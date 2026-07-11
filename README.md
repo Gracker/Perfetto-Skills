@@ -50,6 +50,15 @@ uv sync --extra dev
 uv run python tools/verify.py --smartperfetto ../SmartPerfetto
 ```
 
+## Releases
+
+Tagged releases contain reproducible `.zip` and `.tar.gz` bundles plus
+`SHA256SUMS`. Each archive has one installable
+`perfetto-performance-analysis/` directory, `LICENSE`, `NOTICE`, and
+`PROVENANCE.json`; trace processor executables and trace fixtures are never
+bundled. Verify checksums before extracting, then copy the Skill directory to
+your client's Skill root.
+
 See [the architecture design](docs/superpowers/specs/2026-07-11-perfetto-skills-design.md)
 and [implementation plan](docs/superpowers/plans/2026-07-11-perfetto-skills-implementation.md).
 The maintained public contract is documented in [architecture](docs/architecture.md),

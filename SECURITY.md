@@ -23,3 +23,12 @@ or credentials.
 - Installation refuses to overwrite existing Skills unless explicitly forced.
 - CI and issue logs must not publish trace contents.
 
+## Release integrity
+
+Release workflows pin third-party actions by full commit SHA, verify the public
+export against the catalog-pinned SmartPerfetto commit, run real-trace tests,
+and build byte-for-byte reproducible archives. `SHA256SUMS` covers every release
+archive, while `PROVENANCE.json` records the source catalog and SmartPerfetto
+commit. Release bundles never contain `trace_processor_shell`; the runtime
+bootstrap verifies that executable separately against
+`references/trace-processor-lock.json`.
