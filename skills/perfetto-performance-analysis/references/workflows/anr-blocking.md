@@ -14,7 +14,11 @@ Confirm thread_state coverage, blocked-function availability, Binder/lock/IO sig
 
 ## Evidence sequence
 
-Measure target thread states; resolve D/S/Runnable/Running intervals; build supported waker/Binder/lock chains; correlate long slices, GC, IO, and CPU contention. Search `references/generated/` for `anr_analysis`, `blocking_chain_analysis`, and `binder_root_cause` after export.
+Measure target thread states with [ANR analysis](../generated/skills/anr_analysis.md).
+Resolve D/S/Runnable/Running intervals, then build identity- and time-linked
+waker/Binder/lock chains with [blocking chain analysis](../generated/skills/blocking_chain_analysis.md)
+and [Binder root cause](../generated/skills/binder_root_cause.md). Test long
+slices, GC, IO, and CPU contention without filling broken chain links by guess.
 
 ## Interpretation boundaries
 
@@ -27,4 +31,3 @@ Follow only chains with matching identity and overlapping intervals; report brok
 ## Report requirements
 
 Report target state distribution, supported blocking chain, unresolved gaps, root-cause confidence, and missing instrumentation.
-

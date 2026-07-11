@@ -14,7 +14,11 @@ Run the probe script. Confirm trace bounds, metadata, process/thread tables, and
 
 ## Evidence sequence
 
-Collect global sanity, device state, process identity, state tracks, system load, and data-source availability. Search `references/generated/` for `global_trace_sanity_check`, `process_identity_resolver`, and `device_state_snapshot` after export.
+Run [global trace sanity](../generated/skills/global_trace_sanity_check.md),
+[process identity resolution](../generated/skills/process_identity_resolver.md),
+and [device state](../generated/skills/device_state_snapshot.md). Save the probe,
+trace hash/bounds, selected identities, availability matrix, and routing facts
+before any domain query.
 
 ## Interpretation boundaries
 
@@ -27,4 +31,3 @@ Route each verified anomaly to the narrowest domain workflow.
 ## Report requirements
 
 Report trace identity, bounds, available/missing sources, selected target, and routing decision.
-

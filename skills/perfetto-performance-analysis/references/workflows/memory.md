@@ -14,7 +14,11 @@ Confirm available counters, heap graph/heapprofd data, GC slices, LMK events, DM
 
 ## Evidence sequence
 
-Build memory trends; separate Java, native, graphics, file, swap, and system pressure; inspect GC pause/churn; analyze LMK or retention evidence; correlate with target symptoms. Search `references/generated/` for `memory_analysis`, `gc_analysis`, `lmk_analysis`, and `dmabuf_analysis` after export.
+Build trends with [memory analysis](../generated/skills/memory_analysis.md),
+separating Java, native, graphics, file, swap, and system pressure. Inspect pause
+and churn with [GC analysis](../generated/skills/gc_analysis.md); branch to
+[LMK attribution](../generated/skills/lmk_analysis.md), DMA-BUF, heap graph,
+native allocation, or RSS evidence only when its source is available.
 
 ## Interpretation boundaries
 
@@ -27,4 +31,3 @@ Use heap graph, native allocation, process RSS/swap, bitmap, DMA-BUF, and LMK br
 ## Report requirements
 
 Report component trends, GC/pressure overlap, retention or churn evidence, confidence, and unavailable memory sources.
-

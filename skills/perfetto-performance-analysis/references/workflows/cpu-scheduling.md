@@ -14,7 +14,11 @@ Confirm sched events, CPU/frequency/idle counters, topology evidence, and target
 
 ## Evidence sequence
 
-Detect topology; calculate process/thread CPU time and runnable latency; inspect placement and migration; correlate frequency, idle, utilization, IRQ, and optional callstacks/perf counters. Search `references/generated/` for `cpu_analysis`, `scheduling_analysis`, and `cpu_topology_detection` after export.
+Detect [CPU topology](../generated/skills/cpu_topology_detection.md), then run
+[CPU analysis](../generated/skills/cpu_analysis.md) and
+[scheduling analysis](../generated/skills/scheduling_analysis.md). Calculate
+process/thread running and runnable time, placement, migration, frequency, idle,
+utilization and IRQ pressure; use callstacks/perf counters only when captured.
 
 ## Interpretation boundaries
 
@@ -27,4 +31,3 @@ Inspect representative latency windows, wakers, affinity/uclamp evidence, IRQ pr
 ## Report requirements
 
 Report detected topology, workload scope, running/runnable time, placement/frequency evidence, alternatives, and confidence.
-

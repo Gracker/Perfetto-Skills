@@ -14,7 +14,10 @@ Complete trace overview, target identity, time bounds, and architecture detectio
 
 ## Evidence sequence
 
-Build ordered landmarks; group app, framework, kernel, hardware, and display evidence; test alternative hypotheses; deepen only gaps that can change the conclusion. Search `references/generated/` for `scene_reconstruction` and `state_timeline` after export.
+Build ordered landmarks with [scene reconstruction](../generated/skills/scene_reconstruction.md)
+and [state timeline](../generated/skills/state_timeline.md). Group app,
+framework, kernel, hardware, and display observations by stable identity and
+interval; test alternatives; deepen only gaps that can change the conclusion.
 
 ## Interpretation boundaries
 
@@ -27,4 +30,3 @@ Route unresolved gaps to lifecycle, interaction, blocking, CPU, memory, renderin
 ## Report requirements
 
 Report the timeline, verified links, rejected alternatives, unresolved gaps, evidence IDs, and confidence per link.
-

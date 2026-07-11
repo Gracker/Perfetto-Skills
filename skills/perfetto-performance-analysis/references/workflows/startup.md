@@ -14,7 +14,11 @@ Confirm startup tables or ActivityManager slices, process identity, thread state
 
 ## Evidence sequence
 
-Classify startup type; collect TTID/TTFD and breakdown; measure main-thread self time and states; correlate Binder, IO, class loading, GC, locks, scheduling, frequency, and first-frame production. Search `references/generated/` for `startup_analysis` and `startup_detail` after export.
+Run [startup analysis](../generated/skills/startup_analysis.md), then the bounded
+[startup detail](../generated/skills/startup_detail.md). Preserve cold/warm/hot
+classification and TTID/TTFD landmarks; attribute phases with self time; measure
+main-thread states; then test Binder, IO, class loading/JIT, GC, locks,
+scheduling, frequency ramp, memory pressure, and first-frame production.
 
 ## Interpretation boundaries
 
@@ -27,4 +31,3 @@ Follow the strongest evidence into Binder, IO, GC, scheduling, memory pressure, 
 ## Report requirements
 
 Report startup type, timing landmarks, phase budget, root-cause chain, confidence, evidence IDs, and missing sources.
-

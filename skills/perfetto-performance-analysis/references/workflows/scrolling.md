@@ -14,7 +14,12 @@ Confirm FrameTimeline or fallback frame signals, target identity, display timing
 
 ## Evidence sequence
 
-Detect sessions; measure produced and presented frames; identify real, hidden, and missing jank; inspect representative frames; correlate main/RenderThread states, Binder, locks, GC, GPU, SurfaceFlinger, fences, and thermal/frequency evidence. Search `references/generated/` for `scrolling_analysis`, `scroll_session_analysis`, and `jank_frame_detail` after export.
+Run [scrolling analysis](../generated/skills/scrolling_analysis.md) and
+[session analysis](../generated/skills/scroll_session_analysis.md). Measure
+produced and presented frames separately, identify real, hidden, and missing
+jank, then use [frame detail](../generated/skills/jank_frame_detail.md) on
+representative frames across main/RenderThread, Binder, locks, GC, GPU,
+SurfaceFlinger, fences, and thermal/frequency evidence.
 
 ## Interpretation boundaries
 
@@ -27,4 +32,3 @@ Branch by detected rendering architecture and the guilty production or consumpti
 ## Report requirements
 
 Report refresh budget, session/frame counts, representative evidence, responsibility boundary, confidence, and limitations.
-

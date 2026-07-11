@@ -14,7 +14,11 @@ Confirm target identity and the thread/slice signals used by candidate pipeline 
 
 ## Evidence sequence
 
-Evaluate required signals, exclusions, and weighted scoring for every applicable pipeline; preserve competing candidates; load the matched teaching reference; verify observed anchors in the trace. Search `references/generated/pipelines/` after export.
+Evaluate required signals, exclusions, and weighted scoring in the generated
+[pipeline catalog](../generated/pipelines/docs/index.md); preserve competing
+candidates. Load the candidate definition under `../generated/skills/`, then
+verify its producer, transfer, compositor, fence, and display anchors in the
+trace before using its teaching model.
 
 ## Interpretation boundaries
 
@@ -27,4 +31,3 @@ Inspect the first late or missing producer/compositor/fence anchor using the mat
 ## Report requirements
 
 Report candidate scores, matched/missing signals, selected pipeline, confidence, observed deviations, and unsupported UI-only metadata.
-

@@ -36,8 +36,11 @@ for the selected workflow.
 8. Emit the structure in `assets/report-schema.json`. List missing evidence and
    unresolved alternatives under `limitations`.
 
-Read [the evidence contract](references/evidence/evidence-contract.md) before
-writing conclusions.
+Read [the evidence contract](references/evidence/evidence-contract.md), then use
+[identity rules](references/evidence/identity.md),
+[missing-data rules](references/evidence/missing-data.md), and
+[claim verification](references/evidence/claim-verification.md) before writing
+conclusions.
 
 ## Workflow routing
 
@@ -99,4 +102,3 @@ Perfetto `trace_processor_shell`. The portable instructions work in Codex,
 Claude Code, OpenCode, and other clients that implement Agent Skills and expose
 those capabilities. Cloud-only agents without local file or terminal access can
 use the methodology references but cannot execute trace queries.
-

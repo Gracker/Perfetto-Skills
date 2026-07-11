@@ -14,7 +14,11 @@ Probe and analyze each raw trace independently. Confirm metric definition, units
 
 ## Evidence sequence
 
-Build a side-by-side availability matrix; align comparable facts; calculate deltas only for equivalent metrics; trace significant differences back to side-specific evidence; test alternative platform and capture explanations. Search `references/generated/` for `multi_trace_result_comparison` after export.
+Analyze each trace independently, then apply
+[multi-trace comparison](../generated/skills/multi_trace_result_comparison.md).
+Build a side-by-side availability matrix, align equivalent definitions and
+units, calculate bounded deltas, trace significant differences back to
+side-specific evidence, and test platform, workload, and capture alternatives.
 
 ## Interpretation boundaries
 
@@ -27,4 +31,3 @@ Re-enter the relevant single-trace workflow for any side whose evidence is incom
 ## Report requirements
 
 Report scope parity, availability matrix, comparable deltas, side-specific evidence refs, normalized limitations, and confidence.
-

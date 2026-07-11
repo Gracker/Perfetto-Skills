@@ -14,7 +14,12 @@ Detect architecture from trace signals before loading a framework branch; confir
 
 ## Evidence sequence
 
-Run generic frame and scheduler checks first; then inspect Compose recomposition, Flutter UI/raster/Impeller/Skia, React Native bridge/Fabric/Skia, game loops, FPSGO, or vendor tracks. Search `references/generated/` for `compose_recomposition_hotspot`, `flutter_scrolling_analysis`, `rn_fabric_render_jank`, and `game_fps_analysis` after export.
+Run generic frame and scheduler checks first. After architecture detection, load
+only the matching branch: [Compose recomposition](../generated/skills/compose_recomposition_hotspot.md),
+[Flutter scrolling](../generated/skills/flutter_scrolling_analysis.md),
+[React Native Fabric](../generated/skills/rn_fabric_render_jank.md), or
+[game FPS](../generated/skills/game_fps_analysis.md), plus relevant engine,
+FPSGO, and vendor tracks.
 
 ## Interpretation boundaries
 
@@ -27,4 +32,3 @@ Follow the verified framework stage, engine loop, bridge, raster/GPU path, or pl
 ## Report requirements
 
 Report detection signals/confidence, generic versus architecture-specific evidence, version limits, and recommendations.
-

@@ -14,7 +14,12 @@ Confirm input events or atrace fallbacks, target threads, lifecycle/slice signal
 
 ## Evidence sequence
 
-Build input-to-handler-to-work-to-frame landmarks; quantify gaps; inspect target thread states, Binder/lock/IO/GC work, render production, and presentation. Search `references/generated/` for `click_response_analysis`, `touch_to_display_latency`, and `navigation_analysis` after export.
+Build input-to-handler-to-work-to-frame landmarks with
+[click response](../generated/skills/click_response_analysis.md),
+[touch-to-display](../generated/skills/touch_to_display_latency.md), or
+[navigation analysis](../generated/skills/navigation_analysis.md). Quantify
+every gap, then inspect target thread states, Binder/lock/IO/GC work, render
+production, compositor consumption, and presentation.
 
 ## Interpretation boundaries
 
@@ -27,4 +32,3 @@ Route handler, lifecycle, scheduler, Binder, IO, or rendering gaps to their doma
 ## Report requirements
 
 Report the complete landmark timeline, missing landmarks, largest verified gap, evidence IDs, and confidence.
-

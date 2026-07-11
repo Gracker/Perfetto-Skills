@@ -14,7 +14,11 @@ Confirm app/SF frame signals, GPU tracks or counters, fence data, refresh-rate e
 
 ## Evidence sequence
 
-Measure app production and SF consumption; inspect GPU work/frequency/power state; decompose acquire/present/release fence waits; check composition path, buffer lifecycle, VRR, and presentation. Search `references/generated/` for `gpu_analysis`, `surfaceflinger_analysis`, and `fence_wait_decomposition` after export.
+Measure app production with [GPU analysis](../generated/skills/gpu_analysis.md)
+and compositor consumption with [SurfaceFlinger analysis](../generated/skills/surfaceflinger_analysis.md).
+Use [fence decomposition](../generated/skills/fence_wait_decomposition.md) for
+acquire/present/release waits; check buffer lifecycle, composition path, VRR,
+and actual presentation before assigning responsibility.
 
 ## Interpretation boundaries
 
@@ -27,4 +31,3 @@ Follow the detected pipeline and the first verified late anchor or fence.
 ## Report requirements
 
 Report pipeline stage, layer/frame identity, late interval, supported responsibility, evidence IDs, and limitations.
-

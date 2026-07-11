@@ -14,7 +14,12 @@ Confirm relevant ftrace/atrace/track sources, target identity, and timestamps sh
 
 ## Evidence sequence
 
-Measure target file/block waits and pressure; inspect filesystem or storage activity; correlate network/modem tracks; inspect codec/media and WebView/V8 slices. Search `references/generated/` for `io_pressure`, `block_io_analysis`, `network_analysis`, and `media_codec_activity` after export.
+Measure target waits with [IO pressure](../generated/skills/io_pressure.md) and
+[block IO analysis](../generated/skills/block_io_analysis.md), resolving
+blocked functions and device activity. Branch to
+[network analysis](../generated/skills/network_analysis.md), modem tracks,
+[media codec activity](../generated/skills/media_codec_activity.md), or WebView/V8
+only when those signals overlap the same target and symptom interval.
 
 ## Interpretation boundaries
 
@@ -27,4 +32,3 @@ Follow supported request stages, blocked functions, device activity, modem state
 ## Report requirements
 
 Report source availability, request/stage timeline, target impact, evidence-backed mechanism, confidence, and gaps.
-
