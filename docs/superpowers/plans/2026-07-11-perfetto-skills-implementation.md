@@ -274,7 +274,7 @@ python3 /Users/chris/.codex/skills/.system/skill-creator/scripts/quick_validate.
 
 Expected: `Skill is valid!`.
 
-Run: `skills-ref validate skills/perfetto-performance-analysis`
+Run: `agentskills validate skills/perfetto-performance-analysis`
 
 Expected: valid Skill with no schema errors.
 
@@ -287,7 +287,7 @@ Expected: PASS.
 Add:
 
 ```python
-run(["skills-ref", "validate", "skills/perfetto-performance-analysis"])
+run(["agentskills", "validate", "skills/perfetto-performance-analysis"])
 ```
 
 Commit:
@@ -1180,7 +1180,7 @@ python3 -m venv .venv
 uv sync --extra dev
 .venv/bin/python tools/verify.py --smartperfetto /absolute/path/to/SmartPerfetto
 .venv/bin/python tools/install.py --client codex --home "$PWD/.smoke-home"
-skills-ref validate skills/perfetto-performance-analysis
+agentskills validate skills/perfetto-performance-analysis
 ```
 
 Expected: clone, dependency install, verification, installation, and Skill

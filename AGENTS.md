@@ -19,7 +19,7 @@ Perfetto analysis knowledge. Reply to maintainers in the language they use.
 - Keep `skills/perfetto-performance-analysis/SKILL.md` under 500 lines and use
   imperative instructions.
 - Frontmatter must begin at byte zero and remain accepted by both
-  `quick_validate.py` and `skills-ref`.
+  `quick_validate.py` and the `agentskills` validator from `skills-ref`.
 - Put Agent-readable detail in `references/`, deterministic operations in
   `scripts/`, output templates in `assets/`, and optional Codex UI metadata in
   `agents/openai.yaml`.
@@ -39,4 +39,3 @@ Only this repository-defined command may be used as the complete gate. If the
 SmartPerfetto checkout is unavailable, run `uv run python tools/verify.py` and
 report source/export and real-trace verification as unavailable rather than
 claiming completion.
-

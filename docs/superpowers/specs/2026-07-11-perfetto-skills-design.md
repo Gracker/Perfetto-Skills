@@ -273,7 +273,7 @@ destination. It defaults to copy mode, refuses destructive overwrite without
 
 Required gates:
 
-1. open Agent Skills schema validation with `skills-ref`;
+1. open Agent Skills schema validation with the `agentskills` CLI;
 2. Python unit tests for runtime resolution, downloads, hash verification,
    parameter handling, exporter normalization, catalog coverage, link checking,
    and installation paths;
