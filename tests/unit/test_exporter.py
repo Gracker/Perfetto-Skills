@@ -53,6 +53,17 @@ class ExporterTest(unittest.TestCase):
             )
         )
 
+    def test_repository_identity_is_stable_across_checkout_protocols(self) -> None:
+        expected = "https://github.com/Gracker/SmartPerfetto"
+        for remote in (
+            "git@github.com:Gracker/SmartPerfetto.git",
+            "ssh://git@github.com/Gracker/SmartPerfetto.git",
+            "https://github.com/Gracker/SmartPerfetto",
+            "https://github.com/Gracker/SmartPerfetto.git",
+        ):
+            with self.subTest(remote=remote):
+                self.assertEqual(exporter.canonical_repository(remote), expected)
+
     def test_catalog_has_unique_sources_names_and_destinations(self) -> None:
         catalog = self.load_catalog()
         for key in ("source_path", "name"):

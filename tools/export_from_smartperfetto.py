@@ -98,11 +98,27 @@ def git_output(source: Path, *args: str) -> str:
     return completed.stdout.strip()
 
 
+_GITHUB_REMOTE = re.compile(
+    r"^(?:git@github\.com:|ssh://git@github\.com/|https?://github\.com/)"
+    r"(?P<slug>[^/]+/[^/]+?)(?:\.git)?/?$",
+    re.IGNORECASE,
+)
+
+
+def canonical_repository(remote: str) -> str:
+    match = _GITHUB_REMOTE.fullmatch(remote.strip())
+    if match:
+        return f"https://github.com/{match.group('slug')}"
+    return remote.strip().removesuffix("/")
+
+
 def source_state(source: Path) -> dict[str, Any]:
     return {
         "commit": git_output(source, "rev-parse", "HEAD"),
         "dirty": bool(git_output(source, "status", "--short")),
-        "remote": git_output(source, "remote", "get-url", "origin"),
+        "remote": canonical_repository(
+            git_output(source, "remote", "get-url", "origin")
+        ),
     }
 
 
