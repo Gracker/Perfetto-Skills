@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/fpsgo_analysis.skill.yaml
 Source SHA-256: 6ee6815848f62092599d709a15c857835fb298f96733192f8fc113c03acb42c3
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # FPSGO 策略分析 (MTK)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_freq_timeline.skill.yaml
 Source SHA-256: 1e522ca6fb183f6510f044547c8d5f97b82b8de7b181ceeae96795b0b1e8fe84
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # CPU 频率变化时间线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.

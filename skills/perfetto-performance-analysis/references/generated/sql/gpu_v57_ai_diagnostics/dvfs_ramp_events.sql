@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml
 -- Source SHA-256: ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36
--- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+-- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 CREATE OR REPLACE PERFETTO TABLE __sp_v57_gpu_params AS
 SELECT

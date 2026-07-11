@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/android_view_mixed.md
 Source SHA-256: a396730d294a9e46c7fa106abbb11da6730ab4ea91f2d10b1649f9f6d0361bfa
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 # Android View Mixed Pipeline (Hybrid Composition)
 

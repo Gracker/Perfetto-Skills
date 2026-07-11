@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/scroll_response_latency.skill.yaml
 -- Source SHA-256: d89dec74765b5e8b1f68f450ec1579c149e0d6b3db6adb5e0ffe9c04b2799859
--- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+-- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 WITH move_events AS (
   SELECT

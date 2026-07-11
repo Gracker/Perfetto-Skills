@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_idle_analysis.skill.yaml
 -- Source SHA-256: 231e8ce685c178ba67e1e32c7f5fcdb25ba5b5b0b0773af5145ca0572d6b4861
--- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+-- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 WITH all_idle_events AS (
   -- 不在时间窗口内过滤，避免 LEAD() 丢失跨边界的 idle 区间

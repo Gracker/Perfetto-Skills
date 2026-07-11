@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_standard_legacy.skill.yaml
 Source SHA-256: 6a2d7cacb8c3467eaf412df95cd45a6ca4669844f8b4fcf6279decc5f1251208
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # 标准 Android View (Legacy)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.

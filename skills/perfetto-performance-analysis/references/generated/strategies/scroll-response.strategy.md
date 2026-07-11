@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scroll-response.strategy.md
 Source SHA-256: 8a21157416c0175602c7366081b6c506bb21eb45f608c793011a8b8c4cfc87ad
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 # Scroll Response Strategy
 

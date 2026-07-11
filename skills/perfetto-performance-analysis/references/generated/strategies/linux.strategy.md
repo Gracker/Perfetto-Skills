@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/linux.strategy.md
 Source SHA-256: 7ebec582b4f341fc6da19db3162aa28477be10a29a0720610361f1323508c8f5
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 # Linux Strategy
 

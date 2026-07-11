@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/textureview_producer_frame_timing.skill.yaml
 Source SHA-256: 9c4d5fb0a318772a5c5a9b3998e6489d3ca70d4d6ebc88330940731518a9f30a
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # TextureView 生产端帧时序
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.

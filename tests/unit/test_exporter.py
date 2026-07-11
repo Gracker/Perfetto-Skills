@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SMARTPERFETTO = ROOT.parent / "SmartPerfetto"
 EXPORTER = ROOT / "tools" / "export_from_smartperfetto.py"
 CATALOG = ROOT / "catalog" / "smartperfetto-export.json"
+MIGRATION_DOC = ROOT / "docs" / "migration-coverage.md"
 
 
 class ExporterTest(unittest.TestCase):
@@ -89,6 +90,18 @@ class ExporterTest(unittest.TestCase):
                 self.assertEqual(
                     exporter.classify_skill(name, {"type": "atomic"}), expected
                 )
+
+    def test_migration_coverage_is_rendered_from_catalog(self) -> None:
+        catalog = self.load_catalog()
+        expected = exporter.render_migration_coverage(catalog)
+        self.assertEqual(MIGRATION_DOC.read_text(encoding="utf-8"), expected)
+        self.assertIn(catalog["source"]["commit"], expected)
+        for count in (
+            catalog["summary"]["runtime_candidates"],
+            catalog["summary"]["strategy_sources"],
+            catalog["summary"]["pipeline_docs"],
+        ):
+            self.assertIn(str(count), expected)
 
 
 if __name__ == "__main__":

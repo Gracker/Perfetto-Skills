@@ -15,6 +15,9 @@ class RepositoryContractTest(unittest.TestCase):
             "CONTRIBUTING.md",
             "AGENTS.md",
             "pyproject.toml",
+            "docs/architecture.md",
+            "docs/compatibility.md",
+            "docs/migration-coverage.md",
         ):
             self.assertTrue((ROOT / relative).is_file(), relative)
 

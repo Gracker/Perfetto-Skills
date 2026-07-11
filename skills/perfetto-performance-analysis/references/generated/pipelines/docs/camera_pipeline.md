@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/camera_pipeline.md
 Source SHA-256: 10efdf3cd4712aadb3f5f87aaa07eab7aa441c1a6a384b07ddccde4e415c2096
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 # Camera Rendering Pipeline (Camera2 & HAL3)
 

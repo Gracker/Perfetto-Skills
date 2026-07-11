@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gl_standalone_swap_jank.skill.yaml
 -- Source SHA-256: 099d717e80e4a568d18a565c1bec7714b24451ed809a8c35527cdff3c29eabc9
--- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+-- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 WITH
 input AS (

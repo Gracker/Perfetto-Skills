@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_standard_blast.skill.yaml
 Source SHA-256: 5af1d20831b0954dec49d5e02a7ebbfda46914fc92cf97a079994d09c5b5b92b
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # 标准 Android View (BLAST)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.

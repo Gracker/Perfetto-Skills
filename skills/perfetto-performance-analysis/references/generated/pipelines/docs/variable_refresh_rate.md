@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/variable_refresh_rate.md
 Source SHA-256: 3efdc371c2ea5e2b4b77bddb8e95876729512e5dc9d1ec5318890b73d9dd89e8
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 # Variable Refresh Rate (VRR) Pipeline
 

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/rn_old_arch.md
 Source SHA-256: a4c34ed298977aed21e4080f29e41d45a171630de7b568a6865ef9bff4710c6a
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 # React Native Old Arch (Paper + Bridge) 渲染管线
 

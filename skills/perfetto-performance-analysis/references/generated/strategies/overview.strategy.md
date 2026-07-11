@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/overview.strategy.md
 Source SHA-256: d1f0a9709bfbbd2b23c454880808291924601ff32775333643fcb29d1c298168
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 # Overview Strategy
 

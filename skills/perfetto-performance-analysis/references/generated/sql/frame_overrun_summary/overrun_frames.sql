@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/frame_overrun_summary.skill.yaml
 -- Source SHA-256: 2ef5423c5d7600d720f049fe458bccf4b167e2319a423fa99c754d3b4e6de88f
--- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+-- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 SELECT
   frame_id,

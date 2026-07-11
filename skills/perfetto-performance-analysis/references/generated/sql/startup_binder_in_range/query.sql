@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_binder_in_range.skill.yaml
 -- Source SHA-256: 634089d0758acaec85224ca0440cd8e33c26da6dc537b93e0ee0f3e54d663f6c
--- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+-- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 SELECT
   bt.server_process,

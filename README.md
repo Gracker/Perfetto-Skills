@@ -52,6 +52,9 @@ uv run python tools/verify.py --smartperfetto ../SmartPerfetto
 
 See [the architecture design](docs/superpowers/specs/2026-07-11-perfetto-skills-design.md)
 and [implementation plan](docs/superpowers/plans/2026-07-11-perfetto-skills-implementation.md).
+The maintained public contract is documented in [architecture](docs/architecture.md),
+[compatibility](docs/compatibility.md), and generated
+[migration coverage](docs/migration-coverage.md).
 
 ## License
 

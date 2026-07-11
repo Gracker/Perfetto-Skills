@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/android_pip_freeform.md
 Source SHA-256: b1a3edb2129348f19e3dab03dbfbb86c99d687daeb8aa3cf5a37e4e0157a1b51
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 # PIP & Freeform Window Rendering
 

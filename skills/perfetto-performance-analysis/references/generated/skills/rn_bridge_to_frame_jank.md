@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/rn_bridge_to_frame_jank.skill.yaml
 Source SHA-256: d2cce13360dd218d1931638ebf4d69f3b01a43c9ae5c3470bb7c9ba5e3202311
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # RN Bridge 到帧卡顿关联
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.

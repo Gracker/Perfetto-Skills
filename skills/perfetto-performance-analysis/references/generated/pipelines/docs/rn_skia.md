@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/rn_skia.md
 Source SHA-256: d15c58f7729021fea02313feccfd7a12b973eb1c9dffe77792942eddb581e5cf
-Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 # React Native Skia 渲染管线
 

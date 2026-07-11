@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/wattson_rails_power_breakdown.skill.yaml
 -- Source SHA-256: 8214b9e8c26e8130521fe0d2665da06cf7fa7d139bddbcd0a6f83543d3c09bdb
--- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+-- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 WITH window AS (
   SELECT

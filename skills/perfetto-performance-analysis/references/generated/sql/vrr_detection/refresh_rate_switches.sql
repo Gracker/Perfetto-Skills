@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/vrr_detection.skill.yaml
 -- Source SHA-256: dbd96fdb066f3be0defa9135a69e115de91d28e52f9f9585a9fad0f12fd2cd06
--- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+-- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 WITH
 vsync_intervals AS (
