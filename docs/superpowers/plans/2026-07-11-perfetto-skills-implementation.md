@@ -300,7 +300,7 @@ git commit -m "feat: add portable Perfetto analysis skill router"
 ### Task 3: Cross-platform trace processor bootstrap and query runtime
 
 **Files:**
-- Create: `catalog/trace-processor-lock.json`
+- Create: `skills/perfetto-performance-analysis/references/trace-processor-lock.json`
 - Create: `skills/perfetto-performance-analysis/scripts/_common.py`
 - Create: `skills/perfetto-performance-analysis/scripts/bootstrap_trace_processor.py`
 - Create: `skills/perfetto-performance-analysis/scripts/perfetto_query.py`
@@ -419,7 +419,7 @@ Expected: exit 0 and documented options.
 - [ ] **Step 8: Commit the portable runtime**
 
 ```bash
-git add catalog/trace-processor-lock.json skills/perfetto-performance-analysis/scripts tests/unit tests/support.py
+git add skills/perfetto-performance-analysis/references/trace-processor-lock.json skills/perfetto-performance-analysis/scripts tests/unit tests/support.py
 git commit -m "feat: add portable trace processor runtime"
 ```
 

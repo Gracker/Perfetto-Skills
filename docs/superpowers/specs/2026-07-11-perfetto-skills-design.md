@@ -114,6 +114,7 @@ Perfetto-Skills/
 │       │   └── bootstrap_trace_processor.py
 │       ├── references/
 │       │   ├── workflow-index.json
+│       │   ├── trace-processor-lock.json
 │       │   ├── workflows/
 │       │   ├── evidence/
 │       │   ├── knowledge/
@@ -123,7 +124,6 @@ Perfetto-Skills/
 │           └── report-schema.json
 ├── catalog/
 │   ├── smartperfetto-export.json
-│   └── trace-processor-lock.json
 ├── tools/
 │   ├── export_from_smartperfetto.py
 │   ├── validate_catalog.py
