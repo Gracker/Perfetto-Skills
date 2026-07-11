@@ -73,6 +73,13 @@ class RuntimeTest(unittest.TestCase):
         with self.assertRaisesRegex(self.common.QueryError, "non-tabular text"):
             self.common.parse_csv_output(malformed)
 
+    def test_csv_parser_ignores_trace_processor_leading_blank_lines(self) -> None:
+        output = '\n\n"startup_id","package"\n1,"com.example"\n'
+        self.assertEqual(
+            self.common.parse_csv_output(output),
+            [{"startup_id": 1, "package": "com.example"}],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

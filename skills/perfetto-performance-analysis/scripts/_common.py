@@ -195,7 +195,7 @@ def parse_scalar(value: str) -> str | int | float | None:
 def parse_csv_output(output: str) -> list[dict[str, str | int | float | None]]:
     if not output.strip():
         return []
-    reader = csv.DictReader(io.StringIO(output))
+    reader = csv.DictReader(io.StringIO(output.lstrip("\r\n")))
     if reader.fieldnames is None:
         raise QueryError("trace_processor_shell returned CSV without a header")
     parsed: list[dict[str, str | int | float | None]] = []
