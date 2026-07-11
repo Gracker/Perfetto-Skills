@@ -1,0 +1,26 @@
+-- GENERATED FILE - DO NOT EDIT.
+-- Source: backend/skills/composite/jank_frame_detail.skill.yaml
+-- Source SHA-256: 0403339f9ba204e964aa7ccab7130157ed7149b13da3cfd63bb807484e4bbb96
+-- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+
+WITH main_thread AS (
+  SELECT t.utid
+  FROM thread t
+  JOIN process p ON t.upid = p.upid
+  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+    AND (t.tid = p.pid OR t.name GLOB '[0-9]*.ui')
+)
+SELECT
+  s.name,
+  STR_SPLIT(s.name, ' ', 4) as target_vsync,
+  STR_SPLIT(s.name, ' ', 6) as resync_delay,
+  ROUND(s.dur / 1e6, 2) as dur_ms,
+  printf('%d', s.ts) as ts
+FROM slice s
+JOIN thread_track tt ON s.track_id = tt.id
+WHERE tt.utid IN (SELECT utid FROM main_thread)
+  AND s.ts >= COALESCE(${main_start_ts}, ${start_ts})
+  AND s.ts < COALESCE(${main_end_ts}, ${end_ts})
+  AND s.name GLOB 'Choreographer#doFrame - resynced*'
+ORDER BY s.ts
+LIMIT 10

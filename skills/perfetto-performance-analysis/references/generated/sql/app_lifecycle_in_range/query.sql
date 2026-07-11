@@ -1,0 +1,67 @@
+-- GENERATED FILE - DO NOT EDIT.
+-- Source: backend/skills/atomic/app_lifecycle_in_range.skill.yaml
+-- Source SHA-256: 46a213c077050ea2c95c604806c96bb5c113ed136f248dffca36700952df16f2
+-- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+
+WITH lifecycle_events AS (
+  SELECT
+    s.ts,
+    s.dur,
+    s.name as slice_name,
+    t.name as thread_name,
+    p.name as process_name,
+    CASE
+      WHEN s.name GLOB '*onCreate*' OR s.name GLOB '*performCreate*' THEN 'onCreate'
+      WHEN s.name GLOB '*onStart*' THEN 'onStart'
+      WHEN s.name GLOB '*onResume*' THEN 'onResume'
+      WHEN s.name GLOB '*onPause*' THEN 'onPause'
+      WHEN s.name GLOB '*onStop*' THEN 'onStop'
+      WHEN s.name GLOB '*onDestroy*' THEN 'onDestroy'
+      WHEN s.name GLOB '*activityStart*' THEN 'activityStart'
+      WHEN s.name GLOB '*activityResume*' THEN 'activityResume'
+      WHEN s.name GLOB '*activityPause*' THEN 'activityPause'
+      WHEN s.name GLOB '*inflate*' THEN 'inflate'
+      WHEN s.name GLOB '*bindApplication*' THEN 'bindApplication'
+      WHEN s.name GLOB 'launching:*' THEN 'launching'
+      WHEN s.name GLOB 'completed:*' THEN 'completed'
+      ELSE 'other'
+    END as lifecycle_phase,
+    CASE
+      WHEN s.name GLOB '*Fragment*' THEN 'Fragment'
+      ELSE 'Activity'
+    END as component_type
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN thread t ON tt.utid = t.utid
+  JOIN process p ON t.upid = p.upid
+  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+    AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})
+    AND (t.is_main_thread = 1 OR t.name = p.name)
+    AND (
+      s.name GLOB '*onCreate*' OR s.name GLOB '*onStart*' OR s.name GLOB '*onResume*'
+      OR s.name GLOB '*onPause*' OR s.name GLOB '*onStop*' OR s.name GLOB '*onDestroy*'
+      OR s.name GLOB '*performCreate*' OR s.name GLOB '*activityStart*'
+      OR s.name GLOB '*activityResume*' OR s.name GLOB '*activityPause*'
+      OR s.name GLOB '*inflate*' OR s.name GLOB '*bindApplication*'
+      OR s.name GLOB 'launching:*' OR s.name GLOB 'completed:*'
+    )
+)
+SELECT
+  printf('%d', ts) as ts,
+  slice_name,
+  lifecycle_phase,
+  component_type,
+  process_name,
+  thread_name,
+  ROUND(dur / 1e6, 2) as dur_ms,
+  printf('%d', dur) as dur_ns,
+  CASE
+    WHEN lifecycle_phase = 'onCreate' AND dur / 1e6 > 200 THEN '耗时过长'
+    WHEN lifecycle_phase = 'onResume' AND dur / 1e6 > 100 THEN '耗时过长'
+    WHEN lifecycle_phase = 'inflate' AND dur / 1e6 > 100 THEN '耗时过长'
+    WHEN dur / 1e6 > 500 THEN '耗时过长'
+    ELSE '正常'
+  END as status
+FROM lifecycle_events
+ORDER BY ts ASC

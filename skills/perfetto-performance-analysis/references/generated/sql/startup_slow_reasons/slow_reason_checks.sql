@@ -1,0 +1,532 @@
+-- GENERATED FILE - DO NOT EDIT.
+-- Source: backend/skills/atomic/startup_slow_reasons.skill.yaml
+-- Source SHA-256: 9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58
+-- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+
+WITH startup_info AS (
+  SELECT
+    startup_id,
+    package,
+    ts,
+    dur,
+    startup_type,
+    upid
+  FROM ${startup_overview}
+  ORDER BY dur DESC
+  LIMIT 1
+),
+main_thread AS (
+  SELECT t.utid, t.tid FROM thread t
+  JOIN startup_info si ON t.upid = si.upid
+  WHERE (t.is_main_thread = 1 OR t.tid = (SELECT pid FROM process WHERE upid = si.upid))
+  LIMIT 1
+),
+-- Check: JIT activity (indicator of missing baseline profile)
+jit_check AS (
+  SELECT COUNT(*) as jit_compile_count,
+    ROUND(COALESCE(SUM(s.dur), 0) / 1e6, 1) as jit_compile_ms
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN thread t ON tt.utid = t.utid
+  JOIN startup_info si ON t.upid = si.upid
+  WHERE s.name GLOB 'JIT compiling*'
+    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+),
+-- Check: DEX2OAT running concurrently
+dex2oat_check AS (
+  SELECT COUNT(*) as dex2oat_running
+  FROM process p
+  WHERE (p.name GLOB '*dex2oat*' OR p.name GLOB '*dex2oatd*')
+    AND p.start_ts IS NOT NULL
+    AND p.start_ts < (SELECT ts + dur FROM startup_info)
+),
+-- Check: GC during startup
+gc_check AS (
+  SELECT
+    COUNT(*) as gc_count,
+    ROUND(COALESCE(SUM(s.dur), 0) / 1e6, 1) as gc_total_ms,
+    SUM(CASE WHEN tt.utid = (SELECT utid FROM main_thread) THEN 1 ELSE 0 END) as main_thread_gc_count
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN thread t ON tt.utid = t.utid
+  JOIN startup_info si ON t.upid = si.upid
+  WHERE (s.name GLOB '*GC*' OR s.name GLOB '*gc*')
+    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+    AND s.dur > 100000  -- > 0.1ms
+),
+-- Check: Lock contention
+lock_check AS (
+  SELECT
+    COUNT(*) as lock_count,
+    ROUND(COALESCE(SUM(s.dur), 0) / 1e6, 1) as lock_total_ms
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN main_thread mt ON tt.utid = mt.utid
+  JOIN startup_info si
+  WHERE (s.name GLOB '*Lock contention*'
+         OR s.name GLOB '*monitor contention*'
+         OR s.name GLOB '*art::Monitor*')
+    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+),
+-- Check: Main thread D/DK with direct io_wait or IO/page-cache blocked_function evidence.
+io_check AS (
+  SELECT
+    ROUND(COALESCE(SUM(
+      MIN(ts.ts + ts.dur, (SELECT ts + dur FROM startup_info))
+      - MAX(ts.ts, (SELECT ts FROM startup_info))
+    ), 0) / 1e6, 1) as main_thread_d_state_ms
+  FROM thread_state ts
+  JOIN main_thread mt ON ts.utid = mt.utid
+  WHERE ts.state IN ('D', 'DK')
+    AND (
+      COALESCE(ts.io_wait, 0) = 1
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%filemap%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%page_fault%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%wait_on_page%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%folio_wait%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%io_schedule%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%submit_bio%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%sync%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%blk_%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%ext4%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%f2fs%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%erofs%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%ufshcd%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%mmc_%'
+      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%dm_%'
+    )
+    AND ts.ts < (SELECT ts + dur FROM startup_info)
+    AND ts.ts + ts.dur > (SELECT ts FROM startup_info)
+),
+-- Check: Binder blocking on main thread
+binder_check AS (
+  SELECT
+    COUNT(*) as binder_block_count,
+    ROUND(COALESCE(SUM(ts.dur), 0) / 1e6, 1) as binder_block_ms
+  FROM thread_state ts
+  JOIN main_thread mt ON ts.utid = mt.utid
+  WHERE ts.state = 'S'
+    AND (ts.blocked_function GLOB '*binder*')
+    AND ts.ts >= (SELECT ts FROM startup_info)
+    AND ts.ts < (SELECT ts + dur FROM startup_info)
+    AND ts.dur > 1000000  -- > 1ms
+),
+-- Check: Broadcast delays during startup
+broadcast_check AS (
+  SELECT COUNT(*) as broadcast_count
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN main_thread mt ON tt.utid = mt.utid
+  JOIN startup_info si
+  WHERE s.name GLOB '*broadcastReceiveReg*'
+    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+),
+-- Check: Class verification
+class_verify_check AS (
+  SELECT
+    COUNT(*) as verify_count,
+    ROUND(COALESCE(SUM(s.dur), 0) / 1e6, 1) as verify_ms
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN thread t ON tt.utid = t.utid
+  JOIN startup_info si ON t.upid = si.upid
+  WHERE (s.name GLOB 'VerifyClass*' OR s.name GLOB 'verifyClass*')
+    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+),
+-- Emit detected slow reasons
+detected_reasons AS (
+SELECT 'SR01' as reason_id,
+  'JIT 编译活跃（疑似缺少 Baseline Profile）' as reason,
+  CASE WHEN jit_compile_count > 50 THEN 'critical'
+       WHEN jit_compile_count > 20 THEN 'warning' ELSE 'info' END as severity,
+  jit_compile_count || ' 次编译, ' || jit_compile_ms || ' ms' as evidence,
+  '使用 Baseline Profile 预编译热点方法，减少冷启动 JIT 需求' as suggestion
+FROM jit_check WHERE jit_compile_count > 5
+
+UNION ALL
+SELECT 'SR02', 'DEX2OAT 并发运行',
+  'warning',
+  'dex2oat 进程在启动期间运行', '等待 DEX 优化完成后再测试启动性能'
+FROM dex2oat_check WHERE dex2oat_running > 0
+
+UNION ALL
+SELECT 'SR03',
+  CASE WHEN main_thread_gc_count > 0 THEN '主线程 GC（直接阻塞）'
+       ELSE 'GC 活动（间接影响）' END,
+  CASE WHEN main_thread_gc_count > 0 THEN 'warning' ELSE 'info' END,
+  gc_count || ' 次 GC, 总耗时 ' || gc_total_ms || ' ms, 主线程 ' || main_thread_gc_count || ' 次',
+  '减少启动期间的对象分配，避免触发 GC'
+FROM gc_check WHERE gc_count > 0
+
+UNION ALL
+SELECT 'SR04', '主线程锁竞争',
+  CASE WHEN lock_total_ms > 50 THEN 'critical'
+       WHEN lock_total_ms > 10 THEN 'warning' ELSE 'info' END,
+  lock_count || ' 次, 总耗时 ' || lock_total_ms || ' ms',
+  '检查 synchronized/ReentrantLock 使用，减少启动期间的线程同步'
+FROM lock_check WHERE lock_count > 0
+
+UNION ALL
+SELECT 'SR05', '主线程 IO/page-cache 等待候选',
+  CASE WHEN main_thread_d_state_ms > 100 THEN 'critical'
+       WHEN main_thread_d_state_ms > 30 THEN 'warning' ELSE 'info' END,
+  '主线程 D/DK 且 io_wait 或 IO/page-cache blocked_function ' || main_thread_d_state_ms || ' ms',
+  '结合文件/数据库/SharedPreferences/Provider slice 或 stack 证据确认业务根因后再优化'
+FROM io_check WHERE main_thread_d_state_ms > 5
+
+UNION ALL
+SELECT 'SR06', '主线程 Binder 阻塞',
+  CASE WHEN binder_block_ms > 100 THEN 'critical'
+       WHEN binder_block_ms > 30 THEN 'warning' ELSE 'info' END,
+  binder_block_count || ' 次, 总阻塞 ' || binder_block_ms || ' ms',
+  '减少启动期间的同步 Binder 调用，或改为异步'
+FROM binder_check WHERE binder_block_count > 0
+
+UNION ALL
+SELECT 'SR07', 'Broadcast 接收延迟', 'info',
+  broadcast_count || ' 次 broadcast 在启动期间',
+  '考虑延迟注册非关键 BroadcastReceiver'
+FROM broadcast_check WHERE broadcast_count > 3
+
+UNION ALL
+SELECT 'SR08', '大量类验证',
+  CASE WHEN verify_ms > 100 THEN 'warning' ELSE 'info' END,
+  verify_count || ' 个类验证, 耗时 ' || verify_ms || ' ms',
+  '使用 speed-profile 编译模式减少运行时类验证'
+FROM class_verify_check WHERE verify_count > 10
+
+-- ================================================================
+-- SR09-SR20: 扩展检测 (v3.0)
+-- 参见 knowledge-startup-root-causes.template.md 根因分类体系
+-- ================================================================
+
+-- SR09: ContentProvider 初始化过多 (根因 A1, 仅冷启动)
+-- 门控：需要 bindApplication slice 存在（冷启动标志）
+UNION ALL
+SELECT 'SR09',
+  'ContentProvider 初始化过多（' || cp_count || ' 个）',
+  CASE WHEN cp_count > 8 THEN 'critical'
+       WHEN cp_count > 3 THEN 'warning' ELSE 'info' END,
+  cp_count || ' 个 ContentProvider, 最慢 ' || max_cp_ms || ' ms',
+  '使用 Jetpack App Startup 合并 ContentProvider; 审计每个 CP 的必要性'
+FROM (
+  SELECT COUNT(*) as cp_count,
+    ROUND(MAX(s.dur) / 1e6, 1) as max_cp_ms
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN main_thread mt ON tt.utid = mt.utid
+  JOIN startup_info si
+  WHERE s.name GLOB '*contentProviderCreate*'
+    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+    AND EXISTS (
+      SELECT 1 FROM slice ba
+      JOIN thread_track tt2 ON ba.track_id = tt2.id
+      JOIN main_thread mt2 ON tt2.utid = mt2.utid
+      WHERE ba.name = 'bindApplication'
+        AND ba.ts + ba.dur > si.ts AND ba.ts < si.ts + si.dur
+    )
+) WHERE cp_count > 3
+
+-- SR10: 主线程 futex 等待（仅报告未被 SR04 覆盖的 futex 阻塞）
+-- 两级归因：bindApplication 阶段 + 无 Lock contention slice 覆盖 → 疑似 SP(A9)
+--           其他情况 → 通用 futex 阻塞（不归因为 SP）
+UNION ALL
+SELECT 'SR10',
+  CASE WHEN in_bind_app = 1 AND no_lock_slice = 1
+       THEN '主线程 futex 等待（疑似 SharedPreferences 阻塞，发生在 bindApplication 阶段且无 Lock contention slice）'
+       ELSE '主线程 futex 等待（通用锁/同步阻塞，非 SP 特征）'
+  END,
+  CASE WHEN futex_ms > 50 THEN 'critical'
+       WHEN futex_ms > 10 THEN 'warning' ELSE 'info' END,
+  '主线程 futex_wait 总耗时 ' || futex_ms || ' ms (' || futex_count || ' 次)'
+    || CASE WHEN in_bind_app = 1 THEN ', 在 bindApplication 阶段' ELSE '' END,
+  CASE WHEN in_bind_app = 1 AND no_lock_slice = 1
+       THEN '迁移到 Jetpack DataStore; 拆分大 SP 文件; 避免启动时同步读取 SP'
+       ELSE '检查 blocked_functions 和 Lock contention slice 定位具体锁; 参考 SR04'
+  END
+FROM (
+  SELECT
+    COUNT(*) as futex_count,
+    ROUND(SUM(ts_inner.dur) / 1e6, 1) as futex_ms,
+    -- 是否主要发生在 bindApplication 阶段
+    CASE WHEN SUM(CASE WHEN EXISTS (
+      SELECT 1 FROM slice ba
+      JOIN thread_track tt2 ON ba.track_id = tt2.id
+      JOIN main_thread mt2 ON tt2.utid = mt2.utid
+      WHERE ba.name = 'bindApplication'
+        AND ba.ts + ba.dur > si.ts AND ba.ts < si.ts + si.dur
+        AND ts_inner.ts >= ba.ts AND ts_inner.ts < ba.ts + ba.dur
+    ) THEN ts_inner.dur ELSE 0 END) > SUM(ts_inner.dur) / 2 THEN 1 ELSE 0 END as in_bind_app,
+    -- SR04 是否已覆盖：futex wait 中有多少被 Lock contention slice 时间重叠解释
+    -- 如果 >50% 的 futex 时间与 Lock contention 重叠 → 已被 SR04 覆盖
+    CASE WHEN SUM(CASE WHEN EXISTS (
+      SELECT 1 FROM slice lc
+      JOIN thread_track tt3 ON lc.track_id = tt3.id
+      JOIN main_thread mt3 ON tt3.utid = mt3.utid
+      WHERE (lc.name GLOB '*Lock contention*' OR lc.name GLOB '*monitor contention*')
+        AND lc.ts < ts_inner.ts + ts_inner.dur
+        AND lc.ts + lc.dur > ts_inner.ts
+    ) THEN ts_inner.dur ELSE 0 END) < SUM(ts_inner.dur) / 2 THEN 1 ELSE 0 END as no_lock_slice
+  FROM thread_state ts_inner
+  JOIN main_thread mt ON ts_inner.utid = mt.utid
+  JOIN startup_info si
+  WHERE ts_inner.state = 'S'
+    AND ts_inner.blocked_function GLOB '*futex_wait*'
+    AND ts_inner.ts >= si.ts AND ts_inner.ts < si.ts + si.dur
+    AND ts_inner.dur > 1000000  -- > 1ms
+) WHERE futex_ms > 5
+
+-- SR11: 主线程显式 sleep/delay (根因 A17)
+UNION ALL
+SELECT 'SR11', '主线程存在显式 sleep/delay',
+  CASE WHEN sleep_ms > 100 THEN 'critical'
+       WHEN sleep_ms > 10 THEN 'warning' ELSE 'info' END,
+  '主线程 nanosleep 总耗时 ' || sleep_ms || ' ms (' || sleep_count || ' 次)',
+  '删除 Thread.sleep(); 替换为事件驱动等待'
+FROM (
+  SELECT
+    COUNT(*) as sleep_count,
+    ROUND(SUM(ts_inner.dur) / 1e6, 1) as sleep_ms
+  FROM thread_state ts_inner
+  JOIN main_thread mt ON ts_inner.utid = mt.utid
+  JOIN startup_info si
+  WHERE ts_inner.state = 'S'
+    AND ts_inner.blocked_function GLOB '*nanosleep*'
+    AND ts_inner.ts >= si.ts AND ts_inner.ts < si.ts + si.dur
+) WHERE sleep_ms > 1
+
+-- SR12: 三方 SDK 初始化开销 (根因 A11, 仅冷启动)
+-- 只统计 bindApplication 的直接子 slice（depth+1），避免嵌套重叠双算
+UNION ALL
+SELECT 'SR12', 'bindApplication 阶段非框架 slice 占比高（疑似三方 SDK 初始化过重）',
+  CASE WHEN non_fw_percent > 60 THEN 'critical'
+       WHEN non_fw_percent > 30 THEN 'warning' ELSE 'info' END,
+  '非框架 slice 占 bindApplication ' || non_fw_percent || '%, 总耗时 ' || non_fw_ms || ' ms',
+  '延迟非关键 SDK 初始化至首帧后; 使用 App Startup 库管理初始化顺序'
+FROM (
+  SELECT
+    ROUND(SUM(CASE WHEN s.name NOT GLOB 'bindApplication*'
+                   AND s.name NOT GLOB 'contentProviderCreate*'
+                   AND s.name NOT GLOB 'Application.onCreate*'
+                   AND s.name NOT GLOB 'OpenDexFilesFromOat*'
+                   AND s.name NOT GLOB 'VerifyClass*'
+                   AND s.name NOT GLOB 'JIT compiling*'
+              THEN s.dur ELSE 0 END) / 1e6, 1) as non_fw_ms,
+    ROUND(100.0 * SUM(CASE WHEN s.name NOT GLOB 'bindApplication*'
+                   AND s.name NOT GLOB 'contentProviderCreate*'
+                   AND s.name NOT GLOB 'Application.onCreate*'
+                   AND s.name NOT GLOB 'OpenDexFilesFromOat*'
+                   AND s.name NOT GLOB 'VerifyClass*'
+                   AND s.name NOT GLOB 'JIT compiling*'
+              THEN s.dur ELSE 0 END)
+      / MAX(1, ba.dur), 1) as non_fw_percent
+  FROM slice ba
+  JOIN thread_track tt_ba ON ba.track_id = tt_ba.id
+  JOIN main_thread mt_ba ON tt_ba.utid = mt_ba.utid
+  JOIN startup_info si ON ba.ts + ba.dur > si.ts AND ba.ts < si.ts + si.dur
+  JOIN slice s ON s.track_id = ba.track_id
+    AND s.ts >= ba.ts AND s.ts < ba.ts + ba.dur
+    AND s.dur > 5000000  -- > 5ms
+    AND s.depth = ba.depth + 1  -- 仅直接子 slice，避免嵌套双算
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN main_thread mt ON tt.utid = mt.utid
+  WHERE ba.name = 'bindApplication'
+) WHERE non_fw_percent > 30
+
+-- SR13: Native 库加载开销 (根因 A14)
+UNION ALL
+SELECT 'SR13', 'Native 库加载耗时显著',
+  CASE WHEN dlopen_ms > 200 THEN 'critical'
+       WHEN dlopen_ms > 50 THEN 'warning' ELSE 'info' END,
+  dlopen_count || ' 个 .so 加载, 总耗时 ' || dlopen_ms || ' ms, 最大单个 ' || max_dlopen_ms || ' ms',
+  '延迟加载非关键 native 库; 减小 .so 体积; 使用 linker namespace 优化'
+FROM (
+  SELECT
+    COUNT(*) as dlopen_count,
+    ROUND(SUM(s.dur) / 1e6, 1) as dlopen_ms,
+    ROUND(MAX(s.dur) / 1e6, 1) as max_dlopen_ms
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN thread t ON tt.utid = t.utid
+  JOIN startup_info si ON t.upid = si.upid
+  WHERE s.name GLOB 'dlopen:*'
+    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+) WHERE dlopen_ms > 30
+
+-- SR14: WebView 初始化 (根因 A10)
+UNION ALL
+SELECT 'SR14', 'WebView 初始化在启动路径中',
+  CASE WHEN wv_ms > 300 THEN 'critical'
+       WHEN wv_ms > 100 THEN 'warning' ELSE 'info' END,
+  'WebView 相关 slice 总耗时 ' || wv_ms || ' ms',
+  '延迟 WebView 初始化到首次使用时; 使用 WebView 预热 (Android 12+)'
+FROM (
+  SELECT
+    ROUND(SUM(s.dur) / 1e6, 1) as wv_ms
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN thread t ON tt.utid = t.utid
+  JOIN startup_info si ON t.upid = si.upid
+  WHERE (s.name GLOB '*WebView*' OR s.name GLOB '*webview*'
+         OR s.name GLOB 'dlopen:*webview*' OR s.name GLOB 'dlopen:*chromium*')
+    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+) WHERE wv_ms > 50
+
+-- SR15: Layout Inflation 过重 (根因 A4)
+UNION ALL
+SELECT 'SR15', '布局膨胀(inflate)耗时过长',
+  CASE WHEN inflate_ms > 450 THEN 'critical'
+       WHEN inflate_ms > 200 THEN 'warning' ELSE 'info' END,
+  'inflate 总耗时 ' || inflate_ms || ' ms',
+  '使用 ViewStub 延迟非首屏 View; 减少布局嵌套; 考虑 AsyncLayoutInflater'
+FROM (
+  SELECT
+    ROUND(SUM(s.dur) / 1e6, 1) as inflate_ms
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN main_thread mt ON tt.utid = mt.utid
+  JOIN startup_info si
+  WHERE s.name GLOB 'inflate*'
+    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+) WHERE inflate_ms > 100
+
+-- SR16: 热节流 (根因 B4)
+-- 按 CPU 分组比较同一 CPU 的 startup max vs global max，取最低比值
+-- 避免跨大小核比较导致假阳性
+UNION ALL
+SELECT 'SR16', 'CPU 热节流（CPU' || throttled_cpu || ' 启动期间频率仅达峰值 ' || min_pct || '%）',
+  CASE WHEN min_pct < 70 THEN 'critical'
+       WHEN min_pct < 90 THEN 'warning' ELSE 'info' END,
+  'CPU' || throttled_cpu || ': 启动期间最高 ' || startup_freq || ' KHz, 全局峰值 ' || global_freq || ' KHz (' || min_pct || '%)',
+  '设备可能过热; 冷却后重测对比; 检查 thermal governor 参数'
+FROM (
+  SELECT
+    per_cpu.cpu as throttled_cpu,
+    per_cpu.startup_max as startup_freq,
+    per_cpu.global_max as global_freq,
+    CAST(ROUND(100.0 * per_cpu.startup_max / MAX(1, per_cpu.global_max)) AS INTEGER) as min_pct
+  FROM (
+    SELECT ct.cpu,
+      MAX(CASE WHEN c.ts >= si.ts AND c.ts < si.ts + si.dur THEN c.value ELSE 0 END) as startup_max,
+      MAX(c.value) as global_max
+    FROM counter c
+    JOIN cpu_counter_track ct ON c.track_id = ct.id
+    CROSS JOIN startup_info si
+    WHERE ct.name = 'cpufreq'
+    GROUP BY ct.cpu
+    HAVING global_max > 0 AND startup_max > 0
+  ) per_cpu
+  ORDER BY 100.0 * per_cpu.startup_max / MAX(1, per_cpu.global_max) ASC
+  LIMIT 1
+) WHERE min_pct < 90
+
+-- SR17: 后台进程干扰 (根因 B9)
+-- 检查主线程 Runnable 状态占比，裁剪到启动窗口避免跨边界多算
+UNION ALL
+SELECT 'SR17', '主线程调度延迟过高（后台进程干扰）',
+  CASE WHEN runnable_pct > 15 THEN 'critical'
+       WHEN runnable_pct > 10 THEN 'warning' ELSE 'info' END,
+  '主线程 Runnable 状态占比 ' || runnable_pct || '% (' || runnable_ms || ' ms)',
+  '清理后台进程后重测; 检查同期运行的后台 job/service'
+FROM (
+  SELECT
+    ROUND(SUM(
+      MIN(ts_inner.ts + ts_inner.dur, si.ts + si.dur)
+      - MAX(ts_inner.ts, si.ts)
+    ) / 1e6, 1) as runnable_ms,
+    CAST(ROUND(100.0 * SUM(
+      MIN(ts_inner.ts + ts_inner.dur, si.ts + si.dur)
+      - MAX(ts_inner.ts, si.ts)
+    ) / (SELECT dur FROM startup_info)) AS INTEGER) as runnable_pct
+  FROM thread_state ts_inner
+  JOIN main_thread mt ON ts_inner.utid = mt.utid
+  JOIN startup_info si
+  WHERE ts_inner.state IN ('R', 'R+')
+    AND ts_inner.ts < si.ts + si.dur
+    AND ts_inner.ts + ts_inner.dur > si.ts
+) WHERE runnable_pct > 10
+
+-- SR18: system_server 锁竞争影响 app 启动 (根因 B7)
+-- 因果链：只计算发生在 Binder 线程上、且时间与 app 主线程 binder 阻塞重叠的锁竞争
+-- 避免将 system_server 内部无关锁竞争误归因为 app 启动瓶颈
+UNION ALL
+SELECT 'SR18', 'system_server 锁竞争影响 app 的 Binder 调用',
+  CASE WHEN ss_lock_ms > 100 THEN 'critical'
+       WHEN ss_lock_ms > 20 THEN 'warning' ELSE 'info' END,
+  ss_lock_count || ' 次锁竞争与 app Binder 调用重叠, 总耗时 ' || ss_lock_ms || ' ms, 最大 ' || ss_max_ms || ' ms',
+  '检查 system_server WMS/AMS 锁竞争; 减少启动期间的同步系统调用'
+FROM (
+  SELECT
+    COUNT(*) as ss_lock_count,
+    ROUND(SUM(lc.dur) / 1e6, 1) as ss_lock_ms,
+    ROUND(MAX(lc.dur) / 1e6, 1) as ss_max_ms
+  FROM slice lc
+  JOIN thread_track tt ON lc.track_id = tt.id
+  JOIN thread t ON tt.utid = t.utid
+  JOIN process p ON t.upid = p.upid
+  JOIN startup_info si
+  WHERE p.name = 'system_server'
+    AND (lc.name GLOB 'Lock contention*' OR lc.name GLOB 'monitor contention*')
+    AND lc.ts >= si.ts AND lc.ts < si.ts + si.dur
+    AND lc.dur > 1000000  -- > 1ms
+    -- 因果链：锁竞争必须与 app 主线程的 binder S 状态时间重叠
+    AND EXISTS (
+      SELECT 1 FROM thread_state binder_wait
+      JOIN main_thread mt ON binder_wait.utid = mt.utid
+      WHERE binder_wait.state = 'S'
+        AND binder_wait.blocked_function GLOB '*binder*'
+        AND binder_wait.ts < lc.ts + lc.dur
+        AND binder_wait.ts + binder_wait.dur > lc.ts
+    )
+) WHERE ss_lock_ms > 10
+
+-- SR19: 并发启动 (根因 B12)
+-- 检查启动窗口 ±5s 内的其他进程 fork
+UNION ALL
+SELECT 'SR19', '并发应用启动干扰',
+  CASE WHEN other_start_count > 3 THEN 'critical'
+       WHEN other_start_count > 1 THEN 'warning' ELSE 'info' END,
+  '启动窗口 ±5s 内有 ' || other_start_count || ' 个其他进程 fork',
+  '检查是否为 boot storm 场景; 延迟非关键应用启动'
+FROM (
+  SELECT COUNT(DISTINCT p2.name) as other_start_count
+  FROM process p2
+  JOIN startup_info si
+  WHERE p2.start_ts IS NOT NULL
+    AND p2.start_ts >= si.ts - 5000000000
+    AND p2.start_ts <= si.ts + si.dur + 5000000000
+    AND p2.name NOT GLOB (si.package || '*')
+    AND p2.name != 'system_server'
+    AND p2.name != 'Zygote'
+    AND p2.name NOT GLOB 'zygote*'
+    AND p2.name NOT GLOB '*:*'  -- 排除子进程
+    AND p2.pid > 1000  -- 排除系统低 PID 进程
+) WHERE other_start_count > 1
+
+-- SR20: fsync/数据库 IO 候选 (根因 A8)
+-- fsync 只能证明同步刷盘候选；SQLite/Room/SP/Provider 根因还需要业务层证据。
+UNION ALL
+SELECT 'SR20', '主线程 fsync/数据库 IO 候选',
+  CASE WHEN fsync_ms > 50 THEN 'critical'
+       WHEN fsync_ms > 10 THEN 'warning' ELSE 'info' END,
+  '主线程 fsync 相关 D/DK 候选 ' || fsync_ms || ' ms (' || fsync_count || ' 次)',
+  '补查 SQLite/Room、SharedPreferences/QueuedWork 或 Provider stack/slice，再判断是否需要异步化'
+FROM (
+  SELECT
+    COUNT(*) as fsync_count,
+    ROUND(SUM(ts_inner.dur) / 1e6, 1) as fsync_ms
+  FROM thread_state ts_inner
+  JOIN main_thread mt ON ts_inner.utid = mt.utid
+  JOIN startup_info si
+  WHERE ts_inner.state IN ('D', 'DK')
+    AND (ts_inner.blocked_function GLOB '*fsync*'
+         OR ts_inner.blocked_function GLOB '*sqlite*')
+    AND ts_inner.ts >= si.ts AND ts_inner.ts < si.ts + si.dur
+) WHERE fsync_ms > 5
+
+)
+SELECT reason_id, reason, severity, evidence, suggestion
+FROM detected_reasons
+ORDER BY
+  CASE severity WHEN 'critical' THEN 0 WHEN 'warning' THEN 1 ELSE 2 END,
+  reason_id

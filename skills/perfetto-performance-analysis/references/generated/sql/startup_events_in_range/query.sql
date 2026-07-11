@@ -1,0 +1,149 @@
+-- GENERATED FILE - DO NOT EDIT.
+-- Source: backend/skills/atomic/startup_events_in_range.skill.yaml
+-- Source SHA-256: 8a3f5c3f6cd06de0c739aa95edaa12efc05d0935a8403ae6614654012c3d7e94
+-- Source commit: 1909a9e3d2d62835111539e687fa08c77a8e13fa
+
+-- Multi-signal startup type validation:
+--   bindApplication exists           → cold  (process created from zygote)
+--   performCreate:* without above    → warm  (activity recreated, process alive)
+--   handleRelaunchActivity           → warm  (config change rebuild)
+--   performRestart:* exists           → collected as signal but NOT used for reclassification
+--   none of above                    → keep original platform classification (Rule 5)
+-- Also checks process creation time as fallback cold signal.
+--
+-- Uses android_startup_threads (stdlib, correct process resolution via
+-- android_process_metadata) + direct slice JOIN with OVERLAP time filter.
+-- Key: bindApplication can start BEFORE the launchingActivity event
+-- (process fork precedes framework launch record by ~100ms), so we use
+-- overlap (sl.ts + sl.dur > st.ts AND sl.ts < st.ts + st.dur) instead of
+-- the strict "starts within" filter that android_thread_slices_for_all_startups uses.
+WITH startup_type_signals AS (
+  SELECT
+    st.startup_id,
+    -- Cold signals
+    MAX(CASE WHEN sl.name = 'bindApplication' THEN 1 ELSE 0 END) as has_bind_app,
+    MAX(CASE WHEN sl.name GLOB 'OpenDexFilesFromOat*' THEN 1 ELSE 0 END) as has_dex_load,
+    MAX(CASE WHEN sl.name = 'PostFork' THEN 1 ELSE 0 END) as has_post_fork,
+    -- Warm signals
+    MAX(CASE WHEN sl.name GLOB 'performCreate:*' THEN 1 ELSE 0 END) as has_perform_create,
+    MAX(CASE WHEN sl.name GLOB 'handleRelaunchActivity*'
+             OR sl.name GLOB 'relaunchActivity*' THEN 1 ELSE 0 END) as has_relaunch,
+    -- Hot signals (positive)
+    MAX(CASE WHEN sl.name GLOB 'performRestart*' THEN 1 ELSE 0 END) as has_perform_restart,
+    -- Signal count (trace completeness)
+    COUNT(DISTINCT sl.name) as signal_count
+  FROM android_startup_threads st
+  JOIN thread_track tt ON tt.utid = st.utid
+  JOIN slice sl ON sl.track_id = tt.id
+  WHERE st.is_main_thread = 1
+    -- Overlap: slice overlaps with startup window (not just starts within)
+    AND sl.ts + sl.dur > st.ts AND sl.ts < st.ts + st.dur
+    AND (sl.name IN ('bindApplication', 'PostFork', 'activityStart', 'activityResume')
+         OR sl.name GLOB 'performCreate:*'
+         OR sl.name GLOB 'performRestart*'
+         OR sl.name GLOB 'handleRelaunchActivity*'
+         OR sl.name GLOB 'relaunchActivity*'
+         OR sl.name GLOB 'OpenDexFilesFromOat*')
+  GROUP BY st.startup_id
+),
+-- Check process creation time (fallback cold signal)
+process_age AS (
+  SELECT
+    s.startup_id,
+    MAX(CASE
+      WHEN p.start_ts IS NOT NULL
+        AND p.start_ts >= s.ts - 5000000000  -- 5s tolerance before startup
+        AND p.start_ts <= s.ts + s.dur
+      THEN 1 ELSE 0
+    END) as process_created_during_startup
+  FROM android_startups s
+  LEFT JOIN android_startup_processes asp ON asp.startup_id = s.startup_id
+  LEFT JOIN process p ON p.upid = asp.upid
+  GROUP BY s.startup_id
+),
+validated AS (
+  SELECT
+    s.startup_id,
+    s.package,
+    s.startup_type as original_type,
+    CASE
+      -- Rule 1: bindApplication → cold (strongest signal)
+      WHEN COALESCE(sts.has_bind_app, 0) = 1 THEN 'cold'
+      -- Rule 2: performCreate without bindApplication → warm
+      WHEN COALESCE(sts.has_perform_create, 0) = 1 AND COALESCE(sts.has_bind_app, 0) = 0 THEN 'warm'
+      -- Rule 3: handleRelaunchActivity → warm (config change rebuild)
+      WHEN COALESCE(sts.has_relaunch, 0) = 1 THEN 'warm'
+      -- Rule 4: process created during startup → cold (fallback)
+      WHEN COALESCE(pa.process_created_during_startup, 0) = 1 THEN 'cold'
+      -- Rule 5: keep platform classification
+      ELSE s.startup_type
+    END as startup_type,
+    s.ts,
+    s.dur,
+    ttd.time_to_initial_display,
+    ttd.time_to_full_display,
+    CASE
+      WHEN COALESCE(sts.has_bind_app, 0) = 1 AND s.startup_type != 'cold' THEN 1
+      WHEN COALESCE(sts.has_perform_create, 0) = 1 AND COALESCE(sts.has_bind_app, 0) = 0 AND s.startup_type != 'warm' THEN 1
+      WHEN COALESCE(sts.has_relaunch, 0) = 1 AND s.startup_type != 'warm' THEN 1
+      WHEN COALESCE(pa.process_created_during_startup, 0) = 1 AND s.startup_type != 'cold' THEN 1
+      ELSE 0
+    END as type_reclassified,
+    -- Classification confidence
+    CASE
+      WHEN COALESCE(sts.has_bind_app, 0) = 1 AND (COALESCE(sts.has_dex_load, 0) = 1 OR COALESCE(sts.has_post_fork, 0) = 1) THEN 'high'
+      WHEN COALESCE(sts.has_bind_app, 0) = 1 THEN 'high'
+      WHEN COALESCE(sts.has_perform_create, 0) = 1 AND COALESCE(sts.has_bind_app, 0) = 0 THEN 'high'
+      WHEN COALESCE(sts.has_relaunch, 0) = 1 THEN 'medium'
+      WHEN COALESCE(pa.process_created_during_startup, 0) = 1 THEN 'medium'
+      WHEN COALESCE(sts.signal_count, 0) < 2 THEN 'low'
+      ELSE 'medium'
+    END as type_confidence
+  FROM android_startups s
+  LEFT JOIN android_startup_time_to_display ttd USING (startup_id)
+  LEFT JOIN startup_type_signals sts USING (startup_id)
+  LEFT JOIN process_age pa USING (startup_id)
+  WHERE (s.package GLOB '${package}*' OR '${package}' = '')
+    AND (${startup_id} IS NULL OR s.startup_id = ${startup_id})
+    AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})
+)
+SELECT
+  startup_id,
+  package,
+  startup_type,
+  original_type,
+  dur / 1e6 as dur_ms,
+  printf('%d', ts) as start_ts,
+  printf('%d', ts + dur) as end_ts,
+  printf('%d', dur) as dur_ns,
+  time_to_initial_display / 1e6 as ttid_ms,
+  time_to_full_display / 1e6 as ttfd_ms,
+  CASE startup_type
+    WHEN 'cold' THEN '冷启动'
+    WHEN 'warm' THEN '温启动'
+    WHEN 'hot' THEN '热启动'
+    ELSE startup_type
+  END as type_display,
+  CASE
+    WHEN startup_type = 'cold' AND dur / 1e6 < 500 THEN '优秀'
+    WHEN startup_type = 'cold' AND dur / 1e6 < 1000 THEN '良好'
+    WHEN startup_type = 'cold' AND dur / 1e6 < 2000 THEN '需优化'
+    WHEN startup_type = 'cold' THEN '严重'
+    WHEN startup_type = 'warm' AND dur / 1e6 < 200 THEN '优秀'
+    WHEN startup_type = 'warm' AND dur / 1e6 < 500 THEN '良好'
+    WHEN startup_type = 'warm' AND dur / 1e6 < 1000 THEN '需优化'
+    WHEN startup_type = 'warm' THEN '严重'
+    WHEN startup_type = 'hot' AND dur / 1e6 < 100 THEN '优秀'
+    WHEN startup_type = 'hot' AND dur / 1e6 < 200 THEN '良好'
+    WHEN startup_type = 'hot' AND dur / 1e6 < 500 THEN '需优化'
+    WHEN startup_type = 'hot' THEN '严重'
+    ELSE '需优化'
+  END as rating,
+  type_reclassified,
+  type_confidence,
+  printf('%d', CAST(ts - dur * 0.1 AS INTEGER)) as perfetto_start,
+  printf('%d', CAST(ts + dur * 1.1 AS INTEGER)) as perfetto_end
+FROM validated
+WHERE ('${startup_type}' = '' OR startup_type = '${startup_type}')
+ORDER BY dur DESC, ts ASC

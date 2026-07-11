@@ -8,6 +8,8 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -35,6 +37,20 @@ WORKFLOWS = {
     "scene-reconstruction",
     "trace-comparison",
 }
+GENERATED_PREFIX = Path("references/generated")
+SKILL_ROOT = ROOT / "skills" / PUBLIC_SKILL
+SUPPORTED_STEP_TYPES = {
+    "atomic",
+    "skill",
+    "diagnostic",
+    "iterator",
+    "ai_summary",
+}
+PRODUCT_RUNTIME_PATTERN = re.compile(
+    r"\b(?:submit_plan|invoke_skill|create_artifact|artifact_api|session_state)\b"
+    r"|SmartPerfetto(?:\s+UI)?",
+    re.IGNORECASE,
+)
 
 SKILL_WORKFLOW_OVERRIDES = {
     "android_dvfs_counter_stats": "cpu-scheduling",
@@ -558,6 +574,352 @@ def serialize_catalog(catalog: dict[str, Any]) -> str:
     ) + "\n"
 
 
+def generated_header(entry: dict[str, Any], commit: str, comment: str = "") -> str:
+    prefix = f"{comment} " if comment else ""
+    return (
+        f"{prefix}GENERATED FILE - DO NOT EDIT.\n"
+        f"{prefix}Source: {entry['source_path']}\n"
+        f"{prefix}Source SHA-256: {entry['source_sha256']}\n"
+        f"{prefix}Source commit: {commit}\n"
+    )
+
+
+def write_generated_text(path: Path, content: str) -> None:
+    normalized = "\n".join(line.rstrip() for line in content.splitlines()).rstrip()
+    write_text_atomic(path, normalized + "\n")
+
+
+def yaml_block(value: object) -> str:
+    rendered = yaml.safe_dump(
+        value,
+        sort_keys=False,
+        allow_unicode=True,
+        width=120,
+    ).rstrip()
+    return f"```yaml\n{rendered}\n```"
+
+
+def markdown_section(title: str, value: object) -> str:
+    if value in (None, {}, []):
+        return ""
+    return f"## {title}\n\n{yaml_block(value)}\n\n"
+
+
+def safe_component(value: object, label: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise ExportError(f"Missing generated filename component for {label}")
+    text = str(value)
+    normalized = re.sub(r"[^A-Za-z0-9._-]+", "-", text).strip("-.")
+    if not normalized:
+        raise ExportError(f"Cannot derive generated filename for {label}: {value!r}")
+    return normalized
+
+
+def destination_in_generated_root(destination: str) -> Path:
+    relative = Path(destination)
+    try:
+        inside = relative.relative_to(GENERATED_PREFIX)
+    except ValueError as exc:
+        raise ExportError(f"Generated destination is outside {GENERATED_PREFIX}: {destination}") from exc
+    if relative.is_absolute() or ".." in relative.parts:
+        raise ExportError(f"Unsafe generated destination: {destination}")
+    return inside
+
+
+def infer_step_type(step: dict[str, Any], skill_name: str) -> str:
+    step_type = step.get("type")
+    if step_type is None:
+        if "skill" in step:
+            step_type = "skill"
+        elif "sql" in step:
+            step_type = "atomic"
+    if step_type not in SUPPORTED_STEP_TYPES:
+        raise ExportError(
+            f"Unsupported step type {step_type!r} in {skill_name}.{step.get('id', '<missing>')}"
+        )
+    return str(step_type)
+
+
+def render_step(
+    step: dict[str, Any],
+    skill_name: str,
+    source_entry: dict[str, Any],
+    commit: str,
+    generated_root: Path,
+    sql_destinations: set[str],
+) -> str:
+    step_id = safe_component(step.get("id"), f"{skill_name} step")
+    step_type = infer_step_type(step, skill_name)
+    title = str(step.get("name") or step_id)
+    lines = [f"### {title}", "", f"- ID: `{step_id}`", f"- Type: `{step_type}`"]
+    details = {key: value for key, value in step.items() if key not in {"sql", "name"}}
+    if "sql" in step:
+        sql = step["sql"]
+        if not isinstance(sql, str) or not sql.strip():
+            raise ExportError(f"Empty SQL in {skill_name}.{step_id}")
+        relative = Path("sql") / safe_component(skill_name, "Skill") / f"{step_id}.sql"
+        destination_key = relative.as_posix()
+        if destination_key in sql_destinations:
+            raise ExportError(f"Generated SQL collision: {destination_key}")
+        sql_destinations.add(destination_key)
+        sql_entry = {
+            "source_path": source_entry["source_path"],
+            "source_sha256": source_entry["source_sha256"],
+        }
+        sql_content = generated_header(sql_entry, commit, "--") + "\n" + sql.strip() + "\n"
+        write_generated_text(generated_root / relative, sql_content)
+        lines.append(f"- SQL: [`../{relative.as_posix()}`](../{relative.as_posix()})")
+    lines.extend(["", yaml_block(details), ""])
+    return "\n".join(lines)
+
+
+def render_skill_reference(
+    raw: dict[str, Any],
+    entry: dict[str, Any],
+    commit: str,
+    generated_root: Path,
+    sql_destinations: set[str],
+) -> str:
+    name = str(entry["name"])
+    meta = raw.get("meta") if isinstance(raw.get("meta"), dict) else {}
+    title = str(meta.get("display_name") or raw.get("description") or name).splitlines()[0]
+    parts = [generated_header(entry, commit), f"# {title}\n\n"]
+    parts.append(
+        "This reference is the portable Agent Skill projection of the source definition. "
+        "Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.\n\n"
+    )
+    overview = {
+        key: raw.get(key)
+        for key in ("name", "version", "type", "category", "tier", "description", "tags", "optional", "priority")
+        if raw.get(key) is not None
+    }
+    parts.append(markdown_section("Overview", overview))
+    for heading, key in (
+        ("Metadata", "meta"),
+        ("Triggers", "triggers"),
+        ("Prerequisites", "prerequisites"),
+        ("Inputs", "inputs"),
+        ("Identity requirements", "identity"),
+        ("Context requirements", "context"),
+        ("Module contract", "module"),
+        ("Detection", "detection"),
+        ("Teaching model", "teaching"),
+        ("Analysis guidance", "analysis"),
+        ("Dialogue guidance", "dialogue"),
+        ("Comparison contract", "comparison"),
+    ):
+        parts.append(markdown_section(heading, raw.get(key)))
+
+    root_sql = raw.get("sql")
+    if root_sql is not None:
+        if not isinstance(root_sql, str) or not root_sql.strip():
+            raise ExportError(f"Empty root SQL in {name}")
+        relative = Path("sql") / safe_component(name, "Skill") / "query.sql"
+        destination_key = relative.as_posix()
+        if destination_key in sql_destinations:
+            raise ExportError(f"Generated SQL collision: {destination_key}")
+        sql_destinations.add(destination_key)
+        write_generated_text(
+            generated_root / relative,
+            generated_header(entry, commit, "--") + "\n" + root_sql.strip() + "\n",
+        )
+        parts.append(
+            "## Query\n\n"
+            f"Run [`../{relative.as_posix()}`](../{relative.as_posix()}) with the declared inputs.\n\n"
+        )
+
+    steps = raw.get("steps")
+    if steps is not None:
+        if not isinstance(steps, list):
+            raise ExportError(f"Steps must be an array in {name}")
+        parts.append("## Ordered execution\n\n")
+        for step in steps:
+            if not isinstance(step, dict):
+                raise ExportError(f"Step must be an object in {name}: {step!r}")
+            parts.append(
+                render_step(
+                    step,
+                    name,
+                    entry,
+                    commit,
+                    generated_root,
+                    sql_destinations,
+                )
+            )
+
+    for heading, key in (
+        ("Output and evidence contract", "output"),
+        ("Display metadata", "display"),
+        ("Thresholds", "thresholds"),
+        ("Diagnostics", "diagnostics"),
+        ("Synthesis", "synthesis"),
+    ):
+        parts.append(markdown_section(heading, raw.get(key)))
+    if raw.get("auto_pin"):
+        parts.append(
+            "## Optional UI metadata\n\n"
+            "The following auto-pin instructions are SmartPerfetto UI hints. They are optional in a portable agent workflow.\n\n"
+        )
+        parts.append(yaml_block(raw["auto_pin"]) + "\n")
+    return "".join(parts).rstrip() + "\n"
+
+
+def strip_frontmatter(content: str) -> tuple[str, int]:
+    lines = content.splitlines()
+    starts = [index for index, line in enumerate(lines[:10]) if line.strip() == "---"]
+    for start in starts:
+        for end in range(start + 1, len(lines)):
+            if lines[end].strip() != "---":
+                continue
+            candidate = "\n".join(lines[start + 1 : end])
+            try:
+                parsed = yaml.safe_load(candidate)
+            except yaml.YAMLError:
+                continue
+            if isinstance(parsed, dict):
+                return "\n".join(lines[end + 1 :]).lstrip() + "\n", end + 1
+    return content, 0
+
+
+def portable_strategy_content(content: str) -> tuple[str, list[dict[str, Any]]]:
+    content, frontmatter_lines = strip_frontmatter(content)
+    transformations: list[dict[str, Any]] = []
+    if frontmatter_lines:
+        transformations.append(
+            {"reason": "non-portable frontmatter", "removed_lines": frontmatter_lines}
+        )
+    blocks = re.split(r"(\n\s*\n)", content)
+    kept: list[str] = []
+    removed_lines = 0
+    for block in blocks:
+        if PRODUCT_RUNTIME_PATTERN.search(block):
+            removed_lines += len(block.splitlines())
+        else:
+            kept.append(block)
+    if removed_lines:
+        transformations.append(
+            {"reason": "SmartPerfetto runtime or UI instruction", "removed_lines": removed_lines}
+        )
+    return "".join(kept).strip() + "\n", transformations
+
+
+def render_strategy_reference(
+    source: Path,
+    entry: dict[str, Any],
+    commit: str,
+) -> tuple[str, list[dict[str, Any]]]:
+    content = source.read_text(encoding="utf-8")
+    portable, transformations = portable_strategy_content(content)
+    title = source.name.removesuffix(".md").replace(".", " ").replace("-", " ").title()
+    if source.suffix in {".yaml", ".yml"}:
+        portable = f"```yaml\n{portable.rstrip()}\n```\n"
+    rendered = (
+        generated_header(entry, commit)
+        + f"\n# {title}\n\n"
+        + "Portable methodology extracted from the SmartPerfetto strategy library.\n\n"
+        + portable
+    )
+    return rendered, transformations
+
+
+def render_pipeline_doc(source: Path, entry: dict[str, Any], commit: str) -> str:
+    content, _ = strip_frontmatter(source.read_text(encoding="utf-8"))
+    return generated_header(entry, commit) + "\n" + content.lstrip()
+
+
+def directory_manifest(root: Path) -> dict[str, str]:
+    if not root.is_dir():
+        return {}
+    return {
+        path.relative_to(root).as_posix(): sha256_file(path)
+        for path in sorted(root.rglob("*"))
+        if path.is_file()
+    }
+
+
+def generate_references(
+    source: Path,
+    catalog: dict[str, Any],
+    *,
+    check: bool,
+) -> None:
+    references_root = SKILL_ROOT / "references"
+    generated = references_root / "generated"
+    references_root.mkdir(parents=True, exist_ok=True)
+    transformations: list[dict[str, Any]] = []
+    sql_destinations: set[str] = set()
+    with tempfile.TemporaryDirectory(prefix=".generated-", dir=references_root) as temp:
+        temporary_generated = Path(temp)
+        commit = str(catalog["source"]["commit"])
+        for entry in catalog["skills"]:
+            if entry["disposition"] not in {"exported", "merged"}:
+                continue
+            raw = load_yaml(source / entry["source_path"])
+            content = render_skill_reference(
+                raw,
+                entry,
+                commit,
+                temporary_generated,
+                sql_destinations,
+            )
+            write_generated_text(
+                temporary_generated / destination_in_generated_root(entry["destination"]),
+                content,
+            )
+        for entry in catalog["strategies"]:
+            if entry["disposition"] not in {"exported", "merged"}:
+                continue
+            content, changes = render_strategy_reference(
+                source / entry["source_path"], entry, commit
+            )
+            write_generated_text(
+                temporary_generated / destination_in_generated_root(entry["destination"]),
+                content,
+            )
+            for change in changes:
+                transformations.append({"source_path": entry["source_path"], **change})
+        for entry in catalog["pipeline_docs"]:
+            content = render_pipeline_doc(source / entry["source_path"], entry, commit)
+            write_generated_text(
+                temporary_generated / destination_in_generated_root(entry["destination"]),
+                content,
+            )
+        generated_catalog = {
+            "schema_version": 1,
+            "source_commit": commit,
+            "source_catalog_sha256": hashlib.sha256(
+                serialize_catalog(catalog).encode("utf-8")
+            ).hexdigest(),
+            "generated_files": len(directory_manifest(temporary_generated)) + 1,
+            "sql_files": len(sql_destinations),
+            "transformations": sorted(
+                transformations,
+                key=lambda item: (item["source_path"], item["reason"]),
+            ),
+        }
+        write_text_atomic(
+            temporary_generated / "catalog.json",
+            json.dumps(generated_catalog, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        )
+        expected = directory_manifest(temporary_generated)
+        if check:
+            current = directory_manifest(generated)
+            if current != expected:
+                missing = sorted(set(expected) - set(current))
+                extra = sorted(set(current) - set(expected))
+                changed = sorted(
+                    path for path in set(current) & set(expected) if current[path] != expected[path]
+                )
+                raise ExportError(
+                    "Generated reference drift detected: "
+                    f"missing={missing[:5]}, extra={extra[:5]}, changed={changed[:5]}"
+                )
+            return
+        if generated.exists():
+            shutil.rmtree(generated)
+        os.replace(temporary_generated, generated)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Export a deterministic public Agent Skill catalog from SmartPerfetto."
@@ -606,9 +968,11 @@ def main(argv: list[str] | None = None) -> int:
             raise ExportError(
                 f"Catalog drift detected: run {Path(__file__).name} --source {source}"
             )
+        generate_references(source, catalog, check=True)
         print(f"Catalog is current: {output}")
         return 0
     write_text_atomic(output, serialized)
+    generate_references(source, catalog, check=False)
     print(
         f"Exported {catalog['summary']['runtime_candidates']} runtime Skills, "
         f"{catalog['summary']['strategy_sources']} strategy sources, and "
