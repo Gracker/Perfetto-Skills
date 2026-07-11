@@ -9,12 +9,33 @@ format. It is designed for compatible agents with filesystem and terminal
 access and does not require the SmartPerfetto backend, web UI, provider
 runtime, or MCP server.
 
-## Status
+## Install
 
-The public repository is being built from the current SmartPerfetto source of
-truth. The first release is complete only after standards validation,
-full-source migration coverage, real-trace tests, and fresh-clone verification
-all pass.
+Clone the repository, then install the canonical Skill tree for your client:
+
+```bash
+python3 tools/install.py --client codex
+python3 tools/install.py --client claude-code
+python3 tools/install.py --client opencode
+```
+
+Use `--destination /absolute/skills/directory` for another Agent Skills client.
+Existing installs are never replaced unless `--force` is explicit. The Skill
+contains no bundled executable: on first use, point it at a compatible
+`trace_processor_shell` or let the checksum-pinned bootstrap script install one
+into the local cache.
+
+After restarting or refreshing your client, ask it to use
+`$perfetto-performance-analysis` on a local `.pftrace` file.
+
+## Contents
+
+- One standard `perfetto-performance-analysis` Agent Skill and client-optional
+  OpenAI metadata.
+- 14 standalone analysis workflows.
+- 230 generated SmartPerfetto Skill references and 635 extracted SQL queries.
+- 50 portable strategy/knowledge references and 32 rendering-pipeline docs.
+- A checksum-pinned, cross-platform trace-processor bootstrap and query runtime.
 
 ## Development
 
@@ -37,4 +58,3 @@ and [implementation plan](docs/superpowers/plans/2026-07-11-perfetto-skills-impl
 SmartPerfetto-derived work is licensed under AGPL-3.0-or-later. Upstream
 Perfetto material retains its original Apache-2.0 notices. See [LICENSE](LICENSE)
 and [NOTICE](NOTICE).
-
