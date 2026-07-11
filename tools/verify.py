@@ -91,6 +91,7 @@ def smartperfetto_environment(
     environment = dict(os.environ if base is None else base)
     environment.update(
         {
+            "SMARTPERFETTO_SOURCE": str(source),
             "SMARTPERFETTO_TEST_TRACES": str(traces.resolve()),
             "PERFETTO_TRACE_PROCESSOR": str(binary.resolve()),
         }

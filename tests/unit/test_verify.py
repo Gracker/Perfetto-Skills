@@ -62,6 +62,9 @@ class VerifyCommandTest(unittest.TestCase):
                 source, system="Darwin", machine="arm64", base={}
             )
             self.assertEqual(
+                environment["SMARTPERFETTO_SOURCE"], str(source.resolve())
+            )
+            self.assertEqual(
                 environment["SMARTPERFETTO_TEST_TRACES"], str(traces.resolve())
             )
             self.assertEqual(

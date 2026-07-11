@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -8,7 +9,9 @@ from tools import export_from_smartperfetto as exporter
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SMARTPERFETTO = ROOT.parent / "SmartPerfetto"
+SMARTPERFETTO = Path(
+    os.environ.get("SMARTPERFETTO_SOURCE", ROOT.parent / "SmartPerfetto")
+).expanduser().resolve()
 EXPORTER = ROOT / "tools" / "export_from_smartperfetto.py"
 CATALOG = ROOT / "catalog" / "smartperfetto-export.json"
 MIGRATION_DOC = ROOT / "docs" / "migration-coverage.md"
