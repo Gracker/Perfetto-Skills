@@ -10,8 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def build_commands() -> list[list[str]]:
-    return [
+def build_commands(smartperfetto: Path | None = None) -> list[list[str]]:
+    commands = [
         [
             sys.executable,
             "-m",
@@ -28,6 +28,27 @@ def build_commands() -> list[list[str]]:
             "skills/perfetto-performance-analysis",
         ],
     ]
+    if smartperfetto is not None:
+        commands.extend(
+            [
+                [
+                    sys.executable,
+                    "tools/export_from_smartperfetto.py",
+                    "--source",
+                    str(smartperfetto),
+                    "--check",
+                ],
+                [
+                    sys.executable,
+                    "tools/validate_catalog.py",
+                    "--catalog",
+                    "catalog/smartperfetto-export.json",
+                    "--skill-root",
+                    "skills/perfetto-performance-analysis",
+                ],
+            ]
+        )
+    return commands
 
 
 def run(command: list[str]) -> None:
@@ -45,8 +66,9 @@ def main() -> int:
         type=Path,
         help="Path to a SmartPerfetto checkout for export and trace verification.",
     )
-    parser.parse_args()
-    for command in build_commands():
+    args = parser.parse_args()
+    source = args.smartperfetto.expanduser().resolve() if args.smartperfetto else None
+    for command in build_commands(source):
         run(command)
     return 0
 
