@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 # Android 出图机制（Article-Grounded）
 
 本知识库基于 Android Perfetto 出图类型系列文章 S01-S14，建立"12 锚点 + 3 fence + 4 特征分型 + 5 瓶颈模式 + 17 类型"统一框架。Agent 在任何 pipeline 相关诊断中都应回到这个框架。

@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### media Core Strategy
 
 **Route card**: 视频 / 音频 / 解码 / 编码 / media / codec / video / audio / decoder / encoder
@@ -25,8 +27,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 遵循通用输出契约。
 
 
-**Detail ref**
-- `media:full`: 媒体 / Codec 分析 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="media full strategy detail" keywords="media,视频,音频,解码,编码,media,codec,video,audio,decoder,encoder,mediacodec,codec2,媒体 / Codec 分析,detail,full" default="true" -->

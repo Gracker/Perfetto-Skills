@@ -4,7 +4,7 @@ Source SHA-256: 7cca2aaa1525cb329a14c22261e7c4fb8365284a7410d31bb6d9605950895a47
 Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # Modem Rail 与网络相关性
 
-This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.
+This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
 ## Overview
 

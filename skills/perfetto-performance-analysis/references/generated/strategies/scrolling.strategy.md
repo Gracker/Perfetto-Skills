@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### Scrolling Core Strategy
 
 **Route card**: 滑动 / 卡顿 / 掉帧 / jank / scroll / fps / list / fling
@@ -29,14 +31,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - `scrolling:final_report_and_sql_fallback`: 结论结构和 SQL fallback。
 
 
-<!-- strategy-detail id="overview_artifacts" title="滑动概览、artifact、全局上下文和身份确认" keywords="overview,scrolling_analysis,fetch_artifact,batch_frame_root_cause,scroll_sessions,process_identity_resolver" default="true" -->
-**Android 版本注意**：
-- FrameTimeline 数据需要 Android 12+ (API 31)
-- blocked_functions 需要 trace 包含 `sched/sched_blocked_reason`，并且设备 tracepoint / 符号化可用；缺失时不要只归因 CONFIG_SCHEDSTATS
-- monitor_contention 需要 Android 13+ (API 33)
-- input events 需要 Android 14+ (API 34)
-- Android 14+ token 不再严格连续递增，token_gap 检测可能需调整
-- Chrome/Chromium trace 与普通 Android app trace 不共用同一套 jank 语义；Chrome scroll jank 需要 `chrome_scroll_jank_frame_timeline` 中的 `chrome_scrolls`、`chrome_scroll_jank_v4_results` 或 preferred frame timeline 证据。
+
 
 #### 滑动/卡顿分析（用户提到 滑动、卡顿、掉帧、jank、scroll、fps）
 
@@ -153,13 +148,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 | `Recomposition` / `compose:` | Compose 重组过长 | [App层] 使用 derivedStateOf/remember 减少不必要的重组 |
 | 其他 / 无法匹配 | 通用负载过重 | 需要 jank_frame_detail 查看 main_slices_json 获取更多上下文 |
 
-**workload_heavy 频率复核：** 对 batch_frame_root_cause 中每个 workload_heavy 帧，直接读取已有的 `big_avg_freq_mhz` 和 `device_peak_freq_mhz` 字段（无需额外工具调用），计算频率占比：
-- 如果 `big_avg_freq_mhz < device_peak_freq_mhz * 0.70`：根因应标注为 **"负载过重 + 频率不足"**（trigger=workload, supply=frequency_insufficient）。在满频下相同操作可能不超时，优化建议应同时包含 [App层] 降低负载 + [系统层] 提升调度频率
-- 如果 `big_avg_freq_mhz >= device_peak_freq_mhz * 0.70`：确认为纯负载问题，优化方向纯 [App层]
-- 计算公式：实际运行频率占比 = `big_avg_freq_mhz / device_peak_freq_mhz`，低于 70% 需标注
-- **在结论的代表帧分析中必须报告频率数据**：`大核均频 XXMHz / 设备峰值 YYMHz (ZZ%)`
-- 不要用 `execute_sql` 从 `actual_frame_timeline_slice` 查询 `big_avg_freq_mhz`、`device_peak_freq_mhz` 或 `cpu_freq_clusters_json`；这些是 `batch_frame_root_cause` 的派生结果，不是 FrameTimeline 原生列。
-- 不要把 `batch_frame_root_cause`、`__intrinsic_batch_frame_root_cause` 或任何 skill step/save_as 名称当作 SQL 表查询；它们是 Skill Artifact。需要读取这些字段时，用 `fetch_artifact` 分页获取对应 artifact。
+
 
 **WHY 链深度要求：** 每个 [CRITICAL]/[HIGH] 发现的根因推理链必须至少 2 级：
 - ✅ Level 1: "帧超时" → Level 2: "Binder 阻塞" → Level 3: "服务端 system_server monitor_contention"

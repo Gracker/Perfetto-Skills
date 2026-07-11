@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 # Trace 数据源与采集指南
 
 当分析中发现某些数据不可用时，参考以下指南告知用户如何采集所需数据。

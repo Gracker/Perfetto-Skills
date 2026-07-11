@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 <!-- No template variables — static content -->
 ## 输出格式
 
@@ -58,12 +60,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 找不到精确行列值时不要伪造；限制中说明缺口，只引用能确认的字段。
 - 外部指标、诊断 API、日志/快照必须标注来源类型和时间/版本/窗口边界。
 
-### UI 行动提案
-只有在能引用当前 trace/session 的证据时，才可以输出 UI action proposal：
-- 每个 proposal 必须绑定 `evidenceRefId`、`artifactId`、`skillId` 或 `sourceToolCallId` 至少一项。
-- 不要为推测、背景知识、缺失证据或跨 trace/reference trace 结果生成当前 trace 导航。
-- `navigate_timeline` / `navigate_range` / `open_evidence_table` / `pin_evidence` 都只是候选操作，必须 `requiresConfirmation: true`，不能暗示已执行。
-- 缺少证据指针时在正文给出建议，不生成 proposal。
+
 
 ### 背景知识
 只有当前 trace 已命中对应机制时才添加背景知识：

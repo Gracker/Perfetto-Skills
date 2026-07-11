@@ -7,6 +7,7 @@ from pathlib import Path
 import sys
 
 from _common import (
+    DEFAULT_MAX_OUTPUT_BYTES,
     parse_csv_output,
     parse_scalar,
     run_query,
@@ -113,6 +114,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("trace", type=Path)
     parser.add_argument("--trace-processor")
     parser.add_argument("--timeout", type=float, default=120.0)
+    parser.add_argument(
+        "--max-output-bytes", type=int, default=DEFAULT_MAX_OUTPUT_BYTES
+    )
     parser.add_argument("--output", type=Path)
     return parser
 
@@ -125,6 +129,7 @@ def main(argv: list[str] | None = None) -> int:
             sql=PROBE_SQL,
             trace_processor=args.trace_processor,
             timeout=args.timeout,
+            max_output_bytes=args.max_output_bytes,
         )
         probe = build_probe(args.trace, parse_csv_output(result.stdout))
         rendered = json.dumps(

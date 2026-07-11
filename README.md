@@ -36,6 +36,8 @@ After restarting or refreshing your client, ask it to use
 - 230 generated SmartPerfetto Skill references and 635 extracted SQL queries.
 - 50 portable strategy/knowledge references and 32 rendering-pipeline docs.
 - A checksum-pinned, cross-platform trace-processor bootstrap and query runtime.
+- Safe scalar/result parameter binding and file-based multi-trace comparison,
+  with no dependency on SmartPerfetto session or snapshot services.
 
 ## Development
 

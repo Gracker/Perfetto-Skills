@@ -4,6 +4,7 @@ from pathlib import Path
 import tarfile
 import tempfile
 import unittest
+from unittest import mock
 import zipfile
 
 import yaml
@@ -47,6 +48,27 @@ class ReleaseTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             with self.assertRaises(ValueError):
                 build_release.build_release(Path(temporary), "../escape")
+
+    def test_release_version_must_match_skill_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            with self.assertRaisesRegex(ValueError, "Skill metadata version"):
+                build_release.build_release(Path(temporary), "1.0.0")
+
+    def test_release_rejects_symlinks_inside_skill_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            skill = root / "skill"
+            skill.mkdir()
+            (skill / "SKILL.md").write_text(
+                "---\nmetadata:\n  version: \"0.1.0\"\n---\n",
+                encoding="utf-8",
+            )
+            outside = root / "secret"
+            outside.write_text("do not package", encoding="utf-8")
+            (skill / "leak").symlink_to(outside)
+            with mock.patch.object(build_release, "SKILL_ROOT", skill):
+                with self.assertRaisesRegex(ValueError, "symbolic link"):
+                    build_release.release_entries("0.1.0")
 
     def test_workflows_are_valid_and_pin_actions_by_commit(self) -> None:
         root = Path(__file__).resolve().parents[2]

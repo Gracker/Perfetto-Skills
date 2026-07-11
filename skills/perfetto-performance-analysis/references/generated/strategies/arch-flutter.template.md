@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 <!-- No template variables — static content -->
 ### Flutter 分析注意事项
 - **线程模型**：Flutter 使用 `N.ui` (UI/Dart)  和 `N.raster` (GPU raster) 线程替代标准 Android MainThread/RenderThread

@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 # 3 种 Fence 详解（Article-Grounded）
 
 本模板是 S01 §"三条 fence 的流向" + S05/S06 fence 三分法的完整详解。Agent 在涉及 fence 的诊断中必须明确用哪一种。

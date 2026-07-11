@@ -4,7 +4,7 @@ Source SHA-256: b193794805d2765d8923aeb693fe88709520ebe0d0b3c9ff5eb44a2e0a9afe73
 Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # Linux 调度延迟分布
 
-This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.
+This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
 ## Overview
 

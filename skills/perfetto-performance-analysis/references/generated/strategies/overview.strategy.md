@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### overview Core Strategy
 
 **Route card**: 发生了什么 / 有什么问题 / 概览 / 整体分析 / 场景还原 / 场景分析 / what happened / overview / analyze the trace / scene reconstruction
@@ -24,8 +26,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 遵循通用输出契约。
 
 
-**Detail ref**
-- `overview:full`: 概览 / 场景还原分析（用户提到 发生了什么、概览、overview、场景还原） 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="overview full strategy detail" keywords="overview,发生了什么,有什么问题,概览,整体分析,场景还原,场景分析,what happened,overview,analyze the trace,scene reconstruction,全局分析,概览 / 场景还原分析（用户提到 发生了什么、概览、overview、场景还原）,detail,full" default="true" -->
@@ -35,11 +36,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 
 
-**必须获取关键 artifact 的完整数据**：
-```
-fetch_artifact(artifactId, detail="rows", offset=0, limit=50)
-```
-优先获取：`launches`、`gestures`、`inertial_scrolls`、`janks`、`timeline`
+
 
 **Phase 2 — 问题分级（基于阈值判断）：**
 

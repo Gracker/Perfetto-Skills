@@ -4,7 +4,7 @@ Source SHA-256: 77f0c16c98124ea632834a8112a8afcd6458b6a40457d6f5fe010817005b0bbc
 Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # HardwareBufferRenderer
 
-This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.
+This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
 ## Overview
 

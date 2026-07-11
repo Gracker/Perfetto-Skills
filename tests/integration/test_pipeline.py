@@ -19,9 +19,7 @@ class PipelineTest(unittest.TestCase):
         result = run_public_query(
             trace,
             sql_file=generated_sql("rendering_pipeline_detection", "thread_signals.sql"),
-            replacements={
-                "${package}": "com.example.friendscircle.v27.textureview"
-            },
+            params={"package": "com.example.friendscircle.v27.textureview"},
         )
         self.assertEqual(result["status"], "ok", result)
         signals = result["rows"][0]
@@ -30,9 +28,7 @@ class PipelineTest(unittest.TestCase):
         slices = run_public_query(
             trace,
             sql_file=generated_sql("rendering_pipeline_detection", "slice_signals.sql"),
-            replacements={
-                "${package}": "com.example.friendscircle.v27.textureview"
-            },
+            params={"package": "com.example.friendscircle.v27.textureview"},
         )
         self.assertEqual(slices["status"], "ok", slices)
         self.assertGreater(slices["rows"][0]["texture_view_count"], 0, slices)

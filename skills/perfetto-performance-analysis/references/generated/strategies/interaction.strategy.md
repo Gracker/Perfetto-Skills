@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### interaction Core Strategy
 
 **Route card**: 点击 / 触摸 / 输入延迟 / 响应延迟 / 点击慢 / 响应慢 / 点击卡顿 / click / tap / touch
@@ -28,8 +30,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 置信度与缺失证据
 
 
-**Detail ref**
-- `interaction:full`: 点击/触摸响应分析（用户提到 点击、触摸、tap、click、input latency） 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="interaction full strategy detail" keywords="interaction,点击,触摸,输入延迟,响应延迟,点击慢,响应慢,点击卡顿,click,tap,touch,input latency,response time,点击/触摸响应分析（用户提到 点击、触摸、tap、click、input latency）,detail,full" default="true" -->
@@ -41,7 +42,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 
 
-对大型 artifact 使用 `fetch_artifact` 获取完整行数据。
+
 
 **Phase 3 — 综合结论（基于根因决策树）：**
 

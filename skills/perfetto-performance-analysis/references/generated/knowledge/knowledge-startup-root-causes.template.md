@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 # Android 启动慢根因分类体系
 
 > 本文档是 Agent 在启动分析 Phase 3（结论生成）阶段的参考手册。

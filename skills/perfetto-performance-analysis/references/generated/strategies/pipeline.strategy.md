@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### pipeline Core Strategy
 
 **Route card**: 管线识别 / pipeline识别 / 渲染路径 / 渲染管线检测 / 管线类型 / pipeline detection / rendering pipeline / render path / architecture detection / 渲染架构检测
@@ -28,8 +30,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 图形内存/刷新策略边界
 
 
-**Detail ref**
-- `pipeline:full`: 渲染管线识别与教学分析（用户提到 管线识别、pipeline 检测、渲染路径、渲染架构检测） 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="pipeline full strategy detail" keywords="pipeline,管线识别,pipeline识别,渲染路径,渲染管线检测,管线类型,pipeline detection,rendering pipeline,render path,architecture detection,渲染架构检测,帧渲染路径,frame path,渲染管线识别与教学分析（用户提到 管线识别、pipeline 检测、渲染路径、渲染架构检测）,detail,full" default="true" -->

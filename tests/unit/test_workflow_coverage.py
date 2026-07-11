@@ -76,6 +76,14 @@ class WorkflowCoverageTest(unittest.TestCase):
         for phrase in ("required table", "requested scope", "negative evidence"):
             self.assertIn(phrase, missing.lower())
 
+    def test_comparison_workflow_uses_portable_files(self) -> None:
+        comparison = (SKILL / "references/workflows/trace-comparison.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("perfetto_compare.py", comparison)
+        self.assertIn("comparison-input-schema.json", comparison)
+        self.assertNotIn("snapshot_id", comparison)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 <!-- No template variables — static content -->
 ### Jetpack Compose 分析注意事项
 - **Recomposition**：关注 `Recomposer:recompose` slice 频率和耗时，频繁重组是性能杀手

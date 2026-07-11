@@ -79,6 +79,32 @@ python3 <skill-root>/scripts/perfetto_query.py /absolute/path/to/trace.pftrace \
   --format json --output /absolute/path/to/output/query.json
 ```
 
+Bind SmartPerfetto DSL placeholders through the public wrapper instead of
+editing SQL text. `--param NAME=JSON` safely binds scalar inputs and JSON
+arrays (rendered as SQL literal lists for `IN (...)`),
+`--module android.example.module` loads declared prerequisites, and
+`--result NAME=/path/prior.json` exposes a non-empty saved row array as a
+relation for a dependent step. Pipeline expressions such as
+`${prior_step.data[0].upid}` select a scalar field from those rows:
+
+```bash
+python3 <skill-root>/scripts/perfetto_query.py /absolute/trace.pftrace \
+  --sql-file <skill-root>/references/generated/sql/<skill>/<step>.sql \
+  --module android.frames.timeline \
+  --param 'package="com.example"' --param start_ts=123 \
+  --result prior_step=/absolute/output/prior-step.json \
+  --output /absolute/output/current-step.json
+```
+
+The runtime rejects unresolved placeholders and caps trace-processor stdout and
+stderr at 16 MiB by default. Lower the bound with `--max-output-bytes`; increase
+it only for a reviewed, explicitly bounded query.
+
+For comparison, first write one side-summary file per independently analyzed
+trace using `assets/comparison-input-schema.json`, then run
+`scripts/perfetto_compare.py --side baseline=a.json --side candidate=b.json
+--baseline baseline`.
+
 If `trace_processor_shell` is unavailable, run
 `scripts/bootstrap_trace_processor.py` or provide a verified executable through
 `--trace-processor` or `PERFETTO_TRACE_PROCESSOR`.

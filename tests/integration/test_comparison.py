@@ -1,8 +1,10 @@
+import json
 import os
 from pathlib import Path
+import tempfile
 import unittest
 
-from tests.support import run_public_probe, run_public_query
+from tests.support import run_public_compare, run_public_probe, run_public_query
 
 
 TRACE_ROOT = Path(os.environ["SMARTPERFETTO_TEST_TRACES"]) if os.environ.get("SMARTPERFETTO_TEST_TRACES") else None
@@ -38,6 +40,38 @@ class ComparisonTest(unittest.TestCase):
         self.assertNotEqual(sides[0]["sha256"], sides[1]["sha256"])
         self.assertTrue(all(side["end_ns"] > side["start_ns"] for side in sides))
         self.assertTrue(all(side["slice_count"] > 0 for side in sides))
+        with tempfile.TemporaryDirectory() as temporary:
+            paths = []
+            for side in sides:
+                path = Path(temporary) / f"{side['trace_side']}.json"
+                path.write_text(
+                    json.dumps(
+                        {
+                            "schema_version": 1,
+                            "trace": {
+                                "sha256": side["sha256"],
+                                "start_ns": side["start_ns"],
+                                "end_ns": side["end_ns"],
+                            },
+                            "metrics": {
+                                "trace.slice_count": {
+                                    "status": "observed",
+                                    "value": side["slice_count"],
+                                    "unit": "count",
+                                    "definition": "slice rows in the full trace",
+                                    "evidence_refs": [],
+                                }
+                            },
+                            "limitations": [],
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+                paths.append((side["trace_side"], path))
+            comparison = run_public_compare(paths, baseline="baseline")
+        self.assertEqual(comparison["status"], "complete", comparison)
+        self.assertTrue(comparison["metrics"][0]["comparable"])
+        self.assertIn("candidate", comparison["metrics"][0]["deltas"])
 
 
 if __name__ == "__main__":

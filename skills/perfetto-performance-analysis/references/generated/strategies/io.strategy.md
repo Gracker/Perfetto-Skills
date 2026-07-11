@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### io Core Strategy
 
 **Route card**: io / i/o / disk / storage / filesystem / block io / fsync / fdatasync / page fault / sqlite
@@ -27,8 +29,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 置信度与补证
 
 
-**Detail ref**
-- `io:full`: I/O / Storage / SQLite 分析 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="io full strategy detail" keywords="io,io,i/o,disk,storage,filesystem,block io,fsync,fdatasync,page fault,sqlite,sqliteopenhelper,room,I/O / Storage / SQLite 分析,detail,full" default="true" -->

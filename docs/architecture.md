@@ -66,5 +66,14 @@ atomically installs it in a user cache. No binary is committed to this
 repository or release archive.
 
 The query CLI passes the executable, query file, and trace as an argument array,
-enforces timeouts, and returns typed JSON/CSV/raw results. Empty rows remain
-distinct from unavailable instrumentation and query failure.
+enforces timeouts and a default 16 MiB stdout/stderr bound, and returns typed
+JSON/CSV/raw results. It safely binds scalar placeholders, JSON literal lists,
+declared Perfetto modules, and non-empty JSON row arrays saved by prior steps.
+Dotted result fields and numeric indexes preserve pipeline dependencies without
+evaluating arbitrary expressions. Empty rows remain distinct from unavailable
+instrumentation and query failure.
+
+Product snapshot services are replaced by `perfetto_compare.py`. Each trace is
+analyzed independently into a local side-summary JSON; the adapter compares
+only metrics whose status, unit, and definition match, preserving evidence
+references and typed limitations.

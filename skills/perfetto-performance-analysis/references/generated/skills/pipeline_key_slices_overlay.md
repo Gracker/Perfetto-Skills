@@ -4,7 +4,7 @@ Source SHA-256: 34b2abe52c508a34d1fb3f9794fbac79210dc3ee9fb9e3d4305b68a4c3699b97
 Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # 管线关键 Slice 时间线
 
-This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.
+This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
 ## Overview
 
@@ -34,9 +34,11 @@ tags:
 
 ```yaml
 - name: slice_names
-  type: string
+  type: json_array
   required: true
-  description: SQL IN 列表格式的 Slice 名称，如 'Choreographer#doFrame','DrawFrame','syncFrameState'
+  description: 'Portable binding: pass a JSON array through --param; do not pass a preformatted SQL list.'
+  source_type: string
+  source_description: SQL IN 列表格式的 Slice 名称，如 'Choreographer#doFrame','DrawFrame','syncFrameState'
 - name: package
   type: string
   required: false

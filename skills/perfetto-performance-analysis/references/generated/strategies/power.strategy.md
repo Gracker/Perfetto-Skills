@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### power Core Strategy
 
 **Route card**: 功耗 / 耗电 / 电池 / 掉电 / 发热 / wattson / power / battery / drain / energy
@@ -31,8 +33,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - Alarm/Wakeup/Vitals 边界
 
 
-**Detail ref**
-- `power:full`: 功耗 / 电池 / Wattson 分析（用户提到 功耗、耗电、电池、掉电、wattson） 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="power full strategy detail" keywords="power,功耗,耗电,电池,掉电,发热,wattson,power,battery,drain,energy,thermal,allow-while-idle,功耗 / 电池 / Wattson 分析（用户提到 功耗、耗电、电池、掉电、wattson）,detail,full" default="true" -->

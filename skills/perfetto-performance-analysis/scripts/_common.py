@@ -5,6 +5,8 @@ import csv
 from dataclasses import dataclass
 import hashlib
 import io
+import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -12,10 +14,12 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 from collections.abc import Callable, Mapping
 
 
 DEFAULT_PERFETTO_VERSION = "v57.1"
+DEFAULT_MAX_OUTPUT_BYTES = 16 * 1024 * 1024
 
 
 class QueryError(RuntimeError):
@@ -119,6 +123,7 @@ def run_query(
     sql_file: str | Path | None = None,
     trace_processor: str | None = None,
     timeout: float = 120.0,
+    max_output_bytes: int = DEFAULT_MAX_OUTPUT_BYTES,
 ) -> QueryResult:
     if (sql is None) == (sql_file is None):
         raise ValueError("Provide exactly one of sql or sql_file")
@@ -126,6 +131,10 @@ def run_query(
     if not trace.is_file():
         raise FileNotFoundError(f"Trace file not found: {trace}")
     binary = resolve_trace_processor(trace_processor)
+    if timeout <= 0:
+        raise ValueError("timeout must be greater than zero")
+    if max_output_bytes <= 0:
+        raise ValueError("max_output_bytes must be greater than zero")
 
     temporary_query: Path | None = None
     if sql_file is None:
@@ -148,32 +157,292 @@ def run_query(
         str(query_path),
         str(trace),
     )
+    stdout_path: Path | None = None
+    stderr_path: Path | None = None
+    process: subprocess.Popen[bytes] | None = None
     try:
-        completed = subprocess.run(
-            command,
-            check=False,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-        )
-    except subprocess.TimeoutExpired as exc:
-        raise QueryError(f"Trace query timed out after {timeout:g}s") from exc
+        with tempfile.NamedTemporaryFile(mode="wb", delete=False) as stdout_file:
+            stdout_path = Path(stdout_file.name)
+            with tempfile.NamedTemporaryFile(mode="wb", delete=False) as stderr_file:
+                stderr_path = Path(stderr_file.name)
+                process = subprocess.Popen(
+                    command,
+                    stdout=stdout_file,
+                    stderr=stderr_file,
+                )
+                deadline = time.monotonic() + timeout
+                while process.poll() is None:
+                    if time.monotonic() >= deadline:
+                        process.kill()
+                        process.wait()
+                        raise QueryError(f"Trace query timed out after {timeout:g}s")
+                    if (
+                        stdout_path.stat().st_size > max_output_bytes
+                        or stderr_path.stat().st_size > max_output_bytes
+                    ):
+                        process.kill()
+                        process.wait()
+                        raise QueryError(
+                            f"Trace query exceeded the {max_output_bytes} byte output limit"
+                        )
+                    time.sleep(0.02)
+        if (
+            stdout_path.stat().st_size > max_output_bytes
+            or stderr_path.stat().st_size > max_output_bytes
+        ):
+            raise QueryError(
+                f"Trace query exceeded the {max_output_bytes} byte output limit"
+            )
+        stdout = stdout_path.read_text(encoding="utf-8", errors="replace")
+        stderr = stderr_path.read_text(encoding="utf-8", errors="replace")
+        returncode = process.returncode
     finally:
+        if process is not None and process.poll() is None:
+            process.kill()
+            process.wait()
         if temporary_query is not None:
             temporary_query.unlink(missing_ok=True)
+        if stdout_path is not None:
+            stdout_path.unlink(missing_ok=True)
+        if stderr_path is not None:
+            stderr_path.unlink(missing_ok=True)
 
     result = QueryResult(
-        stdout=completed.stdout,
-        stderr=completed.stderr,
-        returncode=completed.returncode,
+        stdout=stdout,
+        stderr=stderr,
+        returncode=returncode,
         command=command,
     )
-    if completed.returncode != 0:
-        detail = completed.stderr.strip() or completed.stdout.strip()
+    if returncode != 0:
+        detail = stderr.strip() or stdout.strip()
         raise QueryError(
-            f"trace_processor_shell exited with {completed.returncode}: {detail}"
+            f"trace_processor_shell exited with {returncode}: {detail}"
         )
     return result
+
+
+def sql_literal(value: object) -> str:
+    if value is None:
+        return "NULL"
+    if isinstance(value, bool):
+        return "1" if value else "0"
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, float):
+        if not math.isfinite(value):
+            raise ValueError("SQL parameters cannot contain NaN or infinity")
+        return repr(value)
+    if isinstance(value, str):
+        return "'" + value.replace("'", "''") + "'"
+    if isinstance(value, (list, tuple)):
+        if not value:
+            return "NULL"
+        return ", ".join(sql_literal(item) for item in value)
+    raise ValueError(f"unsupported SQL parameter type: {type(value).__name__}")
+
+
+def sql_string_fragment(value: object) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (int, float, str)):
+        if isinstance(value, float) and not math.isfinite(value):
+            raise ValueError("SQL parameters cannot contain NaN or infinity")
+        return str(value).replace("'", "''")
+    if isinstance(value, (list, tuple)):
+        return ",".join(sql_string_fragment(item) for item in value)
+    raise ValueError(f"unsupported SQL string parameter type: {type(value).__name__}")
+
+
+def default_template_value(raw: str) -> object:
+    if raw == "" or raw == "''" or raw == '""':
+        return ""
+    if raw.upper() == "NULL":
+        return None
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        return raw
+
+
+def quote_identifier(value: str) -> str:
+    return '"' + value.replace('"', '""') + '"'
+
+
+def result_rows_to_relation(value: object, name: str) -> str:
+    if isinstance(value, dict) and isinstance(value.get("rows"), list):
+        value = value["rows"]
+    if not isinstance(value, list) or not value:
+        raise ValueError(f"saved result {name!r} must contain at least one row")
+    if not all(isinstance(row, dict) for row in value):
+        raise ValueError(f"saved result {name!r} must be an array of objects")
+    rows: list[dict[str, object]] = value
+    columns = sorted({str(column) for row in rows for column in row})
+    if not columns:
+        raise ValueError(f"saved result {name!r} has no columns")
+    selects = []
+    for row in rows:
+        fields = [
+            f"{sql_literal(row.get(column))} AS {quote_identifier(column)}"
+            for column in columns
+        ]
+        selects.append("SELECT " + ", ".join(fields))
+    return "(" + " UNION ALL ".join(selects) + ")"
+
+
+_RESULT_FIELD = re.compile(r"\.([A-Za-z_][A-Za-z0-9_]*)")
+_RESULT_INDEX = re.compile(r"\[(0|[1-9][0-9]*)\]")
+
+
+def resolve_result_expression(
+    expression: str, results: Mapping[str, object]
+) -> tuple[bool, bool, object]:
+    """Resolve a pipeline-style result path.
+
+    Returns ``(matched, is_relation, value)``. A bare result name denotes the
+    complete row relation; dotted fields and numeric indexes select a scalar.
+    ``data`` and ``rows`` are accepted as aliases for a top-level row array so
+    exported SmartPerfetto expressions keep their documented shape.
+    """
+    root = next(
+        (
+            name
+            for name in sorted(results, key=len, reverse=True)
+            if expression == name
+            or expression.startswith(name + ".")
+            or expression.startswith(name + "[")
+        ),
+        None,
+    )
+    if root is None:
+        return False, False, None
+    if expression == root:
+        return True, True, results[root]
+
+    value = results[root]
+    offset = len(root)
+    while offset < len(expression):
+        field_match = _RESULT_FIELD.match(expression, offset)
+        if field_match:
+            field = field_match.group(1)
+            if isinstance(value, list) and field in {"data", "rows"}:
+                pass
+            elif isinstance(value, dict) and field in value:
+                value = value[field]
+            elif isinstance(value, dict) and field == "data" and "rows" in value:
+                value = value["rows"]
+            else:
+                raise ValueError(
+                    f"saved result path {expression!r} has no field {field!r}"
+                )
+            offset = field_match.end()
+            continue
+
+        index_match = _RESULT_INDEX.match(expression, offset)
+        if index_match:
+            index = int(index_match.group(1))
+            if not isinstance(value, list):
+                raise ValueError(
+                    f"saved result path {expression!r} indexes a non-array value"
+                )
+            if index >= len(value):
+                raise ValueError(
+                    f"saved result path {expression!r} index {index} is out of range"
+                )
+            value = value[index]
+            offset = index_match.end()
+            continue
+
+        raise ValueError(f"invalid saved result path: {expression!r}")
+    if isinstance(value, (dict, list, tuple)):
+        raise ValueError(f"saved result path {expression!r} does not resolve to a scalar")
+    return True, False, value
+
+
+def render_sql_template(
+    template: str,
+    parameters: Mapping[str, object],
+    results: Mapping[str, object],
+) -> str:
+    output: list[str] = []
+    index = 0
+    state = "normal"
+    while index < len(template):
+        if state == "line_comment":
+            output.append(template[index])
+            if template[index] == "\n":
+                state = "normal"
+            index += 1
+            continue
+        if state == "block_comment":
+            if template.startswith("*/", index):
+                output.append("*/")
+                index += 2
+                state = "normal"
+            else:
+                output.append(template[index])
+                index += 1
+            continue
+        if state == "normal" and template.startswith("--", index):
+            output.append("--")
+            index += 2
+            state = "line_comment"
+            continue
+        if state == "normal" and template.startswith("/*", index):
+            output.append("/*")
+            index += 2
+            state = "block_comment"
+            continue
+        if template.startswith("${", index):
+            end = template.find("}", index + 2)
+            if end < 0:
+                raise ValueError("unterminated SQL template placeholder")
+            expression = template[index + 2 : end]
+            name, separator, raw_default = expression.partition("|")
+            if not name:
+                raise ValueError("empty SQL template placeholder")
+            matched_result, is_relation, result_value = resolve_result_expression(
+                name, results
+            )
+            if matched_result:
+                if is_relation:
+                    if state == "string":
+                        raise ValueError(
+                            f"saved result {name!r} cannot be used inside a string"
+                        )
+                    replacement = result_rows_to_relation(result_value, name)
+                else:
+                    replacement = (
+                        sql_string_fragment(result_value)
+                        if state == "string"
+                        else sql_literal(result_value)
+                    )
+            else:
+                if name in parameters:
+                    value = parameters[name]
+                elif separator:
+                    value = default_template_value(raw_default)
+                else:
+                    raise ValueError(f"missing SQL template value: {name}")
+                replacement = (
+                    sql_string_fragment(value) if state == "string" else sql_literal(value)
+                )
+            output.append(replacement)
+            index = end + 1
+            continue
+        if state == "string":
+            if template.startswith("''", index):
+                output.append("''")
+                index += 2
+                continue
+            if template[index] == "'":
+                state = "normal"
+        elif template[index] == "'":
+            state = "string"
+        output.append(template[index])
+        index += 1
+    return "".join(output)
 
 
 _INTEGER = re.compile(r"^-?(?:0|[1-9][0-9]*)$")

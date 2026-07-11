@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### linux Core Strategy
 
 **Route card**: linux / kernel / sched / runqueue / runnable / pmu / perf / cache miss / branch miss / rss
@@ -26,8 +28,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 遵循通用输出契约。
 
 
-**Detail ref**
-- `linux:full`: Linux 内核 / 调度 / PMU 分析 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="linux full strategy detail" keywords="linux,linux,kernel,sched,runqueue,runnable,pmu,perf,cache miss,branch miss,rss,swap,内核,Linux 内核 / 调度 / PMU 分析,detail,full" default="true" -->

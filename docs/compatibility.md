@@ -16,6 +16,15 @@ dependency.
 Cloud-only agents without filesystem or terminal access can read the
 methodology but cannot probe a trace or execute SQL.
 
+Generated SQL retains source placeholders. Execute it through
+`perfetto_query.py`: use `--param` for JSON scalar values or arrays (arrays
+become SQL literal lists for `IN (...)`), `--module` for declared stdlib
+prerequisites, and `--result` for a non-empty JSON row array from a prior step.
+Dotted fields and numeric indexes resolve pipeline expressions such as
+`${step.data[0].upid}`. Direct text substitution is unsupported. Query output
+is bounded to 16 MiB per stream unless an explicit reviewed override is
+supplied.
+
 ## Trace processor
 
 The current lock pins Perfetto `v57.1` and publishes a SHA-256 for each supported

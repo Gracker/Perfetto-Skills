@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 <!-- Template variables:
   {{sceneStrategy}} - Always-injected scene core from *.strategy.md
 -->
@@ -34,13 +36,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 ### Scene Core
 {{sceneStrategy}}
 
-### SQL Discipline
-- `ts` / `dur` 是纳秒；不要用 ms/s 直接过滤。
-- JOIN 后不要裸写 `name` / `ts` / `dur`；用别名或 `thread_slice`。
-- 不确定表/列/stdlib 时先 `lookup_sql_schema` / `list_stdlib_modules`。
-- `thread_slice` 已含 thread/process；排他耗时用 `JOIN slice_self_dur USING(id)`。
-- Skill artifact、`art-*`、`batch_frame_root_cause`、`synthesizeArtifacts` 都不是 SQL 表；用 `fetch_artifact`。
-- SQL 报错后按错误调用 `lookup_sql_schema` / `query_perfetto_source` 修正；多次失败说明边界。
+
 
 ### Reasoning And State
 - CRITICAL/HIGH 必须回答 WHY：症状 → 机制 → 源头/边界；只写“耗时 XXms”不合格。

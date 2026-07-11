@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### Startup Core Strategy
 
 **Route card**: 启动 / 冷启动 / 热启动 / 温启动 / launch / startup / cold start / warm start / hot start / app start
@@ -17,14 +19,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 
 
-**Phase reminders**
-- detail_breakdown: 必须用 Phase 1 的 ttid_ts/ttfd_ts 作为 startup_detail 的时间边界参数。使用 self_ms（排除子切片）而非 wall-time。 工具: startup_detail
-- critical_artifacts: 此阶段不可跳过。必须获取关键 artifact（热点函数、阻塞调用、锁竞争）作为深钻输入。 工具: execute_sql, fetch_artifact
-- slow_reasons_validation: 冷启动必须调用 startup_slow_reasons 检查 DEX2OAT/baseline profile/debuggable 等官方因素。Q4(Sleeping) >25% 必须用 blocking_chain_analysis 追踪阻塞源。 工具: startup_slow_reasons, blocking_chain_analysis
-- webview_startup: 仅在架构检测或 trace 证据提示 WebView 时执行。SQL 必须说明正在验证 WebView/Chromium/V8/CrRendererMain 是否参与启动；若未命中 slice，应把 WebView 启动影响标为证据不足或可排除，而不是继续归到综合结论。 工具: execute_sql
-- startup_power_overlay: 用户关心启动功耗/耗电时，先检查 Trace 数据完整度中的 power_rails、battery_counters、cpu_freq_idle、gpu_work_period。数据可用才调用 wattson_app_startup_power；缺失时输出采集建议，禁止把空表解释为低功耗。 工具: wattson_app_startup_power, battery_charge_timeline, android_dvfs_counter_stats
-- startup_diagnostic_api_boundary: 当计划或用户问题涉及启动诊断 API/外部指标时，必须把 Perfetto startup_analysis/TTID/TTFD、ApplicationStartInfo 记录、App Performance Score/Vitals/APM/A-B 外部数据分层；说明 API/Android 版本、时钟/时间戳对齐、record 是否 incomplete/in-progress、样本/设备/实验窗口，不能把外部分数或聚合直接当成本 trace 根因。 工具: startup_analysis, lookup_knowledge
-- conclusion: 输出必须包含：启动类型判定(cold/warm/hot) + TTID/TTFD 数值 + 阶段耗时分解 + 根因编号引用(A1-A18/B1-B12) + 双受众格式([App層]+[系統/平台層])。
+
 
 **Final report contract summary**
 - 启动类型与 TTID/TTFD
@@ -34,13 +29,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 启动诊断 API/外部指标边界
 
 
-**Always-inject startup skeleton**
-1. 调用 `startup_analysis` 获取 startup_id、TTID/TTFD、重分类后的 cold/warm/hot、主线程热点和数据质量。
-2. 调用 `startup_detail` 做阶段分解、四象限、self_ms、线程状态、关键任务和阻塞关系。
-3. 对 startup_detail 的关键 artifact 使用 `fetch_artifact` 读取行数据；摘要或 detail 文本不能替代 artifact 证据。
-4. 冷启动/bindApplication 命中时补 `startup_slow_reasons`；Q4/Sleeping/blocked_functions 命中时补 `blocking_chain_analysis`。
-5. 最终报告必须包含启动类型+TTID/TTFD、阶段耗时/self_ms、根因编号、App/系统分层建议和证据边界。
-   根因编号只能来自启动知识库 A1-A18/B1-B12，或本轮工具结果明确返回的 SR09-SR20。禁止为了给自定义/合成负载分类而创建 SR01-SR08 或任何新编号；若合成负载没有精确映射，应明确写“无精确知识库编号”，并同时引用本轮实际命中的有效 SRxx 作为交叉验证而不是主根因。
+
 
 **Detail refs**
 - `startup:overview_timing`: startup_analysis/startup_detail 参数、启动类型、artifact 表。
@@ -48,8 +37,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - `startup:root_cause_tree`: self_ms、四象限、blocked_functions、TTID/TTFD 边界和根因决策树。
 
 
-<!-- strategy-detail id="overview_timing" title="启动概览、类型、详情和关键 artifact" keywords="overview,startup_analysis,startup_detail,ttid,ttfd,artifact,fetch_artifact" default="true" -->
-#### 启动分析（用户提到 启动、冷启动、热启动、launch、startup）
+
 
 **⚠️ 核心原则：**
 1. **不能只报告"某 slice 耗时 XXms"——必须解释 WHY（为什么慢）**
@@ -149,11 +137,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 3. **阻塞链构建**：主线程[S:binder_wait] ← Binder线程 ← system_server/PackageManager → 完整因果链
 4. **唤醒者 slice 分析**：waker_current_slice 字段直接告诉你唤醒者在做什么，是最直接的根因证据
 
-获取方式（并行）：
-```
-fetch_artifact("art-N", detail="rows", offset=0, limit=50)  // 对每个关键 artifact
-```
-**在所有关键 artifact 数据到手之前，不要开始写结论。**
+
 
 **背景知识指引（结论生成阶段按需调用）：**
 
@@ -440,8 +424,7 @@ Android 启动有两个串行大阶段，**分析结论必须覆盖两个阶段*
 
 某些 trace 的 `blocked_functions` 列为空（未采 `sched/sched_blocked_reason`、设备 tracepoint 不可用、符号化缺失，或内核配置不支持）。此时：
 
-1. **优先使用 hot_slice_states 数据**（已包含在 startup_detail 的返回结果中，Phase 2.5 fetch_artifact 时获取）。
-   即使全局 blocked_functions 为空，per-slice 的线程状态分布（Running/S/D 各自占比）仍然有效，可以判断 slice 慢在"计算"还是"阻塞"。
+
 
 2. **从已有数据交叉推断**（hot_slice_states 的 blocked_functions 也为空时）：
    - S 状态时长高 + 主线程同步 Binder >50ms → **Binder 阻塞**是主因

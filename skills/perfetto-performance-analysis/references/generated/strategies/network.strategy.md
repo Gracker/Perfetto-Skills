@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### network Core Strategy
 
 **Route card**: 网络 / 流量 / 数据包 / network / traffic / packet / wifi / cellular / 4g / 5g
@@ -28,8 +30,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 网络栈/版本策略边界
 
 
-**Detail ref**
-- `network:full`: 网络活动分析 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="network full strategy detail" keywords="network,网络,流量,数据包,network,traffic,packet,wifi,cellular,4g,5g,tcp,udp,网络活动分析,detail,full" default="true" -->

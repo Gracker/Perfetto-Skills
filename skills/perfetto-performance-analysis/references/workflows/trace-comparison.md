@@ -6,7 +6,9 @@ Compare two or more traces or saved evidence reports without erasing source, pla
 
 ## Inputs
 
-Require named trace sides, comparable target/scope, and either raw traces or reports that follow the public report schema.
+Require named trace sides, comparable target/scope, and either raw traces or
+file-based side summaries that follow
+[`comparison-input-schema.json`](../../assets/comparison-input-schema.json).
 
 ## Availability gate
 
@@ -14,11 +16,13 @@ Probe and analyze each raw trace independently. Confirm metric definition, units
 
 ## Evidence sequence
 
-Analyze each trace independently, then apply
-[multi-trace comparison](../generated/skills/multi_trace_result_comparison.md).
-Build a side-by-side availability matrix, align equivalent definitions and
-units, calculate bounded deltas, trace significant differences back to
-side-specific evidence, and test platform, workload, and capture alternatives.
+Analyze each trace independently and write one side-summary JSON per trace. Use
+the portable [comparison adapter](../generated/skills/multi_trace_result_comparison.md):
+`python3 <skill-root>/scripts/perfetto_compare.py --side baseline=a.json --side
+candidate=b.json --baseline baseline`. It builds the availability matrix and
+computes deltas only when definitions, units, and observed states match. Trace
+significant differences back to side-specific evidence and test platform,
+workload, and capture alternatives.
 
 ## Interpretation boundaries
 

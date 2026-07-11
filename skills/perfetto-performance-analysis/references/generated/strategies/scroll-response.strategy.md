@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### scroll_response Core Strategy
 
 **Route card**: 滑动响应 / 滑动延迟 / 响应速度 / 首帧延迟 / 首帧响应 / scroll response / scroll latency / first frame / response latency / 滑动开始
@@ -27,8 +29,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - FrameTimeline/上屏置信度
 
 
-**Detail ref**
-- `scroll_response:full`: 滑动响应速度分析（用户提到 滑动响应、滑动延迟、首帧延迟、scroll response、scroll latency） 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="scroll_response full strategy detail" keywords="scroll_response,滑动响应,滑动延迟,响应速度,首帧延迟,首帧响应,scroll response,scroll latency,first frame,response latency,滑动开始,scroll start,initial response,滑动响应速度分析（用户提到 滑动响应、滑动延迟、首帧延迟、scroll response、scroll latency）,detail,full" default="true" -->

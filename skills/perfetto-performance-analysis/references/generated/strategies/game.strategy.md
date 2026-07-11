@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### game Core Strategy
 
 **Route card**: 游戏 / game / 帧率 / 游戏卡顿 / 游戏掉帧 / unity / unreal / 游戏性能 / game fps / game performance
@@ -25,8 +27,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 遵循通用输出契约。
 
 
-**Detail ref**
-- `game:full`: 游戏性能分析（用户提到 游戏、game、帧率、游戏卡顿） 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="game full strategy detail" keywords="game,游戏,game,帧率,游戏卡顿,游戏掉帧,unity,unreal,游戏性能,game fps,game performance,godot,cocos,游戏性能分析（用户提到 游戏、game、帧率、游戏卡顿）,detail,full" default="true" -->

@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### memory Core Strategy
 
 **Route card**: 内存 / memory / oom / 泄漏 / leak / lmk / 内存压力 / 内存不足 / low memory / out of memory
@@ -30,8 +32,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 内存诊断 API/剖析产物边界
 
 
-**Detail ref**
-- `memory:full`: 内存分析（用户提到 内存、memory、OOM、泄漏、LMK） 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="memory full strategy detail" keywords="memory,内存,memory,oom,泄漏,leak,lmk,内存压力,内存不足,low memory,out of memory,dmabuf,内存占用,内存分析（用户提到 内存、memory、OOM、泄漏、LMK）,detail,full" default="true" -->

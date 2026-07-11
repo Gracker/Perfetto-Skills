@@ -4,7 +4,7 @@ Source SHA-256: 4f3e9353512c115a63ada88248084eb7717909cfc5f0e72e30e0fc8ce64b6162
 Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # Flutter SurfaceView (Skia)
 
-This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.
+This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
 ## Overview
 

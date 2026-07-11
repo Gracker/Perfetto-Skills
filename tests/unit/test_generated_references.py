@@ -82,6 +82,46 @@ class GeneratedReferenceTest(unittest.TestCase):
             )
         )
 
+    def test_strategy_references_remove_product_tool_dependencies(self) -> None:
+        strategy_text = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in (GENERATED / "strategies").glob("*.md")
+        )
+        for token in (
+            "submit_plan",
+            "invoke_skill",
+            "fetch_artifact",
+            "create_artifact",
+            "navigate_timeline",
+            "pin_tracks",
+        ):
+            self.assertNotIn(token, strategy_text, token)
+        self.assertIn(
+            "`execute_sql(...)` examples mean to run the contained SQL through "
+            "`perfetto_query.py`",
+            strategy_text,
+        )
+
+    def test_comparison_reference_uses_file_adapter_not_product_snapshots(self) -> None:
+        comparison = (
+            GENERATED / "skills" / "multi_trace_result_comparison.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("perfetto_compare.py", comparison)
+        for token in (
+            "snapshot_ids",
+            "baseline_snapshot_id",
+            "analysis_result_snapshot",
+            "ComparisonMatrix",
+        ):
+            self.assertNotIn(token, comparison)
+
+    def test_sql_in_parameters_are_documented_as_json_arrays(self) -> None:
+        for name in ("cpu_idle_analysis.md", "pipeline_key_slices_overlay.md"):
+            content = (GENERATED / "skills" / name).read_text(encoding="utf-8")
+            self.assertIn("type: json_array", content, name)
+            self.assertIn("pass a JSON array through --param", content, name)
+            self.assertIn("source_type: string", content, name)
+
 
 if __name__ == "__main__":
     unittest.main()

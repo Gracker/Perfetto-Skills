@@ -4,7 +4,7 @@ Source SHA-256: 231e8ce685c178ba67e1e32c7f5fcdb25ba5b5b0b0773af5145ca0572d6b4861
 Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # CPU Idle C-State 分析
 
-This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.
+This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
 ## Overview
 
@@ -43,9 +43,11 @@ tags:
   required: false
   description: 分析结束时间戳(ns)
 - name: cpu_ids
-  type: string
+  type: json_array
   required: false
-  description: CPU ID 列表（逗号分隔，如 '4,5,6,7'）
+  description: 'Portable binding: pass a JSON array through --param; do not pass a preformatted SQL list.'
+  source_type: string
+  source_description: CPU ID 列表（逗号分隔，如 '4,5,6,7'）
 ```
 
 ## Query

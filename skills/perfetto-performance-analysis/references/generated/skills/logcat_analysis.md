@@ -4,7 +4,7 @@ Source SHA-256: 8c0018e6416eba29e18bcde7319b929fcc73db350ceff3d87b86e2e2b66e0f60
 Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # Logcat 异常信号检测
 
-This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.
+This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
 ## Overview
 

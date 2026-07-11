@@ -91,13 +91,27 @@ def run_public_probe(trace: Path) -> dict[str, object]:
     )
 
 
+def run_public_compare(
+    sides: list[tuple[str, Path]], baseline: str
+) -> dict[str, object]:
+    command = [
+        sys.executable,
+        str(SCRIPTS / "perfetto_compare.py"),
+        "--baseline",
+        baseline,
+    ]
+    for label, path in sides:
+        command.extend(("--side", f"{label}={path}"))
+    return run_json_command(command)
+
+
 def run_public_query(
     trace: Path,
     *,
     sql: str | None = None,
     sql_file: Path | None = None,
     modules: tuple[str, ...] = (),
-    replacements: dict[str, str] | None = None,
+    params: dict[str, object] | None = None,
 ) -> dict[str, object]:
     if (sql is None) == (sql_file is None):
         raise ValueError("provide exactly one of sql or sql_file")
@@ -106,13 +120,7 @@ def run_public_query(
         source_path = str(sql_file)
         sql = sql_file.read_text(encoding="utf-8")
     assert sql is not None
-    for old, new in sorted((replacements or {}).items()):
-        sql = sql.replace(old, new)
-    includes = "\n".join(f"INCLUDE PERFETTO MODULE {module};" for module in modules)
-    if includes:
-        sql = includes + "\n" + sql
-    result = run_json_command(
-        [
+    command = [
             sys.executable,
             str(SCRIPTS / "perfetto_query.py"),
             str(trace),
@@ -123,7 +131,11 @@ def run_public_query(
             "--format",
             "json",
         ]
-    )
+    for module in modules:
+        command.extend(("--module", module))
+    for key, value in sorted((params or {}).items()):
+        command.extend(("--param", f"{key}={json.dumps(value, ensure_ascii=False)}"))
+    result = run_json_command(command)
     if source_path is not None:
         result["sql_source"] = source_path
     return result

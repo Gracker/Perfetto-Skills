@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 <!-- No template variables — static content -->
 ### WebView 分析注意事项
 - **渲染线程**：GL Functor 模式下 WebView 的 DrawGL 在 App RenderThread 中执行（是帧耗时的重要组成部分）；SurfaceControl 模式下有独立的 Viz Compositor 线程，不经过 RenderThread

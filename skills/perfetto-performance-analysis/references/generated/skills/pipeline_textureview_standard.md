@@ -4,7 +4,7 @@ Source SHA-256: 66e78a2be5c0db0e4831882e1deebb21e846d67d15400ccfe9a17c35ab503f81
 Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 # TextureView 标准
 
-This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.
+This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
 ## Overview
 

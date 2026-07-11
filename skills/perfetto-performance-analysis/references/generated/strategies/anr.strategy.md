@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### anr Core Strategy
 
 **Route card**: anr / 无响应 / 应用无响应 / 主线程无响应 / deadlock / not responding / 死锁 / watchdog / broadcast timeout / input dispatching
@@ -25,8 +27,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - ANR 诊断 API/外部聚合边界
 
 
-**Detail ref**
-- `anr:full`: ANR 分析（用户提到 ANR、无响应、not responding、死锁、冻屏） 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="anr full strategy detail" keywords="anr,anr,无响应,应用无响应,主线程无响应,deadlock,not responding,死锁,watchdog,broadcast timeout,input dispatching,冻屏,freeze,ANR 分析（用户提到 ANR、无响应、not responding、死锁、冻屏）,detail,full" default="true" -->
@@ -75,11 +76,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 
 
-**必须获取关键 artifact 的完整数据**：
-```
-fetch_artifact(artifactId, detail="rows", offset=0, limit=50)
-```
-优先获取：`freeze_check`、`trigger_classification`、`anr_events`、逐 ANR 的 `quadrant`（四象限）、`direct_blocker_candidates`（from `direct_blocker_classification`）、`direct_blocker_slice_candidates`（from `direct_blocker_slice_classification`，若 slice 可用）和 `logcat_event_context`（from `anr_logcat_context`）；若缺 `android_logs`，读取 `logcat_context_gap`（from `anr_logcat_evidence_gap`）。`blocking`/Binder/sched artifact 只作为包名级辅助上下文
+
 
 **Phase 2 — 冻结判定分流（基于 freeze_verdict，第一优先级）：**
 

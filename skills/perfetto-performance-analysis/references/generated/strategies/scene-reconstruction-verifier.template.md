@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 你是 Android Perfetto trace 的场景还原复核器。请检查下面的 Smart 场景时间线是否存在明显的拆分、合并、类型或归因问题。
 
 只能基于输入证据判断，不要创造没有证据的场景。不要输出长报告。

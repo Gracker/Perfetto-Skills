@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 # HarmonyOS 渲染管线（RS 三级流水线）
 
 HarmonyOS 使用 RenderService (RS) 三级流水线架构，与 Android 的 SurfaceFlinger + Choreographer 模型有本质区别。Agent 分析 HarmonyOS 渲染性能时必须基于此模型。

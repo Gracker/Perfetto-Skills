@@ -48,7 +48,8 @@ SUPPORTED_STEP_TYPES = {
     "ai_summary",
 }
 PRODUCT_RUNTIME_PATTERN = re.compile(
-    r"\b(?:submit_plan|invoke_skill|create_artifact|artifact_api|session_state)\b"
+    r"\b(?:submit_plan|invoke_skill|create_artifact|fetch_artifact|load_artifact|"
+    r"get_artifact|artifact_api|session_state|navigate_timeline|pin_tracks)\b"
     r"|SmartPerfetto(?:\s+UI)?",
     re.IGNORECASE,
 )
@@ -749,7 +750,12 @@ def render_skill_reference(
     parts = [generated_header(entry, commit), f"# {title}\n\n"]
     parts.append(
         "This reference is the portable Agent Skill projection of the source definition. "
-        "Execute SQL with `perfetto_query.py`; evaluate conditions and dependent Skill calls in the listed order.\n\n"
+        "Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array "
+        "inputs through `--param`, "
+        "load prerequisites through `--module`, and pass non-empty saved rows from prior "
+        "steps through `--result`; dotted fields and numeric indexes select saved scalar "
+        "values. Evaluate conditions and dependent Skill calls in the "
+        "listed order.\n\n"
     )
     overview = {
         key: raw.get(key)
@@ -771,7 +777,8 @@ def render_skill_reference(
         ("Dialogue guidance", "dialogue"),
         ("Comparison contract", "comparison"),
     ):
-        parts.append(markdown_section(heading, raw.get(key)))
+        value = portable_inputs(raw) if key == "inputs" else raw.get(key)
+        parts.append(markdown_section(heading, value))
 
     root_sql = raw.get("sql")
     if root_sql is not None:
@@ -827,6 +834,71 @@ def render_skill_reference(
     return "".join(parts).rstrip() + "\n"
 
 
+_SQL_LIST_PARAMETER = re.compile(
+    r"\bIN\s*\(\s*\$\{([A-Za-z_][A-Za-z0-9_]*)(?:\|[^}]*)?\}\s*\)",
+    re.IGNORECASE,
+)
+
+
+def portable_inputs(raw: dict[str, Any]) -> object:
+    inputs = raw.get("inputs")
+    if not isinstance(inputs, list):
+        return inputs
+
+    list_parameters: set[str] = set()
+
+    def visit(value: object) -> None:
+        if isinstance(value, str):
+            list_parameters.update(_SQL_LIST_PARAMETER.findall(value))
+        elif isinstance(value, dict):
+            for nested in value.values():
+                visit(nested)
+        elif isinstance(value, list):
+            for nested in value:
+                visit(nested)
+
+    visit(raw)
+    rendered: list[object] = []
+    for value in inputs:
+        if not isinstance(value, dict) or value.get("name") not in list_parameters:
+            rendered.append(value)
+            continue
+        item = dict(value)
+        item["source_type"] = item.get("type")
+        item["type"] = "json_array"
+        if item.get("description"):
+            item["source_description"] = item["description"]
+        item["description"] = (
+            "Portable binding: pass a JSON array through --param; do not pass a "
+            "preformatted SQL list."
+        )
+        rendered.append(item)
+    return rendered
+
+
+def render_comparison_reference(entry: dict[str, Any], commit: str) -> str:
+    return (
+        generated_header(entry, commit)
+        + "\n# File-based trace comparison\n\n"
+        + "The SmartPerfetto source definition uses product snapshot services. The portable "
+        "projection replaces that boundary with local JSON files and "
+        "`scripts/perfetto_compare.py`.\n\n"
+        + "## Inputs\n\n"
+        + "Analyze every trace independently, then write one side summary that follows "
+        "`assets/comparison-input-schema.json`. Each metric carries status, numeric value "
+        "when observed, unit, exact definition, and evidence references.\n\n"
+        + "## Execution\n\n"
+        + "```bash\n"
+        + "python3 <skill-root>/scripts/perfetto_compare.py \\\n"
+        + "  --side baseline=/absolute/baseline.json \\\n"
+        + "  --side candidate=/absolute/candidate.json \\\n"
+        + "  --baseline baseline --output /absolute/comparison.json\n"
+        + "```\n\n"
+        + "The adapter rejects duplicate sides and incompatible definitions, records missing "
+        "metrics as limitations, and computes absolute/percent deltas only for comparable facts.\n"
+    )
+
+
 def strip_frontmatter(content: str) -> tuple[str, int]:
     lines = content.splitlines()
     starts = [index for index, line in enumerate(lines[:10]) if line.strip() == "---"]
@@ -880,6 +952,8 @@ def render_strategy_reference(
         generated_header(entry, commit)
         + f"\n# {title}\n\n"
         + "Portable methodology extracted from the SmartPerfetto strategy library.\n\n"
+        + "`execute_sql(...)` examples mean to run the contained SQL through "
+        "`perfetto_query.py`; they do not require a product tool.\n\n"
         + portable
     )
     return rendered, transformations
@@ -917,14 +991,24 @@ def generate_references(
         for entry in catalog["skills"]:
             if entry["disposition"] not in {"exported", "merged"}:
                 continue
-            raw = load_yaml(source / entry["source_path"])
-            content = render_skill_reference(
-                raw,
-                entry,
-                commit,
-                temporary_generated,
-                sql_destinations,
-            )
+            if entry["name"] == "multi_trace_result_comparison":
+                content = render_comparison_reference(entry, commit)
+                transformations.append(
+                    {
+                        "source_path": entry["source_path"],
+                        "reason": "product snapshot comparison replaced by file-based JSON adapter",
+                        "removed_lines": 0,
+                    }
+                )
+            else:
+                raw = load_yaml(source / entry["source_path"])
+                content = render_skill_reference(
+                    raw,
+                    entry,
+                    commit,
+                    temporary_generated,
+                    sql_destinations,
+                )
             write_generated_text(
                 temporary_generated / destination_in_generated_root(entry["destination"]),
                 content,

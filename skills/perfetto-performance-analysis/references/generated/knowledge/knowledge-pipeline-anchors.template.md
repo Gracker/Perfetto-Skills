@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 # 12 锚点详解（Article-Grounded）
 
 本模板是 S01 §12 个锚点的完整详解。Agent 在 jank 归因时应明确把症状定位到具体锚点。

@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest import mock
 
 from tests.support import SCRIPTS, load_skill_script
 
@@ -65,6 +66,73 @@ class QueryProbeCliTest(unittest.TestCase):
                 json.loads(output.read_text(encoding="utf-8")),
                 [{"name": "value", "one": 1}],
             )
+
+    def test_query_cli_renders_public_parameters_and_modules(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            trace = root / "trace.pftrace"
+            trace.write_bytes(b"trace")
+            captured: dict[str, object] = {}
+            output = root / "result.json"
+
+            def fake_run_query(*args: object, **kwargs: object) -> object:
+                captured.update(kwargs)
+                return type("Result", (), {"stdout": '"value"\n1\n', "stderr": ""})()
+
+            with mock.patch.object(self.query, "run_query", side_effect=fake_run_query):
+                exit_code = self.query.main(
+                    [
+                        str(trace),
+                        "--sql",
+                        "SELECT ${start_ts} AS value WHERE '${package}' != ''",
+                        "--param",
+                        "start_ts=123",
+                        "--param",
+                        'package="com.example"',
+                        "--module",
+                        "android.startup.startups",
+                        "--output",
+                        str(output),
+                    ]
+                )
+            self.assertEqual(exit_code, 0)
+            self.assertIn(
+                "INCLUDE PERFETTO MODULE android.startup.startups;",
+                captured["sql"],
+            )
+            self.assertIn("SELECT 123 AS value", captured["sql"])
+            self.assertIn("'com.example'", captured["sql"])
+
+    def test_query_cli_binds_prior_json_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            trace = root / "trace.pftrace"
+            trace.write_bytes(b"trace")
+            prior = root / "prior.json"
+            prior.write_text('[{"value": 7}]', encoding="utf-8")
+            captured: dict[str, object] = {}
+            output = root / "result.json"
+
+            def fake_run_query(*args: object, **kwargs: object) -> object:
+                captured.update(kwargs)
+                return type("Result", (), {"stdout": '"value"\n7\n', "stderr": ""})()
+
+            with mock.patch.object(self.query, "run_query", side_effect=fake_run_query):
+                exit_code = self.query.main(
+                    [
+                        str(trace),
+                        "--sql",
+                        "SELECT value, ${prior.data[0].value} AS scalar "
+                        "FROM ${prior}",
+                        "--result",
+                        f"prior={prior}",
+                        "--output",
+                        str(output),
+                    ]
+                )
+            self.assertEqual(exit_code, 0)
+            self.assertIn('SELECT 7 AS "value"', captured["sql"])
+            self.assertIn("SELECT value, 7 AS scalar", captured["sql"])
 
     def test_probe_cli_records_identity_bounds_and_capabilities(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

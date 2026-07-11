@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 #### touch_tracking Core Strategy
 
 **Route card**: 跟手度 / 跟手 / 跟随 / follow finger / touch tracking / 触控延迟 / 持续延迟 / 滑动跟随 / input to display / 管线延迟
@@ -24,8 +26,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 遵循通用输出契约。
 
 
-**Detail ref**
-- `touch_tracking:full`: 跟手度分析（用户提到 跟手度、跟手延迟、follow finger、touch tracking） 的完整 phase recipe、SQL、fetch_artifact 表、决策树和边界说明。
+
 
 
 <!-- strategy-detail id="full" title="touch_tracking full strategy detail" keywords="touch_tracking,跟手度,跟手,跟随,follow finger,touch tracking,触控延迟,持续延迟,滑动跟随,input to display,管线延迟,pipeline latency,触摸跟踪,跟手度分析（用户提到 跟手度、跟手延迟、follow finger、touch tracking）,detail,full" default="true" -->

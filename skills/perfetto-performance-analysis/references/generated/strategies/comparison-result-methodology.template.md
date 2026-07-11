@@ -7,6 +7,8 @@ Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
+`execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
 ## 分析结果对比方法论
 
 该方法论只适用于持久化 `AnalysisResultSnapshot` 的对比。它与旧的双 Trace raw-data 对比不同：默认比较已完成分析的结构化结果，只有在明确允许且资源预算允许时才回查原 Trace。

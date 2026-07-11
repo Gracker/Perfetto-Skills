@@ -57,6 +57,16 @@ class SkillContractTest(unittest.TestCase):
             {"trace", "findings", "evidence", "limitations"}.issubset(required)
         )
 
+    def test_portable_parameter_and_comparison_adapters_exist(self) -> None:
+        for relative in (
+            "scripts/perfetto_compare.py",
+            "assets/comparison-input-schema.json",
+        ):
+            self.assertTrue((SKILL / relative).is_file(), relative)
+        query_help = (SKILL / "scripts/perfetto_query.py").read_text(encoding="utf-8")
+        for option in ("--param", "--result", "--module", "--max-output-bytes"):
+            self.assertIn(option, query_help)
+
 
 if __name__ == "__main__":
     unittest.main()
