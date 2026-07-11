@@ -57,8 +57,8 @@ The portable core follows the open Agent Skills specification:
 - each discoverable Skill is a directory whose name matches its frontmatter
   `name`;
 - `SKILL.md` starts at byte zero with YAML frontmatter;
-- portable metadata uses only `name`, `description`, `license`,
-  `compatibility`, and string-valued `metadata`;
+- portable metadata uses only `name`, `description`, `license`, and
+  string-valued `metadata`;
 - detailed content is progressively disclosed through `references/`,
   `scripts/`, and `assets/`;
 - client-specific metadata is isolated in adapter files and is never required
@@ -66,7 +66,9 @@ The portable core follows the open Agent Skills specification:
 
 Canonical content lives under `skills/`. Installers copy or link the same tree
 into `.agents/skills`, `.claude/skills`, or `.opencode/skills`; there are no
-separate Claude, Codex, and OpenCode copies.
+separate Claude, Codex, and OpenCode copies. Optional Codex UI metadata lives in
+the Skill-local `agents/openai.yaml` sidecar and does not affect portable
+behavior.
 
 ## Chosen Architecture
 
@@ -104,26 +106,23 @@ Perfetto-Skills/
 ├── skills/
 │   └── perfetto-performance-analysis/
 │       ├── SKILL.md
+│       ├── agents/
+│       │   └── openai.yaml
 │       ├── scripts/
 │       │   ├── perfetto_query.py
 │       │   ├── perfetto_probe.py
 │       │   └── bootstrap_trace_processor.py
 │       ├── references/
+│       │   ├── workflow-index.json
 │       │   ├── workflows/
 │       │   ├── evidence/
 │       │   ├── knowledge/
 │       │   ├── pipelines/
 │       │   └── sql/
 │       └── assets/
-│           ├── report-schema.json
-│           └── workflow-index.json
-├── adapters/
-│   ├── codex/
-│   ├── claude-code/
-│   └── opencode/
+│           └── report-schema.json
 ├── catalog/
 │   ├── smartperfetto-export.json
-│   ├── workflow-index.json
 │   └── trace-processor-lock.json
 ├── tools/
 │   ├── export_from_smartperfetto.py
@@ -300,7 +299,7 @@ Required gates:
   plus explicit local override.
 - **False causal claims:** preserve evidence/claim boundaries from current
   strategies and require provenance in every report.
-- **SmartPerfetto product coupling:** adapters are optional and all required
+- **SmartPerfetto product coupling:** client metadata is optional and all required
   workflows operate with local files and `trace_processor_shell` alone.
 
 ## Completion Criteria

@@ -15,7 +15,7 @@
 - License: AGPL-3.0-or-later for SmartPerfetto-derived work; preserve upstream Perfetto Apache-2.0 notices.
 - Portable runtime must not require SmartPerfetto, Node.js, MCP, DataEnvelope, Provider Manager, SSE, or UI services.
 - Runtime Python floor: 3.11; development/test Python supports 3.11, 3.12, and 3.13.
-- `SKILL.md` uses only portable stable fields: `name`, `description`, `license`, `compatibility`, and string-valued `metadata`.
+- `SKILL.md` uses only portable fields accepted by both official validators: `name`, `description`, `license`, and string-valued `metadata`.
 - No trace processor binary is committed; every downloaded binary is selected from a lock file and SHA-256 verified.
 - SmartPerfetto remains the domain source of truth; generated public references are never hand-edited.
 - Every SmartPerfetto runtime Skill candidate must appear in the generated catalog with an exported, merged, or product-only disposition and a destination/reason.
@@ -34,6 +34,7 @@
 - Create: `CONTRIBUTING.md`
 - Create: `AGENTS.md`
 - Create: `pyproject.toml`
+- Create: `uv.lock`
 - Create: `tools/verify.py`
 - Test: `tests/unit/test_repository_contract.py`
 
@@ -78,10 +79,6 @@ Expected: FAIL naming the first missing governance file.
 Use the full AGPL-3.0 license text from SmartPerfetto. Set `pyproject.toml` to:
 
 ```toml
-[build-system]
-requires = ["hatchling>=1.27,<2"]
-build-backend = "hatchling.build"
-
 [project]
 name = "perfetto-skills-dev"
 version = "0.1.0"
@@ -93,9 +90,11 @@ dependencies = []
 [project.optional-dependencies]
 dev = ["PyYAML==6.0.2", "skills-ref==0.1.1"]
 
-[tool.hatch.build.targets.wheel]
-packages = []
+[tool.uv]
+package = false
 ```
+
+Run `uv lock` after writing the file and commit the resulting lock file.
 
 Document in `AGENTS.md` that generated files are read-only, the exporter is the
 source of generated references, and the only supported gate is
@@ -143,7 +142,7 @@ Expected: PASS.
 - [ ] **Step 6: Commit the governance baseline**
 
 ```bash
-git add .gitignore README.md LICENSE NOTICE SECURITY.md CONTRIBUTING.md AGENTS.md pyproject.toml tools/verify.py tests/unit/test_repository_contract.py
+git add .gitignore README.md LICENSE NOTICE SECURITY.md CONTRIBUTING.md AGENTS.md pyproject.toml uv.lock tools/verify.py tests/unit/test_repository_contract.py
 git commit -m "chore: establish public repository contract"
 ```
 
@@ -152,7 +151,7 @@ git commit -m "chore: establish public repository contract"
 **Files:**
 - Create: `skills/perfetto-performance-analysis/SKILL.md`
 - Create: `skills/perfetto-performance-analysis/assets/report-schema.json`
-- Create: `skills/perfetto-performance-analysis/assets/workflow-index.json`
+- Create: `skills/perfetto-performance-analysis/references/workflow-index.json`
 - Create: `skills/perfetto-performance-analysis/references/evidence/evidence-contract.md`
 - Create: `skills/perfetto-performance-analysis/references/workflows/index.md`
 - Create: `tests/unit/test_skill_contract.py`
@@ -181,7 +180,7 @@ class SkillContractTest(unittest.TestCase):
         self.assertIn("name: perfetto-performance-analysis", text.split("---", 2)[1])
 
     def test_all_workflow_files_exist(self) -> None:
-        index = json.loads((SKILL / "assets" / "workflow-index.json").read_text())
+        index = json.loads((SKILL / "references" / "workflow-index.json").read_text())
         self.assertGreaterEqual(len(index["workflows"]), 12)
         for workflow in index["workflows"]:
             self.assertTrue((SKILL / workflow["reference"]).is_file(), workflow["id"])
@@ -197,7 +196,24 @@ Run: `python3 -m unittest tests.unit.test_skill_contract -v`
 
 Expected: ERROR because `SKILL.md` and the workflow index do not exist.
 
-- [ ] **Step 3: Write the portable `SKILL.md` router**
+- [ ] **Step 3: Initialize the Skill with the official Skill Creator script**
+
+Run:
+
+```bash
+python3 /Users/chris/.codex/skills/.system/skill-creator/scripts/init_skill.py \
+  perfetto-performance-analysis \
+  --path skills \
+  --resources scripts,references,assets \
+  --interface display_name="Perfetto Performance Analysis" \
+  --interface short_description="Evidence-driven Perfetto trace analysis" \
+  --interface default_prompt='Use $perfetto-performance-analysis to analyze this Perfetto trace and support every conclusion with query evidence.'
+```
+
+Expected: the Skill directory, resource directories, and
+`agents/openai.yaml` are created without example files.
+
+- [ ] **Step 4: Replace the generated template with the portable `SKILL.md` router**
 
 The frontmatter must be exactly portable in shape:
 
@@ -206,7 +222,6 @@ The frontmatter must be exactly portable in shape:
 name: perfetto-performance-analysis
 description: Analyze Android, Linux, and Chromium Perfetto traces with local trace_processor_shell evidence. Use for startup, scrolling or jank, input latency, ANR, CPU scheduling, memory or GC, Binder or IO, GPU or SurfaceFlinger, power or thermal, rendering-pipeline identification, trace capture guidance, and single- or multi-trace performance comparison.
 license: AGPL-3.0-or-later
-compatibility: Python 3.11+ and Perfetto trace_processor_shell; supports Codex, Claude Code, OpenCode, and other Agent Skills clients with filesystem and terminal access.
 metadata:
   version: "0.1.0"
   source: "https://github.com/Gracker/Perfetto-Skills"
@@ -218,9 +233,9 @@ workflow from the JSON index; execute deterministic SQL through the bundled
 script; preserve trace/process/time identity; distinguish missing evidence from
 negative evidence; verify every claim; and write the report schema.
 
-- [ ] **Step 4: Add the workflow and report schemas**
+- [ ] **Step 5: Add the workflow and report schemas**
 
-`workflow-index.json` contains these stable IDs:
+`references/workflow-index.json` contains these stable IDs:
 
 ```json
 {
@@ -248,7 +263,16 @@ Create each referenced workflow file with the shared contract headings so the
 index is valid before content migration: Purpose, Inputs, Availability gate,
 Evidence sequence, Interpretation boundaries, Deep dives, Report requirements.
 
-- [ ] **Step 5: Validate the Skill and run unit tests**
+- [ ] **Step 6: Validate the Skill with both official validators and run unit tests**
+
+Run:
+
+```bash
+python3 /Users/chris/.codex/skills/.system/skill-creator/scripts/quick_validate.py \
+  skills/perfetto-performance-analysis
+```
+
+Expected: `Skill is valid!`.
 
 Run: `skills-ref validate skills/perfetto-performance-analysis`
 
@@ -258,7 +282,7 @@ Run: `python3 -m unittest tests.unit.test_skill_contract -v`
 
 Expected: PASS.
 
-- [ ] **Step 6: Wire standards validation into `tools/verify.py` and commit**
+- [ ] **Step 7: Wire standards validation into `tools/verify.py` and commit**
 
 Add:
 
@@ -554,7 +578,7 @@ git commit -m "feat: catalog SmartPerfetto skill coverage"
 - Create generated: `skills/perfetto-performance-analysis/references/generated/strategies/*.md`
 - Create generated: `skills/perfetto-performance-analysis/references/generated/knowledge/*.md`
 - Create generated: `skills/perfetto-performance-analysis/references/generated/pipelines/*.md`
-- Create generated: `skills/perfetto-performance-analysis/assets/generated-catalog.json`
+- Create generated: `skills/perfetto-performance-analysis/references/generated/catalog.json`
 - Test: `tests/unit/test_generated_references.py`
 
 **Interfaces:**
@@ -625,7 +649,7 @@ only frontmatter fields and injected product instructions that require
 `submit_plan`, `invoke_skill`, SmartPerfetto artifact APIs, session state, or UI
 actions; retain phase recipes, evidence boundaries, schema/table guidance,
 misdiagnosis guards, and report checks. The exporter records every stripped
-section in `generated-catalog.json` with a reason.
+section in `references/generated/catalog.json` with a reason.
 
 - [ ] **Step 5: Export all rendering pipelines and docs**
 
@@ -658,7 +682,7 @@ Expected: PASS with every catalog destination present.
 Commit:
 
 ```bash
-git add tools/export_from_smartperfetto.py catalog skills/perfetto-performance-analysis/references/generated skills/perfetto-performance-analysis/assets/generated-catalog.json tests/unit/test_generated_references.py
+git add tools/export_from_smartperfetto.py catalog skills/perfetto-performance-analysis/references/generated tests/unit/test_generated_references.py
 git commit -m "feat: export complete SmartPerfetto evidence catalog"
 ```
 
@@ -699,7 +723,7 @@ REQUIRED = (
 
 class WorkflowCoverageTest(unittest.TestCase):
     def test_every_workflow_has_complete_contract(self) -> None:
-        index = json.loads((SKILL / "assets" / "workflow-index.json").read_text())
+        index = json.loads((SKILL / "references" / "workflow-index.json").read_text())
         for item in index["workflows"]:
             text = (SKILL / item["reference"]).read_text()
             for heading in REQUIRED:
@@ -758,13 +782,11 @@ git add skills/perfetto-performance-analysis/references tests/unit/test_workflow
 git commit -m "feat: migrate Perfetto analysis workflows"
 ```
 
-### Task 7: Client installers and adapter metadata
+### Task 7: Client installer and optional Codex metadata
 
 **Files:**
 - Create: `tools/install.py`
-- Create: `adapters/codex/agents/openai.yaml`
-- Create: `adapters/claude-code/README.md`
-- Create: `adapters/opencode/README.md`
+- Modify: `skills/perfetto-performance-analysis/agents/openai.yaml`
 - Create: `tests/unit/test_installer.py`
 - Modify: `README.md`
 
@@ -820,11 +842,12 @@ Copy to a temporary sibling directory, validate `SKILL.md`, then atomically
 rename. With `--force`, move the old install to a backup until the new rename
 succeeds, then remove the backup.
 
-- [ ] **Step 4: Add optional client-specific metadata**
+- [ ] **Step 4: Validate optional Codex UI metadata**
 
-Codex `agents/openai.yaml` may describe UI text and optional terminal tools but
-must not change Skill behavior. Claude Code and OpenCode adapter docs describe
-their discovery path only; they do not duplicate `SKILL.md`.
+The Skill-local `agents/openai.yaml` contains only `interface.display_name`,
+`interface.short_description`, and `interface.default_prompt`. The prompt must
+mention `$perfetto-performance-analysis`. Do not declare MCP dependencies,
+because the portable Skill runs through local scripts.
 
 - [ ] **Step 5: Run installer tests and isolated discovery smoke tests**
 
@@ -838,7 +861,7 @@ Run three installs under a temporary home and confirm each installed
 - [ ] **Step 6: Commit installer and public instructions**
 
 ```bash
-git add tools/install.py adapters README.md tests/unit/test_installer.py
+git add tools/install.py skills/perfetto-performance-analysis/agents/openai.yaml README.md tests/unit/test_installer.py
 git commit -m "feat: support cross-client skill installation"
 ```
 
@@ -1047,7 +1070,8 @@ and generated catalog. Produce `.zip`, `.tar.gz`, and `SHA256SUMS`.
 - [ ] **Step 4: Add CI verification**
 
 The verification workflow checks out Perfetto-Skills and SmartPerfetto at the
-catalog's pinned source commit, installs `.[dev]` with Python 3.11/3.12/3.13,
+catalog's pinned source commit, runs `uv sync --extra dev` with Python
+3.11/3.12/3.13,
 runs `python tools/verify.py --smartperfetto ../SmartPerfetto`, and uploads test
 logs only on failure. Do not log trace contents.
 
@@ -1153,7 +1177,7 @@ In a temporary directory:
 gh repo clone Gracker/Perfetto-Skills
 cd Perfetto-Skills
 python3 -m venv .venv
-.venv/bin/python -m pip install -e '.[dev]'
+uv sync --extra dev
 .venv/bin/python tools/verify.py --smartperfetto /absolute/path/to/SmartPerfetto
 .venv/bin/python tools/install.py --client codex --home "$PWD/.smoke-home"
 skills-ref validate skills/perfetto-performance-analysis
