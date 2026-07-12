@@ -3,7 +3,7 @@
 `manifest.json` is the source of truth for Perfetto-Skills' independently owned
 real-trace test matrix. The small Apache-2.0 API 32 warm-start trace under
 `smoke/` is committed for offline verification. Larger traces are distributed
-only in the immutable `fixtures-v1` GitHub Release asset and are never included
+only in the immutable `fixtures-v2` GitHub Release asset and are never included
 in the installable Skill archive.
 
 Every release-blocking trace has immutable provenance, redistribution approval,

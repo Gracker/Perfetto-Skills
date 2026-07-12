@@ -22,7 +22,12 @@ def valid_fixture(**updates: object) -> dict[str, object]:
             "redistribution_review": "approved",
         },
         "real": True,
-        "privacy_review": {"status": "passed", "reviewed_at": "2026-07-12"},
+        "privacy_review": {
+            "status": "passed",
+            "reviewed_at": "2026-07-12",
+            "scanner": "fixture-privacy-v2",
+            "evidence": "privacy-scan-v2.json",
+        },
         "capture": {"config": "embedded_in_trace"},
         "platform": {"api": 32, "oem": "AOSP", "kernel": "unknown"},
         "capabilities": ["android_startup"],

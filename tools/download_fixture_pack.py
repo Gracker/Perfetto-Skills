@@ -14,8 +14,10 @@ from typing import BinaryIO, Callable
 from urllib.request import urlopen
 
 try:
+    from tools.build_fixture_pack import EVIDENCE_MEMBERS
     from tools.fixture_manifest import load_manifest, sha256_file, validate_manifest
 except ModuleNotFoundError:  # Direct script execution.
+    from build_fixture_pack import EVIDENCE_MEMBERS
     from fixture_manifest import load_manifest, sha256_file, validate_manifest
 
 
@@ -32,7 +34,11 @@ def _verify_root(root: Path, lock: dict[str, object]) -> None:
     issues = validate_manifest(manifest)
     if issues:
         raise ValueError("invalid fixture manifest: " + "; ".join(issues))
-    expected = {"manifest.json", *(fixture["path"] for fixture in manifest["fixtures"])}
+    expected = {
+        "manifest.json",
+        *EVIDENCE_MEMBERS,
+        *(fixture["path"] for fixture in manifest["fixtures"]),
+    }
     actual = {
         path.relative_to(root).as_posix()
         for path in root.rglob("*")
@@ -47,6 +53,12 @@ def _verify_root(root: Path, lock: dict[str, object]) -> None:
         path = root / fixture["path"]
         if path.is_symlink() or sha256_file(path) != fixture["sha256"]:
             raise ValueError(f"fixture checksum mismatch: {fixture['path']}")
+    evidence_hashes = lock.get("evidence_sha256")
+    if not isinstance(evidence_hashes, dict) or set(evidence_hashes) != set(EVIDENCE_MEMBERS):
+        raise ValueError("fixture evidence checksums are incomplete")
+    for name, expected_sha256 in evidence_hashes.items():
+        if sha256_file(root / name) != expected_sha256:
+            raise ValueError(f"fixture evidence checksum mismatch: {name}")
 
 
 def download_pack(
@@ -107,6 +119,7 @@ def download_pack(
             manifest = load_manifest(manifest_path)
             expected = {
                 "manifest.json",
+                *EVIDENCE_MEMBERS,
                 *(fixture["path"] for fixture in manifest.get("fixtures", [])),
             }
             if set(names) != expected or len(names) != len(expected):

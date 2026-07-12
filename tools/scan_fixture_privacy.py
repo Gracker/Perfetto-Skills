@@ -15,7 +15,7 @@ except ModuleNotFoundError:  # Direct script execution.
     from fixture_manifest import sha256_file
 
 
-RULESET_VERSION = "fixture-privacy-v1"
+RULESET_VERSION = "fixture-privacy-v2"
 RULES = (
     (
         "email",
@@ -34,10 +34,25 @@ RULES = (
         ),
     ),
     ("private_home_path", re.compile(rb"/(?:Users|home)/[^/\x00\s]+/")),
+    (
+        "account_identifier",
+        re.compile(
+            rb"(?i)(?:account(?:_?name|_?id)?|user_?email)[=:][ \t]*"
+            rb"[A-Za-z0-9._@+-]{3,128}"
+        ),
+    ),
+)
+IDENTIFIER = re.compile(
+    rb"\b(?:[A-Za-z][A-Za-z0-9_]*\.){2,}[A-Za-z][A-Za-z0-9_:$-]*\b"
 )
 
 
-def scan_file(path: Path) -> dict[str, object]:
+def scan_file(
+    path: Path,
+    *,
+    identifier_reviewer: str | None = None,
+    reviewed_at: str | None = None,
+) -> dict[str, object]:
     payload = path.read_bytes()
     findings: list[dict[str, object]] = []
     for rule, pattern in RULES:
@@ -52,12 +67,25 @@ def scan_file(path: Path) -> dict[str, object]:
                 }
             )
     findings.sort(key=lambda item: (int(item["offset"]), str(item["rule"])))
+    identifier_hashes = sorted(
+        {hashlib.sha256(match.group(0)).hexdigest() for match in IDENTIFIER.finditer(payload)}
+    )
+    identifier_inventory_sha256 = hashlib.sha256(
+        "\n".join(identifier_hashes).encode("ascii")
+    ).hexdigest()
     return {
         "path": path.name,
         "sha256": sha256_file(path),
         "ruleset": RULESET_VERSION,
         "passed": not findings,
         "findings": findings,
+        "identifier_review": {
+            "status": "approved" if identifier_reviewer and reviewed_at else "pending",
+            "reviewer": identifier_reviewer,
+            "reviewed_at": reviewed_at,
+            "inventory_count": len(identifier_hashes),
+            "inventory_sha256": identifier_inventory_sha256,
+        },
     }
 
 
@@ -65,8 +93,19 @@ def main(arguments: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("trace", nargs="+", type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--approve-identifiers", metavar="REVIEWER")
+    parser.add_argument("--reviewed-at", metavar="YYYY-MM-DD")
     args = parser.parse_args(arguments)
-    results = [scan_file(path) for path in args.trace]
+    if bool(args.approve_identifiers) != bool(args.reviewed_at):
+        parser.error("--approve-identifiers and --reviewed-at must be provided together")
+    results = [
+        scan_file(
+            path,
+            identifier_reviewer=args.approve_identifiers,
+            reviewed_at=args.reviewed_at,
+        )
+        for path in args.trace
+    ]
     report = {"ruleset": RULESET_VERSION, "results": results}
     output = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.output:
@@ -74,7 +113,11 @@ def main(arguments: list[str] | None = None) -> int:
         args.output.write_text(output, encoding="utf-8")
     else:
         print(output, end="")
-    return 0 if all(bool(result["passed"]) for result in results) else 1
+    return 0 if all(
+        bool(result["passed"])
+        and result["identifier_review"]["status"] == "approved"
+        for result in results
+    ) else 1
 
 
 if __name__ == "__main__":

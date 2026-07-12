@@ -5,7 +5,7 @@ import tarfile
 import tempfile
 import unittest
 
-from tools.build_fixture_pack import build_pack
+from tools.build_fixture_pack import EVIDENCE_MEMBERS, build_pack
 from tools.download_fixture_pack import download_pack
 from tools.fixture_manifest import sha256_file
 
@@ -30,7 +30,11 @@ def write_manifest(root: Path, payload: bytes = b"real trace") -> Path:
                     "redistribution_review": "approved",
                 },
                 "real": True,
-                "privacy_review": {"status": "passed"},
+                "privacy_review": {
+                    "status": "passed",
+                    "scanner": "fixture-privacy-v2",
+                    "evidence": "privacy-scan-v2.json",
+                },
                 "capture": {"config": "test"},
                 "platform": {"api": 32},
                 "capabilities": ["startup"],
@@ -40,7 +44,33 @@ def write_manifest(root: Path, payload: bytes = b"real trace") -> Path:
     }
     path = root / "manifest.json"
     path.write_text(json.dumps(manifest, sort_keys=True), encoding="utf-8")
+    (root / "licenses").mkdir()
+    (root / "licenses/AGPL-3.0.txt").write_text("AGPL", encoding="utf-8")
+    (root / "licenses/Apache-2.0.txt").write_text("Apache", encoding="utf-8")
+    (root / "NOTICE").write_text("notice", encoding="utf-8")
+    (root / "privacy-scan-v2.json").write_text(
+        json.dumps(
+            {
+                "ruleset": "fixture-privacy-v2",
+                "results": [
+                    {
+                        "sha256": sha256_file(trace),
+                        "passed": True,
+                        "identifier_review": {"status": "approved"},
+                    }
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
     return path
+
+
+def evidence_hashes(root: Path) -> dict[str, str]:
+    return {
+        name: sha256_file(root / relative)
+        for name, relative in EVIDENCE_MEMBERS.items()
+    }
 
 
 class FixturePackTest(unittest.TestCase):
@@ -73,6 +103,7 @@ class FixturePackTest(unittest.TestCase):
                         "url": "https://example.invalid/fixtures.tar.gz",
                         "sha256": sha256_file(archive),
                         "manifest_sha256": sha256_file(manifest),
+                        "evidence_sha256": evidence_hashes(root),
                     }
                 ),
                 encoding="utf-8",
@@ -104,6 +135,7 @@ class FixturePackTest(unittest.TestCase):
                                 "url": "https://example.invalid/fixtures.tar.gz",
                                 "sha256": sha256_file(archive),
                                 "manifest_sha256": sha256_file(manifest),
+                                "evidence_sha256": evidence_hashes(root),
                             }
                         ),
                         encoding="utf-8",

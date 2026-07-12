@@ -109,6 +109,11 @@ def validate_manifest(manifest: dict[str, Any]) -> list[str]:
         privacy = fixture.get("privacy_review")
         if not isinstance(privacy, dict) or privacy.get("status") != "passed":
             issues.append(f"{prefix}: privacy review must pass")
+        elif (
+            privacy.get("scanner") != "fixture-privacy-v2"
+            or privacy.get("evidence") != "privacy-scan-v2.json"
+        ):
+            issues.append(f"{prefix}: privacy review must reference v2 evidence")
 
         assertions = fixture.get("assertions")
         if not isinstance(assertions, list):
