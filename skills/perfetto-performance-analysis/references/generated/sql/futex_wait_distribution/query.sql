@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/futex_wait_distribution.skill.yaml
 -- Source SHA-256: b4995afc55c08909120af15f468a3cfe33d21ec3543ae7509296c2f7dec683fd
--- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+-- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 WITH bounds AS (
   SELECT

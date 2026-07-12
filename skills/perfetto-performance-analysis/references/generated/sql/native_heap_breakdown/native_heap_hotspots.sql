@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/native_heap_breakdown.skill.yaml
 -- Source SHA-256: 9de17b88dbea86451c2107ac4494967a6a6bb290b473eefe52f7650cc9e00550
--- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+-- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 WITH input AS (
   SELECT

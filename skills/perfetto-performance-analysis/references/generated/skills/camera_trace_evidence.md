@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/camera_trace_evidence.skill.yaml
-Source SHA-256: e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b
-Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+Source SHA-256: d2f99680715212f30bafe86e1323d04cb469e5582ac89cad1e8c7b48f92e9c2e
+Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 # Camera Trace 证据
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -20,7 +20,7 @@ tier: B
 
 ```yaml
 display_name: Camera Trace 证据
-description: 枚举 Camera 相关 identity、slice、Binder、系统上下文、DMA-BUF 与可选 Pixel stage 证据
+description: 枚举 Camera 相关 identity、slice、Binder、系统上下文、DMA-BUF/legacy ION 与可选 Pixel stage 证据
 icon: photo_camera
 tags:
 - camera
@@ -28,6 +28,7 @@ tags:
 - evidence
 - binder
 - dmabuf
+- ion
 - pixel
 ```
 
@@ -39,16 +40,10 @@ keywords:
   - Camera
   - 相机
   - 打开相机
-  - 预览
-  - 拍照
-  - DMA-BUF
   - 相机内存
   en:
   - camera
   - camera open
-  - preview
-  - capture
-  - dmabuf
   - camera memory
 patterns:
 - .*(camera|Camera|相机).*(open|preview|capture|打开|预览|拍照|DMA|dmabuf).*
@@ -323,7 +318,7 @@ synthesize:
   - key: source
     label: 来源
 ```
-### Camera DMA-BUF 窗口摘要
+### Camera DMA-BUF/legacy ION window evidence
 
 - ID: `camera_dmabuf_summary`
 - Type: `atomic`
@@ -335,7 +330,7 @@ type: atomic
 display:
   layer: list
   level: detail
-  title: Camera 相关 DMA-BUF 事件摘要
+  title: Camera DMA-BUF/legacy ION window evidence
   columns:
   - name: process_name
     label: 进程
@@ -346,6 +341,9 @@ display:
   - name: pid
     label: PID
     type: number
+  - name: memory_source
+    label: 内存来源
+    type: string
   - name: allocation_count
     label: 分配次数
     type: number
@@ -374,6 +372,8 @@ synthesize:
   fields:
   - key: process_name
     label: 进程
+  - key: memory_source
+    label: 内存来源
   - key: allocation_bytes
     label: 窗口内分配量
   - key: release_bytes

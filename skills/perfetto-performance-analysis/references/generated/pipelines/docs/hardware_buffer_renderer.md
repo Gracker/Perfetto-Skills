@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/hardware_buffer_renderer.md
 Source SHA-256: 225ac26040e4038d32e0ce7daf9de78bd902d05c918dc6686b6878ba2d4938b7
-Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 # Hardware Buffer Renderer Pipeline (Android 14+)
 

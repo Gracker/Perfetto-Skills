@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/camera_trace_evidence.skill.yaml
--- Source SHA-256: e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b
--- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+-- Source SHA-256: d2f99680715212f30bafe86e1323d04cb469e5582ac89cad1e8c7b48f92e9c2e
+-- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 WITH
 raw_input AS (
@@ -76,10 +76,20 @@ frame_count AS (
   WHERE ts < input.end_ts
     AND ts + IIF(dur = -1, trace_end() - ts, dur) > input.start_ts
 ),
-dmabuf_count AS (
-  SELECT COUNT(*) AS candidate_count
-  FROM android_dmabuf_allocs, input
-  WHERE ts >= input.start_ts AND ts < input.end_ts
+buffer_memory_count AS (
+  SELECT
+    (SELECT COUNT(*)
+     FROM android_dmabuf_allocs, input
+     WHERE ts >= input.start_ts
+       AND ts < input.end_ts)
+    +
+    (SELECT COUNT(*)
+     FROM counter AS c
+     JOIN thread_counter_track AS tct ON c.track_id = tct.id
+     CROSS JOIN input
+     WHERE tct.name GLOB 'mem.ion_change*'
+       AND c.ts >= input.start_ts
+       AND c.ts < input.end_ts) AS candidate_count
 ),
 pixel_count AS (
   SELECT COUNT(*) AS candidate_count
@@ -138,9 +148,9 @@ SELECT
   'dmabuf_allocations',
   CASE WHEN candidate_count > 0 THEN 'available' ELSE 'missing' END,
   candidate_count,
-  'android_dmabuf_allocs',
-  'DMA-BUF allocation deltas are memory evidence; they do not alone prove a leak.'
-FROM dmabuf_count
+  'android_dmabuf_allocs; counter + thread_counter_track (mem.ion_change*)',
+  'DMA-BUF and legacy ION signed deltas cover only observed events; they are not retained memory or leak proof.'
+FROM buffer_memory_count
 UNION ALL
 SELECT
   'pixel_camera_frames',

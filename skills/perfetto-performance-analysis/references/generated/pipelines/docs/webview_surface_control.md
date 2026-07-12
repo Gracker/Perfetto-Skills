@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/webview_surface_control.md
 Source SHA-256: 487621205713f4205e0a7288ca39b6c3f7541547da93e9c1556f8bc041e10d2f
-Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 # WebView SurfaceControl Pipeline (Viz/OOP-R)
 
