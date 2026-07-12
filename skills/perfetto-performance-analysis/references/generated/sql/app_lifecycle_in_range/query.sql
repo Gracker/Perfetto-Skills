@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/app_lifecycle_in_range.skill.yaml
 -- Source SHA-256: 46a213c077050ea2c95c604806c96bb5c113ed136f248dffca36700952df16f2
--- Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+-- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
 
 WITH lifecycle_events AS (
   SELECT
