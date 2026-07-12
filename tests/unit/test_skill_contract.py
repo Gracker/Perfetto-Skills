@@ -20,8 +20,10 @@ class SkillContractTest(unittest.TestCase):
         self.assertIn("Use for", frontmatter["description"])
         self.assertLessEqual(len(frontmatter["description"]), 1024)
         self.assertEqual(
-            set(frontmatter), {"name", "description", "license", "metadata"}
+            set(frontmatter),
+            {"name", "description", "license", "compatibility", "metadata"},
         )
+        self.assertIn("Python 3.11", frontmatter["compatibility"])
 
     def test_all_workflow_files_exist_and_are_directly_linked(self) -> None:
         index_path = SKILL / "references" / "workflow-index.json"

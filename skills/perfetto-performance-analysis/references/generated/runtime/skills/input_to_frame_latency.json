@@ -1,0 +1,122 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      },
+      {
+        "id": "android_input_source",
+        "selection": "data-source descriptor, build type, config, then rows",
+        "version_hint": {
+          "proto_input_min_api_hint": 34
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "VSYNC-app"
+    ]
+  },
+  "id": "input_to_frame_latency",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "事件动作过滤（默认 MOVE）",
+      "name": "event_action_filter",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Pipeline ID (Phase F: pipeline-aware optional input)",
+      "name": "pipeline_id",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.input"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
+    "sha256": "3f8a18a4750d12e34a5556236cf069b5e09eaf1c3c3cf2cc5af513f635809c46"
+  },
+  "steps": [
+    {
+      "id": "vsync_period",
+      "name": "VSync 周期检测",
+      "query_id": "input_to_frame_latency/vsync_period",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "id": "input_sampling_rate",
+      "name": "输入采样率检测",
+      "query_id": "input_to_frame_latency/input_sampling_rate",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "id": "per_frame_latency",
+      "name": "逐帧延迟",
+      "query_id": "input_to_frame_latency/per_frame_latency",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "id": "latency_statistics",
+      "name": "延迟统计",
+      "query_id": "input_to_frame_latency/latency_statistics",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "id": "latency_spikes",
+      "name": "延迟飙升检测",
+      "query_id": "input_to_frame_latency/latency_spikes",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "2.0",
+  "workflow": "interaction"
+}

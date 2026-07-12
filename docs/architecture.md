@@ -22,8 +22,9 @@ This repository owns the portable projection:
 - `references/evidence/` and `references/knowledge/`: portable evidence and
   interpretation boundaries.
 - `references/generated/`: generated Skill references, SQL, strategies,
-  knowledge, and rendering-pipeline documents.
-- `scripts/`: local trace-processor bootstrap, probe, and query CLIs.
+  knowledge, rendering-pipeline documents, and sharded runtime manifests.
+- `scripts/`: local trace-processor bootstrap, release doctor, capability probe,
+  deterministic Skill executor, query, comparison, and report CLIs.
 
 SmartPerfetto runtime services are deliberately absent. Provider selection,
 session state, product artifacts, DataEnvelope rendering, streaming, reports,
@@ -32,17 +33,23 @@ snapshots, and frontend behavior remain in the product repository.
 ## Analysis flow
 
 1. The client discovers `perfetto-performance-analysis` from `SKILL.md`.
-2. The router records trace identity and loads the evidence contract.
-3. `perfetto_probe.py` establishes trace bounds, tables, metadata, and broad
-   capability availability.
-4. The agent selects one workflow from `workflow-index.json`.
-5. The workflow links only the generated definitions and SQL needed for the
-   question. The agent executes queries through `perfetto_query.py` and saves
-   source, parameters, units, identity, interval, and row bounds.
-6. Findings climb from observation to correlation, mechanism evidence, and
-   verified root cause. Reports follow `assets/report-schema.json`.
-7. Multi-trace work repeats steps 2-6 independently for every side before any
-   delta or causal attribution.
+2. `perfetto_doctor.py` verifies the selected binary against the v57.2 commit,
+   RPC API, platform, and SHA-256 release lock.
+3. `perfetto_probe.py` establishes trace bounds and five-state capability
+   evidence: unsupported, not recorded, recorded empty, recorded populated, or
+   unknown.
+4. The agent selects one workflow from `workflow-index.json` and invokes
+   `perfetto_skill.py run` for its exported root Skill.
+5. The executor lazily loads only the transitive Skill and SQL shards. It
+   applies typed defaults, prerequisites, identity rules, safe conditions,
+   persistent SQL setup dependencies, child Skills, bounded iterators,
+   diagnostics, empty/error semantics, and explicit AI handoffs.
+6. Every query emits stable evidence with trace, source, rendered SQL,
+   validation, compatibility, and processor identity. The agent promotes those
+   observations only through the evidence contract; reports are checked by
+   `perfetto_report.py` against `assets/report-schema.json`.
+7. Multi-trace work repeats the complete run independently for every side
+   before `perfetto_compare.py` admits any metric delta or causal attribution.
 
 ## Generated-file contract
 
@@ -65,12 +72,19 @@ over HTTPS, verifies SHA-256, marks the verified temporary file executable, and
 atomically installs it in a user cache. No binary is committed to this
 repository or release archive.
 
-The query CLI passes the executable, query file, and trace as an argument array,
+The Skill and manifest-query CLIs reject a processor whose commit, RPC API, or
+SHA-256 differs from the release lock unless the caller supplies the explicit
+`--allow-unsupported-processor` escape hatch. This is separate from
+`--allow-unverified`, which applies only to queries explicitly classified as
+unverified. Capability-gated queries instead require an automatic, same-trace
+probe and preserve that gate result in their evidence sidecar.
+
+The query CLI passes the executable, query, and trace as an argument array,
 enforces timeouts and a default 16 MiB stdout/stderr bound, and returns typed
 JSON/CSV/raw results. It safely binds scalar placeholders, JSON literal lists,
 declared Perfetto modules, and non-empty JSON row arrays saved by prior steps.
-Dotted result fields and numeric indexes preserve pipeline dependencies without
-evaluating arbitrary expressions. Empty rows remain distinct from unavailable
+The deterministic runner uses a validated, non-evaluating expression subset for
+authored step conditions. Empty rows remain distinct from unavailable
 instrumentation and query failure.
 
 Product snapshot services are replaced by `perfetto_compare.py`. Each trace is

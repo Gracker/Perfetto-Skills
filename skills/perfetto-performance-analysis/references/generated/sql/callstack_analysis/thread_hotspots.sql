@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/deep/callstack_analysis.skill.yaml
--- Source SHA-256: da6f8f053e7325fffa6983751eaebd17478c4ae924e86352ffd66e4101d98660
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source SHA-256: 32723ee660e8cc822dc7b98136a23b15ba55fc88f77942c0ee0b658a654680f1
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 SELECT
   t.name as thread_name,

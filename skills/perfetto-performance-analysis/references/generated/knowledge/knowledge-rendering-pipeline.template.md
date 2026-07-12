@@ -1,13 +1,24 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-rendering-pipeline.template.md
 Source SHA-256: d023a81db374c2388971668123ec4edd51bed96ce738f9bdc9e178160db53622
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Knowledge Rendering Pipeline Template
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
 
 # Android 出图机制（Article-Grounded）
 
@@ -79,9 +90,54 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ## 17+ 出图类型对照表
 
+每种类型在 the portable runtime 中有独立 pipeline yaml（`backend/skills/pipelines/`），yaml 的 `meta.s_article_ref` 指向对应文章。
 
-
-
+| 类型族 | 子类型 | 文章 | the portable runtime pipeline_id |
+|--------|-------|------|--------------------------|
+| **Standard** | AOSP HWUI（baseline） | S02 | ANDROID_VIEW_STANDARD_BLAST / ANDROID_VIEW_STANDARD_LEGACY |
+| | Compose（main thread 形态不同） | S02 | COMPOSE_STANDARD |
+| **SurfaceView** | BLAST（Android 12+，独立 layer） | S03 | SURFACEVIEW_BLAST |
+| | Legacy（跨进程 BufferQueue） | S03 | (合并到 SURFACEVIEW_BLAST，Phase E 拆) |
+| **TextureView** | 标准 TextureView（永远单 layer） | S04 | TEXTUREVIEW_STANDARD |
+| **Mixed** | HWUI + SurfaceView（多 layer） | S05 | ANDROID_VIEW_MIXED |
+| | HWUI + TextureView（仍单 layer） | S05 | ANDROID_VIEW_MIXED |
+| **Multi-Window** | 同进程（Dialog/PopupWindow/Activity Embedding） | S06 | ANDROID_VIEW_MULTI_WINDOW |
+| | 跨进程（split-screen/PIP/freeform） | S06 | ANDROID_PIP_FREEFORM |
+| **Software/离屏** | 整窗 lockCanvas（无 RenderThread） | S07 | ANDROID_VIEW_SOFTWARE |
+| | LAYER_TYPE_SOFTWARE（混合，仍有 RT + Bitmap upload） | S07 | (Phase E 拆 SOFTWARE_RENDERING_LAYER) |
+| | OFFSCREEN_HARDWAREBUFFER（Android 14+） | S07 | HARDWARE_BUFFER_RENDERER |
+| **Native Graphics** | OpenGL ES | S08 | OPENGL_ES |
+| | Vulkan Native | S08 | VULKAN_NATIVE |
+| | ANGLE GLES-over-Vulkan | S08 | ANGLE_GLES_VULKAN |
+| **WebView** | GL Functor（回宿主 RT） | S09 | WEBVIEW_GL_FUNCTOR |
+| | SurfaceControl（独立 overlay） | S09 | WEBVIEW_SURFACE_CONTROL |
+| | SurfaceView Wrapper（全屏视频） | S09 | WEBVIEW_SURFACEVIEW_WRAPPER |
+| | TextureView Custom（X5/UC） | S09 | WEBVIEW_TEXTUREVIEW_CUSTOM |
+| | Chrome Browser（独立 App） | S09 | CHROME_BROWSER_VIZ |
+| **Flutter** | SurfaceView Impeller | S10 | FLUTTER_SURFACEVIEW_IMPELLER |
+| | SurfaceView Skia | S10 | FLUTTER_SURFACEVIEW_SKIA |
+| | TextureView（回宿主） | S10 | FLUTTER_TEXTUREVIEW |
+| | HC Overlay / PlatformView | S10 | (Phase E 新增) |
+| **Camera** | Preview SurfaceView | S11 | CAMERA_PIPELINE |
+| | Preview TextureView | S11 | CAMERA_PIPELINE |
+| | ImageAnalysis Reader | S11 | IMAGEREADER_PIPELINE |
+| | VideoRecord | S11 | (Phase E 拆) |
+| **Video Overlay** | Decoder Surface | S12 | VIDEO_OVERLAY_HWC |
+| | Decoder TextureView | S12 | (Phase E 拆) |
+| | Tunneled Playback | S12 | (Phase E 拆 VIDEO_TUNNELED_PLAYBACK) |
+| **Game** | Native Vulkan | S13 | GAME_ENGINE |
+| | Native GLES | S13 | GAME_ENGINE |
+| | Swappy frame pacing | S13 | GAME_ENGINE |
+| | MiniGame Container | S13 | (Phase E 新增) |
+| | Cloud Game Decoder | S13 | (Phase E 新增) |
+| | XR Game Timewarp | S13 | (Phase E 新增) |
+| **React Native** | Old Arch HWUI | S14 | (Phase E 新增 RN_OLD_ARCH_HWUI) |
+| | New Arch HWUI (Fabric) | S14 | (Phase E 新增 RN_NEW_ARCH_HWUI) |
+| | Skia Renderer | S14 | (Phase E 新增 RN_SKIA_RENDERER) |
+| **Cross-cutting** | Variable Refresh Rate | S01/S12/S13 | VARIABLE_REFRESH_RATE (NON_PRIMARY) |
+| | Software Compositing (SF 侧) | S01/S05/S06 | SOFTWARE_COMPOSITING |
+| | ImageReader Pipeline | S07/S09/S11 | IMAGEREADER_PIPELINE |
+| | Surface Control API (NDK) | S03 | SURFACE_CONTROL_API |
 
 ## 通用诊断流程
 
@@ -117,7 +173,7 @@ WHERE jank_type != 'None'
 GROUP BY source;
 ```
 
-
+## 与 the portable runtime skill 的对应
 
 每个 pipeline yaml 在 `meta` 中标注了：
 - `s_article_ref`: 对应文章（S02/S03/...）

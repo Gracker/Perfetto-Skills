@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/pipeline.strategy.md
 Source SHA-256: e934bc9e54bbbd75f8726714f35892ea17bd383e2011c916a08b7c4b8b6842ff
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Pipeline Strategy
 
@@ -9,15 +9,237 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: pipeline
+priority: 4
+effort: medium
+required_capabilities:
+- frame_rendering
+optional_capabilities:
+- surfaceflinger
+- gpu
+keywords:
+- 管线识别
+- pipeline识别
+- 渲染路径
+- 渲染管线检测
+- 管线类型
+- pipeline detection
+- rendering pipeline
+- render path
+- architecture detection
+- 渲染架构检测
+- 帧渲染路径
+- frame path
+- BufferQueue
+- BLASTBufferQueue
+- BLAST
+- dequeueBuffer
+- queueBuffer
+- acquire fence
+- present fence
+- release fence
+- refresh rate policy
+- 刷新率策略
+- ARR
+- VRR
+- setFrameRate
+- HWC overlay
+compound_patterns:
+- 什么.*管线
+- 什么.*pipeline
+- 识别.*渲染
+- 检测.*管线
+- 渲染.*路径
+- pipeline.*type
+- (BufferQueue|BLASTBufferQueue|BLAST).*(fence|dequeueBuffer|queueBuffer|latch|backpressure|槽位|背压|release|acquire|present)
+- (dequeueBuffer|queueBuffer).*(release fence|acquire fence|present fence|BufferQueue|SurfaceFlinger|SF)
+- (GraphicBuffer|dma[-_ ]?buf).*(BufferQueue|槽位|backpressure|队列|fence|区别|边界)
+- (refresh rate|刷新率|ARR|VRR|setFrameRate|View\.setRequestedFrameRate).*(policy|策略|budget|预算|帧预算|VSync|vsync|vote|投票)
+- (SurfaceFlinger|SF|HWC).*(present|release fence|acquire fence|BufferQueue|合成|display|commit|composite)
+final_report_contract:
+  required_sections:
+  - id: rendering_stage_split
+    label: 渲染/显示阶段拆分
+    description: 把 Main/UI、RenderThread、BufferQueue、SurfaceFlinger、HWC/display 与 FrameTimeline/VSync 口径分开。
+    pattern_groups:
+    - - 渲染/显示阶段拆分
+      - 阶段拆分
+      - stage\s+split
+      - Main\s*/\s*UI
+      - UI\s*/\s*Main
+      - 主线程
+      - RenderThread
+    - - BufferQueue
+      - SurfaceFlinger
+      - \bSF\b
+      - \bHWC\b
+      - display
+      - 显示
+    - - FrameTimeline
+      - VSync
+      - queueBuffer
+      - dequeueBuffer
+      - commit
+      - composite
+      - present
+  - id: buffer_fence_boundary
+    label: BufferQueue/Fence 边界
+    description: 区分 producer queue/dequeue、SF acquire/latch、BLAST transaction、acquire/present/release fence，避免把 queueBuffer
+      等同上屏。
+    trigger_patterns:
+    - BufferQueue|BLAST|queueBuffer|dequeueBuffer
+    - acquire\s+fence|present\s+fence|release\s+fence|\bfence\b|背压|槽位
+    pattern_groups:
+    - - BufferQueue/Fence
+      - BufferQueue
+      - BLAST
+      - queueBuffer
+      - dequeueBuffer
+      - latch
+    - - acquire
+      - present
+      - release
+      - fence
+      - Fence
+      - Transaction
+      - backpressure
+      - 背压
+      - 槽位
+    - - 不等于
+      - 不能
+      - 不可
+      - 区分
+      - 边界
+      - separate
+      - not
+  - id: graphics_memory_policy_boundary
+    label: 图形内存/刷新策略边界
+    description: 当问题涉及 GraphicBuffer/dma-buf、图形内存、refresh-rate/ARR/VRR 或 HWC/SF policy 时，说明证据来源、缺口和版本/设备边界。
+    trigger_patterns:
+    - GraphicBuffer|dma[-_ ]?buf|graphics\s+memory|图形内存|GPU memory
+    - refresh[-\s]?rate|刷新率|ARR|VRR|setFrameRate|View\.setRequestedFrameRate
+    - (?:SurfaceFlinger|SF|HWC).*(?:policy|策略|refresh|刷新率|overlay|composition|composite|合成)
+    - (?:overlay|composition|composite|合成).*(?:SurfaceFlinger|SF|HWC)
+    pattern_groups:
+    - - GraphicBuffer
+      - dma[-_ ]?buf
+      - graphics\s+memory
+      - 图形内存
+      - 刷新率
+      - refresh[-\s]?rate
+      - ARR
+      - VRR
+      - SurfaceFlinger
+      - \bSF\b
+      - \bHWC\b
+      - overlay
+      - composition
+      - composite
+      - 合成
+    - - 图形内存/刷新策略边界
+      - graphics\s+memory\s+boundary
+      - refresh\s+policy\s+boundary
+      - policy
+      - 策略
+      - 缺失
+      - missing
+      - 边界
+      - confidence
+      - 置信度
+phase_hints:
+- id: buffer_fence_lifecycle
+  keywords:
+  - BufferQueue
+  - BLAST
+  - dequeueBuffer
+  - queueBuffer
+  - latch
+  - acquire fence
+  - present fence
+  - release fence
+  - backpressure
+  - 背压
+  constraints: BufferQueue/Fence 问题必须拆 producer queue/dequeue、BLAST transaction、SF acquire/latch、HWC present、release fence。queueBuffer
+    只证明 producer submission；HWC 不是 BufferQueue consumer，SF 才消费 buffer 后再交给 HWC/RenderEngine。
+  critical_tools:
+  - buffer_transaction_lifecycle
+  - fence_wait_decomposition
+  - surfaceflinger_analysis
+  - present_fence_timing
+  critical: true
+- id: refresh_policy_boundary
+  keywords:
+  - refresh rate
+  - 刷新率
+  - ARR
+  - VRR
+  - setFrameRate
+  - View.setRequestedFrameRate
+  - VSync
+  - 帧预算
+  - refresh policy
+  constraints: 刷新率/ARR/VRR 是 policy/ranking 与设备能力问题。不要默认 16.6ms；先用 vsync_config / vsync_phase_alignment / FrameTimeline 识别实际
+    VSync 周期，再说明 setFrameRate/View.setRequestedFrameRate 只是 hint/vote。
+  critical_tools:
+  - vsync_config
+  - vsync_phase_alignment
+  - surfaceflinger_analysis
+  critical: false
+- id: graphics_memory_boundary
+  keywords:
+  - GraphicBuffer
+  - dma-buf
+  - dmabuf
+  - graphics memory
+  - 图形内存
+  - GPU memory
+  constraints: GraphicBuffer/dma-buf 是图形物理内存证据面，不能和 BufferQueue 槽位、queue depth 或 fence backpressure 混用。只有 meminfo/dma-buf/SurfaceFlinger
+    dumpsys/heap/counter 等证据存在时才能写图形内存占用；Perfetto slice 只能支持队列/同步/背压候选。
+  critical_tools:
+  - memory_analysis
+  critical: false
+plan_template:
+  mandatory_aspects:
+  - id: architecture_detection
+    match_keywords:
+    - architecture
+    - 架构
+    - 检测
+    - detection
+    required_expected_calls:
+    - {}
+  - id: pipeline_skill_invocation
+    match_keywords:
+    - pipeline
+    - 管线
+    - mermaid
+    - thread
+    - 线程
+    - teaching
+    - 教学
+    suggestion: 管线识别场景建议包含管线教学内容展示阶段 (pipeline skill invocation)
+    required_expected_call_alternatives:
+    - skill_id: rendering_pipeline_detection
+    - skill_id: render_pipeline_latency
+    - skill_id: scene_reconstruction
+```
+
 #### pipeline Core Strategy
 
 **Route card**: 管线识别 / pipeline识别 / 渲染路径 / 渲染管线检测 / 管线类型 / pipeline detection / rendering pipeline / render path / architecture detection / 渲染架构检测
 
 **Capabilities**: required=[frame_rendering], optional=[surfaceflinger, gpu]
-
-
-
-
 
 **Phase reminders**
 - buffer_fence_lifecycle: BufferQueue/Fence 问题必须拆 producer queue/dequeue、BLAST transaction、SF acquire/latch、HWC present、release fence。queueBuffer 只证明 producer submission；HWC 不是 BufferQueue consumer，SF 才消费 buffer 后再交给 HWC/RenderEngine。 工具: buffer_transaction_lifecycle, fence_wait_decomposition, surfaceflinger_analysis, present_fence_timing
@@ -28,9 +250,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 渲染/显示阶段拆分
 - BufferQueue/Fence 边界
 - 图形内存/刷新策略边界
-
-
-
 
 
 <!-- strategy-detail id="full" title="pipeline full strategy detail" keywords="pipeline,管线识别,pipeline识别,渲染路径,渲染管线检测,管线类型,pipeline detection,rendering pipeline,render path,architecture detection,渲染架构检测,帧渲染路径,frame path,渲染管线识别与教学分析（用户提到 管线识别、pipeline 检测、渲染路径、渲染架构检测）,detail,full" default="true" -->
@@ -46,18 +265,11 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 5. refresh rate / ARR / VRR 会改变帧预算；`setFrameRate()` / `View.setRequestedFrameRate()` 是 hint/vote，不是强制命令。报告必须用实际 VSync/FrameTimeline 证据说明预算。
 
 **Phase 1 — 自动检测：**
-```
-detect_architecture()
-```
 - 返回：architectureType（Standard/Flutter/Compose/WebView/Game 等）、confidence、metadata（engine、surfaceType 等）
 - 如果 confidence < 0.5：标注不确定性，进入 Phase 3 手动验证
 - 如果 confidence >= 0.5：直接进入 Phase 2
 
 **Phase 2 — 管线匹配与教学：**
-```
-list_skills(type="pipeline")
-# 根据架构类型动态匹配并调用对应的 pipeline skill（如 android_view_standard_blast）
-```
 
 根据检测到的架构类型匹配对应的 Pipeline Skill：
 
@@ -79,12 +291,6 @@ list_skills(type="pipeline")
 | Vulkan | vulkan_native | 原生 Vulkan 渲染 |
 | Camera | camera_pipeline | 相机预览管线 |
 | Video Overlay | video_overlay_hwc | 视频 HWC Overlay |
-
-Camera 管线判定可以在 Pixel/Google Camera trace 中优先探测
-`pixel_camera_frames` 和 `pixel_camera_memory_span`，用于补充 camera graph
-阶段、GoogleCamera / camera HAL / cameraserver RSS 与 DMA heap 证据。该 stdlib
-是 Pixel-specific，可用前必须 `lookup_sql_schema`，不可替代通用 camera HAL /
-SurfaceFlinger / HWC / app producer 证据链。
 
 展示教学内容：
 - **Mermaid 时序图**：帧从生产到消费的完整流程

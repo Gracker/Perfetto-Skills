@@ -1,13 +1,24 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/prompt-output-format.template.md
 Source SHA-256: c8379ddd0be62c25186cf36e22889065c8c4dc054981280e7ef75a39729b8290
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Prompt Output Format Template
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
 
 <!-- No template variables — static content -->
 ## 输出格式
@@ -59,8 +70,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 同类指标合并引用，避免重复堆同一张表。
 - 找不到精确行列值时不要伪造；限制中说明缺口，只引用能确认的字段。
 - 外部指标、诊断 API、日志/快照必须标注来源类型和时间/版本/窗口边界。
-
-
 
 ### 背景知识
 只有当前 trace 已命中对应机制时才添加背景知识：

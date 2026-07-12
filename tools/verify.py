@@ -32,8 +32,14 @@ def build_commands(smartperfetto: Path | None = None) -> list[list[str]]:
         ],
     ]
     if smartperfetto is not None:
-        commands.extend(
+        commands = [
             [
+                sys.executable,
+                "tools/download_declared_fixtures.py",
+                "--smartperfetto",
+                str(smartperfetto),
+            ],
+            *commands,
                 [
                     sys.executable,
                     "tools/export_from_smartperfetto.py",
@@ -49,8 +55,7 @@ def build_commands(smartperfetto: Path | None = None) -> list[list[str]]:
                     "--skill-root",
                     "skills/perfetto-performance-analysis",
                 ],
-            ]
-        )
+        ]
     return commands
 
 

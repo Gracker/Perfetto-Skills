@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/input_to_frame_latency.skill.yaml
 -- Source SHA-256: 3f8a18a4750d12e34a5556236cf069b5e09eaf1c3c3cf2cc5af513f635809c46
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 WITH move_events AS (
   SELECT

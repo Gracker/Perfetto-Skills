@@ -1,0 +1,306 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*Suspend*",
+      "*WakeLock*",
+      "*Wakeup*",
+      "*power_state*",
+      "*suspend*",
+      "*wake_lock*",
+      "*wakeup*"
+    ]
+  },
+  "id": "suspend_wakeup_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "唤醒源过滤（可选）",
+      "name": "wakeup_source",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳（纳秒，可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳（纳秒，可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 50,
+      "description": "频繁唤醒严重阈值（次数）",
+      "name": "frequent_wakeup_critical",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 20,
+      "description": "频繁唤醒警告阈值（次数）",
+      "name": "frequent_wakeup_warning",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 30,
+      "description": "Suspend 中止率严重阈值（%）",
+      "name": "abort_pct_critical",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10,
+      "description": "Suspend 中止率警告阈值（%）",
+      "name": "abort_pct_warning",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 30,
+      "description": "休眠占比过低警告阈值（%）",
+      "name": "low_suspend_pct",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.suspend",
+      "android.wakeups"
+    ],
+    "required_tables": [
+      "sched_slice"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
+    "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
+  },
+  "steps": [
+    {
+      "id": "check_suspend_data",
+      "name": "检查休眠数据",
+      "optional": true,
+      "query_id": "suspend_wakeup_analysis/check_suspend_data",
+      "result_dependencies": [],
+      "save_as": "suspend_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'available'",
+      "id": "check_wakeup_data",
+      "name": "检查唤醒数据",
+      "optional": true,
+      "query_id": "suspend_wakeup_analysis/check_wakeup_data",
+      "result_dependencies": [],
+      "save_as": "wakeup_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'unavailable'",
+      "id": "check_suspend_slices",
+      "name": "检查 Suspend Slice 数据",
+      "query_id": "suspend_wakeup_analysis/check_suspend_slices",
+      "result_dependencies": [],
+      "save_as": "suspend_slice_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'available'",
+      "id": "suspend_overview",
+      "name": "休眠唤醒概览",
+      "optional": true,
+      "query_id": "suspend_wakeup_analysis/suspend_overview",
+      "result_dependencies": [],
+      "save_as": "suspend_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'available'",
+      "id": "suspend_quality_assessment",
+      "name": "休眠质量评估",
+      "optional": true,
+      "query_id": "suspend_wakeup_analysis/suspend_quality_assessment",
+      "result_dependencies": [],
+      "save_as": "suspend_quality",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'available' && wakeup_check.data[0]?.status === 'available'",
+      "id": "wakeup_type_overview",
+      "name": "唤醒事件类型分布",
+      "optional": true,
+      "query_id": "suspend_wakeup_analysis/wakeup_type_overview",
+      "result_dependencies": [],
+      "save_as": "wakeup_type_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'available' && wakeup_check.data[0]?.status === 'available'",
+      "id": "wakeup_source_ranking",
+      "name": "唤醒源排行",
+      "optional": true,
+      "query_id": "suspend_wakeup_analysis/wakeup_source_ranking",
+      "result_dependencies": [],
+      "save_as": "wakeup_source_ranking",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'available' && wakeup_check.data[0]?.status === 'available'",
+      "id": "suspend_backoff",
+      "name": "Suspend Backoff 分析",
+      "optional": true,
+      "query_id": "suspend_wakeup_analysis/suspend_backoff",
+      "result_dependencies": [],
+      "save_as": "suspend_backoff",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'available' && wakeup_check.data[0]?.status === 'available'",
+      "id": "wakeup_timeline",
+      "name": "唤醒事件时间线",
+      "optional": true,
+      "query_id": "suspend_wakeup_analysis/wakeup_timeline",
+      "result_dependencies": [],
+      "save_as": "wakeup_timeline",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'available'",
+      "id": "long_suspend_events",
+      "name": "长时间休眠事件",
+      "optional": true,
+      "query_id": "suspend_wakeup_analysis/long_suspend_events",
+      "result_dependencies": [],
+      "save_as": "long_suspend_events",
+      "type": "atomic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'unavailable' && suspend_slice_check.data[0]?.status === 'available'",
+      "id": "suspend_slice_overview",
+      "name": "Suspend/Wakeup 相关 Slice",
+      "query_id": "suspend_wakeup_analysis/suspend_slice_overview",
+      "result_dependencies": [],
+      "save_as": "suspend_slice_overview",
+      "type": "atomic"
+    },
+    {
+      "id": "suspend_diagnosis",
+      "inputs": [
+        "suspend_overview",
+        "suspend_quality",
+        "wakeup_type_overview",
+        "wakeup_source_ranking",
+        "suspend_backoff"
+      ],
+      "name": "休眠唤醒诊断",
+      "rules": [
+        {
+          "condition": "wakeup_source_ranking.data[0]?.wakeup_count > ${frequent_wakeup_critical|50}",
+          "confidence": "high",
+          "diagnosis": "FREQUENT_WAKEUP - 唤醒源 '${wakeup_source_ranking.data[0].wakeup_source}' 唤醒 ${wakeup_source_ranking.data[0].wakeup_count} 次",
+          "severity": "critical",
+          "suggestions": [
+            "检查该唤醒源对应的驱动或服务",
+            "减少不必要的定时唤醒",
+            "使用 AlarmManager 合并唤醒请求"
+          ]
+        },
+        {
+          "condition": "wakeup_source_ranking.data[0]?.wakeup_count > ${frequent_wakeup_warning|20}",
+          "confidence": "medium",
+          "diagnosis": "FREQUENT_WAKEUP - 唤醒源 '${wakeup_source_ranking.data[0].wakeup_source}' 唤醒 ${wakeup_source_ranking.data[0].wakeup_count} 次",
+          "severity": "warning",
+          "suggestions": [
+            "检查唤醒频率是否合理",
+            "考虑延长唤醒间隔"
+          ]
+        },
+        {
+          "condition": "suspend_quality.data[0]?.abort_pct > ${abort_pct_critical|30}",
+          "confidence": "high",
+          "diagnosis": "LONG_SUSPEND - Suspend 中止率高达 ${suspend_quality.data[0].abort_pct}%，设备难以进入休眠",
+          "severity": "critical",
+          "suggestions": [
+            "检查阻止 suspend 的内核模块或驱动",
+            "检查 wakelock 持有情况",
+            "排查 suspend_quality = 'bad' 的唤醒事件"
+          ]
+        },
+        {
+          "condition": "suspend_quality.data[0]?.abort_pct > ${abort_pct_warning|10}",
+          "confidence": "medium",
+          "diagnosis": "LONG_SUSPEND - Suspend 中止率 ${suspend_quality.data[0].abort_pct}%",
+          "severity": "warning",
+          "suggestions": [
+            "检查 suspend 失败的 backoff 原因",
+            "排查是否有持续持有 wakelock 的进程"
+          ]
+        },
+        {
+          "condition": "suspend_quality.data[0]?.suspend_pct < ${low_suspend_pct|30}",
+          "confidence": "medium",
+          "diagnosis": "LONG_SUSPEND - 休眠时间占比仅 ${suspend_quality.data[0].suspend_pct}%",
+          "severity": "warning",
+          "suggestions": [
+            "设备大部分时间处于唤醒状态",
+            "检查是否有后台活动阻止休眠"
+          ]
+        },
+        {
+          "condition": "suspend_quality.data[0]?.suspend_pct >= 50 && suspend_quality.data[0]?.abort_pct <= ${abort_pct_warning|10}",
+          "confidence": "high",
+          "diagnosis": "SUSPEND_NORMAL - 休眠质量正常（休眠占比 ${suspend_quality.data[0].suspend_pct}%，中止率 ${suspend_quality.data[0].abort_pct}%）",
+          "severity": "info",
+          "suggestions": [
+            "休眠唤醒行为在正常范围内"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    },
+    {
+      "condition": "suspend_check.data[0]?.status === 'unavailable'",
+      "id": "fallback_diagnosis",
+      "inputs": [
+        "suspend_check",
+        "suspend_slice_check"
+      ],
+      "name": "Fallback 诊断",
+      "rules": [
+        {
+          "condition": "suspend_check.data[0]?.status === 'unavailable' && (!suspend_slice_check.data || suspend_slice_check.data[0]?.status === 'unavailable')",
+          "confidence": "high",
+          "diagnosis": "未检测到休眠唤醒数据。Trace 中未包含 android.suspend 模块数据，也未发现 suspend/wakeup 相关 Slice。如需分析休眠问题，请在录制 Trace 时启用 power 相关数据源。",
+          "severity": "info",
+          "suggestions": [
+            "录制 Trace 时启用 android.suspend 和 android.wakeups 模块",
+            "确保录制时间覆盖设备待机周期"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "3.0",
+  "workflow": "power-thermal"
+}

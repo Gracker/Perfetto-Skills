@@ -1,13 +1,24 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-startup-root-causes.template.md
 Source SHA-256: 3399dc218908dc7201cf028dacb6bb3d1146e85b2d7eef5616e23a5aa4303be1
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Knowledge Startup Root Causes Template
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
 
 # Android 启动慢根因分类体系
 
@@ -921,8 +932,6 @@ GROUP BY p.name ORDER BY cpu_ms DESC LIMIT 10
 | 大核频率 < 标称80% | B4(热节流) | cpufreq max vs device spec |
 
 ### D2. blocked_function → 根因速查
-
-`blocked_function` 是 `sched/sched_blocked_reason` 提供的 kernel wchan 单帧，不是完整栈。解释 D-state、`io_wait` 或下列函数族时，优先调用 `lookup_knowledge("thread-state-blocked-reason")` 获取证据强度和下一步补证规则。
 
 | blocked_function 模式 | 根因类别 | 说明 |
 |----------------------|---------|------|

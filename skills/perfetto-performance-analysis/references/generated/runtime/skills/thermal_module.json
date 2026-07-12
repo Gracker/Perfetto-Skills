@@ -1,0 +1,192 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*Temp*",
+      "*cdev*",
+      "*cooling*",
+      "*fan*",
+      "*temp*",
+      "*temperature*",
+      "*thermal*",
+      "*tsens*",
+      "cpufreq"
+    ]
+  },
+  "id": "thermal_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Analysis start timestamp",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Analysis end timestamp",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "counter",
+      "counter_track"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
+    "sha256": "fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708"
+  },
+  "steps": [
+    {
+      "id": "temperature_overview",
+      "name": "温度概览",
+      "on_empty": "未找到温度数据，请确保 trace 包含 thermal/temperature 计数器",
+      "query_id": "thermal_module/temperature_overview",
+      "result_dependencies": [],
+      "save_as": "temp_overview",
+      "type": "atomic"
+    },
+    {
+      "id": "temperature_timeline",
+      "name": "温度时间线",
+      "query_id": "thermal_module/temperature_timeline",
+      "result_dependencies": [],
+      "save_as": "temp_timeline",
+      "type": "atomic"
+    },
+    {
+      "id": "high_temp_periods",
+      "name": "高温时段",
+      "query_id": "thermal_module/high_temp_periods",
+      "result_dependencies": [],
+      "save_as": "high_temp_periods",
+      "type": "atomic"
+    },
+    {
+      "id": "throttling_events",
+      "name": "热节流事件",
+      "query_id": "thermal_module/throttling_events",
+      "result_dependencies": [],
+      "save_as": "throttling_events",
+      "type": "atomic"
+    },
+    {
+      "id": "cooling_activity",
+      "name": "散热设备活动",
+      "optional": true,
+      "query_id": "thermal_module/cooling_activity",
+      "result_dependencies": [],
+      "save_as": "cooling_activity",
+      "type": "atomic"
+    },
+    {
+      "id": "thermal_cpu_correlation",
+      "name": "温度-频率相关性",
+      "query_id": "thermal_module/thermal_cpu_correlation",
+      "result_dependencies": [],
+      "save_as": "thermal_cpu_correlation",
+      "type": "atomic"
+    },
+    {
+      "id": "thermal_diagnosis",
+      "inputs": [
+        "temp_overview",
+        "high_temp_periods",
+        "throttling_events",
+        "thermal_cpu_correlation"
+      ],
+      "name": "热管理诊断",
+      "rules": [
+        {
+          "condition": "temp_overview.data.filter(t => t.status === 'critical').length > 0",
+          "confidence": "critical",
+          "diagnosis": "检测到严重高温: ${temp_overview.data.filter(t => t.status === 'critical')[0]?.sensor_name} 最高 ${temp_overview.data.filter(t => t.status === 'critical')[0]?.max_temp}°C",
+          "evidence_fields": [
+            "temp_overview.data[0]?.sensor_name",
+            "temp_overview.data[0]?.max_temp"
+          ],
+          "suggestions": [
+            "检查设备散热条件",
+            "减少 CPU/GPU 密集型操作",
+            "考虑添加冷却间隔"
+          ]
+        },
+        {
+          "condition": "throttling_events.data.length > 10",
+          "confidence": "high",
+          "diagnosis": "检测到 ${throttling_events.data.length} 次频率骤降，热节流显著影响性能",
+          "evidence_fields": [
+            "throttling_events.data.length",
+            "throttling_events.data[0]?.drop_pct"
+          ],
+          "suggestions": [
+            "工作负载过高导致热积累",
+            "考虑分散计算任务",
+            "优化算法减少 CPU 使用"
+          ]
+        },
+        {
+          "condition": "high_temp_periods.data[0]?.duration_sec > 30",
+          "confidence": "high",
+          "diagnosis": "高温持续 ${high_temp_periods.data[0]?.duration_sec} 秒，散热不足",
+          "evidence_fields": [
+            "high_temp_periods.data[0]?.sensor_name",
+            "high_temp_periods.data[0]?.duration_sec",
+            "high_temp_periods.data[0]?.peak_temp"
+          ],
+          "suggestions": [
+            "持续高温会加速热节流",
+            "检查设备是否被遮挡",
+            "考虑降低持续性能需求"
+          ]
+        },
+        {
+          "condition": "thermal_cpu_correlation.data.filter(t => t.status === 'thermal_throttled').length > 5",
+          "confidence": "high",
+          "diagnosis": "温度与 CPU 频率呈明显负相关，热节流正在发生",
+          "evidence_fields": [
+            "thermal_cpu_correlation.data.filter(t => t.status === 'thermal_throttled').length"
+          ],
+          "suggestions": [
+            "高温直接导致 CPU 降频",
+            "性能受限于散热能力"
+          ]
+        },
+        {
+          "condition": "temp_overview.data[0]?.temp_range > 20",
+          "confidence": "medium",
+          "diagnosis": "温度波动较大: 变化范围 ${temp_overview.data[0]?.temp_range}°C",
+          "evidence_fields": [
+            "temp_overview.data[0]?.sensor_name",
+            "temp_overview.data[0]?.temp_range"
+          ],
+          "suggestions": [
+            "工作负载不均匀",
+            "检查是否有突发计算任务"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "power-thermal"
+}

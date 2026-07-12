@@ -1,0 +1,154 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "thermal_throttling_chain",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；当 package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.dvfs",
+      "linux.cpu.idle",
+      "linux.cpu.utilization.process",
+      "linux.cpu.utilization.thread",
+      "android.gpu.work_period"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/thermal_throttling_chain.skill.yaml",
+    "sha256": "840d149570c40efdadb929920141eec03d3e578709be09c9bc99fa3510efd39f"
+  },
+  "steps": [
+    {
+      "id": "thermal",
+      "name": "温度/热节流分析",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package|${process_name|}}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "thermal",
+      "skill": "thermal_throttling",
+      "type": "skill"
+    },
+    {
+      "id": "dvfs",
+      "name": "DVFS 频率统计",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "dvfs",
+      "skill": "android_dvfs_counter_stats",
+      "type": "skill"
+    },
+    {
+      "id": "cpu_idle",
+      "name": "CPU Idle Residency",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "cpu_idle",
+      "skill": "cpu_idle_state_residency",
+      "type": "skill"
+    },
+    {
+      "id": "process_util",
+      "name": "进程 CPU 利用率",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package|${process_name|}}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "process_util",
+      "skill": "cpu_process_utilization_period",
+      "type": "skill"
+    },
+    {
+      "id": "thread_util",
+      "name": "线程 CPU 利用率",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package|${process_name|}}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "thread_util",
+      "skill": "cpu_thread_utilization_period",
+      "type": "skill"
+    },
+    {
+      "id": "gpu_work_period",
+      "name": "GPU Work Period",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package|${process_name|}}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "gpu_work_period",
+      "skill": "android_gpu_work_period_track",
+      "type": "skill"
+    },
+    {
+      "id": "mali_state",
+      "name": "Mali Power State",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "mali_state",
+      "skill": "mali_gpu_power_state",
+      "type": "skill"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "power-thermal"
+}

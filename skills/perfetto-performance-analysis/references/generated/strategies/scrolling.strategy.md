@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
 Source SHA-256: 84f156a776f45cfc0cc708bf164905ac504f33eba6ddc20ec90d1b5b4b0f8120
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Scrolling Strategy
 
@@ -9,13 +9,400 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: scrolling
+priority: 3
+effort: medium
+required_capabilities:
+- frame_rendering
+- cpu_scheduling
+optional_capabilities:
+- binder_ipc
+- gpu
+- thermal_throttling
+- input_latency
+- lock_contention
+- gpu_work_period
+- cpu_freq_idle
+- battery_counters
+- chrome_scroll_jank
+keywords:
+- 滑动
+- 卡顿
+- 掉帧
+- 丢帧
+- jank
+- scroll
+- fps
+- 列表
+- 流畅
+- fling
+- swipe
+- 滚动
+- recycler
+- recyclerview
+- scrollview
+- scrollstate
+- lazycolumn
+- lazyrow
+- listview
+- lazy
+- 快滑
+- 慢滑
+- stuttering
+- frame drop
+- frame drops
+- dropped frame
+- dropped frames
+- resync
+- resynced
+- App Resynced Jitter
+- janky
+- 不流畅
+- impeller
+- textureview
+- react native
+- glsurfaceview
+- nativeactivity
+- drawfunctor
+final_report_contract:
+  required_sections:
+  - id: root_cause_distribution
+    label: 全帧根因分布
+    description: 按 reason_code / 责任方聚合，列出帧数、占比、关键四象限或频率特征。
+    pattern_groups:
+    - - 全帧根因分布
+      - 根因分布
+      - root[-\s]?cause distribution
+      - reason_code
+    - - 帧数
+      - 占比
+      - frame count
+      - percentage
+      - \|\s*根因\s*\|
+      - \|\s*reason
+  - id: representative_frames
+    label: 代表帧分析
+    description: 每个 CRITICAL/HIGH 根因至少给出 1 个代表样本，包含帧耗时、超预算倍数、vsync_missed、关键 slice/阻塞点和因果链。
+    pattern_groups:
+    - - 代表帧
+      - representative\s+frame
+    - - frame_id
+      - guilty[_ ]?frame
+      - 帧耗时
+      - 耗时\s*/\s*预算
+      - 帧\s*\d+
+      - frame duration
+    - - vsync_missed
+      - VSync\s*丢失
+      - 丢失\s*\d+\s*VSync
+      - 超预算
+      - 预算
+      - budget overrun
+      - missed[-\s]?vsync
+  - id: peak_and_semantic_metrics
+    label: 峰值/口径指标
+    description: 说明总帧数、真实掉帧、假阳性/Buffer Stuffing、最长帧和最长连续丢帧等口径。
+    pattern_groups:
+    - - 真实掉帧
+      - real[_\s-]?jank
+    - - 最长帧
+      - longest frame
+      - 峰值
+  - id: case_recommendations
+    label: 相似案例引用
+    description: 当 typed caseRecommendations 中存在 strong 匹配时，报告需引用对应 case_id，并说明它是证据验证后的相似案例。
+    trigger_patterns:
+    - case recommendation|caseRecommendations|相似案例|案例引用
+    pattern_groups:
+    - - case_id
+      - 相似案例
+      - 案例引用
+      - case recommendation
+      - case[-\s]?based
+phase_hints:
+- id: overview
+  keywords:
+  - 概览
+  - overview
+  - 帧
+  - frame
+  - jank
+  - 卡顿
+  - scrolling_analysis
+  - 统计
+  constraints: 必须调用 scrolling_analysis 获取全帧统计。注意区分 buffer_stuffing（非真实掉帧）和感知掉帧。
+  critical_tools:
+  - scrolling_analysis
+  critical: false
+- id: root_cause_drill
+  keywords:
+  - 根因
+  - root cause
+  - 诊断
+  - diagnos
+  - 深钻
+  - deep
+  - drill
+  - 代表帧
+  - representative
+  - 逐帧
+  constraints: 对占比 >15% 且绝对帧数 >3 的 reason_code，必须选最严重帧执行 jank_frame_detail/frame_blocking_calls/blocking_chain_analysis 深钻。禁止仅靠
+    batch_frame_root_cause 统计分类直接出结论。workload_heavy 必须最后兜底。
+  critical_tools:
+  - jank_frame_detail
+  - frame_blocking_calls
+  - blocking_chain_analysis
+  critical: true
+- id: frame_metrics_overlay
+  keywords:
+  - overrun
+  - per_frame
+  - ui time
+  - cpu time
+  - work period
+  - mali
+  - 帧内
+  - 帧阻塞
+  - 阻塞调用
+  - Binder
+  - futex
+  - GPU
+  - 功耗
+  - 频率
+  constraints: 需要帧内 CPU/UI/GPU/阻塞调用细分时，优先用 frame_overrun_summary、cpu_time_per_frame、frame_ui_time_breakdown、frame_blocking_calls、android_gpu_work_period_track、mali_gpu_power_state
+    作为补充证据。缺 gpu_work_period 时必须标注数据不足。
+  critical_tools:
+  - frame_overrun_summary
+  - cpu_time_per_frame
+  - frame_ui_time_breakdown
+  - frame_blocking_calls
+  - android_gpu_work_period_track
+  - mali_gpu_power_state
+  critical: false
+- id: missing_frame_gap
+  keywords:
+  - 缺帧
+  - gap
+  - frame_production_gap
+  - 帧间
+  - production gap
+  - 隐形缺帧
+  constraints: 只有满足缺帧触发条件时才调用 frame_production_gap；如果 real_jank_count 足够、Buffer Stuffing 假阳性低且非 WebView/SurfaceTexture，要记录触发条件并跳过，不要重复要求
+    scrolling_analysis。
+  critical_tools:
+  - frame_production_gap
+  critical: false
+- id: chrome_scroll_jank
+  keywords:
+  - Chrome
+  - Chromium
+  - WebView
+  - scroll jank v4
+  - preferred frame timeline
+  - ChromeScrollJank
+  constraints: 当 trace 明确来自 Chrome/Chromium/WebView 或用户提到 Chrome scroll jank 时，调用 chrome_scroll_jank_frame_timeline。若返回 no_chrome_scroll_data，只能说明缺少
+    Chrome scroll instrumentation，不要把 Android app FrameTimeline 当作 Chrome scroll jank 证据。
+  critical_tools:
+  - chrome_scroll_jank_frame_timeline
+  critical: false
+- id: architecture_specific_jank
+  keywords:
+  - TextureView
+  - SurfaceTexture
+  - WebView
+  - DrawFunctor
+  - React Native
+  - RN
+  - Fabric
+  - JSI
+  - GLSurfaceView
+  - NativeActivity
+  - OpenGL
+  - Compose
+  - Flutter
+  - mixed
+  - 混合
+  - 架构
+  - 生产端
+  critical_tools:
+  - scrolling_analysis
+  - flutter_scrolling_analysis
+  - textureview_producer_frame_timing
+  - webview_drawfunctor_jank_chain
+  - rn_bridge_to_frame_jank
+  - rn_fabric_render_jank
+  - gl_standalone_swap_jank
+  - compose_recomposition_hotspot
+  - surfaceflinger_analysis
+  critical: false
+- id: display_pipeline_boundary
+  keywords:
+  - BufferQueue
+  - BLAST
+  - dequeueBuffer
+  - queueBuffer
+  - SurfaceFlinger
+  - HWC
+  - acquire fence
+  - present fence
+  - release fence
+  - refresh rate
+  - 刷新率
+  - ARR
+  - VRR
+  - FrameTimeline
+  - sf_backpressure
+  - gpu_fence_wait
+  - resync
+  - resynced
+  - App Resynced Jitter
+  constraints: 当掉帧证据涉及 BufferQueue、Fence、SF/HWC、Buffer Stuffing、隐形掉帧或刷新率变化时，必须把 App/RenderThread、BufferQueue queue/dequeue/latch、SF
+    commit/composite/present、HWC/display 与 acquire/present/release fence 拆开。queueBuffer 快不等于已上屏；dequeueBuffer 等待更接近 release
+    fence/backpressure；刷新率/ARR/VRR 要用实际 VSync 周期，不默认 16.6ms。
+  critical_tools:
+  - surfaceflinger_analysis
+  - buffer_transaction_lifecycle
+  - fence_wait_decomposition
+  - present_fence_timing
+  - vsync_config
+  critical: false
+- id: resync_sf_backlog
+  keywords:
+  - resync
+  - resynced
+  - App Resynced Jitter
+  - Choreographer#doFrame - resynced
+  - SF没合成
+  - 没有合成
+  - 后面针堆积
+  - 帧堆积
+  - backlog
+  constraints: 命中 Choreographer#doFrame - resynced 或 App Resynced Jitter 时，先把它当作 Choreographer 因回调迟到/相位漂移而切到后续 VSync 的 marker，不要当作独立
+    doFrame 或普通业务耗时重复计数。必须继续核对 FrameTimeline 的 jank_type、present_type、vsync_resynced_jitter_millis、同 layer display/surface
+    frame token 连续性、present_ts 间隔和 SF actual/display frame；只有存在 SF actual frame 缺失/late、SF jank_type、present gap 或 dropped
+    display frame 证据时，才能说 SF 未合成对应帧。否则按 App resync/jitter、BufferQueue 背压或 App 未按时产帧描述，并说明 SF 结论证据不足。
+  critical_tools:
+  - scrolling_analysis
+  - jank_frame_detail
+  - consumer_jank_detection
+  - frame_production_gap
+  - surfaceflinger_analysis
+  critical: true
+- id: conclusion
+  keywords:
+  - 结论
+  - conclusion
+  - 输出
+  - output
+  - 报告
+  - report
+  - 总结
+  constraints: 输出必须包含：全帧根因分布表（按 reason_code 聚合）+ 代表帧分析（含四象限+频率+根因推理链）+ 按优先级排序的优化建议。每个 CRITICAL/HIGH 必须有量化证据+因果链。若深钻证据纠正了 batch
+    reason_code（例如 lock_binder_wait 但 binder_overlap_ms=0，render_slices_json 指向 cache_miss/makePipeline/shader 编译），最终结论必须使用纠正后的根因命名，并明确标注原
+    reason_code 为误分类。
+  critical_tools: []
+  critical: false
+plan_template:
+  mandatory_aspects:
+  - id: frame_jank_analysis
+    match_keywords:
+    - frame
+    - jank
+    - scroll
+    - 帧
+    - 卡顿
+    - 滑动
+    - scrolling_analysis
+    - consumer_jank
+    suggestion: 滑动场景建议包含帧渲染/卡顿分析阶段 (scrolling_analysis, consumer_jank_detection)
+    required_expected_calls:
+    - skill_id: scrolling_analysis
+  - id: frame_artifact_fetch
+    match_keywords:
+    - batch_frame_root_cause
+    - artifact
+    - 全帧根因分布
+    - 代表帧
+    - reason_code
+    suggestion: 滑动场景必须计划读取 scrolling_analysis 返回的 batch/root-cause artifact；缺失或无掉帧时执行阶段标记 skipped 并说明
+    required_expected_calls:
+    - {}
+  - id: root_cause_diagnosis
+    match_keywords:
+    - root
+    - cause
+    - diagnos
+    - 根因
+    - 诊断
+    - 深入
+    - deep
+    - jank_frame_detail
+    - frame_blocking_calls
+    suggestion: 滑动场景建议包含完整卡顿帧根因分析阶段 (jank_frame_detail + frame_blocking_calls + blocking_chain_analysis)
+    required_expected_calls:
+    - skill_id: jank_frame_detail
+    - skill_id: frame_blocking_calls
+    - skill_id: blocking_chain_analysis
+  - id: architecture_specific_jank
+    waivable: false
+    trigger_keywords:
+    - TextureView
+    - SurfaceTexture
+    - WebView
+    - DrawFunctor
+    - React Native
+    - RN
+    - Fabric
+    - JSI
+    - GLSurfaceView
+    - NativeActivity
+    - OpenGL
+    - Compose
+    - Flutter
+    - mixed
+    - 混合
+    match_keywords:
+    - TextureView
+    - SurfaceTexture
+    - WebView
+    - DrawFunctor
+    - React Native
+    - RN
+    - Fabric
+    - JSI
+    - GLSurfaceView
+    - NativeActivity
+    - OpenGL
+    - Compose
+    - Flutter
+    - mixed
+    - 混合
+    - 架构
+    required_expected_call_alternatives:
+    - skill_id: flutter_scrolling_analysis
+    - skill_id: textureview_producer_frame_timing
+    - skill_id: webview_drawfunctor_jank_chain
+    - skill_id: rn_bridge_to_frame_jank
+    - skill_id: rn_fabric_render_jank
+    - skill_id: gl_standalone_swap_jank
+    - skill_id: compose_recomposition_hotspot
+    - skill_id: surfaceflinger_analysis
+```
+
 #### Scrolling Core Strategy
 
 **Route card**: 滑动 / 卡顿 / 掉帧 / jank / scroll / fps / list / fling
-
-
-
-
 
 **Final report must include**
 - 必须显式出现 `### 全帧根因分布`：reason_code/责任方、帧数、占比。
@@ -29,9 +416,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - `scrolling:root_cause_drill`: reason_code 深钻、frame_blocking_calls、blocking_chain_analysis、display pipeline 边界。
 - `scrolling:missing_frame_gap`: frame_production_gap 触发和缺帧解释。
 - `scrolling:final_report_and_sql_fallback`: 结论结构和 SQL fallback。
-
-
-
 
 #### 滑动/卡顿分析（用户提到 滑动、卡顿、掉帧、jank、scroll、fps）
 
@@ -60,8 +444,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 如果 `process_name` 来自自动焦点检测、或用户/trace 证据提示进程名与包名/线程名/layer 不一致，先执行 **Phase 1.6 进程身份交叉确认**，再调用本阶段的 `scrolling_analysis`。
 
-
-
 **Phase 1.3 — 全局上下文检查（基于 `global_context_flags` 结果，scrolling_analysis 自动输出）：**
 
 检查 `global_context` 数据源中的标志。在**结论概述段**（帧率/掉帧率数据紧后）用粗体标注，格式如下：
@@ -76,11 +458,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 ⚠️ 全局上下文标志**不改变 reason_code 分类**，仅在结论概述段增加修饰标注。多个标志同时为 1 时全部标注。
 <!-- /strategy-detail -->
 
-<!-- strategy-detail id="architecture_branches" title="滑动混合架构和 producer 分支" keywords="Flutter,TextureView,WebView,React Native,GLSurfaceView,Compose,mixed,architecture" -->
-**Phase 1.5 — 架构感知分支（基于 detect_architecture 结果）：**
-
-`detect_architecture` 的 `primary_pipeline_id` 只是入口，不是单选结论。只要 `candidates_list` / `features_list` 中出现 WebView、Flutter、TextureView、SurfaceView、RN、GL、视频/媒体等次级出图链路，就按 **multi-pipeline** 处理。
-
 **混合出图规则：**
 1. **先分开看 HWUI host 链路**：始终调用 `scrolling_analysis` 获取宿主 App FrameTimeline、MainThread/RenderThread、SF 责任分布。
 2. **再分开看 producer/embedded 链路**：按候选 pipeline 调用对应 skill（Flutter、WebView、TextureView、RN、GL、游戏/媒体）。
@@ -88,13 +465,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 **输出必须分三段**：`HWUI host 证据`、`嵌入/独立 producer 证据`、`合并因果判断`。不能只说“这是 Flutter/WebView/RN 架构所以改用某一个 skill”，也不能只说“FrameTimeline 正常所以无卡顿”。
 
-
-
-
-
 **Phase 1.6 — 进程身份交叉确认（当 process_name 可能不可靠时）：**
-
-
 
 处理规则：
 - 使用 resolver 第一名候选的 `recommended_process_name_param` 作为后续 `scrolling_analysis` / `jank_frame_detail` / `frame_blocking_calls` 的 `process_name`
@@ -104,8 +475,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 <!-- strategy-detail id="root_cause_drill" title="滑动根因分支深钻和 display pipeline 边界" keywords="root cause,reason_code,jank_frame_detail,frame_blocking_calls,blocking_chain_analysis,SurfaceFlinger,Fence,BufferQueue" -->
 **Phase 1.7 — 根因分支深钻（基于 batch_frame_root_cause 的 reason_code 和 jank_responsibility）：**
-
-
 
 **Display pipeline 边界（当证据命中 SF/BufferQueue/Fence/刷新率时必须写清）：**
 - `queueBuffer()` 只证明 producer 已提交 buffer；它不证明 SurfaceFlinger 已 acquire/latch，也不证明 HWC/panel 已 present。
@@ -119,19 +488,11 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 当用户追问"每帧 CPU/UI 时间"、"GPU work period"、"Mali power state"、"是 CPU 还是 GPU 限制"时，优先调用已落地的 B-tier atomic skill：
 
-
-
 这些是补充证据，不替代 Phase 1.9 的根因深钻。若 Trace 数据完整度提示 `gpu_work_period` / `cpu_freq_idle` 缺失，结论中必须说明 GPU/CPU 供应侧判断的可信度下降。
 
 **Phase 1.9 — 根因深钻（🔴 强制执行，不可跳过）：**
 
-对 `batch_frame_root_cause` 中**占比 >15% 且绝对帧数 >3** 的每个 reason_code，**必须**选最严重的 1 帧执行深钻。
-**⛔ 禁止**仅靠 batch_frame_root_cause 的统计分类直接出结论——reason_code（如 workload_heavy）只是分类标签，不是真正的根因。
-**必须**通过至少一次工具调用（frame_blocking_calls / blocking_chain_analysis / binder_root_cause / lookup_knowledge / jank_frame_detail）获取机制级证据，回答"WHY 这帧慢"。跳过此步骤将触发验证错误。
-
 **常见错误：** 看到 reason_code=workload_heavy 就结论"工作负载过重"，但没有回答：具体是哪段代码？为什么在这个时机执行？是否可异步/分帧？这不是根因分析，这只是分类。
-
-
 
 **workload_heavy 子分类指导：** 当 reason_code = `workload_heavy` 时，检查 `top_slice_name` 字段是否**包含**以下关键字，进一步归类（这是字符串包含匹配，不是 SQL 查询）：
 
@@ -148,8 +509,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 | `Recomposition` / `compose:` | Compose 重组过长 | [App层] 使用 derivedStateOf/remember 减少不必要的重组 |
 | 其他 / 无法匹配 | 通用负载过重 | 需要 jank_frame_detail 查看 main_slices_json 获取更多上下文 |
 
-
-
 **WHY 链深度要求：** 每个 [CRITICAL]/[HIGH] 发现的根因推理链必须至少 2 级：
 - ✅ Level 1: "帧超时" → Level 2: "Binder 阻塞" → Level 3: "服务端 system_server monitor_contention"
 - ❌ 仅 Level 1: "帧超时 45ms，workload_heavy"（缺少机制解释）
@@ -165,7 +524,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 | 检测到 WebView / SurfaceTexture 架构（Phase 1.5） | 单 buffer 模式天然容易产生缺帧 |
 
 缺帧在 Perfetto 时间线上表现为帧间 gap 而非红/黄帧，`batch_frame_root_cause` 无法检出。
-
 
 
 返回结果包含：
@@ -208,7 +566,6 @@ Phase 1 的 `batch_frame_root_cause` 已包含每帧的**完整统计数据**（
 - `workload_heavy` 但 `main_slices_json` 明确指向应用自定义方法，最终根因应写具体方法名和所处阶段，例如 `CustomScroll_longFrameLoad` 在 ANIMATION 回调同步执行，而不是只写 "workload_heavy"。
 
 `frame_blocking_calls` 是 Phase 1.9 的帧内阻塞证据补充，不占 `jank_frame_detail` 的 2 帧上限。遇到 Binder/IO/futex/锁相关根因时，优先用它确认阻塞调用是否真的与掉帧帧重叠。
-
 
 
 **Phase 3 — 综合结论（基于全量帧数据）：**
@@ -341,7 +698,8 @@ LIMIT 20
 
 ⚠️ 注意：此 SQL 同时返回框架标记的掉帧和隐形掉帧。`display_type='隐形掉帧'` 的帧是框架未标记但消费端检测到的真实掉帧。
 
-
+**回退 Step 2 — 对 top 5 卡顿帧调用 jank_frame_detail（必须执行）：**
+- 混合选取 APP 和 HIDDEN 帧
 
 **不执行逐帧分析就直接出结论是不允许的。**
 <!-- /strategy-detail -->

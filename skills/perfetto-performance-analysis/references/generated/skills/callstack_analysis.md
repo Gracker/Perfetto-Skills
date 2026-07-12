@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/deep/callstack_analysis.skill.yaml
-Source SHA-256: da6f8f053e7325fffa6983751eaebd17478c4ae924e86352ffd66e4101d98660
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source SHA-256: 32723ee660e8cc822dc7b98136a23b15ba55fc88f77942c0ee0b658a654680f1
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 # 调用栈分析 (Flamegraph)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -58,8 +58,7 @@ patterns:
 ## Prerequisites
 
 ```yaml
-modules:
-- stack_profile
+modules: null
 ```
 
 ## Inputs
@@ -125,6 +124,7 @@ on_empty: 未找到 CPU 采样数据，请确保 trace 包含 simpleperf/perf �
 id: hot_functions
 type: atomic
 optional: true
+condition: sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0
 display:
   level: detail
   layer: list
@@ -170,6 +170,7 @@ save_as: hot_functions
 id: module_distribution
 type: atomic
 optional: true
+condition: sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0
 display:
   level: detail
   layer: list
@@ -201,6 +202,7 @@ save_as: module_distribution
 id: thread_hotspots
 type: atomic
 optional: true
+condition: sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0
 display:
   level: detail
   layer: list
@@ -235,6 +237,7 @@ save_as: thread_hotspots
 id: caller_analysis
 type: atomic
 optional: true
+condition: (hot_functions?.data?.length || 0) > 0
 display:
   level: detail
   layer: deep
@@ -265,6 +268,7 @@ save_as: caller_analysis
 id: analysis_conclusion
 type: atomic
 optional: true
+condition: sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0
 display:
   level: summary
   layer: overview

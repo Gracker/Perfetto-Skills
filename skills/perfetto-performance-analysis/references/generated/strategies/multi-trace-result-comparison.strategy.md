@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/multi-trace-result-comparison.strategy.md
 Source SHA-256: 361979e0bd5f57353028a1ff2d5e9003f9ef20ad310b114545246d357f2b4687
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Multi Trace Result Comparison Strategy
 
@@ -9,40 +9,108 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: multi_trace_result_comparison
+priority: 0
+effort: medium
+required_capabilities: []
+optional_capabilities: []
+keywords:
+- 分析结果对比
+- 结果对比
+- 多 Trace 结果对比
+- 多 trace 结果对比
+- 多个 Trace 结果对比
+- 两个 Trace 结果对比
+- 另一个 Trace 的分析结果
+- 另外一个 Trace 的分析结果
+- snapshot 对比
+- SID 对比
+- analysis result comparison
+- result comparison
+- multi trace result comparison
+- compare snapshots
+- compare analysis results
+compound_patterns:
+- 对比.*(分析结果|结果|snapshot|snapshots|SID|sid)
+- 对比.*(另一个\s*Trace|另外一个\s*Trace|两个\s*Trace|多个\s*Trace|多\s*Trace).*(分析结果|结果|snapshot|snapshots|SID|sid)
+- (分析结果|结果|snapshot|snapshots).*(对比|compare)
+- compare.*(analysis results|result snapshots|snapshots|snapshot ids|SIDs|session results|multi trace results)
+phase_hints:
+- id: result_snapshot_selection
+  keywords:
+  - snapshot
+  - 结果
+  - 候选
+  - baseline
+  - current result
+  - analysis result
+  critical_tools: []
+  critical: true
+- id: matrix_first
+  keywords:
+  - matrix
+  - delta
+  - metric
+  - fps
+  - jank
+  - startup
+  - 启动
+  - 帧率
+  constraints: 定量结论只能来自 ComparisonMatrix 的 normalized metrics。缺失 metric 要标注 missing reason；只有允许回填时才请求 trace backfill。
+  critical_tools: []
+  critical: true
+plan_template:
+  mandatory_aspects:
+  - id: snapshot_scope
+    match_keywords:
+    - snapshot
+    - analysis result
+    - 结果
+    - baseline
+    - candidate
+    suggestion: 分析结果对比必须先确认 snapshot 范围、baseline 和 candidates
+    required_expected_calls:
+    - {}
+  - id: comparison_matrix
+    match_keywords:
+    - matrix
+    - metric
+    - delta
+    - fps
+    - jank
+    - startup
+    - 启动
+    - 帧率
+    suggestion: 分析结果对比必须构造 ComparisonMatrix，并基于结构化 metric 输出 delta
+    required_expected_calls:
+    - skill_id: multi_trace_result_comparison
+```
+
 #### multi_trace_result_comparison Core Strategy
 
 **Route card**: 分析结果对比 / 结果对比 / 多 Trace 结果对比 / 多个 Trace 结果对比 / 两个 Trace 结果对比 / snapshot 对比 / SID 对比 / analysis result comparison / result comparison
 
 **Capabilities**: required=[none], optional=[none]
 
-
-
-
-
-**Phase reminders**
-- result_snapshot_selection: 必须先确认要对比的是 AnalysisResultSnapshot/SID/result，而不是实时 raw trace pair 对比。候选不唯一时必须让用户选择 baseline 和 candidates。
-- matrix_first: 定量结论只能来自 ComparisonMatrix 的 normalized metrics。缺失 metric 要标注 missing reason；只有允许回填时才请求 trace backfill。
-- raw_trace_boundary: 如果当前会话已经有 `referenceTraceId` 或 `tracePairContext`，用户只说“对比两个 Trace/左右 Trace/上下 Trace”的启动、滑动、FPS、频率等原始数据差异时，不使用本策略；应走双 Trace raw comparison 的 `get_comparison_context`、`compare_skill`、`execute_sql_on`。
-
 **Final report contract summary**
 - 遵循通用输出契约。
-
-
-
 
 
 <!-- strategy-detail id="full" title="multi_trace_result_comparison full strategy detail" keywords="multi_trace_result_comparison,分析结果对比,结果对比,多 Trace 结果对比,多 trace 结果对比,多个 Trace 结果对比,两个 Trace 结果对比,snapshot 对比,SID 对比,analysis result comparison,result comparison,multi trace result comparison,compare snapshots,分析结果对比（用户提到多个 Trace 的已有分析结果、snapshot、SID/result、另一个 Trace 的分析结果）,detail,full" default="true" -->
 #### 分析结果对比（用户提到多个 Trace 的已有分析结果、snapshot、SID/result、另一个 Trace 的分析结果）
 
 这是多窗口/多用户结果快照对比，不是当前会话里已打开两个 Trace 的实时 raw data 对比。
-
-**核心原则：**
-1. 先对比 `AnalysisResultSnapshot`，不默认唤醒原 TraceProcessor。
-2. 定量结论只来自 `ComparisonMatrix` 中的 normalized metrics。
-3. 不同 scene、设备、包名或采集配置不一致时，结论必须降级并明确说明。
-4. 每个关键数值必须能追溯到 snapshot、metric key 和 evidence refs。
-5. AI 只能解释差异，不允许从自然语言报告里重新抽取或发明指标。
-6. 如果用户说的是已打开的左/右或上/下 Trace 原始数据差异，而不是已有结果/snapshot/SID，则不要使用本策略。
 
 **Phase 1 — Snapshot 范围确认：**
 
@@ -52,11 +120,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - baseline 必须明确；不要把“当前 Trace”隐式当成所有场景的 baseline。
 
 **Phase 2 — 构造 ComparisonMatrix：**
-
-- 使用 `multi_trace_result_comparison` Skill contract 描述输入输出边界。
-- 构造输入：`snapshot_ids`, `baseline_snapshot_id`, 可选 `metric_keys`, 原始 `query`。
-- 默认 metric 范围：`startup.total_ms`, `scrolling.avg_fps`, `scrolling.jank_rate_pct`。
-- 用户显式要求某个 metric key 时，优先加入 matrix；缺失时进入缺失矩阵。
 
 **Phase 3 — 缺失与回填：**
 
@@ -75,8 +138,3 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 4. AI 解释分为“已验证事实”和“推断”，推断必须基于 matrix 中的事实。
 
 禁止：
-
-- 使用 raw trace pair 的 `execute_sql_on("reference")` 路线替代结果快照对比。
-- 对单侧缺失 metric 给出百分比变化。
-- 用报告正文里的描述覆盖 normalized metric。
-<!-- /strategy-detail -->

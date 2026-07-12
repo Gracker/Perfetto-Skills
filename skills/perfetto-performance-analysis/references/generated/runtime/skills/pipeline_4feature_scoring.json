@@ -1,0 +1,133 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*AChoreographer*",
+      "*ASurfaceTransaction*",
+      "*BLASTBufferQueue*",
+      "*Choreographer#doFrame*",
+      "*FEngineLoop*",
+      "*MainLoop*",
+      "*PlayerLoop*",
+      "*Swappy*",
+      "*SwappyVk_*",
+      "*Vulkan*",
+      "*applyTransaction*",
+      "*eglSwapBuffers*",
+      "*lockCanvas*",
+      "*processCaptureRequest*",
+      "*processCaptureResult*",
+      "*queueBuffer*",
+      "*releaseOutputBuffer*",
+      "*setFrameRate*",
+      "*setFrameRateCategory*",
+      "*unlockCanvasAndPost*",
+      "*updateTexImage*",
+      "*vkQueuePresentKHR*",
+      "1.io",
+      "1.raster",
+      "1.ui",
+      "Compositor",
+      "CompositorTileWorker*",
+      "CrRendererMain*",
+      "DrawFrame*",
+      "GLThread*",
+      "GameThread",
+      "GodotMain*",
+      "RHIThread",
+      "RenderThread",
+      "UnityGfx*",
+      "UnityMain*",
+      "VizCompositorThread*",
+      "VkQueue*",
+      "main",
+      "mqt_js*",
+      "mqt_native*"
+    ]
+  },
+  "id": "pipeline_4feature_scoring",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "slices.with_context",
+      "android.frames.timeline"
+    ],
+    "required_tables": [
+      "slice",
+      "thread_track",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/pipeline_4feature_scoring.skill.yaml",
+    "sha256": "510fbb63523a223a8d40f61f49a3090fc0b9dcc00bebf3a319e94aaf6506408a"
+  },
+  "steps": [
+    {
+      "id": "producer_thread_signature",
+      "name": "Producer 线程数（特征 1）",
+      "query_id": "pipeline_4feature_scoring/producer_thread_signature",
+      "result_dependencies": [],
+      "save_as": "producer_thread_signature",
+      "type": "atomic"
+    },
+    {
+      "id": "layer_signature",
+      "name": "Layer 数（特征 2）",
+      "query_id": "pipeline_4feature_scoring/layer_signature",
+      "result_dependencies": [],
+      "save_as": "layer_signature",
+      "type": "atomic"
+    },
+    {
+      "id": "bufferqueue_path",
+      "name": "BufferQueue 路径（特征 3）",
+      "query_id": "pipeline_4feature_scoring/bufferqueue_path",
+      "result_dependencies": [],
+      "save_as": "bufferqueue_path",
+      "type": "atomic"
+    },
+    {
+      "id": "extra_rhythm",
+      "name": "额外节奏源（特征 4）",
+      "query_id": "pipeline_4feature_scoring/extra_rhythm",
+      "result_dependencies": [],
+      "save_as": "extra_rhythm",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "rendering-pipeline"
+}

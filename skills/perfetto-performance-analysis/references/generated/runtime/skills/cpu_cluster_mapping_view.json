@@ -1,0 +1,44 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "cpu_cluster_mapping_view",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [],
+  "prerequisites": {
+    "modules": [
+      "android.cpu.cluster_type"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/cpu_cluster_mapping_view.skill.yaml",
+    "sha256": "c5d603b71661230ea7d4c4b626a8e6e9d6ecb6844f83d8d215feb9429bf19fb1"
+  },
+  "steps": [
+    {
+      "id": "cluster_mapping",
+      "name": "CPU Cluster 映射",
+      "query_id": "cpu_cluster_mapping_view/cluster_mapping",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

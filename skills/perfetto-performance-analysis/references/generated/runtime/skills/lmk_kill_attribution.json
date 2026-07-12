@@ -1,0 +1,63 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${process_name}*"
+    ]
+  },
+  "id": "lmk_kill_attribution",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名 GLOB（可选）",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.memory.lmk"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/lmk_kill_attribution.skill.yaml",
+    "sha256": "4c299b78e625d37ee05fb8288a3b072ab6151ce29c5f98780a038913d06664ae"
+  },
+  "steps": [
+    {
+      "id": "lmk_events",
+      "name": "LMK 事件列表",
+      "query_id": "lmk_kill_attribution/lmk_events",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "memory"
+}

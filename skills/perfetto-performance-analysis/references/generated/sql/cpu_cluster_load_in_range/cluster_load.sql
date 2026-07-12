@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml
 -- Source SHA-256: 531fd3145d1a67a1ae02e1e028280f2e0e627b4bde1f7c832a985911391fd433
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 WITH
 -- 获取每个 CPU 上的 Running 状态时间

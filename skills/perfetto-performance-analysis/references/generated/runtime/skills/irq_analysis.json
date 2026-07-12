@@ -1,0 +1,225 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "irq/%",
+      "irq_handler_%",
+      "softirq/%",
+      "softirq_",
+      "softirq_%"
+    ]
+  },
+  "id": "irq_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选，用于关联分析）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳（纳秒，可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳（纳秒，可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 1000,
+      "description": "硬中断长耗时阈值（微秒，默认 1000us=1ms）",
+      "name": "hard_irq_long_threshold_us",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10000,
+      "description": "软中断长耗时阈值（微秒，默认 10000us=10ms）",
+      "name": "soft_irq_long_threshold_us",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10000,
+      "description": "中断频率重负载阈值（次/秒）",
+      "name": "irq_rate_heavy_threshold",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
+      "description": "中断耗时重负载阈值（ms/秒）",
+      "name": "irq_dur_heavy_threshold_ms",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/irq_analysis.skill.yaml",
+    "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+  },
+  "steps": [
+    {
+      "id": "data_check",
+      "name": "IRQ 数据检测",
+      "query_id": "irq_analysis/data_check",
+      "result_dependencies": [],
+      "save_as": "data_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_irq_data === 1",
+      "id": "irq_overview",
+      "name": "中断概览",
+      "optional": true,
+      "query_id": "irq_analysis/irq_overview",
+      "result_dependencies": [],
+      "save_as": "irq_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_irq_data === 1",
+      "id": "top_irq_sources",
+      "name": "顶级 IRQ 源",
+      "optional": true,
+      "query_id": "irq_analysis/top_irq_sources",
+      "result_dependencies": [],
+      "save_as": "top_irq_sources",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_irq_data === 1",
+      "id": "hard_irq_detail",
+      "name": "硬中断明细",
+      "optional": true,
+      "query_id": "irq_analysis/hard_irq_detail",
+      "result_dependencies": [],
+      "save_as": "hard_irq_detail",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_irq_data === 1",
+      "id": "soft_irq_detail",
+      "name": "软中断明细",
+      "optional": true,
+      "query_id": "irq_analysis/soft_irq_detail",
+      "result_dependencies": [],
+      "save_as": "soft_irq_detail",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_irq_data === 1",
+      "id": "long_irq_events",
+      "name": "长耗时中断事件",
+      "optional": true,
+      "query_id": "irq_analysis/long_irq_events",
+      "result_dependencies": [],
+      "save_as": "long_irq_events",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_irq_data === 1",
+      "id": "irq_timeline",
+      "name": "中断时间分布",
+      "optional": true,
+      "query_id": "irq_analysis/irq_timeline",
+      "result_dependencies": [],
+      "save_as": "irq_timeline",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_irq_data === 1",
+      "id": "root_cause_classification",
+      "name": "根因分类",
+      "query_id": "irq_analysis/root_cause_classification",
+      "result_dependencies": [],
+      "save_as": "root_cause",
+      "type": "atomic"
+    },
+    {
+      "id": "irq_diagnosis",
+      "inputs": [
+        "irq_overview",
+        "top_irq_sources",
+        "long_irq_events",
+        "root_cause"
+      ],
+      "name": "中断诊断",
+      "rules": [
+        {
+          "condition": "root_cause.data[0]?.classification === 'IRQ_LATENCY'",
+          "confidence": "high",
+          "diagnosis": "检测到异常长耗时中断 (硬中断 ${root_cause.data[0].long_hard_irq_count} 次 >1ms，软中断 ${root_cause.data[0].long_soft_irq_count} 次 >10ms)",
+          "severity": "critical",
+          "suggestions": [
+            "检查长耗时硬中断对应的设备驱动",
+            "分析软中断堆积原因 (NET_RX/TIMER 等)",
+            "考虑将中断绑定到特定 CPU 核心避免影响关键任务"
+          ]
+        },
+        {
+          "condition": "root_cause.data[0]?.classification === 'IRQ_HEAVY'",
+          "confidence": "high",
+          "diagnosis": "中断负载较重 (总计 ${root_cause.data[0].total_irq_count} 次，耗时 ${root_cause.data[0].total_dur_ms}ms)",
+          "severity": "warning",
+          "suggestions": [
+            "检查高频中断源，评估是否可以合并或降频",
+            "使用 IRQ affinity 分散中断负载",
+            "检查网络和存储 IO 是否导致过多中断"
+          ]
+        },
+        {
+          "condition": "root_cause.data[0]?.classification === 'IRQ_NORMAL'",
+          "confidence": "high",
+          "diagnosis": "中断负载正常，无异常",
+          "severity": "info",
+          "suggestions": [
+            "当前中断状态良好"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_irq_data !== 1",
+      "id": "no_data_fallback",
+      "name": "无 IRQ 数据",
+      "query_id": "irq_analysis/no_data_fallback",
+      "result_dependencies": [],
+      "save_as": "no_data_fallback",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "3.0",
+  "workflow": "cpu-scheduling"
+}

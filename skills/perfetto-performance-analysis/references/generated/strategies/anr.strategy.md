@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
 Source SHA-256: 7789a0289bed4a0b46c99ddcd9705bdf77585f0f349359d83f1bc1f84cbcc719
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Anr Strategy
 
@@ -9,25 +9,160 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: anr
+priority: 1
+effort: medium
+required_capabilities:
+- anr
+- cpu_scheduling
+optional_capabilities:
+- binder_ipc
+- lock_contention
+- gc_memory
+keywords:
+- anr
+- 无响应
+- 应用无响应
+- 主线程无响应
+- deadlock
+- not responding
+- 死锁
+- watchdog
+- broadcast timeout
+- input dispatching
+- 冻屏
+- freeze
+- 卡死
+compound_patterns:
+- (ApplicationExitInfo|getHistoricalProcessExitReasons|ProfilingManager|ProfilingTrigger|Play Vitals|Android Vitals|client
+  watchdog|SDK watchdog).*(ANR|not responding|无响应|卡死)
+- (ANR|not responding|无响应|卡死).*(ApplicationExitInfo|getHistoricalProcessExitReasons|ProfilingManager|ProfilingTrigger|Play
+  Vitals|Android Vitals|client watchdog|SDK watchdog)
+final_report_contract:
+  required_sections:
+  - id: anr_diagnostic_api_boundary
+    label: ANR 诊断 API/外部聚合边界
+    description: 当用户主动提到 ApplicationExitInfo、ProfilingTrigger、Play/Android Vitals 或客户端 watchdog 时，区分系统确认 ANR、客户端预警、Profiling
+      artifact、Play 聚合和当前 trace 根因证据。
+    trigger_patterns:
+    - ApplicationExitInfo|getHistoricalProcessExitReasons|getAnrInfo|REASON_ANR
+    - ProfilingManager|ProfilingTrigger|TRIGGER_TYPE_ANR
+    - Play Vitals|Android Vitals|user-perceived ANR|client watchdog|SDK watchdog
+    pattern_groups:
+    - - ANR 诊断 API/外部聚合边界
+      - ANR diagnostic API
+      - system-confirmed
+      - client watchdog
+      - Play Vitals
+      - ProfilingTrigger
+      - ApplicationExitInfo
+    - - diagnostic_api
+      - profiling_artifact
+      - external_aggregate
+      - ApplicationExitInfo
+      - getAnrInfo
+      - REASON_ANR
+      - ProfilingManager
+      - ProfilingTrigger
+      - TRIGGER_TYPE_ANR
+      - Play Vitals
+      - Android Vitals
+      - watchdog
+    - - API\s*3[067]
+      - Android\s*1[167]
+      - version
+      - 版本
+      - reason
+      - trigger type
+      - timeout
+      - ANR window
+      - event window
+      - timestamp
+      - artifact
+    - - current trace
+      - Perfetto
+      - direct_blocker
+      - logcat
+      - Binder
+      - lock
+      - align
+      - 对齐
+      - missing
+      - 缺失
+      - confidence
+      - 不能
+      - 不可
+      - not replace
+phase_hints:
+- id: freeze_verdict
+  keywords:
+  - verdict
+  - 判定
+  - freeze
+  - diagnosis
+  - 诊断
+  - 原因
+  - anr_analysis
+  - 系统
+  - system
+  constraints: freeze_verdict 是第一优先级门控。system freeze → 系统原因排查；app_specific → 进入 App 根因决策树（5 步子流程）。禁止在未确认 freeze_verdict 前直接分析
+    App 代码。
+  critical_tools:
+  - anr_analysis
+  critical: true
+- id: anr_diagnostic_api_boundary
+  keywords:
+  - ApplicationExitInfo
+  - getHistoricalProcessExitReasons
+  - getAnrInfo
+  - REASON_ANR
+  - ProfilingManager
+  - ProfilingTrigger
+  - TRIGGER_TYPE_ANR
+  - Play Vitals
+  - Android Vitals
+  - client watchdog
+  - SDK watchdog
+  constraints: ApplicationExitInfo、ProfilingTrigger 产物、Play/Android Vitals、客户端 watchdog 都只能补充 ANR 证据。必须说明 API/Android 版本、reason/trigger
+    type、record/artifact 时间、事件窗口对齐；根因仍需 Perfetto ANR window、direct_blocker、logcat、Binder/lock/IO/GC/scheduler 证据闭环。
+  critical_tools:
+  - anr_analysis
+  critical: false
+plan_template:
+  mandatory_aspects:
+  - id: anr_root_cause
+    match_keywords:
+    - anr
+    - deadlock
+    - block
+    - 死锁
+    - 阻塞
+    - not_responding
+    - anr_analysis
+    suggestion: ANR 场景建议包含 ANR 原因定位阶段 (anr_analysis)
+    required_expected_calls:
+    - skill_id: anr_analysis
+```
+
 #### anr Core Strategy
 
 **Route card**: anr / 无响应 / 应用无响应 / 主线程无响应 / deadlock / not responding / 死锁 / watchdog / broadcast timeout / input dispatching
 
 **Capabilities**: required=[anr, cpu_scheduling], optional=[binder_ipc, lock_contention, gc_memory]
 
-
-
-
-
-**Phase reminders**
-- freeze_verdict: freeze_verdict 是第一优先级门控。system freeze → 系统原因排查；app_specific → 进入 App 根因决策树（5 步子流程）。禁止在未确认 freeze_verdict 前直接分析 App 代码。 工具: anr_analysis
-- anr_diagnostic_api_boundary: ApplicationExitInfo、ProfilingTrigger 产物、Play/Android Vitals、客户端 watchdog 都只能补充 ANR 证据。必须说明 API/Android 版本、reason/trigger type、record/artifact 时间、事件窗口对齐；根因仍需 Perfetto ANR window、direct_blocker、logcat、Binder/lock/IO/GC/scheduler 证据闭环。 工具: anr_analysis, lookup_knowledge
-
 **Final report contract summary**
 - ANR 诊断 API/外部聚合边界
-
-
-
 
 
 <!-- strategy-detail id="full" title="anr full strategy detail" keywords="anr,anr,无响应,应用无响应,主线程无响应,deadlock,not responding,死锁,watchdog,broadcast timeout,input dispatching,冻屏,freeze,ANR 分析（用户提到 ANR、无响应、not responding、死锁、冻屏）,detail,full" default="true" -->
@@ -59,24 +194,25 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 #### 证据边界和裁剪规则
 
-- `anr_dur_ms` 是 Perfetto 从 timer event 或 subject 抽取的实际 ANR duration，优先级高于 AOSP/Pixels 默认值。分析窗口必须使用 `timeout_ms = COALESCE(NULLIF(anr_dur_ms, 0), default_anr_dur_ms, heuristic_fallback)`。
-- `heuristic_fallback` 只是低置信度 lookback，不是 Perfetto default。`CONTENT_PROVIDER_NOT_RESPONDING`、`GPU_HANG`、`APP_TRIGGERED`、`UNKNOWN_ANR_TYPE` 在 Perfetto 默认表中没有固定 timeout，使用 heuristic 时必须明确标为证据缺口/低置信度。
-- 多个 ANR 必须按 `error_id` / `upid` / 单个 ANR 窗口隔离证据。`upid` 是 Perfetto 进程唯一身份，逐事件线程证据优先用 `upid` 定位，`pid`/进程名只能作为降级匹配。不要把第一条 ANR 附近的 CPU、logcat、Binder 或锁竞争套到后续事件上；overview 中首个 ANR 窗口系统健康只可作为 baseline context。
-- 所有 duration 证据必须裁剪到 `[anr_ts - timeout_ns, anr_ts]`；跨窗口 slice 只能计入重叠部分。
-- `nativePollOnce`、`epoll_wait`、Looper 空闲只说明主线程等待事件或缺少更细证据。它可以作为排除性证据，不能单独作为最终根因。
-- `blocking`、`binder_calls`、`main_sync_binder`、`sched_delay` 这类包名级 artifact 只能作辅助上下文；逐 ANR 定因必须优先使用 `direct_blocker_candidates`、同窗口线程/slice 证据和事件级锚点。
-- Binder wait 需要对端/服务端证据；锁等待需要 owner/monitor chain；CPU/IO/内存压力需要与同一窗口的主线程、系统负载或日志闭环。
-- AnrManager/ActivityManager 的 “ANR in ...” 往往是 dump 或报告时刻，不必然等于真实触发起点；用它校验上下文，不替代 Perfetto ANR 时间窗。
-- 输入类 ANR 必须区分 `wq`/FINISHED timeout、stale drop、InputChannel 创建/断连、target/focused window 缺失和 App main-thread blocking。`wq`/queue age 是未 ACK 症状和计时基础，不是 Binder、App 业务代码或 InputDispatcher 根因本身；stale drop 也不是系统确认 ANR。
-- ApplicationExitInfo、ProfilingManager/ProfilingTrigger 产物、Play/Android Vitals 和客户端 watchdog 是不同证据层。它们可以帮助确认历史退出、预警、采样窗口或线上影响面，但不能替代当前 Perfetto ANR window、direct blocker、事件级 logcat、Binder/lock/IO/GC/scheduler 证据链。需要机制背景时调用 `lookup_knowledge("observability-diagnostics")`。
-
 #### ANR 场景关键 Stdlib 表
 
 写 execute_sql 时优先使用（完整列表见方法论模板）：`android_oom_adj_intervals`、`android_monitor_contention_chain`、`android_screen_state`、`sched_latency_for_running_interval`、`cpu_utilization_in_interval(ts, dur)`、`android_garbage_collection_events`
 
+**Phase 1 — ANR 检测 + 系统健康评估（1 次调用）：**
+- 如果知道包名，传入 `process_name` 或 `package` 参数
+- 返回结果包含以下关键 artifact：
+  - `detection`：ANR 检测（总数、受影响进程数、时间跨度）
+  - `trigger_classification`：Perfetto ANR 类型到 the portable runtime `trigger_type` 的规范化映射，并输出候选根因提示（非最终结论）
+  - `cpu_health`：系统 CPU 负载（大核/小核利用率、是否过载）
+  - `memory_pressure`：ANR 窗口内的 LMK 事件
+  - `io_load`：各进程的 D-state 不可中断等待基线；不能单独作为 IO 根因
+  - `lock_waits`：futex/mutex 锁等待分布（P95/max）
+  - **`freeze_check`**（from `system_freeze_check`）：**系统冻结判定（最关键）**
+  - `overview` / `anr_events`：ANR 分类统计、逐事件窗口、`timeout_source` 与跳转范围
+  - 逐 ANR 的 `anr_detail` 迭代结果（四象限、`direct_blocker_classification` 保存为 `direct_blocker_candidates`、`direct_blocker_slice_classification` 保存为 `direct_blocker_slice_candidates`、`anr_logcat_context` 保存为 `logcat_event_context`、Binder、锁竞争、唤醒链等）
 
-
-
+**必须获取关键 artifact 的完整数据**：
+优先获取：`freeze_check`、`trigger_classification`、`anr_events`、逐 ANR 的 `quadrant`（四象限）、`direct_blocker_candidates`（from `direct_blocker_classification`）、`direct_blocker_slice_candidates`（from `direct_blocker_slice_classification`，若 slice 可用）和 `logcat_event_context`（from `anr_logcat_context`）；若缺 `android_logs`，读取 `logcat_context_gap`（from `anr_logcat_evidence_gap`）。`blocking`/Binder/sched artifact 只作为包名级辅助上下文
 
 **Phase 2 — 冻结判定分流（基于 freeze_verdict，第一优先级）：**
 
@@ -96,8 +232,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 **Phase 3 — App 级根因诊断决策树（当 freeze_verdict = app_specific）：**
 
 ### 第一步：看四象限分布（来自 anr_detail 的 `quadrant`）
-
-
 
 ### 第二步：当 Q4 占比高时 — 以 direct_blocker + 线程状态定位
 
@@ -154,12 +288,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 | **调度延迟** | Q3 Runnable 高且 direct_blocker 为 scheduler_pressure 时补查具体延迟分布 | `sched` |
 
 ### 第五步：交叉验证系统上下文
-
-- **CPU 负载** (`cpu_health`)：大核 avg_util_pct > 90% → CPU 饥饿参与因素
-- **内存压力** (`memory_pressure`)：ANR 窗口内有 LMK → 可能是 GC 压力或进程被回收重启
-- **不可中断等待基线** (`io_load`)：多进程 D-state 高只能说明系统/内核等待压力；只有结合 block IO、blocked_function 或文件/SQLite slice 证据，才能升级为系统级 IO 瓶颈
-- **锁等待** (`lock_waits`)：futex/mutex P95 偏高只作为包名级候选信号；最终定因必须结合逐 ANR `direct_blocker_candidates`、当前进程主线程 `lock_contention` 或锁链证据
-- **blocked_function 机制解释**：报告 D-state、`io_wait` 或 kernel blocked_function 时，调用 `lookup_knowledge("thread-state-blocked-reason")`；说明它是 kernel wchan 单帧，不是完整调用栈。
 
 **Phase 4 — 综合输出：**
 

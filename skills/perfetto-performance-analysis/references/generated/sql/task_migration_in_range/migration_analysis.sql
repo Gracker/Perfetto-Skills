@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/task_migration_in_range.skill.yaml
 -- Source SHA-256: 1b05bdb3c94d10130b9a0a89dc4e197560e6c66e235eca7924f7b6fe80d9df88
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 WITH
 target_threads AS (

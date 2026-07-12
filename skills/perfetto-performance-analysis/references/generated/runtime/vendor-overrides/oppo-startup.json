@@ -1,0 +1,173 @@
+{
+  "application_mode": "advisory_only",
+  "definition": {
+    "additional_diagnostics": [
+      {
+        "condition": "coloross_boost_engine.count == 0",
+        "id": "hyperboost_not_active",
+        "message": "未检测到 HyperBoost 加速，启动可能未享受到系统加速",
+        "severity": "info",
+        "suggestions": [
+          "检查应用是否在 HyperBoost 白名单中",
+          "联系 OPPO 系统工程师确认加速策略"
+        ]
+      },
+      {
+        "condition": "oppo_system_services.any.dur_ms > 50",
+        "id": "oppo_service_slow",
+        "message": "OPPO 系统服务 ${server_process} 调用耗时 ${dur_ms}ms",
+        "severity": "warning",
+        "suggestions": [
+          "联系 OPPO 系统侧确认服务状态",
+          "检查是否可以异步调用"
+        ]
+      },
+      {
+        "condition": "app_freeze_state.any.dur_ms > 100",
+        "id": "freeze_recovery_slow",
+        "message": "从冻结状态恢复耗时 ${dur_ms}ms",
+        "severity": "warning",
+        "suggestions": [
+          "检查应用是否有大量状态需要恢复",
+          "优化 onResume 中的逻辑"
+        ]
+      }
+    ],
+    "additional_output_sections": [
+      {
+        "fields": [
+          {
+            "key": "boost_event",
+            "label": "加速事件"
+          },
+          {
+            "key": "dur_ms",
+            "label": "持续时间",
+            "unit": "ms"
+          }
+        ],
+        "from": "coloross_boost_engine",
+        "id": "hyperboost",
+        "show_when": "coloross_boost_engine.count > 0",
+        "title": "HyperBoost 加速状态",
+        "type": "status"
+      },
+      {
+        "fields": [
+          {
+            "key": "server_process",
+            "label": "服务"
+          },
+          {
+            "key": "dur_ms",
+            "label": "耗时",
+            "unit": "ms"
+          },
+          {
+            "key": "call_count",
+            "label": "调用次数"
+          }
+        ],
+        "from": "oppo_system_services",
+        "id": "oppo_services",
+        "show_when": "oppo_system_services.count > 0",
+        "title": "OPPO 系统服务调用",
+        "type": "table"
+      }
+    ],
+    "additional_steps": [
+      {
+        "description": "检查 HyperBoost 是否在启动期间生效",
+        "for_each": "startups",
+        "id": "coloross_boost_engine",
+        "name": "ColorOS 加速引擎检测",
+        "sql": "SELECT\n  s.name as boost_event,\n  s.dur / 1e6 as dur_ms,\n  (s.ts - (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})) / 1e6 as relative_ts_ms\nFROM slice s\nWHERE (s.name GLOB '*HyperBoost*'\n       OR s.name GLOB '*ColorOS*Boost*'\n       OR s.name GLOB '*oplus*boost*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.ts ASC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "oppo_system_services",
+        "name": "OPPO 系统服务调用",
+        "sql": "SELECT\n  server_process,\n  client_dur / 1e6 as dur_ms,\n  COUNT(*) as call_count\nFROM android_binder_txns\nWHERE client_process GLOB '${package}*'\n  AND (server_process GLOB '*oppo*'\n       OR server_process GLOB '*oplus*'\n       OR server_process GLOB '*color*')\n  AND client_ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND client_ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nGROUP BY server_process\nORDER BY SUM(client_dur) DESC\n"
+      },
+      {
+        "description": "检查应用是否从冻结状态恢复",
+        "for_each": "startups",
+        "id": "app_freeze_state",
+        "name": "应用冻结状态检测",
+        "sql": "SELECT\n  s.name as freeze_event,\n  s.dur / 1e6 as dur_ms,\n  (s.ts - (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})) / 1e6 as relative_ts_ms\nFROM slice s\nWHERE (s.name GLOB '*freeze*'\n       OR s.name GLOB '*Freeze*'\n       OR s.name GLOB '*thaw*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.ts ASC\n"
+      }
+    ],
+    "extends": "composite/startup_analysis",
+    "meta": {
+      "description": "针对 OPPO ColorOS 优化的启动分析，包含 HyperBoost 检测",
+      "display_name": "OPPO ColorOS 启动分析",
+      "os": "ColorOS",
+      "vendor": "oppo"
+    },
+    "thresholds_override": {
+      "big_core_ratio": {
+        "levels": {
+          "critical": {
+            "max": 40
+          },
+          "excellent": {
+            "min": 80
+          },
+          "good": {
+            "max": 80,
+            "min": 60
+          },
+          "warning": {
+            "max": 60,
+            "min": 40
+          }
+        }
+      },
+      "cold_start_time": {
+        "levels": {
+          "critical": {
+            "min": 1500
+          },
+          "excellent": {
+            "max": 400
+          },
+          "good": {
+            "max": 800,
+            "min": 400
+          },
+          "warning": {
+            "max": 1500,
+            "min": 800
+          }
+        }
+      }
+    },
+    "vendor_detection": {
+      "signatures": [
+        {
+          "confidence": "high",
+          "pattern": "*ColorOS*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*OPPO*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*HyperBoost*"
+        },
+        {
+          "confidence": "medium",
+          "pattern": "*oplus*"
+        }
+      ]
+    },
+    "version": "1.0.0"
+  },
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/vendors/oppo/startup.override.yaml",
+    "sha256": "e5fcacb9241865a82427cf9cd78d4ae7430d3a655238b41a23015168b6f94326"
+  }
+}

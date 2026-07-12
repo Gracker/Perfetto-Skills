@@ -1,0 +1,36 @@
+{
+  "execution_verified_queries": [
+    "callstack_analysis/check_samples",
+    "rendering_pipeline_detection/slice_signals",
+    "rendering_pipeline_detection/thread_signals",
+    "scrolling_analysis/frame_timeline_check",
+    "startup_slow_reasons/startup_overview"
+  ],
+  "perfetto": {
+    "commit": "da1d152cff27890903d158fe96751de3aab883cc",
+    "rpc_api_version": 14,
+    "stdlib_tree": "7f0459ca3eed8372a8762ae052ed7fdb48eb3d88",
+    "tag": "v57.2"
+  },
+  "policy": {
+    "capability_gated_queries_may_not_support_causal_claims": true,
+    "static_valid_is_not_semantic_proof": true,
+    "unknown_or_unsupported_requires_explicit_override": true
+  },
+  "schema_version": 1,
+  "semantic_verified_queries": [
+    "callstack_analysis/check_samples",
+    "rendering_pipeline_detection/slice_signals",
+    "rendering_pipeline_detection/thread_signals",
+    "scrolling_analysis/frame_timeline_check",
+    "startup_slow_reasons/startup_overview"
+  ],
+  "source_commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+  "summary": {
+    "capability_gated": 632,
+    "execution_verified": 5,
+    "queries": 637,
+    "semantic_verified": 5,
+    "static_valid": 637
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "pipeline_android_pip_freeform",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "knowledge_only",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/pipelines/android_pip_freeform.skill.yaml",
+    "sha256": "aecef1c3039235de2f9e42a20904afc0328cdfe103791e963040bcfabfc576c6"
+  },
+  "steps": [],
+  "type": "pipeline_definition",
+  "version": "1.0",
+  "workflow": "rendering-pipeline"
+}

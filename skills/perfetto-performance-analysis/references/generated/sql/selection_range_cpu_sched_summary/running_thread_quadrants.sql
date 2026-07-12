@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml
--- Source SHA-256: c970063c31991780a831d4c680bca4f241addf9eecef9565c54d93c113652151
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source SHA-256: 31127ebb648421f06248c4ceb054d614d12df318c63b0a652a41f341b556310e
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 WITH
 target_threads AS (

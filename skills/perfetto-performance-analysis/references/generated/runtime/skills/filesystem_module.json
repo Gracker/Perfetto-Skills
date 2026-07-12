@@ -1,0 +1,221 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%${package}%",
+      "*File*",
+      "*IO*",
+      "*Open*",
+      "*Query*",
+      "*Read*",
+      "*Room*",
+      "*SQLite*",
+      "*SharedPreferences*",
+      "*Write*",
+      "*apply*",
+      "*commit*",
+      "*cursor*",
+      "*database*",
+      "*flush*",
+      "*getShared*",
+      "*open*",
+      "*query*",
+      "*read*",
+      "*sharedpref*",
+      "*sqlite*",
+      "*sync*",
+      "*transaction*",
+      "*write*"
+    ]
+  },
+  "id": "filesystem_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target package name",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Analysis start timestamp",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Analysis end timestamp",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "thread",
+      "process",
+      "thread_state"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
+    "sha256": "f09b8fa67e639a8b6825f4e99517b4cf82b8fae75c585d2c96f928f28e3c7f24"
+  },
+  "steps": [
+    {
+      "id": "io_overview",
+      "name": "I/O 操作概览",
+      "query_id": "filesystem_module/io_overview",
+      "result_dependencies": [],
+      "save_as": "io_overview",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_io",
+      "name": "主线程 I/O",
+      "query_id": "filesystem_module/main_thread_io",
+      "result_dependencies": [],
+      "save_as": "main_thread_io",
+      "type": "atomic"
+    },
+    {
+      "id": "database_operations",
+      "name": "数据库操作",
+      "query_id": "filesystem_module/database_operations",
+      "result_dependencies": [],
+      "save_as": "db_operations",
+      "type": "atomic"
+    },
+    {
+      "id": "shared_prefs_operations",
+      "name": "SharedPreferences 操作",
+      "query_id": "filesystem_module/shared_prefs_operations",
+      "result_dependencies": [],
+      "save_as": "sp_operations",
+      "type": "atomic"
+    },
+    {
+      "id": "io_wait_state",
+      "name": "I/O 等待状态",
+      "query_id": "filesystem_module/io_wait_state",
+      "result_dependencies": [],
+      "save_as": "io_wait_state",
+      "type": "atomic"
+    },
+    {
+      "id": "slow_io_operations",
+      "name": "慢 I/O 操作",
+      "query_id": "filesystem_module/slow_io_operations",
+      "result_dependencies": [],
+      "save_as": "slow_io",
+      "type": "atomic"
+    },
+    {
+      "id": "io_diagnosis",
+      "inputs": [
+        "io_overview",
+        "main_thread_io",
+        "db_operations",
+        "io_wait_state",
+        "slow_io"
+      ],
+      "name": "I/O 诊断",
+      "rules": [
+        {
+          "condition": "main_thread_io.data.length > 0",
+          "confidence": "critical",
+          "diagnosis": "检测到 ${main_thread_io.data.length} 次主线程 I/O 操作，最长 ${main_thread_io.data[0]?.dur_ms}ms",
+          "evidence_fields": [
+            "main_thread_io.data.length",
+            "main_thread_io.data[0]?.dur_ms",
+            "main_thread_io.data[0]?.io_operation"
+          ],
+          "suggestions": [
+            "将 I/O 操作移至后台线程",
+            "使用 Kotlin 协程或 RxJava 异步处理",
+            "考虑使用 Room 的 suspend 函数"
+          ]
+        },
+        {
+          "condition": "db_operations.data.filter(op => op.thread_type === 'main_thread').length > 5",
+          "confidence": "high",
+          "diagnosis": "主线程进行了多次数据库操作",
+          "evidence_fields": [
+            "db_operations.data[0]?.db_operation",
+            "db_operations.data[0]?.dur_ms"
+          ],
+          "suggestions": [
+            "数据库查询应在后台线程执行",
+            "使用 Room 的 @Query 配合 LiveData/Flow",
+            "考虑批量处理减少查询次数"
+          ]
+        },
+        {
+          "condition": "io_wait_state.data[0]?.io_wait_ms > 50",
+          "confidence": "high",
+          "diagnosis": "线程 I/O 等待时间过长: ${io_wait_state.data[0]?.thread_name} 等待 ${io_wait_state.data[0]?.io_wait_ms}ms",
+          "evidence_fields": [
+            "io_wait_state.data[0]?.thread_name",
+            "io_wait_state.data[0]?.io_wait_ms"
+          ],
+          "suggestions": [
+            "检查存储设备性能",
+            "减少同步 I/O 操作",
+            "考虑使用缓存"
+          ]
+        },
+        {
+          "condition": "slow_io.data.filter(op => op.severity === 'CRITICAL').length > 0",
+          "confidence": "critical",
+          "diagnosis": "主线程存在严重慢 I/O: ${slow_io.data.filter(op => op.severity === 'CRITICAL')[0]?.operation}",
+          "evidence_fields": [
+            "slow_io.data[0]?.operation",
+            "slow_io.data[0]?.dur_ms"
+          ],
+          "suggestions": [
+            "立即将此操作移至后台",
+            "这可能导致 ANR"
+          ]
+        },
+        {
+          "condition": "io_overview.data[0]?.total_ms > 500",
+          "confidence": "medium",
+          "diagnosis": "I/O 操作总耗时 ${io_overview.data[0]?.total_ms}ms，占用大量时间",
+          "evidence_fields": [
+            "io_overview.data[0]?.io_type",
+            "io_overview.data[0]?.total_ms"
+          ],
+          "suggestions": [
+            "优化 I/O 访问模式",
+            "使用批量读写减少系统调用",
+            "考虑内存缓存"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "io-network-media"
+}

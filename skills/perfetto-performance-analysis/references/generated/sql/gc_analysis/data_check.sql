@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gc_analysis.skill.yaml
--- Source SHA-256: 94563f8717669e993b92723f09bb10688c8a9ac9d9c9caf91391ddf4ecf14639
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source SHA-256: 9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 SELECT
   CASE WHEN EXISTS (

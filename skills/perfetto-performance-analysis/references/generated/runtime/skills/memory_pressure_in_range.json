@@ -1,0 +1,76 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%alloc_pages%",
+      "%compact%",
+      "%direct_reclaim%",
+      "%lmkd%",
+      "%lowmemory%",
+      "%memory_pressure%",
+      "%oom_adj%",
+      "%page_alloc%",
+      "%reclaim%alloc%",
+      "kswapd%",
+      "mem.%psi%",
+      "mm_filemap_add_to_page_cache",
+      "mm_filemap_delete_from_page_cache"
+    ]
+  },
+  "id": "memory_pressure_in_range",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Start timestamp in nanoseconds",
+      "name": "start_ts",
+      "required": true,
+      "type": "number"
+    },
+    {
+      "description": "End timestamp in nanoseconds",
+      "name": "end_ts",
+      "required": true,
+      "type": "number"
+    },
+    {
+      "description": "Package name to filter (optional)",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/memory_pressure_in_range.skill.yaml",
+    "sha256": "a66e08f21f1d0ba173f8552ced7df4ba9d4fc56822ed2b14f05d0cb93c5dfc28"
+  },
+  "steps": [
+    {
+      "description": "Analyze memory pressure indicators in the given time range",
+      "id": "memory_pressure_analysis",
+      "optional": true,
+      "query_id": "memory_pressure_in_range/memory_pressure_analysis",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0.0",
+  "workflow": "memory"
+}

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_events_in_range.skill.yaml
 -- Source SHA-256: 8a3f5c3f6cd06de0c739aa95edaa12efc05d0935a8403ae6614654012c3d7e94
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 -- Multi-signal startup type validation:
 --   bindApplication exists           → cold  (process created from zygote)

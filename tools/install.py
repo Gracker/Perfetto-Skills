@@ -10,11 +10,15 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL_NAME = "perfetto-performance-analysis"
-CANONICAL_SKILL = ROOT / "skills" / SKILL_NAME
+CANONICAL_SKILL = (
+    ROOT / "skills" / SKILL_NAME
+    if (ROOT / "skills" / SKILL_NAME).is_dir()
+    else ROOT / SKILL_NAME
+)
 CLIENT_PATHS = {
     "codex": Path(".agents/skills"),
     "claude-code": Path(".claude/skills"),
-    "opencode": Path(".opencode/skills"),
+    "opencode": Path(".config/opencode/skills"),
 }
 COPY_IGNORE = shutil.ignore_patterns(
     "__pycache__",

@@ -1,0 +1,900 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "*Compile*",
+      "*Draw*",
+      "*Fence*",
+      "*Pipeline*Create*",
+      "*Shader*",
+      "*compile*",
+      "*dequeueBuffer*",
+      "*eglSwap*",
+      "*eglSwapBuffers*",
+      "*fence*",
+      "*programCache*",
+      "*shader*",
+      "Choreographer#doFrame - resynced*",
+      "GrGLGpu*",
+      "RenderThread",
+      "[0-9]*.raster",
+      "[0-9]*.ui",
+      "android_binder_txns",
+      "android_garbage_collection_events",
+      "android_gpu_frequency",
+      "android_monitor_contention",
+      "cpufreq"
+    ]
+  },
+  "id": "jank_frame_detail",
+  "identity": {
+    "aliases": [
+      "package",
+      "process_name"
+    ],
+    "policy": "required",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
+  },
+  "inputs": [
+    {
+      "description": "帧开始时间戳(ns)，优先使用",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "帧结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "帧开始时间戳(ns)，兼容旧接口，等同于 start_ts",
+      "name": "frame_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "帧持续时间(ns)，兼容旧接口，用于计算 end_ts",
+      "name": "frame_dur",
+      "required": false,
+      "type": "duration"
+    },
+    {
+      "name": "main_start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "main_end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "main_dur_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "name": "render_start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "render_end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "render_dur_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "name": "pid",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "帧 ID，可选",
+      "name": "frame_id",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "name": "frame_index",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "掉帧类型，可选，默认 'Unknown'",
+      "name": "jank_type",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "帧耗时(ms)，可选，可从 start_ts/end_ts 计算",
+      "name": "dur_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "name": "session_id",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "name": "layer_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "display_frame_token 跳跃值 (>1 表示消费端掉帧)",
+      "name": "token_gap",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "跳过的 VSync 数量 (token_gap - 1)",
+      "name": "vsync_missed",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "掉帧责任归属: APP / SF / BUFFER_STUFFING / HIDDEN / UNKNOWN",
+      "name": "jank_responsibility",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "掉帧原因说明，由 scrolling_analysis 生成的中文诊断",
+      "name": "jank_cause",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.binder",
+      "android.slices",
+      "android.monitor_contention",
+      "android.garbage_collection",
+      "android.gpu.frequency"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
+    "sha256": "0403339f9ba204e964aa7ccab7130157ed7149b13da3cfd63bb807484e4bbb96"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "monitor_contention_check",
+      "name": "Monitor Contention 数据源检测",
+      "query_id": "jank_frame_detail/monitor_contention_check",
+      "result_dependencies": [],
+      "save_as": "monitor_contention",
+      "type": "atomic"
+    },
+    {
+      "id": "gc_table_check",
+      "name": "GC 数据源检测",
+      "optional": true,
+      "query_id": "jank_frame_detail/gc_table_check",
+      "result_dependencies": [],
+      "save_as": "gc_availability",
+      "type": "atomic"
+    },
+    {
+      "id": "gpu_table_check",
+      "name": "GPU 数据源检测",
+      "optional": true,
+      "query_id": "jank_frame_detail/gpu_table_check",
+      "result_dependencies": [],
+      "save_as": "gpu_availability",
+      "type": "atomic"
+    },
+    {
+      "id": "binder_table_check",
+      "name": "Binder 数据源检测",
+      "optional": true,
+      "query_id": "jank_frame_detail/binder_table_check",
+      "result_dependencies": [],
+      "save_as": "binder_availability",
+      "type": "atomic"
+    },
+    {
+      "id": "quadrant_analysis",
+      "name": "四象限分析",
+      "optional": true,
+      "query_id": "jank_frame_detail/quadrant_analysis",
+      "result_dependencies": [],
+      "save_as": "quadrant_data",
+      "type": "atomic"
+    },
+    {
+      "id": "binder_calls",
+      "name": "Binder 调用",
+      "optional": true,
+      "query_id": "jank_frame_detail/binder_calls",
+      "result_dependencies": [],
+      "save_as": "binder_data",
+      "type": "atomic"
+    },
+    {
+      "id": "cpu_freq_analysis",
+      "name": "CPU频率",
+      "optional": true,
+      "query_id": "jank_frame_detail/cpu_freq_analysis",
+      "result_dependencies": [],
+      "save_as": "freq_data",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_slices",
+      "name": "主线程耗时操作",
+      "optional": true,
+      "query_id": "jank_frame_detail/main_thread_slices",
+      "result_dependencies": [],
+      "save_as": "main_slices",
+      "type": "atomic"
+    },
+    {
+      "id": "choreographer_resync_markers",
+      "name": "Choreographer resync 标记",
+      "optional": true,
+      "query_id": "jank_frame_detail/choreographer_resync_markers",
+      "result_dependencies": [],
+      "save_as": "resync_markers",
+      "type": "atomic"
+    },
+    {
+      "id": "render_thread_slices",
+      "name": "RenderThread 耗时操作",
+      "optional": true,
+      "query_id": "jank_frame_detail/render_thread_slices",
+      "result_dependencies": [],
+      "save_as": "render_slices",
+      "type": "atomic"
+    },
+    {
+      "id": "cpu_freq_timeline",
+      "name": "CPU 频率变化时间线",
+      "optional": true,
+      "query_id": "jank_frame_detail/cpu_freq_timeline",
+      "result_dependencies": [],
+      "save_as": "freq_timeline",
+      "type": "atomic"
+    },
+    {
+      "condition": "monitor_contention.data[0]?.has_monitor_contention === 1",
+      "id": "lock_contention",
+      "name": "锁竞争分析",
+      "optional": true,
+      "query_id": "jank_frame_detail/lock_contention",
+      "result_dependencies": [],
+      "save_as": "lock_data",
+      "type": "atomic"
+    },
+    {
+      "condition": "gc_availability?.data?.[0]?.has_gc_table === 1",
+      "id": "gc_in_frame",
+      "name": "GC 影响分析",
+      "optional": true,
+      "query_id": "jank_frame_detail/gc_in_frame",
+      "result_dependencies": [],
+      "save_as": "gc_data",
+      "type": "atomic"
+    },
+    {
+      "id": "io_blocking",
+      "name": "IO/page-cache 等待候选分析",
+      "optional": true,
+      "query_id": "jank_frame_detail/io_blocking",
+      "result_dependencies": [],
+      "save_as": "io_data",
+      "type": "atomic"
+    },
+    {
+      "id": "sched_latency",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "sched_data",
+      "skill": "sched_latency_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "task_migration",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "migration_data",
+      "skill": "task_migration_in_range",
+      "type": "skill"
+    },
+    {
+      "condition": "gpu_availability?.data?.[0]?.has_gpu_slices === 1",
+      "id": "gpu_render",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "gpu_data",
+      "skill": "gpu_render_in_range",
+      "type": "skill"
+    },
+    {
+      "condition": "binder_availability?.data?.[0]?.has_binder_table === 1",
+      "id": "binder_blocking",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "binder_blocking_data",
+      "skill": "binder_blocking_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "cpu_throttling",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "throttling_data",
+      "skill": "cpu_throttling_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "cpu_cluster_load",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "cluster_load_data",
+      "skill": "cpu_cluster_load_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "page_fault",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "page_fault_data",
+      "skill": "page_fault_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "sf_composition",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "sf_data",
+      "skill": "sf_composition_in_range",
+      "type": "skill"
+    },
+    {
+      "condition": "gpu_availability?.data?.[0]?.has_gpu_freq === 1",
+      "id": "gpu_freq",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "gpu_freq_data",
+      "skill": "gpu_freq_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "vsync_alignment",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "vsync_data",
+      "skill": "vsync_alignment_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "render_pipeline",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "main_end_ts": "${main_end_ts}",
+        "main_start_ts": "${main_start_ts}",
+        "render_end_ts": "${render_end_ts}",
+        "render_start_ts": "${render_start_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "pipeline_data",
+      "skill": "render_pipeline_latency",
+      "type": "skill"
+    },
+    {
+      "id": "root_cause_summary",
+      "name": "根因分析",
+      "optional": true,
+      "query_id": "jank_frame_detail/root_cause_summary",
+      "result_dependencies": [],
+      "save_as": "root_cause",
+      "type": "atomic"
+    },
+    {
+      "id": "frame_diagnosis",
+      "inputs": [
+        "quadrant_data",
+        "binder_data",
+        "freq_data",
+        "main_slices",
+        "resync_markers",
+        "render_slices",
+        "freq_timeline",
+        "lock_data",
+        "gc_data",
+        "io_data",
+        "root_cause",
+        "sched_data",
+        "migration_data",
+        "gpu_data",
+        "binder_blocking_data",
+        "throttling_data",
+        "cluster_load_data",
+        "page_fault_data",
+        "sf_data",
+        "gpu_freq_data",
+        "vsync_data",
+        "pipeline_data"
+      ],
+      "name": "帧诊断",
+      "rules": [
+        {
+          "condition": "root_cause?.data?.[0]?.primary_cause",
+          "confidence": "${root_cause.data[0].confidence === '高' ? 'high' : root_cause.data[0].confidence === '中' ? 'medium' : 'low'}",
+          "diagnosis": "${root_cause.data[0].primary_cause}",
+          "severity": "critical",
+          "suggestions": [
+            "${root_cause.data[0].secondary_info || '查看下方详细数据分析具体原因'}"
+          ]
+        },
+        {
+          "condition": "resync_markers?.data?.length > 0",
+          "confidence": "medium",
+          "diagnosis": "检测到 Choreographer resync marker：doFrame 已重同步到后续 VSync，需结合 FrameTimeline/SF 消费证据判断是否存在 SF 未合成或帧堆积",
+          "severity": "warning",
+          "suggestions": [
+            "不要把 resynced child slice 当作独立 doFrame 或普通业务耗时重复计数",
+            "核对 jank_type、present_type、present_ts 间隔、同 layer token 和 SurfaceFlinger actual/display frame"
+          ]
+        },
+        {
+          "condition": "lock_data?.data?.length > 0 && lock_data.data[0]?.wait_ms > 1",
+          "confidence": "high",
+          "diagnosis": "锁竞争等待 ${lock_data.data[0].wait_ms}ms (${lock_data.data[0].blocking_method})",
+          "severity": "critical",
+          "suggestions": [
+            "检查持锁线程是否在做耗时操作",
+            "考虑减少锁粒度或使用无锁数据结构"
+          ]
+        },
+        {
+          "condition": "lock_data?.data?.length > 0 && lock_data.data[0]?.main_blocked === 1",
+          "confidence": "high",
+          "diagnosis": "主线程被锁阻塞 (等待 ${lock_data.data[0].blocking_thread_name})",
+          "severity": "critical",
+          "suggestions": [
+            "避免在持锁时做 Binder/IO 操作",
+            "考虑使用异步锁或拆分锁"
+          ]
+        },
+        {
+          "condition": "io_data?.data?.length > 0 && io_data.data[0]?.total_ms > 3",
+          "confidence": "medium",
+          "diagnosis": "IO/page-cache 等待候选 ${io_data.data[0].total_ms}ms (${io_data.data[0].thread_name}, ${io_data.data[0].io_cause})",
+          "severity": "critical",
+          "suggestions": [
+            "结合文件/数据库/SharedPreferences/Provider slice 或 stack 证据确认业务根因",
+            "确认后再将同步 IO 移到后台线程"
+          ]
+        },
+        {
+          "condition": "io_data?.data?.length > 0 && io_data.data[0]?.total_ms > 1",
+          "confidence": "medium",
+          "diagnosis": "${io_data.data[0].thread_name} IO/page-cache 等待候选 ${io_data.data[0].total_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "检查帧期间是否有文件/数据库 slice、page fault 或 block I/O 证据",
+            "证据闭环后再考虑内存映射、预加载或异步化"
+          ]
+        },
+        {
+          "condition": "gc_data?.data?.length > 0 && gc_data.data.reduce((s, g) => s + (g.overlap_ms || 0), 0) > 3",
+          "confidence": "high",
+          "diagnosis": "GC 严重影响帧渲染：总重叠 ${gc_data.data.reduce((s, g) => s + (g.overlap_ms || 0), 0).toFixed(1)}ms",
+          "severity": "critical",
+          "suggestions": [
+            "减少帧期间的对象分配",
+            "检查是否有大对象频繁创建",
+            "考虑对象池化或预分配"
+          ]
+        },
+        {
+          "condition": "gc_data?.data?.length > 0 && gc_data.data[0]?.overlap_ms > 1",
+          "confidence": "high",
+          "diagnosis": "GC (${gc_data.data[0].gc_type}) 与帧重叠 ${gc_data.data[0].overlap_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "减少短生命周期对象的分配",
+            "避免在 onDraw/onLayout 中创建对象"
+          ]
+        },
+        {
+          "condition": "sched_data?.data?.length > 0 && sched_data.data[0]?.max_latency_ms > 5",
+          "confidence": "high",
+          "diagnosis": "${sched_data.data[0].thread_name} 调度延迟严重: 最大 ${sched_data.data[0].max_latency_ms}ms",
+          "severity": "critical",
+          "suggestions": [
+            "检查系统是否有高优先级进程抢占 CPU",
+            "考虑提高 UI 线程优先级",
+            "检查后台任务是否过于密集"
+          ]
+        },
+        {
+          "condition": "sched_data?.data?.length > 0 && sched_data.data[0]?.total_runnable_ms > 3",
+          "confidence": "high",
+          "diagnosis": "${sched_data.data[0].thread_name} Runnable 等待 ${sched_data.data[0].total_runnable_ms}ms (${sched_data.data[0].runnable_count}次)",
+          "severity": "warning",
+          "suggestions": [
+            "系统 CPU 资源紧张",
+            "检查是否有密集计算任务"
+          ]
+        },
+        {
+          "condition": "migration_data?.data?.length > 0 && migration_data.data[0]?.big_to_little > 2",
+          "confidence": "high",
+          "diagnosis": "${migration_data.data[0].thread_name} 从大核迁移到小核 ${migration_data.data[0].big_to_little}次",
+          "severity": "warning",
+          "suggestions": [
+            "检查系统温控策略是否过于激进",
+            "考虑绑定 UI 线程到大核"
+          ]
+        },
+        {
+          "condition": "migration_data?.data?.length > 0 && migration_data.data[0]?.big_core_pct < 30",
+          "confidence": "high",
+          "diagnosis": "${migration_data.data[0].thread_name} 大核运行占比仅 ${migration_data.data[0].big_core_pct}%",
+          "severity": "warning",
+          "suggestions": [
+            "UI 线程未能获得足够大核资源",
+            "检查调度器配置"
+          ]
+        },
+        {
+          "condition": "gpu_data?.data?.find(g => g.operation === 'GPU Fence Wait')?.total_ms > 3",
+          "confidence": "high",
+          "diagnosis": "GPU Fence 等待 ${gpu_data.data.find(g => g.operation === 'GPU Fence Wait')?.total_ms}ms",
+          "severity": "critical",
+          "suggestions": [
+            "GPU 繁忙，无法及时完成上一帧",
+            "检查是否有复杂的 GPU 着色器",
+            "减少过度绘制"
+          ]
+        },
+        {
+          "condition": "gpu_data?.data?.find(g => g.operation === 'EGL SwapBuffers')?.max_ms > 5",
+          "confidence": "high",
+          "diagnosis": "EGL SwapBuffers 耗时 ${gpu_data.data.find(g => g.operation === 'EGL SwapBuffers')?.max_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "帧缓冲交换延迟，可能是 GPU/SF 瓶颈",
+            "检查三缓冲是否正常"
+          ]
+        },
+        {
+          "condition": "binder_blocking_data?.data?.length > 0 && binder_blocking_data.data[0]?.max_block_ms > 5",
+          "confidence": "high",
+          "diagnosis": "Binder 同步调用阻塞 ${binder_blocking_data.data[0].max_block_ms}ms (${binder_blocking_data.data[0].server_process})",
+          "severity": "critical",
+          "suggestions": [
+            "将 Binder 调用移到后台线程",
+            "使用 oneway Binder 调用",
+            "检查服务端是否有性能问题"
+          ]
+        },
+        {
+          "condition": "binder_blocking_data?.data?.length > 0 && binder_blocking_data.data[0]?.total_block_ms > 2",
+          "confidence": "high",
+          "diagnosis": "Binder 调用总阻塞 ${binder_blocking_data.data[0].total_block_ms}ms (${binder_blocking_data.data[0].call_count}次)",
+          "severity": "warning",
+          "suggestions": [
+            "减少帧期间的 Binder 调用次数",
+            "考虑批量处理或缓存"
+          ]
+        },
+        {
+          "condition": "Boolean(throttling_data?.data?.find(t => t.core_type === 'big' && t.throttle_detected === 1 && (t.freq_drop_pct || 0) > 20 && (t.max_freq_mhz || 0) > (t.min_freq_mhz || 0)))",
+          "confidence": "high",
+          "diagnosis": "检测到 CPU 限频: 大核最低 ${throttling_data.data.find(t => t.core_type === 'big' && t.throttle_detected === 1)?.min_freq_mhz}MHz（峰值 ${throttling_data.data.find(t => t.core_type === 'big' && t.throttle_detected === 1)?.max_freq_mhz}MHz，降幅 ${throttling_data.data.find(t => t.core_type === 'big' && t.throttle_detected === 1)?.freq_drop_pct}%）",
+          "severity": "critical",
+          "suggestions": [
+            "设备温度过高触发限频",
+            "减少持续高负载任务",
+            "检查散热状况"
+          ]
+        },
+        {
+          "condition": "Boolean(throttling_data?.data?.find(t => t.core_type === 'big' && (t.freq_drop_pct || 0) > 20))",
+          "confidence": "high",
+          "diagnosis": "帧期间大核降频 ${throttling_data.data.find(t => t.core_type === 'big')?.freq_drop_pct}%",
+          "severity": "warning",
+          "suggestions": [
+            "CPU 频率不稳定影响性能",
+            "检查功耗管理策略"
+          ]
+        },
+        {
+          "condition": "cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.load_pct > 90",
+          "confidence": "high",
+          "diagnosis": "大核簇负载 ${cluster_load_data.data.find(c => c.cluster === '大核簇')?.load_pct}%，接近跑满",
+          "severity": "critical",
+          "suggestions": [
+            "大核资源严重不足",
+            "检查是否有后台密集计算任务",
+            "考虑优化或推迟非关键任务"
+          ]
+        },
+        {
+          "condition": "cluster_load_data?.data?.find(c => c.cluster === '小核簇')?.load_pct > 95",
+          "confidence": "high",
+          "diagnosis": "小核簇负载 ${cluster_load_data.data.find(c => c.cluster === '小核簇')?.load_pct}%，几乎跑满",
+          "severity": "warning",
+          "suggestions": [
+            "系统整体负载很高",
+            "后台任务可能挤占资源"
+          ]
+        },
+        {
+          "condition": "cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.load_pct > 70 && cluster_load_data?.data?.find(c => c.cluster === '小核簇')?.load_pct > 70",
+          "confidence": "high",
+          "diagnosis": "CPU 整体负载高: 大核 ${cluster_load_data.data.find(c => c.cluster === '大核簇')?.load_pct}%, 小核 ${cluster_load_data.data.find(c => c.cluster === '小核簇')?.load_pct}%",
+          "severity": "warning",
+          "suggestions": [
+            "系统 CPU 资源紧张",
+            "多任务竞争导致调度延迟"
+          ]
+        },
+        {
+          "condition": "cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.max_single_core_pct > 95",
+          "confidence": "medium",
+          "diagnosis": "大核簇中有核心接近 100% (${cluster_load_data.data.find(c => c.cluster === '大核簇')?.max_single_core_pct}%)",
+          "severity": "info",
+          "suggestions": [
+            "可能有单线程密集任务",
+            "检查是否有热点线程"
+          ]
+        },
+        {
+          "condition": "page_fault_data?.data?.length > 0 && page_fault_data.data[0]?.total_ms > 2",
+          "confidence": "high",
+          "diagnosis": "${page_fault_data.data[0].thread_name} 内存操作阻塞 ${page_fault_data.data[0].total_ms}ms (${page_fault_data.data[0].fault_type})",
+          "severity": "critical",
+          "suggestions": [
+            "触发页面错误或内存回收",
+            "预加载可能需要的数据",
+            "检查内存压力"
+          ]
+        },
+        {
+          "condition": "page_fault_data?.data?.find(p => p.fault_type === 'memory_reclaim')?.total_ms > 1",
+          "confidence": "high",
+          "diagnosis": "系统内存回收导致阻塞 ${page_fault_data.data.find(p => p.fault_type === 'memory_reclaim')?.total_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "系统内存紧张",
+            "检查应用内存使用"
+          ]
+        },
+        {
+          "condition": "sf_data?.data?.find(s => s.composition_type === 'Composite')?.total_ms > 3",
+          "confidence": "medium",
+          "diagnosis": "SurfaceFlinger 合成耗时 ${sf_data.data.find(s => s.composition_type === 'Composite')?.total_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "系统合成层可能是瓶颈",
+            "检查图层数量和复杂度"
+          ]
+        },
+        {
+          "condition": "gpu_freq_data?.data?.length > 0 && gpu_freq_data.data[0]?.low_freq_pct > 50",
+          "confidence": "medium",
+          "diagnosis": "GPU 低频运行占比 ${gpu_freq_data.data[0].low_freq_pct}%",
+          "severity": "warning",
+          "suggestions": [
+            "GPU 未能提升频率",
+            "检查 GPU 功耗策略"
+          ]
+        },
+        {
+          "condition": "vsync_data?.data?.find(v => v.metric === '截止时间')?.value?.includes('超时')",
+          "confidence": "high",
+          "diagnosis": "帧未能在 VSync 前完成: ${vsync_data.data.find(v => v.metric === '截止时间')?.value}",
+          "severity": "warning",
+          "suggestions": [
+            "帧渲染超过 VSync 周期",
+            "需要优化帧渲染时间"
+          ]
+        },
+        {
+          "condition": "pipeline_data?.data?.find(p => p.stage?.includes('主线程'))?.pct > 70",
+          "confidence": "high",
+          "diagnosis": "主线程占用帧时间 ${pipeline_data.data.find(p => p.stage?.includes('主线程'))?.pct}%",
+          "severity": "info",
+          "suggestions": [
+            "主线程是主要瓶颈",
+            "检查主线程耗时操作"
+          ]
+        },
+        {
+          "condition": "pipeline_data?.data?.find(p => p.stage?.includes('RenderThread'))?.pct > 60",
+          "confidence": "high",
+          "diagnosis": "RenderThread 占用帧时间 ${pipeline_data.data.find(p => p.stage?.includes('RenderThread'))?.pct}%",
+          "severity": "info",
+          "suggestions": [
+            "渲染是主要瓶颈",
+            "检查 GPU 操作和绘制复杂度"
+          ]
+        },
+        {
+          "condition": "binder_data?.data?.length > 0 && binder_data.data[0]?.dur_ms > 2",
+          "confidence": "high",
+          "diagnosis": "Binder 调用耗时 ${binder_data.data[0].dur_ms}ms (${binder_data.data[0].interface})",
+          "severity": "warning",
+          "suggestions": [
+            "检查是否可以异步调用",
+            "考虑使用缓存减少调用次数"
+          ]
+        },
+        {
+          "condition": "quadrant_data?.data?.find(q => q.quadrant?.includes('Q3'))?.percentage > 15",
+          "confidence": "high",
+          "diagnosis": "主线程 Runnable 等待 ${quadrant_data.data.find(q => q.quadrant?.includes('Q3'))?.percentage}%",
+          "severity": "warning",
+          "suggestions": [
+            "CPU 资源争抢，检查后台任务",
+            "考虑提高线程优先级"
+          ]
+        },
+        {
+          "condition": "quadrant_data?.data?.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q4'))?.percentage > 40",
+          "confidence": "high",
+          "diagnosis": "主线程休眠/阻塞时间占比 ${quadrant_data.data.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q4'))?.percentage}%",
+          "severity": "warning",
+          "suggestions": [
+            "检查是否有 IO 操作或锁等待",
+            "考虑使用异步 IO"
+          ]
+        },
+        {
+          "condition": "quadrant_data?.data?.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q2'))?.percentage > 60",
+          "confidence": "medium",
+          "diagnosis": "主线程主要运行在小核 (${quadrant_data.data.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q2'))?.percentage}%)",
+          "severity": "info",
+          "suggestions": [
+            "检查系统温控是否限制大核",
+            "考虑提高线程优先级"
+          ]
+        },
+        {
+          "condition": "main_slices?.data?.length > 0 && main_slices.data[0]?.dur_ms > 5",
+          "confidence": "high",
+          "diagnosis": "主线程操作 '${main_slices.data[0].name}' 耗时 ${main_slices.data[0].dur_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "考虑将耗时操作移到后台线程",
+            "优化该操作的执行效率"
+          ]
+        },
+        {
+          "condition": "render_slices?.data?.length > 0 && render_slices.data[0]?.dur_ms > 3",
+          "confidence": "high",
+          "diagnosis": "RenderThread 操作 '${render_slices.data[0].name}' 耗时 ${render_slices.data[0].dur_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "检查是否有复杂的自定义绘制",
+            "考虑减少绘制复杂度或使用硬件加速"
+          ]
+        },
+        {
+          "condition": "freq_data?.data?.find(f => f.core_type === 'big')?.avg_freq_mhz < 1500",
+          "confidence": "medium",
+          "diagnosis": "大核频率偏低 (${freq_data.data?.find(f => f.core_type === 'big')?.avg_freq_mhz || 0}MHz)",
+          "severity": "info",
+          "suggestions": [
+            "系统可能处于省电模式",
+            "检查温控策略"
+          ]
+        },
+        {
+          "condition": "freq_timeline?.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length > 2",
+          "confidence": "medium",
+          "diagnosis": "大核频率降频 ${freq_timeline.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length || 0}次",
+          "severity": "info",
+          "suggestions": [
+            "可能触发了温控降频",
+            "检查系统负载和温度"
+          ]
+        },
+        {
+          "condition": "${vsync_missed} >= 3",
+          "confidence": "high",
+          "diagnosis": "严重卡顿: SF 跳过 ${vsync_missed} 帧 VSync (约 ${vsync_missed} 个 VSync 周期)",
+          "severity": "critical",
+          "suggestions": [
+            "检查此时系统是否有大量后台活动",
+            "查看主线程和 RenderThread 的阻塞原因"
+          ]
+        },
+        {
+          "condition": "${vsync_missed} >= 1",
+          "confidence": "high",
+          "diagnosis": "掉帧: SF 跳过 ${vsync_missed} 帧 VSync",
+          "severity": "warning",
+          "suggestions": [
+            "查看上方四象限和耗时操作数据"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "2.0",
+  "workflow": "scrolling"
+}

@@ -1,0 +1,68 @@
+{
+  "application_mode": "advisory_only",
+  "definition": {
+    "additional_steps": [
+      {
+        "description": "分析 MTK 平台特有的系统事件",
+        "for_each": "startups",
+        "id": "mtk_platform_events",
+        "name": "MTK 平台事件",
+        "sql": "SELECT\n  s.name as mtk_event,\n  s.dur / 1e6 as dur_ms,\n  (s.ts - (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})) / 1e6 as relative_ts_ms\nFROM slice s\nWHERE (s.name GLOB '*MTK*'\n       OR s.name GLOB '*MTKFB*'\n       OR s.name GLOB '*MediaTek*'\n       OR s.name GLOB '*PerfService*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.ts ASC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "mtk_perf_service",
+        "name": "MTK 性能服务",
+        "sql": "SELECT\n  s.name as perf_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*PerfService*'\n       OR s.name GLOB '*PowerHal*'\n       OR s.name GLOB '*fps_policy*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "mtk_gpu_analysis",
+        "name": "MTK GPU 分析",
+        "sql": "SELECT\n  s.name as gpu_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*Mali*'\n       OR s.name GLOB '*PowerVR*'\n       OR s.name GLOB '*IMG*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\nLIMIT 20\n"
+      }
+    ],
+    "extends": "composite/startup_analysis",
+    "meta": {
+      "description": "针对联发科平台优化的启动分析",
+      "display_name": "MTK 平台启动分析",
+      "platform": "MediaTek",
+      "vendor": "mtk"
+    },
+    "vendor_detection": {
+      "signatures": [
+        {
+          "confidence": "high",
+          "pattern": "*MTK*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*MediaTek*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*MTKFB*"
+        },
+        {
+          "confidence": "medium",
+          "pattern": "*mtk*"
+        },
+        {
+          "confidence": "medium",
+          "pattern": "*Dimensity*"
+        },
+        {
+          "confidence": "medium",
+          "pattern": "*Helio*"
+        }
+      ]
+    },
+    "version": "1.0.0"
+  },
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/vendors/mtk/startup.override.yaml",
+    "sha256": "edc4f400202881e50cb10afb5ac088172f4c8adc6ca8ae42bf12b2839dec7683"
+  }
+}

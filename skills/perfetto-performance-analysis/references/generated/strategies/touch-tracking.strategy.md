@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/touch-tracking.strategy.md
 Source SHA-256: eb33bfb6a954bc4afa2034814ec4b04363df3302b6af0c9a54e61b6204fbf479
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Touch Tracking Strategy
 
@@ -9,24 +9,80 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: touch_tracking
+priority: 3
+effort: medium
+required_capabilities:
+- input_latency
+- frame_rendering
+- surfaceflinger
+optional_capabilities:
+- cpu_scheduling
+- gpu
+keywords:
+- 跟手度
+- 跟手
+- 跟随
+- follow finger
+- touch tracking
+- 触控延迟
+- 持续延迟
+- 滑动跟随
+- input to display
+- 管线延迟
+- pipeline latency
+- 触摸跟踪
+- touch latency
+- 输入延迟持续
+compound_patterns:
+- 跟手.*度
+- 跟手.*延迟
+- 滑动.*跟手
+- 滑动.*跟随
+- touch.*tracking
+- follow.*finger
+- input.*display.*latency
+- 持续.*延迟
+- 每帧.*延迟
+- per.*frame.*latency
+plan_template:
+  mandatory_aspects:
+  - id: per_frame_latency_measurement
+    match_keywords:
+    - input
+    - touch
+    - 跟手
+    - 延迟
+    - latency
+    - per_frame
+    - tracking
+    suggestion: 跟手度场景建议包含逐帧 Input-to-Display 延迟测量阶段
+    required_expected_calls:
+    - skill_id: touch_to_display_latency
+```
+
 #### touch_tracking Core Strategy
 
 **Route card**: 跟手度 / 跟手 / 跟随 / follow finger / touch tracking / 触控延迟 / 持续延迟 / 滑动跟随 / input to display / 管线延迟
 
 **Capabilities**: required=[input_latency, frame_rendering, surfaceflinger], optional=[cpu_scheduling, gpu]
 
-
-
-
-
 **Phase reminders**
 - 无额外 phase hint。
 
 **Final report contract summary**
 - 遵循通用输出契约。
-
-
-
 
 
 <!-- strategy-detail id="full" title="touch_tracking full strategy detail" keywords="touch_tracking,跟手度,跟手,跟随,follow finger,touch tracking,触控延迟,持续延迟,滑动跟随,input to display,管线延迟,pipeline latency,触摸跟踪,跟手度分析（用户提到 跟手度、跟手延迟、follow finger、touch tracking）,detail,full" default="true" -->
@@ -45,7 +101,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 **Phase 1 — 逐帧 Input-to-Display 延迟测量：**
 
-
+返回：每个 MOVE 事件的 5 维延迟分解（dispatch/handling/ack/e2e）+ 帧内分解（frame_dur/frame_to_present），以及统计指标（均值、P50、P90、P99、抖动）和 is_speculative 帧关联置信度。
 
 如果该 Skill 不可用（trace 缺少 `sendMessage(*)`/`receiveMessage(*)` slices），使用 SQL 回退：
 ```sql
@@ -100,7 +156,6 @@ ORDER BY input_ts
 跟手延迟的一个关键因素是 **input sampling 与 VSync 的相位关系**。
 
 
-
 该 Skill 测量：
 - Input event timestamp 与最近 VSync 信号的相位差
 - 相位差的统计分布
@@ -146,8 +201,6 @@ LIMIT 5
 | **输入采样率低** | input event 间隔 >12ms | 触控 IC 采样率低（120Hz touch sampling = 8.3ms interval） |
 
 **深钻决策：**
-
-
 
 ### 输出结构必须遵循：
 

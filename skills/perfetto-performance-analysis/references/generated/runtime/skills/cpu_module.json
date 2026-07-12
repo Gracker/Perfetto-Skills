@@ -1,0 +1,152 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "cpufreq"
+    ]
+  },
+  "id": "cpu_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Specific CPU core ID",
+      "name": "cpu_id",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "Analysis start timestamp",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Analysis end timestamp",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.cpu.frequency",
+      "linux.cpu.idle"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/hardware/cpu_module.skill.yaml",
+    "sha256": "d035f125f1bd29ac6f675796781f4037254da8283f6dc51f661b1b9e5afaa51e"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "frequency_overview",
+      "name": "CPU 频率概览",
+      "query_id": "cpu_module/frequency_overview",
+      "result_dependencies": [],
+      "save_as": "freq_overview",
+      "type": "atomic"
+    },
+    {
+      "id": "throttling_events",
+      "name": "频率限制事件",
+      "query_id": "cpu_module/throttling_events",
+      "result_dependencies": [],
+      "save_as": "throttle_events",
+      "type": "atomic"
+    },
+    {
+      "id": "cluster_utilization",
+      "name": "集群利用率",
+      "query_id": "cpu_module/cluster_utilization",
+      "result_dependencies": [],
+      "save_as": "cluster_util",
+      "type": "atomic"
+    },
+    {
+      "id": "frequency_distribution",
+      "name": "频率分布",
+      "query_id": "cpu_module/frequency_distribution",
+      "result_dependencies": [],
+      "save_as": "freq_dist",
+      "type": "atomic"
+    },
+    {
+      "id": "cpu_diagnosis",
+      "inputs": [
+        "freq_overview",
+        "throttle_events",
+        "cluster_util"
+      ],
+      "name": "CPU 诊断",
+      "rules": [
+        {
+          "condition": "freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz < 1500",
+          "confidence": "high",
+          "diagnosis": "大核 CPU 平均频率较低 (${freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz}MHz)，可能存在热节流或功耗限制",
+          "evidence_fields": [
+            "freq_overview.data[0].avg_freq_mhz",
+            "freq_overview.data[0].max_freq_mhz"
+          ],
+          "suggestions": [
+            "检查设备温度",
+            "检查是否开启省电模式"
+          ]
+        },
+        {
+          "condition": "throttle_events.data.length > 20",
+          "confidence": "medium",
+          "diagnosis": "CPU 频率频繁变化 (${throttle_events.data.length} 次)，调度器可能不稳定",
+          "evidence_fields": [
+            "throttle_events.data.length"
+          ],
+          "suggestions": [
+            "检查 governor 设置",
+            "检查是否有功耗抖动"
+          ]
+        },
+        {
+          "condition": "freq_overview.data.find(f => f.cluster === 'little')?.avg_freq_mhz > freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz",
+          "confidence": "medium",
+          "diagnosis": "小核频率高于大核，可能存在调度异常或热节流",
+          "evidence_fields": [
+            "freq_overview.data[0].avg_freq_mhz"
+          ],
+          "suggestions": [
+            "检查大核是否被热节流",
+            "检查 CPU affinity 设置"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

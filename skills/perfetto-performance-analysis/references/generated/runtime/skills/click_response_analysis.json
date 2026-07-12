@@ -1,0 +1,326 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      },
+      {
+        "id": "android_input_source",
+        "selection": "data-source descriptor, build type, config, then rows",
+        "version_hint": {
+          "proto_input_min_api_hint": 34
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "${target_process.data[0].process_name}"
+    ]
+  },
+  "id": "click_response_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳（纳秒，可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳（纳秒，可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 100,
+      "description": "慢输入事件阈值（ms，超过该值视为慢事件）",
+      "name": "slow_event_threshold_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 100,
+      "description": "平均延迟-严重阈值（ms）",
+      "name": "avg_latency_critical_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
+      "description": "应用处理延迟-警告阈值（ms）",
+      "name": "avg_handling_warning_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 20,
+      "description": "系统分发延迟-警告阈值（ms）",
+      "name": "avg_dispatch_warning_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 30,
+      "description": "Binder 阻塞判定阈值（ms）",
+      "name": "binder_blocking_threshold_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 200,
+      "description": "严重慢事件阈值（ms）",
+      "name": "critical_event_threshold_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
+      "description": "线程状态分析最小输入延迟阈值（ms）",
+      "name": "thread_state_min_dur_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": true,
+      "description": "是否启用逐事件详细分析（策略模式可关闭以避免重复）",
+      "name": "enable_per_event_detail",
+      "required": false,
+      "type": "boolean"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.input",
+      "android.binder",
+      "android.frames.timeline"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/click_response_analysis.skill.yaml",
+    "sha256": "0f803fbe7f82fcbcf288bfe2fb88bab8e0ad54cb2df2995d710a285a31b733c6"
+  },
+  "steps": [
+    {
+      "id": "check_input_data",
+      "name": "检查输入事件数据",
+      "optional": true,
+      "query_id": "click_response_analysis/check_input_data",
+      "result_dependencies": [],
+      "save_as": "input_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "input_check.data[0]?.status === 'available'",
+      "id": "get_process",
+      "name": "选择目标进程",
+      "query_id": "click_response_analysis/get_process",
+      "result_dependencies": [],
+      "save_as": "target_process",
+      "type": "atomic"
+    },
+    {
+      "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "input_latency_overview",
+      "name": "输入延迟概览",
+      "query_id": "click_response_analysis/input_latency_overview",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "latency_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "latency_by_event_type",
+      "name": "按事件类型分析",
+      "query_id": "click_response_analysis/latency_by_event_type",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "latency_by_type",
+      "type": "atomic"
+    },
+    {
+      "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "latency_by_window",
+      "name": "按窗口分析",
+      "optional": true,
+      "query_id": "click_response_analysis/latency_by_window",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "latency_by_window",
+      "type": "atomic"
+    },
+    {
+      "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "slow_input_events",
+      "name": "慢输入事件",
+      "query_id": "click_response_analysis/slow_input_events",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "slow_events",
+      "type": "atomic"
+    },
+    {
+      "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "input_thread_state",
+      "name": "输入期间主线程状态",
+      "optional": true,
+      "query_id": "click_response_analysis/input_thread_state",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "input_thread_state",
+      "type": "atomic"
+    },
+    {
+      "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "input_binder_calls",
+      "name": "输入期间 Binder",
+      "query_id": "click_response_analysis/input_binder_calls",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "input_binder",
+      "type": "atomic"
+    },
+    {
+      "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "input_to_frame",
+      "name": "输入到帧关联",
+      "optional": true,
+      "query_id": "click_response_analysis/input_to_frame",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "input_to_frame",
+      "type": "atomic"
+    },
+    {
+      "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "latency_distribution",
+      "name": "延迟分布",
+      "query_id": "click_response_analysis/latency_distribution",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "latency_distribution",
+      "type": "atomic"
+    },
+    {
+      "condition": "slow_events.data.length > 0 && '${enable_per_event_detail|true}' !== 'false'",
+      "id": "analyze_slow_events",
+      "item_params": {
+        "dispatch_ms": "dispatch_ms",
+        "event_action": "event_action",
+        "event_end_ts": "event_end_ts",
+        "event_ts": "event_ts",
+        "event_type": "event_type",
+        "handling_ms": "handling_ms",
+        "perfetto_end": "perfetto_end",
+        "perfetto_start": "perfetto_start",
+        "process_name": "process_name",
+        "total_ms": "total_ms"
+      },
+      "item_skill": "click_response_detail",
+      "name": "慢输入事件详细分析",
+      "source": "slow_events",
+      "type": "iterator"
+    },
+    {
+      "id": "click_diagnosis",
+      "inputs": [
+        "latency_overview",
+        "slow_events",
+        "input_thread_state",
+        "input_binder"
+      ],
+      "name": "点击响应诊断",
+      "rules": [
+        {
+          "condition": "latency_overview.data[0]?.avg_total_ms > ${avg_latency_critical_ms|100}",
+          "confidence": "high",
+          "diagnosis": "平均输入延迟过高 (${latency_overview.data[0].avg_total_ms}ms)",
+          "severity": "critical",
+          "suggestions": [
+            "检查主线程是否有耗时操作",
+            "优化事件处理逻辑",
+            "将耗时操作移到后台线程"
+          ]
+        },
+        {
+          "condition": "latency_overview.data[0]?.avg_handling_ms > ${avg_handling_warning_ms|50}",
+          "confidence": "high",
+          "diagnosis": "应用处理延迟偏高 (${latency_overview.data[0].avg_handling_ms}ms)",
+          "severity": "warning",
+          "suggestions": [
+            "优化 onClick/onTouchEvent 处理",
+            "避免在事件处理中进行 IO 操作"
+          ]
+        },
+        {
+          "condition": "latency_overview.data[0]?.avg_dispatch_ms > ${avg_dispatch_warning_ms|20}",
+          "confidence": "medium",
+          "diagnosis": "系统分发延迟偏高 (${latency_overview.data[0].avg_dispatch_ms}ms)",
+          "severity": "warning",
+          "suggestions": [
+            "可能是系统负载过高",
+            "检查输入系统是否有瓶颈"
+          ]
+        },
+        {
+          "condition": "slow_events.data[0]?.total_ms > ${critical_event_threshold_ms|200}",
+          "confidence": "high",
+          "diagnosis": "存在严重慢输入事件 (${slow_events.data[0].total_ms}ms)",
+          "severity": "critical",
+          "suggestions": [
+            "分析该事件期间主线程状态",
+            "检查是否有 Binder/IO 阻塞"
+          ]
+        },
+        {
+          "condition": "input_binder.data[0]?.total_dur_ms > ${binder_blocking_threshold_ms|30}",
+          "confidence": "high",
+          "diagnosis": "输入期间存在 Binder 阻塞 (${input_binder.data[0].total_dur_ms}ms)",
+          "severity": "warning",
+          "suggestions": [
+            "将 Binder 调用移到后台线程",
+            "使用异步 Binder 接口"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "interaction"
+}

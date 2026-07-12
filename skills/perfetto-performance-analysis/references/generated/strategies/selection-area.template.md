@@ -1,13 +1,24 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/selection-area.template.md
 Source SHA-256: 3166bc6d4745e6b42148a4642349254d11d5b1dddb1a0aeaa7a6baa635462f76
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Selection Area Template
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
 
 <!-- Template variables (substituted by claudeSystemPrompt.ts):
   {{startNs}}     - Area start timestamp in ns (number)
@@ -34,8 +45,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 当用户提到"选中的区间"/"这一段"/"选择的范围"/"marked area"/"current window"等，指的就是上述时间窗口
 - 如果前端请求附带了 `traceContext` datasets，优先复用其中已经预取的选区数据；缺少用户所问的指标时，再调用工具补齐
 
-
-
 **选区内常用 SQL 查询模板（需要自定义 SQL 时使用）:**
 ```sql
 -- 1) 选区内某线程的调度状态分布（大小核、Running/Sleeping/Runnable）
@@ -52,14 +61,3 @@ SELECT ct.cpu, c.ts, c.value AS freq_khz
 FROM counter c JOIN cpu_counter_track ct ON c.track_id = ct.id
 WHERE ct.name = 'cpufreq' AND c.ts >= {{startNs}} AND c.ts <= {{endNs}}
 ORDER BY ct.cpu, c.ts;
-
--- 3) 选区内某线程的 Slice 热点（通过 thread_track 关联）
-SELECT s.name,
-       (MIN(s.ts + s.dur, {{endNs}}) - MAX(s.ts, {{startNs}}))/1e6 AS dur_ms,
-       s.ts, s.depth
-FROM slice s JOIN thread_track tt ON s.track_id = tt.id
-WHERE tt.utid = <UTID>
-  AND s.ts < {{endNs}} AND s.ts + s.dur > {{startNs}}
-ORDER BY s.dur DESC LIMIT 20;
-```
-> 注意: 不要猜测表名。如果不确定表是否存在，先用 `lookup_sql_schema` 工具查询。

@@ -1,0 +1,80 @@
+{
+  "application_mode": "advisory_only",
+  "definition": {
+    "additional_steps": [
+      {
+        "for_each": "startups",
+        "id": "oneui_optimization",
+        "name": "OneUI 优化检测",
+        "optional": true,
+        "save_as": "oneui_events",
+        "sql": "SELECT\n  s.name as optimization_event,\n  s.dur / 1e6 as dur_ms,\n  (s.ts - (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})) / 1e6 as relative_ts_ms\nFROM slice s\nWHERE (s.name GLOB '*OneUI*'\n       OR s.name GLOB '*SEC*'\n       OR s.name GLOB '*Samsung*'\n       OR s.name GLOB '*GameOptimizer*'\n       OR s.name GLOB '*GameBooster*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.ts ASC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "game_booster_status",
+        "name": "Game Booster 检测",
+        "optional": true,
+        "save_as": "game_booster_events",
+        "sql": "SELECT\n  s.name as booster_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*GameBooster*'\n       OR s.name GLOB '*game*booster*'\n       OR s.name GLOB '*GOS*'\n       OR s.name GLOB '*GameOptimizingService*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "samsung_services",
+        "name": "三星服务检测",
+        "optional": true,
+        "save_as": "samsung_service_events",
+        "sql": "SELECT\n  s.name as service_event,\n  s.dur / 1e6 as dur_ms,\n  t.name as thread_name\nFROM slice s\nJOIN thread_track tt ON s.track_id = tt.id\nJOIN thread t ON tt.utid = t.utid\nJOIN process p ON t.upid = p.upid\nWHERE p.name GLOB '${package}*'\n  AND (s.name GLOB '*SamsungPay*'\n       OR s.name GLOB '*Knox*'\n       OR s.name GLOB '*Bixby*'\n       OR s.name GLOB '*SmartManager*'\n       OR s.name GLOB '*DeviceHealth*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.dur > 1000000\nORDER BY s.dur DESC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "adaptive_refresh",
+        "name": "自适应刷新率",
+        "optional": true,
+        "sql": "SELECT\n  s.name as refresh_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*AdaptiveRefresh*'\n       OR s.name GLOB '*adaptive*refresh*'\n       OR s.name GLOB '*VRR*'\n       OR s.name GLOB '*RefreshRate*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.ts ASC\n"
+      }
+    ],
+    "extends": "composite/startup_analysis",
+    "meta": {
+      "description": "针对三星 OneUI 优化的启动分析",
+      "display_name": "Samsung OneUI 启动分析",
+      "os": "OneUI",
+      "vendor": "samsung"
+    },
+    "vendor_detection": {
+      "signatures": [
+        {
+          "confidence": "high",
+          "pattern": "*samsung*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*Samsung*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*OneUI*"
+        },
+        {
+          "confidence": "medium",
+          "pattern": "*SEC*"
+        },
+        {
+          "confidence": "medium",
+          "pattern": "*Galaxy*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*Exynos*"
+        }
+      ]
+    },
+    "version": "1.0.0"
+  },
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/vendors/samsung/startup.override.yaml",
+    "sha256": "5bf0b3407172f1d1a0f1f15ff2c92c3bb2be07cde70657bd7e7bd888aa624117"
+  }
+}

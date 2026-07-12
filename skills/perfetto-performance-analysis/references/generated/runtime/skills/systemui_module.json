@@ -1,0 +1,260 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%SystemUI%",
+      "%systemui%",
+      "*AIDL*",
+      "*Binder*",
+      "*Bouncer*",
+      "*Choreographer#doFrame*",
+      "*CollapsedStatusBar*",
+      "*DrawFrame*",
+      "*Gesture*",
+      "*Keyguard*",
+      "*LockScreen*",
+      "*NavBar*",
+      "*Navigation*",
+      "*Notification*",
+      "*QS*",
+      "*QuickSettings*",
+      "*Shade*",
+      "*StatusBar*",
+      "*Swipe*",
+      "*Tile*",
+      "*Unlock*",
+      "*Volume*",
+      "*VolumeDialog*",
+      "*aidl*",
+      "*binder*",
+      "*collapse*",
+      "*doFrame*",
+      "*expand*",
+      "*gesture*",
+      "*keyguard*",
+      "*lockscreen*",
+      "*navbar*",
+      "*navigation*",
+      "*notification*",
+      "*shade*",
+      "*status_bar*",
+      "*statusbar*",
+      "*swipe*",
+      "*tile*",
+      "*unlock*",
+      "*volume*",
+      "com.android.systemui"
+    ]
+  },
+  "id": "systemui_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/app/systemui_module.skill.yaml",
+    "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
+  },
+  "steps": [
+    {
+      "id": "systemui_process",
+      "name": "SystemUI 进程识别",
+      "query_id": "systemui_module/systemui_process",
+      "result_dependencies": [],
+      "save_as": "systemui_process",
+      "type": "atomic"
+    },
+    {
+      "id": "systemui_main_thread",
+      "name": "SystemUI 主线程概览",
+      "on_empty": "未找到 SystemUI 进程数据",
+      "query_id": "systemui_module/systemui_main_thread",
+      "result_dependencies": [],
+      "save_as": "systemui_main_thread",
+      "type": "atomic"
+    },
+    {
+      "id": "systemui_frames",
+      "name": "SystemUI 帧渲染",
+      "query_id": "systemui_module/systemui_frames",
+      "result_dependencies": [],
+      "save_as": "systemui_frames",
+      "type": "atomic"
+    },
+    {
+      "id": "statusbar_activities",
+      "name": "状态栏活动",
+      "query_id": "systemui_module/statusbar_activities",
+      "result_dependencies": [],
+      "save_as": "statusbar_activities",
+      "type": "atomic"
+    },
+    {
+      "id": "notification_shade",
+      "name": "通知中心活动",
+      "query_id": "systemui_module/notification_shade",
+      "result_dependencies": [],
+      "save_as": "notification_shade",
+      "type": "atomic"
+    },
+    {
+      "id": "quick_settings",
+      "name": "快捷设置活动",
+      "query_id": "systemui_module/quick_settings",
+      "result_dependencies": [],
+      "save_as": "quick_settings",
+      "type": "atomic"
+    },
+    {
+      "id": "navigation_activities",
+      "name": "导航栏活动",
+      "query_id": "systemui_module/navigation_activities",
+      "result_dependencies": [],
+      "save_as": "navigation_activities",
+      "type": "atomic"
+    },
+    {
+      "id": "lockscreen_activities",
+      "name": "锁屏活动",
+      "query_id": "systemui_module/lockscreen_activities",
+      "result_dependencies": [],
+      "save_as": "lockscreen_activities",
+      "type": "atomic"
+    },
+    {
+      "id": "systemui_binder",
+      "name": "SystemUI Binder 调用",
+      "query_id": "systemui_module/systemui_binder",
+      "result_dependencies": [],
+      "save_as": "systemui_binder",
+      "type": "atomic"
+    },
+    {
+      "id": "volume_dialog",
+      "name": "音量对话框",
+      "optional": true,
+      "query_id": "systemui_module/volume_dialog",
+      "result_dependencies": [],
+      "save_as": "volume_dialog",
+      "type": "atomic"
+    },
+    {
+      "id": "systemui_diagnosis",
+      "inputs": [
+        "systemui_frames",
+        "systemui_main_thread",
+        "notification_shade",
+        "quick_settings",
+        "navigation_activities",
+        "systemui_binder"
+      ],
+      "name": "SystemUI 诊断",
+      "rules": [
+        {
+          "condition": "systemui_frames.data[0]?.jank_rate_pct > 5",
+          "confidence": "high",
+          "diagnosis": "SystemUI 卡顿率 ${systemui_frames.data[0]?.jank_rate_pct}%，影响系统 UI 体验",
+          "evidence_fields": [
+            "systemui_frames.data[0]?.jank_rate_pct",
+            "systemui_frames.data[0]?.jank_frames",
+            "systemui_frames.data[0]?.total_frames"
+          ],
+          "suggestions": [
+            "检查通知中心动画性能",
+            "优化快捷设置 Tile 响应",
+            "减少主线程耗时操作"
+          ]
+        },
+        {
+          "condition": "systemui_main_thread.data[0]?.max_ms > 100",
+          "confidence": "high",
+          "diagnosis": "SystemUI 主线程存在耗时操作: ${systemui_main_thread.data[0]?.activity} 最长 ${systemui_main_thread.data[0]?.max_ms}ms",
+          "evidence_fields": [
+            "systemui_main_thread.data[0]?.activity",
+            "systemui_main_thread.data[0]?.max_ms"
+          ],
+          "suggestions": [
+            "将耗时操作移至后台线程",
+            "优化 UI 更新逻辑"
+          ]
+        },
+        {
+          "condition": "notification_shade.data[0]?.max_ms > 50",
+          "confidence": "medium",
+          "diagnosis": "通知中心活动耗时较高: ${notification_shade.data[0]?.shade_event} 最长 ${notification_shade.data[0]?.max_ms}ms",
+          "evidence_fields": [
+            "notification_shade.data[0]?.shade_event",
+            "notification_shade.data[0]?.max_ms"
+          ],
+          "suggestions": [
+            "优化通知渲染",
+            "减少通知展开时的计算",
+            "检查是否有复杂的自定义通知视图"
+          ]
+        },
+        {
+          "condition": "quick_settings.data[0]?.max_ms > 50",
+          "confidence": "medium",
+          "diagnosis": "快捷设置耗时较高: ${quick_settings.data[0]?.qs_event} 最长 ${quick_settings.data[0]?.max_ms}ms",
+          "evidence_fields": [
+            "quick_settings.data[0]?.qs_event",
+            "quick_settings.data[0]?.max_ms"
+          ],
+          "suggestions": [
+            "优化 Tile 状态查询",
+            "减少 Tile 刷新频率"
+          ]
+        },
+        {
+          "condition": "navigation_activities.data[0]?.max_ms > 32",
+          "confidence": "medium",
+          "diagnosis": "导航手势响应较慢: ${navigation_activities.data[0]?.nav_event} 最长 ${navigation_activities.data[0]?.max_ms}ms",
+          "evidence_fields": [
+            "navigation_activities.data[0]?.nav_event",
+            "navigation_activities.data[0]?.max_ms"
+          ],
+          "suggestions": [
+            "检查手势检测逻辑",
+            "优化动画实现"
+          ]
+        },
+        {
+          "condition": "systemui_binder.data[0]?.max_ms > 50",
+          "confidence": "medium",
+          "diagnosis": "SystemUI 存在耗时 Binder 调用: ${systemui_binder.data[0]?.binder_call} 最长 ${systemui_binder.data[0]?.max_ms}ms",
+          "evidence_fields": [
+            "systemui_binder.data[0]?.binder_call",
+            "systemui_binder.data[0]?.max_ms"
+          ],
+          "suggestions": [
+            "检查是否可以异步执行",
+            "缓存 Binder 调用结果"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "trace-overview"
+}

@@ -1,0 +1,122 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "%.apk",
+      "%.dex",
+      "%.so",
+      "%kernel%",
+      "%vmlinux%"
+    ]
+  },
+  "id": "callstack_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 10,
+      "description": "最小采样数阈值",
+      "name": "min_samples",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/deep/callstack_analysis.skill.yaml",
+    "sha256": "32723ee660e8cc822dc7b98136a23b15ba55fc88f77942c0ee0b658a654680f1"
+  },
+  "steps": [
+    {
+      "id": "check_samples",
+      "name": "检查采样数据",
+      "on_empty": "未找到 CPU 采样数据，请确保 trace 包含 simpleperf/perf 数据",
+      "query_id": "callstack_analysis/check_samples",
+      "result_dependencies": [],
+      "save_as": "sample_stats",
+      "type": "atomic"
+    },
+    {
+      "condition": "sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0",
+      "id": "hot_functions",
+      "name": "热点函数 Top 20",
+      "optional": true,
+      "query_id": "callstack_analysis/hot_functions",
+      "result_dependencies": [
+        "sample_stats"
+      ],
+      "save_as": "hot_functions",
+      "type": "atomic"
+    },
+    {
+      "condition": "sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0",
+      "id": "module_distribution",
+      "name": "模块采样分布",
+      "optional": true,
+      "query_id": "callstack_analysis/module_distribution",
+      "result_dependencies": [],
+      "save_as": "module_distribution",
+      "type": "atomic"
+    },
+    {
+      "condition": "sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0",
+      "id": "thread_hotspots",
+      "name": "线程采样分布",
+      "optional": true,
+      "query_id": "callstack_analysis/thread_hotspots",
+      "result_dependencies": [],
+      "save_as": "thread_hotspots",
+      "type": "atomic"
+    },
+    {
+      "condition": "(hot_functions?.data?.length || 0) > 0",
+      "id": "caller_analysis",
+      "name": "热点函数调用者分析",
+      "optional": true,
+      "query_id": "callstack_analysis/caller_analysis",
+      "result_dependencies": [
+        "hot_functions"
+      ],
+      "save_as": "caller_analysis",
+      "type": "atomic"
+    },
+    {
+      "condition": "sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0",
+      "id": "analysis_conclusion",
+      "name": "分析结论",
+      "optional": true,
+      "query_id": "callstack_analysis/analysis_conclusion",
+      "result_dependencies": [
+        "hot_functions",
+        "module_distribution",
+        "sample_stats"
+      ],
+      "type": "atomic"
+    }
+  ],
+  "type": "deep",
+  "version": "3.0",
+  "workflow": "trace-overview"
+}

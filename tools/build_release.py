@@ -71,6 +71,7 @@ def release_entries(version: str) -> list[tuple[str, bytes, int]]:
     }
     entries.extend(
         [
+            ("tools/install.py", (ROOT / "tools" / "install.py").read_bytes(), 0o755),
             ("LICENSE", (ROOT / "LICENSE").read_bytes(), 0o644),
             ("NOTICE", (ROOT / "NOTICE").read_bytes(), 0o644),
             (

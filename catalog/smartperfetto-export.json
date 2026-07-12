@@ -1,4 +1,14 @@
 {
+  "fixture_manifest_source": "backend/skills/public-fixtures.yaml",
+  "official_perfetto": {
+    "commit": "da1d152cff27890903d158fe96751de3aab883cc",
+    "official_skill_reference": "ai/skills/perfetto/SKILL-template.md",
+    "official_skill_role": "gap_check_only",
+    "repository": "https://github.com/google/perfetto",
+    "rpc_api_version": 14,
+    "stdlib_tree": "7f0459ca3eed8372a8762ae052ed7fdb48eb3d88",
+    "tag": "v57.2"
+  },
   "pipeline_docs": [
     {
       "destination": "references/generated/pipelines/docs/android_pip_freeform.md",
@@ -584,7 +594,7 @@
       "name": "callstack_analysis",
       "runtime_type": "deep",
       "source_path": "backend/skills/deep/callstack_analysis.skill.yaml",
-      "source_sha256": "da6f8f053e7325fffa6983751eaebd17478c4ae924e86352ffd66e4101d98660",
+      "source_sha256": "32723ee660e8cc822dc7b98136a23b15ba55fc88f77942c0ee0b658a654680f1",
       "tier": "S",
       "version": "3.0",
       "workflow": "trace-overview"
@@ -678,7 +688,7 @@
       "name": "cpu_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_analysis.skill.yaml",
-      "source_sha256": "b3ab914b724ad69264ba04c73c6cb054a3567de1ffde3e53768eb349ac5d3afe",
+      "source_sha256": "c2723137b1cdfaa2c0f8b23cc62a9133aa534e56dc981c472ddc8d28ca6dff14",
       "tier": "S",
       "version": "1.0",
       "workflow": "cpu-scheduling"
@@ -797,7 +807,7 @@
       "name": "cpu_profiling",
       "runtime_type": "deep",
       "source_path": "backend/skills/deep/cpu_profiling.skill.yaml",
-      "source_sha256": "a6a66506443dbaafa5b0ec8d01520c945065aa40ce65d0f89fd60577ae67e1ce",
+      "source_sha256": "747b9f8972708ad1e4c8449ab8e9876c58138f44ae4f3515d87232a9173a4772",
       "tier": "S",
       "version": "3.0",
       "workflow": "cpu-scheduling"
@@ -869,7 +879,7 @@
       "name": "cpu_topology_view",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_topology_view.skill.yaml",
-      "source_sha256": "1a730191dd48abb10a07b8d4b95200f4d4b160ae178d037907613bef58910630",
+      "source_sha256": "792f8e08be59730e2b62f9f21359ea7677b02b8ab7aa5224e5caaa9587779f76",
       "tier": "B",
       "version": "1.0",
       "workflow": "cpu-scheduling"
@@ -1072,7 +1082,7 @@
       "name": "gc_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/gc_analysis.skill.yaml",
-      "source_sha256": "94563f8717669e993b92723f09bb10688c8a9ac9d9c9caf91391ddf4ecf14639",
+      "source_sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366",
       "tier": "S",
       "version": "3.0",
       "workflow": "memory"
@@ -1108,7 +1118,7 @@
       "name": "global_trace_sanity_check",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
-      "source_sha256": "082c5e5e00286a42ebf2cb10e6d0305f0d94f83c2f64eb7baef061951d49dec8",
+      "source_sha256": "3c4b708b7b84c9206463877bf914275bb2d48df15eef7c821ebe6eeaf4a8e263",
       "tier": "S",
       "version": "1.0",
       "workflow": "trace-overview"
@@ -1249,7 +1259,7 @@
       "name": "io_pressure",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/io_pressure.skill.yaml",
-      "source_sha256": "0a450c93ae1f945c82729a14f132f2006df7bf395e1ffa1fd86ae69180fa5a23",
+      "source_sha256": "4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571",
       "tier": "S",
       "version": "3.0",
       "workflow": "io-network-media"
@@ -1260,7 +1270,7 @@
       "name": "irq_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/irq_analysis.skill.yaml",
-      "source_sha256": "2790ff697fe7ae14da02b54deb78e2d1b46dd8d3cbebb27599a1e20f8ca5a2cf",
+      "source_sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576",
       "tier": "S",
       "version": "3.0",
       "workflow": "cpu-scheduling"
@@ -2087,7 +2097,7 @@
       "name": "process_slice_cpu_hotspots",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/process_slice_cpu_hotspots.skill.yaml",
-      "source_sha256": "a548a07ddd975cfb5ca525722c772baa7e0fe0f68e36e49f68890e6c1afd013e",
+      "source_sha256": "fd6bc72d2cee67b783f9795e253586db60f2b7a3c3e786495b6d998e69403a8a",
       "tier": "B",
       "version": "1.0",
       "workflow": "cpu-scheduling"
@@ -2183,7 +2193,7 @@
       "name": "scheduler_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
-      "source_sha256": "0eb2ad71f21998edd7e7c48853cb90b76d0a623ccf3936bee6aa61310d955a88",
+      "source_sha256": "170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452",
       "version": "1.0",
       "workflow": "cpu-scheduling"
     },
@@ -2253,7 +2263,7 @@
       "name": "selection_range_cpu_sched_summary",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
-      "source_sha256": "c970063c31991780a831d4c680bca4f241addf9eecef9565c54d93c113652151",
+      "source_sha256": "31127ebb648421f06248c4ceb054d614d12df318c63b0a652a41f341b556310e",
       "tier": "B",
       "version": "1.0",
       "workflow": "cpu-scheduling"
@@ -2325,7 +2335,7 @@
       "name": "startup_binder_pool_analysis",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_binder_pool_analysis.skill.yaml",
-      "source_sha256": "6f1f394a97708c7e21b8372f5891316858b397cd37477cba43d7fa54adf9fb1f",
+      "source_sha256": "10d4853d77be31976d5238ca1b58dbda245f3e8372eca058a69fbd8303127584",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2361,7 +2371,7 @@
       "name": "startup_cpu_placement_timeline",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_cpu_placement_timeline.skill.yaml",
-      "source_sha256": "d69eb45820fa5548bf1eb21d16e03bfa005b5517174b1a476bcba1ea67dcc809",
+      "source_sha256": "2697e8f8785a219d21dc73847d18ecba03b50728a78f3eab6721dfebee25ff4b",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2373,7 +2383,7 @@
       "name": "startup_critical_tasks",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
-      "source_sha256": "425297e5c75ebc5b5eca49affc78e4dc1ab558e52e841f51aa1a4d8d1ec83aac",
+      "source_sha256": "8d9ffc04a4543994c80e63aba04812d897f68580cb39396c9600aafb01cf51dc",
       "tier": "A",
       "version": "1.0",
       "workflow": "startup"
@@ -2385,7 +2395,7 @@
       "name": "startup_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/startup_detail.skill.yaml",
-      "source_sha256": "c893e468e06b0ae4f90ad99ba68cc341888c7cd9ad8159142e77dfc1b7903b32",
+      "source_sha256": "27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6",
       "tier": "S",
       "version": "2.0",
       "workflow": "startup"
@@ -2433,7 +2443,7 @@
       "name": "startup_hot_slice_states",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_hot_slice_states.skill.yaml",
-      "source_sha256": "bd287fdd71c8bd1a0b349bca9db78b6080a78cc9d1ba3751a94e558c6a04f264",
+      "source_sha256": "7b53b185503a7dbaaf1ddc0527728dc763324f140dc4b673f65e56d18926eba6",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2445,7 +2455,7 @@
       "name": "startup_jit_analysis",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_jit_analysis.skill.yaml",
-      "source_sha256": "6ce25c529a4b610e61911c78f8ba61c403eb24ad58b3bec74898d6d6d35aaeb1",
+      "source_sha256": "3b238fd00ac7450afc57b24ada44cbcb0b1c9f11a83cba1a91e1af48addd169a",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2493,7 +2503,7 @@
       "name": "startup_main_thread_states_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_main_thread_states_in_range.skill.yaml",
-      "source_sha256": "2969dfa4db861bd32949987d04de683e4127047f0b89ba73910e89934fc915e6",
+      "source_sha256": "e80f0fec172c222ce015de035a53406369f359dc9a4bd41bf913b7104344b333",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2517,7 +2527,7 @@
       "name": "startup_sched_latency_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_sched_latency_in_range.skill.yaml",
-      "source_sha256": "2dff6eedc8bbd571f995c4eafe43f22357f71ad1b391939d8188bf3d6dbb0213",
+      "source_sha256": "868ae912f8997443ef08fdde6c3ceddbf4fb19eb4eff2517d5aec6048a897e81",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2541,7 +2551,7 @@
       "name": "startup_thread_blocking_graph",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_thread_blocking_graph.skill.yaml",
-      "source_sha256": "eaa6929c7ddf3ad7bf3920f4a29d76ecd82be66cbfc6b032b7306156bd54507f",
+      "source_sha256": "efc99dd7288f62ffa136feb19c852594d545620e9a17523b1070b71f14041d67",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2576,7 +2586,7 @@
       "name": "surfaceflinger_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/framework/surfaceflinger_module.skill.yaml",
-      "source_sha256": "8fb31a101cc4a8eb2f27ee6912d7f2050586b4cdc0b8722a544391b9c26cd7e0",
+      "source_sha256": "d456d7df46f6aec95de47a77dc360d10ac0154b45fa9ed8e8a779c8ea356bffd",
       "version": "1.0",
       "workflow": "gpu-rendering"
     },
@@ -2692,7 +2702,7 @@
       "name": "third_party_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/app/third_party_module.skill.yaml",
-      "source_sha256": "4ec1adf4fca9bc5c1c99e0f926c86d6b2effc9f0f47b5f20451dda2bc4807ad5",
+      "source_sha256": "dacb92b3b21e6a6eb465c54481840390078de91ffe280ccb2ee14d978360ae96",
       "version": "1.0",
       "workflow": "frameworks-games"
     },
@@ -2901,12 +2911,32 @@
     }
   ],
   "source": {
-    "commit": "fb2c84db1786a214c2a68a89e8143b9b88cb2e00",
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "f04e40c51b51dcc2d1bddebd04033109efb1b4912683c85cbd1dccbdfb796835",
+    "policy_sha256": "31510a58d440771c6ba5ead6622979520dedfba466a857a14cb1b6bf1d80b32b",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
+  "sql_fragments": [
+    {
+      "destination": "references/generated/runtime/fragments/target_threads.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/target_threads.sql",
+      "source_sha256": "736e45d55768740f222375b17546f2f5bf96f66c2f2747639ceadc891840112f"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/thread_states_quadrant.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/thread_states_quadrant.sql",
+      "source_sha256": "ed6b54485655100dd9d525ec671ecc5c2a060f131457c501e09b26715dbe1766"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/vsync_config.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/vsync_config.sql",
+      "source_sha256": "cf00555528fd2ad63aae7a38b5ec667384ca65535843b0b039ca997d17f56d04"
+    }
+  ],
   "strategies": [
     {
       "destination": "references/generated/strategies/anr.strategy.md",
@@ -3363,6 +3393,66 @@
       "pipeline_definition": 31
     },
     "skill_yaml_files": 235,
-    "strategy_sources": 65
-  }
+    "sql_fragments": 3,
+    "strategy_sources": 65,
+    "vendor_overrides": 8
+  },
+  "vendor_overrides": [
+    {
+      "application_mode": "advisory_only",
+      "destination": "references/generated/runtime/vendor-overrides/honor-startup.json",
+      "disposition": "exported",
+      "source_path": "backend/skills/vendors/honor/startup.override.yaml",
+      "source_sha256": "aafadcba4fc1ebda6e2e0a17693dc1f77ee338a4c6508e749eeb6e9789da9642"
+    },
+    {
+      "application_mode": "advisory_only",
+      "destination": "references/generated/runtime/vendor-overrides/mtk-startup.json",
+      "disposition": "exported",
+      "source_path": "backend/skills/vendors/mtk/startup.override.yaml",
+      "source_sha256": "edc4f400202881e50cb10afb5ac088172f4c8adc6ca8ae42bf12b2839dec7683"
+    },
+    {
+      "application_mode": "advisory_only",
+      "destination": "references/generated/runtime/vendor-overrides/oppo-startup.json",
+      "disposition": "exported",
+      "source_path": "backend/skills/vendors/oppo/startup.override.yaml",
+      "source_sha256": "e5fcacb9241865a82427cf9cd78d4ae7430d3a655238b41a23015168b6f94326"
+    },
+    {
+      "application_mode": "advisory_only",
+      "destination": "references/generated/runtime/vendor-overrides/pixel-startup.json",
+      "disposition": "exported",
+      "source_path": "backend/skills/vendors/pixel/startup.override.yaml",
+      "source_sha256": "33bf156ed21cde9085fa08deb855cf47de704f8efa33d8a07d43104c79eaea5f"
+    },
+    {
+      "application_mode": "advisory_only",
+      "destination": "references/generated/runtime/vendor-overrides/qualcomm-startup.json",
+      "disposition": "exported",
+      "source_path": "backend/skills/vendors/qualcomm/startup.override.yaml",
+      "source_sha256": "9a9f9841f92d4132fb1d625ad40a7d7a8f5309e2ed09a4f0d8dfe477641bc74c"
+    },
+    {
+      "application_mode": "advisory_only",
+      "destination": "references/generated/runtime/vendor-overrides/samsung-startup.json",
+      "disposition": "exported",
+      "source_path": "backend/skills/vendors/samsung/startup.override.yaml",
+      "source_sha256": "5bf0b3407172f1d1a0f1f15ff2c92c3bb2be07cde70657bd7e7bd888aa624117"
+    },
+    {
+      "application_mode": "advisory_only",
+      "destination": "references/generated/runtime/vendor-overrides/vivo-startup.json",
+      "disposition": "exported",
+      "source_path": "backend/skills/vendors/vivo/startup.override.yaml",
+      "source_sha256": "d67e640d98f6738490d0fcc1486e7ae23523cd1404f35a063aaff12eb549f1bf"
+    },
+    {
+      "application_mode": "advisory_only",
+      "destination": "references/generated/runtime/vendor-overrides/xiaomi-startup.json",
+      "disposition": "exported",
+      "source_path": "backend/skills/vendors/xiaomi/startup.override.yaml",
+      "source_sha256": "9f34231ee4ad502a6475d24d55c3d45f76f547afb1c52b7c5d5381a52b591f3a"
+    }
+  ]
 }

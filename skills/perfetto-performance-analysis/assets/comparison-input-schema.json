@@ -1,15 +1,14 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Gracker/Perfetto-Skills/schemas/comparison-input-v1.json",
-  "title": "Perfetto Skills comparison side",
+  "$id": "https://github.com/Gracker/Perfetto-Skills/schemas/comparison-input-v2.json",
+  "title": "Perfetto Skills comparison side v2",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "trace", "metrics", "limitations"],
+  "required": ["schema_version", "trace", "comparison_context", "metrics", "limitations"],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {"const": 2},
     "trace": {
       "type": "object",
-      "additionalProperties": false,
       "required": ["sha256"],
       "properties": {
         "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
@@ -17,17 +16,30 @@
         "end_ns": {"type": "integer"}
       }
     },
+    "comparison_context": {
+      "type": "object",
+      "required": ["identity", "window_duration_ns", "refresh_budget_ns", "cpu_topology", "capabilities", "android_profile", "processor"],
+      "properties": {
+        "identity": {"type": "object"},
+        "window_duration_ns": {"type": "integer", "minimum": 0},
+        "refresh_budget_ns": {"type": ["integer", "null"]},
+        "cpu_topology": {"type": ["string", "object"]},
+        "capabilities": {"type": "array", "items": {"type": "string"}},
+        "android_profile": {"type": "object"},
+        "processor": {"type": "object"}
+      }
+    },
     "metrics": {
       "type": "object",
       "additionalProperties": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["status", "unit", "definition", "evidence_refs"],
+        "required": ["status", "unit", "definition", "source_sha256", "evidence_refs"],
         "properties": {
           "status": {"enum": ["observed", "not_observed", "missing_evidence", "out_of_scope"]},
           "value": {"type": "number"},
           "unit": {"type": "string", "minLength": 1},
           "definition": {"type": "string", "minLength": 1},
+          "source_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "evidence_refs": {"type": "array", "items": {"type": "string"}}
         }
       }

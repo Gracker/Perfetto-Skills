@@ -1,11 +1,104 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
 -- Source SHA-256: 0403339f9ba204e964aa7ccab7130157ed7149b13da3cfd63bb807484e4bbb96
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 -- 根因分析: 综合四象限、CPU频率、耗时操作等数据，输出明确的根因结论
 -- CTEs vsync_ticks, vsync_config, target_threads, thread_states injected via sql_fragments
 WITH
+-- Fragment: vsync_config
+-- Estimates VSync period using median of VSYNC-sf intervals, fallback to 16.67ms (60Hz)
+-- Snaps to nearest standard refresh rate (30/60/90/120/144/165 Hz) to avoid
+-- half-period toggle contamination and jitter-induced miscalculation.
+-- Params: ${start_ts}, ${end_ts}
+vsync_ticks AS (
+  SELECT c.ts, c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
+  FROM counter c
+  JOIN counter_track t ON c.track_id = t.id
+  WHERE t.name = 'VSYNC-sf'
+    AND c.ts >= ${start_ts} - 100000000
+    AND c.ts < ${end_ts} + 100000000
+),
+vsync_config AS (
+  SELECT CASE
+    WHEN raw_ns BETWEEN 5500000 AND 6500000 THEN 6060606
+    WHEN raw_ns BETWEEN 6500001 AND 7500000 THEN 6944444
+    WHEN raw_ns BETWEEN 7500001 AND 9500000 THEN 8333333
+    WHEN raw_ns BETWEEN 9500001 AND 12500000 THEN 11111111
+    WHEN raw_ns BETWEEN 12500001 AND 20000000 THEN 16666667
+    WHEN raw_ns BETWEEN 20000001 AND 35000000 THEN 33333333
+    ELSE raw_ns
+  END AS vsync_period_ns
+  FROM (
+    SELECT CAST(COALESCE(
+      (SELECT PERCENTILE(interval_ns, 0.5)
+       FROM vsync_ticks
+       WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      16666667
+    ) AS INTEGER) AS raw_ns
+  )
+),
+-- Fragment: target_threads
+-- Resolves MainThread + RenderThread for the target package.
+-- Supports standard Android (RenderThread), Flutter (N.raster/N.ui), and Compose.
+-- Params: ${package}, ${start_ts}, ${end_ts}
+-- Optional: ${main_start_ts}, ${main_end_ts}, ${render_start_ts}, ${render_end_ts}
+target_threads AS (
+  SELECT t.utid, t.tid, t.name as thread_name, p.pid, p.name as process_name,
+    CASE
+      WHEN t.tid = p.pid THEN 'MainThread'
+      WHEN t.name = 'RenderThread' THEN 'RenderThread'
+      WHEN t.name GLOB '[0-9]*.raster' THEN 'RenderThread'
+      WHEN t.name GLOB '[0-9]*.ui' THEN 'MainThread'
+      ELSE 'Other'
+    END as thread_type,
+    CASE
+      WHEN t.tid = p.pid THEN COALESCE(${main_start_ts}, ${start_ts})
+      WHEN t.name = 'RenderThread' THEN COALESCE(${render_start_ts}, ${start_ts})
+      WHEN t.name GLOB '[0-9]*.raster' THEN COALESCE(${render_start_ts}, ${start_ts})
+      WHEN t.name GLOB '[0-9]*.ui' THEN COALESCE(${main_start_ts}, ${start_ts})
+      ELSE ${start_ts}
+    END as thread_start_ts,
+    CASE
+      WHEN t.tid = p.pid THEN COALESCE(${main_end_ts}, ${end_ts})
+      WHEN t.name = 'RenderThread' THEN COALESCE(${render_end_ts}, ${end_ts})
+      WHEN t.name GLOB '[0-9]*.raster' THEN COALESCE(${render_end_ts}, ${end_ts})
+      WHEN t.name GLOB '[0-9]*.ui' THEN COALESCE(${main_end_ts}, ${end_ts})
+      ELSE ${end_ts}
+    END as thread_end_ts
+  FROM thread t
+  JOIN process p ON t.upid = p.upid
+  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+    AND (t.tid = p.pid OR t.name = 'RenderThread'
+         OR t.name GLOB '[0-9]*.raster' OR t.name GLOB '[0-9]*.ui')
+),
+-- Fragment: thread_states_quadrant
+-- Depends on: target_threads (CTE), _cpu_topology (VIEW)
+-- Maps thread states to Q1-Q4 quadrant classification
+-- Q1: Running on big/prime cores (compute-capable)
+-- Q2: Running on medium/little cores (power-efficient)
+-- Q3: Runnable but not scheduled (scheduling contention)
+-- Q4a: Uninterruptible wait (D/DK). Treat as IO only when io_wait=1
+--       or blocked_function matches an IO/page-cache family.
+-- Q4b: Voluntary sleep (S=interruptible sleep, I=idle) — waiting on lock/futex/binder
+thread_states AS (
+  SELECT
+    tt.thread_type,
+    CASE
+      WHEN ts.state = 'Running' AND COALESCE(ct.core_type, 'little') IN ('prime', 'big') THEN 'Q1'
+      WHEN ts.state = 'Running' AND COALESCE(ct.core_type, 'little') IN ('medium', 'little') THEN 'Q2'
+      WHEN ts.state IN ('R', 'R+') THEN 'Q3'
+      WHEN ts.state IN ('D', 'DK') THEN 'Q4a'
+      WHEN ts.state IN ('S', 'I') THEN 'Q4b'
+      ELSE 'Other'
+    END as quadrant,
+    SUM(ts.dur) as dur_ns
+  FROM thread_state ts
+  JOIN target_threads tt ON ts.utid = tt.utid
+  LEFT JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
+  WHERE ts.ts >= tt.thread_start_ts AND ts.ts < tt.thread_end_ts
+  GROUP BY tt.thread_type, quadrant
+),
 -- 3. 计算各线程四象限百分比
 quadrant_pct AS (
   SELECT

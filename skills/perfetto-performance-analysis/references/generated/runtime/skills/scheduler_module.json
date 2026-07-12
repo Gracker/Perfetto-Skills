@@ -1,0 +1,152 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%${package}%",
+      "cpufreq"
+    ]
+  },
+  "id": "scheduler_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target package name",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Target thread ID",
+      "name": "tid",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "Analysis start timestamp",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Analysis end timestamp",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.cpu.frequency"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
+    "sha256": "170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "runnable_analysis",
+      "name": "Runnable 状态分析",
+      "query_id": "scheduler_module/runnable_analysis",
+      "result_dependencies": [],
+      "save_as": "runnable_data",
+      "type": "atomic"
+    },
+    {
+      "id": "cpu_frequency",
+      "name": "CPU 频率分析",
+      "query_id": "scheduler_module/cpu_frequency",
+      "result_dependencies": [],
+      "save_as": "freq_data",
+      "type": "atomic"
+    },
+    {
+      "id": "core_distribution",
+      "name": "大小核分布",
+      "query_id": "scheduler_module/core_distribution",
+      "result_dependencies": [],
+      "save_as": "core_data",
+      "type": "atomic"
+    },
+    {
+      "id": "scheduling_diagnosis",
+      "inputs": [
+        "runnable_data",
+        "freq_data",
+        "core_data"
+      ],
+      "name": "调度诊断",
+      "rules": [
+        {
+          "condition": "runnable_data.data[0]?.runnable_ms > 50",
+          "confidence": "high",
+          "diagnosis": "线程 ${runnable_data.data[0]?.thread_name} Runnable 等待时间过长 (${runnable_data.data[0]?.runnable_ms}ms)，存在 CPU 竞争",
+          "evidence_fields": [
+            "runnable_data.data[0].thread_name",
+            "runnable_data.data[0].runnable_ms"
+          ],
+          "suggestions": [
+            "检查是否有后台线程占用 CPU",
+            "考虑提升关键线程优先级"
+          ]
+        },
+        {
+          "condition": "freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz < 1500",
+          "confidence": "medium",
+          "diagnosis": "大核 CPU 频率较低 (${freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz}MHz)，可能存在热节流或功耗限制",
+          "evidence_fields": [
+            "freq_data.data[0].avg_freq_mhz",
+            "freq_data.data[0].max_freq_mhz"
+          ],
+          "suggestions": [
+            "检查设备温度",
+            "检查电池状态和功耗策略"
+          ]
+        },
+        {
+          "condition": "core_data.data[0]?.small_core_pct > 50",
+          "confidence": "medium",
+          "diagnosis": "主线程大部分时间运行在小核 (${core_data.data[0]?.small_core_pct}%)，性能受限",
+          "evidence_fields": [
+            "core_data.data[0].thread_name",
+            "core_data.data[0].small_core_pct"
+          ],
+          "suggestions": [
+            "检查 CPU 亲和性设置",
+            "考虑使用 SCHED_FIFO 提升优先级"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

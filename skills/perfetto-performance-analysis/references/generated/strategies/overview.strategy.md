@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/overview.strategy.md
 Source SHA-256: d1f0a9709bfbbd2b23c454880808291924601ff32775333643fcb29d1c298168
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Overview Strategy
 
@@ -9,15 +9,69 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: overview
+priority: 5
+effort: high
+required_capabilities:
+- cpu_scheduling
+- device_state
+optional_capabilities:
+- frame_rendering
+- startup
+- binder_ipc
+- gc_memory
+- thermal_throttling
+- power_rails
+- battery_counters
+keywords:
+- 发生了什么
+- 有什么问题
+- 概览
+- 整体分析
+- 场景还原
+- 场景分析
+- what happened
+- overview
+- analyze the trace
+- scene reconstruction
+- 全局分析
+compound_patterns:
+- 整体.*分析
+- 分析.*整体
+- trace.*中.*什么
+- what.*in.*trace
+plan_template:
+  mandatory_aspects:
+  - id: scene_detection_and_drill
+    match_keywords:
+    - scene
+    - overview
+    - 场景
+    - 概览
+    - detect
+    - 检测
+    - timeline
+    suggestion: 概览场景建议包含场景检测和问题场景深钻阶段
+    required_expected_calls:
+    - skill_id: scene_reconstruction
+```
+
 #### overview Core Strategy
 
 **Route card**: 发生了什么 / 有什么问题 / 概览 / 整体分析 / 场景还原 / 场景分析 / what happened / overview / analyze the trace / scene reconstruction
 
 **Capabilities**: required=[cpu_scheduling, device_state], optional=[frame_rendering, startup, binder_ipc, gc_memory, thermal_throttling, power_rails, battery_counters]
-
-
-
-
 
 **Phase reminders**
 - 无额外 phase hint。
@@ -26,17 +80,27 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 遵循通用输出契约。
 
 
-
-
-
 <!-- strategy-detail id="full" title="overview full strategy detail" keywords="overview,发生了什么,有什么问题,概览,整体分析,场景还原,场景分析,what happened,overview,analyze the trace,scene reconstruction,全局分析,概览 / 场景还原分析（用户提到 发生了什么、概览、overview、场景还原）,detail,full" default="true" -->
 #### 概览 / 场景还原分析（用户提到 发生了什么、概览、overview、场景还原）
 
 本策略将 trace 当作一段用户操作的"故事"来解读：先检测发生了哪些场景，再对有问题的场景做针对性深钻。
 
+**Phase 1 — 场景检测（1 次调用）：**
+返回结果包含以下 artifact：
+- `time_range`：trace 时间范围和总时长
+- `screen_events`：屏幕状态变化（亮屏/灭屏/解锁）
+- `app_switches`：前台应用切换列表
+- `gestures`：用户手势（scroll/tap/long_press/swipe）
+- `scroll_starts`：滑动会话起始点
+- `inertial_scrolls`：惯性滑动事件
+- `idle_periods`：空闲时段
+- `launches`：应用启动事件（cold/warm/hot）
+- `sys_events`：系统事件（thermal/low_memory/broadcast）
+- `janks`：卡顿事件
+- `timeline`：合并时间线
 
-
-
+**必须获取关键 artifact 的完整数据**：
+优先获取：`launches`、`gestures`、`inertial_scrolls`、`janks`、`timeline`
 
 **Phase 2 — 问题分级（基于阈值判断）：**
 
@@ -58,8 +122,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 **Phase 3 — 针对性深钻（路由表）：**
 
 对每个问题场景，调用对应的 Skill 进行深钻：
-
-如果深钻需要 `process_name`，系统会在进程级 Skill 执行前自动做身份准入和参数重写。若准入返回 ambiguous/blocked，调用 `process_identity_resolver` 查看候选进程；后续 Skill 的 `process_name` 使用 `recommended_process_name_param`，报告中的应用身份使用 `canonical_package_name`。
 
 | 场景类型 | 调用的 Skill | 关键参数 |
 |---------|------------|---------|

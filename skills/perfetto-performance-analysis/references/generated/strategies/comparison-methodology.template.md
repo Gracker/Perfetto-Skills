@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/comparison-methodology.template.md
 Source SHA-256: 504450e6dc153aee444a0915d50b996a51afe84c809efe2db28b61f1800a60a7
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Comparison Methodology Template
 
@@ -9,23 +9,20 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
+
 ## 对比分析方法论
 
 当两个 Trace 同时可用时，遵循以下结构化对比流程：
-
-### Phase 1: 对齐确认
-1. 调用 `get_comparison_context()` 获取两个 Trace 的元数据
-2. 确认窗口/语义映射：`current`、`reference` 分别对应左/右或上/下哪一侧；用户说“左边/右边/上面/下面/主/参考”时按 `tracePairContext.aliases` 解析
-3. 确认包名对齐（相同应用 → 直接对比；不同应用 → 在结论中标注差异）
-4. 确认能力交集（`commonCapabilities`）— 后续对比仅限交集范围
-
-
-
-### Phase 3: 差异深钻
-对 Phase 2 中差异显著的指标（>10% 变化），使用 `execute_sql_on` 深入分析：
-- 差异的具体分布（哪些帧/阶段贡献了差异）
-- 系统上下文差异（CPU 频率、温控、内存压力）
-- 根因推断（为什么参考 Trace 更好/更差）
 
 ### Phase 4: 结构化结论
 输出格式：

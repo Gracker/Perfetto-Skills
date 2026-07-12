@@ -1,43 +1,55 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Gracker/Perfetto-Skills/schemas/report-v1.json",
-  "title": "Perfetto Skills evidence report",
+  "$id": "https://github.com/Gracker/Perfetto-Skills/schemas/report-v2.json",
+  "title": "Perfetto Skills evidence report v2",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "workflow", "status", "trace", "findings", "evidence", "limitations"],
+  "required": ["schema_version", "trace", "findings", "evidence", "limitations"],
   "properties": {
-    "schema_version": {"const": 1},
-    "workflow": {"type": "string", "minLength": 1},
-    "status": {"enum": ["complete", "partial", "unavailable"]},
+    "schema_version": {"const": 2},
     "trace": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["side", "path", "sha256"],
+        "required": ["side", "sha256"],
         "properties": {
-          "side": {"type": "string", "minLength": 1},
-          "path": {"type": "string", "minLength": 1},
+          "side": {"type": "string"},
+          "path": {"type": "string"},
           "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
           "start_ns": {"type": "integer"},
           "end_ns": {"type": "integer"}
         }
       }
     },
+    "workflow": {"type": "string"},
+    "status": {"enum": ["complete", "partial", "unavailable"]},
     "findings": {
       "type": "array",
       "items": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "title", "claim", "confidence", "evidence_refs"],
+        "required": ["claim", "claim_class", "evidence", "alternatives", "limitations"],
         "properties": {
-          "id": {"type": "string", "minLength": 1},
-          "title": {"type": "string", "minLength": 1},
           "claim": {"type": "string", "minLength": 1},
-          "confidence": {"enum": ["high", "medium", "low"]},
-          "evidence_refs": {"type": "array", "items": {"type": "string"}},
-          "recommendation": {"type": "string"}
+          "claim_class": {"enum": ["observation", "correlation", "mechanism", "causal", "root_cause"]},
+          "mechanism": {"type": "string"},
+          "falsifier": {"type": "string"},
+          "alternatives": {"type": "array", "items": {"type": "string"}},
+          "limitations": {"type": "array", "items": {"type": "string"}},
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["evidence_id", "row", "column", "expected"],
+              "properties": {
+                "evidence_id": {"type": "string"},
+                "row": {"type": "integer", "minimum": 0},
+                "column": {"type": "string"},
+                "expected": {}
+              }
+            }
+          }
         }
       }
     },
@@ -45,22 +57,35 @@
       "type": "array",
       "items": {
         "type": "object",
-        "additionalProperties": false,
-        "required": ["id", "trace_side", "source", "summary"],
+        "required": ["evidence_id", "trace", "status", "validation", "processor", "rows", "identity"],
         "properties": {
-          "id": {"type": "string", "minLength": 1},
-          "trace_side": {"type": "string", "minLength": 1},
-          "source": {"type": "string", "minLength": 1},
-          "summary": {"type": "string", "minLength": 1},
-          "process": {"type": "string"},
-          "thread": {"type": "string"},
-          "start_ns": {"type": "integer"},
-          "duration_ns": {"type": "integer"},
-          "artifact": {"type": "string"}
+          "evidence_id": {"type": "string"},
+          "trace": {
+            "type": "object",
+            "required": ["sha256", "side"],
+            "properties": {
+              "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+              "side": {"type": "string"}
+            }
+          },
+          "status": {"enum": ["observed", "empty", "missing_evidence", "not_applicable", "skipped_condition", "error"]},
+          "validation": {"type": "object"},
+          "processor": {
+            "type": "object",
+            "required": ["status", "binary_sha256"],
+            "properties": {
+              "status": {"enum": ["verified", "unsupported"]},
+              "binary_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+              "version": {"type": "string"},
+              "platform": {"type": "string"},
+              "issues": {"type": "array", "items": {"type": "string"}}
+            }
+          },
+          "identity": {"type": "object"},
+          "rows": {"type": "array"}
         }
       }
     },
     "limitations": {"type": "array", "items": {"type": "string"}}
   }
 }
-

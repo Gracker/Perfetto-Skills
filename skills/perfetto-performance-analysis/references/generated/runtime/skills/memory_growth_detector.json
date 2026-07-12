@@ -1,0 +1,112 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "memory_growth_detector",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；当 package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 50,
+      "description": "增长告警阈值(MB)，默认 50",
+      "name": "growth_warning_mb",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 5,
+      "description": "百分比增长触发评级所需的最小 RSS 增长(MB)，默认 5",
+      "name": "growth_pct_min_mb",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 20,
+      "description": "RSS 增长率关注阈值(%)，默认 20",
+      "name": "growth_warning_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
+      "description": "RSS 增长率严重阈值(%)，默认 50",
+      "name": "growth_critical_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10,
+      "description": "相邻采样 RSS 跳跃阈值(MB)，默认 10",
+      "name": "jump_warning_mb",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 2,
+      "description": "Peak/Avg 异常阈值，默认 2",
+      "name": "peak_avg_warning_ratio",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.memory.process"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/memory_growth_detector.skill.yaml",
+    "sha256": "d088a4f84486f3486d78bca495692f08bcfb5082ca1116aa968809851ef1873d"
+  },
+  "steps": [
+    {
+      "id": "memory_growth",
+      "name": "进程内存增长",
+      "query_id": "memory_growth_detector/memory_growth",
+      "result_dependencies": [],
+      "save_as": "memory_growth",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "memory"
+}

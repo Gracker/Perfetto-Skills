@@ -63,29 +63,21 @@ class GeneratedReferenceTest(unittest.TestCase):
         self.assertEqual(
             generated_catalog["source_commit"], source_catalog["source"]["commit"]
         )
-        self.assertEqual(generated_catalog["schema_version"], 1)
+        self.assertEqual(generated_catalog["schema_version"], 2)
         self.assertIn("transformations", generated_catalog)
 
-    def test_strategy_frontmatter_is_not_exported_as_agent_instructions(self) -> None:
+    def test_strategy_frontmatter_is_preserved_as_portable_metadata(self) -> None:
         startup = (
             GENERATED / "strategies" / "startup.strategy.md"
         ).read_text(encoding="utf-8")
-        self.assertNotIn("\nscene: startup\n", startup)
-        generated_catalog = json.loads(
-            (GENERATED / "catalog.json").read_text(encoding="utf-8")
-        )
-        self.assertTrue(
-            any(
-                item["source_path"] == "backend/strategies/startup.strategy.md"
-                and item["reason"] == "non-portable frontmatter"
-                for item in generated_catalog["transformations"]
-            )
-        )
+        self.assertIn("## Portable strategy metadata", startup)
+        self.assertIn("\nscene: startup\n", startup)
 
     def test_strategy_references_remove_product_tool_dependencies(self) -> None:
         strategy_text = "\n".join(
             path.read_text(encoding="utf-8")
-            for path in (GENERATED / "strategies").glob("*.md")
+            for directory in (GENERATED / "strategies", GENERATED / "knowledge")
+            for path in directory.glob("*.md")
         )
         for token in (
             "submit_plan",
@@ -94,6 +86,29 @@ class GeneratedReferenceTest(unittest.TestCase):
             "create_artifact",
             "navigate_timeline",
             "pin_tracks",
+            "execute_sql_on",
+            "list_skills",
+            "analysis_result_snapshot",
+            "get_comparison_context",
+            "compare_skill",
+            "perfetto_query_by_trace_side",
+            "referenceTraceId",
+            "tracePairContext",
+            "AnalysisResultSnapshot",
+            "snapshot_ids",
+            "perfetto_skill_run",
+            "read_evidence_bundle",
+            "portable_checklist",
+            "update_plan_phase",
+            "lookup_strategy_detail",
+            "lookup_knowledge",
+            "submit_hypothesis",
+            "resolve_hypothesis",
+            "flag_uncertainty",
+            "write_analysis_note",
+            "detect_architecture",
+            "lookup_sql_schema",
+            "process_identity_resolver",
         ):
             self.assertNotIn(token, strategy_text, token)
         self.assertIn(
@@ -101,6 +116,8 @@ class GeneratedReferenceTest(unittest.TestCase):
             "`perfetto_query.py`",
             strategy_text,
         )
+        self.assertIn("perfetto_skill.py run", strategy_text)
+        self.assertIn("perfetto_compare.py", strategy_text)
 
     def test_comparison_reference_uses_file_adapter_not_product_snapshots(self) -> None:
         comparison = (

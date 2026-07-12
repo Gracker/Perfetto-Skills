@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/surfaceview.md
 Source SHA-256: 5054a484a5921ce5214b2221c3518728bda16f0b9845cd472b9aa980d194f04e
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # SurfaceView Rendering Pipeline (Direct Producer via BLAST)
 

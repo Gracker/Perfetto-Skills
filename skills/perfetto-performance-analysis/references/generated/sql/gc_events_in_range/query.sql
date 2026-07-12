@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gc_events_in_range.skill.yaml
 -- Source SHA-256: 1b3a5a7f2e13ed61dddef00d1d78f2fb1032e35ed9bcccb6559913ea8ca73d11
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 -- Use Perfetto stdlib android_garbage_collection_events (precise gc_type classification,
 -- heap metrics, and CPU state breakdown). Note: returns 0 rows on older traces that

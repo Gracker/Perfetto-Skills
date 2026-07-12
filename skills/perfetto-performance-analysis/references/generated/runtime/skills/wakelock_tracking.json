@@ -1,0 +1,91 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*PowerManager*WakeLock*",
+      "*SuspendBlocker*",
+      "*WakeLock*",
+      "*WakeupSource*",
+      "*suspend_blocker*",
+      "*wake_lock*",
+      "*wakelock*",
+      "*wakeup_source*"
+    ]
+  },
+  "id": "wakelock_tracking",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/wakelock_tracking.skill.yaml",
+    "sha256": "0384f134ae9d3dff888d962e31723669769e7f31268205c764b027d8888a973c"
+  },
+  "steps": [
+    {
+      "id": "wakelock_events",
+      "name": "Wake Lock 事件",
+      "query_id": "wakelock_tracking/wakelock_events",
+      "result_dependencies": [],
+      "save_as": "wakelock_events",
+      "type": "atomic"
+    },
+    {
+      "id": "suspend_blockers",
+      "name": "Suspend Blocker",
+      "query_id": "wakelock_tracking/suspend_blockers",
+      "result_dependencies": [],
+      "save_as": "suspend_blockers",
+      "type": "atomic"
+    },
+    {
+      "id": "wakelock_duration",
+      "name": "Wake Lock 持有时间排行",
+      "query_id": "wakelock_tracking/wakelock_duration",
+      "result_dependencies": [],
+      "save_as": "wakelock_duration",
+      "type": "atomic"
+    },
+    {
+      "id": "wakelock_timeline",
+      "name": "Wake Lock 时间线",
+      "query_id": "wakelock_tracking/wakelock_timeline",
+      "result_dependencies": [],
+      "save_as": "wakelock_timeline",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "power-thermal"
+}

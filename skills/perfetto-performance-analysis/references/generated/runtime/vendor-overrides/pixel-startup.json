@@ -1,0 +1,76 @@
+{
+  "application_mode": "advisory_only",
+  "definition": {
+    "additional_steps": [
+      {
+        "for_each": "startups",
+        "id": "tensor_features",
+        "name": "Tensor 芯片特性",
+        "optional": true,
+        "save_as": "tensor_events",
+        "sql": "SELECT\n  s.name as tensor_event,\n  s.dur / 1e6 as dur_ms,\n  (s.ts - (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})) / 1e6 as relative_ts_ms\nFROM slice s\nWHERE (s.name GLOB '*Tensor*'\n       OR s.name GLOB '*tensor*'\n       OR s.name GLOB '*TPU*'\n       OR s.name GLOB '*EdgeTPU*'\n       OR s.name GLOB '*ML*Accelerator*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.ts ASC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "performance_profile",
+        "name": "性能配置文件",
+        "optional": true,
+        "sql": "SELECT\n  s.name as profile_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*PerformanceProfile*'\n       OR s.name GLOB '*performance*profile*'\n       OR s.name GLOB '*PowerHint*'\n       OR s.name GLOB '*Boost*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "adaptive_battery",
+        "name": "自适应电池",
+        "optional": true,
+        "sql": "SELECT\n  s.name as battery_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*AdaptiveBattery*'\n       OR s.name GLOB '*adaptive*battery*'\n       OR s.name GLOB '*AppStandby*'\n       OR s.name GLOB '*BatteryStats*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "mali_gpu_analysis",
+        "name": "Mali GPU 分析",
+        "sql": "SELECT\n  s.name as gpu_event,\n  s.dur / 1e6 as dur_ms,\n  (s.ts - (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})) / 1e6 as relative_ts_ms\nFROM slice s\nWHERE (s.name GLOB '*Mali*'\n       OR s.name GLOB '*mali*'\n       OR s.name GLOB '*GPU*fence*'\n       OR s.name GLOB '*gpu*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\nLIMIT 20\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "ambient_services",
+        "name": "环境服务检测",
+        "optional": true,
+        "sql": "SELECT\n  s.name as ambient_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*NowPlaying*'\n       OR s.name GLOB '*Ambient*'\n       OR s.name GLOB '*Hotword*'\n       OR s.name GLOB '*VoiceInteraction*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\n"
+      }
+    ],
+    "extends": "composite/startup_analysis",
+    "meta": {
+      "description": "针对 Google Pixel 优化的启动分析",
+      "display_name": "Google Pixel 启动分析",
+      "platform": "Pixel",
+      "vendor": "pixel"
+    },
+    "vendor_detection": {
+      "signatures": [
+        {
+          "confidence": "medium",
+          "pattern": "*google*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*Pixel*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*Tensor*"
+        },
+        {
+          "confidence": "low",
+          "pattern": "*Android*"
+        }
+      ]
+    },
+    "version": "1.0.0"
+  },
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/vendors/pixel/startup.override.yaml",
+    "sha256": "33bf156ed21cde9085fa08deb855cf47de704f8efa33d8a07d43104c79eaea5f"
+  }
+}

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/startup.strategy.md
 Source SHA-256: d9d24aca67b7773992faa9712569c3c4fdcd250068962b54536ef2049d66ff02
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Startup Strategy
 
@@ -9,17 +9,376 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: startup
+priority: 2
+effort: medium
+required_capabilities:
+- startup
+- cpu_scheduling
+optional_capabilities:
+- binder_ipc
+- lock_contention
+- gc_memory
+- disk_io
+- memory_pressure
+- thermal_throttling
+- power_rails
+- battery_counters
+- cpu_freq_idle
+- gpu_work_period
+keywords:
+- 启动
+- 冷启动
+- 热启动
+- 温启动
+- launch
+- startup
+- cold start
+- warm start
+- hot start
+- app start
+- 首帧
+- ttid
+- ttfd
+- first frame
+- ApplicationStartInfo
+- getHistoricalProcessStartReasons
+- STARTUP_STATE
+- START_TIMESTAMP
+- START_REASON
+- START_COMPONENT
+compound_patterns:
+- 打开.*(应用|app|软件)
+- 打开.*(速度|时间|耗时)
+- (App Performance Score|Android Vitals|Play Vitals|online APM|\bAPM\b|A/B|experiment).*(startup|launch|TTID|TTFD|启动|冷启动|温启动|热启动)
+- (startup|launch|TTID|TTFD|启动|冷启动|温启动|热启动).*(App Performance Score|Android Vitals|Play Vitals|online APM|\bAPM\b|A/B|experiment)
+final_report_contract:
+  required_sections:
+  - id: startup_type_and_metrics
+    label: 启动类型与 TTID/TTFD
+    description: 明确 cold/warm/hot 判定，并给出 TTID/TTFD 或对应不可用原因。
+    pattern_groups:
+    - - 启动类型
+      - 冷启动
+      - 温启动
+      - 热启动
+      - cold\s*start
+      - warm\s*start
+      - hot\s*start
+    - - TTID
+      - TTFD
+      - Time\s+to\s+initial\s+display
+      - Time\s+to\s+full\s+display
+  - id: phase_breakdown
+    label: 阶段耗时分解
+    description: 包含 startup_detail / phase breakdown 口径，并优先使用 self_ms 解释阶段贡献。
+    pattern_groups:
+    - - 阶段耗时
+      - 阶段分解
+      - phase\s+breakdown
+      - startup_detail
+      - 根因分析树
+      - Phase\s*\d+
+    - - self_ms
+      - dur_ms
+      - 耗时
+      - \d+(?:\.\d+)?\s*ms
+  - id: root_cause_references
+    label: 根因编号引用
+    description: 关键根因只能引用启动知识库已有的 A1-A18、B1-B12，或工具实际返回的 SR09-SR20；禁止自创 SR01-SR08 或其他编号。
+    pattern_groups:
+    - - \bA(?:1[0-8]?|[2-9])\b
+      - \bB(?:1[0-2]?|[2-9])\b
+      - SR(?:09|1[0-9]|20)(?!\d)
+  - id: audience_recommendations
+    label: App/系统分层建议
+    description: 优化建议必须区分 App 层和系统/平台/ROM 层。
+    pattern_groups:
+    - - App\s*层
+      - 应用\s*层
+      - App\s+layer
+    - - 系统\s*/\s*平台\s*层
+      - 系统\s*层
+      - 平台\s*层
+      - ROM\s*层
+      - System/Platform
+      - platform\s+layer
+  - id: startup_diagnostic_api_boundary
+    label: 启动诊断 API/外部指标边界
+    description: 当用户主动提到 ApplicationStartInfo、App Performance Score、Vitals、APM 或 A/B 时，区分当前 trace、诊断 API 记录、外部聚合/实验数据、版本/时钟边界和缺失证据。
+    trigger_patterns:
+    - ApplicationStartInfo|getHistoricalProcessStartReasons|STARTUP_STATE|START_TIMESTAMP|START_REASON|START_COMPONENT
+    - App Performance Score|Android Vitals|Play Vitals|Macrobenchmark|online APM|\bAPM\b|A/B|experiment
+    pattern_groups:
+    - - 启动诊断 API/外部指标边界
+      - startup diagnostic API
+      - external metric boundary
+      - ApplicationStartInfo
+      - App Performance Score
+      - Vitals
+      - APM
+      - A/B
+    - - diagnostic_api
+      - external_aggregate
+      - experiment
+      - ApplicationStartInfo
+      - getHistoricalProcessStartReasons
+      - STARTUP_STATE
+      - START_TIMESTAMP
+      - START_REASON
+      - START_COMPONENT
+      - App Performance Score
+      - Play Vitals
+      - Android Vitals
+    - - API\s*3[56]
+      - Android\s*1[56]
+      - version
+      - 版本
+      - clock
+      - timestamp
+      - record state
+      - in-progress
+      - incomplete
+      - device
+      - sample
+      - activation
+      - A/A
+    - - trace window
+      - current trace
+      - TTID
+      - TTFD
+      - align
+      - 对齐
+      - missing
+      - 缺失
+      - confidence
+      - 置信
+      - 不能
+      - 不可
+      - not prove
+phase_hints:
+- id: detail_breakdown
+  keywords:
+  - detail
+  - 详情
+  - 分解
+  - breakdown
+  - 阶段
+  - startup_detail
+  - 耗时
+  constraints: 必须用 Phase 1 的 ttid_ts/ttfd_ts 作为 startup_detail 的时间边界参数。使用 self_ms（排除子切片）而非 wall-time。
+  critical_tools:
+  - startup_detail
+  critical: false
+- id: critical_artifacts
+  keywords:
+  - artifact
+  - critical
+  - 关键
+  - 任务
+  - task
+  - 热点
+  - hot
+  - 阻塞
+  - block
+  constraints: 此阶段不可跳过。必须获取关键 artifact（热点函数、阻塞调用、锁竞争）作为深钻输入。
+  critical_tools:
+  - execute_sql
+  critical: true
+- id: slow_reasons_validation
+  keywords:
+  - slow
+  - reason
+  - 原因
+  - 交叉
+  - cross
+  - 验证
+  - dex2oat
+  - baseline
+  - debuggable
+  constraints: 冷启动必须调用 startup_slow_reasons 检查 DEX2OAT/baseline profile/debuggable 等官方因素。Q4(Sleeping) >25% 必须用 blocking_chain_analysis
+    追踪阻塞源。
+  critical_tools:
+  - startup_slow_reasons
+  - blocking_chain_analysis
+  critical: true
+- id: webview_startup
+  keywords:
+  - webview
+  - chromium
+  - v8
+  - crrenderermain
+  - parsehtml
+  - drawgl
+  - 页面渲染
+  - WebView启动
+  constraints: 仅在架构检测或 trace 证据提示 WebView 时执行。SQL 必须说明正在验证 WebView/Chromium/V8/CrRendererMain 是否参与启动；若未命中 slice，应把 WebView
+    启动影响标为证据不足或可排除，而不是继续归到综合结论。
+  critical_tools:
+  - execute_sql
+  critical: false
+- id: startup_power_overlay
+  keywords:
+  - power
+  - battery
+  - wattson
+  - 功耗
+  - 耗电
+  - 电池
+  - 启动期能耗
+  - 掉电
+  constraints: 用户关心启动功耗/耗电时，先检查 Trace 数据完整度中的 power_rails、battery_counters、cpu_freq_idle、gpu_work_period。数据可用才调用 wattson_app_startup_power；缺失时输出采集建议，禁止把空表解释为低功耗。
+  critical_tools:
+  - wattson_app_startup_power
+  - battery_charge_timeline
+  - android_dvfs_counter_stats
+  critical: false
+- id: startup_diagnostic_api_boundary
+  keywords:
+  - ApplicationStartInfo
+  - getHistoricalProcessStartReasons
+  - STARTUP_STATE
+  - START_TIMESTAMP
+  - START_REASON
+  - START_COMPONENT
+  - App Performance Score
+  - Android Vitals
+  - Play Vitals
+  - APM
+  - A/B
+  - experiment
+  constraints: 当计划或用户问题涉及启动诊断 API/外部指标时，必须把 Perfetto startup_analysis/TTID/TTFD、ApplicationStartInfo 记录、App Performance Score/Vitals/APM/A-B
+    外部数据分层；说明 API/Android 版本、时钟/时间戳对齐、record 是否 incomplete/in-progress、样本/设备/实验窗口，不能把外部分数或聚合直接当成本 trace 根因。
+  critical_tools:
+  - startup_analysis
+  critical: false
+- id: conclusion
+  keywords:
+  - 结论
+  - conclusion
+  - 输出
+  - output
+  - 报告
+  - report
+  - 总结
+  constraints: 输出必须包含：启动类型判定(cold/warm/hot) + TTID/TTFD 数值 + 阶段耗时分解 + 根因编号引用(A1-A18/B1-B12) + 双受众格式([App層]+[系統/平台層])。
+  critical_tools: []
+  critical: false
+plan_template:
+  mandatory_aspects:
+  - id: startup_timing
+    match_keywords:
+    - startup
+    - ttid
+    - ttfd
+    - launch
+    - 启动
+    - startup_analysis
+    suggestion: 启动场景建议包含启动耗时测量阶段 (startup_analysis)
+    required_expected_call_alternatives:
+    - skill_id: startup_analysis
+    - skill_id: startup_analysis
+  - id: phase_breakdown
+    match_keywords:
+    - phase
+    - breakdown
+    - block
+    - 阶段
+    - 分解
+    - 阻塞
+    - startup_detail
+    suggestion: 启动场景建议包含启动阶段分解和阻塞因素分析
+    required_expected_call_alternatives:
+    - skill_id: startup_detail
+    - skill_id: startup_detail
+  - id: startup_critical_artifacts
+    match_keywords:
+    - artifact
+    - critical_tasks
+    - hot_slice_states
+    - thread_blocking_graph
+    - 关键数据
+    - 关键任务
+    - 阻塞关系
+    suggestion: 启动详情阶段必须计划获取 startup_detail 的关键 artifact（主线程状态、四象限、热点、关键任务/阻塞关系；缺失时阶段可 skipped+reason）
+    required_expected_calls:
+    - {}
+  - id: launch_type_verdict
+    match_keywords:
+    - type
+    - cold
+    - warm
+    - hot
+    - bindApplication
+    - 类型
+    - 冷启动
+    - 温启动
+    - 热启动
+    - 判定
+    suggestion: 启动场景建议验证启动类型 (cold/warm/hot)：bindApplication 存在→冷启动，仅 performCreate→温启动
+    required_expected_call_alternatives:
+    - skill_id: startup_analysis
+    - skill_id: startup_analysis
+  - id: cold_start_slow_reasons
+    trigger_keywords:
+    - cold
+    - 冷启动
+    - bindApplication
+    - startup_slow_reasons
+    - SR09
+    - SR10
+    - SR20
+    match_keywords:
+    - startup_slow_reasons
+    - slow reason
+    - 官方启动慢原因
+    - SR09
+    - SR10
+    - SR20
+    - dex2oat
+    - baseline
+    suggestion: 冷启动或 bindApplication 证据出现时，计划必须包含 startup_slow_reasons 交叉验证；若数据不可用，执行阶段标记 skipped 并说明原因
+    required_expected_call_alternatives:
+    - skill_id: startup_slow_reasons
+    - skill_id: startup_slow_reasons
+  - id: q4_blocking_chain
+    trigger_keywords:
+    - Q4
+    - Sleeping
+    - sleeping
+    - 阻塞
+    - blocking_chain
+    - blocked_functions
+    - futex
+    - binder
+    match_keywords:
+    - blocking_chain_analysis
+    - 阻塞链
+    - 唤醒者
+    - waker
+    - blocked_functions
+    suggestion: 当计划涉及 Q4/Sleeping/阻塞解释时，必须声明 blocking_chain_analysis；若 trace 缺少阻塞信号，执行阶段标记 skipped 并说明
+    required_expected_call_alternatives:
+    - skill_id: blocking_chain_analysis
+    - skill_id: blocking_chain_analysis
+```
+
 #### Startup Core Strategy
 
 **Route card**: 启动 / 冷启动 / 热启动 / 温启动 / launch / startup / cold start / warm start / hot start / app start
 
 **Capabilities**: required=[startup, cpu_scheduling], optional=[binder_ipc, lock_contention, gc_memory, disk_io, memory_pressure, thermal_throttling, power_rails, battery_counters]
-
-
-
-
-
-
 
 **Final report contract summary**
 - 启动类型与 TTID/TTFD
@@ -28,16 +387,10 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - App/系统分层建议
 - 启动诊断 API/外部指标边界
 
-
-
-
 **Detail refs**
 - `startup:overview_timing`: startup_analysis/startup_detail 参数、启动类型、artifact 表。
 - `startup:conditional_drills`: 内存压力、功耗、冷启动 slow reasons、Q4 阻塞链、Compose/Flutter/WebView 分支。
 - `startup:root_cause_tree`: self_ms、四象限、blocked_functions、TTID/TTFD 边界和根因决策树。
-
-
-
 
 **⚠️ 核心原则：**
 1. **不能只报告"某 slice 耗时 XXms"——必须解释 WHY（为什么慢）**
@@ -68,7 +421,9 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 写 execute_sql 时优先使用（完整列表见方法论模板）：`android_startup_opinionated_breakdown`、`android_garbage_collection_events`、`android_oom_adj_intervals`、`android_screen_state`、`slice_self_dur`、`cpu_process_utilization_in_interval(ts, dur)`、`cpu_frequency_counters`、`android_dvfs_counter_stats`
 
-
+**Phase 1 — 获取启动概览：**
+返回：启动事件列表、延迟归因分析、主线程热点操作（含 self_dur_ms）、文件 IO、Binder 调用、**主线程状态分布（含 blocked_functions）**、GC 事件、数据质量检查、调度延迟。
+从结果中提取 startup_id、start_ts、end_ts、dur_ms、package、startup_type 参数。
 
 ⚠️ **数据质量门禁特别注意：**
 - **R008_TTID_GT_DUR**（TTID > 启动时长）：不要只说"TTID 不可信"或"建议在 Perfetto UI 中查看"——必须**主动分析**差值（TTID - dur_ms）去向。**具体做法**：用 execute_sql 查询启动 end_ts 到 TTID 时间点之间的 RenderThread 和 SurfaceFlinger 活动：
@@ -84,11 +439,10 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - **温启动 + bindApplication 矛盾**：即使未触发 R009，如果主线程热点中出现 bindApplication（478ms+），也应主动质疑：温启动不应有 Application 初始化开销。可能原因：① 进程被回收后重启（实为冷启动）；② framework atrace 标记不准确。
 - **禁止反向误判**：如果 `startup_analysis.get_startups` 显示 `type_display=冷启动`，且 `startup_breakdown` 包含 `bind_application` 耗时，后续任何 raw SQL 只有在使用 overlap/扩展窗口并命中同一进程主线程后，才允许挑战冷启动结论。窄窗口 0 行只能写成“该 SQL 口径未覆盖 bindApplication 起点”，不能写成“bindApplication 不存在”。
 
-
+**Phase 2 — 获取启动详情（需要传参）：**
+返回：四象限分析（Q1-Q4）、CPU 大小核占比、CPU 频率统计、可操作热点 Top5（含 self_ms）、**主线程状态分布（含 blocked_functions）**、**热点 Slice 线程状态分布（per-slice 根因定位）**、**启动关键任务（全线程四象限+摆核）**、**线程阻塞关系图（block/wakeup 因果链）**、Binder/IO/调度延迟详情。
 
 **Phase 2.5 — 获取详细数据（必须执行，不可跳过）：**
-
-
 
 **必须获取**（startup_detail 稳定产出）：
 
@@ -137,22 +491,10 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 3. **阻塞链构建**：主线程[S:binder_wait] ← Binder线程 ← system_server/PackageManager → 完整因果链
 4. **唤醒者 slice 分析**：waker_current_slice 字段直接告诉你唤醒者在做什么，是最直接的根因证据
 
-
+获取方式（并行）：
+**在所有关键 artifact 数据到手之前，不要开始写结论。**
 
 **背景知识指引（结论生成阶段按需调用）：**
-
-在结论生成（Phase 3）阶段，按**根因类型聚合**调用 `lookup_knowledge`，每类根因最多 1 个 📚 知识块（避免重复调用同一模板）。知识块附在对应的 CRITICAL/HIGH 发现之后：
-
-| 根因类型 | 知识模板 | 触发条件 |
-|---------|---------|---------|
-| **启动根因分类体系** | `lookup_knowledge("startup-root-causes")` | 需要根因编号参考(A1-A18/B1-B12)或交叉因素分析(C1-C4) |
-| Binder 阻塞 | `lookup_knowledge("binder-ipc")` | S 状态中 Binder 占比高 |
-| 锁竞争 / futex | `lookup_knowledge("lock-contention")` | blocked_functions 含 futex_wait |
-| D-state / io_wait / blocked_function | `lookup_knowledge("thread-state-blocked-reason")` | 出现不可中断等待、io_wait 或关键 blocked_function，需要解释 kernel wchan 证据边界 |
-| GC 压力 | `lookup_knowledge("gc-dynamics")` | GC 占主线程时间 >5% |
-| CPU 调度 / 大小核 / 升频 | `lookup_knowledge("cpu-scheduler")` | Q2>15% 或 CPU 争抢 >1.5x 或升频异常 |
-| Thermal 限频 | `lookup_knowledge("thermal-throttling")` | 均频远低于峰值或检测到限频 |
-| DEX/OAT 加载、ART 运行时 | Agent 自行编写背景知识（当前无专用模板） | bindApplication 阶段 IO 为主因 |
 
 📚 知识块展示格式：
 ```
@@ -179,7 +521,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 低端或老化存储介质、dm-verity/加密开销 → 即使 Page Cache 充足也可能有较高 IO 延迟
 
 ⚠️ **时序说明**：Phase 2.56 先于 `startup_slow_reasons`（Phase 2.6）执行，上述排除场景的信号（dex2oat/profile 等）在 Phase 2.56 执行时尚不可用。因此：先执行 `memory_pressure_in_range` 获取内存压力数据，在结论阶段（Phase 3）再与 Phase 2.6 信号联合解读。
-
 
 
 **诊断逻辑**：
@@ -223,7 +564,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 任一关键 capability 缺失 → 结论中加“数据采集建议”，不要把空表当成“启动不耗电”
 
 
-
 交叉验证：
 - 若启动窗口能耗高，再调用 `app_process_starts_summary` 判断是否有进程反复拉起
 - 若 DVFS/温控相关，再调用 `android_dvfs_counter_stats` 或 `thermal_throttling`
@@ -239,7 +579,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 2. **类加载影响**：检查 Phase 1 返回的 `class_loading` 数据，分析类加载/类验证（`OpenDexFilesFromOat`）耗时占 bindApplication 阶段的比例。冷启动的 DEX 加载和类验证是特有开销
 3. **结论中必须提及**：JIT 和类加载的影响评估结果，作为冷启动特有的排除/确认因素
 
-
+**Phase 2.6 — 启动慢原因检测与交叉验证（冷启动必须执行 ⚠️）：**
+检测 20 种已知启动慢原因（SR01-SR20），与自有分析交叉验证。
 
 **SR 分类概览**（v3.0）：
 
@@ -267,8 +608,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 **Phase 2.7 — 阻塞链深钻（Q4>25% 时必须执行 ⚠️）：**
 
 当四象限分析 Q4(Sleeping) > 25% 时，此步骤为**必须**。不能仅依赖间接推断（如"推测为 join/await 模式"）来解释 S 状态根因——如果 blocked_functions 为空且 Q4 > 25%，blocking_chain_analysis 是获取直接证据的唯一途径。基于间接推断的发现在结论中可信度会被自动降低。
-
-
 
 **Phase 2.75 — 首帧后可交互性检查（TTFD 存在或 dur > 2s 时执行）：**
 
@@ -424,8 +763,6 @@ Android 启动有两个串行大阶段，**分析结论必须覆盖两个阶段*
 
 某些 trace 的 `blocked_functions` 列为空（未采 `sched/sched_blocked_reason`、设备 tracepoint 不可用、符号化缺失，或内核配置不支持）。此时：
 
-
-
 2. **从已有数据交叉推断**（hot_slice_states 的 blocked_functions 也为空时）：
    - S 状态时长高 + 主线程同步 Binder >50ms → **Binder 阻塞**是主因
    - S 状态时长高 + GC 在主线程 >20ms → **GC 阻塞**参与
@@ -478,9 +815,6 @@ TTID 和 TTFD 是两个不同的指标，必须区分：
 - **业务可用/可交互时间**：如果 App 有自定义业务 ready、首个可交互、首页数据加载完成或线上 APM TTFD 口径，必须标成外部/业务上下文。除非 trace 中有同名 marker 或可对齐的日志/快照，否则不能把它当作 `android_startup_time_to_display` 的直接证据。
 - **外部评分/Vitals 边界**：App Performance Score、Macrobenchmark、Android Vitals 或线上 APM 可以作为启动质量背景和下一步验证方向；当前 Perfetto trace 只能证明本次采集窗口内的启动链路，不能直接证明 28 天 Vitals 状态或评分项合规。
 - **ApplicationStartInfo / 外部观测边界**：当用户提供或询问 `ApplicationStartInfo`、App Performance Score、Vitals、APM 或 A/B 时，必须说明这是 `diagnostic_api`、`external_aggregate` 或 `experiment_or_ab` 证据。ApplicationStartInfo 记录需要核对 API/Android 版本、startup state、start type/reason/component、timestamp clock 和当前 Perfetto 窗口是否对齐；App Performance Score/Vitals/APM/A-B 需要核对设备、样本窗口、版本/渠道、activation 和 A/A sanity。需要机制背景时调用：
-  ```
-  lookup_knowledge("observability-diagnostics")
-  ```
 
 **分析边界（analysis window）说明**：
 - `android_startups` 表的 `dur`（= `end_ts - start_ts`）是框架层启动时长，通常表示框架认定的 startup completion，可近似首帧显示边界

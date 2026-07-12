@@ -18,7 +18,7 @@ import time
 from collections.abc import Callable, Mapping
 
 
-DEFAULT_PERFETTO_VERSION = "v57.1"
+DEFAULT_PERFETTO_VERSION = "v57.2"
 DEFAULT_MAX_OUTPUT_BYTES = 16 * 1024 * 1024
 
 
@@ -461,6 +461,76 @@ def parse_scalar(value: str) -> str | int | float | None:
     return value
 
 
+def _parse_relaxed_perfetto_json_row(
+    line: str, fieldnames: list[str]
+) -> list[str]:
+    """Parse trace_processor CSV fields whose JSON quotes are not doubled.
+
+    trace_processor_shell quotes a JSON result column as a CSV field but leaves
+    the JSON object's own quotes unescaped. Recovery is deliberately limited to
+    columns named ``*_json`` and accepts a boundary only when the candidate is
+    valid JSON, so arbitrary malformed/free-text output remains rejected.
+    """
+    values: list[str] = []
+    offset = 0
+    for field_index, fieldname in enumerate(fieldnames):
+        last = field_index == len(fieldnames) - 1
+        if offset >= len(line):
+            raise QueryError("trace_processor_shell returned a truncated CSV row")
+        if line[offset] != '"':
+            end = len(line) if last else line.find(",", offset)
+            if end < 0:
+                raise QueryError("trace_processor_shell returned a malformed CSV row")
+            values.append(line[offset:end])
+            offset = end + (0 if last else 1)
+            continue
+        start = offset + 1
+        if fieldname.endswith("_json") or line[start:start + 1] in {"[", "{"}:
+            cursor = start
+            recovered_json = False
+            while True:
+                cursor = line.find('"', cursor)
+                if cursor < 0:
+                    break
+                boundary = cursor == len(line) - 1 if last else line.startswith('",', cursor)
+                if boundary:
+                    candidate = line[start:cursor]
+                    try:
+                        json.loads(candidate)
+                    except json.JSONDecodeError:
+                        cursor += 1
+                        continue
+                    values.append(candidate)
+                    offset = cursor + (1 if last else 2)
+                    recovered_json = True
+                    break
+                cursor += 1
+            if recovered_json:
+                continue
+            if fieldname.endswith("_json"):
+                raise QueryError("trace_processor_shell returned unterminated JSON CSV")
+        cursor = start
+        decoded: list[str] = []
+        while cursor < len(line):
+            if line.startswith('""', cursor):
+                decoded.append('"')
+                cursor += 2
+                continue
+            if line[cursor] == '"':
+                boundary = cursor == len(line) - 1 if last else line.startswith('",', cursor)
+                if boundary:
+                    values.append("".join(decoded))
+                    offset = cursor + (1 if last else 2)
+                    break
+            decoded.append(line[cursor])
+            cursor += 1
+        else:
+            raise QueryError("trace_processor_shell returned unterminated CSV text")
+    if offset != len(line):
+        raise QueryError("trace_processor_shell returned extra CSV fields")
+    return values
+
+
 def parse_csv_output(output: str) -> list[dict[str, str | int | float | None]]:
     if not output.strip():
         return []
@@ -468,16 +538,32 @@ def parse_csv_output(output: str) -> list[dict[str, str | int | float | None]]:
     if reader.fieldnames is None:
         raise QueryError("trace_processor_shell returned CSV without a header")
     parsed: list[dict[str, str | int | float | None]] = []
+    invalid = False
     for row in reader:
         if not row:
             continue
         if None in row or any(value is None for value in row.values()):
-            raise QueryError(
-                "trace_processor_shell returned non-tabular text inside CSV; "
-                "use raw/csv output or hex-encode free-text SQL columns before "
-                "requesting JSON"
-            )
+            invalid = True
+            break
         parsed.append({key: parse_scalar(value) for key, value in row.items()})
+    if invalid:
+        lines = [line for line in output.lstrip("\r\n").splitlines() if line]
+        header = next(csv.reader([lines[0]]))
+        try:
+            recovered = [
+                _parse_relaxed_perfetto_json_row(line, header) for line in lines[1:]
+            ]
+            return [
+                {key: parse_scalar(value) for key, value in zip(header, row, strict=True)}
+                for row in recovered
+            ]
+        except QueryError:
+            pass
+        raise QueryError(
+            "trace_processor_shell returned non-tabular text inside CSV; "
+            "use raw/csv output or hex-encode free-text SQL columns before "
+            "requesting JSON"
+        )
     return parsed
 
 

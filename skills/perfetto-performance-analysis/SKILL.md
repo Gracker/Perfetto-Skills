@@ -2,8 +2,9 @@
 name: perfetto-performance-analysis
 description: Analyze Android, Linux, and Chromium Perfetto traces with local trace_processor_shell evidence. Use for startup, scrolling or jank, input latency, ANR, CPU scheduling, memory or GC, Binder or IO, GPU or SurfaceFlinger, power or thermal, rendering-pipeline identification, trace capture guidance, scene reconstruction, and single- or multi-trace performance comparison.
 license: AGPL-3.0-or-later
+compatibility: Requires Python 3.11+, local filesystem and terminal access, and a checksum-verified Perfetto trace_processor_shell. Works without SmartPerfetto or an upstream Perfetto checkout after installation.
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
   source: "https://github.com/Gracker/Perfetto-Skills"
 ---
 
@@ -25,7 +26,8 @@ for the selected workflow.
    evidence.
 4. Select one primary workflow below. Load its Markdown file directly, then
    follow its availability gate and evidence sequence.
-5. Execute SQL through `scripts/perfetto_query.py`. Keep query source,
+5. Execute a complete exported Skill through `scripts/perfetto_skill.py run`,
+   or one manifest query through `scripts/perfetto_query.py --query-id`. Keep query source,
    parameters, trace identity, timestamps, durations, units, and returned row
    bounds with every saved result.
 6. Separate observations, correlations, mechanisms, and verified root causes.
@@ -63,6 +65,30 @@ Use [the machine-readable workflow index](references/workflow-index.json) when
 selecting or validating workflow IDs.
 
 ## Runtime commands
+
+List or run a deterministic portable Skill graph:
+
+```bash
+python3 <skill-root>/scripts/perfetto_skill.py list
+python3 <skill-root>/scripts/perfetto_skill.py run /absolute/trace.pftrace \
+  --skill startup_analysis --param 'package="com.example"' \
+  --output-dir /absolute/output/run
+```
+
+Complete Skill runs and `--query-id` runs verify the selected processor's
+v57.2 commit, RPC API, platform, and SHA-256 before executing SQL. Inspect that
+identity independently with:
+
+```bash
+python3 <skill-root>/scripts/perfetto_doctor.py
+```
+
+Use `--allow-unsupported-processor` only for an explicitly labeled canary; it
+does not turn the result into verified evidence. A capability-gated query runs
+only after an automatic probe for the same trace proves its required schema;
+the gate result remains in the evidence sidecar. `--allow-unverified` is a
+separate opt-in only for a query explicitly classified as unverified and never
+bypasses a missing capability.
 
 Probe a trace:
 
@@ -106,7 +132,7 @@ trace using `assets/comparison-input-schema.json`, then run
 --baseline baseline`.
 
 If `trace_processor_shell` is unavailable, run
-`scripts/bootstrap_trace_processor.py` or provide a verified executable through
+`scripts/bootstrap_trace_processor.py` or provide a locked executable through
 `--trace-processor` or `PERFETTO_TRACE_PROCESSOR`.
 
 ## Reference discovery

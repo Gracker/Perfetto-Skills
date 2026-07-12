@@ -80,6 +80,22 @@ class RuntimeTest(unittest.TestCase):
             [{"startup_id": 1, "package": "com.example"}],
         )
 
+    def test_csv_parser_recovers_perfetto_unescaped_json_result_columns(self) -> None:
+        output = (
+            '"id","quadrant_json","frequency_json"\n'
+            '1,"[{"thread":"main","pct":90}]","[{"core":"big","mhz":2000}]"\n'
+        )
+        self.assertEqual(
+            self.common.parse_csv_output(output),
+            [
+                {
+                    "id": 1,
+                    "quadrant_json": '[{"thread":"main","pct":90}]',
+                    "frequency_json": '[{"core":"big","mhz":2000}]',
+                }
+            ],
+        )
+
     def test_sql_template_binds_scalars_and_defaults_without_injection(self) -> None:
         rendered = self.common.render_sql_template(
             "WHERE name GLOB '${package}*' AND ts >= ${start_ts} LIMIT ${top_n|30}",

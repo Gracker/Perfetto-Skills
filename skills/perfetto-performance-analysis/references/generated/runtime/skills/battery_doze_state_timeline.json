@@ -1,0 +1,62 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "battery_doze_state_timeline",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.battery.doze"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/battery_doze_state_timeline.skill.yaml",
+    "sha256": "76538da9dab1b6f5e68441be298de8fa40633dbe1e8b0cf79d547d49c1f1e4a1"
+  },
+  "steps": [
+    {
+      "id": "deep_idle_intervals",
+      "name": "Deep Idle 区间",
+      "query_id": "battery_doze_state_timeline/deep_idle_intervals",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "id": "light_idle_intervals",
+      "name": "Light Idle 区间",
+      "query_id": "battery_doze_state_timeline/light_idle_intervals",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "power-thermal"
+}

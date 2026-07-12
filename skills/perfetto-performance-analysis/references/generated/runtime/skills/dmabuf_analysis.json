@@ -1,0 +1,138 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*${package}*"
+    ]
+  },
+  "id": "dmabuf_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标应用包名（支持 GLOB），留空分析所有 DMA Buffer",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 1,
+      "description": "最小缓冲区大小阈值 (MB)",
+      "name": "min_size_mb",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "分析起始时间戳（纳秒，可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳（纳秒，可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.memory.dmabuf"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
+    "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+  },
+  "steps": [
+    {
+      "id": "data_check",
+      "name": "数据检测",
+      "optional": true,
+      "query_id": "dmabuf_analysis/data_check",
+      "result_dependencies": [],
+      "save_as": "data_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "dmabuf_overview",
+      "name": "DMA Buffer 概览",
+      "query_id": "dmabuf_analysis/dmabuf_overview",
+      "result_dependencies": [],
+      "save_as": "dmabuf_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "dmabuf_cumulative",
+      "name": "DMA Buffer 累积使用",
+      "optional": true,
+      "query_id": "dmabuf_analysis/dmabuf_cumulative",
+      "result_dependencies": [],
+      "save_as": "dmabuf_cumulative",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "large_buffer_allocs",
+      "name": "大型 Buffer 分配",
+      "query_id": "dmabuf_analysis/large_buffer_allocs",
+      "result_dependencies": [],
+      "save_as": "large_buffer_allocs",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "dmabuf_frequency",
+      "name": "Buffer 分配频率",
+      "query_id": "dmabuf_analysis/dmabuf_frequency",
+      "result_dependencies": [],
+      "save_as": "dmabuf_frequency",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "thread_alloc_stats",
+      "name": "线程级分配统计",
+      "query_id": "dmabuf_analysis/thread_alloc_stats",
+      "result_dependencies": [],
+      "save_as": "thread_alloc_stats",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "buffer_lifecycle",
+      "name": "Buffer 生命周期",
+      "query_id": "dmabuf_analysis/buffer_lifecycle",
+      "result_dependencies": [],
+      "save_as": "buffer_lifecycle",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "root_cause_classification",
+      "name": "根因分类",
+      "query_id": "dmabuf_analysis/root_cause_classification",
+      "result_dependencies": [],
+      "save_as": "root_cause",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "3.0",
+  "workflow": "memory"
+}

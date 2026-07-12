@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scroll-response.strategy.md
 Source SHA-256: 8a21157416c0175602c7366081b6c506bb21eb45f608c793011a8b8c4cfc87ad
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Scroll Response Strategy
 
@@ -9,15 +9,216 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: scroll_response
+priority: 3
+effort: medium
+required_capabilities:
+- frame_rendering
+- input_latency
+optional_capabilities:
+- cpu_scheduling
+- surfaceflinger
+keywords:
+- 滑动响应
+- 滑动延迟
+- 响应速度
+- 首帧延迟
+- 首帧响应
+- scroll response
+- scroll latency
+- first frame
+- response latency
+- 滑动开始
+- scroll start
+- initial response
+- 触摸响应
+compound_patterns:
+- 滑动.*响应
+- 滑动.*延迟
+- scroll.*response
+- scroll.*latency
+- 首帧.*延迟
+- 首帧.*响应
+- 滑动.*首帧
+final_report_contract:
+  required_sections:
+  - id: scroll_response_scope
+    label: 响应延迟口径
+    description: 明确当前报告使用 dispatch-to-ACK、ACTION_MOVE-to-first-frame、还是 input-to-present 口径；不可混用。
+    pattern_groups:
+    - - 响应延迟口径
+      - 口径
+      - latency scope
+      - dispatch-to-ACK
+      - ACTION_MOVE
+      - first frame
+      - input-to-present
+    - - dispatch-to-ACK
+      - dispatch
+      - ACK
+      - ACTION_MOVE
+      - first frame
+      - 首帧
+      - input-to-present
+      - 上屏
+      - present
+    - - 区分
+      - 边界
+      - 不是
+      - 不能
+      - 不可
+      - 缺失
+      - separate
+      - not
+      - missing
+  - id: scroll_input_target_boundary
+    label: 输入目标与队列边界
+    description: 说明 stale/focus/window/InputChannel/FINISHED/iq/oq/wq 是否有证据；不要把窗口或队列问题直接写成 App 滑动逻辑。
+    pattern_groups:
+    - - 输入目标
+      - 队列边界
+      - target window
+      - focused window
+      - InputChannel
+      - FINISHED
+      - \bwq\b
+      - stale
+    - - stale
+      - focused window
+      - target window
+      - InputChannel
+      - FINISHED
+      - ACK
+      - iq
+      - oq
+      - \bwq\b
+      - 焦点
+      - 窗口
+    - - 证据
+      - 缺失
+      - 不适用
+      - 不能
+      - 边界
+      - missing
+      - not
+  - id: frame_timeline_confidence
+    label: FrameTimeline/上屏置信度
+    description: 说明 frame_id、FrameTimeline、RenderThread、SF/present 链接是否可用；缺失时只能写首帧候选或 dispatch/ACK。
+    pattern_groups:
+    - - FrameTimeline
+      - frame_id
+      - present
+      - 上屏
+      - RenderThread
+      - SurfaceFlinger
+      - SF
+      - 置信
+    - - 可用
+      - 缺失
+      - linkage
+      - 关联
+      - 候选
+      - 不适用
+      - missing
+      - confidence
+phase_hints:
+- id: scroll_latency_scope_boundary
+  keywords:
+  - scroll response
+  - scroll latency
+  - first frame
+  - ACTION_MOVE
+  - 首帧
+  - 响应延迟
+  - 滑动响应
+  constraints: 先声明响应口径：dispatch-to-ACK、ACTION_MOVE 到首帧候选、还是 input-to-present。scroll_response_latency 的默认输出不能在缺少 FrameTimeline/present
+    链接时被写成硬端到端上屏。
+  critical_tools:
+  - input_events_in_range
+  - scroll_response_latency
+  critical: true
+- id: scroll_input_target_boundary
+  keywords:
+  - InputDispatcher
+  - InputChannel
+  - FINISHED
+  - ACK
+  - wait queue
+  - wq
+  - stale
+  - focused window
+  - target window
+  constraints: 滑动响应异常可能来自输入队列、窗口目标、stale drop 或未完成 ACK。若没有 dumpsys/logcat/WindowManager/InputDispatcher 证据，只能作为缺口，不要把它归因成
+    App 滑动代码。
+  critical_tools:
+  - input_events_in_range
+  critical: false
+plan_template:
+  mandatory_aspects:
+  - id: input_event_detection
+    match_keywords:
+    - input
+    - gesture
+    - motion
+    - action_move
+    - 输入
+    - 手势
+    - 触摸
+    - input_events
+    suggestion: 滑动响应场景建议包含输入事件定位阶段 (input event detection)
+    required_expected_call_alternatives:
+    - skill_id: click_response_analysis
+    - skill_id: input_events_in_range
+  - id: latency_breakdown
+    match_keywords:
+    - latency
+    - response
+    - delay
+    - 延迟
+    - 响应
+    - 分解
+    - breakdown
+    - 首帧
+    - FrameTimeline
+    - present
+    suggestion: 滑动响应场景建议包含响应延迟口径和帧/上屏证据边界 (latency scope + frame linkage)
+    required_expected_call_alternatives:
+    - skill_id: scroll_response_latency
+    - skill_id: touch_to_display_latency
+  - id: input_target_boundary
+    match_keywords:
+    - stale
+    - focused window
+    - target window
+    - InputChannel
+    - FINISHED
+    - ACK
+    - wait queue
+    - wq
+    - dumpsys
+    - logcat
+    suggestion: 滑动响应场景需要说明输入目标、stale、FINISHED ACK 和窗口/队列证据是否可用或缺失
+    required_expected_call_alternatives:
+    - skill_id: click_response_detail
+    - skill_id: input_events_in_range
+```
+
 #### scroll_response Core Strategy
 
 **Route card**: 滑动响应 / 滑动延迟 / 响应速度 / 首帧延迟 / 首帧响应 / scroll response / scroll latency / first frame / response latency / 滑动开始
 
 **Capabilities**: required=[frame_rendering, input_latency], optional=[cpu_scheduling, surfaceflinger]
-
-
-
-
 
 **Phase reminders**
 - scroll_latency_scope_boundary: 先声明响应口径：dispatch-to-ACK、ACTION_MOVE 到首帧候选、还是 input-to-present。scroll_response_latency 的默认输出不能在缺少 FrameTimeline/present 链接时被写成硬端到端上屏。 工具: input_events_in_range, scroll_response_latency
@@ -27,9 +228,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 响应延迟口径
 - 输入目标与队列边界
 - FrameTimeline/上屏置信度
-
-
-
 
 
 <!-- strategy-detail id="full" title="scroll_response full strategy detail" keywords="scroll_response,滑动响应,滑动延迟,响应速度,首帧延迟,首帧响应,scroll response,scroll latency,first frame,response latency,滑动开始,scroll start,initial response,滑动响应速度分析（用户提到 滑动响应、滑动延迟、首帧延迟、scroll response、scroll latency）,detail,full" default="true" -->
@@ -45,7 +243,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 **Phase 1 — 输入事件定位：**
 
-
+首先定位滑动手势的起始输入事件：
 
 如果该 Skill 不可用，使用 SQL 回退：
 ```sql
@@ -70,7 +268,7 @@ LIMIT 50
 
 **Phase 2 — 首帧关联：**
 
-
+找到手势启动后的第一帧：
 
 如果该 Skill 不可用，使用 SQL 回退：
 ```sql
@@ -185,8 +383,6 @@ LIMIT 20
 | SF composition | <4ms | GPU composition 慢、layer 数多、HWC 回退 |
 
 **深钻决策（基于瓶颈段）：**
-
-
 
 **输入目标与队列边界：**
 - `input_events_in_range` / `scroll_response_latency` 只覆盖完成 dispatch→receive→finish→ACK 的事件。没有结果不等于没有输入问题，可能是未完成 ACK、stale drop、focus/window 或 InputChannel 证据缺失。

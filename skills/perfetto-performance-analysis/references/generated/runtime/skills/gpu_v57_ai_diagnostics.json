@@ -1,0 +1,167 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "Power",
+      "Temperature",
+      "architecture",
+      "dimension_arg_set_id",
+      "gpufreq",
+      "machine_id",
+      "ugpu"
+    ]
+  },
+  "id": "gpu_v57_ai_diagnostics",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Start timestamp in ns",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "End timestamp in ns",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Optional host-unique GPU id",
+      "name": "ugpu",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "default": 0.9,
+      "description": "Target clock ratio relative to observed fmax",
+      "name": "target_freq_ratio",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 1000,
+      "description": "Minimum sustained throttle interval in ns",
+      "name": "min_throttle_ns",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "default": 20,
+      "description": "Maximum rows for event-style tables",
+      "name": "max_rows",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "counters.intervals",
+      "intervals.overlap",
+      "intervals.intersect"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+    "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
+  },
+  "steps": [
+    {
+      "id": "data_check",
+      "name": "GPU v57 data availability",
+      "query_id": "gpu_v57_ai_diagnostics/data_check",
+      "result_dependencies": [],
+      "save_as": "data_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.gpu_rows > 0 && data_check.data[0]?.has_gpu_machine_id === 1 && data_check.data[0]?.has_gpu_architecture === 1",
+      "id": "gpu_inventory",
+      "name": "GPU inventory",
+      "optional": true,
+      "query_id": "gpu_v57_ai_diagnostics/gpu_inventory",
+      "result_dependencies": [],
+      "save_as": "gpu_inventory",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.gpu_activity_rows > 0 && data_check.data[0]?.has_gpu_track_dimensions === 1",
+      "id": "timeline_occupancy",
+      "name": "GPU timeline occupancy",
+      "optional": true,
+      "query_id": "gpu_v57_ai_diagnostics/timeline_occupancy",
+      "result_dependencies": [],
+      "save_as": "timeline_occupancy",
+      "type": "atomic"
+    },
+    {
+      "condition": "timeline_occupancy.data?.length > 0",
+      "id": "idle_gaps",
+      "name": "Largest GPU idle gaps",
+      "optional": true,
+      "query_id": "gpu_v57_ai_diagnostics/idle_gaps",
+      "result_dependencies": [],
+      "save_as": "idle_gaps",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.gpufreq_tracks > 0 && data_check.data[0]?.has_gpu_counter_ugpu === 1 && timeline_occupancy.data?.length > 0",
+      "id": "frequency_residency",
+      "name": "GPU frequency residency while busy",
+      "optional": true,
+      "query_id": "gpu_v57_ai_diagnostics/frequency_residency",
+      "result_dependencies": [],
+      "save_as": "frequency_residency",
+      "type": "atomic"
+    },
+    {
+      "condition": "frequency_residency.data?.length > 0",
+      "id": "dvfs_ramp_events",
+      "name": "GPU DVFS ramp events",
+      "optional": true,
+      "query_id": "gpu_v57_ai_diagnostics/dvfs_ramp_events",
+      "result_dependencies": [],
+      "save_as": "dvfs_ramp_events",
+      "type": "atomic"
+    },
+    {
+      "condition": "frequency_residency.data?.length > 0",
+      "id": "sustained_throttle_events",
+      "name": "Sustained GPU throttle events",
+      "optional": true,
+      "query_id": "gpu_v57_ai_diagnostics/sustained_throttle_events",
+      "result_dependencies": [],
+      "save_as": "sustained_throttle_events",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.gpu_activity_rows === 0 && data_check.data[0]?.gpufreq_tracks === 0",
+      "id": "no_data_contract",
+      "name": "GPU v57 no-data contract",
+      "optional": true,
+      "query_id": "gpu_v57_ai_diagnostics/no_data_contract",
+      "result_dependencies": [
+        "data_check"
+      ],
+      "save_as": "no_data_contract",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "gpu-rendering"
+}

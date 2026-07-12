@@ -1,0 +1,118 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "android_memory_v57_ai_diagnostics",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Optional process name substring for heap graph rows",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Optional heap graph sample timestamp",
+      "name": "graph_sample_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 1,
+      "description": "Minimum heap profile size in MB",
+      "name": "min_size_mb",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 40,
+      "description": "Maximum rows per diagnostic table",
+      "name": "max_rows",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "prelude.after_eof.memory",
+      "prelude.after_eof.views",
+      "android.memory.heap_graph.heap_graph_stats",
+      "android.memory.heap_graph.class_summary_tree",
+      "android.memory.heap_profile.summary_tree"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+    "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+  },
+  "steps": [
+    {
+      "id": "data_check",
+      "name": "Memory v57 data availability",
+      "query_id": "android_memory_v57_ai_diagnostics/data_check",
+      "result_dependencies": [],
+      "save_as": "data_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.heap_graph_class_rows > 0",
+      "id": "heap_graph_repeated_objects",
+      "name": "Repeated heap graph object classes",
+      "optional": true,
+      "query_id": "android_memory_v57_ai_diagnostics/heap_graph_repeated_objects",
+      "result_dependencies": [],
+      "save_as": "heap_graph_repeated_objects",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.heap_graph_objects > 0",
+      "id": "heap_graph_size_frequencies",
+      "name": "Heap graph object size frequencies",
+      "optional": true,
+      "query_id": "android_memory_v57_ai_diagnostics/heap_graph_size_frequencies",
+      "result_dependencies": [],
+      "save_as": "heap_graph_size_frequencies",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.heap_profile_summary_rows > 0",
+      "id": "heap_profile_hotspots",
+      "name": "Heap profile allocation hotspots",
+      "optional": true,
+      "query_id": "android_memory_v57_ai_diagnostics/heap_profile_hotspots",
+      "result_dependencies": [],
+      "save_as": "heap_profile_hotspots",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.heap_graph_class_rows === 0 && data_check.data[0]?.heap_graph_objects === 0 && data_check.data[0]?.heap_profile_summary_rows === 0",
+      "id": "no_data_contract",
+      "name": "Memory v57 no-data contract",
+      "optional": true,
+      "query_id": "android_memory_v57_ai_diagnostics/no_data_contract",
+      "result_dependencies": [
+        "data_check"
+      ],
+      "save_as": "no_data_contract",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "memory"
+}

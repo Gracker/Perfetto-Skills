@@ -23,13 +23,27 @@ def require_mapping(value: object, label: str) -> dict[str, Any]:
 
 
 def validate_side(label: str, document: dict[str, Any]) -> None:
-    if document.get("schema_version") != 1:
+    if document.get("schema_version") != 2:
         raise ValueError(f"side {label!r} has unsupported schema_version")
     trace = require_mapping(document.get("trace"), f"side {label} trace")
     sha256 = trace.get("sha256")
     if not isinstance(sha256, str) or not SHA256_PATTERN.fullmatch(sha256):
         raise ValueError(f"side {label!r} trace.sha256 is invalid")
     metrics = require_mapping(document.get("metrics"), f"side {label} metrics")
+    context = require_mapping(
+        document.get("comparison_context"), f"side {label} comparison_context"
+    )
+    for field in (
+        "identity",
+        "window_duration_ns",
+        "refresh_budget_ns",
+        "cpu_topology",
+        "capabilities",
+        "android_profile",
+        "processor",
+    ):
+        if field not in context:
+            raise ValueError(f"side {label!r} comparison_context needs {field}")
     for key, raw_metric in metrics.items():
         metric = require_mapping(raw_metric, f"side {label} metric {key}")
         status = metric.get("status")
@@ -44,6 +58,9 @@ def validate_side(label: str, document: dict[str, Any]) -> None:
         for field in ("unit", "definition"):
             if not isinstance(metric.get(field), str) or not metric[field]:
                 raise ValueError(f"side {label} metric {key} needs {field}")
+        source_sha256 = metric.get("source_sha256")
+        if not isinstance(source_sha256, str) or not SHA256_PATTERN.fullmatch(source_sha256):
+            raise ValueError(f"side {label} metric {key} needs source_sha256")
         refs = metric.get("evidence_refs", [])
         if not isinstance(refs, list) or not all(isinstance(ref, str) for ref in refs):
             raise ValueError(f"side {label} metric {key} evidence_refs must be strings")
@@ -85,6 +102,26 @@ def build_comparison(
 
     rows: list[dict[str, Any]] = []
     limitations: list[str] = []
+    context_fields = (
+        "identity",
+        "window_duration_ns",
+        "refresh_budget_ns",
+        "cpu_topology",
+        "capabilities",
+        "android_profile",
+        "processor",
+    )
+    context_mismatches = [
+        field
+        for field in context_fields
+        if len(
+            {
+                json.dumps(document["comparison_context"][field], sort_keys=True)
+                for _, _, document in sides
+            }
+        )
+        != 1
+    ]
     for key in keys:
         entries = {
             label: require_mapping(document["metrics"], "metrics").get(key)
@@ -98,8 +135,11 @@ def build_comparison(
         }
         units = {entry["unit"] for entry in observed.values()}
         definitions = {entry["definition"] for entry in observed.values()}
+        sources = {entry["source_sha256"] for entry in observed.values()}
         reason: str | None = None
-        if missing:
+        if context_mismatches:
+            reason = "comparison context mismatch: " + ", ".join(context_mismatches)
+        elif missing:
             reason = f"metric missing on sides: {', '.join(missing)}"
         elif len(observed) != len(sides):
             unavailable = [
@@ -112,6 +152,8 @@ def build_comparison(
             reason = "unit mismatch across sides"
         elif len(definitions) != 1:
             reason = "definition mismatch across sides"
+        elif len(sources) != 1:
+            reason = "query source mismatch across sides"
         comparable = reason is None
         values = {
             label: entry.get("value") if isinstance(entry, dict) else None
@@ -151,7 +193,7 @@ def build_comparison(
     for label, _, document in sides:
         limitations.extend(f"{label}: {item}" for item in document.get("limitations", []))
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "workflow": "trace-comparison",
         "status": "complete" if all(row["comparable"] for row in rows) else "partial",
         "baseline": baseline,

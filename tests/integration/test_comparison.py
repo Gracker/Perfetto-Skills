@@ -47,11 +47,20 @@ class ComparisonTest(unittest.TestCase):
                 path.write_text(
                     json.dumps(
                         {
-                            "schema_version": 1,
+                            "schema_version": 2,
                             "trace": {
                                 "sha256": side["sha256"],
                                 "start_ns": side["start_ns"],
                                 "end_ns": side["end_ns"],
+                            },
+                            "comparison_context": {
+                                "identity": {"scope": "whole_trace"},
+                                "window_duration_ns": side["end_ns"] - side["start_ns"],
+                                "refresh_budget_ns": None,
+                                "cpu_topology": "unknown",
+                                "capabilities": ["slices"],
+                                "android_profile": {"api": "from_trace"},
+                                "processor": {"commit": "locked"},
                             },
                             "metrics": {
                                 "trace.slice_count": {
@@ -59,6 +68,7 @@ class ComparisonTest(unittest.TestCase):
                                     "value": side["slice_count"],
                                     "unit": "count",
                                     "definition": "slice rows in the full trace",
+                                    "source_sha256": "c" * 64,
                                     "evidence_refs": [],
                                 }
                             },
@@ -69,9 +79,9 @@ class ComparisonTest(unittest.TestCase):
                 )
                 paths.append((side["trace_side"], path))
             comparison = run_public_compare(paths, baseline="baseline")
-        self.assertEqual(comparison["status"], "complete", comparison)
-        self.assertTrue(comparison["metrics"][0]["comparable"])
-        self.assertIn("candidate", comparison["metrics"][0]["deltas"])
+        self.assertEqual(comparison["status"], "partial", comparison)
+        self.assertFalse(comparison["metrics"][0]["comparable"])
+        self.assertIn("window_duration_ns", comparison["metrics"][0]["reason"])
 
 
 if __name__ == "__main__":

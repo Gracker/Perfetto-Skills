@@ -1,0 +1,137 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%busy%",
+      "%clock%",
+      "%draw%",
+      "%eglSwap%",
+      "%flush%",
+      "%freq%",
+      "%load%",
+      "%swap%",
+      "%util%",
+      "RenderThread"
+    ]
+  },
+  "id": "gpu_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target package name",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/hardware/gpu_module.skill.yaml",
+    "sha256": "6dd740df9f3de46527f96908cf6ac30d71767e6f61d2bc2d6544f825cbbc3551"
+  },
+  "steps": [
+    {
+      "id": "gpu_frequency_overview",
+      "name": "GPU 频率概览",
+      "query_id": "gpu_module/gpu_frequency_overview",
+      "result_dependencies": [],
+      "save_as": "gpu_freq",
+      "type": "atomic"
+    },
+    {
+      "id": "gpu_utilization",
+      "name": "GPU 利用率",
+      "query_id": "gpu_module/gpu_utilization",
+      "result_dependencies": [],
+      "save_as": "gpu_util",
+      "type": "atomic"
+    },
+    {
+      "id": "render_thread_gpu",
+      "name": "RenderThread GPU 耗时",
+      "query_id": "gpu_module/render_thread_gpu",
+      "result_dependencies": [],
+      "save_as": "render_gpu",
+      "type": "atomic"
+    },
+    {
+      "id": "slow_gpu_operations",
+      "name": "慢 GPU 操作",
+      "query_id": "gpu_module/slow_gpu_operations",
+      "result_dependencies": [],
+      "save_as": "slow_gpu_ops",
+      "type": "atomic"
+    },
+    {
+      "id": "gpu_diagnosis",
+      "inputs": [
+        "gpu_freq",
+        "gpu_util",
+        "render_gpu",
+        "slow_gpu_ops"
+      ],
+      "name": "GPU 诊断",
+      "rules": [
+        {
+          "condition": "render_gpu.data[0]?.avg_gpu_ms > 8",
+          "confidence": "high",
+          "diagnosis": "RenderThread GPU 平均耗时过长 (${render_gpu.data[0]?.avg_gpu_ms}ms)，超过帧预算",
+          "evidence_fields": [
+            "render_gpu.data[0].avg_gpu_ms",
+            "render_gpu.data[0].max_gpu_ms"
+          ],
+          "suggestions": [
+            "减少过度绘制",
+            "简化 shader 复杂度",
+            "减少纹理大小"
+          ]
+        },
+        {
+          "condition": "slow_gpu_ops.data.length > 10",
+          "confidence": "high",
+          "diagnosis": "存在 ${slow_gpu_ops.data.length} 次慢 GPU 操作",
+          "evidence_fields": [
+            "slow_gpu_ops.data.length",
+            "slow_gpu_ops.data[0]?.dur_ms"
+          ],
+          "suggestions": [
+            "分析具体慢操作的原因",
+            "检查是否有大纹理上传"
+          ]
+        },
+        {
+          "condition": "gpu_util.data[0]?.avg_value > 90",
+          "confidence": "medium",
+          "diagnosis": "GPU 利用率过高 (${gpu_util.data[0]?.avg_value}%)，接近饱和",
+          "evidence_fields": [
+            "gpu_util.data[0].avg_value"
+          ],
+          "suggestions": [
+            "降低渲染复杂度",
+            "考虑降低分辨率"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "gpu-rendering"
+}

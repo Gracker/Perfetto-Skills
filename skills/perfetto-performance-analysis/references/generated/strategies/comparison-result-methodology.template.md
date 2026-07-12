@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/comparison-result-methodology.template.md
 Source SHA-256: 7e90c0a2fb309eaabb079e038748338fad67cd988bdff2fc82ad2bcd48780732
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Comparison Result Methodology Template
 
@@ -9,16 +9,20 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
+
 ## 分析结果对比方法论
 
-该方法论只适用于持久化 `AnalysisResultSnapshot` 的对比。它与旧的双 Trace raw-data 对比不同：默认比较已完成分析的结构化结果，只有在明确允许且资源预算允许时才回查原 Trace。
-
 ### 输入确认
-
-1. 明确 `baseline_snapshot_id` 和候选 `snapshot_ids`。
-2. 确认所有 snapshot 在同一 workspace 内可读。
-3. 检查 scene、包名、设备、采集配置是否可比；不一致时降低结论强度。
-4. 用户没有明确选择且候选不唯一时，必须请求选择，不要自动猜。
 
 ### Matrix First
 

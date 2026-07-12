@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
 Source SHA-256: d38fac137bb6b82c262a19a8090b6648c5b8adede66969c4485a020a268540ac
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Memory Strategy
 
@@ -9,21 +9,254 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: memory
+priority: 4
+effort: medium
+required_capabilities:
+- gc_memory
+- memory_pressure
+optional_capabilities:
+- cpu_scheduling
+- binder_ipc
+- battery_counters
+keywords:
+- 内存
+- memory
+- oom
+- 泄漏
+- leak
+- lmk
+- 内存压力
+- 内存不足
+- low memory
+- out of memory
+- dmabuf
+- 内存占用
+compound_patterns:
+- 内存.*泄漏
+- 内存.*压力
+- 内存.*不足
+- memory.*leak
+- memory.*pressure
+- (ApplicationExitInfo|getHistoricalProcessExitReasons|REASON_LOW_MEMORY|REASON_FREEZER|REASON_EXCESSIVE_RESOURCE_USAGE).*(OOM|LMK|freezer|memory|low
+  memory|kill|内存|杀进程)
+- (OOM|LMK|freezer|memory|low memory|kill|内存|杀进程).*(ApplicationExitInfo|getHistoricalProcessExitReasons|REASON_LOW_MEMORY|REASON_FREEZER|REASON_EXCESSIVE_RESOURCE_USAGE)
+- (ProfilingManager|ProfilingTrigger|heap dump|heap profile|Java heap dump).*(OOM|memory|heap|leak|内存|泄漏)
+- (OOM|memory|heap|leak|内存|泄漏).*(ProfilingManager|ProfilingTrigger|heap dump|heap profile|Java heap dump)
+final_report_contract:
+  required_sections:
+  - id: memory_evidence_scope
+    label: 内存证据范围
+    description: 说明当前结论基于哪些内存证据源，并列出缺失或不可证明的证据。
+    pattern_groups:
+    - - 证据范围
+      - 证据来源
+      - 数据来源
+      - evidence\s+scope
+      - evidence\s+source
+    - - PSS
+      - RSS
+      - Java\s+Heap
+      - Native\s+Heap
+      - Graphics
+      - dma[-_ ]?buf
+      - GC
+      - LMK
+      - heap\s+graph
+      - 缺失
+      - missing
+  - id: memory_type_breakdown
+    label: 内存类型拆分
+    description: 把 Java、Native、Graphics/dma-buf、RSS/PSS、GC、LMK/freezer 等口径分开。
+    pattern_groups:
+    - - 内存类型
+      - 类型拆分
+      - 分类
+      - breakdown
+      - Java\s+Heap
+      - Native\s+Heap
+      - Graphics
+      - dma[-_ ]?buf
+    - - 泄漏
+      - leak
+      - 增长
+      - churn
+      - 分配
+      - 回收
+      - GC
+      - LMK
+      - freezer
+      - OOM
+      - 压力
+      - pressure
+  - id: memory_confidence_boundary
+    label: 置信度与缺失证据
+    description: 明确高内存、泄漏、GC、LMK/freezer/OOM、外部诊断 API 之间的证据边界。
+    pattern_groups:
+    - - 证据不足
+      - 缺失
+      - missing
+      - limitation
+      - 限制
+      - 置信
+      - confidence
+      - 需补
+      - 建议采集
+    - - 不等于
+      - 不能
+      - 不得
+      - 区分
+      - 边界
+      - separate
+      - not
+  - id: memory_diagnostic_api_boundary
+    label: 内存诊断 API/剖析产物边界
+    description: 当用户主动提到 ApplicationExitInfo、ProfilingManager、ProfilingTrigger、heap dump/profile、KOOM 或 APM 时，区分当前 trace 内存证据、退出记录、剖析产物、外部聚合和缺失证据。
+    trigger_patterns:
+    - ApplicationExitInfo|getHistoricalProcessExitReasons|REASON_LOW_MEMORY|REASON_FREEZER|REASON_EXCESSIVE_RESOURCE_USAGE
+    - ProfilingManager|ProfilingTrigger|heap dump|heap profile|Java heap dump|KOOM|APM
+    pattern_groups:
+    - - 内存诊断 API/剖析产物边界
+      - memory diagnostic API
+      - profiling artifact
+      - ApplicationExitInfo
+      - ProfilingManager
+      - ProfilingTrigger
+      - heap dump
+      - heap profile
+    - - diagnostic_api
+      - profiling_artifact
+      - external_aggregate
+      - ApplicationExitInfo
+      - getHistoricalProcessExitReasons
+      - REASON_LOW_MEMORY
+      - REASON_FREEZER
+      - REASON_EXCESSIVE_RESOURCE_USAGE
+      - ProfilingManager
+      - ProfilingTrigger
+      - KOOM
+      - APM
+    - - API\s*3[0567]
+      - Android\s*1[1567]
+      - version
+      - 版本
+      - reason
+      - process
+      - pid
+      - upid
+      - timestamp
+      - result file
+      - artifact
+      - record
+    - - trace window
+      - current trace
+      - align
+      - 对齐
+      - missing
+      - 缺失
+      - confidence
+      - 置信
+      - 不能
+      - 不可
+      - not prove
+      - not equal
+phase_hints:
+- id: memory_evidence_gate
+  keywords:
+  - memory
+  - 内存
+  - heap
+  - rss
+  - pss
+  - gc
+  - lmk
+  - memory_analysis
+  - 证据
+  constraints: 先确认 memory_analysis/lmk/GC/heap graph/dmabuf 等证据哪些存在。结论必须按证据类型分层；缺失 Native/SO/匿名 mmap/thread stack/ApplicationExitInfo/MemoryLimiter
+    等来源时只写数据缺口，不能当成已证明。
+  critical_tools:
+  - memory_analysis
+  critical: true
+- id: lmk_freezer_oom_boundary
+  keywords:
+  - lmk
+  - oom
+  - freezer
+  - kill
+  - 杀进程
+  - 低内存
+  - 内存压力
+  constraints: LMK、freezer、Java OOM、Native OOM、Android 17 MemoryLimiter 是不同机制。只有对应事件、ApplicationExitInfo 或进程状态证据存在时才能命名；否则写成候选或采集建议。
+  critical_tools:
+  - lmk_analysis
+  - lmk_kill_attribution
+  - oom_adjuster_score_timeline
+  critical: false
+- id: gc_churn_boundary
+  keywords:
+  - gc
+  - churn
+  - allocation
+  - 分配
+  - 回收
+  - 抖动
+  - pause
+  constraints: GC 与卡顿/ANR 重叠只能说明相关性。必须结合 GC pause、allocation churn、线程状态或帧/ANR窗口证据，避免把后台 GC 或普通回收直接写成根因。
+  critical_tools:
+  - memory_analysis
+  - gc_analysis
+  critical: false
+- id: memory_diagnostic_api_boundary
+  keywords:
+  - ApplicationExitInfo
+  - getHistoricalProcessExitReasons
+  - REASON_LOW_MEMORY
+  - REASON_FREEZER
+  - REASON_EXCESSIVE_RESOURCE_USAGE
+  - ProfilingManager
+  - ProfilingTrigger
+  - heap dump
+  - heap profile
+  - KOOM
+  - APM
+  constraints: ApplicationExitInfo、ProfilingManager/ProfilingTrigger、heap dump/profile、KOOM/APM 都是补充证据。必须说明 API/Android 版本、record/artifact
+    时间、进程身份、reason/result file、与当前 trace 的对齐关系；不得把高内存直接等同泄漏，也不得把缺少退出记录写成没有 OOM/LMK。
+  critical_tools:
+  - memory_analysis
+  - lmk_analysis
+  critical: false
+plan_template:
+  mandatory_aspects:
+  - id: memory_trend_and_gc
+    match_keywords:
+    - memory
+    - oom
+    - gc
+    - 内存
+    - heap
+    - lmk
+    - memory_analysis
+    suggestion: 内存场景建议包含内存使用趋势和 GC 分析阶段 (memory_analysis)
+    required_expected_calls:
+    - skill_id: memory_analysis
+```
+
 #### memory Core Strategy
 
 **Route card**: 内存 / memory / oom / 泄漏 / leak / lmk / 内存压力 / 内存不足 / low memory / out of memory
 
 **Capabilities**: required=[gc_memory, memory_pressure], optional=[cpu_scheduling, binder_ipc, battery_counters]
-
-
-
-
-
-**Phase reminders**
-- memory_evidence_gate: 先确认 memory_analysis/lmk/GC/heap graph/dmabuf 等证据哪些存在。结论必须按证据类型分层；缺失 Native/SO/匿名 mmap/thread stack/ApplicationExitInfo/MemoryLimiter 等来源时只写数据缺口，不能当成已证明。 工具: memory_analysis
-- lmk_freezer_oom_boundary: LMK、freezer、Java OOM、Native OOM、Android 17 MemoryLimiter 是不同机制。只有对应事件、ApplicationExitInfo 或进程状态证据存在时才能命名；否则写成候选或采集建议。 工具: lmk_analysis, lmk_kill_attribution, oom_adjuster_score_timeline
-- gc_churn_boundary: GC 与卡顿/ANR 重叠只能说明相关性。必须结合 GC pause、allocation churn、线程状态或帧/ANR窗口证据，避免把后台 GC 或普通回收直接写成根因。 工具: memory_analysis, gc_analysis
-- memory_diagnostic_api_boundary: ApplicationExitInfo、ProfilingManager/ProfilingTrigger、heap dump/profile、KOOM/APM 都是补充证据。必须说明 API/Android 版本、record/artifact 时间、进程身份、reason/result file、与当前 trace 的对齐关系；不得把高内存直接等同泄漏，也不得把缺少退出记录写成没有 OOM/LMK。 工具: memory_analysis, lmk_analysis, lookup_knowledge
 
 **Final report contract summary**
 - 内存证据范围
@@ -32,23 +265,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 内存诊断 API/剖析产物边界
 
 
-
-
-
 <!-- strategy-detail id="full" title="memory full strategy detail" keywords="memory,内存,memory,oom,泄漏,leak,lmk,内存压力,内存不足,low memory,out of memory,dmabuf,内存占用,内存分析（用户提到 内存、memory、OOM、泄漏、LMK）,detail,full" default="true" -->
 #### 内存分析（用户提到 内存、memory、OOM、泄漏、LMK）
-
-**核心原则：**
-1. **先分证据源**：PSS/RSS、Java Heap、Native Heap、Graphics/dma-buf、GC、LMK/freezer、heap graph、ApplicationExitInfo/MemoryLimiter 等是不同口径。
-2. **高内存不是泄漏**：必须先判断趋势、对象/类型归属、GC 后是否回落、缓存策略和进程角色，不能只凭峰值下结论。
-3. **LMK/freezer/OOM 不能混用**：LMK 是系统低内存杀进程，freezer 是 cached process 冻结机制，Java/Native OOM 是进程内分配失败，MemoryLimiter 是版本敏感的系统退出原因。
-4. **外部诊断是补充证据**：ApplicationExitInfo、ProfilingManager/ProfilingTrigger 产物、线上 OOM/KOOM、heap dump、APM 指标可以补上下文，但必须标明来源、版本/API 边界、record/artifact 时间、进程身份和与当前 trace 的对应关系。需要机制背景时调用 `lookup_knowledge("observability-diagnostics")`。
-5. **缺失证据要进入结论**：trace 没有 heap graph、dmabuf、smaps、ApplicationExitInfo 或长窗口趋势时，只能输出候选和下一步采集建议。
-6. **Heap Graph 泄漏只按证据分级**：`reachable=1` 只能说明 sample 时仍可达；只有可达对象与 sample 前生命周期（如 `onDestroy` / `onDestroyView`）对齐时，才能写成高置信泄漏候选。同类 Activity/Fragment 多实例只能写低置信候选，即使最近生命周期是 active/inactive，也不能升级成已泄漏。
-7. **引用链从候选对象出发**：查 reference holder 时先收敛到 suspect object ids，再用 `heap_graph_reference.owned_id` 找持有者；引用来源需排除 Perfetto `_excluded_refs` 覆盖的 weak/phantom/finalizer referent 边；v56 的 `_excluded_refs` 不再排除 soft reference，不要自行把 soft referent 当作已过滤边，也不要对 heap graph 全量对象/引用做宽 JOIN 后直接下结论。
-8. **RSS/Anon/Swap 是趋势辅证**：RSS 增长、单点跳跃、Peak/Avg 异常、Anon+Swap 占比能说明内存压力或增长形态，但不能单独证明 Java 泄漏或 PSS 问题。
-9. **Profiler 只能回答各自能看见的问题**：Memory counters/LMK 给系统和进程趋势，ART heap dump 给 Java/Kotlin 引用保留图但不给分配调用栈，heapprofd 给 native malloc/free 族调用栈和观测窗口内分配/释放，不能把其中一个证据源升级成全量内存真相。
-10. **采集窗口是结论边界**：heapprofd 不是 retroactive，只能看到 profiler 启动后的分配；Java heap dump 是 sample 点引用图；process stats 轮询可能漏掉很短的 RSS 峰值，`rss_stat`/`mm_event`/LMK 事件更适合捕获短时压力。缺失这些证据时必须转成具体采集建议。
 
 **Perfetto 官方内存证据映射：**
 
@@ -65,15 +283,18 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 写 execute_sql 时优先使用（完整列表见方法论模板）：`android_garbage_collection_events`、`android_oom_adj_intervals`、`android_screen_state`
 
+**Phase 1 — 内存概览（1 次调用）：**
+返回：内存使用趋势、RSS/PSS 分布、内存分类统计。
 
+**Phase 2 — LMK 分析（如果有 LMK 事件）：**
+返回：LMK 事件列表、被杀进程、OOM-adj 分布、重启循环检测。
 
-
-
-
+如果需要更轻量的事件/分数视图，或 `lmk_analysis` 结果为空但用户明确问 OOM/adj：
+- `lmk_kill_attribution`：LMK 事件、被杀进程、adj、oom_score_adj
+- `oom_adjuster_score_timeline`：进程 OOM adj 分数时间线
+- `memory_rss_high_watermark`：RSS high watermark，辅助识别增长型内存压力
 
 **Phase 3 — 深度分析（按需选择）：**
-
-
 
 **Phase 4 — 交叉分析：**
 - 内存压力 + LMK → 检查是否有进程被反复杀死重启（thrashing）

@@ -1,17 +1,38 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/deep/callstack_analysis.skill.yaml
--- Source SHA-256: da6f8f053e7325fffa6983751eaebd17478c4ae924e86352ffd66e4101d98660
--- Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+-- Source SHA-256: 32723ee660e8cc822dc7b98136a23b15ba55fc88f77942c0ee0b658a654680f1
+-- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 WITH RECURSIVE
 -- 获取 Top 5 热点函数的 frame_id
 top_frames AS (
   SELECT DISTINCT
     spf.id as frame_id,
-    sps.name as function_name
+    COALESCE(
+      (
+        SELECT sps.name
+        FROM stack_profile_symbol sps
+        WHERE sps.symbol_set_id = spf.symbol_set_id
+        ORDER BY sps.inlined DESC, sps.id
+        LIMIT 1
+      ),
+      spf.deobfuscated_name,
+      spf.name,
+      'unknown'
+    ) as function_name
   FROM stack_profile_frame spf
-  JOIN stack_profile_symbol sps ON spf.symbol_id = sps.id
-  WHERE sps.name IN (
+  WHERE COALESCE(
+    (
+      SELECT sps.name
+      FROM stack_profile_symbol sps
+      WHERE sps.symbol_set_id = spf.symbol_set_id
+      ORDER BY sps.inlined DESC, sps.id
+      LIMIT 1
+    ),
+    spf.deobfuscated_name,
+    spf.name,
+    'unknown'
+  ) IN (
     SELECT function_name FROM (${hot_functions}) LIMIT 5
   )
 ),
@@ -49,11 +70,21 @@ caller_stats AS (
   SELECT
     cc.hot_function,
     cc.depth,
-    COALESCE(sps.name, 'unknown') as caller_name
+    COALESCE(
+      (
+        SELECT sps.name
+        FROM stack_profile_symbol sps
+        WHERE sps.symbol_set_id = spf.symbol_set_id
+        ORDER BY sps.inlined DESC, sps.id
+        LIMIT 1
+      ),
+      spf.deobfuscated_name,
+      spf.name,
+      'unknown'
+    ) as caller_name
   FROM caller_chain cc
   JOIN stack_profile_callsite spc ON cc.parent_id = spc.id
   LEFT JOIN stack_profile_frame spf ON spc.frame_id = spf.id
-  LEFT JOIN stack_profile_symbol sps ON spf.symbol_id = sps.id
 )
 SELECT
   hot_function,

@@ -1,0 +1,170 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*"
+    ]
+  },
+  "id": "surfaceflinger_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target package name",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Specific frame ID to analyze",
+      "name": "frame_id",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "Analysis start timestamp",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Analysis end timestamp",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.frames.timeline",
+      "android.frames.jank_type"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/framework/surfaceflinger_module.skill.yaml",
+    "sha256": "d456d7df46f6aec95de47a77dc360d10ac0154b45fa9ed8e8a779c8ea356bffd"
+  },
+  "steps": [
+    {
+      "id": "frame_overview",
+      "name": "帧统计概览",
+      "query_id": "surfaceflinger_module/frame_overview",
+      "result_dependencies": [],
+      "save_as": "frame_stats",
+      "type": "atomic"
+    },
+    {
+      "id": "jank_breakdown",
+      "name": "卡顿类型分布",
+      "query_id": "surfaceflinger_module/jank_breakdown",
+      "result_dependencies": [],
+      "save_as": "jank_types",
+      "type": "atomic"
+    },
+    {
+      "id": "thread_timing",
+      "name": "线程耗时分布",
+      "query_id": "surfaceflinger_module/thread_timing",
+      "result_dependencies": [],
+      "save_as": "thread_stats",
+      "type": "atomic"
+    },
+    {
+      "id": "worst_frames",
+      "name": "最差帧列表",
+      "query_id": "surfaceflinger_module/worst_frames",
+      "result_dependencies": [],
+      "save_as": "worst_frames",
+      "type": "atomic"
+    },
+    {
+      "id": "frame_diagnosis",
+      "inputs": [
+        "frame_stats",
+        "jank_types",
+        "thread_stats"
+      ],
+      "name": "帧诊断",
+      "rules": [
+        {
+          "condition": "frame_stats.data[0]?.jank_rate > 10",
+          "confidence": "high",
+          "diagnosis": "卡顿率过高 (${frame_stats.data[0]?.jank_rate}%)，用户体验受影响",
+          "evidence_fields": [
+            "frame_stats.data[0].jank_rate",
+            "frame_stats.data[0].jank_count"
+          ],
+          "suggestions": [
+            "分析具体卡顿帧找出根因",
+            "减少主线程工作量"
+          ]
+        },
+        {
+          "condition": "thread_stats.data.find(t => t.thread === 'MainThread')?.overrun_count > 5",
+          "confidence": "high",
+          "diagnosis": "主线程频繁超时 (${thread_stats.data.find(t => t.thread === 'MainThread')?.overrun_count} 次)，应用逻辑耗时",
+          "evidence_fields": [
+            "thread_stats.data[0].avg_ms",
+            "thread_stats.data[0].overrun_count"
+          ],
+          "suggestions": [
+            "检查主线程是否有耗时操作",
+            "将耗时操作移至后台线程"
+          ]
+        },
+        {
+          "condition": "thread_stats.data.find(t => t.thread === 'RenderThread')?.overrun_count > 5",
+          "confidence": "high",
+          "diagnosis": "渲染线程频繁超时 (${thread_stats.data.find(t => t.thread === 'RenderThread')?.overrun_count} 次)，GPU 负载高",
+          "evidence_fields": [
+            "thread_stats.data[1].avg_ms",
+            "thread_stats.data[1].overrun_count"
+          ],
+          "suggestions": [
+            "减少过度绘制",
+            "优化 View 层级"
+          ]
+        },
+        {
+          "condition": "jank_types.data[0]?.jank_cause?.includes('Binder')",
+          "confidence": "medium",
+          "diagnosis": "Binder 调用导致卡顿 (${jank_types.data[0]?.count} 次)",
+          "evidence_fields": [
+            "jank_types.data[0].jank_cause",
+            "jank_types.data[0].count"
+          ],
+          "suggestions": [
+            "检查帧渲染期间的 Binder 调用",
+            "考虑缓存或异步处理"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "gpu-rendering"
+}

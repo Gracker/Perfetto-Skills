@@ -1,8 +1,8 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_topology_view.skill.yaml
-Source SHA-256: 1a730191dd48abb10a07b8d4b95200f4d4b160ae178d037907613bef58910630
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
-# CPU 拓扑视图初始化
+Source SHA-256: 792f8e08be59730e2b62f9f21359ea7677b02b8ab7aa5224e5caaa9587779f76
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+# CPU 拓扑关系初始化
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
@@ -19,8 +19,8 @@ tier: B
 ## Metadata
 
 ```yaml
-display_name: CPU 拓扑视图初始化
-description: 创建 CPU 拓扑分类视图，供后续 SQL JOIN 使用
+display_name: CPU 拓扑关系初始化
+description: 创建物化 CPU 拓扑分类关系，供后续 SQL JOIN 使用
 icon: memory
 tags:
 - cpu
@@ -45,6 +45,19 @@ tags:
 
 ## Ordered execution
 
+### 检查旧 CPU 拓扑对象
+
+- ID: `inspect_existing_topology_object`
+- Type: `atomic`
+- SQL: [`../sql/cpu_topology_view/inspect_existing_topology_object.sql`](../sql/cpu_topology_view/inspect_existing_topology_object.sql)
+
+```yaml
+id: inspect_existing_topology_object
+type: atomic
+display:
+  level: hidden
+save_as: existing_topology_object
+```
 ### 清理旧 CPU 拓扑视图
 
 - ID: `drop_existing_topology_view`
@@ -54,11 +67,24 @@ tags:
 ```yaml
 id: drop_existing_topology_view
 type: atomic
-optional: true
 display:
   level: hidden
+condition: existing_topology_object.data?.[0]?.type === 'view'
 ```
-### 创建 CPU 拓扑视图
+### 清理旧 CPU 拓扑表
+
+- ID: `drop_existing_topology_table`
+- Type: `atomic`
+- SQL: [`../sql/cpu_topology_view/drop_existing_topology_table.sql`](../sql/cpu_topology_view/drop_existing_topology_table.sql)
+
+```yaml
+id: drop_existing_topology_table
+type: atomic
+display:
+  level: hidden
+condition: existing_topology_object.data?.[0]?.type === 'table'
+```
+### 创建 CPU 拓扑关系
 
 - ID: `create_topology_view`
 - Type: `atomic`

@@ -20,6 +20,15 @@ class VerifyCommandTest(unittest.TestCase):
     def test_build_commands_adds_catalog_checks_for_smartperfetto(self) -> None:
         source = Path("/tmp/SmartPerfetto")
         commands = verify.build_commands(source)
+        self.assertEqual(
+            commands[0],
+            [
+                verify.sys.executable,
+                "tools/download_declared_fixtures.py",
+                "--smartperfetto",
+                str(source),
+            ],
+        )
         self.assertIn(
             [
                 verify.sys.executable,

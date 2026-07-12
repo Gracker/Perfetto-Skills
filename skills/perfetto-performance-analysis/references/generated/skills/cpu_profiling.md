@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/deep/cpu_profiling.skill.yaml
-Source SHA-256: a6a66506443dbaafa5b0ec8d01520c945065aa40ce65d0f89fd60577ae67e1ce
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source SHA-256: 747b9f8972708ad1e4c8449ab8e9876c58138f44ae4f3515d87232a9173a4772
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 # CPU 深度调优
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -56,7 +56,6 @@ patterns:
 
 ```yaml
 modules:
-- sched
 - linux.cpu.frequency
 ```
 

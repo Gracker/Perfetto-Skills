@@ -1,0 +1,599 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "branches": [
+          "api<=28",
+          "api29-32",
+          "api>=33"
+        ],
+        "id": "official_android_startup_tags",
+        "source": "perfetto stdlib android/startup/startups.sql"
+      },
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*"
+    ]
+  },
+  "id": "startup_detail",
+  "identity": {
+    "aliases": [
+      "package",
+      "process_name"
+    ],
+    "policy": "required",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
+  },
+  "inputs": [
+    {
+      "description": "启动事件 ID",
+      "name": "startup_id",
+      "required": true,
+      "type": "integer"
+    },
+    {
+      "description": "启动开始时间戳(ns)",
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "启动结束时间戳(ns)",
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "启动耗时(ms)",
+      "name": "dur_ms",
+      "required": true,
+      "type": "number"
+    },
+    {
+      "description": "应用包名",
+      "name": "package",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "启动类型 (cold/warm/hot)，已经过 bindApplication 存在性校验",
+      "name": "startup_type",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "Perfetto 原始报告的启动类型（校验前）",
+      "name": "original_type",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "TTID (ms)",
+      "name": "ttid_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "TTFD (ms)",
+      "name": "ttfd_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "Perfetto 跳转开始时间",
+      "name": "perfetto_start",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Perfetto 跳转结束时间",
+      "name": "perfetto_end",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.startup.startups",
+      "android.binder",
+      "linux.cpu.frequency"
+    ],
+    "required_tables": [
+      "android_startups"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/startup_detail.skill.yaml",
+    "sha256": "27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "startup_info",
+      "name": "启动基本信息",
+      "query_id": "startup_detail/startup_info",
+      "result_dependencies": [],
+      "save_as": "startup_basic",
+      "type": "atomic"
+    },
+    {
+      "id": "cpu_core_analysis",
+      "name": "大小核占比分析",
+      "query_id": "startup_detail/cpu_core_analysis",
+      "result_dependencies": [],
+      "save_as": "cpu_core",
+      "type": "atomic"
+    },
+    {
+      "id": "cpu_freq_analysis",
+      "name": "CPU 频率分析",
+      "query_id": "startup_detail/cpu_freq_analysis",
+      "result_dependencies": [],
+      "save_as": "cpu_freq",
+      "type": "atomic"
+    },
+    {
+      "id": "freq_rampup",
+      "name": "CPU 频率爬升",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "freq_rampup",
+      "skill": "startup_freq_rampup",
+      "type": "skill"
+    },
+    {
+      "id": "quadrant_analysis",
+      "name": "四大象限分析",
+      "optional": true,
+      "query_id": "startup_detail/quadrant_analysis",
+      "result_dependencies": [],
+      "save_as": "quadrant",
+      "type": "atomic"
+    },
+    {
+      "id": "cpu_placement_timeline",
+      "name": "摆核时序分析",
+      "optional": true,
+      "params": {
+        "bucket_ms": 50,
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "cpu_placement",
+      "skill": "startup_cpu_placement_timeline",
+      "type": "skill"
+    },
+    {
+      "id": "main_thread_slices",
+      "name": "主线程耗时操作",
+      "params": {
+        "end_ts": "${end_ts}",
+        "min_dur_ns": 1000000,
+        "package": "${package}",
+        "start_ts": "${start_ts}",
+        "top_k": 10
+      },
+      "save_as": "main_slices",
+      "skill": "main_thread_slices_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "actionable_main_thread_slices",
+      "name": "主线程可操作热点",
+      "query_id": "startup_detail/actionable_main_thread_slices",
+      "result_dependencies": [],
+      "save_as": "actionable_main_slices",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_file_io",
+      "name": "主线程文件 IO",
+      "params": {
+        "end_ts": "${end_ts}",
+        "min_dur_ns": 500000,
+        "package": "${package}",
+        "start_ts": "${start_ts}",
+        "top_k": 10
+      },
+      "save_as": "main_file_io",
+      "skill": "main_thread_file_io_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "binder_analysis",
+      "name": "Binder 调用分析",
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "binder_calls",
+      "skill": "binder_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "main_thread_sync_binder",
+      "name": "主线程同步 Binder",
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "main_sync_binder",
+      "skill": "binder_blocking_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "binder_pool",
+      "name": "Binder 线程池分析",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "binder_pool",
+      "skill": "startup_binder_pool_analysis",
+      "type": "skill"
+    },
+    {
+      "id": "sched_latency",
+      "name": "调度延迟分析",
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "sched_delay",
+      "skill": "main_thread_sched_latency_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "main_thread_state",
+      "name": "主线程状态分布",
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}",
+        "startup_id": "${startup_id}",
+        "startup_type": "${startup_type}"
+      },
+      "save_as": "thread_states",
+      "skill": "startup_main_thread_states_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "critical_tasks",
+      "name": "启动关键任务",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}",
+        "top_k": 15
+      },
+      "save_as": "critical_tasks",
+      "skill": "startup_critical_tasks",
+      "type": "skill"
+    },
+    {
+      "id": "thread_blocking_graph",
+      "name": "线程阻塞关系",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "min_block_ms": 1,
+        "package": "${package}",
+        "start_ts": "${start_ts}",
+        "top_k": 20
+      },
+      "save_as": "blocking_graph",
+      "skill": "startup_thread_blocking_graph",
+      "type": "skill"
+    },
+    {
+      "condition": "'${startup_type}' === 'cold'",
+      "id": "jit_analysis",
+      "name": "JIT 影响分析",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "jit_analysis",
+      "skill": "startup_jit_analysis",
+      "type": "skill"
+    },
+    {
+      "id": "hot_slice_states",
+      "name": "热点 Slice 线程状态",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}",
+        "top_n": 10
+      },
+      "save_as": "hot_slice_states",
+      "skill": "startup_hot_slice_states",
+      "type": "skill"
+    },
+    {
+      "id": "startup_diagnosis",
+      "inputs": [
+        "startup_basic",
+        "cpu_core",
+        "cpu_freq",
+        "freq_rampup",
+        "quadrant",
+        "cpu_placement",
+        "main_slices",
+        "actionable_main_slices",
+        "main_file_io",
+        "binder_calls",
+        "main_sync_binder",
+        "binder_pool",
+        "sched_delay",
+        "thread_states",
+        "critical_tasks",
+        "blocking_graph",
+        "jit_analysis",
+        "hot_slice_states"
+      ],
+      "name": "启动诊断",
+      "rules": [
+        {
+          "condition": "cpu_core.data[0]?.big_core_pct < 20 && quadrant.data[0]?.q3_runnable_ms > 50 && !(cpu_core.data[0]?.classify_method || '').includes('cpu_id_fallback')",
+          "confidence": "medium",
+          "diagnosis": "主线程大核占比偏低（${cpu_core.data[0].big_core_pct}%）且 Runnable 排队明显（${quadrant.data[0].q3_runnable_ms}ms），可能存在调度供给不足",
+          "severity": "warning",
+          "suggestions": [
+            "检查是否有其他高优先级进程抢占大核",
+            "考虑调整进程优先级或使用 setThreadPriority"
+          ]
+        },
+        {
+          "condition": "(cpu_core.data[0]?.classify_method || '').includes('cpu_id_fallback')",
+          "confidence": "medium",
+          "diagnosis": "核类型判定回退到 CPU 编号阈值，大小核相关结论置信度有限",
+          "severity": "info",
+          "suggestions": [
+            "补充或检查 cpu_frequency/cpu capacity 数据后再判断大小核调度问题"
+          ]
+        },
+        {
+          "condition": "quadrant.data[0]?.q3_runnable_ms > 50 && (sched_delay.data[0]?.severe_count || 0) > 3",
+          "confidence": "high",
+          "diagnosis": "主线程 Runnable 等待 ${quadrant.data[0].q3_runnable_ms}ms，且存在 ${sched_delay.data[0].severe_count} 次 >8ms 调度延迟",
+          "severity": "warning",
+          "suggestions": [
+            "CPU 资源争抢严重，检查后台线程负载",
+            "减少启动期间的并发线程数"
+          ]
+        },
+        {
+          "condition": "quadrant.data[0]?.q4a_pct > 15 && ((main_file_io.data[0]?.percent || 0) > 2 || thread_states?.data?.find(r => (r.evidence_strength === 'direct_io_wait' || r.evidence_strength === 'inferred_io_or_page_cache') && ((r.percent || 0) > 5)))",
+          "confidence": "medium",
+          "diagnosis": "主线程不可中断等待占比 ${quadrant.data[0].q4a_pct}%，并出现文件 I/O 或 io_wait/page-cache blocked_function 证据，属于 IO/page-cache 等待候选",
+          "severity": "warning",
+          "suggestions": [
+            "将数据库/文件读写操作移至后台线程",
+            "使用异步 IO 或延迟加载策略",
+            "检查 APK/DEX 文件读取是否在关键路径"
+          ]
+        },
+        {
+          "condition": "quadrant.data[0]?.q4b_pct > 30 && ((main_sync_binder?.data?.find(r => r.is_main_blocked === 1)?.total_block_ms) || 0) > 20",
+          "confidence": "medium",
+          "diagnosis": "主线程睡眠等待(S 状态) 占比 ${quadrant.data[0].q4b_pct}% 且存在 Binder 阻塞证据",
+          "severity": "warning",
+          "suggestions": [
+            "检查主线程同步 Binder 调用，改为异步",
+            "减少启动期间的锁竞争"
+          ]
+        },
+        {
+          "condition": "(main_file_io.data[0]?.total_ms > 50 || main_file_io.data[0]?.percent > 5) && ((quadrant.data[0]?.q4a_pct || 0) > 10 || (quadrant.data[0]?.q4b_pct || 0) > 20)",
+          "confidence": "high",
+          "diagnosis": "主线程文件 IO '${main_file_io.data[0].io_slice}' 耗时 ${main_file_io.data[0].total_ms}ms（占比 ${main_file_io.data[0].percent}%）",
+          "severity": "warning",
+          "suggestions": [
+            "避免在首帧前执行文件读取/写入，改为预取或延迟加载",
+            "数据库初始化改为异步，合并小 IO 为批量 IO"
+          ]
+        },
+        {
+          "condition": "(((main_sync_binder?.data?.find(r => r.is_main_blocked === 1)?.total_block_ms) || 0) > 80 || ((main_sync_binder?.data?.find(r => r.is_main_blocked === 1)?.max_block_ms) || 0) > 16) && ((quadrant.data[0]?.q4b_pct || 0) > 15 || (quadrant.data[0]?.q3_runnable_ms || 0) > 20)",
+          "confidence": "high",
+          "diagnosis": "主线程同步 Binder '${main_sync_binder.data.find(r => r.is_main_blocked === 1)?.interface}' 阻塞 ${main_sync_binder.data.find(r => r.is_main_blocked === 1)?.total_block_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "将同步 Binder 改为异步或迁移到后台线程",
+            "减少启动首屏前的跨进程依赖调用"
+          ]
+        },
+        {
+          "condition": "binder_calls.data[0]?.total_client_ms > 100 && ((main_sync_binder?.data?.find(r => r.is_main_blocked === 1)?.total_block_ms) || 0) > 20",
+          "confidence": "high",
+          "diagnosis": "Binder 调用 ${binder_calls.data[0].server_process} 总耗时 ${binder_calls.data[0].total_client_ms}ms，且主线程存在同步 Binder 阻塞",
+          "severity": "warning",
+          "suggestions": [
+            "减少启动期间的 IPC 调用",
+            "使用异步 Binder 或延迟调用"
+          ]
+        },
+        {
+          "condition": "(sched_delay.data[0]?.severe_count || 0) > 5 && (sched_delay.data[0]?.max_latency_ms || 0) > 8",
+          "confidence": "medium",
+          "diagnosis": "存在 ${sched_delay.data[0].severe_count} 次严重调度延迟 (>8ms)，最大延迟 ${sched_delay.data[0].max_latency_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "检查系统负载，减少后台进程",
+            "考虑使用 SCHED_FIFO 策略"
+          ]
+        },
+        {
+          "condition": "((actionable_main_slices.data[0]?.is_framework_wrapper || 0) === 0) && (actionable_main_slices.data[0]?.max_ms || 0) > 80 && (actionable_main_slices.data[0]?.percent || 0) > 15",
+          "confidence": "high",
+          "diagnosis": "主线程可操作热点 '${actionable_main_slices.data[0].slice_name}' 最长耗时 ${actionable_main_slices.data[0].max_ms}ms（占比 ${actionable_main_slices.data[0].percent}%）",
+          "severity": "warning",
+          "suggestions": [
+            "优先下钻该切片内部子阶段，定位可迁移到后台的初始化任务",
+            "将首帧前非关键任务延后到 TTID 之后执行"
+          ]
+        },
+        {
+          "condition": "main_slices.data[0]?.max_ms > 100 && (main_slices.data[0]?.percent || 0) > 20 && !['clientTransactionExecuted', 'activityStart', 'bindApplication'].includes(main_slices.data[0]?.slice_name || '') && !(main_slices.data[0]?.slice_name || '').startsWith('performCreate:')",
+          "confidence": "high",
+          "diagnosis": "主线程操作 '${main_slices.data[0].slice_name}' 最长耗时 ${main_slices.data[0].max_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "优化该操作或移到后台线程",
+            "检查是否可以分批执行"
+          ]
+        },
+        {
+          "condition": "(quadrant.data[0]?.q4b_pct || 0) > 25 && thread_states?.data?.find(r => r.state === 'S')?.percent > 20 && (thread_states?.data?.find(r => r.state === 'S')?.blocked_functions || '').includes('futex')",
+          "confidence": "high",
+          "diagnosis": "主线程 S(Sleeping) 状态占比 ${thread_states.data.find(r => r.state === 'S').percent}%，blocked_functions 含 futex 相关函数，存在锁竞争",
+          "severity": "warning",
+          "suggestions": [
+            "检查主线程是否存在锁竞争（synchronized/ReentrantLock）",
+            "减少启动期间的线程同步操作"
+          ]
+        },
+        {
+          "condition": "(quadrant.data[0]?.q4a_pct || 0) > 10 && thread_states?.data?.find(r => (r.evidence_strength === 'direct_io_wait' || r.evidence_strength === 'inferred_io_or_page_cache') && ((r.percent || 0) > 5))",
+          "confidence": "medium",
+          "diagnosis": "主线程 D/不可中断等待中出现 IO/page-cache 证据（${thread_states.data.find(r => r.evidence_strength === 'direct_io_wait' || r.evidence_strength === 'inferred_io_or_page_cache').total_dur_ms}ms），需要结合文件/DB slice 或 block I/O 进一步定因",
+          "severity": "warning",
+          "suggestions": [
+            "将数据库/文件操作移至后台线程",
+            "使用异步 IO 或延迟加载"
+          ]
+        },
+        {
+          "condition": "(critical_tasks?.data?.find(t => t.role === 'jit')?.total_cpu_ms || 0) > 20 && (critical_tasks?.data?.find(t => t.role === 'jit')?.big_core_pct || 0) > 50",
+          "confidence": "medium",
+          "diagnosis": "JIT 线程 CPU 时间 ${critical_tasks.data.find(t => t.role === 'jit').total_cpu_ms}ms（大核占比 ${critical_tasks.data.find(t => t.role === 'jit').big_core_pct}%），可能与主线程争抢大核",
+          "severity": "warning",
+          "suggestions": [
+            "使用 Baseline Profile 减少冷启动 JIT 编译需求",
+            "检查是否缺少 .prof 或 .dm 文件"
+          ]
+        },
+        {
+          "condition": "(critical_tasks?.data?.find(t => t.role === 'render')?.total_cpu_ms || 0) > 5 && (critical_tasks?.data?.find(t => t.role === 'render')?.big_core_pct || 0) < 30",
+          "confidence": "medium",
+          "diagnosis": "RenderThread 大核占比仅 ${critical_tasks.data.find(t => t.role === 'render').big_core_pct}%，首帧渲染可能因小核性能不足而变慢",
+          "severity": "info",
+          "suggestions": [
+            "检查 RenderThread 是否被调度到小核运行",
+            "大量 GPU 指令在小核上提交会增加 TTID"
+          ]
+        },
+        {
+          "condition": "(critical_tasks?.data?.find(t => t.role === 'main')?.cross_cluster_migrations || 0) > 10",
+          "confidence": "high",
+          "diagnosis": "主线程跨 cluster 核迁移 ${critical_tasks.data.find(t => t.role === 'main').cross_cluster_migrations} 次，L2 Cache 反复失效导致性能损失",
+          "severity": "warning",
+          "suggestions": [
+            "频繁跨 cluster 迁移说明调度器未稳定分配核心",
+            "检查是否有其他线程/进程在启动期间与主线程争抢 CPU"
+          ]
+        },
+        {
+          "condition": "critical_tasks?.data?.length > 0 && critical_tasks.data.reduce((sum, t) => sum + (t.total_cpu_ms || 0), 0) > ${dur_ms} * 2",
+          "confidence": "medium",
+          "diagnosis": "所有线程总 CPU 时间 ${Math.round(critical_tasks.data.reduce((sum, t) => sum + (t.total_cpu_ms || 0), 0))}ms 是启动墙钟时间 ${dur_ms}ms 的 ${(critical_tasks.data.reduce((sum, t) => sum + (t.total_cpu_ms || 0), 0) / ${dur_ms}).toFixed(1)} 倍，CPU 争抢激烈",
+          "severity": "info",
+          "suggestions": [
+            "减少启动期间的后台线程并发",
+            "延迟非关键初始化到首帧之后"
+          ]
+        },
+        {
+          "condition": "(blocking_graph?.data?.find(b => b.blocked_role === 'main' && b.waker_process === 'system_server')?.total_block_ms || 0) > 30",
+          "confidence": "high",
+          "diagnosis": "主线程被 system_server 阻塞 ${blocking_graph.data.find(b => b.blocked_role === 'main' && b.waker_process === 'system_server').total_block_ms}ms（函数：${blocking_graph.data.find(b => b.blocked_role === 'main' && b.waker_process === 'system_server').blocked_function}）",
+          "severity": "warning",
+          "suggestions": [
+            "system_server 处理延迟可能因系统负载高",
+            "检查启动期间是否有密集的跨进程 Binder 调用"
+          ]
+        },
+        {
+          "condition": "(blocking_graph?.data?.find(b => b.blocked_role === 'main' && b.waker_thread === 'HeapTaskDaemon')?.total_block_ms || 0) > 10",
+          "confidence": "high",
+          "diagnosis": "主线程被 GC 阻塞 ${blocking_graph.data.find(b => b.blocked_role === 'main' && b.waker_thread === 'HeapTaskDaemon').total_block_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "减少启动期间的对象分配",
+            "避免在 Application.onCreate() 中创建大量临时对象"
+          ]
+        },
+        {
+          "condition": "freq_rampup?.data?.find(r => r.core_type === 'big' || r.core_type === 'prime')?.rampup_pct > 50",
+          "confidence": "medium",
+          "diagnosis": "启动初期大核频率比稳态低 ${freq_rampup.data.find(r => r.core_type === 'big' || r.core_type === 'prime').rampup_pct}%，存在升频延迟",
+          "severity": "info",
+          "suggestions": [
+            "冷启动初期 CPU 可能从低频 idle 唤醒，Governor 需要几个调度周期才升频",
+            "Qualcomm WALT 和 Pixel schedutil 的升频速度不同，可查看厂商特定优化"
+          ]
+        },
+        {
+          "condition": "cpu_placement?.data?.length > 2 && (cpu_placement.data[0]?.big_core_pct || 0) < 20 && (cpu_placement.data[2]?.big_core_pct || 0) > 60",
+          "confidence": "medium",
+          "diagnosis": "启动前 100ms 主线程大核占比仅 ${cpu_placement.data[0].big_core_pct}%，之后升至 ${cpu_placement.data[2].big_core_pct}%。启动初期被困在小核",
+          "severity": "warning",
+          "suggestions": [
+            "可能因 Zygote fork 继承了小核亲和性，或 top-app cgroup 设置有延迟",
+            "bindApplication 阶段的性能受此影响最大"
+          ]
+        },
+        {
+          "condition": "binder_pool?.data?.find(r => r.metric === '线程池利用率')?.value?.includes('⚠️')",
+          "confidence": "medium",
+          "diagnosis": "Binder 线程池利用率过高，新的 Binder 回复可能排队等待",
+          "severity": "warning",
+          "suggestions": [
+            "减少启动期间并行的 Binder 调用",
+            "将非关键 IPC 延迟到首帧之后"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "2.0",
+  "workflow": "startup"
+}

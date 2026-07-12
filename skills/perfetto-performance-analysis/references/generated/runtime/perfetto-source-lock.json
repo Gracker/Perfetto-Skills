@@ -1,0 +1,58 @@
+{
+  "canary": {
+    "commit": null,
+    "release_blocking": false,
+    "stdlib_tree_matches_release": true,
+    "tag": null
+  },
+  "generated_indexes": {
+    "stdlib_docs_sha256": "b58d65e6117f900fc4704ef755330785001c3436fb675de70c0ae534a9dbcb7d",
+    "stdlib_symbols_sha256": "55a468e9917ec430644ac9db6e138c06d96287daef4ea73b0cd09cffc2b64996"
+  },
+  "official_skill_reference": {
+    "path": "ai/skills/perfetto/SKILL-template.md",
+    "role": "gap_check_only",
+    "runtime_dependency": false,
+    "sha256": "4bbe57d18f7d8dc56ca9379046397c2cb21bb7d55f4c29a7c50533b492097a14",
+    "tag": "v57.2"
+  },
+  "release": {
+    "commit": "da1d152cff27890903d158fe96751de3aab883cc",
+    "rpc_api_version": 14,
+    "stdlib_tree": "7f0459ca3eed8372a8762ae052ed7fdb48eb3d88",
+    "tag": "v57.2"
+  },
+  "repository": "https://github.com/google/perfetto",
+  "runtime_substrate": {
+    "platforms": {
+      "linux-amd64": {
+        "path": "v57.2/linux-amd64/trace_processor_shell",
+        "sha256": "55ba613fc6d4f71df81eee2dbfc293020063655c241b3e314bff75345b802684"
+      },
+      "linux-arm64": {
+        "path": "v57.2/linux-arm64/trace_processor_shell",
+        "sha256": "1dcc1d9aaff2eb92e8bc58f1957e4e445600294bd61dbc09345c1018c5ff0868"
+      },
+      "mac-amd64": {
+        "path": "v57.2/mac-amd64/trace_processor_shell",
+        "sha256": "c0f61397901da47cbe1bb9a0843624f7c2038ac92176ce15e3736ce9aa0afef0"
+      },
+      "mac-arm64": {
+        "path": "v57.2/mac-arm64/trace_processor_shell",
+        "sha256": "98a41b80e9f60da0373d64aff6455681f8c26b7c391ae5736324a5b11e3dacc2"
+      },
+      "windows-amd64": {
+        "path": "v57.2/windows-amd64/trace_processor_shell.exe",
+        "sha256": "100334b6091596fbc97f872556849a5747bf47a7f7190c485ba8cea8d2409c7b"
+      }
+    },
+    "required_runtime_checks": [
+      "artifact_sha256",
+      "version_commit",
+      "rpc_api_version"
+    ],
+    "trace_processor_lock": "../../../trace-processor-lock.json",
+    "trace_processor_lock_sha256": "3a6ffeff9742385cc91a9255559d31158a19f5dc5917ebc4b21de6bedd8fe0ad"
+  },
+  "schema_version": 1
+}

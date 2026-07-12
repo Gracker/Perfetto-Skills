@@ -65,7 +65,7 @@ class BootstrapTest(unittest.TestCase):
         )
         self.assertTrue(lock_path.is_file(), "references/trace-processor-lock.json")
         lock = json.loads(lock_path.read_text(encoding="utf-8"))
-        self.assertEqual(lock["perfetto_version"], "v57.1")
+        self.assertEqual(lock["perfetto_version"], "v57.2")
         self.assertEqual(
             set(lock["platforms"]),
             {

@@ -1,0 +1,59 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "multi_trace_result_comparison",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Ordered analysis result snapshot IDs to compare.",
+      "name": "snapshot_ids",
+      "required": true,
+      "type": "array"
+    },
+    {
+      "description": "Snapshot ID used as the comparison baseline.",
+      "name": "baseline_snapshot_id",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "Optional metric keys to include. Defaults to standard comparison metrics.",
+      "name": "metric_keys",
+      "required": false,
+      "type": "array"
+    },
+    {
+      "description": "Original user comparison request.",
+      "name": "query",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "knowledge_only",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/comparison/multi_trace_result_comparison.skill.yaml",
+    "sha256": "77585c59a25d4c89d4510b6d4017e3bd1d0e48dcd05e45064517414e5ec8a738"
+  },
+  "steps": [],
+  "type": "comparison",
+  "version": "1.0.0",
+  "workflow": "trace-comparison"
+}

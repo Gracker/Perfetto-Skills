@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/global_trace_sanity_check.skill.yaml
-Source SHA-256: 082c5e5e00286a42ebf2cb10e6d0305f0d94f83c2f64eb7baef061951d49dec8
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source SHA-256: 3c4b708b7b84c9206463877bf914275bb2d48df15eef7c821ebe6eeaf4a8e263
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 # 全局 Trace Sanity 检查
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -65,7 +65,6 @@ required_tables:
 - thread_state
 - sched_slice
 modules:
-- sched
 - sched.thread_level_parallelism
 ```
 

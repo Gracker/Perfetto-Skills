@@ -1,0 +1,38 @@
+{
+  "skill_name": "perfetto-performance-analysis",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Use the Perfetto skill to analyze ../SmartPerfetto/test-traces/launch_light.pftrace for Android app startup. Run the complete startup workflow, distinguish absent evidence from empty results, and save a machine-readable evidence-backed report under the requested output directory.",
+      "expected_output": "A startup report based on a deterministic full Skill run, with processor identity, query provenance, limitations, and no unsupported causal claims.",
+      "files": [],
+      "assertions": [
+        "The output records the trace SHA-256 and verified trace processor identity.",
+        "The output uses the complete startup_analysis graph rather than a single ad hoc SQL query.",
+        "Findings cite query evidence and preserve missing or empty evidence as limitations."
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze ../SmartPerfetto/test-traces/scroll-demo-customer-scroll.pftrace for scrolling and jank with the Perfetto skill. Identify the worst observed frames, drill into one frame with the exported fragment-backed detail workflow, and avoid treating Android version as proof that a signal exists.",
+      "expected_output": "An evidence-backed scrolling analysis that executes both the root workflow and one frame-detail path, with capability states and bounded conclusions.",
+      "files": [],
+      "assertions": [
+        "The output executes a scrolling root Skill and a jank frame detail Skill with concrete frame parameters.",
+        "The output distinguishes schema/capability availability from populated trace evidence.",
+        "The output preserves query source hashes and does not claim API-level support without trace evidence."
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Compare ../SmartPerfetto/test-traces/launch_light.pftrace with ../SmartPerfetto/test-traces/lacunh_heavy.pftrace using the Perfetto skill. Analyze both traces independently, admit only metrics with matching definition and unit, and produce a report that separates observation, correlation, and verified root cause.",
+      "expected_output": "Two independent evidence sets plus a gated comparison that refuses incompatible or missing metrics and states residual uncertainty.",
+      "files": [],
+      "assertions": [
+        "Each trace is analyzed independently and has its own identity and evidence references.",
+        "Only metrics with compatible status, unit, and definition are compared.",
+        "The conclusion distinguishes observation, correlation, mechanism evidence, and verified root cause."
+      ]
+    }
+  ]
+}

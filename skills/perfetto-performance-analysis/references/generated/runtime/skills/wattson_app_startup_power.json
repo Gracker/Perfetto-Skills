@@ -1,0 +1,52 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "wattson_app_startup_power",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名 GLOB（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "wattson.windows",
+      "wattson.aggregation"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/wattson_app_startup_power.skill.yaml",
+    "sha256": "306e55087c67e9f4fe2d3c6bf37e5372a3ed7019c0470eb97e07921adf210f1f"
+  },
+  "steps": [
+    {
+      "id": "startup_power",
+      "name": "启动期能耗列表",
+      "query_id": "wattson_app_startup_power/startup_power",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "startup"
+}

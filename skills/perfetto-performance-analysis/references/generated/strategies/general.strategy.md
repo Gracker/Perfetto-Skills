@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/general.strategy.md
 Source SHA-256: ee8e41f175846136b1af81f0467bb8ebdada0a34a5941b3df53293ea8730ba03
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # General Strategy
 
@@ -9,15 +9,31 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: general
+priority: 99
+effort: high
+required_capabilities:
+- cpu_scheduling
+optional_capabilities: []
+keywords: []
+```
+
 #### general Core Strategy
 
 **Route card**: general
 
 **Capabilities**: required=[cpu_scheduling], optional=[none]
-
-
-
-
 
 **Phase reminders**
 - 无额外 phase hint。
@@ -26,28 +42,12 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 遵循通用输出契约。
 
 
-
-
-
 <!-- strategy-detail id="full" title="general full strategy detail" keywords="general,通用分析,detail,full" default="true" -->
 #### 通用分析
 
 当前查询未匹配到特定场景策略。请根据用户关注的方向，使用以下决策树选择合适的分析路径。
 
 **决策树 — 按用户关注方向路由：**
-
-
-
-**场景专用快速路由**（如果用户的问题明确匹配以下场景，直接使用对应策略）：
-- **滑动/卡顿**: scrolling_analysis → jank_frame_detail (逐帧深钻)
-- **启动**: startup_analysis → startup_detail
-- **ANR**: anr_analysis → anr_detail
-- **点击/触摸**: click_response_analysis → click_response_detail (逐事件深钻)
-- **TextureView/WebView/Flutter/RN/GL 混合架构卡顿**: detect_architecture → HWUI host skill + architecture-specific producer skill → 合并依赖判断
-- **概览/场景还原**: scene_reconstruction → 按场景路由到对应 Skill
-- **功耗/耗电**: wattson_rails_power_breakdown → wattson_thread_power_attribution；数据缺失时 battery_charge_timeline / android_kernel_wakelock_summary / suspend_wakeup_analysis fallback
-
-也可以使用 `list_skills` 发现更多可用技能，或使用 `execute_sql` 做自定义查询。
 
 #### 通用场景关键 Stdlib 表
 

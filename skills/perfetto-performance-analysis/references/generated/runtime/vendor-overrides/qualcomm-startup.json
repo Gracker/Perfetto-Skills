@@ -1,0 +1,87 @@
+{
+  "application_mode": "advisory_only",
+  "definition": {
+    "additional_diagnostics": [
+      {
+        "condition": "adreno_gpu_analysis.any.dur_ms > 16",
+        "id": "gpu_bottleneck",
+        "message": "Adreno GPU 操作耗时 ${dur_ms}ms，可能影响渲染",
+        "severity": "warning",
+        "suggestions": [
+          "检查是否有复杂的 GPU 计算",
+          "优化着色器复杂度",
+          "减少过度绘制"
+        ]
+      }
+    ],
+    "additional_steps": [
+      {
+        "for_each": "startups",
+        "id": "qualcomm_platform_events",
+        "name": "高通平台事件",
+        "sql": "SELECT\n  s.name as qcom_event,\n  s.dur / 1e6 as dur_ms,\n  (s.ts - (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})) / 1e6 as relative_ts_ms\nFROM slice s\nWHERE (s.name GLOB '*QTI*'\n       OR s.name GLOB '*Qualcomm*'\n       OR s.name GLOB '*qcom*'\n       OR s.name GLOB '*QSEE*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.ts ASC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "adreno_gpu_analysis",
+        "name": "Adreno GPU 分析",
+        "sql": "SELECT\n  s.name as gpu_event,\n  s.dur / 1e6 as dur_ms,\n  (s.ts - (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})) / 1e6 as relative_ts_ms\nFROM slice s\nWHERE (s.name GLOB '*Adreno*'\n       OR s.name GLOB '*adreno*'\n       OR s.name GLOB '*gpu*fence*'\n       OR s.name GLOB '*kgsl*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\nLIMIT 20\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "qualcomm_perf_service",
+        "name": "高通性能服务",
+        "sql": "SELECT\n  s.name as perf_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*perf-hal*'\n       OR s.name GLOB '*perflock*'\n       OR s.name GLOB '*boost*'\n       OR s.name GLOB '*hint*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "dsp_npu_usage",
+        "name": "DSP/NPU 使用分析",
+        "optional": true,
+        "sql": "SELECT\n  s.name as dsp_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*DSP*'\n       OR s.name GLOB '*NPU*'\n       OR s.name GLOB '*Hexagon*'\n       OR s.name GLOB '*CDSP*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.dur DESC\n"
+      }
+    ],
+    "extends": "composite/startup_analysis",
+    "meta": {
+      "description": "针对高通 Snapdragon 平台优化的启动分析",
+      "display_name": "高通平台启动分析",
+      "platform": "Snapdragon",
+      "vendor": "qualcomm"
+    },
+    "vendor_detection": {
+      "signatures": [
+        {
+          "confidence": "high",
+          "pattern": "*QTI*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*Qualcomm*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*qualcomm*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*Adreno*"
+        },
+        {
+          "confidence": "medium",
+          "pattern": "*Snapdragon*"
+        },
+        {
+          "confidence": "medium",
+          "pattern": "*qcom*"
+        }
+      ]
+    },
+    "version": "1.0.0"
+  },
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/vendors/qualcomm/startup.override.yaml",
+    "sha256": "9a9f9841f92d4132fb1d625ad40a7d7a8f5309e2ed09a4f0d8dfe477641bc74c"
+  }
+}

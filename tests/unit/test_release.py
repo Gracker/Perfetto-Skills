@@ -1,6 +1,8 @@
 import hashlib
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tarfile
 import tempfile
 import unittest
@@ -20,7 +22,7 @@ class ReleaseTest(unittest.TestCase):
     def test_archives_contain_installable_skill_and_provenance(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             zip_path, tar_path, checksums = build_release.build_release(
-                Path(temporary), "0.1.0"
+                Path(temporary), "0.2.0"
             )
             self.assertTrue(checksums.is_file())
             with zipfile.ZipFile(zip_path) as bundle:
@@ -28,21 +30,39 @@ class ReleaseTest(unittest.TestCase):
                 provenance = json.loads(bundle.read("PROVENANCE.json"))
             self.assertIn("perfetto-performance-analysis/SKILL.md", names)
             self.assertIn("perfetto-performance-analysis/references/generated/catalog.json", names)
+            self.assertIn("tools/install.py", names)
             self.assertIn("LICENSE", names)
             self.assertIn("NOTICE", names)
-            self.assertEqual(provenance["version"], "0.1.0")
+            self.assertEqual(provenance["version"], "0.2.0")
             self.assertFalse(any(name.endswith(("trace_processor_shell", ".exe")) for name in names))
             with tarfile.open(tar_path, "r:gz") as bundle:
                 self.assertEqual(names, {member.name for member in bundle.getmembers() if member.isfile()})
 
     def test_two_builds_are_byte_for_byte_reproducible(self) -> None:
         with tempfile.TemporaryDirectory() as first, tempfile.TemporaryDirectory() as second:
-            first_paths = build_release.build_release(Path(first), "0.1.0")
-            second_paths = build_release.build_release(Path(second), "0.1.0")
+            first_paths = build_release.build_release(Path(first), "0.2.0")
+            second_paths = build_release.build_release(Path(second), "0.2.0")
             self.assertEqual(
                 [sha256(path) for path in first_paths],
                 [sha256(path) for path in second_paths],
             )
+
+    def test_archive_installer_installs_extracted_skill(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            zip_path, _, _ = build_release.build_release(root / "dist", "0.2.0")
+            extracted = root / "extracted"
+            with zipfile.ZipFile(zip_path) as bundle:
+                bundle.extractall(extracted)
+            destination = root / "installed"
+            completed = subprocess.run(
+                [sys.executable, str(extracted / "tools" / "install.py"), "--destination", str(destination)],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            self.assertTrue((destination / "perfetto-performance-analysis" / "SKILL.md").is_file())
 
     def test_version_cannot_escape_output_directory(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -92,6 +112,19 @@ class ReleaseTest(unittest.TestCase):
         self.assertEqual(
             workflow["jobs"]["release"]["permissions"], {"contents": "write"}
         )
+
+    def test_source_checkout_includes_perfetto_submodule_for_export_verification(self) -> None:
+        root = Path(__file__).resolve().parents[2]
+        for filename in ("verify.yml", "release.yml"):
+            workflow = yaml.safe_load(
+                (root / ".github" / "workflows" / filename).read_text(encoding="utf-8")
+            )
+            source_checkout = next(
+                step
+                for step in workflow["jobs"]["verify"]["steps"]
+                if step.get("name") == "Check out pinned SmartPerfetto source"
+            )
+            self.assertEqual(source_checkout["with"]["submodules"], "recursive")
 
 
 if __name__ == "__main__":

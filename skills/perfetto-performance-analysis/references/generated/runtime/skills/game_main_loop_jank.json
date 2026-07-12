@@ -1,0 +1,110 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*Camera.Render*",
+      "*Cocos*",
+      "*Director::mainLoop*",
+      "*FrameGameThread*",
+      "*GLThread*",
+      "*GameThread*",
+      "*Gfx.WaitForPresent*",
+      "*Main::iteration*",
+      "*PlayerLoop*",
+      "*RHIThread*",
+      "*RenderingThread*",
+      "*Tick*",
+      "*Unity*",
+      "*UnityGfx*",
+      "*Unreal*",
+      "*Update*",
+      "*WaitForPresent*",
+      "*cocos2d*",
+      "*idle_process*",
+      "*physics_process*"
+    ]
+  },
+  "id": "game_main_loop_jank",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；当 package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "目标帧预算(ms)，默认 16.67",
+      "name": "target_frame_ms",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "slices.with_context"
+    ],
+    "required_tables": [
+      "slice",
+      "thread_track",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/game_main_loop_jank.skill.yaml",
+    "sha256": "174f4c55bf6e3f9deed54eb0413221f154230454cb2b49437a87e6831cd3a251"
+  },
+  "steps": [
+    {
+      "id": "engine_loop_summary",
+      "name": "游戏主循环汇总",
+      "query_id": "game_main_loop_jank/engine_loop_summary",
+      "result_dependencies": [],
+      "save_as": "engine_loop_summary",
+      "type": "atomic"
+    },
+    {
+      "id": "slow_engine_slices",
+      "name": "慢主循环切片",
+      "query_id": "game_main_loop_jank/slow_engine_slices",
+      "result_dependencies": [],
+      "save_as": "slow_engine_slices",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "frameworks-games"
+}

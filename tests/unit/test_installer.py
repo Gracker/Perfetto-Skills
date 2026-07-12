@@ -67,6 +67,11 @@ class InstallerTest(unittest.TestCase):
             "$perfetto-performance-analysis", metadata["interface"]["default_prompt"]
         )
 
+    def test_opencode_global_path_matches_documented_xdg_root(self) -> None:
+        self.assertEqual(
+            install.CLIENT_PATHS["opencode"], Path(".config/opencode/skills")
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

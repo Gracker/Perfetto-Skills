@@ -1,0 +1,110 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%",
+      "GPU completion",
+      "RenderThread",
+      "[0-9]*.raster",
+      "[0-9]*.ui"
+    ]
+  },
+  "id": "process_slice_cpu_hotspots",
+  "identity": {
+    "aliases": [
+      "package",
+      "process_name"
+    ],
+    "policy": "verify_if_present",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
+  },
+  "inputs": [
+    {
+      "description": "目标应用包名或进程名前缀",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名；当 package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "可选 trace 内进程 ID；优先级高于 package/process_name",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "可选 slice 名称过滤；默认字面包含匹配，包含 % 时按 SQL LIKE 模式匹配",
+      "name": "slice_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": "all",
+      "description": "线程范围：all/main/render/main_render",
+      "name": "thread_scope",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)，默认 trace_start()",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)，默认 trace_end()",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 0,
+      "description": "聚合后最小 CPU 时间阈值(ns)",
+      "name": "min_cpu_ns",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "default": 10,
+      "description": "返回 TopK 条目",
+      "name": "top_k",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "thread_track",
+      "thread",
+      "process",
+      "thread_state"
+    ]
+  },
+  "query_id": "process_slice_cpu_hotspots/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/process_slice_cpu_hotspots.skill.yaml",
+    "sha256": "fd6bc72d2cee67b783f9795e253586db60f2b7a3c3e786495b6d998e69403a8a"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

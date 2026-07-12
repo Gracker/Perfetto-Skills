@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/teaching.strategy.md
 Source SHA-256: a4b8a175a3c30632e4b12cb264c9c0952e136a86b10dbf4040f1048602e1915d
-Source commit: fb2c84db1786a214c2a68a89e8143b9b88cb2e00
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
 
 # Teaching Strategy
 
@@ -9,24 +9,85 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+## Portable execution commands
+
+- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
+- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.
+- Run one query: `python3 <skill-root>/scripts/perfetto_query.py TRACE --query-id SKILL/STEP --output RESULT.json`.
+- Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
+- Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
+
+## Portable strategy metadata
+
+```yaml
+scene: teaching
+priority: 3
+effort: medium
+required_capabilities: []
+optional_capabilities: []
+keywords:
+- 教学
+- 是什么
+- 什么意思
+- 怎么工作
+- 怎么运作
+- explain
+- how does
+- what is
+- thread role
+- mechanism
+- 原理
+- 线程角色
+- 关键slice
+- mermaid
+- 源码
+- source code
+- 这个slice
+compound_patterns:
+- 这个.*是什么
+- .*怎么.*工作
+- .*是.*什么意思
+- explain.*this
+- what.*does.*this
+- .*管线.*是
+- .*pipeline.*is
+plan_template:
+  mandatory_aspects:
+  - id: architecture_detection
+    match_keywords:
+    - architecture
+    - 架构
+    - pipeline
+    - 管线
+    - 教学
+    required_expected_calls:
+    - {}
+  - id: pipeline_teaching
+    match_keywords:
+    - teach
+    - explain
+    - 说明
+    - 解释
+    - thread
+    - 线程
+    - slice
+    - mermaid
+    required_expected_call_alternatives:
+    - skill_id: rendering_pipeline_detection
+    - skill_id: scene_reconstruction
+```
+
 #### teaching Core Strategy
 
 **Route card**: 教学 / 是什么 / 什么意思 / 怎么工作 / 怎么运作 / explain / how does / what is / thread role / mechanism
 
 **Capabilities**: required=[none], optional=[none]
 
-
-
-
-
 **Phase reminders**
 - 无额外 phase hint。
 
 **Final report contract summary**
 - 遵循通用输出契约。
-
-
-
 
 
 <!-- strategy-detail id="full" title="teaching full strategy detail" keywords="teaching,教学,是什么,什么意思,怎么工作,怎么运作,explain,how does,what is,thread role,mechanism,原理,线程角色,教学/概念解释分析（用户提到 是什么、什么意思、怎么工作、explain、what is、pipeline、thread role）,detail,full" default="true" -->
@@ -45,7 +106,14 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 | 渲染架构/管线 | 用户提到"管线"、"pipeline"、"渲染架构" | 先检测架构 → 加载对应管线教学 |
 | 通用概念 | 用户提到"VSync"、"Choreographer"、"SurfaceFlinger" 等术语 | 概念解释 → 在管线中的位置 → 与 trace 的关联 |
 
-
+**Phase 2 — 架构检测与 observed-flow 教学：**
+- 先展示当前 trace 中真实观测到的 lanes/events，再展示 Mermaid
+- `primary_pipeline_id` 只是入口，不是最终单选结论
+- 如果 candidates/features 暗示 WebView/Flutter/RN/GL/TextureView/SurfaceView 等混合出图，先分开展示 host HWUI 与 producer 链路
+- 如果 trace 具备 sched/thread_state 信号，展示 Critical task / Wakeup 关系；如果缺少 `sched_wakeup` 或官方 critical path 为空，明确标成采集缺口
+- 解释关键线程角色（main thread、RenderThread、producer、SurfaceFlinger、HWC/present）
+- 列出关键 Slice 及其含义，并标注哪些在当前 trace 中真实命中、哪些缺失
+- 如果用户有 selection context，优先关联选区；否则使用 visible window，再退回 package/process hint 或活跃渲染进程 fallback
 
 **Phase 3 — 上下文关联教学：**
 
@@ -75,9 +143,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 **3c. Perfetto 表/视图查询：**
 如果用户问到 Perfetto 的特定表或视图：
-```
-lookup_sql_schema("<table_or_view_name>")
-```
 返回表的 schema、列定义和用途说明。
 
 **Phase 4 — 教学输出格式：**
@@ -125,7 +190,6 @@ lookup_sql_schema("<table_or_view_name>")
 **Phase 5 — 时间线可视化（可选）：**
 
 当你完成管线教学内容后，如果已检测到管线类型并获取了关键 Slice 列表，调用以下 skill 将关键 Slice 高亮为 Perfetto 时间线 overlay，帮助用户对照理论管线图与实际 trace。这个 overlay 结果应进入 observed-flow 语义：命中的 slice 是事实，未命中的 slice 是 warning，不是静态模板事实。
-
 
 
 注意：`slice_names` 参数使用 SQL IN 列表格式，每个名称用单引号包裹、逗号分隔。从管线教学的 `key_slices` 列表中提取名称。
