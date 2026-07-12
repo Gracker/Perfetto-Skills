@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/camera_trace_evidence.skill.yaml
 -- Source SHA-256: e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b
--- Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+-- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
 
 WITH
 raw_input AS (

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/android_view_multi_window.md
 Source SHA-256: bfb417fa192590e629e5fc5715721dd5c3bcc10bf85feb9a74a4981394bf2c91
-Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
 
 # Multi-Window AOSP Rendering Pipeline (Dual Source)
 

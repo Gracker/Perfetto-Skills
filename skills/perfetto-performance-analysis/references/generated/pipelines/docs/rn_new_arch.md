@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/rn_new_arch.md
 Source SHA-256: 4a6877e442821b1e77fe57ceb57e91d2300f339d836957cc4e7438de28368c52
-Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
 
 # React Native New Arch (Fabric + JSI) 渲染管线
 

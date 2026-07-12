@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/startup_detail.skill.yaml
 -- Source SHA-256: 27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6
--- Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+-- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
 
 WITH main_thread AS (
   SELECT t.utid, t.tid, p.pid

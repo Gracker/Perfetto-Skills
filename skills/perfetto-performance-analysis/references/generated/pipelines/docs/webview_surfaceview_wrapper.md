@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/webview_surfaceview_wrapper.md
 Source SHA-256: 607c29afa34c961d6100b29e22c6ee264288d82c740047559d2239ffbc4ef8c6
-Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
 
 # WebView SurfaceView Wrapper Pipeline (App-Side / Video)
 

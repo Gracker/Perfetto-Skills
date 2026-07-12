@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/surface_control_api.md
 Source SHA-256: ad1e6a842dc59846a05fb8ee72af825a374ff4e8b6887c970dc4b7e7367cf3a4
-Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
 
 # SurfaceControl API Deep Dive (NDK)
 

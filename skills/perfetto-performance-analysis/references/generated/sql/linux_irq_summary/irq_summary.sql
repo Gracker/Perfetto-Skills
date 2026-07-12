@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/linux_irq_summary.skill.yaml
 -- Source SHA-256: 5ed6c6bb88f94df602ca5a751e53d30bec9514dcbff8bb6ece838bfcb963369d
--- Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+-- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
 
 SELECT
   name,

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/game_engine.md
 Source SHA-256: 4a6f0989041b83f58d9f45539db26bc1c571160e9410b22712e8c845aa370425
-Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
 
 # Game Engine Rendering Pipeline (Unity / Unreal)
 
