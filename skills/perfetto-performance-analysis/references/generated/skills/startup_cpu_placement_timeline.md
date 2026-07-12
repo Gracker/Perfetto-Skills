@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_cpu_placement_timeline.skill.yaml
 Source SHA-256: 2697e8f8785a219d21dc73847d18ecba03b50728a78f3eab6721dfebee25ff4b
-Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 # 启动摆核时序分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

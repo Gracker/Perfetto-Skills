@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_detail.skill.yaml
 -- Source SHA-256: 3bf411e6c0f6db9de2434fb0ad420cb0a0140388c5968306f5ad569b3ff0c3e7
--- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+-- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 SELECT
   '${event_type}' as event_type,

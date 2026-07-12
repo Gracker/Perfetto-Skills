@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/power_module.skill.yaml
 -- Source SHA-256: c78783057846e5a5481c15de86a5cfb018687fc79c03c89f11364a34bf005634
--- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+-- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 SELECT
   ct.name AS counter_name,

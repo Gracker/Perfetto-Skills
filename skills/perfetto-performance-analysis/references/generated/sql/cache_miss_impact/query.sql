@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cache_miss_impact.skill.yaml
 -- Source SHA-256: f98a68d85159deab48eb38133d87b1e7a9fc61e91b4b659e2210997d60da51b1
--- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+-- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 WITH raw AS (
   SELECT

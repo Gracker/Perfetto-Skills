@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/video_overlay_hwc.md
 Source SHA-256: e9d60b8620654517016898fcd06a2578cefe63872a8f34b18bb41bdcef6a3e45
-Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 # Video Overlay Pipeline (MediaCodec direct to HWC)
 

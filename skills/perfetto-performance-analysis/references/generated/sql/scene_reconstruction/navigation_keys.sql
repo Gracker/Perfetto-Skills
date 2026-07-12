@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scene_reconstruction.skill.yaml
 -- Source SHA-256: ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978
--- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+-- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 -- Pair DOWN → nearest UP per key_code using ROW_NUMBER for strict matching.
 -- Handles repeats/double-taps by assigning each DOWN its own ordinal.

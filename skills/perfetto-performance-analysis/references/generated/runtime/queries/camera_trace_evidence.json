@@ -54,14 +54,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/camera_trace_evidence/evidence_coverage.sql",
-      "sha256": "c789ff0fb8f31149dc4fb5f524733343842df1d736a69fe3e3e98b49aedc908d",
-      "signal_patterns": [],
+      "sha256": "bbb657d395dcab4a1bdfe42959c4f0554725cd1355e141258d84665d6246fc03",
+      "signal_patterns": [
+        "mem.ion_change*"
+      ],
       "skill_id": "camera_trace_evidence",
       "source": {
-        "commit": "4489476e5b45a868fbf4bdbf0f10e466870f59bf",
+        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
         "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+        "sha256": "d2f99680715212f30bafe86e1323d04cb469e5582ac89cad1e8c7b48f92e9c2e"
       },
       "sql_dependencies": {
         "creates": [],
@@ -155,14 +157,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/camera_trace_evidence/camera_process_candidates.sql",
-      "sha256": "9a2ebfd95b6c7f1df9a531aaba173b4ce39c2ff947c0e3b39392a63618f8cefd",
+      "sha256": "17e73d0571ab3aa347fd7953bb3a9497566636298f6c6462e4b50323b95f7d64",
       "signal_patterns": [],
       "skill_id": "camera_trace_evidence",
       "source": {
-        "commit": "4489476e5b45a868fbf4bdbf0f10e466870f59bf",
+        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
         "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+        "sha256": "d2f99680715212f30bafe86e1323d04cb469e5582ac89cad1e8c7b48f92e9c2e"
       },
       "sql_dependencies": {
         "creates": [],
@@ -256,14 +258,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/camera_trace_evidence/camera_slice_candidates.sql",
-      "sha256": "b63799bab1f1004e764ae09cc48ef5312d082de68fd5713e783d5702e9d06d46",
+      "sha256": "d3775b0f916b13eee3df6e879439f9b226061161e8729eec6f429f1d5d66b46a",
       "signal_patterns": [],
       "skill_id": "camera_trace_evidence",
       "source": {
-        "commit": "4489476e5b45a868fbf4bdbf0f10e466870f59bf",
+        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
         "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+        "sha256": "d2f99680715212f30bafe86e1323d04cb469e5582ac89cad1e8c7b48f92e9c2e"
       },
       "sql_dependencies": {
         "creates": [],
@@ -357,14 +359,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/camera_trace_evidence/camera_binder_summary.sql",
-      "sha256": "1b9a52949a7bdd0b2cc0f9578260ae83bdd0b079d08a2b2aa0b1564847fa692c",
+      "sha256": "cd16b97b1fd4453e91e2b2e85fbb01e54b639d522a3e52d7fd9585154afd5c71",
       "signal_patterns": [],
       "skill_id": "camera_trace_evidence",
       "source": {
-        "commit": "4489476e5b45a868fbf4bdbf0f10e466870f59bf",
+        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
         "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+        "sha256": "d2f99680715212f30bafe86e1323d04cb469e5582ac89cad1e8c7b48f92e9c2e"
       },
       "sql_dependencies": {
         "creates": [],
@@ -458,14 +460,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/camera_trace_evidence/camera_dmabuf_summary.sql",
-      "sha256": "b1613f34d7ae798a8766d57670282c00b28de5e4f3c5fda30b7f60ad2b216f36",
-      "signal_patterns": [],
+      "sha256": "bd0c8f7df0f9d572cd4811aeeb3add8e995e4d0dd44b5f6b49ee985b001244a3",
+      "signal_patterns": [
+        "mem.ion_change*"
+      ],
       "skill_id": "camera_trace_evidence",
       "source": {
-        "commit": "4489476e5b45a868fbf4bdbf0f10e466870f59bf",
+        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
         "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+        "sha256": "d2f99680715212f30bafe86e1323d04cb469e5582ac89cad1e8c7b48f92e9c2e"
       },
       "sql_dependencies": {
         "creates": [],
@@ -559,14 +563,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/camera_trace_evidence/pixel_camera_stage_summary.sql",
-      "sha256": "eacf2a5d1b7d8dd185651b61a1e449bb7e1805005b23ec508ae4fbdcdd7aa964",
+      "sha256": "0f95b677d13b88c38df521fe68eb9d0d19c06dbdc87fefe4e50a8718e73efbe2",
       "signal_patterns": [],
       "skill_id": "camera_trace_evidence",
       "source": {
-        "commit": "4489476e5b45a868fbf4bdbf0f10e466870f59bf",
+        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
         "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+        "sha256": "d2f99680715212f30bafe86e1323d04cb469e5582ac89cad1e8c7b48f92e9c2e"
       },
       "sql_dependencies": {
         "creates": [],

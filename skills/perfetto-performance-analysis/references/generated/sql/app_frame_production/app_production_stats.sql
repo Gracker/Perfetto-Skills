@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/app_frame_production.skill.yaml
 -- Source SHA-256: c8e21c57ef149119c22d8a07d0dd4abed6c9b41b2a7542f8ed748adadb10621b
--- Source commit: 4489476e5b45a868fbf4bdbf0f10e466870f59bf
+-- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
 
 WITH
 time_bounds AS (
