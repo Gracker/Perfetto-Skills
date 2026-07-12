@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/flutter_architecture.md
 Source SHA-256: 6c084e59b05bd7767af0bc2085bfabb1adf298c153698d723510417dad5211f2
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
 
 # Flutter Rendering Architecture (Index)
 
