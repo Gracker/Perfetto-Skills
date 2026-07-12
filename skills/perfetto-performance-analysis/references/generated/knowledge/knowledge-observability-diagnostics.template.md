@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-observability-diagnostics.template.md
 Source SHA-256: 3493c6dce3f2cb2399f1c75f3147768c329cdf69f7821e3c410f0da73e0c972f
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
 
 # Knowledge Observability Diagnostics Template
 

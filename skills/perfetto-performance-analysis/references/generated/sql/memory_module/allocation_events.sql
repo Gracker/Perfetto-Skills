@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/memory_module.skill.yaml
 -- Source SHA-256: 4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
 
 SELECT
   s.name AS alloc_event,

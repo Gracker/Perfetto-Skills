@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/imagereader_pipeline.md
 Source SHA-256: c9b4c249658b73efc4d8dea1f47f3b764a54b63bb581efc03d4ec6a9fe785cb9
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
 
 # ImageReader Pipeline
 

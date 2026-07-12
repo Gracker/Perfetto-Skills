@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/frame_pipeline_variance.skill.yaml
 -- Source SHA-256: 950462b8e2b44ec13d3e9173fa31326ad38fd20335c64190a8a35c9111e9af9c
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
 
 WITH frames AS (
   SELECT

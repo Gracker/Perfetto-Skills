@@ -50,7 +50,7 @@
       "destination": "references/generated/pipelines/docs/camera_pipeline.md",
       "disposition": "exported",
       "source_path": "docs/rendering_pipelines/camera_pipeline.md",
-      "source_sha256": "10efdf3cd4712aadb3f5f87aaa07eab7aa441c1a6a384b07ddccde4e415c2096"
+      "source_sha256": "6ecf269c18739aa38a737d882b30482f97bd48c8cd9060cf344fea5e08b62337"
     },
     {
       "destination": "references/generated/pipelines/docs/chrome_browser_viz.md",
@@ -598,6 +598,18 @@
       "tier": "S",
       "version": "3.0",
       "workflow": "trace-overview"
+    },
+    {
+      "category": "rendering",
+      "destination": "references/generated/skills/camera_trace_evidence.md",
+      "disposition": "exported",
+      "name": "camera_trace_evidence",
+      "runtime_type": "composite",
+      "source_path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
+      "source_sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b",
+      "tier": "B",
+      "version": "1.0",
+      "workflow": "rendering-pipeline"
     },
     {
       "category": "framework",
@@ -1673,7 +1685,7 @@
       "name": "pipeline_4feature_scoring",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/pipeline_4feature_scoring.skill.yaml",
-      "source_sha256": "510fbb63523a223a8d40f61f49a3090fc0b9dcc00bebf3a319e94aaf6506408a",
+      "source_sha256": "1e79317b0855a512d32bbad13dab94931b70017b7cf9f585ab505151c272ea3a",
       "tier": "B",
       "version": "1.0",
       "workflow": "rendering-pipeline"
@@ -1696,7 +1708,7 @@
       "name": "pipeline_android_view_mixed",
       "runtime_type": "pipeline_definition",
       "source_path": "backend/skills/pipelines/android_view_mixed.skill.yaml",
-      "source_sha256": "f2d0fd7677db12a85dfdb68f6d477a1641ff04d6d9af90c7129c872a05ed2b97",
+      "source_sha256": "d086d880afa0f8af639222dea376588748a774b0f4d04ea54f8eabef390362ab",
       "version": "1.0",
       "workflow": "rendering-pipeline"
     },
@@ -1762,7 +1774,7 @@
       "name": "pipeline_camera_pipeline",
       "runtime_type": "pipeline_definition",
       "source_path": "backend/skills/pipelines/camera_pipeline.skill.yaml",
-      "source_sha256": "479ed093fa26fc6b133ceba6ba4af413e76bb97701a20becb96ed562ee5adfeb",
+      "source_sha256": "55ab9f0f50c5deaffb9d814b65ad0cd7466569d27d66aaa17188f4c9ed38f250",
       "version": "1.0",
       "workflow": "rendering-pipeline"
     },
@@ -1939,7 +1951,7 @@
       "name": "pipeline_surfaceview_blast",
       "runtime_type": "pipeline_definition",
       "source_path": "backend/skills/pipelines/surfaceview_blast.skill.yaml",
-      "source_sha256": "aa6456ffba0a474f20b71fd1efdc7a7021979e41d44215ca71ba3ce31f40a489",
+      "source_sha256": "6f75d6b4ac8b5c26e7e59c18854de7a773a30341f10dfa2763c4bf5673139bb6",
       "version": "1.0",
       "workflow": "rendering-pipeline"
     },
@@ -2911,10 +2923,10 @@
     }
   ],
   "source": {
-    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "commit": "185f0ffb7335de511f608acc42f5752a0f6d7c1e",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "31510a58d440771c6ba5ead6622979520dedfba466a857a14cb1b6bf1d80b32b",
+    "policy_sha256": "61b0ed34ce3420adb520c9a0897f0bec6b374376abfc249858d84e314ad2dc6a",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3384,15 +3396,15 @@
     "exported_strategy_sources": 50,
     "pipeline_docs": 32,
     "product_only_strategy_sources": 15,
-    "runtime_candidates": 230,
+    "runtime_candidates": 231,
     "runtime_types": {
       "atomic": 119,
       "comparison": 1,
-      "composite": 77,
+      "composite": 78,
       "deep": 2,
       "pipeline_definition": 31
     },
-    "skill_yaml_files": 235,
+    "skill_yaml_files": 236,
     "sql_fragments": 3,
     "strategy_sources": 65,
     "vendor_overrides": 8

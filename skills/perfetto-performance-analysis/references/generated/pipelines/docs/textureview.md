@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/textureview.md
 Source SHA-256: a12c8642a232c3ddd2738804aaa855935643cd196f3370040a51ed2de2af08f4
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
 
 # TextureView Rendering Pipeline (App-side Composition)
 

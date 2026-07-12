@@ -1,0 +1,612 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "camera_trace_evidence/evidence_coverage",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/camera_trace_evidence/evidence_coverage.sql",
+      "sha256": "90e0a4da758c4019c1d3137cca65f411ad9cda19e74213f4e58172d1fa81911c",
+      "signal_patterns": [],
+      "skill_id": "camera_trace_evidence",
+      "source": {
+        "commit": "185f0ffb7335de511f608acc42f5752a0f6d7c1e",
+        "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "slices.with_context",
+          "android.binder",
+          "android.frames.timeline",
+          "android.memory.dmabuf",
+          "linux.cpu.frequency",
+          "pixel.camera"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "evidence_coverage",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "max_rows",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "camera_trace_evidence/camera_process_candidates",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/camera_trace_evidence/camera_process_candidates.sql",
+      "sha256": "820a760cd42eea71e7ce8589f2d0f7c82f1056240028b0685e3000f2507a4cfe",
+      "signal_patterns": [],
+      "skill_id": "camera_trace_evidence",
+      "source": {
+        "commit": "185f0ffb7335de511f608acc42f5752a0f6d7c1e",
+        "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "slices.with_context",
+          "android.binder",
+          "android.frames.timeline",
+          "android.memory.dmabuf",
+          "linux.cpu.frequency",
+          "pixel.camera"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "camera_process_candidates",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "max_rows",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "camera_trace_evidence/camera_slice_candidates",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/camera_trace_evidence/camera_slice_candidates.sql",
+      "sha256": "f8d5df0d0adb53995d622729bee5805ac5565f7fb9b04116a9aa8829448d2379",
+      "signal_patterns": [],
+      "skill_id": "camera_trace_evidence",
+      "source": {
+        "commit": "185f0ffb7335de511f608acc42f5752a0f6d7c1e",
+        "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "slices.with_context",
+          "android.binder",
+          "android.frames.timeline",
+          "android.memory.dmabuf",
+          "linux.cpu.frequency",
+          "pixel.camera"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "camera_slice_candidates",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "max_rows",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "camera_trace_evidence/camera_binder_summary",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/camera_trace_evidence/camera_binder_summary.sql",
+      "sha256": "d2d53ccb5db3bb290f80343ad5152a9c275437494add8e5d7fab75cce68daecd",
+      "signal_patterns": [],
+      "skill_id": "camera_trace_evidence",
+      "source": {
+        "commit": "185f0ffb7335de511f608acc42f5752a0f6d7c1e",
+        "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "slices.with_context",
+          "android.binder",
+          "android.frames.timeline",
+          "android.memory.dmabuf",
+          "linux.cpu.frequency",
+          "pixel.camera"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "camera_binder_summary",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "max_rows",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "camera_trace_evidence/camera_dmabuf_summary",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/camera_trace_evidence/camera_dmabuf_summary.sql",
+      "sha256": "2fe713fc0d585a475b144bc680d19ef6f5bb0e69bf2388ebbf017c6e92e3879d",
+      "signal_patterns": [],
+      "skill_id": "camera_trace_evidence",
+      "source": {
+        "commit": "185f0ffb7335de511f608acc42f5752a0f6d7c1e",
+        "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "slices.with_context",
+          "android.binder",
+          "android.frames.timeline",
+          "android.memory.dmabuf",
+          "linux.cpu.frequency",
+          "pixel.camera"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "camera_dmabuf_summary",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "max_rows",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "camera_trace_evidence/pixel_camera_stage_summary",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/camera_trace_evidence/pixel_camera_stage_summary.sql",
+      "sha256": "ecf9653255aef934528f2769d0e4e8537f15e4b81cee8f5f3328a7024d55b499",
+      "signal_patterns": [],
+      "skill_id": "camera_trace_evidence",
+      "source": {
+        "commit": "185f0ffb7335de511f608acc42f5752a0f6d7c1e",
+        "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "slices.with_context",
+          "android.binder",
+          "android.frames.timeline",
+          "android.memory.dmabuf",
+          "linux.cpu.frequency",
+          "pixel.camera"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "pixel_camera_stage_summary",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "max_rows",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "camera_trace_evidence"
+}

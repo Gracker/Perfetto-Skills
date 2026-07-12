@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/android_view_standard.md
 Source SHA-256: 49561400c28af5db8af264f129ce0bac36fbd133704b5caeea7a1e4cb00718ed
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
 
 # Standard AOSP Rendering Pipeline (Deep Dive: BLAST)
 

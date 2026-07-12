@@ -1,0 +1,54 @@
+-- GENERATED FILE - DO NOT EDIT.
+-- Source: backend/skills/composite/camera_trace_evidence.skill.yaml
+-- Source SHA-256: e04e0e2abc55ba999b714a2c10b4ef880e1770e26691a3ea05fa412cf78ec05b
+-- Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
+
+WITH
+raw_input AS (
+  SELECT
+    COALESCE(${start_ts}, trace_start()) AS raw_start_ts,
+    COALESCE(${end_ts}, trace_end()) AS raw_end_ts,
+    MIN(MAX(COALESCE(${max_rows|20}, 20), 1), 100) AS max_rows
+),
+input AS (
+  SELECT
+    MIN(raw_start_ts, raw_end_ts) AS start_ts,
+    MAX(raw_start_ts, raw_end_ts) AS end_ts,
+    max_rows
+  FROM raw_input
+),
+candidates AS (
+  SELECT
+    MAX(ts, input.start_ts) AS overlap_ts,
+    MIN(ts + IIF(dur = -1, trace_end() - ts, dur), input.end_ts)
+      - MAX(ts, input.start_ts) AS overlap_dur,
+    COALESCE(name, '<unnamed slice>') AS slice_name,
+    COALESCE(process_name, '<unnamed process>') AS process_name,
+    COALESCE(thread_name, '<unnamed thread>') AS thread_name,
+    upid,
+    utid
+  FROM thread_slice, input
+  WHERE ts < input.end_ts
+    AND ts + IIF(dur = -1, trace_end() - ts, dur) > input.start_ts
+    AND (
+      lower(COALESCE(name, '')) GLOB '*camera*'
+      OR lower(COALESCE(name, '')) GLOB '*camx*'
+      OR lower(COALESCE(name, '')) GLOB '*mtkcam*'
+      OR lower(COALESCE(name, '')) GLOB '*capture*'
+      OR lower(COALESCE(name, '')) GLOB '*preview*'
+    )
+)
+SELECT
+  printf('%d', overlap_ts) AS ts,
+  printf('%d', overlap_dur) AS dur_ns,
+  slice_name,
+  process_name,
+  thread_name,
+  upid,
+  utid,
+  'thread_slice' AS source,
+  'Slice names are implementation-specific candidates and require identity/anchor verification.' AS limitation
+FROM candidates, input
+WHERE overlap_dur > 0
+ORDER BY overlap_dur DESC
+LIMIT (SELECT max_rows FROM input)

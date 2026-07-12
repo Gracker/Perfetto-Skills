@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_thread_blocking_graph.skill.yaml
 -- Source SHA-256: efc99dd7288f62ffa136feb19c852594d545620e9a17523b1070b71f14041d67
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
 
 WITH process_threads AS (
   SELECT

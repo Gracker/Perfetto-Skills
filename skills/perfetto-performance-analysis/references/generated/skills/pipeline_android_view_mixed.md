@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_mixed.skill.yaml
-Source SHA-256: f2d0fd7677db12a85dfdb68f6d477a1641ff04d6d9af90c7129c872a05ed2b97
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: d086d880afa0f8af639222dea376588748a774b0f4d04ea54f8eabef390362ab
+Source commit: 185f0ffb7335de511f608acc42f5752a0f6d7c1e
 # Android View 混合渲染
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -38,7 +38,7 @@ four_features:
   bufferqueue_path: BBQ_TRANSACTION_INPROC + INDEPENDENT_LAYER
   extra_rhythm_sources:
   - video_codec_pacing
-  - camera_sensor_trigger
+  - camera_request_activity
 deviation_anchors: multi_path_anchor_4_5_6_8
 subvariants_note: '文章 S05 区分 3 个子变种：
 
