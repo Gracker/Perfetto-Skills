@@ -46,8 +46,8 @@ class ExporterTest(unittest.TestCase):
             check=True,
         )
         catalog = self.load_catalog()
-        self.assertEqual(catalog["summary"]["skill_yaml_files"], 235)
-        self.assertEqual(catalog["summary"]["runtime_candidates"], 230)
+        self.assertEqual(catalog["summary"]["skill_yaml_files"], 236)
+        self.assertEqual(catalog["summary"]["runtime_candidates"], 231)
         self.assertEqual(catalog["summary"]["excluded_skill_definitions"], 5)
         self.assertEqual(catalog["summary"]["runtime_candidates"], len(catalog["skills"]))
         self.assertTrue(
