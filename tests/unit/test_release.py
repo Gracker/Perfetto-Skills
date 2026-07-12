@@ -126,6 +126,15 @@ class ReleaseTest(unittest.TestCase):
             )
             self.assertEqual(source_checkout["with"]["submodules"], "recursive")
 
+            release_fetch = next(
+                step
+                for step in workflow["jobs"]["verify"]["steps"]
+                if step.get("name") == "Fetch pinned official Perfetto release"
+            )
+            self.assertEqual(release_fetch["working-directory"], "SmartPerfetto/perfetto")
+            self.assertIn('catalog["official_perfetto"]', release_fetch["run"])
+            self.assertIn('refs/tags/${tag}:refs/tags/${tag}', release_fetch["run"])
+
 
 if __name__ == "__main__":
     unittest.main()

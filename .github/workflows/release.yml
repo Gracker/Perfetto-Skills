@@ -31,6 +31,13 @@ jobs:
           path: SmartPerfetto
           persist-credentials: false
           submodules: "recursive"
+      - name: Fetch pinned official Perfetto release
+        working-directory: SmartPerfetto/perfetto
+        shell: bash
+        run: |
+          repository="$(python3 -c 'import json; catalog=json.load(open("../../Perfetto-Skills/catalog/smartperfetto-export.json")); print(catalog["official_perfetto"]["repository"])')"
+          tag="$(python3 -c 'import json; catalog=json.load(open("../../Perfetto-Skills/catalog/smartperfetto-export.json")); print(catalog["official_perfetto"]["tag"])')"
+          git fetch --depth=1 "$repository" "refs/tags/${tag}:refs/tags/${tag}"
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
