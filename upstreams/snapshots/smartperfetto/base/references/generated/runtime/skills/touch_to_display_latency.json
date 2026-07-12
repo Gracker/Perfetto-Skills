@@ -1,0 +1,71 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "android_input_source",
+        "selection": "data-source descriptor, build type, config, then rows",
+        "version_hint": {
+          "proto_input_min_api_hint": 34
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*"
+    ]
+  },
+  "id": "touch_to_display_latency",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "输入事件类型过滤（如 MOTION/KEY）",
+      "name": "event_type",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.input"
+    ],
+    "required_tables": []
+  },
+  "query_id": "touch_to_display_latency/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/touch_to_display_latency.skill.yaml",
+    "sha256": "1eae013ffdaba631ee4959847e00cae0c4786b003c28a3a01975e8592b873da3"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "2.0",
+  "workflow": "interaction"
+}

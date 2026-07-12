@@ -1,0 +1,124 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "process_identity_resolver/root",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/process_identity_resolver/query.sql",
+      "sha256": "10ca1ff13e9e1aa6cc88a9f4e8772871cfd1df17063b41859bfe9e7d6f67a2ad",
+      "signal_patterns": [
+        "/apex/*",
+        "/odm/bin/*",
+        "/system/bin/*",
+        "/system_ext/bin/*",
+        "/vendor/bin/*",
+        "Cr*Main",
+        "[0-9]*.raster",
+        "[0-9]*.ui",
+        "battery_stats.top",
+        "com.android.inputmethod*",
+        "com.android.launcher*",
+        "com.android.systemui*",
+        "com.google.android.apps.nexuslauncher*",
+        "com.google.android.inputmethod*",
+        "com.huawei.android.launcher*",
+        "com.miui.home*",
+        "com.oppo.launcher*",
+        "com.sec.android.app.launcher*",
+        "com.vivo.launcher*"
+      ],
+      "skill_id": "process_identity_resolver",
+      "source": {
+        "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+        "path": "backend/skills/atomic/process_identity_resolver.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "0825f2ccd3b390e08777718e3eab70f65d0c162625007baded0f9cc0093a8500"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.process_metadata",
+          "android.frames.timeline",
+          "android.oom_adjuster",
+          "android.battery_stats"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "root",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "max_rows",
+          "package",
+          "pid",
+          "process_name",
+          "start_ts",
+          "thread_name",
+          "upid"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "process_identity_resolver"
+}

@@ -4,7 +4,7 @@
 
 **Goal:** Separate SmartPerfetto import, Google official Skill gap checking, PerfettoSQL substrate synchronization, and local SQL development into explicit pinned workflows that preserve local fixes.
 
-**Architecture:** Machine-readable locks describe each upstream. A generated-file base manifest records SmartPerfetto output hashes; local overlays carry expected base hashes and full replacement content. Sync tools write temporary reports by default and update locks/snapshots only with `--apply`; ordinary compile and tests use committed inputs.
+**Architecture:** Machine-readable locks describe each upstream. A separate committed immutable SmartPerfetto base tree plus a path/hash manifest preserves reconstructable upstream content. Local overlays carry expected base hashes and full replacement content; the compiler materializes final generated output into a different tree. Sync tools write temporary reports by default and update locks/snapshots only with `--apply`.
 
 **Tech Stack:** Python 3.11 standard library plus development PyYAML, JSON, SHA-256, Git, PerfettoSQL, Python `unittest`, GitHub Actions.
 
@@ -25,6 +25,7 @@
 - Create: `upstreams/smartperfetto.lock.json`
 - Create: `upstreams/google-perfetto.lock.json`
 - Create: `upstreams/snapshots/smartperfetto/generated-base.json`
+- Create: `upstreams/snapshots/smartperfetto/base/` (complete imported base)
 - Create: `tools/upstream_locks.py`
 - Create: `tests/unit/test_upstream_locks.py`
 
@@ -34,7 +35,10 @@
 
 - [ ] **Step 1: Write failing lock tests**
 
-Require immutable 40-hex commits, HTTPS GitHub repository identities, v57.2 tag/commit/RPC/tree values, official Skill `gap_check_only`, unique generated paths, and current-file hashes matching the base manifest.
+Require immutable 40-hex commits, HTTPS GitHub repository identities, v57.2
+tag/commit/RPC/tree values, official Skill `gap_check_only`, unique generated
+paths, every manifest hash matching the separate base tree, and a zero-overlay
+compile matching current generated output.
 
 - [ ] **Step 2: Run tests and verify they fail**
 
@@ -44,7 +48,9 @@ Expected: FAIL because locks/module do not exist.
 
 - [ ] **Step 3: Implement lock validation and base manifest generation**
 
-The base manifest maps each generated relative path to `{sha256, source_kind, source_commit}`. Sort all keys and use deterministic JSON serialization.
+The base manifest maps each base-tree relative path to `{sha256, source_kind,
+source_commit}`. Sort all keys and use deterministic JSON serialization. The
+base tree stores the complete imported bytes and is never the compiler output.
 
 - [ ] **Step 4: Seed locks from current verified v0.2 state**
 
@@ -99,7 +105,10 @@ Import into a temporary directory, compare against the committed base manifest, 
 
 - [ ] **Step 6: Implement deterministic local compiler**
 
-Compiler inputs are current imported generated assets, base manifest, `src/` native assets, and overlays. It validates expected hashes, writes a temporary final tree, then checks or atomically applies it.
+Compiler inputs are the separate committed immutable base tree, base manifest,
+`src/` native assets, and overlays. It validates expected hashes, writes a
+temporary final tree, then checks or atomically applies it. It never reads the
+current final generated tree as base and never mutates the base tree.
 
 - [ ] **Step 7: Run sync/compiler tests and current export check**
 

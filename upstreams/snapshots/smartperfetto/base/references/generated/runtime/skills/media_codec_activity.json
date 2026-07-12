@@ -1,0 +1,99 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*C2*",
+      "*CCodec*",
+      "*Codec2*",
+      "*MediaCodec*",
+      "*OMX*",
+      "*dequeueInputBuffer*",
+      "*dequeueOutputBuffer*",
+      "*queueInputBuffer*",
+      "*releaseOutputBuffer*"
+    ]
+  },
+  "id": "media_codec_activity",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；当 package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "慢 codec 事件阈值(ms)，默认 8",
+      "name": "slow_threshold_ms",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "slices.with_context"
+    ],
+    "required_tables": [
+      "slice",
+      "thread_track",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/media_codec_activity.skill.yaml",
+    "sha256": "f9785c4a5b759aab3f1efe3c1d4faede153488cd9f89592428318f926cda0bbb"
+  },
+  "steps": [
+    {
+      "id": "codec_activity_summary",
+      "name": "Codec 活动汇总",
+      "query_id": "media_codec_activity/codec_activity_summary",
+      "result_dependencies": [],
+      "save_as": "codec_activity_summary",
+      "type": "atomic"
+    },
+    {
+      "id": "slow_codec_events",
+      "name": "慢 Codec 事件",
+      "query_id": "media_codec_activity/slow_codec_events",
+      "result_dependencies": [],
+      "save_as": "slow_codec_events",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "io-network-media"
+}

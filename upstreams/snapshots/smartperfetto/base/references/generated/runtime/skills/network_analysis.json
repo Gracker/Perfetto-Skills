@@ -1,0 +1,298 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*Connect*",
+      "*DNS*",
+      "*Http*",
+      "*Network*",
+      "*Socket*",
+      "*connect*",
+      "*dns*",
+      "*http*",
+      "*network*",
+      "*socket*"
+    ]
+  },
+  "id": "network_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选，留空分析所有流量）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "网络接口过滤（wlan0, rmnet_data0 等）",
+      "name": "interface",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳（纳秒，可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳（纳秒，可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 100,
+      "description": "大流量严重阈值（MB）",
+      "name": "heavy_traffic_critical_mb",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10,
+      "description": "大流量警告阈值（MB）",
+      "name": "heavy_traffic_warning_mb",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 20,
+      "description": "频繁网络活跃周期阈值（次数）",
+      "name": "frequent_active_periods",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.network_packets"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/network_analysis.skill.yaml",
+    "sha256": "2608305b18a6513dfcc208dc9b7094457f4b581a131e6abecd7116b127802254"
+  },
+  "steps": [
+    {
+      "id": "check_network_data",
+      "name": "检查网络数据",
+      "optional": true,
+      "query_id": "network_analysis/check_network_data",
+      "result_dependencies": [],
+      "save_as": "network_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'unavailable'",
+      "id": "check_network_slices",
+      "name": "检查网络 Slice 数据",
+      "query_id": "network_analysis/check_network_slices",
+      "result_dependencies": [],
+      "save_as": "network_slice_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'available'",
+      "id": "evidence_scope",
+      "name": "证据范围说明",
+      "optional": true,
+      "query_id": "network_analysis/evidence_scope",
+      "result_dependencies": [],
+      "save_as": "evidence_scope",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'available'",
+      "id": "network_overview",
+      "name": "网络流量概览",
+      "optional": true,
+      "query_id": "network_analysis/network_overview",
+      "result_dependencies": [],
+      "save_as": "network_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'available'",
+      "id": "traffic_by_interface",
+      "name": "按接口流量分布",
+      "optional": true,
+      "query_id": "network_analysis/traffic_by_interface",
+      "result_dependencies": [],
+      "save_as": "traffic_by_interface",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'available'",
+      "id": "app_traffic_ranking",
+      "name": "应用流量排行",
+      "optional": true,
+      "query_id": "network_analysis/app_traffic_ranking",
+      "result_dependencies": [],
+      "save_as": "app_traffic_ranking",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'available'",
+      "id": "transport_distribution",
+      "name": "传输协议分布",
+      "optional": true,
+      "query_id": "network_analysis/transport_distribution",
+      "result_dependencies": [],
+      "save_as": "transport_distribution",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'available'",
+      "id": "port_analysis",
+      "name": "端口使用分析",
+      "optional": true,
+      "query_id": "network_analysis/port_analysis",
+      "result_dependencies": [],
+      "save_as": "port_analysis",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'available'",
+      "id": "traffic_timeline",
+      "name": "流量时间分布",
+      "optional": true,
+      "query_id": "network_analysis/traffic_timeline",
+      "result_dependencies": [],
+      "save_as": "traffic_timeline",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'available'",
+      "id": "large_transfers",
+      "name": "大流量传输事件",
+      "optional": true,
+      "query_id": "network_analysis/large_transfers",
+      "result_dependencies": [],
+      "save_as": "large_transfers",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'available'",
+      "id": "network_power_cost",
+      "name": "网络功耗影响",
+      "optional": true,
+      "query_id": "network_analysis/network_power_cost",
+      "result_dependencies": [],
+      "save_as": "network_power_cost",
+      "type": "atomic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'unavailable' && network_slice_check.data[0]?.status === 'available'",
+      "id": "network_slice_overview",
+      "name": "网络相关 Slice 概览",
+      "query_id": "network_analysis/network_slice_overview",
+      "result_dependencies": [],
+      "save_as": "network_slice_overview",
+      "type": "atomic"
+    },
+    {
+      "id": "network_diagnosis",
+      "inputs": [
+        "network_overview",
+        "app_traffic_ranking",
+        "transport_distribution",
+        "large_transfers",
+        "network_power_cost"
+      ],
+      "name": "网络诊断",
+      "rules": [
+        {
+          "condition": "network_overview.data[0]?.total_mb > ${heavy_traffic_critical_mb|100}",
+          "confidence": "high",
+          "diagnosis": "NETWORK_HEAVY - 网络流量过大 (${network_overview.data[0].total_mb} MB)",
+          "severity": "critical",
+          "suggestions": [
+            "检查是否有不必要的大文件下载",
+            "考虑使用压缩传输和增量更新",
+            "检查图片/视频资源是否过大"
+          ]
+        },
+        {
+          "condition": "network_overview.data[0]?.total_mb > ${heavy_traffic_warning_mb|10}",
+          "confidence": "medium",
+          "diagnosis": "NETWORK_HEAVY - 网络流量较大 (${network_overview.data[0].total_mb} MB)",
+          "severity": "warning",
+          "suggestions": [
+            "检查流量来源应用",
+            "考虑优化资源加载策略"
+          ]
+        },
+        {
+          "condition": "network_power_cost.data[0]?.active_periods > network_overview.data[0]?.total_mb * 10 && network_power_cost.data[0]?.active_periods > ${frequent_active_periods|20}",
+          "confidence": "medium",
+          "diagnosis": "NETWORK_LATENCY - 频繁小量网络传输，功耗影响大（${network_power_cost.data[0].active_periods} 个活跃周期）",
+          "severity": "warning",
+          "suggestions": [
+            "批量合并网络请求以减少唤醒次数",
+            "使用 JobScheduler 或 WorkManager 延迟非紧急请求",
+            "检查后台定时同步频率"
+          ]
+        },
+        {
+          "condition": "port_analysis.data.find(p => p.service === 'DNS')?.event_count > 100",
+          "confidence": "low",
+          "diagnosis": "NETWORK_DNS_PACKET_ACTIVITY - 远程端口 53 包活动频繁；当前 packet trace 不能直接证明 DNS 阶段耗时或请求延迟",
+          "severity": "warning",
+          "suggestions": [
+            "结合 OkHttp/Cronet DNS 阶段埋点或接入层 request_id 证据确认是否存在 DNS 延迟",
+            "若确认重复解析，再检查 DNS 缓存、预解析和连接复用策略"
+          ]
+        },
+        {
+          "condition": "network_overview.data[0]?.total_mb <= ${heavy_traffic_warning_mb|10}",
+          "confidence": "high",
+          "diagnosis": "NETWORK_NORMAL - 网络流量正常",
+          "severity": "info",
+          "suggestions": [
+            "网络使用在正常范围内"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    },
+    {
+      "condition": "network_check.data[0]?.status === 'unavailable'",
+      "id": "fallback_diagnosis",
+      "inputs": [
+        "network_check",
+        "network_slice_check"
+      ],
+      "name": "Fallback 诊断",
+      "rules": [
+        {
+          "condition": "network_check.data[0]?.status === 'unavailable' && (!network_slice_check.data || network_slice_check.data[0]?.status === 'unavailable')",
+          "confidence": "high",
+          "diagnosis": "未检测到网络数据。Trace 中未包含 android.network_packets 模块数据，也未发现网络相关 Slice。如需分析网络问题，请在录制 Trace 时启用 net 数据源。",
+          "severity": "info",
+          "suggestions": [
+            "录制 Trace 时启用 android.network_packets",
+            "确保已安装 net hook"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "3.0",
+  "workflow": "io-network-media"
+}

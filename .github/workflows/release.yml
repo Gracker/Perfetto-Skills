@@ -16,28 +16,6 @@ jobs:
         with:
           path: Perfetto-Skills
           persist-credentials: false
-      - name: Read pinned SmartPerfetto commit
-        id: source
-        working-directory: Perfetto-Skills
-        shell: bash
-        run: |
-          commit="$(python3 -c 'import json; print(json.load(open("catalog/smartperfetto-export.json"))["source"]["commit"])')"
-          echo "commit=$commit" >> "$GITHUB_OUTPUT"
-      - name: Check out pinned SmartPerfetto source
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-        with:
-          repository: Gracker/SmartPerfetto
-          ref: ${{ steps.source.outputs.commit }}
-          path: SmartPerfetto
-          persist-credentials: false
-          submodules: "recursive"
-      - name: Fetch pinned official Perfetto release
-        working-directory: SmartPerfetto/perfetto
-        shell: bash
-        run: |
-          repository="$(python3 -c 'import json; catalog=json.load(open("../../Perfetto-Skills/catalog/smartperfetto-export.json")); print(catalog["official_perfetto"]["repository"])')"
-          tag="$(python3 -c 'import json; catalog=json.load(open("../../Perfetto-Skills/catalog/smartperfetto-export.json")); print(catalog["official_perfetto"]["tag"])')"
-          git fetch --depth=1 "$repository" "refs/tags/${tag}:refs/tags/${tag}"
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
@@ -48,7 +26,7 @@ jobs:
         working-directory: Perfetto-Skills
         run: |
           uv sync --extra dev
-          uv run python tools/verify.py --smartperfetto ../SmartPerfetto
+          uv run python tools/verify.py
 
   release:
     needs: verify

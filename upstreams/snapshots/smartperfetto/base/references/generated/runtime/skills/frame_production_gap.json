@@ -1,0 +1,103 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${process_name}*",
+      "Choreographer#doFrame%",
+      "DrawFrame%",
+      "RenderThread",
+      "VSYNC-sf",
+      "draw:%"
+    ]
+  },
+  "id": "frame_production_gap",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名",
+      "name": "process_name",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Pipeline ID (Phase F: pipeline-aware optional input)",
+      "name": "pipeline_id",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "最小 gap 阈值（VSync 倍数，默认 1.5）",
+      "name": "min_gap_vsync",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "actual_frame_timeline_slice",
+      "slice",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/frame_production_gap.skill.yaml",
+    "sha256": "f533dbd058eb314ef6dc1c8e1517275fb7432c17d5f0c2e136536a0c9a26acf2"
+  },
+  "steps": [
+    {
+      "id": "gap_summary",
+      "name": "帧 Gap 概览",
+      "query_id": "frame_production_gap/gap_summary",
+      "result_dependencies": [],
+      "save_as": "gap_overview",
+      "type": "atomic"
+    },
+    {
+      "id": "gap_list",
+      "name": "帧 Gap 列表",
+      "query_id": "frame_production_gap/gap_list",
+      "result_dependencies": [],
+      "save_as": "gap_list",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "scrolling"
+}

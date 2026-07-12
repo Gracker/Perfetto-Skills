@@ -1,0 +1,72 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "branches": [
+          "api<=28",
+          "api29-32",
+          "api>=33"
+        ],
+        "id": "official_android_startup_tags",
+        "source": "perfetto stdlib android/startup/startups.sql"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "startup_sched_latency_in_range",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "name": "startup_id",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "name": "startup_type",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.startup.startups"
+    ],
+    "required_tables": []
+  },
+  "query_id": "startup_sched_latency_in_range/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/startup_sched_latency_in_range.skill.yaml",
+    "sha256": "868ae912f8997443ef08fdde6c3ceddbf4fb19eb4eff2517d5aec6048a897e81"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "startup"
+}

@@ -1,0 +1,141 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "branches": [
+          "api<=28",
+          "api29-32",
+          "api>=33"
+        ],
+        "id": "official_android_startup_tags",
+        "source": "perfetto stdlib android/startup/startups.sql"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%Choreographer%doFrame%",
+      "%activityResume%",
+      "%activityStart%",
+      "%bindApplication%"
+    ]
+  },
+  "id": "ams_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target package name",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Launch type: cold, warm, hot",
+      "name": "launch_type",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.startup.startups",
+      "android.startup.time_to_display",
+      "android.broadcasts"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/framework/ams_module.skill.yaml",
+    "sha256": "a39931677061435b7e6004f603fa590fc51196fd1619697154b7f89e5c1510ec"
+  },
+  "steps": [
+    {
+      "id": "startup_timing",
+      "name": "启动时序分析",
+      "query_id": "ams_module/startup_timing",
+      "result_dependencies": [],
+      "save_as": "startup_data",
+      "type": "atomic"
+    },
+    {
+      "id": "startup_phases",
+      "name": "启动阶段分解",
+      "query_id": "ams_module/startup_phases",
+      "result_dependencies": [],
+      "save_as": "phases",
+      "type": "atomic"
+    },
+    {
+      "id": "broadcast_analysis",
+      "name": "广播分析",
+      "query_id": "ams_module/broadcast_analysis",
+      "result_dependencies": [],
+      "save_as": "broadcasts",
+      "type": "atomic"
+    },
+    {
+      "id": "startup_diagnosis",
+      "inputs": [
+        "startup_data",
+        "phases",
+        "broadcasts"
+      ],
+      "name": "启动诊断",
+      "rules": [
+        {
+          "condition": "startup_data.data[0]?.total_ms > 1000 && startup_data.data[0]?.launch_type === 'cold'",
+          "confidence": "high",
+          "diagnosis": "冷启动耗时过长 (${startup_data.data[0]?.total_ms}ms)，超过 1 秒阈值",
+          "evidence_fields": [
+            "startup_data.data[0].total_ms",
+            "startup_data.data[0].launch_type"
+          ],
+          "suggestions": [
+            "检查 Application.onCreate() 耗时",
+            "延迟非必要初始化"
+          ]
+        },
+        {
+          "condition": "startup_data.data[0]?.total_ms > 500 && startup_data.data[0]?.launch_type === 'warm'",
+          "confidence": "medium",
+          "diagnosis": "温启动耗时过长 (${startup_data.data[0]?.total_ms}ms)，超过 500ms 阈值",
+          "evidence_fields": [
+            "startup_data.data[0].total_ms"
+          ],
+          "suggestions": [
+            "检查 Activity.onCreate() 耗时",
+            "优化布局复杂度"
+          ]
+        },
+        {
+          "condition": "broadcasts.data[0]?.dur_ms > 50",
+          "confidence": "medium",
+          "diagnosis": "广播接收器延迟启动 (${broadcasts.data[0]?.broadcast_action} 耗时 ${broadcasts.data[0]?.dur_ms}ms)",
+          "evidence_fields": [
+            "broadcasts.data[0].broadcast_action",
+            "broadcasts.data[0].dur_ms"
+          ],
+          "suggestions": [
+            "将广播处理移至后台",
+            "考虑使用 JobScheduler"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "startup"
+}

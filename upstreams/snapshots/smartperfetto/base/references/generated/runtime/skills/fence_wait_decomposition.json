@@ -1,0 +1,97 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "*acquireBuffer*",
+      "*dequeueBuffer*",
+      "*latchBuffer*",
+      "*presentDisplay*",
+      "surfaceflinger"
+    ]
+  },
+  "id": "fence_wait_decomposition",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "应用包名（可选，用于过滤 dequeueBuffer 等待）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/fence_wait_decomposition.skill.yaml",
+    "sha256": "182d5e6b03a0ccfbd53f5da992628513e87e9afe773539e0fc312d54148568af"
+  },
+  "steps": [
+    {
+      "id": "acquire_fence_wait",
+      "name": "Acquire Fence 等待（SF latch）",
+      "query_id": "fence_wait_decomposition/acquire_fence_wait",
+      "result_dependencies": [],
+      "save_as": "acquire_fence_wait",
+      "type": "atomic"
+    },
+    {
+      "id": "present_fence_timing",
+      "name": "Present Fence 时机（HWC presentDisplay）",
+      "query_id": "fence_wait_decomposition/present_fence_timing",
+      "result_dependencies": [],
+      "save_as": "present_fence_timing",
+      "type": "atomic"
+    },
+    {
+      "id": "release_fence_impact",
+      "name": "Release Fence 影响（App dequeueBuffer 等待）",
+      "query_id": "fence_wait_decomposition/release_fence_impact",
+      "result_dependencies": [],
+      "save_as": "release_fence_impact",
+      "type": "atomic"
+    },
+    {
+      "id": "fence_attribution_hint",
+      "name": "Fence 三分归因提示",
+      "query_id": "fence_wait_decomposition/fence_attribution_hint",
+      "result_dependencies": [],
+      "save_as": "fence_attribution_hint",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "gpu-rendering"
+}

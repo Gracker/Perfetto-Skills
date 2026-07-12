@@ -4,7 +4,7 @@
 
 **Goal:** Add aligned project-choice README tables and enforce a bidirectional SmartPerfetto/Perfetto-Skills impact decision before relevant commits or pushes.
 
-**Architecture:** Each repository owns a small path classifier and mandatory Agent routing text. The classifier detects whether a diff touches the paired contract, while the AI records the semantic decision as `required`, `not_required`, or `deferred`; it never guesses the decision automatically.
+**Architecture:** Each repository owns a small path classifier and mandatory Agent routing text. The classifier includes branch, staged, unstaged, and untracked paths and computes a change-set fingerprint. The AI records `required`, `not_required`, or `deferred` in commit/PR notes; it never guesses semantics. `required` validates a paired repository/ref and `deferred` requires a durable handoff.
 
 **Tech Stack:** Markdown, Python 3.11 standard library, Node.js 24 ESM, Python `unittest`, SmartPerfetto Jest/project scripts.
 
@@ -116,7 +116,9 @@ Do not commit SmartPerfetto files from the public repository.
 
 **Interfaces:**
 - Produces: `classify(repository: str, paths: list[str]) -> dict[str, object]` and a CLI accepting `--repository`, `--base`, repeated `--path`, `--decision`, `--reason`, and `--handoff`.
-- Consumes: changed file paths from explicit `--path` arguments or `git diff --name-only "$(git merge-base HEAD origin/main)"...HEAD`.
+- Consumes: explicit paths or the union of merge-base-to-HEAD, staged,
+  unstaged, and untracked paths. Dotfiles are preserved by removing only an
+  exact leading `./`; unsafe `../` paths are rejected.
 
 - [ ] **Step 1: Write failing classifier tests**
 
@@ -161,9 +163,7 @@ Define immutable trigger prefixes for both repositories. The public set must inc
 ```python
 PUBLIC_TRIGGERS = (
     "catalog/",
-    "skills/perfetto-performance-analysis/scripts/",
-    "skills/perfetto-performance-analysis/assets/",
-    "skills/perfetto-performance-analysis/references/generated/",
+    "skills/perfetto-performance-analysis/",
     "src/",
     "upstreams/",
     "fixtures/",
@@ -172,12 +172,17 @@ PUBLIC_TRIGGERS = (
 )
 ```
 
-The result JSON contains `repository`, `paired_repository`, `review_required`, `matched_paths`, and `decision`. Validation rules:
+The result JSON contains `repository`, `paired_repository`, `review_required`,
+`matched_paths`, `change_fingerprint`, paired repository/ref evidence, and
+`decision`. Add tests for `.claude/...`, `../`, staged, unstaged, and untracked
+paths. Validation rules:
 
 - triggered change with no decision: exit 2;
 - `not_required`: non-empty `--reason` required;
 - `deferred`: non-empty `--reason` and `--handoff` required;
 - `required`: non-empty `--reason` required;
+- `required`: `--paired-path` or immutable `--paired-ref` is required and its
+  repository identity/ref is validated;
 - no trigger: decision defaults to `not_required` with reason `no paired-contract paths changed`.
 
 - [ ] **Step 4: Run classifier tests**
@@ -342,4 +347,7 @@ Run the smallest focused tests first, then repeat both complete gates if behavio
 
 - [ ] **Step 5: Record impact decisions**
 
-Run each repository's classifier against the task's merge base with decision `required` and a reason referring to the paired commit hash. Expected: both exit 0.
+Run each repository's classifier against the full worktree with decision
+`required`, paired repository/ref evidence, and a reason referring to the paired
+commit hash. Record each JSON fingerprint and paired ref in the commit/PR notes.
+Expected: both exit 0.

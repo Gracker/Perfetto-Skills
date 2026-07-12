@@ -1,0 +1,139 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "binder_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target package name",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Target thread ID",
+      "name": "tid",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "Caller process name",
+      "name": "caller",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Callee process name",
+      "name": "callee",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.binder"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/kernel/binder_module.skill.yaml",
+    "sha256": "ac801a61aa0de9d819d8b84e2ccfcfb07d76ca816e88e5fde8c63d1832343e4a"
+  },
+  "steps": [
+    {
+      "id": "binder_summary",
+      "name": "Binder 调用概览",
+      "query_id": "binder_module/binder_summary",
+      "result_dependencies": [],
+      "save_as": "binder_stats",
+      "type": "atomic"
+    },
+    {
+      "id": "long_sync_calls",
+      "name": "耗时同步调用",
+      "query_id": "binder_module/long_sync_calls",
+      "result_dependencies": [],
+      "save_as": "long_calls",
+      "type": "atomic"
+    },
+    {
+      "id": "blocking_analysis",
+      "name": "阻塞模式分析",
+      "query_id": "binder_module/blocking_analysis",
+      "result_dependencies": [],
+      "save_as": "blocking_data",
+      "type": "atomic"
+    },
+    {
+      "id": "binder_diagnosis",
+      "inputs": [
+        "binder_stats",
+        "long_calls",
+        "blocking_data"
+      ],
+      "name": "Binder 诊断",
+      "rules": [
+        {
+          "condition": "long_calls.data[0]?.dur_ms > 16",
+          "confidence": "high",
+          "diagnosis": "发现长耗时 Binder 调用: ${long_calls.data[0]?.interface} (${long_calls.data[0]?.dur_ms}ms)，主线程被阻塞",
+          "evidence_fields": [
+            "long_calls.data[0].interface",
+            "long_calls.data[0].dur_ms",
+            "long_calls.data[0].server_process"
+          ],
+          "suggestions": [
+            "考虑将该 Binder 调用移至后台线程",
+            "检查服务端处理是否有性能问题"
+          ]
+        },
+        {
+          "condition": "binder_stats.data[0]?.sync_count > 20",
+          "confidence": "medium",
+          "diagnosis": "Binder 同步调用次数过多: ${binder_stats.data[0]?.interface} (${binder_stats.data[0]?.sync_count} 次)",
+          "evidence_fields": [
+            "binder_stats.data[0].interface",
+            "binder_stats.data[0].sync_count",
+            "binder_stats.data[0].total_ms"
+          ],
+          "suggestions": [
+            "考虑批量处理减少调用次数",
+            "使用异步 Binder 调用"
+          ]
+        },
+        {
+          "condition": "blocking_data.data[0]?.total_block_ms > 50",
+          "confidence": "medium",
+          "diagnosis": "Binder 调用累计阻塞时间过长: ${blocking_data.data[0]?.server_process} (${blocking_data.data[0]?.total_block_ms}ms)",
+          "evidence_fields": [
+            "blocking_data.data[0].server_process",
+            "blocking_data.data[0].total_block_ms"
+          ],
+          "suggestions": [
+            "检查服务端进程是否繁忙",
+            "考虑缓存调用结果"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "anr-blocking"
+}

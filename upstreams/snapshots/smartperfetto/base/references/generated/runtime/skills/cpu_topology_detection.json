@@ -1,0 +1,79 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "cpu_topology_detection",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "分析起始时间（保留兼容；共享拓扑检测使用整条 trace 的观测证据）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间（保留兼容；共享拓扑检测使用整条 trace 的观测证据）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/cpu_topology_detection.skill.yaml",
+    "sha256": "539074112cd1527ea174f211bee7834c523e137e7c052281ce81e1a3832ca6d0"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "detect_cpu_clusters",
+      "name": "检测 CPU 集群",
+      "query_id": "cpu_topology_detection/detect_cpu_clusters",
+      "result_dependencies": [],
+      "save_as": "cpu_clusters",
+      "type": "atomic"
+    },
+    {
+      "id": "cluster_summary",
+      "name": "集群汇总",
+      "query_id": "cpu_topology_detection/cluster_summary",
+      "result_dependencies": [],
+      "save_as": "cluster_summary",
+      "type": "atomic"
+    },
+    {
+      "id": "cluster_mapping",
+      "name": "集群映射",
+      "query_id": "cpu_topology_detection/cluster_mapping",
+      "result_dependencies": [],
+      "save_as": "cluster_mapping",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

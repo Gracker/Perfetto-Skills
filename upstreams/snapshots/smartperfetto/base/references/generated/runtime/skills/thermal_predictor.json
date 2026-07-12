@@ -1,0 +1,87 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "cpufreq"
+    ]
+  },
+  "id": "thermal_predictor",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "default": 30,
+      "description": "平均降频高风险阈值（%）",
+      "name": "high_drop_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 15,
+      "description": "平均降频中风险阈值（%）",
+      "name": "medium_drop_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
+      "description": "限频核心占比高风险阈值（%）",
+      "name": "high_core_ratio_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 25,
+      "description": "限频核心占比中风险阈值（%）",
+      "name": "medium_core_ratio_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 30,
+      "description": "单核心疑似限频判定阈值（%）",
+      "name": "core_drop_threshold_pct",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "counter",
+      "cpu_counter_track"
+    ]
+  },
+  "query_id": "thermal_predictor/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/thermal_predictor.skill.yaml",
+    "sha256": "16bb6ec7bc5e0769d25f1b2b46ed3a8d7d71648c6c6ae67e745ef86966aaa7ef"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "power-thermal"
+}

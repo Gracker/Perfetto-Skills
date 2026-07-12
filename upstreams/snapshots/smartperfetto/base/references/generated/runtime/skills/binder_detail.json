@@ -1,0 +1,183 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${process_name}*"
+    ]
+  },
+  "id": "binder_detail",
+  "identity": {
+    "aliases": [
+      "process_name",
+      "package"
+    ],
+    "policy": "required",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
+  },
+  "inputs": [
+    {
+      "description": "Binder 开始时间戳(ns)",
+      "name": "binder_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "Binder 结束时间戳(ns)",
+      "name": "binder_end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "Binder 耗时(ms)",
+      "name": "dur_ms",
+      "required": true,
+      "type": "number"
+    },
+    {
+      "description": "服务进程",
+      "name": "server_process",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "AIDL 方法名",
+      "name": "aidl_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "客户端进程名",
+      "name": "process_name",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "Perfetto 跳转开始时间",
+      "name": "perfetto_start",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Perfetto 跳转结束时间",
+      "name": "perfetto_end",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/binder_detail.skill.yaml",
+    "sha256": "b21af48bb190aa382256c422c77267cce8f041f42257cbbd3a6f669e691f5bf9"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "binder_info",
+      "name": "Binder 基本信息",
+      "query_id": "binder_detail/binder_info",
+      "result_dependencies": [],
+      "save_as": "binder_basic",
+      "type": "atomic"
+    },
+    {
+      "id": "cpu_core_analysis",
+      "name": "大小核占比分析",
+      "query_id": "binder_detail/cpu_core_analysis",
+      "result_dependencies": [],
+      "save_as": "cpu_core",
+      "type": "atomic"
+    },
+    {
+      "id": "quadrant_analysis",
+      "name": "四大象限分析",
+      "optional": true,
+      "query_id": "binder_detail/quadrant_analysis",
+      "result_dependencies": [],
+      "save_as": "quadrant",
+      "type": "atomic"
+    },
+    {
+      "id": "blocking_analysis",
+      "name": "阻塞原因分析",
+      "optional": true,
+      "query_id": "binder_detail/blocking_analysis",
+      "result_dependencies": [],
+      "save_as": "blocking",
+      "type": "atomic"
+    },
+    {
+      "id": "binder_diagnosis",
+      "inputs": [
+        "binder_basic",
+        "cpu_core",
+        "quadrant",
+        "blocking"
+      ],
+      "name": "Binder 诊断",
+      "rules": [
+        {
+          "condition": "quadrant.data[0]?.sleeping_pct > 90",
+          "confidence": "high",
+          "diagnosis": "主线程在等待 Binder 回复 (${quadrant.data[0].sleeping_pct}% Sleeping)",
+          "severity": "info",
+          "suggestions": [
+            "服务端处理时间过长",
+            "考虑使用异步 Binder"
+          ]
+        },
+        {
+          "condition": "cpu_core.data[0]?.running_pct > 30",
+          "confidence": "medium",
+          "diagnosis": "Binder 期间主线程 Running 占比 ${cpu_core.data[0].running_pct}%",
+          "severity": "info",
+          "suggestions": [
+            "可能存在客户端序列化开销",
+            "检查传输数据大小"
+          ]
+        },
+        {
+          "condition": "quadrant.data[0]?.q3_runnable_ms > 5",
+          "confidence": "medium",
+          "diagnosis": "主线程 Runnable 等待 ${quadrant.data[0].q3_runnable_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "CPU 资源争抢",
+            "检查系统负载"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "2.0",
+  "workflow": "anr-blocking"
+}

@@ -1,0 +1,223 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "heap_graph"
+        ]
+      },
+      "id": "android_heap_graph_leak_candidates/leak_candidates",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/android_heap_graph_leak_candidates/leak_candidates.sql",
+      "sha256": "b695648a8b49e92a15668de48a0e87ecf8aecedd86a1d27741aff52d2d86e088",
+      "signal_patterns": [
+        "*",
+        "*onCreate*",
+        "*onDestroy*",
+        "*onDestroyView*",
+        "*onPause*",
+        "*onResume*",
+        "*onStart*",
+        "*onStop*"
+      ],
+      "skill_id": "android_heap_graph_leak_candidates",
+      "source": {
+        "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+        "path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "7b56ba3235b7962f0119ea09d450af39eba9c021da1cb714c40db3d5c2064ce7"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.memory.heap_graph.excluded_refs"
+        ],
+        "drops": [],
+        "required_tables": [
+          "heap_graph_object",
+          "heap_graph_class",
+          "heap_graph_reference"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "leak_candidates",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "class_name_glob",
+          "graph_sample_ts",
+          "lifecycle_slice_prefix",
+          "max_candidates",
+          "package",
+          "process_name"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "heap_graph"
+        ]
+      },
+      "id": "android_heap_graph_leak_candidates/reference_holders",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/android_heap_graph_leak_candidates/reference_holders.sql",
+      "sha256": "cc0e98a9a179e92bd117692d87790bd684bbddd62e2c35efd07da8651931f5c1",
+      "signal_patterns": [
+        "*",
+        "*onCreate*",
+        "*onDestroy*",
+        "*onDestroyView*",
+        "*onPause*",
+        "*onResume*",
+        "*onStart*",
+        "*onStop*"
+      ],
+      "skill_id": "android_heap_graph_leak_candidates",
+      "source": {
+        "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+        "path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "7b56ba3235b7962f0119ea09d450af39eba9c021da1cb714c40db3d5c2064ce7"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.memory.heap_graph.excluded_refs"
+        ],
+        "drops": [],
+        "required_tables": [
+          "heap_graph_object",
+          "heap_graph_class",
+          "heap_graph_reference"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "reference_holders",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "class_name_glob",
+          "graph_sample_ts",
+          "lifecycle_slice_prefix",
+          "max_candidates",
+          "max_reference_edges",
+          "package",
+          "process_name"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "android_heap_graph_leak_candidates"
+}

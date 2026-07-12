@@ -1,0 +1,308 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${target_process.data[0].process_name}"
+    ]
+  },
+  "id": "binder_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳（纳秒，可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳（纳秒，可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 50,
+      "description": "慢 Binder 严重阈值（ms）",
+      "name": "slow_binder_critical_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 16,
+      "description": "慢 Binder 警告阈值（ms）",
+      "name": "slow_binder_warning_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
+      "description": "主线程事务数告警阈值",
+      "name": "main_thread_txn_warning",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 20,
+      "description": "服务端响应告警阈值（ms）",
+      "name": "server_response_warning_ms",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.binder",
+      "android.frames.timeline"
+    ],
+    "required_tables": [
+      "slice"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/binder_analysis.skill.yaml",
+    "sha256": "d005054dab0e8c6ea08c377ca3407e935fb7134f30aa318211845cf32f3e2a0a"
+  },
+  "steps": [
+    {
+      "id": "check_binder",
+      "name": "检查 Binder 数据",
+      "optional": true,
+      "query_id": "binder_analysis/check_binder",
+      "result_dependencies": [],
+      "save_as": "binder_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "binder_check.data[0]?.status === 'available'",
+      "id": "get_process",
+      "name": "选择目标进程",
+      "query_id": "binder_analysis/get_process",
+      "result_dependencies": [],
+      "save_as": "target_process",
+      "type": "atomic"
+    },
+    {
+      "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "binder_overview",
+      "name": "Binder 概览",
+      "query_id": "binder_analysis/binder_overview",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "binder_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "outgoing_by_interface",
+      "name": "发出的调用（按接口）",
+      "query_id": "binder_analysis/outgoing_by_interface",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "outgoing_by_interface",
+      "type": "atomic"
+    },
+    {
+      "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "main_thread_sync_binder",
+      "name": "主线程同步 Binder",
+      "query_id": "binder_analysis/main_thread_sync_binder",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "main_thread_binder",
+      "type": "atomic"
+    },
+    {
+      "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "binder_blocking_analysis",
+      "name": "Binder 阻塞分析",
+      "optional": true,
+      "query_id": "binder_analysis/binder_blocking_analysis",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "binder_blocking",
+      "type": "atomic"
+    },
+    {
+      "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "server_response_analysis",
+      "name": "服务端响应分析",
+      "query_id": "binder_analysis/server_response_analysis",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "server_response",
+      "type": "atomic"
+    },
+    {
+      "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "binder_frame_correlation",
+      "name": "Binder 与帧关联",
+      "optional": true,
+      "query_id": "binder_analysis/binder_frame_correlation",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "binder_frame",
+      "type": "atomic"
+    },
+    {
+      "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "id": "incoming_calls",
+      "name": "接收的调用",
+      "query_id": "binder_analysis/incoming_calls",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "incoming_calls",
+      "type": "atomic"
+    },
+    {
+      "condition": "main_thread_binder.data.length > 0",
+      "id": "analyze_slow_binder",
+      "item_params": {
+        "aidl_name": "aidl_name",
+        "binder_end_ts": "binder_end_ts",
+        "binder_ts": "binder_ts",
+        "dur_ms": "dur_ms",
+        "perfetto_end": "perfetto_end",
+        "perfetto_start": "perfetto_start",
+        "process_name": "process_name",
+        "server_process": "server_process"
+      },
+      "item_skill": "binder_detail",
+      "max_items": 10,
+      "name": "慢 Binder 详细分析",
+      "source": "main_thread_binder",
+      "type": "iterator"
+    },
+    {
+      "id": "binder_diagnosis",
+      "inputs": [
+        "binder_overview",
+        "main_thread_binder",
+        "binder_blocking",
+        "server_response"
+      ],
+      "name": "Binder 诊断",
+      "rules": [
+        {
+          "condition": "binder_check?.data?.[0]?.status !== 'available'",
+          "confidence": "low",
+          "diagnosis": "unable_to_determine：缺少 android_binder_txns 或目标时段无 Binder 数据",
+          "evidence_fields": [
+            "binder_check.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] Perf/Infra | [Priority] P0 | [Action] 采集包含 android.binder 模块的 trace 并覆盖问题时段",
+            "[Verify] 重新执行 binder_analysis，确认 binder_check.status=available"
+          ]
+        },
+        {
+          "condition": "main_thread_binder.data[0]?.dur_ms > (inputs?.slow_binder_critical_ms ?? 50)",
+          "confidence": "high",
+          "diagnosis": "主线程存在严重慢 Binder 调用 (${main_thread_binder.data[0].dur_ms}ms)",
+          "evidence_fields": [
+            "main_thread_binder.data",
+            "binder_overview.data"
+          ],
+          "severity": "critical",
+          "suggestions": [
+            "[Owner] App | [Priority] P0 | [Action] 将该 Binder 调用迁移到后台线程或异步化",
+            "[Owner] Service | [Priority] P0 | [Action] 优化服务 ${main_thread_binder.data[0].server_process} 响应链路",
+            "[Verify] 复测主线程 slow binder 次数和单次耗时"
+          ]
+        },
+        {
+          "condition": "main_thread_binder.data[0]?.dur_ms > (inputs?.slow_binder_warning_ms ?? 16)",
+          "confidence": "high",
+          "diagnosis": "主线程 Binder 调用超过一帧时间 (${main_thread_binder.data[0].dur_ms}ms)",
+          "evidence_fields": [
+            "main_thread_binder.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] App/Service | [Priority] P1 | [Action] 对主线程 Binder 做异步化并减少重调用",
+            "[Verify] 对比优化前后关键场景帧时长与 Binder P95"
+          ]
+        },
+        {
+          "condition": "binder_overview.data[0]?.main_thread_txns > (inputs?.main_thread_txn_warning ?? 50)",
+          "confidence": "medium",
+          "diagnosis": "主线程发起 ${binder_overview.data[0].main_thread_txns} 次 Binder 调用",
+          "evidence_fields": [
+            "binder_overview.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] App | [Priority] P1 | [Action] 合并调用、增加缓存并迁移非关键调用到后台线程",
+            "[Verify] 复测 main_thread_txns 和 slow_calls_count"
+          ]
+        },
+        {
+          "condition": "server_response.data[0]?.avg_server_dur_ms > (inputs?.server_response_warning_ms ?? 20)",
+          "confidence": "medium",
+          "diagnosis": "服务端平均处理时间较长 (${server_response.data[0].avg_server_dur_ms}ms)",
+          "evidence_fields": [
+            "server_response.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] Service | [Priority] P1 | [Action] 优化服务端热点接口与锁/IO路径",
+            "[Owner] App | [Priority] P2 | [Action] 结合缓存减少重复服务请求",
+            "[Verify] 复测 avg_server_dur_ms 与接口耗时分布"
+          ]
+        },
+        {
+          "condition": "binder_blocking.data.find(b => b.state === 'D')?.state_percent > 50",
+          "confidence": "medium",
+          "diagnosis": "Binder 阻塞期间存在大量 IO 等待",
+          "evidence_fields": [
+            "binder_blocking.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] Service | [Priority] P1 | [Action] 检查并下移阻塞 IO，避免同步链路卡住调用方",
+            "[Verify] 复测阻塞态占比与主线程阻塞时长"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "anr-blocking"
+}

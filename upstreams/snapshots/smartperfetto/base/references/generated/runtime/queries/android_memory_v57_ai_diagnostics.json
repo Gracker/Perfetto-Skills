@@ -1,0 +1,473 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "android_memory_v57_ai_diagnostics/data_check",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/android_memory_v57_ai_diagnostics/data_check.sql",
+      "sha256": "ddea8a719a6724894819f190f7f29e4289db50818be0deb8c489a5b74546801d",
+      "signal_patterns": [],
+      "skill_id": "android_memory_v57_ai_diagnostics",
+      "source": {
+        "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+        "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "prelude.after_eof.memory",
+          "prelude.after_eof.views",
+          "android.memory.heap_graph.heap_graph_stats",
+          "android.memory.heap_graph.class_summary_tree",
+          "android.memory.heap_profile.summary_tree"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "data_check",
+      "template": {
+        "fragments": [],
+        "parameters": [],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "heap_graph"
+        ]
+      },
+      "id": "android_memory_v57_ai_diagnostics/heap_graph_repeated_objects",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/android_memory_v57_ai_diagnostics/heap_graph_repeated_objects.sql",
+      "sha256": "8226948b4aa133113d7e882be46de4e6581dea743d3195bfcc072c48982a3a95",
+      "signal_patterns": [],
+      "skill_id": "android_memory_v57_ai_diagnostics",
+      "source": {
+        "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+        "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "prelude.after_eof.memory",
+          "prelude.after_eof.views",
+          "android.memory.heap_graph.heap_graph_stats",
+          "android.memory.heap_graph.class_summary_tree",
+          "android.memory.heap_profile.summary_tree"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "heap_graph_repeated_objects",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "graph_sample_ts",
+          "max_rows",
+          "process_name"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "heap_graph"
+        ]
+      },
+      "id": "android_memory_v57_ai_diagnostics/heap_graph_size_frequencies",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/android_memory_v57_ai_diagnostics/heap_graph_size_frequencies.sql",
+      "sha256": "accde1e69d4c0b304f43cbb743803aa122834ec8b89162736c820175e2f54704",
+      "signal_patterns": [],
+      "skill_id": "android_memory_v57_ai_diagnostics",
+      "source": {
+        "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+        "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "prelude.after_eof.memory",
+          "prelude.after_eof.views",
+          "android.memory.heap_graph.heap_graph_stats",
+          "android.memory.heap_graph.class_summary_tree",
+          "android.memory.heap_profile.summary_tree"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "heap_graph_size_frequencies",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "graph_sample_ts",
+          "max_rows",
+          "process_name"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "android_memory_v57_ai_diagnostics/heap_profile_hotspots",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/android_memory_v57_ai_diagnostics/heap_profile_hotspots.sql",
+      "sha256": "576af57e2e6f455aaec9a369c9b4f2cba9406ac2f439cf9dd18ee6253bc688ff",
+      "signal_patterns": [],
+      "skill_id": "android_memory_v57_ai_diagnostics",
+      "source": {
+        "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+        "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "prelude.after_eof.memory",
+          "prelude.after_eof.views",
+          "android.memory.heap_graph.heap_graph_stats",
+          "android.memory.heap_graph.class_summary_tree",
+          "android.memory.heap_profile.summary_tree"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "heap_profile_hotspots",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "max_rows",
+          "min_size_mb"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "android_memory_v57_ai_diagnostics/no_data_contract",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/android_memory_v57_ai_diagnostics/no_data_contract.sql",
+      "sha256": "64b11a36d743a24043f0d6b579dee76080cf7dc36ffa1220c42efdb11d719a15",
+      "signal_patterns": [],
+      "skill_id": "android_memory_v57_ai_diagnostics",
+      "source": {
+        "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+        "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "prelude.after_eof.memory",
+          "prelude.after_eof.views",
+          "android.memory.heap_graph.heap_graph_stats",
+          "android.memory.heap_graph.class_summary_tree",
+          "android.memory.heap_profile.summary_tree"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "no_data_contract",
+      "template": {
+        "fragments": [],
+        "parameters": [],
+        "result_dependencies": [
+          "data_check"
+        ]
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "android_memory_v57_ai_diagnostics"
+}

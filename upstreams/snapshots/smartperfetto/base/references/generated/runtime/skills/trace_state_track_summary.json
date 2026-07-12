@@ -1,0 +1,68 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "trace_state_track_summary",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Start timestamp in ns",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "End timestamp in ns",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Optional track name substring",
+      "name": "track_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Optional state category substring",
+      "name": "category",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 80,
+      "description": "Maximum rows to return",
+      "name": "max_rows",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "viz.summary.track_event"
+    ],
+    "required_tables": []
+  },
+  "query_id": "trace_state_track_summary/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/trace_state_track_summary.skill.yaml",
+    "sha256": "2cdb80f8ba21476ade7c51c601baad2f3af62cfa24ec319d2506c30c043c5699"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "trace-overview"
+}

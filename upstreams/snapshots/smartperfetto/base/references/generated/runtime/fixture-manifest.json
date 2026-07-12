@@ -1,0 +1,234 @@
+{
+  "fixtures": [
+    {
+      "android": {
+        "api": 36,
+        "build_type": "user",
+        "oem": "Google",
+        "qpr": "unknown"
+      },
+      "assertions": [
+        {
+          "field": "startup_type",
+          "kind": "non_empty",
+          "query_id": "startup_slow_reasons/startup_overview"
+        }
+      ],
+      "capture_config": "embedded_in_trace",
+      "id": "smart-launch-light-api36",
+      "kernel": "6.1.129-android14-11-gdc1fbab45e9b-ab13299063",
+      "license": "AGPL-3.0-or-later",
+      "sha256": "6c5479fd1b765ee4d29692c43a8204b972bc0f97eb373aca98ea7e11e99fd8b4",
+      "source": "test-traces/launch_light.pftrace"
+    },
+    {
+      "android": {
+        "api": 36,
+        "build_type": "user",
+        "oem": "Xiaomi",
+        "qpr": "unknown"
+      },
+      "assertions": [],
+      "capture_config": "embedded_in_trace",
+      "id": "smart-launch-heavy-api36",
+      "kernel": "6.12.23-android16-5-gb23e74f69076-abogki452159376-4k",
+      "license": "AGPL-3.0-or-later",
+      "sha256": "2a0c7b85e7f4a14e43b7f8d6de21172e05eba1ed3ad8ef7df539bb5e59b6ba63",
+      "source": "test-traces/lacunh_heavy.pftrace"
+    },
+    {
+      "android": {
+        "api": 35,
+        "build_type": "user",
+        "oem": "Nubia",
+        "qpr": "unknown"
+      },
+      "assertions": [
+        {
+          "field": "has_frame_timeline",
+          "kind": "field_equals",
+          "query_id": "scrolling_analysis/frame_timeline_check",
+          "value": 1
+        }
+      ],
+      "capture_config": "embedded_in_trace",
+      "id": "smart-aosp-scroll-api35",
+      "kernel": "6.6.56-android15-8-g1b3a8e682e47-ab101-4k",
+      "license": "AGPL-3.0-or-later",
+      "sha256": "df7eebc5c6ff19b48331f8f1bca346612d86a5ae26eae202d46842a83f87a653",
+      "source": "test-traces/scroll_Standard-AOSP-App-Without-PreAnimation.pftrace"
+    },
+    {
+      "android": {
+        "api": 35,
+        "build_type": "user",
+        "oem": "Nubia",
+        "qpr": "unknown"
+      },
+      "assertions": [
+        {
+          "field": "flutter_ui_count",
+          "kind": "field_positive",
+          "params": {
+            "package": "com.example.friendscircle.v27.textureview"
+          },
+          "query_id": "rendering_pipeline_detection/thread_signals"
+        },
+        {
+          "field": "texture_view_count",
+          "kind": "field_positive",
+          "params": {
+            "package": "com.example.friendscircle.v27.textureview"
+          },
+          "query_id": "rendering_pipeline_detection/slice_signals"
+        }
+      ],
+      "capture_config": "embedded_in_trace",
+      "id": "smart-flutter-texture-api35",
+      "kernel": "6.6.56-android15-8-g1b3a8e682e47-ab101-4k",
+      "license": "AGPL-3.0-or-later",
+      "sha256": "645deaa9fc564e0ea33072c83f5ecf1d0a6f53a97055cc98c640e8294deb315e",
+      "source": "test-traces/Scroll-Flutter-327-TextureView.pftrace"
+    },
+    {
+      "android": {
+        "api": 35,
+        "build_type": "user",
+        "oem": "Nubia",
+        "qpr": "unknown"
+      },
+      "assertions": [],
+      "capture_config": "embedded_in_trace",
+      "id": "smart-flutter-surface-api35",
+      "kernel": "6.6.56-android15-8-g1b3a8e682e47-ab101-4k",
+      "license": "AGPL-3.0-or-later",
+      "sha256": "e876c56b5d7290acda596e73929c1a127df4255e9ca6951605dad40833e67a53",
+      "source": "test-traces/Scroll-Flutter-SurfaceView-Wechat-Wenyiwen.pftrace"
+    },
+    {
+      "android": {
+        "api": 36,
+        "build_type": "user",
+        "oem": "OPPO",
+        "qpr": "unknown"
+      },
+      "assertions": [],
+      "capture_config": "embedded_in_trace",
+      "id": "smart-oppo-scroll-api36",
+      "kernel": "6.6.89-android15-8-g97a9aaefab9a-ab14519050-4k",
+      "license": "AGPL-3.0-or-later",
+      "sha256": "1015ba963c49cd57d08d8997c4c48027026f2d6e41f7eb72b4b1356e39f7af3a",
+      "source": "test-traces/scroll-demo-customer-scroll.pftrace"
+    },
+    {
+      "android": {
+        "api": 24,
+        "build_type": "unknown",
+        "oem": "AOSP",
+        "qpr": "not_applicable"
+      },
+      "assertions": [
+        {
+          "field": "startup_id",
+          "kind": "non_empty",
+          "query_id": "startup_slow_reasons/startup_overview"
+        }
+      ],
+      "capture_config": "upstream_diff_test",
+      "checksum_source": "perfetto/test/data/api24_startup_cold.perfetto-trace.sha256",
+      "id": "upstream-startup-api24-cold",
+      "license": "Apache-2.0",
+      "sha256": "ac006a3ec74fac70feb58c2cfad840c552af0ebd25f03bdfbf14d5f77148764b",
+      "source": "perfetto/test/data/api24_startup_cold.perfetto-trace"
+    },
+    {
+      "android": {
+        "api": 31,
+        "build_type": "unknown",
+        "oem": "AOSP",
+        "qpr": "unknown"
+      },
+      "assertions": [
+        {
+          "field": "startup_type",
+          "kind": "field_equals",
+          "query_id": "startup_slow_reasons/startup_overview",
+          "value": "cold"
+        }
+      ],
+      "capture_config": "upstream_diff_test",
+      "checksum_source": "perfetto/test/data/api31_startup_cold.perfetto-trace.sha256",
+      "id": "upstream-startup-api31-cold",
+      "license": "Apache-2.0",
+      "sha256": "aadf4a141dc0249abd4d7080a7d94bd614949eb0e7398fa6f3c75b503c70dade",
+      "source": "perfetto/test/data/api31_startup_cold.perfetto-trace"
+    },
+    {
+      "android": {
+        "api": 32,
+        "build_type": "unknown",
+        "oem": "AOSP",
+        "qpr": "unknown"
+      },
+      "assertions": [
+        {
+          "field": "startup_type",
+          "kind": "field_equals",
+          "query_id": "startup_slow_reasons/startup_overview",
+          "value": "warm"
+        }
+      ],
+      "capture_config": "upstream_diff_test",
+      "checksum_source": "perfetto/test/data/api32_startup_warm.perfetto-trace.sha256",
+      "id": "upstream-startup-api32-warm",
+      "license": "Apache-2.0",
+      "sha256": "776122b5660c5d6e738950031fdb4992a64e3224e9e82bbaed474a0a281ed7e3",
+      "source": "perfetto/test/data/api32_startup_warm.perfetto-trace"
+    },
+    {
+      "android": {
+        "api": 34,
+        "build_type": "unknown",
+        "oem": "AOSP",
+        "qpr": "base_or_unknown"
+      },
+      "assertions": [
+        {
+          "field": "startup_id",
+          "kind": "non_empty",
+          "query_id": "startup_slow_reasons/startup_overview"
+        }
+      ],
+      "capture_config": "upstream_diff_test",
+      "checksum_source": "perfetto/test/data/api34_startup_cold.perfetto-trace.sha256",
+      "id": "upstream-startup-api34-cold",
+      "license": "Apache-2.0",
+      "sha256": "1958521dc5128cd4eadd1df281e19987aded718750e6883f82ffd3b5eb529bd6",
+      "source": "perfetto/test/data/api34_startup_cold.perfetto-trace"
+    },
+    {
+      "android": {
+        "api": "not_applicable",
+        "build_type": "unknown",
+        "oem": "not_applicable",
+        "qpr": "not_applicable"
+      },
+      "assertions": [
+        {
+          "field": "total_samples",
+          "kind": "field_positive",
+          "query_id": "callstack_analysis/check_samples"
+        }
+      ],
+      "capture_config": "upstream_diff_test",
+      "checksum_source": "perfetto/test/data/callstack_sampling.pftrace.sha256",
+      "id": "upstream-callstack-sampling",
+      "license": "Apache-2.0",
+      "sha256": "0ef35902380a75c52cd83afdb4165b545a5810bde16bad954872994ca21c5ae7",
+      "source": "perfetto/test/data/callstack_sampling.pftrace"
+    }
+  ],
+  "schema_version": 1,
+  "source_path": "backend/skills/public-fixtures.yaml",
+  "source_sha256": "55f7e9ef115f20ab20d3bb1b27d76b2fefe916e3d82674809cdb4e21a12b9998"
+}

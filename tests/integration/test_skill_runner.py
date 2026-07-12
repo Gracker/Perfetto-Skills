@@ -1,16 +1,20 @@
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
 
-from tests.support import SCRIPTS, trace_processor
+from tests.support import SCRIPTS, fixture_available, fixture_path, trace_processor
 
 
-TRACE_ROOT = Path(os.environ["SMARTPERFETTO_TEST_TRACES"]) if os.environ.get("SMARTPERFETTO_TEST_TRACES") else None
-SOURCE = Path(os.environ["SMARTPERFETTO_SOURCE"]) if os.environ.get("SMARTPERFETTO_SOURCE") else None
+RUNNER_FIXTURES = (
+    "startup-light-api36",
+    "scroll-aosp-api35",
+    "flutter-texture-api35",
+    "callstack-sampling",
+    "scroll-oppo-api36",
+)
 
 
 def required_execution_errors(result: dict[str, object]) -> list[str]:
@@ -31,31 +35,30 @@ def required_execution_errors(result: dict[str, object]) -> list[str]:
     return errors
 
 
-@unittest.skipUnless(TRACE_ROOT and TRACE_ROOT.is_dir(), "SMARTPERFETTO_TEST_TRACES not configured")
+@unittest.skipUnless(
+    all(fixture_available(fixture_id) for fixture_id in RUNNER_FIXTURES),
+    "full PERFETTO_FIXTURE_ROOT not configured",
+)
 class SkillRunnerIntegrationTest(unittest.TestCase):
     def test_representative_complete_skill_graphs_run_without_hidden_step_errors(self) -> None:
         cases = [
-            ("startup_analysis", "launch_light.pftrace", []),
-            ("scrolling_analysis", "scroll_Standard-AOSP-App-Without-PreAnimation.pftrace", []),
-            ("anr_analysis", "launch_light.pftrace", []),
-            ("memory_analysis", "launch_light.pftrace", []),
+            ("startup_analysis", "startup-light-api36", []),
+            ("scrolling_analysis", "scroll-aosp-api35", []),
+            ("anr_analysis", "startup-light-api36", []),
+            ("memory_analysis", "startup-light-api36", []),
             (
                 "rendering_pipeline_detection",
-                "Scroll-Flutter-327-TextureView.pftrace",
+                "flutter-texture-api35",
                 ["--param", 'package="com.example.friendscircle.v27.textureview"'],
             ),
             (
                 "callstack_analysis",
-                (
-                    SOURCE / "perfetto/test/data/callstack_sampling.pftrace"
-                    if SOURCE
-                    else TRACE_ROOT / "launch_light.pftrace"
-                ),
+                "callstack-sampling",
                 [],
             ),
             (
                 "jank_frame_detail",
-                "scroll-demo-customer-scroll.pftrace",
+                "scroll-oppo-api36",
                 [
                     "--param", "start_ts=506731768732822",
                     "--param", "end_ts=506731787394072",
@@ -76,7 +79,7 @@ class SkillRunnerIntegrationTest(unittest.TestCase):
                         sys.executable,
                         str(SCRIPTS / "perfetto_skill.py"),
                         "run",
-                        str(filename if isinstance(filename, Path) else TRACE_ROOT / filename),
+                        str(fixture_path(filename)),
                         "--skill",
                         skill_id,
                         "--trace-processor",

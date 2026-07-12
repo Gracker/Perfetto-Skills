@@ -1,0 +1,210 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%Home%",
+      "%Launcher%",
+      "%home%",
+      "%launcher%",
+      "%lawnchair%",
+      "%nexuslauncher%",
+      "%trebuchet%",
+      "*AIDL*",
+      "*AllApps*",
+      "*AppWidget*",
+      "*Binder*",
+      "*Choreographer#doFrame*",
+      "*DrawFrame*",
+      "*Drawer*",
+      "*ItemClick*",
+      "*RemoteViews*",
+      "*Wallpaper*",
+      "*Widget*",
+      "*aidl*",
+      "*allapps*",
+      "*binder*",
+      "*doFrame*",
+      "*drawer*",
+      "*launchApp*",
+      "*onClick*",
+      "*startActivity*",
+      "*touch*",
+      "*wallpaper*",
+      "*widget*"
+    ]
+  },
+  "id": "launcher_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target app package to analyze launch timing",
+      "name": "target_package",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/app/launcher_module.skill.yaml",
+    "sha256": "09423f22ca1cc723d498d6e9ecfbfb935d5cf177154c5eab813f3bf7d0bcef40"
+  },
+  "steps": [
+    {
+      "id": "launcher_process",
+      "name": "Launcher 进程识别",
+      "query_id": "launcher_module/launcher_process",
+      "result_dependencies": [],
+      "save_as": "launcher_process",
+      "type": "atomic"
+    },
+    {
+      "id": "launcher_main_thread",
+      "name": "Launcher 主线程概览",
+      "on_empty": "未找到 Launcher 进程或主线程数据",
+      "query_id": "launcher_module/launcher_main_thread",
+      "result_dependencies": [],
+      "save_as": "launcher_main_thread",
+      "type": "atomic"
+    },
+    {
+      "id": "launcher_frames",
+      "name": "Launcher 帧渲染",
+      "query_id": "launcher_module/launcher_frames",
+      "result_dependencies": [],
+      "save_as": "launcher_frames",
+      "type": "atomic"
+    },
+    {
+      "id": "widget_activities",
+      "name": "Widget 活动",
+      "query_id": "launcher_module/widget_activities",
+      "result_dependencies": [],
+      "save_as": "widget_activities",
+      "type": "atomic"
+    },
+    {
+      "id": "app_launch_events",
+      "name": "应用启动事件",
+      "query_id": "launcher_module/app_launch_events",
+      "result_dependencies": [],
+      "save_as": "app_launch_events",
+      "type": "atomic"
+    },
+    {
+      "id": "wallpaper_rendering",
+      "name": "壁纸渲染",
+      "optional": true,
+      "query_id": "launcher_module/wallpaper_rendering",
+      "result_dependencies": [],
+      "save_as": "wallpaper_rendering",
+      "type": "atomic"
+    },
+    {
+      "id": "all_apps_drawer",
+      "name": "All Apps 抽屉",
+      "query_id": "launcher_module/all_apps_drawer",
+      "result_dependencies": [],
+      "save_as": "all_apps_drawer",
+      "type": "atomic"
+    },
+    {
+      "id": "launcher_binder_calls",
+      "name": "Launcher Binder 调用",
+      "query_id": "launcher_module/launcher_binder_calls",
+      "result_dependencies": [],
+      "save_as": "launcher_binder_calls",
+      "type": "atomic"
+    },
+    {
+      "id": "launcher_diagnosis",
+      "inputs": [
+        "launcher_frames",
+        "launcher_main_thread",
+        "widget_activities",
+        "launcher_binder_calls"
+      ],
+      "name": "Launcher 诊断",
+      "rules": [
+        {
+          "condition": "launcher_frames.data[0]?.jank_rate_pct > 5",
+          "confidence": "high",
+          "diagnosis": "Launcher 卡顿率 ${launcher_frames.data[0]?.jank_rate_pct}%，影响桌面体验",
+          "evidence_fields": [
+            "launcher_frames.data[0]?.jank_rate_pct",
+            "launcher_frames.data[0]?.jank_frames",
+            "launcher_frames.data[0]?.total_frames"
+          ],
+          "suggestions": [
+            "检查主线程耗时操作",
+            "优化 Widget 更新频率",
+            "减少同步 Binder 调用"
+          ]
+        },
+        {
+          "condition": "launcher_main_thread.data[0]?.max_ms > 100",
+          "confidence": "high",
+          "diagnosis": "Launcher 主线程存在耗时操作: ${launcher_main_thread.data[0]?.activity} 最长 ${launcher_main_thread.data[0]?.max_ms}ms",
+          "evidence_fields": [
+            "launcher_main_thread.data[0]?.activity",
+            "launcher_main_thread.data[0]?.max_ms"
+          ],
+          "suggestions": [
+            "将耗时操作移至后台线程",
+            "使用异步加载"
+          ]
+        },
+        {
+          "condition": "widget_activities.data[0]?.total_ms > 100",
+          "confidence": "medium",
+          "diagnosis": "Widget 活动耗时较高: ${widget_activities.data[0]?.widget_activity} 共 ${widget_activities.data[0]?.total_ms}ms",
+          "evidence_fields": [
+            "widget_activities.data[0]?.widget_activity",
+            "widget_activities.data[0]?.total_ms"
+          ],
+          "suggestions": [
+            "减少 Widget 更新频率",
+            "简化 Widget 布局",
+            "避免在 Widget 中使用复杂视图"
+          ]
+        },
+        {
+          "condition": "launcher_binder_calls.data[0]?.max_ms > 50",
+          "confidence": "medium",
+          "diagnosis": "Launcher 存在耗时 Binder 调用: ${launcher_binder_calls.data[0]?.binder_call} 最长 ${launcher_binder_calls.data[0]?.max_ms}ms",
+          "evidence_fields": [
+            "launcher_binder_calls.data[0]?.binder_call",
+            "launcher_binder_calls.data[0]?.max_ms"
+          ],
+          "suggestions": [
+            "检查是否可以异步执行",
+            "减少主线程 Binder 调用"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "startup"
+}

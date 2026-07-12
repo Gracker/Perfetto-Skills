@@ -1,0 +1,398 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "%.%"
+    ]
+  },
+  "id": "cpu_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间（可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间（可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 30,
+      "description": "大核使用率告警阈值（%）",
+      "name": "big_core_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
+      "description": "主线程 Running 告警阈值（%）",
+      "name": "running_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 16,
+      "description": "调度延迟严重阈值（ms）",
+      "name": "sched_delay_critical_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
+      "description": "阻塞函数告警阈值（ms）",
+      "name": "blocked_function_threshold_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": true,
+      "description": "是否启用专家探针（迁核/Cache miss）",
+      "name": "enable_expert_probes",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "default": 25,
+      "description": "线程亲和性探针判定阈值（%）",
+      "name": "affinity_probe_migration_ratio_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 35,
+      "description": "线程迁核告警阈值（%）",
+      "name": "affinity_violation_warning_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 500000,
+      "description": "Cache miss 高影响阈值（平均增量）",
+      "name": "cache_miss_high_avg_delta_threshold",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 100000,
+      "description": "Cache miss 中影响阈值（平均增量）",
+      "name": "cache_miss_medium_avg_delta_threshold",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.cpu.frequency"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/cpu_analysis.skill.yaml",
+    "sha256": "c2723137b1cdfaa2c0f8b23cc62a9133aa534e56dc981c472ddc8d28ca6dff14"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "get_process",
+      "name": "获取目标进程",
+      "on_empty": "未找到目标进程",
+      "query_id": "cpu_analysis/get_process",
+      "result_dependencies": [],
+      "save_as": "target_process",
+      "type": "atomic"
+    },
+    {
+      "condition": "target_process.data.length > 0",
+      "id": "core_type_stats",
+      "name": "核心类型统计",
+      "query_id": "cpu_analysis/core_type_stats",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "core_stats",
+      "type": "atomic"
+    },
+    {
+      "condition": "target_process.data.length > 0",
+      "id": "thread_cpu_usage",
+      "name": "线程 CPU 使用",
+      "query_id": "cpu_analysis/thread_cpu_usage",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "thread_usage",
+      "type": "atomic"
+    },
+    {
+      "condition": "target_process.data.length > 0",
+      "id": "main_thread_states",
+      "name": "主线程状态分布",
+      "optional": true,
+      "query_id": "cpu_analysis/main_thread_states",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "main_thread_states",
+      "type": "atomic"
+    },
+    {
+      "condition": "target_process.data.length > 0",
+      "id": "runnable_latency",
+      "name": "调度延迟分析",
+      "optional": true,
+      "query_id": "cpu_analysis/runnable_latency",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "runnable_delays",
+      "type": "atomic"
+    },
+    {
+      "condition": "target_process.data.length > 0",
+      "id": "main_thread_cores",
+      "name": "主线程核心分布",
+      "query_id": "cpu_analysis/main_thread_cores",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "main_thread_cores",
+      "type": "atomic"
+    },
+    {
+      "condition": "target_process.data.length > 0",
+      "id": "blocked_functions",
+      "name": "阻塞函数分析",
+      "optional": true,
+      "query_id": "cpu_analysis/blocked_functions",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "blocked_functions",
+      "type": "atomic"
+    },
+    {
+      "condition": "target_process.data.length > 0",
+      "id": "cpu_frequency_distribution",
+      "name": "CPU 频率分布",
+      "optional": true,
+      "query_id": "cpu_analysis/cpu_frequency_distribution",
+      "result_dependencies": [],
+      "save_as": "cpu_freq",
+      "type": "atomic"
+    },
+    {
+      "condition": "target_process.data.length > 0",
+      "id": "wakeup_chain",
+      "name": "唤醒链分析",
+      "optional": true,
+      "query_id": "cpu_analysis/wakeup_chain",
+      "result_dependencies": [
+        "target_process"
+      ],
+      "save_as": "wakeup_chain",
+      "type": "atomic"
+    },
+    {
+      "condition": "enable_expert_probes !== false && target_process.data.length > 0",
+      "id": "thread_affinity_probe",
+      "name": "线程亲和性探针",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts ?? null}",
+        "migration_ratio_threshold": "${affinity_probe_migration_ratio_threshold_pct|25}",
+        "package": "${target_process.data[0]?.process_name || package || ''}",
+        "start_ts": "${start_ts ?? null}"
+      },
+      "save_as": "affinity_probe",
+      "skill": "thread_affinity_violation",
+      "type": "skill"
+    },
+    {
+      "condition": "enable_expert_probes !== false && target_process.data.length > 0",
+      "id": "cache_counter_check",
+      "name": "Cache Miss 计数器检测",
+      "optional": true,
+      "query_id": "cpu_analysis/cache_counter_check",
+      "result_dependencies": [],
+      "save_as": "cache_counter_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "enable_expert_probes !== false && target_process.data.length > 0 && cache_counter_check.data[0]?.has_cache_counter === 1",
+      "id": "cache_miss_probe",
+      "name": "Cache Miss 探针",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts ?? null}",
+        "high_impact_threshold": "${cache_miss_high_avg_delta_threshold|500000}",
+        "medium_impact_threshold": "${cache_miss_medium_avg_delta_threshold|100000}",
+        "start_ts": "${start_ts ?? null}"
+      },
+      "save_as": "cache_miss_probe",
+      "skill": "cache_miss_impact",
+      "type": "skill"
+    },
+    {
+      "id": "cpu_diagnosis",
+      "inputs": [
+        "core_stats",
+        "main_thread_states",
+        "runnable_delays",
+        "blocked_functions",
+        "affinity_probe",
+        "cache_miss_probe"
+      ],
+      "name": "CPU 诊断",
+      "rules": [
+        {
+          "condition": "(core_stats?.data?.length || 0) === 0 &&\n(main_thread_states?.data?.length || 0) === 0 &&\n(runnable_delays?.data?.length || 0) === 0 &&\n(blocked_functions?.data?.length || 0) === 0\n",
+          "confidence": "low",
+          "diagnosis": "unable_to_determine：CPU 诊断数据不足（缺少 sched/thread_state 关键样本）",
+          "evidence_fields": [
+            "core_stats.data",
+            "main_thread_states.data",
+            "runnable_delays.data",
+            "blocked_functions.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] Perf/Infra | [Priority] P0 | [Action] 采集包含 sched 与 thread_state 的完整 trace（覆盖目标场景）",
+            "[Verify] 重新执行 cpu_analysis，确认 core_stats/main_thread_states/runnable_delays 均有数据"
+          ]
+        },
+        {
+          "condition": "(core_stats?.data?.length || 0) > 0 &&\n((core_stats.data.find(c => (c.core_type || '').includes('big') || (c.core_type || '').includes('prime'))?.percent) || 0) < (big_core_threshold_pct || 30)\n",
+          "confidence": "medium",
+          "diagnosis": "大核使用率偏低 (<${big_core_threshold_pct || 30}%)",
+          "evidence_fields": [
+            "core_stats.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] Runtime/App | [Priority] P1 | [Action] 检查关键线程优先级与调度组",
+            "[Owner] System | [Priority] P1 | [Action] 评估 PowerHint/调频策略对关键线程的影响",
+            "[Verify] 对比优化前后 big/prime 核占比与帧稳定性"
+          ]
+        },
+        {
+          "condition": "(main_thread_states?.data?.length || 0) > 0 &&\n((main_thread_states.data.find(s => s.state === 'Running')?.percent) || 0) < (running_threshold_pct || 50)\n",
+          "confidence": "medium",
+          "diagnosis": "主线程 CPU 利用率偏低 (Running ${main_thread_states?.data?.find(s => s.state === 'Running')?.percent}%)",
+          "evidence_fields": [
+            "main_thread_states.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] App | [Priority] P1 | [Action] 排查主线程等待/阻塞来源（锁、IO、Binder）",
+            "[Verify] 复测 Running 比例与可交互场景帧时长"
+          ]
+        },
+        {
+          "condition": "((runnable_delays?.data?.[0]?.wait_ms) || 0) > (sched_delay_critical_ms || 16)",
+          "confidence": "high",
+          "diagnosis": "存在严重调度延迟 (${runnable_delays?.data?.[0]?.wait_ms}ms)",
+          "evidence_fields": [
+            "runnable_delays.data"
+          ],
+          "severity": "critical",
+          "suggestions": [
+            "[Owner] Perf/System | [Priority] P0 | [Action] 检查高负载与抢占来源，控制后台并发",
+            "[Owner] App | [Priority] P1 | [Action] 合并短任务，减少调度抖动",
+            "[Verify] 复测 runnable wait P95 与关键路径帧时间"
+          ]
+        },
+        {
+          "condition": "(runnable_delays?.data?.length || 0) > 10",
+          "confidence": "medium",
+          "diagnosis": "调度延迟频繁发生 (${runnable_delays?.data?.length} 次 >1ms)",
+          "evidence_fields": [
+            "runnable_delays.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] App | [Priority] P1 | [Action] 优化线程模型，减少线程切换",
+            "[Verify] 对比调优前后 delay 次数与上下文切换指标"
+          ]
+        },
+        {
+          "condition": "((blocked_functions?.data?.[0]?.total_dur_ms) || 0) > (blocked_function_threshold_ms || 50)",
+          "confidence": "medium",
+          "diagnosis": "主线程 kernel blocked_function/wchan 候选为 ${blocked_functions?.data?.[0]?.blocked_function}，累计 ${blocked_functions?.data?.[0]?.total_dur_ms}ms；它是单帧阻塞点，需结合 app slice、文件/DB、Binder 或锁链证据后再定业务根因",
+          "evidence_fields": [
+            "blocked_functions.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] Perf | [Priority] P1 | [Action] 交叉检查对应时间窗的 app slice、文件/DB、Binder 或 lock contention 证据",
+            "[Verify] 复测 blocked_function/io_wait 总耗时和主线程可运行占比"
+          ]
+        },
+        {
+          "condition": "((affinity_probe?.data?.[0]?.migration_ratio_pct) || 0) >= (affinity_violation_warning_threshold_pct || 35)",
+          "confidence": "medium",
+          "diagnosis": "线程 ${affinity_probe?.data?.[0]?.thread_name} 迁核占比 ${affinity_probe?.data?.[0]?.migration_ratio_pct}% ，存在亲和性抖动",
+          "evidence_fields": [
+            "affinity_probe.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] Runtime/System | [Priority] P1 | [Action] 调整关键线程亲和性与调度优先级",
+            "[Verify] 复测 migration_ratio_pct 与帧稳定性"
+          ]
+        },
+        {
+          "condition": "(cache_miss_probe?.data?.find(r => r.impact_level === 'high')?.avg_miss_delta || 0) > 0",
+          "confidence": "medium",
+          "diagnosis": "检测到高缓存未命中压力 (${cache_miss_probe.data.find(r => r.impact_level === 'high').counter_name})",
+          "evidence_fields": [
+            "cache_miss_probe.data"
+          ],
+          "severity": "warning",
+          "suggestions": [
+            "[Owner] App | [Priority] P1 | [Action] 优化数据局部性并减少 cache thrashing",
+            "[Verify] 复测 avg_miss_delta 与关键路径耗时"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

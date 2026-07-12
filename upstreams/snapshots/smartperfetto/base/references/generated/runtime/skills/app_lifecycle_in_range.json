@@ -1,0 +1,72 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "*Fragment*",
+      "*activityPause*",
+      "*activityResume*",
+      "*activityStart*",
+      "*bindApplication*",
+      "*inflate*",
+      "*onCreate*",
+      "*onDestroy*",
+      "*onPause*",
+      "*onResume*",
+      "*onStart*",
+      "*onStop*",
+      "*performCreate*",
+      "completed:*",
+      "launching:*"
+    ]
+  },
+  "id": "app_lifecycle_in_range",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice"
+    ]
+  },
+  "query_id": "app_lifecycle_in_range/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/app_lifecycle_in_range.skill.yaml",
+    "sha256": "46a213c077050ea2c95c604806c96bb5c113ed136f248dffca36700952df16f2"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "interaction"
+}

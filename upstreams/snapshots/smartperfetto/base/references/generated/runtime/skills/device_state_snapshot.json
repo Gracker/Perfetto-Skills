@@ -1,0 +1,88 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*BatteryLevel*",
+      "*BatteryStatus*",
+      "*Idle*",
+      "*MemAvailable*",
+      "*MemFree*",
+      "*ScreenState*",
+      "*Temperature*",
+      "*battery_level*",
+      "*battery_status*",
+      "*charging*",
+      "*doze*",
+      "*idle*",
+      "*mem.*pressure*",
+      "*psi*mem*",
+      "*screen_state*",
+      "*suspend*",
+      "*temp*",
+      "*thermal_zone*"
+    ]
+  },
+  "id": "device_state_snapshot",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "counter",
+      "counter_track"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/device_state_snapshot.skill.yaml",
+    "sha256": "886bf69ae41b697f5c80cad4e1787cc5198233e15f65cb3c9cb3d382ca3b3655"
+  },
+  "steps": [
+    {
+      "id": "environment_snapshot",
+      "name": "设备环境快照",
+      "query_id": "device_state_snapshot/environment_snapshot",
+      "result_dependencies": [],
+      "save_as": "environment_snapshot",
+      "type": "atomic"
+    },
+    {
+      "id": "idle_window_summary",
+      "name": "Idle 窗口摘要",
+      "optional": true,
+      "query_id": "device_state_snapshot/idle_window_summary",
+      "result_dependencies": [],
+      "save_as": "idle_window_summary",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "2.0",
+  "workflow": "trace-overview"
+}

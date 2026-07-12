@@ -1,4 +1,3 @@
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -7,18 +6,10 @@ import sys
 import tempfile
 import unittest
 
-from tests.support import SCRIPTS, trace_processor
+from tests.support import SCRIPTS, fixture_path, fixture_root, trace_processor
 
 
-SOURCE = Path(os.environ["SMARTPERFETTO_SOURCE"]) if os.environ.get("SMARTPERFETTO_SOURCE") else None
-RUNTIME = (
-    Path(__file__).resolve().parents[2]
-    / "skills"
-    / "perfetto-performance-analysis"
-    / "references"
-    / "generated"
-    / "runtime"
-)
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def assert_semantic_assertion(
@@ -39,22 +30,21 @@ def assert_semantic_assertion(
         testcase.fail(f"unknown assertion kind: {assertion['kind']}")
 
 
-@unittest.skipUnless(SOURCE and SOURCE.is_dir(), "SMARTPERFETTO_SOURCE not configured")
+@unittest.skipUnless(fixture_root(), "PERFETTO_FIXTURE_ROOT not configured")
 class FixtureManifestTest(unittest.TestCase):
     def test_all_declared_semantic_assertions_execute_on_their_hashed_fixture(self) -> None:
-        manifest = json.loads((RUNTIME / "fixture-manifest.json").read_text(encoding="utf-8"))
+        manifest = json.loads((ROOT / "fixtures/manifest.json").read_text(encoding="utf-8"))
         executed = 0
         with tempfile.TemporaryDirectory() as temporary:
             for fixture in manifest["fixtures"]:
                 if not fixture.get("assertions"):
                     continue
-                trace = SOURCE / fixture["source"]
-                self.assertTrue(trace.is_file(), fixture["id"])
-                self.assertEqual(
-                    hashlib.sha256(trace.read_bytes()).hexdigest(),
-                    fixture["sha256"],
-                    fixture["id"],
-                )
+                try:
+                    trace = fixture_path(fixture["id"])
+                except FileNotFoundError:
+                    if os.environ.get("PERFETTO_FIXTURE_TIER") == "offline":
+                        continue
+                    raise
                 for assertion_index, assertion in enumerate(fixture["assertions"]):
                     with self.subTest(fixture=fixture["id"], query=assertion["query_id"]):
                         output = Path(temporary) / f"{fixture['id']}-{assertion_index}.json"
@@ -81,7 +71,8 @@ class FixtureManifestTest(unittest.TestCase):
                         rows = json.loads(output.read_text(encoding="utf-8"))
                         assert_semantic_assertion(self, rows, assertion)
                         executed += 1
-        self.assertEqual(executed, 9)
+        expected = 1 if os.environ.get("PERFETTO_FIXTURE_TIER") == "offline" else 9
+        self.assertEqual(executed, expected)
 
 
 class FixtureAssertionSemanticsTest(unittest.TestCase):

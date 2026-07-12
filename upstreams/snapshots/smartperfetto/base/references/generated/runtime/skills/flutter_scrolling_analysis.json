@@ -1,0 +1,138 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%${package}%",
+      "%BeginFrame%",
+      "%Build%",
+      "%Compositor%",
+      "%DrawToSurface%",
+      "%EntityPass%",
+      "%Layout%",
+      "%Paint%",
+      "%Semantics%",
+      "%SkGpu%",
+      "*1.io*",
+      "*1.raster*",
+      "*1.ui*",
+      "*DrawFrame*",
+      "*SurfaceTexture*",
+      "*queueBuffer*",
+      "*updateTexImage*",
+      "RenderThread",
+      "VSYNC-sf"
+    ]
+  },
+  "id": "flutter_scrolling_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Flutter 应用包名",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳（纳秒）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳（纳秒）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "VSync 周期（纳秒），默认 16666667 (60Hz)",
+      "name": "vsync_period_ns",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.frames.timeline"
+    ],
+    "required_tables": [
+      "actual_frame_timeline_slice"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/flutter_scrolling_analysis.skill.yaml",
+    "sha256": "1948ff2572667b9c7ccba73cb1bc9334c36b3ae6f6ae78371b7c64e154421c72"
+  },
+  "steps": [
+    {
+      "id": "flutter_frame_overview",
+      "name": "Flutter 帧概览",
+      "query_id": "flutter_scrolling_analysis/flutter_frame_overview",
+      "result_dependencies": [],
+      "save_as": "overview",
+      "type": "atomic"
+    },
+    {
+      "id": "flutter_thread_analysis",
+      "name": "Flutter 线程耗时",
+      "query_id": "flutter_scrolling_analysis/flutter_thread_analysis",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "id": "flutter_consumer_jank",
+      "name": "Flutter 消费端掉帧检测",
+      "query_id": "flutter_scrolling_analysis/flutter_consumer_jank",
+      "result_dependencies": [],
+      "save_as": "flutter_jank_stats",
+      "type": "atomic"
+    },
+    {
+      "id": "flutter_jank_frames",
+      "name": "Flutter 掉帧列表",
+      "query_id": "flutter_scrolling_analysis/flutter_jank_frames",
+      "result_dependencies": [],
+      "save_as": "jank_frames",
+      "type": "atomic"
+    },
+    {
+      "id": "flutter_ui_thread_long_slices",
+      "name": "UI 线程长耗时",
+      "query_id": "flutter_scrolling_analysis/flutter_ui_thread_long_slices",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "id": "flutter_raster_thread_long_slices",
+      "name": "Raster 线程长耗时",
+      "query_id": "flutter_scrolling_analysis/flutter_raster_thread_long_slices",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "frameworks-games"
+}

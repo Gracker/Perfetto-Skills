@@ -1,0 +1,152 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      },
+      {
+        "id": "android_input_source",
+        "selection": "data-source descriptor, build type, config, then rows",
+        "version_hint": {
+          "proto_input_min_api_hint": 34
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*AppTransition*",
+      "*InputMethodManager*show*",
+      "*InputMethodService*show*",
+      "*KeyguardGoing*",
+      "*NotificationShade*",
+      "*RecentsAnimation*",
+      "*RemoteAnimation*",
+      "*StatusBar*expand*",
+      "*StatusBarWindow*",
+      "*Transition*",
+      "*WindowAnimation*",
+      "*keyguardGoingAway*",
+      "*showSoftInput*",
+      "*startRecentsActivity*",
+      "battery_stats.top",
+      "com.android.systemui*"
+    ]
+  },
+  "id": "state_timeline",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "trace_id",
+      "required": true,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.screen_state",
+      "android.input",
+      "android.battery_stats"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/state_timeline.skill.yaml",
+    "sha256": "e3ba12b4a53d3c90d152f942c7f910e4108218ef5da2c56c0e19561009686fc2"
+  },
+  "steps": [
+    {
+      "id": "timeline_bounds",
+      "name": "时间线范围与可用表",
+      "query_id": "state_timeline/timeline_bounds",
+      "result_dependencies": [],
+      "save_as": "timeline_bounds",
+      "type": "atomic"
+    },
+    {
+      "condition": "timeline_bounds.data[0]?.has_screen_state === 1",
+      "id": "device_state_lane",
+      "name": "设备状态泳道",
+      "optional": true,
+      "query_id": "state_timeline/device_state_lane",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "condition": "timeline_bounds.data[0]?.has_screen_state !== 1",
+      "id": "device_state_lane_fallback",
+      "name": "设备状态泳道（降级）",
+      "query_id": "state_timeline/device_state_lane_fallback",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "condition": "timeline_bounds.data[0]?.has_frame_timeline === 1 && timeline_bounds.data[0]?.has_input_events === 1",
+      "id": "input_state_lane_frames",
+      "name": "用户输入状态泳道（帧级）",
+      "optional": true,
+      "query_id": "state_timeline/input_state_lane_frames",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "condition": "timeline_bounds.data[0]?.has_frame_timeline !== 1 && timeline_bounds.data[0]?.has_input_events === 1",
+      "id": "input_state_lane_fallback",
+      "name": "用户输入状态泳道（启发式）",
+      "optional": true,
+      "query_id": "state_timeline/input_state_lane_fallback",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "condition": "timeline_bounds.data[0]?.has_battery_top === 1",
+      "id": "app_state_lane",
+      "name": "应用状态泳道",
+      "optional": true,
+      "query_id": "state_timeline/app_state_lane",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "condition": "timeline_bounds.data[0]?.has_battery_top !== 1",
+      "id": "app_state_lane_fallback",
+      "name": "应用状态泳道（降级）",
+      "query_id": "state_timeline/app_state_lane_fallback",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "id": "system_state_lane",
+      "name": "系统状态泳道",
+      "query_id": "state_timeline/system_state_lane",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "id": "lane_summary",
+      "name": "泳道统计汇总",
+      "query_id": "state_timeline/lane_summary",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "trace-overview"
+}

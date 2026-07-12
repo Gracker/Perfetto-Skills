@@ -1,0 +1,70 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "linux_perf_counter_hotspots",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；当 package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.perf.counters"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/linux_perf_counter_hotspots.skill.yaml",
+    "sha256": "a45de9aedc3fc4f3cf6cf9056e2e50d0de44ab20831abdaa17a1351352564370"
+  },
+  "steps": [
+    {
+      "id": "perf_counter_hotspots",
+      "name": "Perf Counter 热点",
+      "query_id": "linux_perf_counter_hotspots/perf_counter_hotspots",
+      "result_dependencies": [],
+      "save_as": "perf_counter_hotspots",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

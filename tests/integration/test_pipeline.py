@@ -1,21 +1,15 @@
-import os
-from pathlib import Path
 import unittest
 
-from tests.support import generated_sql, run_public_query
-
-
-TRACE_ROOT = Path(os.environ["SMARTPERFETTO_TEST_TRACES"]) if os.environ.get("SMARTPERFETTO_TEST_TRACES") else None
+from tests.support import fixture_available, fixture_path, generated_sql, run_public_query
 
 
 @unittest.skipUnless(
-    TRACE_ROOT and TRACE_ROOT.is_dir(),
-    "SMARTPERFETTO_TEST_TRACES not configured",
+    fixture_available("flutter-texture-api35"),
+    "full PERFETTO_FIXTURE_ROOT not configured",
 )
 class PipelineTest(unittest.TestCase):
     def test_flutter_textureview_signals_are_observed(self) -> None:
-        trace = TRACE_ROOT / "Scroll-Flutter-327-TextureView.pftrace"
-        self.assertTrue(trace.is_file())
+        trace = fixture_path("flutter-texture-api35")
         result = run_public_query(
             trace,
             sql_file=generated_sql("rendering_pipeline_detection", "thread_signals.sql"),

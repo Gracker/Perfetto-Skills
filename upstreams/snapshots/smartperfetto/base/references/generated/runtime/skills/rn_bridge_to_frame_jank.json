@@ -1,0 +1,96 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*BatchedBridge*",
+      "*JS*",
+      "*RCTEventEmitter*",
+      "*ReactChoreographer*",
+      "*UIManager*",
+      "*callFunctionReturnFlushedQueue*",
+      "*dispatchViewUpdates*",
+      "*mqt_js*",
+      "*mqt_native_modules*"
+    ]
+  },
+  "id": "rn_bridge_to_frame_jank",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；当 package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.frames.timeline",
+      "slices.with_context"
+    ],
+    "required_tables": [
+      "actual_frame_timeline_slice",
+      "slice",
+      "thread_track",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/rn_bridge_to_frame_jank.skill.yaml",
+    "sha256": "d2cce13360dd218d1931638ebf4d69f3b01a43c9ae5c3470bb7c9ba5e3202311"
+  },
+  "steps": [
+    {
+      "id": "rn_bridge_frame_overlap",
+      "name": "RN Bridge 与帧重叠",
+      "query_id": "rn_bridge_to_frame_jank/rn_bridge_frame_overlap",
+      "result_dependencies": [],
+      "save_as": "rn_bridge_frame_overlap",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "frameworks-games"
+}

@@ -1,0 +1,58 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${process_name}*"
+    ]
+  },
+  "id": "cpu_thread_utilization_period",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 30,
+      "name": "top_n",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.cpu.utilization.thread"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/cpu_thread_utilization_period.skill.yaml",
+    "sha256": "ce8310da44dc38f1cb55bd3e6768d15e6959ac0130ef320d511f5ba7d4a9deb6"
+  },
+  "steps": [
+    {
+      "id": "thread_util",
+      "name": "线程 CPU 利用率",
+      "query_id": "cpu_thread_utilization_period/thread_util",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

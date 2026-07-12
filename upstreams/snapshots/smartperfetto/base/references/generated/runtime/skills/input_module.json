@@ -1,0 +1,137 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "android_input_source",
+        "selection": "data-source descriptor, build type, config, then rows",
+        "version_hint": {
+          "proto_input_min_api_hint": 34
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%InputDispatcher%",
+      "%InputReader%",
+      "%deliverInputEvent%",
+      "%dispatchTouchEvent%"
+    ]
+  },
+  "id": "input_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target package name",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Target timestamp",
+      "name": "ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.input"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/framework/input_module.skill.yaml",
+    "sha256": "77e992fb9b0d483e4e6c1956dd1023052e4c345a03137e372448ad8c22892918"
+  },
+  "steps": [
+    {
+      "id": "click_response_overview",
+      "name": "点击响应概览",
+      "query_id": "input_module/click_response_overview",
+      "result_dependencies": [],
+      "save_as": "click_stats",
+      "type": "atomic"
+    },
+    {
+      "id": "slow_input_events",
+      "name": "慢输入事件",
+      "query_id": "input_module/slow_input_events",
+      "result_dependencies": [],
+      "save_as": "slow_inputs",
+      "type": "atomic"
+    },
+    {
+      "id": "input_dispatch_timing",
+      "name": "输入派发时序",
+      "query_id": "input_module/input_dispatch_timing",
+      "result_dependencies": [],
+      "save_as": "dispatch_timing",
+      "type": "atomic"
+    },
+    {
+      "id": "input_diagnosis",
+      "inputs": [
+        "click_stats",
+        "slow_inputs",
+        "dispatch_timing"
+      ],
+      "name": "输入诊断",
+      "rules": [
+        {
+          "condition": "click_stats.data[0]?.avg_latency_ms > 100",
+          "confidence": "high",
+          "diagnosis": "平均点击响应延迟过高 (${click_stats.data[0]?.avg_latency_ms}ms)，超过 100ms 阈值",
+          "evidence_fields": [
+            "click_stats.data[0].avg_latency_ms",
+            "click_stats.data[0].slow_clicks"
+          ],
+          "suggestions": [
+            "检查主线程是否有耗时操作",
+            "优化 View 层级减少测量/布局时间"
+          ]
+        },
+        {
+          "condition": "click_stats.data[0]?.slow_clicks > 5",
+          "confidence": "high",
+          "diagnosis": "存在 ${click_stats.data[0]?.slow_clicks} 次慢响应点击事件",
+          "evidence_fields": [
+            "click_stats.data[0].slow_clicks",
+            "click_stats.data[0].max_latency_ms"
+          ],
+          "suggestions": [
+            "分析具体慢点击事件的根因",
+            "检查是否有 Binder 调用阻塞"
+          ]
+        },
+        {
+          "condition": "dispatch_timing.data.find(s => s.stage === 'InputDispatcher')?.avg_ms > 5",
+          "confidence": "medium",
+          "diagnosis": "InputDispatcher 派发延迟 (${dispatch_timing.data.find(s => s.stage === 'InputDispatcher')?.avg_ms}ms)",
+          "evidence_fields": [
+            "dispatch_timing.data[1].avg_ms"
+          ],
+          "suggestions": [
+            "检查系统负载",
+            "检查是否有其他应用占用焦点"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "interaction"
+}

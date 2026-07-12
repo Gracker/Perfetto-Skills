@@ -1,0 +1,64 @@
+{
+  "application_mode": "advisory_only",
+  "definition": {
+    "additional_steps": [
+      {
+        "for_each": "startups",
+        "id": "miui_optimization",
+        "name": "MIUI 优化检测",
+        "sql": "SELECT\n  s.name as optimization_event,\n  s.dur / 1e6 as dur_ms,\n  (s.ts - (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})) / 1e6 as relative_ts_ms\nFROM slice s\nWHERE (s.name GLOB '*MIUI*'\n       OR s.name GLOB '*miui*'\n       OR s.name GLOB '*MiBoost*'\n       OR s.name GLOB '*Boost*Pool*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.ts ASC\n"
+      },
+      {
+        "description": "检查云控和推送服务对启动的影响",
+        "for_each": "startups",
+        "id": "xiaomi_cloud_services",
+        "name": "小米云服务检测",
+        "sql": "SELECT\n  s.name as service_event,\n  s.dur / 1e6 as dur_ms,\n  t.name as thread_name\nFROM slice s\nJOIN thread_track tt ON s.track_id = tt.id\nJOIN thread t ON tt.utid = t.utid\nJOIN process p ON t.upid = p.upid\nWHERE p.name GLOB '${package}*'\n  AND (s.name GLOB '*MiPush*'\n       OR s.name GLOB '*XMPush*'\n       OR s.name GLOB '*Analytics*'\n       OR s.name GLOB '*cloud*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.dur > 1000000\nORDER BY s.dur DESC\n"
+      },
+      {
+        "for_each": "startups",
+        "id": "memory_optimization",
+        "name": "内存优化状态",
+        "sql": "SELECT\n  s.name as memory_event,\n  s.dur / 1e6 as dur_ms\nFROM slice s\nWHERE (s.name GLOB '*lmk*'\n       OR s.name GLOB '*memory*reclaim*'\n       OR s.name GLOB '*compaction*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nORDER BY s.ts ASC\n"
+      }
+    ],
+    "extends": "composite/startup_analysis",
+    "meta": {
+      "description": "针对小米 MIUI/HyperOS 优化的启动分析",
+      "display_name": "小米 MIUI 启动分析",
+      "os": "MIUI/HyperOS",
+      "vendor": "xiaomi"
+    },
+    "vendor_detection": {
+      "signatures": [
+        {
+          "confidence": "high",
+          "pattern": "*miui*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*MIUI*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*xiaomi*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*Xiaomi*"
+        },
+        {
+          "confidence": "high",
+          "pattern": "*HyperOS*"
+        }
+      ]
+    },
+    "version": "1.0.0"
+  },
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/vendors/xiaomi/startup.override.yaml",
+    "sha256": "9f34231ee4ad502a6475d24d55c3d45f76f547afb1c52b7c5d5381a52b591f3a"
+  }
+}

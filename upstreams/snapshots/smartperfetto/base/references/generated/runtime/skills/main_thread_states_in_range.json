@@ -1,0 +1,81 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package|}",
+      "${package|}:*"
+    ]
+  },
+  "id": "main_thread_states_in_range",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "目标进程名；匹配精确进程或 name:* 子进程",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 0,
+      "description": "Trace 内唯一进程 ID；优先用于精确进程隔离",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "default": 0,
+      "description": "进程 ID；无 upid 时作为降级匹配",
+      "name": "pid",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "返回 TopK 条目，默认 10",
+      "name": "top_k",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": []
+  },
+  "query_id": "main_thread_states_in_range/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/main_thread_states_in_range.skill.yaml",
+    "sha256": "9dff50424647c05fa5494e804e49bc18338d552e3b39edb6edca6cbb4c53e3e2"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "trace-overview"
+}

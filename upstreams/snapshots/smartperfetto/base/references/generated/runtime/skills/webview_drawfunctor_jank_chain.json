@@ -1,0 +1,120 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*AwDrawFn*",
+      "*Blink*",
+      "*Chromium*",
+      "*Compositor*",
+      "*CrRendererMain*",
+      "*DrawFn_DrawGL*",
+      "*DrawFunctor*",
+      "*DrawGL*",
+      "*JavaScript*",
+      "*V8*",
+      "*sandboxed_process*",
+      "*v8*",
+      "*webview*"
+    ]
+  },
+  "id": "webview_drawfunctor_jank_chain",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；当 package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.frames.timeline",
+      "slices.with_context"
+    ],
+    "required_tables": [
+      "actual_frame_timeline_slice",
+      "slice",
+      "thread_track",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/webview_drawfunctor_jank_chain.skill.yaml",
+    "sha256": "d0794e39385b8e2f575eebff3c0229ba4ca0b468c5845b371ac3187f521f2c7a"
+  },
+  "steps": [
+    {
+      "id": "drawfunctor_signal_summary",
+      "name": "WebView Functor 信号概览",
+      "query_id": "webview_drawfunctor_jank_chain/drawfunctor_signal_summary",
+      "result_dependencies": [],
+      "save_as": "drawfunctor_signal_summary",
+      "type": "atomic"
+    },
+    {
+      "id": "drawfunctor_frame_overlap",
+      "name": "Functor/JS 与宿主帧重叠",
+      "query_id": "webview_drawfunctor_jank_chain/drawfunctor_frame_overlap",
+      "result_dependencies": [],
+      "save_as": "drawfunctor_frame_overlap",
+      "type": "atomic"
+    },
+    {
+      "id": "v8_long_tasks",
+      "name": "WebView V8 长任务",
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package|${process_name|}}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "v8_long_tasks",
+      "skill": "webview_v8_analysis",
+      "type": "skill"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "io-network-media"
+}

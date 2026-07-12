@@ -1,0 +1,136 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*"
+    ]
+  },
+  "id": "cpu_profiling",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 1,
+      "description": "最小运行时长阈值（毫秒）",
+      "name": "min_runtime_ms",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.cpu.frequency"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/deep/cpu_profiling.skill.yaml",
+    "sha256": "747b9f8972708ad1e4c8449ab8e9876c58138f44ae4f3515d87232a9173a4772"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "cpu_usage_overview",
+      "name": "CPU 使用概览",
+      "optional": true,
+      "query_id": "cpu_profiling/cpu_usage_overview",
+      "result_dependencies": [],
+      "save_as": "cpu_overview",
+      "type": "atomic"
+    },
+    {
+      "id": "process_cpu_time",
+      "name": "进程 CPU 时间",
+      "query_id": "cpu_profiling/process_cpu_time",
+      "result_dependencies": [],
+      "save_as": "process_cpu_time",
+      "type": "atomic"
+    },
+    {
+      "id": "thread_cpu_time",
+      "name": "线程 CPU 时间",
+      "query_id": "cpu_profiling/thread_cpu_time",
+      "result_dependencies": [],
+      "save_as": "thread_cpu_time",
+      "type": "atomic"
+    },
+    {
+      "id": "core_distribution",
+      "name": "大小核分布",
+      "optional": true,
+      "query_id": "cpu_profiling/core_distribution",
+      "result_dependencies": [],
+      "save_as": "core_distribution",
+      "type": "atomic"
+    },
+    {
+      "id": "scheduling_latency",
+      "name": "调度延迟",
+      "optional": true,
+      "query_id": "cpu_profiling/scheduling_latency",
+      "result_dependencies": [],
+      "save_as": "scheduling_latency",
+      "type": "atomic"
+    },
+    {
+      "id": "context_switches",
+      "name": "上下文切换",
+      "query_id": "cpu_profiling/context_switches",
+      "result_dependencies": [],
+      "save_as": "context_switches",
+      "type": "atomic"
+    },
+    {
+      "id": "cpu_timeline",
+      "name": "CPU 使用时间线",
+      "query_id": "cpu_profiling/cpu_timeline",
+      "result_dependencies": [],
+      "save_as": "cpu_timeline",
+      "type": "atomic"
+    },
+    {
+      "id": "profiling_conclusion",
+      "name": "CPU 剖析结论",
+      "optional": true,
+      "query_id": "cpu_profiling/profiling_conclusion",
+      "result_dependencies": [
+        "core_distribution",
+        "scheduling_latency",
+        "thread_cpu_time"
+      ],
+      "type": "atomic"
+    }
+  ],
+  "type": "deep",
+  "version": "3.0",
+  "workflow": "cpu-scheduling"
+}

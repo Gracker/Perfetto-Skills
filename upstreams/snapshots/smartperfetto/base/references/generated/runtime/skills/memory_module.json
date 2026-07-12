@@ -1,0 +1,240 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%${package}%",
+      "%Buffers%",
+      "%Cached%",
+      "%Mem%",
+      "%MemAvailable%",
+      "%MemFree%",
+      "%Memory%",
+      "%RSS%",
+      "%SwapFree%",
+      "%heap%",
+      "%mem%",
+      "%memory%",
+      "%rss%",
+      "*Alloc*",
+      "*LMK*",
+      "*OOM*",
+      "*PSI*",
+      "*alloc*",
+      "*dmabuf*",
+      "*fault*",
+      "*gpu*mem*",
+      "*graphics*",
+      "*ion*",
+      "*kill*memory*",
+      "*lmk*",
+      "*lowmemory*",
+      "*malloc*",
+      "*mmap*",
+      "*oom*",
+      "*page*fault*",
+      "*pgfault*",
+      "*pressure*",
+      "*psi*"
+    ]
+  },
+  "id": "memory_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target package name",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Analysis start timestamp",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Analysis end timestamp",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "counter",
+      "counter_track"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
+    "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"
+  },
+  "steps": [
+    {
+      "id": "memory_overview",
+      "name": "系统内存概览",
+      "query_id": "memory_module/memory_overview",
+      "result_dependencies": [],
+      "save_as": "memory_overview",
+      "type": "atomic"
+    },
+    {
+      "id": "lmk_events",
+      "name": "LMK 事件",
+      "on_empty": "未检测到 LMK 事件",
+      "query_id": "memory_module/lmk_events",
+      "result_dependencies": [],
+      "save_as": "lmk_events",
+      "type": "atomic"
+    },
+    {
+      "id": "dmabuf_usage",
+      "name": "dmabuf 内存使用",
+      "query_id": "memory_module/dmabuf_usage",
+      "result_dependencies": [],
+      "save_as": "dmabuf_usage",
+      "type": "atomic"
+    },
+    {
+      "id": "memory_psi",
+      "name": "内存压力指标",
+      "query_id": "memory_module/memory_psi",
+      "result_dependencies": [],
+      "save_as": "memory_psi",
+      "type": "atomic"
+    },
+    {
+      "id": "process_memory",
+      "name": "进程内存",
+      "optional": true,
+      "query_id": "memory_module/process_memory",
+      "result_dependencies": [],
+      "save_as": "process_memory",
+      "type": "atomic"
+    },
+    {
+      "id": "memory_timeline",
+      "name": "内存时间线",
+      "query_id": "memory_module/memory_timeline",
+      "result_dependencies": [],
+      "save_as": "memory_timeline",
+      "type": "atomic"
+    },
+    {
+      "id": "page_fault_analysis",
+      "name": "页面错误分析",
+      "optional": true,
+      "query_id": "memory_module/page_fault_analysis",
+      "result_dependencies": [],
+      "save_as": "page_faults",
+      "type": "atomic"
+    },
+    {
+      "id": "allocation_events",
+      "name": "内存分配事件",
+      "query_id": "memory_module/allocation_events",
+      "result_dependencies": [],
+      "save_as": "allocation_events",
+      "type": "atomic"
+    },
+    {
+      "id": "memory_diagnosis",
+      "inputs": [
+        "memory_overview",
+        "lmk_events",
+        "dmabuf_usage",
+        "memory_psi",
+        "process_memory"
+      ],
+      "name": "内存诊断",
+      "rules": [
+        {
+          "condition": "lmk_events.data.length > 0",
+          "confidence": "critical",
+          "diagnosis": "检测到 ${lmk_events.data.length} 个 LMK 事件，系统内存压力大",
+          "evidence_fields": [
+            "lmk_events.data.length",
+            "lmk_events.data[0]?.lmk_event"
+          ],
+          "suggestions": [
+            "检查内存泄漏",
+            "减少后台进程内存使用",
+            "优化缓存策略"
+          ]
+        },
+        {
+          "condition": "dmabuf_usage.data[0]?.growth_mb > 50",
+          "confidence": "high",
+          "diagnosis": "dmabuf 内存增长 ${dmabuf_usage.data[0]?.growth_mb}MB，可能存在泄漏",
+          "evidence_fields": [
+            "dmabuf_usage.data[0]?.growth_mb",
+            "dmabuf_usage.data[0]?.max_mb"
+          ],
+          "suggestions": [
+            "检查 Surface/Texture 是否正确释放",
+            "检查 Bitmap 缓存策略",
+            "使用 Android Studio Memory Profiler 分析"
+          ]
+        },
+        {
+          "condition": "memory_psi.data[0]?.avg_value > 30",
+          "confidence": "high",
+          "diagnosis": "内存压力指标偏高: PSI 平均 ${memory_psi.data[0]?.avg_value}%",
+          "evidence_fields": [
+            "memory_psi.data[0]?.avg_value",
+            "memory_psi.data[0]?.max_value"
+          ],
+          "suggestions": [
+            "系统内存紧张，考虑释放缓存",
+            "减少内存密集型操作",
+            "检查是否有内存泄漏"
+          ]
+        },
+        {
+          "condition": "memory_overview.data.find(m => m.memory_type.includes('Free'))?.min_mb < 100",
+          "confidence": "high",
+          "diagnosis": "可用内存最低降至 ${memory_overview.data.find(m => m.memory_type.includes('Free'))?.min_mb}MB",
+          "evidence_fields": [
+            "memory_overview.data[0]?.min_mb"
+          ],
+          "suggestions": [
+            "系统内存极低，可能触发 LMK",
+            "检查大内存消耗进程"
+          ]
+        },
+        {
+          "condition": "process_memory.data[0]?.max_mb > 500",
+          "confidence": "medium",
+          "diagnosis": "进程 ${process_memory.data[0]?.process_name} 内存峰值 ${process_memory.data[0]?.max_mb}MB",
+          "evidence_fields": [
+            "process_memory.data[0]?.process_name",
+            "process_memory.data[0]?.max_mb"
+          ],
+          "suggestions": [
+            "检查是否有大对象或集合",
+            "考虑使用 LruCache",
+            "分析堆内存组成"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "memory"
+}

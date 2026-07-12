@@ -1,0 +1,57 @@
+{
+  "normalizations": [
+    {
+      "field": "template.fragments.target_threads.sql.source_sha256",
+      "query_id": "jank_frame_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.vsync_config.sql.source_sha256",
+      "query_id": "jank_frame_detail/root_cause_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.target_threads.sql.source_sha256",
+      "query_id": "jank_frame_detail/root_cause_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thread_states_quadrant.sql.source_sha256",
+      "query_id": "jank_frame_detail/root_cause_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "sql_dependencies.required_tables",
+      "query_id": "scroll_session_analysis/full_session_stats",
+      "reason": "legacy symbol normalized through src/symbol-aliases.json",
+      "replacements": {
+        "android_input_event": "android_input_events"
+      }
+    },
+    {
+      "field": "sql_dependencies.required_tables",
+      "query_id": "scroll_session_analysis/touch_phase_stats",
+      "reason": "legacy symbol normalized through src/symbol-aliases.json",
+      "replacements": {
+        "android_input_event": "android_input_events"
+      }
+    },
+    {
+      "field": "sql_dependencies.required_tables",
+      "query_id": "scroll_session_analysis/fling_phase_stats",
+      "reason": "legacy symbol normalized through src/symbol-aliases.json",
+      "replacements": {
+        "android_input_event": "android_input_events"
+      }
+    },
+    {
+      "field": "sql_dependencies.required_tables",
+      "query_id": "scroll_session_analysis/identify_janky_frames",
+      "reason": "legacy symbol normalized through src/symbol-aliases.json",
+      "replacements": {
+        "android_input_event": "android_input_events"
+      }
+    }
+  ],
+  "schema_version": 1
+}

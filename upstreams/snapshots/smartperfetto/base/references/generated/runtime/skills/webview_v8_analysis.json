@@ -1,0 +1,110 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "*MajorGC*",
+      "*MinorGC*",
+      "*V8.GC*",
+      "*V8.GCCompactor*",
+      "*V8.GCScavenger*",
+      "*v8.compile*",
+      "*v8.gc*",
+      "*v8.run*"
+    ]
+  },
+  "id": "webview_v8_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持 GLOB）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.frames.timeline"
+    ],
+    "required_tables": [
+      "slice"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/webview_v8_analysis.skill.yaml",
+    "sha256": "2049705d85775c01fb32fc6391b66c22d69cd8ec313a1543111b4c0fbb42ad9f"
+  },
+  "steps": [
+    {
+      "id": "v8_gc_events",
+      "name": "V8 GC 事件",
+      "query_id": "webview_v8_analysis/v8_gc_events",
+      "result_dependencies": [],
+      "save_as": "v8_gc_events",
+      "type": "atomic"
+    },
+    {
+      "id": "v8_script_execution",
+      "name": "V8 脚本执行",
+      "query_id": "webview_v8_analysis/v8_script_execution",
+      "result_dependencies": [],
+      "save_as": "v8_script_execution",
+      "type": "atomic"
+    },
+    {
+      "id": "v8_compilation",
+      "name": "V8 编译开销",
+      "query_id": "webview_v8_analysis/v8_compilation",
+      "result_dependencies": [],
+      "save_as": "v8_compilation",
+      "type": "atomic"
+    },
+    {
+      "id": "v8_frame_impact",
+      "name": "V8 GC 帧影响",
+      "optional": true,
+      "query_id": "webview_v8_analysis/v8_frame_impact",
+      "result_dependencies": [],
+      "save_as": "v8_frame_impact",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "io-network-media"
+}

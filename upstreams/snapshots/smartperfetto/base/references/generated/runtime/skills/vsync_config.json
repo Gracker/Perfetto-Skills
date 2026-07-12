@@ -1,0 +1,71 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "VSYNC-sf"
+    ]
+  },
+  "id": "vsync_config",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "分析起始时间（可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间（可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.frames.timeline"
+    ],
+    "required_tables": [
+      "expected_frame_timeline_slice"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/vsync_config.skill.yaml",
+    "sha256": "7dbf90d2995e488a38404e815e4b85f2674d51b83d6a59b78ae3ed4bcc08d946"
+  },
+  "steps": [
+    {
+      "id": "detect_vsync_config",
+      "name": "检测 Vsync 配置",
+      "query_id": "vsync_config/detect_vsync_config",
+      "result_dependencies": [],
+      "save_as": "vsync_config",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "scrolling"
+}

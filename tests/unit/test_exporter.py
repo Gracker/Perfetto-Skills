@@ -9,9 +9,11 @@ from tools import export_from_smartperfetto as exporter
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SMARTPERFETTO = Path(
-    os.environ.get("SMARTPERFETTO_SOURCE", ROOT.parent / "SmartPerfetto")
-).expanduser().resolve()
+SMARTPERFETTO = (
+    Path(os.environ["SMARTPERFETTO_SOURCE"]).expanduser().resolve()
+    if os.environ.get("SMARTPERFETTO_SOURCE")
+    else None
+)
 EXPORTER = ROOT / "tools" / "export_from_smartperfetto.py"
 CATALOG = ROOT / "catalog" / "smartperfetto-export.json"
 MIGRATION_DOC = ROOT / "docs" / "migration-coverage.md"
@@ -20,16 +22,18 @@ MIGRATION_DOC = ROOT / "docs" / "migration-coverage.md"
 class ExporterTest(unittest.TestCase):
     def setUp(self) -> None:
         self.assertTrue(EXPORTER.is_file(), "tools/export_from_smartperfetto.py")
-        self.assertTrue(
-            (SMARTPERFETTO / "backend" / "skills" / "public-export.yaml").is_file(),
-            "SmartPerfetto backend/skills/public-export.yaml",
-        )
 
     def load_catalog(self) -> dict[str, object]:
         self.assertTrue(CATALOG.is_file(), "catalog/smartperfetto-export.json")
         return json.loads(CATALOG.read_text(encoding="utf-8"))
 
+    @unittest.skipUnless(
+        SMARTPERFETTO
+        and (SMARTPERFETTO / "backend/skills/public-export.yaml").is_file(),
+        "explicit SMARTPERFETTO_SOURCE not configured",
+    )
     def test_catalog_covers_every_runtime_candidate(self) -> None:
+        assert SMARTPERFETTO is not None
         subprocess.run(
             [
                 sys.executable,

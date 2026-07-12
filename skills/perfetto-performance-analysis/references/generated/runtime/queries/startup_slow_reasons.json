@@ -17,13 +17,13 @@
           },
           "31": {
             "fixtures": [
-              "upstream-startup-api31-cold"
+              "startup-api31-cold"
             ],
             "status": "verified"
           },
           "32": {
             "fixtures": [
-              "upstream-startup-api32-warm"
+              "startup-api32-warm-smoke"
             ],
             "status": "verified"
           },
@@ -33,7 +33,7 @@
           },
           "34": {
             "fixtures": [
-              "upstream-startup-api34-cold"
+              "startup-api34-cold"
             ],
             "status": "verified"
           },
@@ -43,7 +43,7 @@
           },
           "36": {
             "fixtures": [
-              "smart-launch-light-api36"
+              "startup-light-api36"
             ],
             "status": "verified"
           },
@@ -95,11 +95,11 @@
         "default_execution": "verified",
         "execution_verified": true,
         "fixtures": [
-          "smart-launch-light-api36",
-          "upstream-startup-api24-cold",
-          "upstream-startup-api31-cold",
-          "upstream-startup-api32-warm",
-          "upstream-startup-api34-cold"
+          "startup-light-api36",
+          "startup-api24-cold",
+          "startup-api31-cold",
+          "startup-api32-warm-smoke",
+          "startup-api34-cold"
         ],
         "runtime_compatible": true,
         "semantic_verified": true,

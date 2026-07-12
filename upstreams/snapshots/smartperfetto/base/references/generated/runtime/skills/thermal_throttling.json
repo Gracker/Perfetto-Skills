@@ -1,0 +1,331 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%gpu%",
+      "%temp%",
+      "%temperature%",
+      "%thermal%",
+      "%tsens%",
+      "android_gpu_frequency",
+      "cpufreq"
+    ]
+  },
+  "id": "thermal_throttling",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳（纳秒，可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳（纳秒，可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": true,
+      "description": "是否启用专家探针（热预测/GPU DVFS）",
+      "name": "enable_expert_probes",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "default": 30,
+      "description": "热预测高风险的平均降频阈值（%）",
+      "name": "thermal_predictor_high_drop_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 15,
+      "description": "热预测中风险的平均降频阈值（%）",
+      "name": "thermal_predictor_medium_drop_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
+      "description": "热预测高风险的限频核心占比阈值（%）",
+      "name": "thermal_predictor_high_core_ratio_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 25,
+      "description": "热预测中风险的限频核心占比阈值（%）",
+      "name": "thermal_predictor_medium_core_ratio_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 30,
+      "description": "判定单核心疑似限频的降频阈值（%）",
+      "name": "thermal_predictor_core_drop_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 12,
+      "description": "GPU 升降频判定阈值（%）",
+      "name": "gpu_transition_threshold_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 25,
+      "description": "GPU 降频占比告警阈值（%）",
+      "name": "gpu_downshift_warning_pct",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "counter"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/thermal_throttling.skill.yaml",
+    "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+  },
+  "steps": [
+    {
+      "id": "data_check",
+      "name": "温度数据检测",
+      "query_id": "thermal_throttling/data_check",
+      "result_dependencies": [],
+      "save_as": "data_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "enable_expert_probes !== false && (data_check.data[0]?.has_thermal_data === 1 || data_check.data[0]?.has_freq_data === 1 || data_check.data[0]?.has_gpu_freq_data === 1)",
+      "id": "expert_analysis_window",
+      "name": "热分析窗口",
+      "optional": true,
+      "query_id": "thermal_throttling/expert_analysis_window",
+      "result_dependencies": [],
+      "save_as": "analysis_window",
+      "type": "atomic"
+    },
+    {
+      "condition": "enable_expert_probes !== false && data_check.data[0]?.has_freq_data === 1 && analysis_window.data?.[0]?.window_start_ts != null && analysis_window.data?.[0]?.window_end_ts != null",
+      "id": "thermal_predictor_probe",
+      "name": "热风险预测",
+      "optional": true,
+      "params": {
+        "core_drop_threshold_pct": "${thermal_predictor_core_drop_threshold_pct|30}",
+        "end_ts": "${analysis_window.data?.[0]?.window_end_ts ?? end_ts ?? null}",
+        "high_core_ratio_threshold_pct": "${thermal_predictor_high_core_ratio_pct|50}",
+        "high_drop_threshold_pct": "${thermal_predictor_high_drop_pct|30}",
+        "medium_core_ratio_threshold_pct": "${thermal_predictor_medium_core_ratio_pct|25}",
+        "medium_drop_threshold_pct": "${thermal_predictor_medium_drop_pct|15}",
+        "start_ts": "${analysis_window.data?.[0]?.window_start_ts ?? start_ts ?? null}"
+      },
+      "save_as": "thermal_prediction",
+      "skill": "thermal_predictor",
+      "type": "skill"
+    },
+    {
+      "condition": "data_check.data[0]?.has_thermal_data === 1",
+      "id": "thermal_overview",
+      "name": "温度传感器概览",
+      "optional": true,
+      "query_id": "thermal_throttling/thermal_overview",
+      "result_dependencies": [],
+      "save_as": "thermal_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_freq_data === 1",
+      "id": "cpu_freq_overview",
+      "name": "CPU 频率概览",
+      "optional": true,
+      "query_id": "thermal_throttling/cpu_freq_overview",
+      "result_dependencies": [],
+      "save_as": "cpu_freq_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "enable_expert_probes !== false && data_check.data[0]?.has_gpu_freq_data === 1 && analysis_window.data?.[0]?.window_start_ts != null && analysis_window.data?.[0]?.window_end_ts != null",
+      "id": "gpu_power_probe",
+      "name": "GPU DVFS 探针",
+      "optional": true,
+      "params": {
+        "end_ts": "${analysis_window.data?.[0]?.window_end_ts ?? end_ts ?? null}",
+        "start_ts": "${analysis_window.data?.[0]?.window_start_ts ?? start_ts ?? null}",
+        "transition_threshold_pct": "${gpu_transition_threshold_pct|12}"
+      },
+      "save_as": "gpu_power_probe",
+      "skill": "gpu_power_state_analysis",
+      "type": "skill"
+    },
+    {
+      "condition": "data_check.data[0]?.has_thermal_data === 1",
+      "id": "thermal_timeline",
+      "name": "温度变化时间线",
+      "optional": true,
+      "query_id": "thermal_throttling/thermal_timeline",
+      "result_dependencies": [],
+      "save_as": "thermal_timeline",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_freq_data === 1",
+      "id": "frequency_drop_events",
+      "name": "频率骤降事件",
+      "optional": true,
+      "query_id": "thermal_throttling/frequency_drop_events",
+      "result_dependencies": [],
+      "save_as": "frequency_drops",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_thermal_data === 1 && data_check.data[0]?.has_freq_data === 1",
+      "id": "thermal_freq_correlation",
+      "name": "温度-频率相关性",
+      "optional": true,
+      "query_id": "thermal_throttling/thermal_freq_correlation",
+      "result_dependencies": [],
+      "save_as": "thermal_freq_correlation",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_thermal_data === 1",
+      "id": "high_temp_periods",
+      "name": "高温时段",
+      "optional": true,
+      "query_id": "thermal_throttling/high_temp_periods",
+      "result_dependencies": [],
+      "save_as": "high_temp_periods",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_thermal_data === 1 || data_check.data[0]?.has_freq_data === 1",
+      "id": "root_cause_classification",
+      "name": "根因分类",
+      "query_id": "thermal_throttling/root_cause_classification",
+      "result_dependencies": [],
+      "save_as": "root_cause",
+      "type": "atomic"
+    },
+    {
+      "id": "thermal_diagnosis",
+      "inputs": [
+        "thermal_overview",
+        "cpu_freq_overview",
+        "thermal_prediction",
+        "gpu_power_probe",
+        "frequency_drops",
+        "high_temp_periods",
+        "root_cause"
+      ],
+      "name": "热节流诊断",
+      "rules": [
+        {
+          "condition": "root_cause.data[0]?.classification === 'THERMAL_THROTTLING'",
+          "confidence": "high",
+          "diagnosis": "检测到热节流：峰值 ${root_cause.data[0].peak_temp_c}C，${root_cause.data[0].throttled_cpu_count} 核受影响",
+          "severity": "critical",
+          "suggestions": [
+            "减少后台 CPU 密集任务",
+            "优化计算密集操作，添加冷却间隔",
+            "检查设备散热条件"
+          ]
+        },
+        {
+          "condition": "root_cause.data[0]?.classification === 'SUSTAINED_HIGH_TEMP'",
+          "confidence": "high",
+          "diagnosis": "持续高温 ${root_cause.data[0].peak_temp_c}C，存在热节流风险",
+          "severity": "warning",
+          "suggestions": [
+            "降低持续 CPU 负载",
+            "避免长时间高强度计算",
+            "监控温度变化趋势"
+          ]
+        },
+        {
+          "condition": "(thermal_prediction?.data?.[0]?.thermal_risk || '') === 'high'",
+          "confidence": "high",
+          "diagnosis": "热风险预测为高：频率平均降幅 ${thermal_prediction.data[0].avg_drop_pct}%",
+          "severity": "critical",
+          "suggestions": [
+            "立即降低持续计算密度，增加任务分批与冷却间隔",
+            "优先优化后台并发，避免长时间满载",
+            "结合温度传感器与 FPS 继续观测 1-3 分钟趋势"
+          ]
+        },
+        {
+          "condition": "(gpu_power_probe?.data?.[0]?.downshift_ratio_pct || 0) >= (gpu_downshift_warning_pct || 25)",
+          "confidence": "medium",
+          "diagnosis": "GPU 降频占比 ${gpu_power_probe.data[0].downshift_ratio_pct}% ，存在图形侧热压或功耗抖动",
+          "severity": "warning",
+          "suggestions": [
+            "降低高峰渲染负载，减少过度绘制和昂贵 shader",
+            "平滑 GPU 突发任务，避免频繁升降频震荡"
+          ]
+        },
+        {
+          "condition": "root_cause.data[0]?.classification === 'FREQ_INSTABILITY'",
+          "confidence": "medium",
+          "diagnosis": "CPU 频率不稳定 (${root_cause.data[0].severe_drop_count} 次骤降)，可能受温度影响",
+          "severity": "warning",
+          "suggestions": [
+            "检查散热条件",
+            "优化任务调度避免突发负载"
+          ]
+        },
+        {
+          "condition": "root_cause.data[0]?.classification === 'THERMAL_NORMAL'",
+          "confidence": "high",
+          "diagnosis": "温度正常，无明显热节流",
+          "severity": "info",
+          "suggestions": [
+            "当前热状态良好"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_thermal_data !== 1 && data_check.data[0]?.has_freq_data !== 1 && data_check.data[0]?.has_gpu_freq_data !== 1",
+      "id": "no_data_fallback",
+      "name": "无温度数据",
+      "query_id": "thermal_throttling/no_data_fallback",
+      "result_dependencies": [],
+      "save_as": "no_data_fallback",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "3.0",
+  "workflow": "power-thermal"
+}

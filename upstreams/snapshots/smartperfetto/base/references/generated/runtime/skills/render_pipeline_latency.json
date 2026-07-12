@@ -1,0 +1,82 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "render_pipeline_latency",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "帧开始时间戳(ns)",
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "帧结束时间戳(ns)",
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "主线程开始时间戳(ns)",
+      "name": "main_start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "主线程结束时间戳(ns)",
+      "name": "main_end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "RenderThread 开始时间戳(ns)",
+      "name": "render_start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "RenderThread 结束时间戳(ns)",
+      "name": "render_end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.frames.timeline"
+    ],
+    "required_tables": []
+  },
+  "query_id": "render_pipeline_latency/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/render_pipeline_latency.skill.yaml",
+    "sha256": "485299ac47ece0112e0d06665583b421d13314d59be5ff19a7286223dab81d4b"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "gpu-rendering"
+}

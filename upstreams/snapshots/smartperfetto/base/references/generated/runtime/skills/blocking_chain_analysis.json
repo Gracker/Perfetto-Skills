@@ -1,0 +1,92 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${process_name}*"
+    ]
+  },
+  "id": "blocking_chain_analysis",
+  "identity": {
+    "aliases": [
+      "process_name",
+      "package"
+    ],
+    "policy": "required",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名",
+      "name": "process_name",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "thread_state",
+      "thread",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
+    "sha256": "d2c7a63dade5310e92b508c129b78b4e3a420c57d613ac75107d93e89f7418cf"
+  },
+  "steps": [
+    {
+      "id": "thread_state_distribution",
+      "name": "主线程状态分布",
+      "query_id": "blocking_chain_analysis/thread_state_distribution",
+      "result_dependencies": [],
+      "save_as": "thread_state_distribution",
+      "type": "atomic"
+    },
+    {
+      "id": "waker_chain",
+      "name": "唤醒链分析",
+      "optional": true,
+      "query_id": "blocking_chain_analysis/waker_chain",
+      "result_dependencies": [],
+      "save_as": "waker_chain",
+      "type": "atomic"
+    },
+    {
+      "id": "blocked_function_summary",
+      "name": "阻塞函数汇总",
+      "optional": true,
+      "query_id": "blocking_chain_analysis/blocked_function_summary",
+      "result_dependencies": [],
+      "save_as": "blocked_function_summary",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "anr-blocking"
+}

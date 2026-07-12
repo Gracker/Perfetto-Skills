@@ -1,0 +1,98 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "*monitor*",
+      "*mutex*",
+      "Lock contention*(owner tid: *)*"
+    ]
+  },
+  "id": "lock_contention_in_range",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "name": "package",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.monitor_contention",
+      "slices.with_context"
+    ],
+    "required_tables": [
+      "thread_state",
+      "android_monitor_contention"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/lock_contention_in_range.skill.yaml",
+    "sha256": "5ab49bd436eb79f8d1bdc21b06e2b662481cb3335728c1776c55c8b0fab0f99b"
+  },
+  "steps": [
+    {
+      "id": "monitor_contentions",
+      "name": "Java Monitor 锁竞争",
+      "optional": true,
+      "query_id": "lock_contention_in_range/monitor_contentions",
+      "result_dependencies": [],
+      "save_as": "monitor_contentions",
+      "type": "atomic"
+    },
+    {
+      "id": "owner_contentions",
+      "name": "持锁线程归因",
+      "optional": true,
+      "query_id": "lock_contention_in_range/owner_contentions",
+      "result_dependencies": [],
+      "save_as": "owner_contentions",
+      "type": "atomic"
+    },
+    {
+      "id": "futex_waits",
+      "name": "Futex 等待",
+      "optional": true,
+      "query_id": "lock_contention_in_range/futex_waits",
+      "result_dependencies": [],
+      "save_as": "futex_waits",
+      "type": "atomic"
+    },
+    {
+      "id": "lock_summary",
+      "name": "锁竞争汇总",
+      "optional": true,
+      "query_id": "lock_contention_in_range/lock_summary",
+      "result_dependencies": [],
+      "save_as": "summary",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "anr-blocking"
+}

@@ -1,0 +1,113 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*",
+      "*onCreate*",
+      "*onDestroy*",
+      "*onDestroyView*",
+      "*onPause*",
+      "*onResume*",
+      "*onStart*",
+      "*onStop*"
+    ]
+  },
+  "id": "android_heap_graph_leak_candidates",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（支持前缀/GLOB）；process_name 为空时使用",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；为空则分析所有 heap graph 进程",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "指定 heap graph sample 时间戳；为空分析全部 sample",
+      "name": "graph_sample_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "额外目标 class GLOB；为空时只检查 Activity/Fragment 命名类",
+      "name": "class_name_glob",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": "SI$",
+      "description": "生命周期切片前缀，默认匹配 SI$<class>.<method>；传空字符串可用任意前缀 FQN 匹配",
+      "name": "lifecycle_slice_prefix",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 50,
+      "description": "候选 class 返回行数",
+      "name": "max_candidates",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "default": 100,
+      "description": "引用边返回行数",
+      "name": "max_reference_edges",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.memory.heap_graph.excluded_refs"
+    ],
+    "required_tables": [
+      "heap_graph_object",
+      "heap_graph_class",
+      "heap_graph_reference"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
+    "sha256": "7b56ba3235b7962f0119ea09d450af39eba9c021da1cb714c40db3d5c2064ce7"
+  },
+  "steps": [
+    {
+      "id": "leak_candidates",
+      "name": "Heap Graph 泄漏候选",
+      "query_id": "android_heap_graph_leak_candidates/leak_candidates",
+      "result_dependencies": [],
+      "save_as": "leak_candidates",
+      "type": "atomic"
+    },
+    {
+      "id": "reference_holders",
+      "name": "候选对象保留引用来源",
+      "optional": true,
+      "query_id": "android_heap_graph_leak_candidates/reference_holders",
+      "result_dependencies": [],
+      "save_as": "reference_holders",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "memory"
+}

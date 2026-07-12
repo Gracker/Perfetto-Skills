@@ -1,0 +1,62 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${process_name}*"
+    ]
+  },
+  "id": "oom_adjuster_score_timeline",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.oom_adjuster"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/oom_adjuster_score_timeline.skill.yaml",
+    "sha256": "c955d048f6d17e0c4063656ab3f1b2468226e04ce68b76ef596f479b158bb973"
+  },
+  "steps": [
+    {
+      "id": "oom_intervals",
+      "name": "OOM Score 区间",
+      "query_id": "oom_adjuster_score_timeline/oom_intervals",
+      "result_dependencies": [],
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "memory"
+}

@@ -1,0 +1,493 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}",
+      "${package}:*",
+      "${process_name}",
+      "${process_name}:*",
+      "com.android.systemui",
+      "system_server"
+    ]
+  },
+  "id": "anr_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名，留空分析所有 ANR",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "应用包名（process_name 的别名）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "ANR 类型过滤",
+      "name": "anr_type",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 3,
+      "description": "多 ANR 系统级问题阈值",
+      "name": "multi_anr_threshold",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10,
+      "description": "多 ANR 时间窗口（秒）",
+      "name": "multi_anr_span_seconds",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 500,
+      "description": "兼容旧调用的 D-state 不可中断等待告警阈值（ms）；不能单独作为 IO 根因",
+      "name": "io_wait_threshold_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 500,
+      "description": "D-state 不可中断等待告警阈值（ms）；需要 blocked_function/slice/系统 IO 证据才能升级为 IO",
+      "name": "uninterruptible_wait_threshold_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": true,
+      "description": "是否启用锁等待探针（futex/mutex）",
+      "name": "enable_lock_probe",
+      "required": false,
+      "type": "boolean"
+    },
+    {
+      "default": 20,
+      "description": "Futex P95 严重锁竞争阈值（ms）",
+      "name": "lock_contention_futex_p95_critical_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10,
+      "description": "Mutex P95 锁等待告警阈值（ms）",
+      "name": "lock_contention_mutex_p95_warning_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": true,
+      "description": "是否执行逐 ANR 深度分析；测试或快速预览可设为 false",
+      "name": "enable_detail_analysis",
+      "required": false,
+      "type": "boolean"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.anrs",
+      "android.binder",
+      "android.memory.lmk"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/anr_analysis.skill.yaml",
+    "sha256": "9a20a24042252892aabc8ff420a5f4777953bd6c041b00285dc3402f3cf6182e"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "get_anr_context",
+      "name": "提取 ANR 上下文",
+      "optional": true,
+      "params": {
+        "anr_type": "${anr_type}",
+        "package": "${package}",
+        "process_name": "${process_name}"
+      },
+      "save_as": "anr_ctx",
+      "skill": "anr_context_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "anr_detection",
+      "name": "ANR 检测",
+      "on_empty": "未检测到 ANR 事件。请确认 Trace 包含 ANR 数据。",
+      "optional": true,
+      "query_id": "anr_analysis/anr_detection",
+      "result_dependencies": [],
+      "save_as": "detection",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0",
+      "id": "trigger_classification",
+      "name": "ANR 触发类型分类",
+      "query_id": "anr_analysis/trigger_classification",
+      "result_dependencies": [],
+      "save_as": "trigger_classification",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0",
+      "id": "system_cpu_health",
+      "name": "系统 CPU 健康状况",
+      "optional": true,
+      "query_id": "anr_analysis/system_cpu_health",
+      "result_dependencies": [
+        "anr_ctx"
+      ],
+      "save_as": "cpu_health",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0",
+      "id": "memory_pressure",
+      "name": "内存压力检测",
+      "optional": true,
+      "query_id": "anr_analysis/memory_pressure",
+      "result_dependencies": [
+        "anr_ctx"
+      ],
+      "save_as": "memory_pressure",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0",
+      "id": "io_load",
+      "name": "不可中断等待基线",
+      "optional": true,
+      "query_id": "anr_analysis/io_load",
+      "result_dependencies": [
+        "anr_ctx"
+      ],
+      "save_as": "io_load",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0 && enable_lock_probe !== false",
+      "id": "futex_wait_probe",
+      "name": "ANR 锁等待探针",
+      "optional": true,
+      "params": {
+        "end_ts": "${anr_ctx.data?.[0]?.anr_ts ?? null}",
+        "package": "${package || process_name || anr_ctx.data?.[0]?.process_name || ''}",
+        "start_ts": "${anr_ctx.data?.[0]?.anr_ts != null && anr_ctx.data?.[0]?.timeout_ns != null ? (Number(anr_ctx.data[0].anr_ts) - Number(anr_ctx.data[0].timeout_ns)) : null}"
+      },
+      "save_as": "lock_waits",
+      "skill": "futex_wait_distribution",
+      "type": "skill"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0",
+      "id": "system_freeze_check",
+      "name": "系统冻结检测",
+      "optional": true,
+      "query_id": "anr_analysis/system_freeze_check",
+      "result_dependencies": [
+        "anr_ctx"
+      ],
+      "save_as": "freeze_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0",
+      "id": "anr_overview",
+      "name": "ANR 概览统计",
+      "query_id": "anr_analysis/anr_overview",
+      "result_dependencies": [],
+      "save_as": "overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0",
+      "id": "get_anr_events",
+      "name": "获取 ANR 事件列表",
+      "query_id": "anr_analysis/get_anr_events",
+      "result_dependencies": [],
+      "save_as": "anr_events",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0",
+      "id": "top_cpu_processes",
+      "name": "Top CPU 进程",
+      "optional": true,
+      "query_id": "anr_analysis/top_cpu_processes",
+      "result_dependencies": [
+        "anr_ctx"
+      ],
+      "save_as": "top_processes",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0 && enable_detail_analysis !== false",
+      "id": "analyze_anr_events",
+      "item_params": {
+        "anr_dur_ms": "anr_dur_ms",
+        "anr_ts": "anr_ts",
+        "anr_type": "anr_type",
+        "component": "component",
+        "error_id": "error_id",
+        "intent": "intent",
+        "perfetto_end": "perfetto_end",
+        "perfetto_start": "perfetto_start",
+        "pid": "pid",
+        "process_name": "process_name",
+        "timeout_ns": "timeout_ns",
+        "upid": "upid"
+      },
+      "item_skill": "anr_detail",
+      "name": "ANR 事件详细分析",
+      "source": "anr_events",
+      "type": "iterator"
+    },
+    {
+      "id": "anr_diagnosis",
+      "inputs": [
+        "detection",
+        "trigger_classification",
+        "cpu_health",
+        "memory_pressure",
+        "io_load",
+        "lock_waits",
+        "freeze_check",
+        "overview",
+        "anr_events",
+        "top_processes"
+      ],
+      "name": "ANR 诊断",
+      "rules": [
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && freeze_check.data[0]?.freeze_verdict === 'system_server_freeze'",
+          "confidence": "high",
+          "diagnosis": "system_server 运行占比仅 ${freeze_check.data[0].system_server_running_pct}%（疑似系统服务冻结）",
+          "severity": "critical",
+          "suggestions": [
+            "这是系统级问题，优先排查 system_server 调度阻塞",
+            "检查 Binder 死锁、IO 堵塞和内核锁等待",
+            "结合内核调度与系统服务线程栈定位阻塞点"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && freeze_check.data[0]?.freeze_verdict === 'system_freeze'",
+          "confidence": "high",
+          "diagnosis": "系统级冻结：${freeze_check.data[0].frozen_apps}/${freeze_check.data[0].total_apps} 个应用主线程几乎无运行",
+          "severity": "critical",
+          "suggestions": [
+            "这是系统级问题，非单个应用问题",
+            "检查系统服务是否正常",
+            "检查是否有内核级阻塞（内存/IO/锁）"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) > 1 && freeze_check.data[0]?.freeze_verdict === 'system_server_freeze'",
+          "confidence": "medium",
+          "diagnosis": "首个 ANR 窗口 baseline 显示 system_server 运行占比仅 ${freeze_check.data[0].system_server_running_pct}%，需逐 ANR 复核后才能升级为系统根因",
+          "severity": "warning",
+          "suggestions": [
+            "该 freeze_check 只覆盖首个 ANR 窗口",
+            "多 ANR 必须逐事件检查 direct_blocker、日志和系统线程证据",
+            "不要把首个窗口 system_server_freeze 直接推广到所有 ANR"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) > 1 && freeze_check.data[0]?.freeze_verdict === 'system_freeze'",
+          "confidence": "medium",
+          "diagnosis": "首个 ANR 窗口 baseline 显示 ${freeze_check.data[0].frozen_apps}/${freeze_check.data[0].total_apps} 个应用主线程低活动，需逐 ANR 复核后才能升级为系统根因",
+          "severity": "warning",
+          "suggestions": [
+            "该 freeze_check 只覆盖首个 ANR 窗口",
+            "多 ANR 必须逐事件检查 direct_blocker、日志和系统上下文",
+            "若后续 ANR 窗口没有系统冻结证据，只能作为候选背景"
+          ]
+        },
+        {
+          "condition": "detection.data[0]?.total_anr_count > (multi_anr_threshold || 3) && detection.data[0]?.anr_span_seconds < (multi_anr_span_seconds || 10)",
+          "confidence": "high",
+          "diagnosis": "短时间内发生 ${detection.data[0].total_anr_count} 个 ANR，间隔仅 ${detection.data[0].anr_span_seconds}s",
+          "severity": "critical",
+          "suggestions": [
+            "多个 ANR 集中发生通常指向系统级问题",
+            "检查系统是否过载或有资源争抢"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && memory_pressure.data?.length > 0",
+          "confidence": "high",
+          "diagnosis": "ANR 期间发生 LMK 杀进程，系统内存压力大",
+          "severity": "critical",
+          "suggestions": [
+            "内存不足导致系统繁忙，影响应用响应",
+            "检查内存占用大户",
+            "考虑减少内存使用"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && cpu_health.data?.find(r => r.status === 'overloaded')",
+          "confidence": "high",
+          "diagnosis": "CPU ${cpu_health.data.find(r => r.status === 'overloaded').core_type} 核过载 (${cpu_health.data.find(r => r.status === 'overloaded').avg_util_pct}%)",
+          "severity": "critical",
+          "suggestions": [
+            "CPU 资源严重不足",
+            "检查后台进程 CPU 占用",
+            "top_processes 显示的进程可能是罪魁祸首"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && io_load.data[0]?.uninterruptible_wait_ms > (uninterruptible_wait_threshold_ms || io_wait_threshold_ms || 500)",
+          "confidence": "low",
+          "diagnosis": "进程 ${io_load.data[0].process_name} D-state 不可中断等待 ${io_load.data[0].uninterruptible_wait_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "D-state 只能说明不可中断等待，不能单独证明磁盘 IO",
+            "只有 blocked_function、slice 或 block IO 证据命中 io_schedule/fsync/blk/ext4/f2fs/filemap_fault 等路径时，才升级为 IO 根因"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && (lock_waits?.data?.find(r => r.wait_type === 'futex')?.p95_wait_ms || 0) > (lock_contention_futex_p95_critical_ms || 20)",
+          "confidence": "medium",
+          "diagnosis": "ANR 窗口 Futex P95 等待 ${lock_waits.data.find(r => r.wait_type === 'futex').p95_wait_ms}ms，存在锁等待候选信号",
+          "severity": "warning",
+          "suggestions": [
+            "这是包名级专家探针，不能作为最终根因",
+            "必须结合逐 ANR direct_blocker_classification 和当前进程 MainThread lock_contention 再判断",
+            "若确认主线程锁等待，再排查持锁线程、锁顺序和锁内 Binder/IO/数据库操作"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && (lock_waits?.data?.find(r => r.wait_type === 'mutex')?.p95_wait_ms || 0) > (lock_contention_mutex_p95_warning_ms || 10)",
+          "confidence": "medium",
+          "diagnosis": "ANR 窗口 Mutex P95 等待 ${lock_waits.data.find(r => r.wait_type === 'mutex').p95_wait_ms}ms，锁等待偏高",
+          "severity": "warning",
+          "suggestions": [
+            "按热点函数重构锁粒度，降低串行化路径",
+            "评估是否可用无锁队列或分段锁替换"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'no_focus_window')",
+          "confidence": "medium",
+          "diagnosis": "触发类型分流：无焦点窗口输入超时，需要窗口焦点链证据闭环",
+          "severity": "warning",
+          "suggestions": [
+            "按 Activity resume → relayout → draw/focus 顺序检查窗口建立链路",
+            "若主线程只呈现 nativePoll/epoll，不要单独归因为 Looper 空闲",
+            "结合 WindowManager/InputDispatcher/AnrManager 日志确认焦点丢失阶段"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'job_scheduler_timeout')",
+          "confidence": "medium",
+          "diagnosis": "触发类型分流：JobScheduler 相关 ANR，需要 JobService 回调或绑定链路证据",
+          "severity": "warning",
+          "suggestions": [
+            "检查 onStartJob/onStopJob/onBind 是否在主线程执行耗时操作",
+            "检查 JobScheduler 与应用进程之间的 Binder 调用是否有对端等待",
+            "不要只按普通 Service 超时处理，需保留 JobService 回调语义"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'system_watchdog_swt')",
+          "confidence": "medium",
+          "diagnosis": "触发类型分流：system_server Watchdog/SWT，需要系统服务线程证据闭环",
+          "severity": "warning",
+          "suggestions": [
+            "优先排查 system_server Handler、锁和 Binder 线程池",
+            "除非有明确同步 Binder 反向证据，否则不要归因为目标 App",
+            "结合 system_server 线程状态、monitor contention 与系统日志闭环"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && top_processes.data?.find(p => p.process_name === anr_events.data?.[0]?.process_name && p.cpu_pct > 85)",
+          "confidence": "medium",
+          "diagnosis": "目标进程在 ANR 窗口 CPU 占比 ${top_processes.data.find(p => p.process_name === anr_events.data?.[0]?.process_name && p.cpu_pct > 85).cpu_pct}%",
+          "severity": "warning",
+          "suggestions": [
+            "这是 high_load_anr 候选证据，需要和主线程热点、调度延迟或 GC/内存压力交叉验证",
+            "优先检查主线程 Running 热点和后台线程是否抢占关键核心",
+            "不要仅凭 CPU 占比高给出最终根因"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'input_dispatching_timeout')",
+          "confidence": "medium",
+          "diagnosis": "触发类型分流：输入事件超时，需要 direct_blocker/线程状态/日志证据闭环",
+          "severity": "warning",
+          "suggestions": [
+            "主线程 5 秒未处理输入是触发机制，不是最终根因",
+            "检查逐 ANR direct_blocker_classification 中的 Binder/锁/IO/调度候选",
+            "只有线程状态、对端或日志证据闭环后才能升级为根因"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'broadcast_timeout')",
+          "confidence": "medium",
+          "diagnosis": "触发类型分流：广播处理超时，需要 onReceive/goAsync/finish 链路证据",
+          "severity": "warning",
+          "suggestions": [
+            "广播超时只说明超时入口，不能直接等同业务代码根因",
+            "区分前台/后台广播窗口，并检查工作线程或 Binder 对端",
+            "需要当前 ANR 的线程状态、日志或组件证据闭环"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'service_timeout')",
+          "confidence": "medium",
+          "diagnosis": "触发类型分流：服务生命周期超时，需要 Service/FGS 链路证据",
+          "severity": "warning",
+          "suggestions": [
+            "Service/FGS 超时是触发类型，不能单独作为最终根因",
+            "检查 onCreate/onStartCommand/onBind/startForeground 调用链",
+            "结合 direct_blocker 与日志证据确认是主线程、对端还是系统资源问题"
+          ]
+        },
+        {
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'content_provider_timeout')",
+          "confidence": "medium",
+          "diagnosis": "触发类型分流：ContentProvider 超时，需要 provider 发布/查询链路证据",
+          "severity": "warning",
+          "suggestions": [
+            "ContentProvider not responding 只说明触发入口",
+            "检查 provider 主线程、Binder 线程、数据库/文件 IO 和调用方等待",
+            "没有逐事件阻塞证据时不要写成最终根因"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "anr-blocking"
+}

@@ -1,0 +1,76 @@
+GENERATED FILE - DO NOT EDIT.
+Source: docs/rendering_pipelines/webview_surfaceview_wrapper.md
+Source SHA-256: 607c29afa34c961d6100b29e22c6ee264288d82c740047559d2239ffbc4ef8c6
+Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+
+# WebView SurfaceView Wrapper Pipeline (App-Side / Video)
+
+这是开发者最容易理解的 "SurfaceView" 模式。它主要出现在全屏视频播放场景，或者某些通过 `SurfaceView` 托管 WebView 内容的特殊实现中。
+
+## 1. 核心流程：App 托管 (App Hosting)
+
+与 `SurfaceControl` 模式不同，这里的 Buffer 生产和提交仍然由 **App 进程**（或其加载的媒体组件）控制。
+
+### 第一阶段：WebChromeClient 回调
+1.  **Trigger**: 用户点击网页上的全屏按钮。
+2.  **onShowCustomView(View view, CustomViewCallback callback)**:
+    *   WebView 回调 App 开发者实现的方法。
+    *   参数 `view` 通常就是一个 `SurfaceView` 或包含 SurfaceView 的 `FrameLayout`。
+    *   **关键点**: 这个 View 是在 App 进程中创建的。
+
+> *注: 此管线主要适用于宿主 App 通过 `onShowCustomView()` 托管全屏视频的场景。内联视频和部分 provider 的全屏实现也可能走其他路径，不能一概写成“所有内联视频都不经过这里”。*
+
+### 第二阶段：Media Player Rendering
+1.  **Set Surface**: 底层的 MediaPlayer (或 ExoPlayer) 获取这个 SurfaceView 的 `SurfaceHolder`。
+2.  **Decode & Render**: 视频解码器直接向这个 Surface 生产 Buffer。
+3.  **App Hosting**:
+    *   App 负责托管这个 SurfaceView 的生命周期、布局和 Z-order。
+    *   真正的视频 Buffer 提交通常由 Player / MediaCodec / Surface producer 完成，而不是“App UI 线程亲自提交”。
+
+---
+
+## 2. 渲染时序图
+
+注意 Buffer 的生产者是 App 进程中的 Video Player，而不是 WebView 的渲染进程。
+
+```mermaid
+sequenceDiagram
+    participant HW as Hardware VSync
+    participant App as App UI Thread
+    participant Player as Video Player
+    participant BBQ as BLAST (App)
+    participant SF as SurfaceFlinger
+    participant HWC as HWC
+
+    %% 1. App Trigger
+    Note over App: 1. Setup
+    App->>App: onShowCustomView()
+    App->>SF: Transaction (Add SV Layer)
+
+    %% 2. Player Render
+    rect rgb(230, 240, 250)
+        Note over Player, BBQ: 2. Content Production
+        activate Player
+        Player->>Player: Decode Frame
+        Player->>BBQ: queueBuffer()
+        deactivate Player
+        BBQ->>SF: Transaction(Buffer)
+    end
+
+    %% 3. Composition
+    Note over HW, SF: 3. VSync-SF
+    HW->>SF: Signal
+    activate SF
+    SF->>SF: latchBuffer
+    SF->>HWC: Composite (SV Layer + App Layer)
+    deactivate SF
+
+    %% 4. Display
+    HWC->>HWC: Scanout
+```
+
+## 3. 总结
+*   **Producer**: App Process (MediaPlayer/ExoPlayer)。
+    *MediaCodec 通过 Surface 模式（`releaseOutputBuffer(render=true)`）零拷贝传递解码帧。*
+*   **Role**: 在渲染层面，WebView 更多负责信令和占位（触发全屏、容器切换、与宿主协作）；媒体控制、DRM、字幕和手势逻辑的归属要看宿主与播放器集成方式，不能统一归因给 WebView。
+*   **Performance**: 等同于原生 SurfaceView 播放视频，性能极高。

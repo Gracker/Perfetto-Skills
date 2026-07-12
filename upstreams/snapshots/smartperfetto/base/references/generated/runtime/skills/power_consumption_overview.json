@@ -1,0 +1,229 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "power_consumption_overview",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；当 package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.power_rails",
+      "wattson.aggregation",
+      "android.battery",
+      "android.kernel_wakelocks",
+      "android.wakeups",
+      "android.screen_state",
+      "android.network_packets",
+      "linux.cpu.idle"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/power_consumption_overview.skill.yaml",
+    "sha256": "500e56c35f463dfbfe88e8ac5f45c7882c5010b2212f2139e5b421f659d1b6f2"
+  },
+  "steps": [
+    {
+      "id": "hardware_rails",
+      "name": "Power Rails 实测能耗",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "hardware_rails",
+      "skill": "power_rails_energy_breakdown",
+      "type": "skill"
+    },
+    {
+      "id": "wattson_rails",
+      "name": "Wattson 子系统能耗估算",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "wattson_rails",
+      "skill": "wattson_rails_power_breakdown",
+      "type": "skill"
+    },
+    {
+      "id": "battery_drain_rate",
+      "name": "掉电速率摘要",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "battery_drain_rate",
+      "skill": "battery_drain_rate_summary",
+      "type": "skill"
+    },
+    {
+      "id": "suspend_wakeup",
+      "name": "Suspend / Wakeup 链路",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "suspend_wakeup",
+      "skill": "suspend_wakeup_analysis",
+      "type": "skill"
+    },
+    {
+      "id": "wakeup_frequency",
+      "name": "唤醒频率摘要",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "wakeup_frequency",
+      "skill": "wakeup_frequency_summary",
+      "type": "skill"
+    },
+    {
+      "id": "wakelocks",
+      "name": "Kernel Wakelock 汇总",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "wakelocks",
+      "skill": "android_kernel_wakelock_summary",
+      "type": "skill"
+    },
+    {
+      "id": "screen_off_cpu",
+      "name": "熄屏后台 CPU 归因",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "screen_off_cpu",
+      "skill": "screen_off_background_cpu_attribution",
+      "type": "skill"
+    },
+    {
+      "id": "modem_network",
+      "name": "Modem / 网络相关性",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "modem_network",
+      "skill": "modem_network_correlation_summary",
+      "type": "skill"
+    },
+    {
+      "id": "cpu_freq_residency",
+      "name": "CPU 高频驻留",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "cpu_freq_residency",
+      "skill": "cpu_freq_residency_summary",
+      "type": "skill"
+    },
+    {
+      "id": "wattson_threads",
+      "name": "Wattson 线程能耗归因",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package}",
+        "process_name": "${process_name}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "wattson_threads",
+      "skill": "wattson_thread_power_attribution",
+      "type": "skill"
+    },
+    {
+      "id": "battery_charge",
+      "name": "电池电量/电流时间线",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "battery_charge",
+      "skill": "battery_charge_timeline",
+      "type": "skill"
+    },
+    {
+      "id": "dvfs",
+      "name": "DVFS 频率统计",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "dvfs",
+      "skill": "android_dvfs_counter_stats",
+      "type": "skill"
+    },
+    {
+      "id": "gpu_work_period",
+      "name": "GPU Work Period",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package|${process_name|}}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "gpu_work_period",
+      "skill": "android_gpu_work_period_track",
+      "type": "skill"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "power-thermal"
+}

@@ -1,0 +1,524 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${process_name}",
+      "${process_name}:*",
+      "%DrawFrame%",
+      "%dequeueBuffer%",
+      "%nSyncDraw%",
+      "%syncFrameState%",
+      "Binder:%",
+      "RenderThread",
+      "android_logs",
+      "slice",
+      "thread_state",
+      "thread_track"
+    ]
+  },
+  "id": "anr_detail",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "ANR 发生时间戳(ns)",
+      "name": "anr_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "ANR 超时时间(ns)",
+      "name": "timeout_ns",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "进程名",
+      "name": "process_name",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "进程 ID",
+      "name": "pid",
+      "required": true,
+      "type": "integer"
+    },
+    {
+      "default": 0,
+      "description": "Trace 内唯一进程 ID；优先用于逐 ANR 进程隔离",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "ANR 类型",
+      "name": "anr_type",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "description": "ANR error_id（用于逐事件证据隔离）",
+      "name": "error_id",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "ANR intent（如果 Perfetto 可提取）",
+      "name": "intent",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "ANR component（如果 Perfetto 可提取）",
+      "name": "component",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "ANR 持续时间(ms)",
+      "name": "anr_dur_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "Perfetto 跳转开始时间",
+      "name": "perfetto_start",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Perfetto 跳转结束时间",
+      "name": "perfetto_end",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.binder",
+      "linux.cpu.frequency",
+      "android.monitor_contention"
+    ],
+    "required_tables": [
+      "slice",
+      "process"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/anr_detail.skill.yaml",
+    "sha256": "e48c73408b2775bed099612d32832cde9f70ca33cd1cc462e0275b1454588359"
+  },
+  "steps": [
+    {
+      "id": "init_cpu_topology",
+      "name": "初始化 CPU 拓扑",
+      "optional": true,
+      "skill": "cpu_topology_view",
+      "type": "skill"
+    },
+    {
+      "id": "anr_info",
+      "name": "ANR 基本信息",
+      "query_id": "anr_detail/anr_info",
+      "result_dependencies": [],
+      "save_as": "anr_basic",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_quadrant",
+      "name": "主线程四象限分析",
+      "optional": true,
+      "query_id": "anr_detail/main_thread_quadrant",
+      "result_dependencies": [],
+      "save_as": "quadrant",
+      "type": "atomic"
+    },
+    {
+      "id": "blocking_reasons",
+      "name": "阻塞原因分析",
+      "params": {
+        "end_ts": "${anr_ts}",
+        "package": "${process_name}",
+        "pid": "${pid}",
+        "start_ts": "${anr_ts - timeout_ns}",
+        "top_k": 10,
+        "upid": "${upid}"
+      },
+      "save_as": "blocking",
+      "skill": "main_thread_states_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "render_thread_analysis",
+      "name": "RenderThread 分析",
+      "optional": true,
+      "query_id": "anr_detail/render_thread_analysis",
+      "result_dependencies": [],
+      "save_as": "render_thread",
+      "type": "atomic"
+    },
+    {
+      "id": "binder_calls",
+      "name": "Binder 调用分析",
+      "optional": true,
+      "params": {
+        "end_ts": "${anr_ts}",
+        "package": "${process_name}",
+        "start_ts": "${anr_ts - timeout_ns}"
+      },
+      "save_as": "binder_calls",
+      "skill": "binder_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "main_thread_sync_binder",
+      "name": "主线程同步 Binder",
+      "optional": true,
+      "params": {
+        "end_ts": "${anr_ts}",
+        "package": "${process_name}",
+        "start_ts": "${anr_ts - timeout_ns}"
+      },
+      "save_as": "main_sync_binder",
+      "skill": "binder_blocking_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "sched_latency",
+      "name": "调度延迟分析",
+      "optional": true,
+      "params": {
+        "end_ts": "${anr_ts}",
+        "package": "${process_name}",
+        "start_ts": "${anr_ts - timeout_ns}"
+      },
+      "save_as": "sched_delay",
+      "skill": "main_thread_sched_latency_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "lock_contention",
+      "name": "锁竞争检测",
+      "optional": true,
+      "query_id": "anr_detail/lock_contention",
+      "result_dependencies": [],
+      "save_as": "lock_contention",
+      "type": "atomic"
+    },
+    {
+      "id": "app_freeze_check",
+      "name": "应用冻结检测",
+      "optional": true,
+      "query_id": "anr_detail/app_freeze_check",
+      "result_dependencies": [],
+      "save_as": "app_freeze_check",
+      "type": "atomic"
+    },
+    {
+      "id": "wakeup_chain",
+      "name": "唤醒链分析",
+      "optional": true,
+      "query_id": "anr_detail/wakeup_chain",
+      "result_dependencies": [],
+      "save_as": "wakeup",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_slices",
+      "name": "主线程耗时操作",
+      "optional": true,
+      "params": {
+        "end_ts": "${anr_ts}",
+        "min_dur_ns": 1000000,
+        "package": "${process_name}",
+        "pid": "${pid}",
+        "start_ts": "${anr_ts - timeout_ns}",
+        "top_k": 15,
+        "upid": "${upid}"
+      },
+      "save_as": "main_slices",
+      "skill": "main_thread_slices_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "thread_evidence_availability",
+      "name": "线程证据可用性",
+      "optional": true,
+      "query_id": "anr_detail/thread_evidence_availability",
+      "result_dependencies": [],
+      "save_as": "thread_evidence_availability",
+      "type": "atomic"
+    },
+    {
+      "condition": "thread_evidence_availability.data[0]?.has_thread_state !== 1",
+      "id": "direct_blocker_evidence_gap",
+      "name": "直接阻塞点证据缺口",
+      "optional": true,
+      "query_id": "anr_detail/direct_blocker_evidence_gap",
+      "result_dependencies": [],
+      "save_as": "direct_blocker_gap",
+      "type": "atomic"
+    },
+    {
+      "condition": "thread_evidence_availability.data[0]?.has_thread_state === 1",
+      "id": "direct_blocker_classification",
+      "name": "直接阻塞点候选",
+      "optional": true,
+      "query_id": "anr_detail/direct_blocker_classification",
+      "result_dependencies": [],
+      "save_as": "direct_blocker_candidates",
+      "type": "atomic"
+    },
+    {
+      "condition": "thread_evidence_availability.data[0]?.has_thread_state === 1 && (thread_evidence_availability.data[0]?.has_thread_track !== 1 || thread_evidence_availability.data[0]?.has_slice !== 1)",
+      "id": "direct_blocker_slice_evidence_gap",
+      "name": "Slice 直接阻塞点证据缺口",
+      "optional": true,
+      "query_id": "anr_detail/direct_blocker_slice_evidence_gap",
+      "result_dependencies": [],
+      "save_as": "direct_blocker_slice_gap",
+      "type": "atomic"
+    },
+    {
+      "condition": "thread_evidence_availability.data[0]?.has_thread_track === 1 && thread_evidence_availability.data[0]?.has_slice === 1",
+      "id": "direct_blocker_slice_classification",
+      "name": "Slice 直接阻塞点候选",
+      "optional": true,
+      "query_id": "anr_detail/direct_blocker_slice_classification",
+      "result_dependencies": [],
+      "save_as": "direct_blocker_slice_candidates",
+      "type": "atomic"
+    },
+    {
+      "id": "logcat_availability",
+      "name": "Logcat 表可用性",
+      "optional": true,
+      "query_id": "anr_detail/logcat_availability",
+      "result_dependencies": [],
+      "save_as": "logcat_availability",
+      "type": "atomic"
+    },
+    {
+      "condition": "logcat_availability.data[0]?.has_android_logs !== 1",
+      "id": "anr_logcat_evidence_gap",
+      "name": "当前 ANR 日志证据缺口",
+      "optional": true,
+      "query_id": "anr_detail/anr_logcat_evidence_gap",
+      "result_dependencies": [],
+      "save_as": "logcat_context_gap",
+      "type": "atomic"
+    },
+    {
+      "condition": "logcat_availability.data[0]?.has_android_logs === 1",
+      "id": "anr_logcat_context",
+      "name": "当前 ANR 日志上下文",
+      "optional": true,
+      "query_id": "anr_detail/anr_logcat_context",
+      "result_dependencies": [],
+      "save_as": "logcat_event_context",
+      "type": "atomic"
+    },
+    {
+      "id": "anr_event_diagnosis",
+      "inputs": [
+        "anr_basic",
+        "quadrant",
+        "render_thread",
+        "lock_contention",
+        "app_freeze_check",
+        "wakeup",
+        "main_slices",
+        "direct_blocker_gap",
+        "direct_blocker_candidates",
+        "direct_blocker_slice_gap",
+        "direct_blocker_slice_candidates",
+        "logcat_context_gap",
+        "logcat_event_context"
+      ],
+      "name": "ANR 事件诊断",
+      "rules": [
+        {
+          "condition": "direct_blocker_gap.data?.find(r => r.direct_blocker_type === 'evidence_unavailable')",
+          "confidence": "low",
+          "diagnosis": "当前 trace 缺少 thread_state，直接阻塞点不可判定",
+          "severity": "info",
+          "suggestions": [
+            "不要仅凭 trigger 或 logcat 作为最终根因",
+            "需要包含 thread_state 的 trace 才能判断主线程直接阻塞形态"
+          ]
+        },
+        {
+          "condition": "direct_blocker_slice_gap.data?.find(r => r.direct_blocker_type === 'slice_evidence_unavailable')",
+          "confidence": "low",
+          "diagnosis": "当前 trace 缺少 thread_track/slice，无法用 slice 判断 IO/GC/渲染候选",
+          "severity": "info",
+          "suggestions": [
+            "thread_state 直接阻塞点仍可使用",
+            "不要把缺失 slice 解释为没有 IO/GC/渲染等待"
+          ]
+        },
+        {
+          "condition": "logcat_context_gap.data?.find(r => r.signal_type === 'evidence_unavailable')",
+          "confidence": "low",
+          "diagnosis": "当前 trace 缺少 android_logs，无法用 Logcat/AnrManager 校验触发上下文",
+          "severity": "info",
+          "suggestions": [
+            "保留该缺口，不要把缺失日志解释为没有系统/窗口/Binder 信号",
+            "结合 Perfetto ANR 类型和线程状态继续分析"
+          ]
+        },
+        {
+          "condition": "(quadrant.data[0]?.sleeping_pct || 0) > 80 && (direct_blocker_candidates.data?.find(r => ['binder_wait','lock_or_futex_wait','disk_or_page_fault_io','main_thread_sleep'].includes(r.direct_blocker_type) && r.confidence !== 'low') || direct_blocker_slice_candidates.data?.find(r => ['db_or_file_io_slice','render_or_fence_wait','gc_or_stw_wait'].includes(r.direct_blocker_type) && r.confidence !== 'low'))",
+          "confidence": "medium",
+          "diagnosis": "主线程 Sleeping/Blocked 占比 ${quadrant.data[0].sleeping_pct}%，存在逐事件 direct_blocker 候选；仍需对应的对端/owner/系统上下文闭环",
+          "severity": "warning",
+          "suggestions": [
+            "以 direct_blocker_classification 为准，不使用包名级 blocking 结果单独定因",
+            "Binder wait 需要对端线程证据；锁等待需要 owner/monitor chain；IO/GC/Render 需要同窗口上下文",
+            "nativePoll/epoll 等待不满足该规则，不能单独作为根因"
+          ]
+        },
+        {
+          "condition": "(quadrant.data[0]?.runnable_pct || 0) > 30 && direct_blocker_candidates.data?.find(r => r.direct_blocker_type === 'scheduler_pressure' && r.confidence !== 'low')",
+          "confidence": "medium",
+          "diagnosis": "主线程等待调度 ${quadrant.data[0].runnable_pct}%，direct_blocker 标记 scheduler_pressure；需要系统负载/拓扑/调度证据闭环",
+          "severity": "warning",
+          "suggestions": [
+            "主线程想运行但拿不到 CPU",
+            "检查同一 ANR 窗口的 CPU health、Top CPU process 和调度延迟",
+            "不要只凭包名级 sched_latency 结果定因"
+          ]
+        },
+        {
+          "condition": "quadrant.data[0]?.running_pct > 50 && quadrant.data[0]?.q1_big_running_ms < quadrant.data[0]?.q2_little_running_ms * 0.3 && quadrant.data[0]?.runnable_pct > 10 && direct_blocker_candidates.data?.find(r => r.direct_blocker_type === 'scheduler_pressure' && r.confidence !== 'low')",
+          "confidence": "medium",
+          "diagnosis": "主线程大核占比偏低且存在调度等待（Runnable ${quadrant.data[0].runnable_pct}%），可能有 CPU 供给不足",
+          "severity": "warning",
+          "suggestions": [
+            "检查高优先级线程是否占用大核",
+            "检查是否有高优先级任务抢占大核",
+            "可能触发温控策略"
+          ]
+        },
+        {
+          "condition": "direct_blocker_candidates.data?.find(r => r.direct_blocker_type === 'binder_wait')",
+          "confidence": "medium",
+          "diagnosis": "主线程存在 Binder 等待候选，但该证据只能说明客户端等待，不能直接定责对端",
+          "severity": "warning",
+          "suggestions": [
+            "补查 Binder 对端进程、server_dur 或 system_server 线程状态",
+            "将 Binder wait 作为 direct blocker candidate，而不是最终根因"
+          ]
+        },
+        {
+          "condition": "direct_blocker_candidates.data?.find(r => r.direct_blocker_type === 'lock_or_futex_wait') && !(lock_contention.data?.find(r => r.blocked_type === 'MainThread'))",
+          "confidence": "medium",
+          "diagnosis": "主线程存在 futex/lock 等待候选，但缺少持锁线程/锁链证据",
+          "severity": "warning",
+          "suggestions": [
+            "需要 android_monitor_contention、owner thread 或锁链证据确认",
+            "不要把普通 futex_wait 直接写成死锁"
+          ]
+        },
+        {
+          "condition": "direct_blocker_candidates.data?.find(r => r.direct_blocker_type === 'lock_or_futex_wait') && lock_contention.data?.find(r => r.blocked_type === 'MainThread' && r.severity === 'critical') && (quadrant.data[0]?.sleeping_pct || 0) > 50",
+          "confidence": "high",
+          "diagnosis": "主线程严重锁竞争：等待 ${lock_contention.data.find(r => r.blocked_type === 'MainThread' && r.severity === 'critical')?.blocking_thread_name} ${lock_contention.data.find(r => r.blocked_type === 'MainThread' && r.severity === 'critical')?.wait_ms}ms",
+          "severity": "critical",
+          "suggestions": [
+            "存在当前 ANR 进程主线程严重锁竞争",
+            "持锁线程：${lock_contention.data.find(r => r.blocked_type === 'MainThread' && r.severity === 'critical')?.blocking_thread_name}",
+            "阻塞方法：${lock_contention.data.find(r => r.blocked_type === 'MainThread' && r.severity === 'critical')?.blocking_method}"
+          ]
+        },
+        {
+          "condition": "direct_blocker_candidates.data?.find(r => r.direct_blocker_type === 'lock_or_futex_wait') && lock_contention.data?.find(r => r.blocked_type === 'MainThread') && (quadrant.data[0]?.sleeping_pct || 0) > 30",
+          "confidence": "high",
+          "diagnosis": "主线程被锁阻塞",
+          "severity": "warning",
+          "suggestions": [
+            "主线程在等待获取锁",
+            "避免主线程持有长时间锁",
+            "考虑使用异步操作或减少锁粒度"
+          ]
+        },
+        {
+          "condition": "direct_blocker_candidates.data?.find(r => r.direct_blocker_type === 'native_poll_idle_or_ambiguous') && !direct_blocker_candidates.data?.find(r => ['binder_wait','lock_or_futex_wait','disk_or_page_fault_io'].includes(r.direct_blocker_type)) && !direct_blocker_slice_candidates.data?.find(r => ['db_or_file_io_slice','render_or_fence_wait'].includes(r.direct_blocker_type))",
+          "confidence": "low",
+          "diagnosis": "主线程主要表现为 native poll/epoll 等待；这是 idle-or-ambiguous 证据，不能单独作为 ANR 根因",
+          "severity": "info",
+          "suggestions": [
+            "结合 EventLog/Logcat 的 input/no-focus/window 时间线判断真实触发链",
+            "检查系统负载、焦点窗口、对端 Binder 或渲染链路是否是上游原因"
+          ]
+        },
+        {
+          "condition": "render_thread.data?.find(r => r.name?.includes('nSyncDraw') && r.dur_ms > 50) && (quadrant.data[0]?.sleeping_pct || 0) > 30",
+          "confidence": "high",
+          "diagnosis": "RenderThread nSyncDraw 阻塞 ${render_thread.data.find(r => r.name?.includes('nSyncDraw'))?.dur_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "渲染同步点阻塞",
+            "可能与主线程有同步等待",
+            "检查是否有复杂绘制操作"
+          ]
+        },
+        {
+          "condition": "render_thread.data?.find(r => r.name?.includes('dequeueBuffer') && r.dur_ms > 50) && (quadrant.data[0]?.sleeping_pct || 0) > 30",
+          "confidence": "medium",
+          "diagnosis": "RenderThread dequeueBuffer 阻塞 ${render_thread.data.find(r => r.name?.includes('dequeueBuffer'))?.dur_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "等待 SurfaceFlinger 分配 Buffer",
+            "可能是显示系统繁忙",
+            "检查是否有大量图形渲染"
+          ]
+        },
+        {
+          "condition": "app_freeze_check.data?.find(r => r.thread_type === 'MainThread')?.status === 'frozen' && app_freeze_check.data?.find(r => r.thread_type === 'RenderThread')?.status === 'frozen' && app_freeze_check.data?.find(r => r.thread_type === 'Binder')?.status === 'frozen' && (quadrant.data[0]?.sleeping_pct || 0) > 80",
+          "confidence": "high",
+          "diagnosis": "应用完全冻结，主线程活动率仅 ${app_freeze_check.data.find(r => r.thread_type === 'MainThread')?.activity_pct}%",
+          "severity": "critical",
+          "suggestions": [
+            "MainThread、RenderThread、Binder 均几乎没有活动",
+            "可能是死锁或严重阻塞",
+            "检查 direct_blocker、锁 owner、Binder 对端或系统上下文"
+          ]
+        },
+        {
+          "condition": "app_freeze_check.data?.find(r => r.thread_type === 'MainThread')?.status === 'frozen' && (quadrant.data[0]?.sleeping_pct || 0) > 80 && !(app_freeze_check.data?.find(r => r.thread_type === 'RenderThread')?.status === 'frozen' && app_freeze_check.data?.find(r => r.thread_type === 'Binder')?.status === 'frozen')",
+          "confidence": "medium",
+          "diagnosis": "主线程冻结/低活动，不能直接等同应用完全冻结",
+          "severity": "warning",
+          "suggestions": [
+            "检查 RenderThread、Binder 线程是否仍活跃",
+            "按 direct_blocker、锁 owner、Binder 对端或系统上下文继续定因",
+            "只有 MainThread、RenderThread、Binder 均冻结时才报告应用完全冻结"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "2.0",
+  "workflow": "anr-blocking"
+}

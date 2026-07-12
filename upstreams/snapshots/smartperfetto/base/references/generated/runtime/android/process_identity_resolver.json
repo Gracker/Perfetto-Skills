@@ -1,0 +1,99 @@
+{
+  "adapters": [
+    {
+      "id": "official_frame_timeline_or_legacy",
+      "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+      "source": "perfetto stdlib android/frames/timeline.sql",
+      "version_hint": {
+        "frame_timeline_min_api": 31
+      }
+    },
+    {
+      "id": "android_input_source",
+      "selection": "data-source descriptor, build type, config, then rows",
+      "version_hint": {
+        "proto_input_min_api_hint": 34
+      }
+    }
+  ],
+  "api": {
+    "28": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "29": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "30": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "31": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "32": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "33": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "34": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "35": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "36": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "37": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    }
+  },
+  "required_modules": [
+    "android.process_metadata",
+    "android.frames.timeline",
+    "android.oom_adjuster",
+    "android.battery_stats"
+  ],
+  "required_tables": [],
+  "schema_version": 1,
+  "selection_order": [
+    "device_capability",
+    "trace_config_and_setup_errors",
+    "engine_module_and_schema",
+    "target_range_row_coverage",
+    "api_hint"
+  ],
+  "signal_patterns": [
+    "/apex/*",
+    "/odm/bin/*",
+    "/system/bin/*",
+    "/system_ext/bin/*",
+    "/vendor/bin/*",
+    "Cr*Main",
+    "[0-9]*.raster",
+    "[0-9]*.ui",
+    "battery_stats.top",
+    "com.android.inputmethod*",
+    "com.android.launcher*",
+    "com.android.systemui*",
+    "com.google.android.apps.nexuslauncher*",
+    "com.google.android.inputmethod*",
+    "com.huawei.android.launcher*",
+    "com.miui.home*",
+    "com.oppo.launcher*",
+    "com.sec.android.app.launcher*",
+    "com.vivo.launcher*"
+  ],
+  "skill_id": "process_identity_resolver",
+  "steps": {}
+}

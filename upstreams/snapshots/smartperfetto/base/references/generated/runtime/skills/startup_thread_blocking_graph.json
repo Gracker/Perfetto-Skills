@@ -1,0 +1,67 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*",
+      "*FinalizerDaemon*",
+      "*HeapTaskDaemon*",
+      "Binder:*",
+      "Jit thread pool*",
+      "RenderThread"
+    ]
+  },
+  "id": "startup_thread_blocking_graph",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "package",
+      "required": true,
+      "type": "string"
+    },
+    {
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "name": "min_block_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "name": "top_k",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": []
+  },
+  "query_id": "startup_thread_blocking_graph/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/startup_thread_blocking_graph.skill.yaml",
+    "sha256": "efc99dd7288f62ffa136feb19c852594d545620e9a17523b1070b71f14041d67"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "startup"
+}

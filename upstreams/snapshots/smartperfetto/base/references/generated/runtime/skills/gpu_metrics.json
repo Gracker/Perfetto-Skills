@@ -1,0 +1,127 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "official_frame_timeline_or_legacy",
+        "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+        "source": "perfetto stdlib android/frames/timeline.sql",
+        "version_hint": {
+          "frame_timeline_min_api": 31
+        }
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "*Busy*",
+      "*Draw*Call*",
+      "*Fence*",
+      "*Freq*",
+      "*GPU completion*",
+      "*GPU*",
+      "*Render*Pass*",
+      "*Shader*",
+      "*Util*",
+      "*Waiting for GPU*",
+      "*busy*",
+      "*clock*",
+      "*fence*",
+      "*fence*signal*",
+      "*freq*",
+      "*gl*Draw*",
+      "*gpu*",
+      "*util*",
+      "*vkQueue*",
+      "VSYNC-sf"
+    ]
+  },
+  "id": "gpu_metrics",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "package",
+      "required": false,
+      "type": "string"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.frames.timeline"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/atomic/gpu_metrics.skill.yaml",
+    "sha256": "7ec44d892abb05141d0c58bfb05944911a22d8a6d4252fc95aa9b12c5f4f800a"
+  },
+  "steps": [
+    {
+      "id": "gpu_frequency",
+      "name": "GPU 频率",
+      "optional": true,
+      "query_id": "gpu_metrics/gpu_frequency",
+      "result_dependencies": [],
+      "save_as": "gpu_freq",
+      "type": "atomic"
+    },
+    {
+      "id": "gpu_utilization",
+      "name": "GPU 利用率",
+      "optional": true,
+      "query_id": "gpu_metrics/gpu_utilization",
+      "result_dependencies": [],
+      "save_as": "gpu_util",
+      "type": "atomic"
+    },
+    {
+      "id": "gpu_render_time",
+      "name": "GPU 渲染耗时",
+      "optional": true,
+      "query_id": "gpu_metrics/gpu_render_time",
+      "result_dependencies": [],
+      "save_as": "gpu_render_time",
+      "type": "atomic"
+    },
+    {
+      "id": "gpu_fence_waits",
+      "name": "GPU Fence 等待",
+      "optional": true,
+      "query_id": "gpu_metrics/gpu_fence_waits",
+      "result_dependencies": [],
+      "save_as": "gpu_fence",
+      "type": "atomic"
+    },
+    {
+      "id": "gpu_summary",
+      "name": "GPU 汇总",
+      "query_id": "gpu_metrics/gpu_summary",
+      "result_dependencies": [],
+      "save_as": "gpu_summary",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "gpu-rendering"
+}

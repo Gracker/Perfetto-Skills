@@ -1,0 +1,217 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "${package}*"
+    ]
+  },
+  "id": "io_pressure",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "应用包名（可选）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "分析起始时间戳（纳秒，可选）",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳（纳秒，可选）",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 1,
+      "description": "最小 IO Wait 时长阈值（毫秒）",
+      "name": "min_duration_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 20,
+      "description": "列表最大返回条数",
+      "name": "max_items",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10,
+      "description": "长 IO 事件阈值（毫秒）",
+      "name": "long_io_threshold_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 5000,
+      "description": "IO Wait 严重阈值（毫秒，总等待时间超过此值为 critical）",
+      "name": "critical_io_wait_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 1000,
+      "description": "IO Wait 警告阈值（毫秒，总等待时间超过此值为 warning）",
+      "name": "warning_io_wait_ms",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.threads"
+    ],
+    "required_tables": [
+      "thread_state"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/composite/io_pressure.skill.yaml",
+    "sha256": "4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571"
+  },
+  "steps": [
+    {
+      "id": "data_check",
+      "name": "数据检测",
+      "query_id": "io_pressure/data_check",
+      "result_dependencies": [],
+      "save_as": "data_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "io_wait_overview",
+      "name": "IO Wait 总览",
+      "optional": true,
+      "query_id": "io_pressure/io_wait_overview",
+      "result_dependencies": [],
+      "save_as": "io_overview",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "process_io_distribution",
+      "name": "进程 IO Wait 分布",
+      "optional": true,
+      "query_id": "io_pressure/process_io_distribution",
+      "result_dependencies": [],
+      "save_as": "process_io",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_blocked_functions === 1",
+      "id": "blocking_functions",
+      "name": "阻塞函数热点",
+      "optional": true,
+      "query_id": "io_pressure/blocking_functions",
+      "result_dependencies": [],
+      "save_as": "blocking_functions",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "thread_io_details",
+      "name": "线程 IO Wait 详情",
+      "optional": true,
+      "query_id": "io_pressure/thread_io_details",
+      "result_dependencies": [],
+      "save_as": "thread_io",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_long_io === 1",
+      "id": "long_io_events",
+      "name": "长 IO Wait 事件",
+      "optional": true,
+      "query_id": "io_pressure/long_io_events",
+      "result_dependencies": [],
+      "save_as": "long_io_events",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.has_data === 1",
+      "id": "root_cause_classification",
+      "name": "IO 根因分类",
+      "optional": true,
+      "query_id": "io_pressure/root_cause_classification",
+      "result_dependencies": [],
+      "save_as": "root_cause",
+      "type": "atomic"
+    },
+    {
+      "id": "io_diagnostic",
+      "name": "IO 诊断",
+      "rules": [
+        {
+          "condition": "(io_overview?.data?.[0]?.severity) === 'critical'",
+          "diagnosis": "IO 压力严重: 总等待 ${io_overview.data[0].total_io_wait_ms}ms, 影响 ${io_overview.data[0].affected_threads} 个线程",
+          "severity": "critical",
+          "suggestions": [
+            "检查是否存在大文件读写或频繁的小文件操作",
+            "考虑使用异步 IO 或 IO 调度优化",
+            "检查存储设备健康状况"
+          ]
+        },
+        {
+          "condition": "(io_overview?.data?.[0]?.severity) === 'warning'",
+          "diagnosis": "IO 压力偏高: 总等待 ${io_overview.data[0].total_io_wait_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "分析阻塞函数，定位 IO 热点",
+            "考虑批量化 IO 操作"
+          ]
+        },
+        {
+          "condition": "(root_cause?.data?.[0]?.root_cause_type) === 'IO_FS_BOUND'",
+          "diagnosis": "文件系统操作是主要 IO 瓶颈 (${root_cause.data[0].primary_pct}%)",
+          "severity": "warning",
+          "suggestions": [
+            "优化文件读写模式，减少小文件操作",
+            "使用 mmap 或缓存减少文件系统调用"
+          ]
+        },
+        {
+          "condition": "(root_cause?.data?.[0]?.root_cause_type) === 'IO_SYNC_BOUND'",
+          "diagnosis": "同步操作频繁导致 IO 等待 (${root_cause.data[0].primary_pct}%)",
+          "severity": "warning",
+          "suggestions": [
+            "减少 fsync 调用频率",
+            "使用 write-back 缓存策略"
+          ]
+        },
+        {
+          "condition": "(io_overview?.data?.[0]?.severity) === 'normal' || (io_overview?.data?.[0]?.severity) === 'info'",
+          "diagnosis": "IO 压力在正常范围内 (${io_overview.data[0].total_io_wait_ms}ms)",
+          "severity": "info"
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "3.0",
+  "workflow": "io-network-media"
+}

@@ -1,0 +1,222 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "%${package}%",
+      "%Binder%",
+      "*Lock*",
+      "*LockContention*",
+      "*Monitor*",
+      "*Mutex*",
+      "*acquired*",
+      "*contention*",
+      "*futex*",
+      "*holding*lock*",
+      "*lock*",
+      "*lock*held*",
+      "*monitor*",
+      "*mutex*",
+      "*synchronized*",
+      "*wait*"
+    ]
+  },
+  "id": "lock_contention_module",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Target package name",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Target thread ID",
+      "name": "tid",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "Analysis start timestamp",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Analysis end timestamp",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "thread",
+      "process",
+      "thread_state"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "cda248e2324a554220e15f8ce5ede39f2f53468d",
+    "path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
+    "sha256": "ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118"
+  },
+  "steps": [
+    {
+      "id": "lock_contention_overview",
+      "name": "锁竞争概览",
+      "on_empty": "未检测到明显的锁竞争事件",
+      "query_id": "lock_contention_module/lock_contention_overview",
+      "result_dependencies": [],
+      "save_as": "lock_overview",
+      "type": "atomic"
+    },
+    {
+      "id": "monitor_contention",
+      "name": "Monitor 竞争",
+      "query_id": "lock_contention_module/monitor_contention",
+      "result_dependencies": [],
+      "save_as": "monitor_contention",
+      "type": "atomic"
+    },
+    {
+      "id": "blocked_threads",
+      "name": "阻塞线程分析",
+      "query_id": "lock_contention_module/blocked_threads",
+      "result_dependencies": [],
+      "save_as": "blocked_threads",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_locks",
+      "name": "主线程锁等待",
+      "query_id": "lock_contention_module/main_thread_locks",
+      "result_dependencies": [],
+      "save_as": "main_thread_locks",
+      "type": "atomic"
+    },
+    {
+      "id": "binder_thread_locks",
+      "name": "Binder 线程锁等待",
+      "query_id": "lock_contention_module/binder_thread_locks",
+      "result_dependencies": [],
+      "save_as": "binder_thread_locks",
+      "type": "atomic"
+    },
+    {
+      "id": "long_lock_holds",
+      "name": "长时间锁持有",
+      "optional": true,
+      "query_id": "lock_contention_module/long_lock_holds",
+      "result_dependencies": [],
+      "save_as": "long_lock_holds",
+      "type": "atomic"
+    },
+    {
+      "id": "thread_contention_pairs",
+      "name": "线程竞争关系",
+      "query_id": "lock_contention_module/thread_contention_pairs",
+      "result_dependencies": [],
+      "save_as": "thread_contention_pairs",
+      "type": "atomic"
+    },
+    {
+      "id": "lock_diagnosis",
+      "inputs": [
+        "lock_overview",
+        "monitor_contention",
+        "blocked_threads",
+        "main_thread_locks"
+      ],
+      "name": "锁竞争诊断",
+      "rules": [
+        {
+          "condition": "main_thread_locks.data.length > 0",
+          "confidence": "critical",
+          "diagnosis": "主线程检测到 ${main_thread_locks.data.length} 次锁等待，最长 ${main_thread_locks.data[0]?.wait_ms}ms",
+          "evidence_fields": [
+            "main_thread_locks.data.length",
+            "main_thread_locks.data[0]?.lock_event",
+            "main_thread_locks.data[0]?.wait_ms"
+          ],
+          "suggestions": [
+            "主线程不应等待锁",
+            "将竞争资源的访问移至后台线程",
+            "使用无锁数据结构"
+          ]
+        },
+        {
+          "condition": "lock_overview.data[0]?.total_wait_ms > 100",
+          "confidence": "high",
+          "diagnosis": "锁竞争总等待时间 ${lock_overview.data[0]?.total_wait_ms}ms",
+          "evidence_fields": [
+            "lock_overview.data[0]?.lock_event",
+            "lock_overview.data[0]?.total_wait_ms"
+          ],
+          "suggestions": [
+            "减少临界区代码",
+            "考虑使用细粒度锁",
+            "使用读写锁分离"
+          ]
+        },
+        {
+          "condition": "monitor_contention.data[0]?.wait_ms > 10",
+          "confidence": "high",
+          "diagnosis": "Java Monitor 竞争: ${monitor_contention.data[0]?.monitor_event} 等待 ${monitor_contention.data[0]?.wait_ms}ms",
+          "evidence_fields": [
+            "monitor_contention.data[0]?.monitor_event",
+            "monitor_contention.data[0]?.wait_ms",
+            "monitor_contention.data[0]?.waiting_thread"
+          ],
+          "suggestions": [
+            "检查 synchronized 块的必要性",
+            "考虑使用 ReentrantLock 提供更好的控制",
+            "缩小 synchronized 范围"
+          ]
+        },
+        {
+          "condition": "blocked_threads.data.filter(t => t.state === 'D').length > 3",
+          "confidence": "medium",
+          "diagnosis": "多个线程处于不可中断阻塞状态，可能存在 I/O 或锁等待",
+          "evidence_fields": [
+            "blocked_threads.data.filter(t => t.state === 'D').length"
+          ],
+          "suggestions": [
+            "检查是否有 I/O 阻塞",
+            "检查是否有内核锁竞争"
+          ]
+        },
+        {
+          "condition": "thread_contention_pairs.data[0]?.blocked_pct > 30",
+          "confidence": "medium",
+          "diagnosis": "线程 ${thread_contention_pairs.data[0]?.thread_name} 阻塞时间占比 ${thread_contention_pairs.data[0]?.blocked_pct}%",
+          "evidence_fields": [
+            "thread_contention_pairs.data[0]?.thread_name",
+            "thread_contention_pairs.data[0]?.blocked_pct"
+          ],
+          "suggestions": [
+            "该线程大部分时间在等待",
+            "分析其等待的资源"
+          ]
+        }
+      ],
+      "type": "diagnostic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "anr-blocking"
+}

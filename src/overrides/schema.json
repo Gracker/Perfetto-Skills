@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema_version", "target", "kind", "expected_base_sha256", "replacement", "replacement_sha256", "reason", "regression_ids", "upstream_candidate"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "target": {"type": "string"},
+    "kind": {"enum": ["sql", "skill", "strategy"]},
+    "expected_base_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "replacement": {"type": "string"},
+    "replacement_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reason": {"type": "string", "minLength": 1},
+    "regression_ids": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "base_failure_signature": {"type": "string", "minLength": 1},
+    "dependent_replacements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["target", "expected_base_sha256", "replacement", "replacement_sha256"],
+        "properties": {
+          "target": {"type": "string"},
+          "expected_base_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "replacement": {"type": "string"},
+          "replacement_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "upstream_candidate": {"enum": ["propose", "local_only", "accepted_upstream"]}
+  },
+  "additionalProperties": false
+}
