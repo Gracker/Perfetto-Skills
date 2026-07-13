@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/surfaceview_blast.skill.yaml
-Source SHA-256: 6f75d6b4ac8b5c26e7e59c18854de7a773a30341f10dfa2763c4bf5673139bb6
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: a2f85c38f862e278be9e101753de3d6cf726e3091f543b20876d6f754a57c6a0
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # SurfaceView (BLAST)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: SurfaceView (BLAST)
 description: 独立 SurfaceView + BLAST 同步，用于自定义 GL 渲染、媒体播放
 icon: surface
 family: surface
-doc_path: rendering_pipelines/surfaceview.md
+doc_path: rendering_pipelines/S03_surfaceview_type.md
 s_article_ref: S03
 four_features:
   producer_threads:
@@ -56,7 +56,9 @@ subvariants_note: '文章 S03 描述 SurfaceView 4 个版本里程碑：
 
   - Android S/12+: BLAST / BLASTBufferQueue 统一 buffer 与 transaction
 
-  当前 ID 主要覆盖 Android 12+/BLAST 路径。Phase E 会拆 SURFACEVIEW_LEGACY (跨进程 BufferQueue) 独立 ID。
+  当前 variant 主要覆盖 Android 12+/BLAST 路径；旧式跨进程 BufferQueue 作为 S03 的历史子路径解释，
+
+  不单独形成 Android 17 主类型。
 
   '
 known_limitations: '- SurfaceView 内容不在宿主 HWUI 绘制树里，任意 View transform 与周围 View 混合无法直接做（需改 TextureView 或用 SurfaceControl 几何变换近似）
@@ -93,40 +95,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: SurfaceView (BLAST) 渲染管线
-summary: '使用独立的 Surface 进行渲染，常见于 OpenGL 游戏、视频播放器。
-
-  SurfaceView 有自己的 Layer，不受 View 系统约束，可以在独立线程渲染。
-
-  现代 Android 上常通过 BLAST / Transaction 模型协同 Buffer 与几何更新，但具体内部 trace 细节依版本而异。
-
-  '
-mermaid: "sequenceDiagram\n  participant App as App Thread\n  participant GL as GLThread\n  participant BQ as BufferQueue\n\
-  \  participant TX as BufferTX\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over App,SF: \U0001F4CD\
-  \ SurfaceView (BLAST) 独立渲染\n  App->>GL: 请求绘制\n  activate GL\n  GL->>BQ: dequeueBuffer\n  GL->>GL: OpenGL/Vulkan 渲染\n  GL->>GL:\
-  \ GPU 绘制命令\n  GL->>BQ: queueBuffer + Transaction\n  deactivate GL\n\n  BQ-->>TX: BLAST Transaction\n  VS->>SF: \U0001F514\
-  \ VSync-sf\n  activate SF\n  TX->>SF: setTransactionState\n  SF->>SF: latchBuffer\n  SF->>SF: HWC 合成 (独立 Layer)\n  deactivate\
-  \ SF\n\n  Note over App,SF: ✨ 独立于 App UI；但同步与合成效果仍取决于窗口变换、HWC 与系统负载\n"
-thread_roles:
-- thread: GLThread
-  role: 独立渲染线程
-  description: OpenGL/Vulkan 渲染，直接提交到 SurfaceView
-- thread: SurfaceFlinger
-  role: 独立层合成
-  description: SurfaceView 作为独立 Layer 合成
-key_slices:
-- name: eglSwapBuffers
-  thread: GLThread
-  description: 交换 Buffer
-- name: dequeueBuffer
-  thread: any
-  description: 获取可写 Buffer（可能阻塞在 BufferQueue）
-- name: queueBuffer
-  thread: any
-  description: 提交 Buffer（现代系统中常与 Transaction 路径协同）
-- name: SurfaceView
-  thread: any
-  description: SurfaceView 操作
+source: rendering_pipelines/S03_surfaceview_type.md
 ```
 
 ## Analysis guidance

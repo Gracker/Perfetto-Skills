@@ -1,11 +1,11 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_utilization_per_period.skill.yaml
--- Source SHA-256: 9920c14a1dfb568ab235f8ad07dc05900335274cf3a7715383808227764b30a7
--- Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+-- Source SHA-256: 0df1c92c4e548e72bb7d5e6ddb73270df2ea13c89ff46b4726d0877431b0852a
+-- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 SELECT
   ts,
-  100.0 AS dur_ms,
+  ROUND(dur / 1e6, 1) AS dur_ms,
   ROUND(utilization, 4) AS utilization
-FROM cpu_utilization_per_period(time_from_ms(100))
+FROM cpu_utilization_per_period
 ORDER BY ts ASC

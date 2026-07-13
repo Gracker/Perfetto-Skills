@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_gc_in_range.skill.yaml
 -- Source SHA-256: 5f4f1e48270ae77c92d5b68fd2ccd0cdd2299f386239316e3e0647f3aba1b8f7
--- Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+-- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 SELECT
   ts.slice_name as gc_type,

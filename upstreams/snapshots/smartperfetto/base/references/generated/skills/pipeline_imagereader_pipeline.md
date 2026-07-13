@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/imagereader_pipeline.skill.yaml
-Source SHA-256: c016399e110f9f3bfe0ba8f599e4ad9a59889ac2c2eea78845816dd4c56a90fd
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 5b2ccd004a9c5954b77897842a72d4e07412657f67fe7305fd90b0634a2ece8a
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # ImageReader 渲染管线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: ImageReader 渲染管线
 description: 通过 ImageReader API 获取渲染帧的管线，常见于 ML 推理、屏幕录制、自定义相机处理和部分 Chrome 渲染模式
 icon: image
 family: specialized
-doc_path: rendering_pipelines/imagereader_pipeline.md
+doc_path: rendering_pipelines/S07_software_offscreen_type.md
 s_article_ref: S07
 four_features:
   producer_threads:
@@ -45,7 +45,9 @@ cross_cutting_nature: 'ImageReader 不是独立 pipeline——它是任何 Produ
   '
 subvariants_note: '文章 S11 把 Camera ImageReader 路径单列为 CAMERA_IMAGEANALYSIS_READER 子变种。
 
-  Phase E 评估是否拆分。
+  当前条目在 catalog 中作为 S07 的 feature 证据；Camera ImageAnalysis 语义由 S11 文档补充，
+
+  不参与主类型竞争。
 
   '
 ```
@@ -80,66 +82,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-title: ImageReader 渲染管线
-summary: 'ImageReader 允许应用直接访问渲染到 Surface 的图像数据。它底层基于 BufferQueue，
-
-  作为 consumer 端从 producer（Camera HAL、MediaCodec 解码器、GPU 渲染等）获取帧。
-
-
-  典型使用场景：
-
-  - ML 推理：获取 Camera/GPU 帧进行实时模型推理
-
-  - 屏幕录制：捕获渲染帧编码为视频
-
-  - 自定义相机处理：Camera2 API + ImageReader 实现自定义 ISP
-
-  - 部分 Chrome 渲染模式：通过 ImageReader 获取合成帧
-
-
-  关键特征：
-
-  - Java API: `ImageReader.newInstance()` + `onImageAvailable` 回调
-
-  - NDK API: `AImageReader_new()` + `AImageReader_ImageListener`
-
-  - 与 HardwareBuffer 结合可实现零拷贝跨进程/跨 GPU 帧传递
-
-  - maxImages 参数控制 BufferQueue 深度，影响内存占用和延迟
-
-  '
-mermaid: "sequenceDiagram\n  participant P as Producer<br/>(Camera/GPU/Codec)\n  participant BQ as BufferQueue\n  participant\
-  \ IR as ImageReader\n  participant App as App (Consumer)\n  participant Proc as Processing<br/>(ML/Encode/Display)\n\n \
-  \ Note over P,Proc: \U0001F4CD ImageReader 帧获取流程\n  P->>BQ: dequeueBuffer\n  P->>P: 渲染/解码/捕获\n  P->>BQ: queueBuffer (帧就绪)\n\
-  \n  BQ->>IR: onImageAvailable 回调\n  activate IR\n  IR->>App: 通知新帧可用\n  deactivate IR\n\n  activate App\n  App->>IR: acquireNextImage\n\
-  \  IR->>BQ: acquireBuffer (获取帧)\n  IR-->>App: Image (HardwareBuffer)\n  App->>Proc: 处理帧 (ML 推理/编码/展示)\n  App->>IR: Image.close()\n\
-  \  IR->>BQ: releaseBuffer\n  deactivate App\n\n  Note over P,Proc: ⏱️ 关键耗时点：queueBuffer→回调延迟、帧处理耗时、Buffer 释放速度\n"
-thread_roles:
-- thread: main
-  role: 应用主线程
-  description: 配置 ImageReader, 注册回调, 管理生命周期
-  trace_tags: bindApplication, activityStart, ImageReader
-- thread: ImageReader
-  role: ImageReader 回调
-  description: 处理 onImageAvailable 回调, 获取和释放 Image
-  trace_tags: ImageReader, onImageAvailable, acquireNextImage
-- thread: Producer
-  role: 帧生产者
-  description: 帧生产线程 — 可以是 Camera HAL, MediaCodec 解码器, 或 GPU 渲染线程
-  trace_tags: Camera, MediaCodec, dequeueBuffer, queueBuffer
-key_slices:
-- name: acquireNextImage
-  thread: any
-  description: 获取下一帧 Image — 从 BufferQueue 获取渲染好的帧
-- name: onImageAvailable
-  thread: any
-  description: 帧可用回调 — ImageReader 通知应用有新帧
-- name: queueBuffer
-  thread: any
-  description: 提交 Buffer — 生产者将渲染好的帧提交到 BufferQueue
-- name: HardwareBuffer
-  thread: any
-  description: 硬件 Buffer 操作 — GPU/Camera/Codec 直接读写
+source: rendering_pipelines/S07_software_offscreen_type.md
 ```
 
 ## Analysis guidance

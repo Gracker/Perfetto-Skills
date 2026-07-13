@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/camera_pipeline.skill.yaml
-Source SHA-256: 55ab9f0f50c5deaffb9d814b65ad0cd7466569d27d66aaa17188f4c9ed38f250
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: b61f90b3c1e9832a39519c1b465663073c65009e4fba3b6442df4d6738335045
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # 相机管线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: 相机管线
 description: Camera2/HAL3 多流相机渲染
 icon: camera
 family: specialized
-doc_path: rendering_pipelines/camera_pipeline.md
+doc_path: rendering_pipelines/S11_camera_type.md
 s_article_ref: S11
 four_features:
   producer_threads:
@@ -51,7 +51,7 @@ subvariants_note: '文章 S11 把 Camera 类型拆为 4 个子变种：
 
   - CAMERA_VIDEORECORD_SURFACE（录像 Surface）
 
-  Phase E 拆分独立 ID。当前 ID 一并覆盖。
+  当前 variant 对应 S11；预览、分析与录像作为同一类型下的检测子路径一并输出。
 
   '
 multi_output_back_pressure: 'Camera 多路输出（preview/analysis/record）可能共享硬件与 buffer 资源。
@@ -84,54 +84,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-title: 相机渲染管线
-summary: 'Camera2 API 和 HAL3 相机架构，支持多流同时处理（预览、拍照、录像）。
-
-  Request 按序提交，但可有多个 request 同时 in-flight；每个 request 可产生 partial metadata
-
-  和一个或多个输出 buffer。`onOpened` 只证明设备打开完成，不证明首个 result、buffer 或预览呈现。
-
-  首帧需要稳定的 session/camera identity，以及明确的 request/result/buffer/presentation 锚点；
-
-  vendor slice-name inventory 只能作为 candidate，不能单独证明首帧。首帧到达时 3A 仍可能搜索，
-
-  有 trace 证据时应单独报告 3A 状态。`prepare()` 是 buffer 预分配取舍，可能推迟首次输出并增加内存，
-
-  不是通用首帧修复。ZSL 行为和 buffer topology 取决于 capability、实现与 App 配置。
-
-  ImageReader backpressure 只有在 buffer ownership/acquire-release 证据存在时才是受支持的假设；
-
-  PSS/RSS 增长本身不足以判定泄漏。Pixel `pixel.camera` 解析只是可选 vendor fast path，
-
-  不是可移植的 Android Camera contract。Camera trace 可见性强依赖设备、OEM 和启用的数据源。
-
-  '
-mermaid: "sequenceDiagram\n  participant App as App\n  participant Cam as CameraService\n  participant HAL as Camera HAL\n\
-  \  participant ISP as ISP/GPU\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\
-  \n  Note over App,SF: \U0001F4CD Camera2/HAL3 渲染链路\n  App->>Cam: createCaptureSession\n  App->>Cam: setRepeatingRequest\n\
-  \n  activate HAL\n  HAL->>ISP: 配置图像处理流水线\n  loop 每帧\n    HAL->>HAL: 捕获 Bayer 数据\n    HAL->>ISP: 3A + ISP 处理\n    ISP->>BQ:\
-  \ 输出到 Surface\n  end\n  deactivate HAL\n\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n  SF->>SF: latchBuffer\n  SF->>SF:\
-  \ HWC Composite\n  deactivate SF\n\n  Note over App,SF: \U0001F4F7 支持预览/录制/拍照多路输出\n"
-thread_roles:
-- thread: Camera
-  role: 相机服务
-  description: Camera2 API 和相机服务（线程名 / slice 名依设备而异）
-- thread: CaptureSession
-  role: 采集会话
-  description: 相机采集会话管理
-key_slices:
-- name: Camera
-  thread: any
-  description: 相机相关操作候选（vendor 名称不能单独证明 request/result/buffer 阶段）
-- name: CaptureSession
-  thread: any
-  description: 采集会话活动候选（名称与可见性依版本 / OEM 变化）
-- name: createCaptureSession
-  thread: any
-  description: 创建采集会话候选（常见于启动/切换摄像头/重配流）
-- name: setRepeatingRequest
-  thread: any
-  description: 预览/录制重复 request activity candidate（不能据此推断 sensor trigger）
+source: rendering_pipelines/S11_camera_type.md
 ```
 
 ## Analysis guidance

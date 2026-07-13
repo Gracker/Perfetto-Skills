@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/webview_textureview_custom.skill.yaml
-Source SHA-256: 11811b4cba46039f372e76257853a79311cddc2d8b3a679ffe50daf9d3816d8c
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 6c771335298179b05c20755f8c7716f9296836a061b73eab41a3d78467d5e36d
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # WebView TextureView (定制内核)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: WebView TextureView (定制内核)
 description: X5/UC 等定制 WebView 内核，使用 TextureView
 icon: web
 family: webview
-doc_path: rendering_pipelines/webview_textureview_custom.md
+doc_path: rendering_pipelines/S09_webview_type.md
 s_article_ref: S09
 four_features:
   producer_threads:
@@ -70,44 +70,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: WebView TextureView (定制内核) 渲染管线
-summary: '使用腾讯 X5、UC 等第三方定制 WebView 内核，通常使用 TextureView
-
-  进行渲染。这些内核可能有自己的渲染优化策略，但整体上仍属于
-
-  “SurfaceTexture producer + 宿主侧再次合成”的架构；回调线程和消费线程实现差异很大。
-
-  '
-mermaid: "sequenceDiagram\n  participant Main as App (main)\n  participant RT as RenderThread\n  participant X5 as X5/UC Core\n\
-  \  participant TV as TextureView\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\
-  \n  Note over Main,SF: \U0001F4CD 自定义 WebView 内核 (X5/UC)\n  Main->>X5: 加载网页\n  activate X5\n  X5->>TV: 渲染到 TextureView\n\
-  \  X5->>TV: queueBuffer / produce frame\n  deactivate X5\n\n  Main->>RT: syncFrameState\n  activate RT\n  RT->>RT: DrawFrame\n\
-  \  RT->>RT: 绑定 TextureView 纹理\n  RT->>BQ: queueBuffer\n  deactivate RT\n\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n\
-  \  SF->>SF: latchBuffer\n  SF->>SF: HWC Composite\n  deactivate SF\n\n  Note over Main,SF: \U0001F1E8\U0001F1F3 国内常见的第三方\
-  \ WebView 方案\n"
-thread_roles:
-- thread: main
-  role: UI 集成
-  description: 承载定制 WebView 的 Activity
-- thread: RenderThread
-  role: 纹理合成
-  description: 将定制内核内容作为纹理合成
-- thread: WebViewCore
-  role: 定制内核渲染
-  description: X5/UC 等内核渲染线程（trace 中可能表现为 WebViewCore/CrRendererMain/其他专用线程）
-key_slices:
-- name: SurfaceTexture
-  thread: any
-  description: TextureView/SurfaceTexture 生产-消费链路
-- name: updateTexImage (hint)
-  thread: RenderThread
-  description: 消费侧更新纹理的常见提示信号
-- name: syncFrameState
-  thread: RenderThread
-  description: 宿主 UI 与 RenderThread 同步，驱动纹理合成
-- name: DrawFrame
-  thread: RenderThread
-  description: 宿主 RenderThread 合成 WebView 纹理并提交
+source: rendering_pipelines/S09_webview_type.md
 ```
 
 ## Analysis guidance

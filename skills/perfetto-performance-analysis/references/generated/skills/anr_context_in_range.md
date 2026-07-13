@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/anr_context_in_range.skill.yaml
 Source SHA-256: 72ffcd16110748ddcd1ef5a9dc9ebaa508eac40ffac9571fe7a25a4eefe3000c
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # ANR 上下文提取
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

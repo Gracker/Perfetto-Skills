@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_standard_legacy.skill.yaml
-Source SHA-256: 6a2d7cacb8c3467eaf412df95cd45a6ca4669844f8b4fcf6279decc5f1251208
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: a1541a7ac62141bec397dc6d281b792fa3119ed2e8fc21f48ceb33d0264494b0
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # 标准 Android View (Legacy)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: 标准 Android View (Legacy)
 description: Android 12 之前的 HWUI + Legacy BufferQueue 渲染管线
 icon: android
 family: hwui
-doc_path: rendering_pipelines/android_view_standard.md
+doc_path: rendering_pipelines/S02_aosp_standard_type.md
 s_article_ref: S02
 four_features:
   producer_threads:
@@ -64,40 +64,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: Android View 标准渲染管线 (Legacy)
-summary: 'Android 12 之前的默认渲染管线，使用 HWUI 硬件加速和传统 BufferQueue 机制。
-
-  Buffer 通过 Binder 调用提交给 SurfaceFlinger，缺少原子性事务支持。
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant Main as App (main)\n  participant RT as RenderThread\n\
-  \  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over VA,SF:\
-  \ \U0001F4CD Frame N Production Phase (Legacy)\n  VA->>Main: \U0001F514 VSync-app 信号触发\n  activate Main\n  Main->>Main:\
-  \ Choreographer#doFrame\n  Main->>Main: Input → Animation → Measure → Layout → Draw\n  Main->>RT: syncFrameState (阻塞)\n\
-  \  deactivate Main\n\n  activate RT\n  RT->>BQ: dequeueBuffer\n  RT->>RT: DrawFrame (GPU 渲染)\n  RT->>BQ: queueBuffer (Binder\
-  \ 调用)\n  deactivate RT\n\n  Note over BQ,SF: \U0001F4CD Frame N Consumption Phase\n  BQ-->>SF: onFrameAvailable 回调\n  VS->>SF:\
-  \ \U0001F514 VSync-sf 信号触发\n  activate SF\n  SF->>SF: handleMessageRefresh\n  SF->>SF: latchBuffer\n  SF->>SF: HWC Composite\n\
-  \  deactivate SF\n\n  Note over VA,SF: ⚠️ Legacy 缺少原子事务，可能出现撕裂/尺寸不同步\n"
-thread_roles:
-- thread: main
-  role: UI 构建
-  description: Measure/Layout/Draw 生成 DisplayList
-- thread: RenderThread
-  role: GPU 渲染
-  description: 执行绘制命令，通过 BufferQueue 提交
-- thread: SurfaceFlinger
-  role: 合成显示
-  description: Latch Buffer，HWC 合成
-key_slices:
-- name: DrawFrame
-  thread: RenderThread
-  description: 开始渲染
-- name: queueBuffer
-  thread: RenderThread
-  description: 提交 Buffer 到 BufferQueue
-- name: dequeueBuffer
-  thread: RenderThread
-  description: 获取空闲 Buffer
+source: rendering_pipelines/S02_aosp_standard_type.md
 ```
 
 ## Analysis guidance

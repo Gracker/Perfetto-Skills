@@ -61,9 +61,14 @@ class ExporterTest(unittest.TestCase):
         self.assertEqual(
             len(catalog["strategies"]), catalog["summary"]["strategy_sources"]
         )
-        self.assertGreaterEqual(len(catalog["pipeline_docs"]), 30)
+        pipeline_docs = catalog["pipeline_docs"]
+        self.assertEqual(len(pipeline_docs), 14)
+        self.assertEqual(
+            [item["source_path"].split("/")[-1].split("_")[0] for item in pipeline_docs],
+            [f"S{index:02d}" for index in range(1, 15)],
+        )
         self.assertTrue(
-            all(item["disposition"] == "exported" for item in catalog["pipeline_docs"])
+            all(item["disposition"] == "exported" for item in pipeline_docs)
         )
 
     def test_bootstrap_classifier_preserves_domain_boundaries(self) -> None:

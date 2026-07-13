@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/teaching.strategy.md
-Source SHA-256: a4b8a175a3c30632e4b12cb264c9c0952e136a86b10dbf4040f1048602e1915d
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 291745c845a2e6e58feb3a7a689adc8e0952eb79cddd4e930c6449b6bc66a757
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 # Teaching Strategy
 
@@ -122,7 +122,10 @@ plan_template:
 - 例如："DrawFrame 正常耗时 4-8ms，当前帧耗时 35ms，超出帧预算"
 
 **3b. 源码位置（按需）：**
-注意：AOSP 源码路径可能因 Android 版本不同而变化。如果引用源码位置，标注适用的 Android 版本范围（如 'Android 12+ (API 31+)'）。核心渲染路径在 android14-release 分支为最新参考。
+注意：AOSP 源码路径可能因 Android 版本不同而变化。如果引用源码位置，标注
+适用版本。渲染教学以固定上游 S01-S14 为准：平台锚点
+`android-17.0.0_r1`，kernel 锚点 `android17-6.18-2026-06_r6`，并明确
+Android 12—17 差异。框架/engine/provider 版本必须单独记录。
 
 如果用户问到源码位置，提供 AOSP 源码路径 + 关键函数名：
 

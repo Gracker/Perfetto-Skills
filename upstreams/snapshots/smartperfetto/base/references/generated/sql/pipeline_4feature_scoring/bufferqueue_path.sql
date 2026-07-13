@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/pipeline_4feature_scoring.skill.yaml
--- Source SHA-256: 1e79317b0855a512d32bbad13dab94931b70017b7cf9f585ab505151c272ea3a
--- Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+-- Source SHA-256: 2188f6c3732115b4eac2d4d5250a23f8ff912ecab084d6aabc732df5c69ccef3
+-- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 WITH
 blast AS (

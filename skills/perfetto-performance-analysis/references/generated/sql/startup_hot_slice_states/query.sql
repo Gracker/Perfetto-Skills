@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_hot_slice_states.skill.yaml
 -- Source SHA-256: 7b53b185503a7dbaaf1ddc0527728dc763324f140dc4b673f65e56d18926eba6
--- Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+-- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 WITH main_thread AS (
   SELECT t.utid, p.pid

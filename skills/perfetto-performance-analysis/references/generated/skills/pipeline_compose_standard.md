@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/compose_standard.skill.yaml
-Source SHA-256: a864dbf8dba46dab81928bb99d5a99bb6629001b5135dee571ed40856017f588
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 331b58f702c25ea53aaae2c93c2f8842525d243ac6dd98d7d0fc8826f7173719
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # Jetpack Compose (Standard)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: Jetpack Compose (Standard)
 description: Jetpack Compose + HWUI RenderThread, Recomposition driven
 icon: android
 family: hwui
-doc_path: rendering_pipelines/compose_standard.md
+doc_path: rendering_pipelines/S02_aosp_standard_type.md
 s_article_ref: S02
 four_features:
   producer_threads:
@@ -76,66 +76,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: Jetpack Compose 渲染管线
-summary: 'Jetpack Compose 基于 HWUI RenderThread 渲染，但在 UI 构建阶段有独特的机制：
-
-  - Composition 阶段: Recomposer 驱动 @Composable 函数重新执行
-
-  - Layout 阶段: Compose 自有的 measure/layout (非 View.onMeasure)
-
-  - Draw 阶段: 生成 DisplayList, 由 RenderThread 执行 GPU 渲染
-
-
-  性能关键点:
-
-  - Recomposition 风暴: 不必要的重组导致频繁重绘
-
-  - State 读取范围: 过宽的 State 读取触发过多组件重组
-
-  - LazyColumn/LazyRow: 类似 RecyclerView 的虚拟化列表
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant Main as Main Thread\n  participant RC as Recomposer\n\
-  \  participant RT as RenderThread\n  participant BQ as BLASTBufferQueue\n  participant VS as VSync-sf\n  participant SF\
-  \ as SurfaceFlinger\n\n  Note over VA,SF: Jetpack Compose (HWUI + BLAST)\n  VA->>Main: VSync -> Choreographer#doFrame\n\
-  \  activate Main\n  Main->>RC: Recomposition (State changed)\n  RC->>RC: @Composable functions\n  RC->>Main: Layout (measure\
-  \ + place)\n  Main->>Main: Draw (Canvas -> DisplayList)\n  Main->>RT: syncFrameState\n  deactivate Main\n\n  activate RT\n\
-  \  RT->>RT: DrawFrame (GPU commands)\n  RT->>BQ: queueBuffer + applyTransaction\n  deactivate RT\n\n  VS->>SF: VSync-sf\n\
-  \  activate SF\n  SF->>SF: latchBuffer + Composite\n  deactivate SF\n"
-thread_roles:
-- thread: main
-  role: Composition + Layout + Draw
-  description: Recomposer 驱动 Composable 函数, Layout, 生成 DisplayList
-  trace_tags:
-  - Recompos*
-  - Compose:*
-  - Choreographer#doFrame
-- thread: RenderThread
-  role: GPU 渲染
-  description: 执行 DisplayList -> GPU 命令 -> queueBuffer
-  trace_tags:
-  - DrawFrame
-  - syncFrameState
-  - queueBuffer
-- thread: SurfaceFlinger
-  role: 合成显示
-  description: BLAST Transaction 接收, HWC/GPU 合成
-key_slices:
-- name: Recomposition
-  thread: main
-  description: Compose 重组 -- 当 State 变化时触发, 是性能问题的主要来源
-- name: Compose:*
-  thread: main
-  description: Compose 内部操作 (CompositionLocal, SnapshotState 等)
-- name: Choreographer#doFrame
-  thread: main
-  description: 帧开始, 驱动 Composition -> Layout -> Draw
-- name: DrawFrame
-  thread: RenderThread
-  description: GPU 渲染, 执行 DisplayList
-- name: syncFrameState
-  thread: RenderThread
-  description: Main -> RenderThread 同步 DisplayList (阻塞 Main)
+source: rendering_pipelines/S02_aosp_standard_type.md
 ```
 
 ## Analysis guidance

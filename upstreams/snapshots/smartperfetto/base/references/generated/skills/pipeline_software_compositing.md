@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/software_compositing.skill.yaml
-Source SHA-256: 69274622927defcec6da608c0efe501fa40665062ad341bb316b2f906c496f19
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: b33f5c40a40d7c5e8b7331bd420c27d8ddd50beb248469018ecfd156b425d78f
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # 软件合成回退
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: 软件合成回退
 description: SurfaceFlinger CPU 软件合成回退，GPU 合成不可用时的降级路径
 icon: memory
 family: surfaceflinger
-doc_path: rendering_pipelines/software_compositing.md
+doc_path: rendering_pipelines/S01_rendering_types_overview.md
 s_article_ref: S01
 four_features:
   producer_threads: []
@@ -87,56 +87,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: SurfaceFlinger 软件合成管线
-summary: '当 GPU 合成不可用或不适用时，SurfaceFlinger 会回退到 CPU 软件合成路径。
-
-  常见触发场景包括：
-
-  - GPU 不可用（低端设备或 GPU 被占用）
-
-  - Layer 数量超过 HWC 硬件叠加层上限
-
-  - 不支持的混合模式或像素格式
-
-  - 安全内容保护需要 CPU 合成
-
-  - 调试/降级模式
-
-
-  软件合成性能显著低于 GPU/HWC 合成，通常导致 SurfaceFlinger
-
-  主线程耗时增加，可能影响帧率和显示延迟。
-
-  '
-mermaid: "sequenceDiagram\n  participant App as App Process\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n\
-  \  participant SF as SurfaceFlinger\n  participant VAL as HWC Validate\n  participant CPU as CPU Compositor\n  participant\
-  \ DISP as Display\n\n  Note over App,DISP: Software Compositing Fallback Path\n  App->>BQ: queueBuffer (帧提交)\n\n  VS->>SF:\
-  \ VSync-sf 触发\n  activate SF\n  SF->>SF: handleMessageRefresh\n  SF->>SF: latchBuffer (获取 Layer 缓冲区)\n  SF->>VAL: validateDisplay\n\
-  \  Note over VAL: HWC 拒绝部分/全部 Layer\n  VAL-->>SF: 返回需要 Client 合成的 Layer 列表\n\n  SF->>CPU: CPU 软件合成 (Skia/OpenGL fallback)\n\
-  \  activate CPU\n  CPU->>CPU: 逐 Layer 像素混合\n  CPU->>CPU: 颜色空间转换/缩放\n  deactivate CPU\n\n  SF->>DISP: presentDisplay (提交合成结果)\n\
-  \  deactivate SF\n\n  Note over App,DISP: ⚠️ CPU 合成延迟高于 GPU/HWC 路径\n"
-thread_roles:
-- thread: SurfaceFlinger
-  role: 合成调度 + CPU 合成
-  description: handleMessageRefresh 驱动合成流程，回退时执行 CPU 像素混合
-  trace_tags:
-  - handleMessageRefresh
-  - composite
-  - validateDisplay
-  - presentDisplay
-key_slices:
-- name: handleMessageRefresh
-  thread: SurfaceFlinger
-  description: SurfaceFlinger 合成主入口，每帧触发
-- name: validateDisplay
-  thread: SurfaceFlinger
-  description: HWC 验证 Layer 合成方式（Client/Device/Cursor）
-- name: composite
-  thread: SurfaceFlinger
-  description: 执行实际合成操作（软件合成时耗时显著增加）
-- name: presentDisplay
-  thread: SurfaceFlinger
-  description: 提交合成结果到显示硬件
+source: rendering_pipelines/S01_rendering_types_overview.md
 ```
 
 ## Analysis guidance

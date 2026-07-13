@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/media_codec_activity.skill.yaml
 -- Source SHA-256: f9785c4a5b759aab3f1efe3c1d4faede153488cd9f89592428318f926cda0bbb
--- Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+-- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 WITH
 input AS (

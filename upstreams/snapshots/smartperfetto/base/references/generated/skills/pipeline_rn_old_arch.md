@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/rn_old_arch.skill.yaml
-Source SHA-256: 74d3d807279e94e56f21d3a882417f6ee5185b9decc5f2bf1620c244fb1a3b82
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 8fe98e016f146e01ca6d726872aa432c1de7b609f7b2161b3cf14bf25223cbbd
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # React Native Old Arch (Paper + Bridge)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: React Native Old Arch (Paper + Bridge)
 description: RN 老架构：JavaScriptCore/Hermes + Bridge JSON 序列化 + Shadow tree + Yoga + 宿主 HWUI
 icon: react
 family: webview
-doc_path: rendering_pipelines/rn_old_arch.md
+doc_path: rendering_pipelines/S14_react_native_type.md
 s_article_ref: S14
 four_features:
   producer_threads:
@@ -86,33 +86,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: React Native Old Arch (Paper + Bridge) 渲染管线
-summary: 'RN 老架构基于 Paper 渲染器 + Bridge：
-
-  - JS 线程（mqt_js）执行 React 业务逻辑（Hermes 或 JSC）
-
-  - Bridge 通过 JSON 序列化跨 JS/Native 边界
-
-  - Shadow thread（mqt_shadow_queue）做 Yoga layout
-
-  - UIManager 在 main thread 创建/更新原生 View
-
-  - 最终走宿主 HWUI RenderThread
-
-
-  UI 更新延迟特征：JS 状态变化到 UI 反映通常 1-2 帧（Bridge 异步序列化开销）。
-
-  '
-key_slices:
-- name: Yoga
-  thread: mqt_shadow_queue
-  description: Yoga layout 计算（flexbox 布局引擎）
-- name: NativeToJsBridge / JsToNativeBridge
-  thread: any
-  description: Bridge 跨边界调用（高频率小粒度调用累积开销）
-- name: UIManager.dispatchViewUpdates
-  thread: main
-  description: UIManager 提交 View 更新
+source: rendering_pipelines/S14_react_native_type.md
 ```
 
 ## Analysis guidance

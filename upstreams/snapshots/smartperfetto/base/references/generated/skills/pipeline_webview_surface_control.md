@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/webview_surface_control.skill.yaml
-Source SHA-256: 84becbf74e77c7718e6df2d1efecac2da828ecc11891c88ccaeed41ddb55beb5
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: d6310e6c9cf9ce4049d65ba6c4b213cb0a4c401ca99c1ad81b069a6686cc1ef8
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # WebView Surface Control
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: WebView Surface Control
 description: 现代 WebView + Viz/OOP-R，独立合成
 icon: web
 family: webview
-doc_path: rendering_pipelines/webview_surface_control.md
+doc_path: rendering_pipelines/S09_webview_type.md
 s_article_ref: S09
 four_features:
   producer_threads:
@@ -64,36 +64,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: WebView Surface Control 渲染管线
-summary: '现代 WebView 使用 Viz (Visual Compositor) 和 OOP-R (Out-of-Process Rasterization)
-
-  进行渲染时，可能通过 SurfaceControl 独立提交到 SurfaceFlinger。
-
-  browser code 与 GPU / network services 通常仍在宿主 app 进程内；
-
-  是否启用该模式、是否完全不阻塞宿主 RenderThread，要以具体设备和 trace 为准。
-
-  '
-mermaid: "sequenceDiagram\n  participant CR as CrRendererMain\n  participant Viz as VizCompositorThread\n  participant SC\
-  \ as SurfaceControl\n  participant TX as Transaction\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\
-  \n  Note over CR,SF: \U0001F4CD WebView Surface Control (条件成立时的独立合成)\n  CR->>CR: Blink 渲染网页\n  CR->>Viz: 提交合成任务\n\n  activate\
-  \ Viz\n  Viz->>Viz: GPU 光栅化 Tiles\n  Viz->>Viz: 合成网页 Layers\n  Viz->>SC: 创建/更新 SurfaceControl\n  Viz->>TX: ASurfaceTransaction\n\
-  \  TX->>SF: 独立提交 Transaction\n  deactivate Viz\n\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n  SF->>SF: latchBuffer\n\
-  \  SF->>SF: HWC Composite\n  deactivate SF\n\n  Note over CR,SF: ✨ 独立于 App RenderThread，不阻塞 UI\n"
-thread_roles:
-- thread: VizCompositorThread
-  role: Viz 合成器
-  description: Chromium 可视化合成器，线程名可能表现为 VizCompositorThread 或相近名称
-- thread: CrRendererMain
-  role: Chromium 渲染
-  description: WebView 内容渲染
-key_slices:
-- name: VizCompositorThread (hint)
-  thread: VizCompositorThread
-  description: Viz 合成提示信号，未必稳定可见
-- name: SurfaceControl
-  thread: any
-  description: SurfaceControl 事务
+source: rendering_pipelines/S09_webview_type.md
 ```
 
 ## Analysis guidance

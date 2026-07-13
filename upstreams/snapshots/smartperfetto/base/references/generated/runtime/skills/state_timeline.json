@@ -66,9 +66,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "40048058243cbb91ef11082a06ba1e4d0f7d3c5a",
+    "commit": "68b113e0355716255af357e8396cd71c71e11d97",
     "path": "backend/skills/composite/state_timeline.skill.yaml",
-    "sha256": "847df75d4dff0db6d9e8a10b5d5654d248cc898fde909ce265075dfb85209401"
+    "sha256": "e3ba12b4a53d3c90d152f942c7f910e4108218ef5da2c56c0e19561009686fc2"
   },
   "steps": [
     {
@@ -92,7 +92,6 @@
       "condition": "timeline_bounds.data[0]?.has_screen_state !== 1",
       "id": "device_state_lane_fallback",
       "name": "设备状态泳道（降级）",
-      "optional": true,
       "query_id": "state_timeline/device_state_lane_fallback",
       "result_dependencies": [],
       "type": "atomic"
@@ -128,7 +127,6 @@
       "condition": "timeline_bounds.data[0]?.has_battery_top !== 1",
       "id": "app_state_lane_fallback",
       "name": "应用状态泳道（降级）",
-      "optional": true,
       "query_id": "state_timeline/app_state_lane_fallback",
       "result_dependencies": [],
       "type": "atomic"

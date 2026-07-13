@@ -52,7 +52,14 @@ class GeneratedReferenceTest(unittest.TestCase):
             if item["runtime_type"] == "pipeline_definition"
         ]
         self.assertEqual(len(definitions), 31)
-        self.assertEqual(len(catalog["pipeline_docs"]), 32)
+        self.assertEqual(len(catalog["pipeline_docs"]), 14)
+        self.assertEqual(
+            [
+                Path(item["destination"]).stem.split("_")[0]
+                for item in catalog["pipeline_docs"]
+            ],
+            [f"S{index:02d}" for index in range(1, 15)],
+        )
         self.assertTrue(all((SKILL / item["destination"]).is_file() for item in definitions))
 
     def test_generated_catalog_records_provenance_and_transformations(self) -> None:

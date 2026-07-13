@@ -13,7 +13,13 @@
       "target_range_row_coverage",
       "api_hint"
     ],
-    "signal_patterns": []
+    "signal_patterns": [
+      "irq/%",
+      "irq_handler_%",
+      "softirq/%",
+      "softirq_",
+      "softirq_%"
+    ]
   },
   "id": "irq_analysis",
   "identity": {
@@ -68,9 +74,7 @@
     }
   ],
   "prerequisites": {
-    "modules": [
-      "linux.irqs"
-    ],
+    "modules": [],
     "required_tables": [
       "slice"
     ]
@@ -79,9 +83,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "40048058243cbb91ef11082a06ba1e4d0f7d3c5a",
+    "commit": "68b113e0355716255af357e8396cd71c71e11d97",
     "path": "backend/skills/composite/irq_analysis.skill.yaml",
-    "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
+    "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
   },
   "steps": [
     {

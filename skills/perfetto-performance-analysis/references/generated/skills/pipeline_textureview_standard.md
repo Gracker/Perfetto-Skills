@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/textureview_standard.skill.yaml
-Source SHA-256: 66e78a2be5c0db0e4831882e1deebb21e846d67d15400ccfe9a17c35ab503f81
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 71fbf458f59347c366ca9c96df9bd910bb8297d8ce2b4797e958cbe7e0113c94
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # TextureView 标准
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: TextureView 标准
 description: SurfaceTexture 纹理采样/合成模式，与 View 层次集成
 icon: texture
 family: surface
-doc_path: rendering_pipelines/textureview.md
+doc_path: rendering_pipelines/S04_textureview_type.md
 s_article_ref: S04
 four_features:
   producer_threads:
@@ -90,44 +90,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: TextureView 渲染管线
-summary: '使用 SurfaceTexture 将渲染内容作为纹理集成到 View 层次中。
-
-  支持 View 的所有变换（缩放、裁剪、透明度），但会增加纹理采样/合成带宽开销。
-
-  适合需要与 View 混合显示的场景。`updateTexImage` / `onFrameAvailable` 常见但不是稳定 contract。
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant Main as App (main)\n  participant RT as RenderThread\n\
-  \  participant Producer as Producer Thread\n  participant ST as SurfaceTexture\n  participant BQ as BufferQueue\n  participant\
-  \ VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over VA,SF: \U0001F4CD TextureView 渲染链路\n  Producer->>ST:\
-  \ 渲染内容到 SurfaceTexture\n  Producer->>ST: queueBuffer\n  ST-->>RT: onFrameAvailable / listener callback\n\n  VA->>Main: \U0001F514\
-  \ VSync-app\n  activate Main\n  Main->>RT: syncFrameState\n  deactivate Main\n\n  activate RT\n  RT->>RT: DrawFrame\n  RT->>RT:\
-  \ 绑定 SurfaceTexture 纹理\n  RT->>RT: 绘制到 View 层级\n  RT->>BQ: queueBuffer\n  deactivate RT\n\n  VS->>SF: \U0001F514 VSync-sf\n\
-  \  activate SF\n  SF->>SF: latchBuffer\n  SF->>SF: HWC 合成\n  deactivate SF\n\n  Note over VA,SF: ⚠️ 需要 GPU 采样 → 开销高于 SurfaceView\n"
-thread_roles:
-- thread: main
-  role: UI 集成
-  description: 管理 TextureView 在 View 层次中的位置
-- thread: RenderThread
-  role: 纹理上传 + 合成
-  description: 将 SurfaceTexture 内容作为纹理绘制
-key_slices:
-- name: updateTexImage (hint)
-  thread: RenderThread
-  description: 常见的纹理消费信号；名称可见性依版本而异
-- name: SurfaceTexture
-  thread: any
-  description: SurfaceTexture 操作
-- name: onFrameAvailable
-  thread: any
-  description: 生产者有新帧可用，触发消费者侧更新纹理
-- name: syncFrameState
-  thread: RenderThread
-  description: 宿主 UI 与 RenderThread 同步，驱动 TextureView 合成
-- name: DrawFrame
-  thread: RenderThread
-  description: RenderThread 绑定纹理并绘制到 View 层级
+source: rendering_pipelines/S04_textureview_type.md
 ```
 
 ## Analysis guidance

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/chrome_browser_viz.skill.yaml
-Source SHA-256: 0fe580335d4efba6c1f5aa2dcd88e4d891af28864578a3fc11cbc249a77f44b4
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 466d0a5cad5e8f40b35606a938cb63f3e17c75995c13f5df9629200c8d56b37b
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # Chrome Browser (Viz)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: Chrome Browser (Viz)
 description: Chrome 浏览器 Viz 合成器管线，多进程架构 (Browser/Renderer/GPU)
 icon: web
 family: webview
-doc_path: rendering_pipelines/chrome_browser_viz.md
+doc_path: rendering_pipelines/S09_webview_type.md
 s_article_ref: S09
 four_features:
   producer_threads:
@@ -91,67 +91,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: Chrome Browser Viz 合成器渲染管线
-summary: 'Chrome 浏览器使用多进程架构进行渲染：
-
-  - Browser Process (CrBrowserMain): 管理 UI、导航、网络请求
-
-  - Renderer Process (CrRendererMain): Blink 引擎解析/布局/绘制网页内容
-
-  - GPU/Viz Process (VizCompositorThread): OOP-R 光栅化 + Viz 合成
-
-
-  Viz (Visual Compositor) 是 Chrome 的集中式合成器，负责将来自多个 Renderer
-
-  的合成帧整合并通过 SurfaceFlinger 或直接提交到显示。
-
-  OOP-R (Out-of-Process Rasterization) 将光栅化移到 GPU 进程，
-
-  减少 Renderer 进程的 GPU 资源竞争。
-
-  '
-mermaid: "sequenceDiagram\n  participant BM as CrBrowserMain\n  participant CC as Compositor (Renderer)\n  participant CR\
-  \ as CrRendererMain\n  participant Viz as VizCompositorThread\n  participant GPU as CrGpuMain\n  participant VS as VSync-sf\n\
-  \  participant SF as SurfaceFlinger\n\n  Note over BM,SF: Chrome Browser Viz Pipeline (OOP-R)\n  BM->>CR: 导航/加载请求\n  activate\
-  \ CR\n  CR->>CR: Blink: Parse → Style → Layout → Paint\n  CR->>CC: 生成 CompositorFrame\n  deactivate CR\n\n  activate CC\n\
-  \  CC->>Viz: SubmitCompositorFrame\n  deactivate CC\n\n  activate Viz\n  Viz->>Viz: cc::DisplayScheduler\n  Viz->>Viz: 聚合多\
-  \ Renderer CompositorFrame\n  Viz->>GPU: GPU 光栅化 + 合成\n  deactivate Viz\n\n  activate GPU\n  GPU->>GPU: Rasterize Tiles\
-  \ (OOP-R)\n  GPU->>GPU: Draw Quad / Output Surface\n  GPU->>SF: 提交 Buffer\n  deactivate GPU\n\n  VS->>SF: VSync-sf\n  activate\
-  \ SF\n  SF->>SF: latchBuffer\n  SF->>SF: HWC Composite\n  SF->>SF: Present to Display\n  deactivate SF\n\n  Note over BM,SF:\
-  \ 多进程隔离：Renderer 崩溃不影响 Browser\n"
-thread_roles:
-- thread: CrBrowserMain
-  role: Browser 主线程
-  description: 管理 Chrome UI、标签页导航、网络请求调度
-  trace_tags: Navigation, Loading, NetworkService
-- thread: CrRendererMain
-  role: Renderer 主线程
-  description: Blink 引擎执行 HTML/CSS/JS，生成绘制命令
-  trace_tags: Blink, v8, Layout, Paint
-- thread: VizCompositorThread
-  role: Viz 合成器
-  description: 集中式合成器，聚合多个 Renderer 的 CompositorFrame
-  trace_tags: DisplayScheduler, SurfaceAggregator
-- thread: CrGpuMain
-  role: GPU 主线程
-  description: OOP-R 光栅化、GPU 命令执行、Buffer 提交
-  trace_tags: RasterTask, GpuChannel
-key_slices:
-- name: viz.BeginFrame
-  thread: VizCompositorThread
-  description: Viz 发起帧调度信号
-- name: Chromium.Compositor
-  thread: CrRendererMain
-  description: Renderer 侧合成操作
-- name: cc::DisplayScheduler
-  thread: VizCompositorThread
-  description: Viz 显示调度器决定何时合成/提交
-- name: SubmitCompositorFrame
-  thread: CrRendererMain
-  description: Renderer 提交 CompositorFrame 到 Viz
-- name: RasterTask
-  thread: CrGpuMain
-  description: OOP-R GPU 光栅化任务
+source: rendering_pipelines/S09_webview_type.md
 ```
 
 ## Analysis guidance

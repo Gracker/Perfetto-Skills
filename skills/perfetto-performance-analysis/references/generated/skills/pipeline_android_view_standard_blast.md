@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_standard_blast.skill.yaml
-Source SHA-256: 5af1d20831b0954dec49d5e02a7ebbfda46914fc92cf97a079994d09c5b5b92b
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 78d0c2c42588b16a4a9fd020bd57a3ab3dd13c448ab9e726b3878ae30427e6b0
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # 标准 Android View (BLAST)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: 标准 Android View (BLAST)
 description: Android 11+/12+ 常见的 HWUI + 现代 Transaction/BLAST 提交流程
 icon: android
 family: hwui
-doc_path: rendering_pipelines/android_view_standard.md
+doc_path: rendering_pipelines/S02_aosp_standard_type.md
 s_article_ref: S02
 four_features:
   producer_threads:
@@ -75,65 +75,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: Android View 标准渲染管线 (BLAST)
-summary: 'Android 11+/12+ 设备上常见的渲染管线：View 系统由 RenderThread 通过现代 Transaction/BLAST
-
-  提交流程更新 Buffer 和窗口状态，提升原子性更新与同步性，减少撕裂/尺寸不同步等问题。
-
-  相比传统 BufferQueue 提交流程，它通常能减少由“提交不同步/额外缓冲/等待”导致的卡顿与延迟，
-
-  但具体收益会随设备实现与负载变化，建议以 trace 为准。
-
-
-  版本要点（以 AOSP/厂商实现为准）:
-
-  - Android 11+：引入 BLASTBufferQueue（不同设备/ROM 覆盖率不同）
-
-  - Android 12+：BLASTBufferQueue/Transaction 提交流程更普遍（原子性更新）
-
-  - 与 FrameTimeline 等帧诊断能力结合后，可更容易定位“生产慢/合成慢/显示慢”
-
-  - 新版本持续在 Transaction 批处理、合成调度与帧诊断上演进，建议用 trace 验证实际链路
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant Main as App (main)\n  participant RT as RenderThread\n\
-  \  participant BQ as BufferQueue<br/>(QueuedBuffer)\n  participant VS as VSync-sf\n  participant TX as BufferTX\n  participant\
-  \ SF as SurfaceFlinger\n\n  Note over VA,SF: \U0001F4CD Frame N Production Phase\n  VA->>Main: \U0001F514 VSync-app 信号触发\n\
-  \  activate Main\n  Main->>Main: Choreographer#doFrame\n  Main->>Main: Input → Animation → Measure → Layout → Draw\n  Main->>RT:\
-  \ syncFrameState (阻塞等待)\n  deactivate Main\n\n  activate RT\n  RT->>BQ: dequeueBuffer\n  RT->>RT: DrawFrame (执行 GPU 命令)\n\
-  \  RT->>RT: Flush GPU Commands\n  RT->>BQ: queueBuffer / transaction submit\n  deactivate RT\n\n  Note over BQ,SF: \U0001F4CD\
-  \ Frame N Consumption Phase\n  BQ-->>TX: Buffer Ready (BLAST Transaction)\n  VS->>SF: \U0001F514 VSync-sf 信号触发\n  activate\
-  \ SF\n  TX->>SF: setTransactionState (常见)\n  SF->>SF: SF main loop / composite\n  SF->>SF: latchBuffer (获取 Buffer)\n  SF->>SF:\
-  \ HWC Composite (合成)\n  SF->>SF: Present to Display\n  deactivate SF\n\n  Note over VA,SF: ⏱️ 关键耗时点：Main/RT阻塞、GPU渲染、SF合成\n"
-thread_roles:
-- thread: main
-  role: UI 构建
-  description: 处理 Input/Animation/Measure/Layout/Draw，生成 DisplayList
-  trace_tags: Choreographer#doFrame, measure, layout, draw
-- thread: RenderThread
-  role: GPU 渲染
-  description: 执行 GL/Vulkan 绘制命令，管理 GPU 资源，提交 BLAST Transaction
-  trace_tags: DrawFrame, syncFrameState, queueBuffer（具体 trace 名称依版本变化）
-- thread: SurfaceFlinger
-  role: 合成显示
-  description: 接收 Transaction，Latch Buffer，HWC 合成多个 Layer
-  trace_tags: setTransactionState, latchBuffer, FrameTimeline/SF 主循环片段
-key_slices:
-- name: Choreographer#doFrame
-  thread: main
-  description: 帧回调入口，开始 UI 构建
-- name: DrawFrame
-  thread: RenderThread
-  description: 开始 GPU 渲染流程
-- name: syncFrameState
-  thread: RenderThread
-  description: UI 线程与 RenderThread 同步 DisplayList
-- name: BLASTBufferQueue (hint)
-  thread: RenderThread
-  description: BLAST 适配器提示信号，可能不可见
-- name: setTransactionState (hint)
-  thread: SurfaceFlinger
-  description: 系统侧事务处理提示信号，具体名称依版本而异
+source: rendering_pipelines/S02_aosp_standard_type.md
 ```
 
 ## Analysis guidance

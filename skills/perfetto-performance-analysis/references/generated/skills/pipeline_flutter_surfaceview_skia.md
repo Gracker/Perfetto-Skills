@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/flutter_surfaceview_skia.skill.yaml
-Source SHA-256: 4f3e9353512c115a63ada88248084eb7717909cfc5f0e72e30e0fc8ce64b6162
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 6f73af0a28cf141538bb6f1dbafa4e5873b8ab4b43f8905ef0e55ec0b17c3429
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # Flutter SurfaceView (Skia)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: Flutter SurfaceView (Skia)
 description: Flutter + Skia 引擎，运行时 Shader 编译 (Runtime Shader Compilation)
 icon: flutter
 family: flutter
-doc_path: rendering_pipelines/flutter_surfaceview.md
+doc_path: rendering_pipelines/S10_flutter_type.md
 s_article_ref: S10
 four_features:
   producer_threads:
@@ -80,38 +80,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: Flutter SurfaceView (Skia) 渲染管线
-summary: 'Flutter 使用 Skia 渲染引擎，通过 SurfaceView 独立渲染。
-
-  Skia 使用运行时 Shader 编译 (Runtime Shader Compilation)，首次使用新效果时可能有编译卡顿。
-
-  在旧版本、特定配置或 Impeller fallback 场景中仍可能使用该模式，需重点关注 Shader 编译与光栅化耗时。
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant UI as ui/main (Dart)\n  participant IO as 1.io\n \
-  \ participant Raster as raster (Skia)\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as\
-  \ SurfaceFlinger\n\n  Note over VA,SF: \U0001F4CD Flutter Frame Production (Skia)\n  VA->>UI: \U0001F514 VSync → BeginFrame\
-  \ (常见)\n  activate UI\n  UI->>UI: Dart VM 执行 (build → layout → paint)\n  UI->>UI: 生成 Layer Tree\n  UI->>Raster: 提交 Layer\
-  \ Tree\n  deactivate UI\n\n  activate Raster\n  Raster->>Raster: SkGpu::DrawLayers\n  Raster->>Raster: GPU 光栅化 (OpenGL/Vulkan)\n\
-  \  Raster->>BQ: queueBuffer\n  deactivate Raster\n\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n  SF->>SF: latchBuffer\n\
-  \  SF->>SF: HWC Composite\n  deactivate SF\n\n  Note over IO: 1.io 线程负责图片解码\n  Note over VA,SF: ⚠️ Skia 运行时 Shader 编译可能导致首帧卡顿\n"
-thread_roles:
-- thread: ui / main / 1.ui
-  role: Dart UI 线程
-  description: 执行 Dart 代码，生成 Layer Tree；线程名依版本变化
-- thread: raster / 1.raster
-  role: Skia 光栅化
-  description: 使用 Skia 光栅化
-- thread: 1.io
-  role: Flutter IO
-  description: 资源加载
-key_slices:
-- name: SkGpu
-  thread: raster / 1.raster
-  description: Skia GPU 渲染提示信号
-- name: Rasterizer
-  thread: raster / 1.raster
-  description: 光栅化操作提示信号
+source: rendering_pipelines/S10_flutter_type.md
 ```
 
 ## Analysis guidance

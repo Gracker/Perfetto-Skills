@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/webview_surfaceview_wrapper.skill.yaml
-Source SHA-256: b6c6297680f128ed569cfc323431a2314384977ebb08c08e6c50bd0f2387acfc
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: 15a526a010a329ca90a47f84637259669b5a7aa7aa2fa97415db686588282080
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # WebView SurfaceView Wrapper
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: WebView SurfaceView Wrapper
 description: WebView 全屏视频包装模式
 icon: video
 family: webview
-doc_path: rendering_pipelines/webview_surfaceview_wrapper.md
+doc_path: rendering_pipelines/S09_webview_type.md
 s_article_ref: S09
 four_features:
   producer_threads:
@@ -69,46 +69,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: WebView SurfaceView Wrapper 渲染管线
-summary: 'WebView 全屏视频播放模式，使用 SurfaceView 包装视频内容。
-
-  视频解码通过 MediaCodec，直接输出到 SurfaceView。
-
-  常见于网页视频全屏播放场景。
-
-  '
-mermaid: "sequenceDiagram\n  participant Main as App (main)\n  participant WV as WebView\n  participant CR as CrRendererMain\n\
-  \  participant SV as SurfaceView\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\
-  \n  Note over Main,SF: \U0001F4CD WebView SurfaceView Wrapper (全屏视频)\n  Main->>WV: 加载视频页面\n  WV->>CR: 请求视频渲染\n\n  activate\
-  \ CR\n  CR->>SV: 创建 SurfaceView 包装\n  CR->>BQ: 视频解码输出\n  deactivate CR\n\n  Note over SV,SF: 视频帧独立路径\n  BQ-->>SF: 视频 Buffer\
-  \ Ready\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n  SF->>SF: latchBuffer (视频 Layer)\n  SF->>SF: HWC Overlay/Composite\n\
-  \  deactivate SF\n\n  Note over Main,SF: \U0001F3AC 全屏视频使用独立 Surface 优化\n"
-thread_roles:
-- thread: main
-  role: App 控制
-  description: 控制 WebView 和播放状态
-- thread: CrRendererMain
-  role: Chromium 渲染
-  description: WebView 内容和视频协调
-- thread: MediaCodec
-  role: 视频解码
-  description: 硬件视频解码
-- thread: SurfaceFlinger
-  role: 合成/Overlay
-  description: 将视频 SurfaceView Layer 以 Overlay 或 GPU 合成方式输出
-key_slices:
-- name: MediaCodec
-  thread: any
-  description: 视频解码（queue/dequeue/releaseOutputBuffer 等）
-- name: SurfaceView
-  thread: any
-  description: 全屏视频 SurfaceView 创建/attach/resize
-- name: latchBuffer
-  thread: SurfaceFlinger
-  description: SurfaceFlinger 获取视频 Buffer（决定 Overlay/合成）
-- name: HWC
-  thread: any
-  description: 硬件合成/Overlay 相关调用（不同厂商 trace 名称可能不同）
+source: rendering_pipelines/S09_webview_type.md
 ```
 
 ## Analysis guidance

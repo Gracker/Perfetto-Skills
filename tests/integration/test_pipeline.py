@@ -10,22 +10,44 @@ from tests.support import fixture_available, fixture_path, generated_sql, run_pu
 class PipelineTest(unittest.TestCase):
     def test_flutter_textureview_signals_are_observed(self) -> None:
         trace = fixture_path("flutter-texture-api35")
-        result = run_public_query(
+        active_processes = run_public_query(
             trace,
-            sql_file=generated_sql("rendering_pipeline_detection", "thread_signals.sql"),
+            sql_file=generated_sql(
+                "rendering_pipeline_detection", "active_rendering_processes.sql"
+            ),
             params={"package": "com.example.friendscircle.v27.textureview"},
         )
-        self.assertEqual(result["status"], "ok", result)
-        signals = result["rows"][0]
-        self.assertGreater(signals["flutter_ui_count"], 0, signals)
-        self.assertGreater(signals["render_thread_count"], 0, signals)
-        slices = run_public_query(
+        self.assertEqual(active_processes["status"], "ok", active_processes)
+        self.assertGreater(active_processes["rows"][0]["frame_count"], 0)
+
+        bufferqueue = run_public_query(
             trace,
-            sql_file=generated_sql("rendering_pipeline_detection", "slice_signals.sql"),
+            sql_file=generated_sql(
+                "rendering_pipeline_detection", "bufferqueue_path_signals.sql"
+            ),
             params={"package": "com.example.friendscircle.v27.textureview"},
         )
-        self.assertEqual(slices["status"], "ok", slices)
-        self.assertGreater(slices["rows"][0]["texture_view_count"], 0, slices)
+        self.assertEqual(bufferqueue["status"], "ok", bufferqueue)
+        self.assertGreater(bufferqueue["rows"][0]["queue_buffer_count"], 0)
+
+        scores = run_public_query(
+            trace,
+            sql_file=generated_sql(
+                "rendering_pipeline_detection", "score_pipelines.sql"
+            ),
+            params={"package": "com.example.friendscircle.v27.textureview"},
+        )
+        self.assertEqual(scores["status"], "ok", scores)
+        flutter_texture = next(
+            row
+            for row in scores["rows"]
+            if row["pipeline_id"] == "FLUTTER_TEXTUREVIEW"
+        )
+        self.assertGreater(flutter_texture["score"], 0.5, flutter_texture)
+        self.assertEqual(
+            max(scores["rows"], key=lambda row: row["score"])["pipeline_id"],
+            "FLUTTER_TEXTUREVIEW",
+        )
 
 
 if __name__ == "__main__":

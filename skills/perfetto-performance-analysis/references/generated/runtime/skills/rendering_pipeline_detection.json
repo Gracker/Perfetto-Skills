@@ -23,34 +23,36 @@
     ],
     "signal_patterns": [
       "${package}*",
-      "*Camera*",
+      "*BLASTBufferQueue*",
+      "*Choreographer#doFrame*",
       "*Chrome*",
-      "*CompositorTileW*",
-      "*CrRenderer*",
-      "*Decoder*",
-      "*Flutter*",
-      "*GLSurface*",
-      "*GLThread*",
-      "*GameThread*",
-      "*GodotMain*",
-      "*MediaCodec*",
-      "*RHIThread*",
-      "*SurfaceFlinger*",
-      "*Unity*",
-      "*UnityGfx*",
-      "*UnityMain*",
-      "*VizCompositor*",
-      "*VkQueue*",
-      "*Vulkan*",
-      "*WebViewCore*",
-      "*io.flutter*",
-      "*io.flutter.impeller*",
-      "*raster*",
-      "*ui*",
-      "1.raster",
+      "*Engine::BeginFrame*",
+      "*EntityPass*",
+      "*FramePacing*",
+      "*FrameTimeline*",
+      "*Rasterizer::DrawToSurfaces*",
+      "*Swappy*",
+      "*applyTransaction*",
+      "*dequeueBuffer*",
+      "*eglSwapBuffers*",
+      "*lockCanvas*",
+      "*queueBuffer*",
+      "*unlockCanvasAndPost*",
+      "*updateTexImage*",
+      "*vkQueuePresentKHR*",
+      "CrRendererMain*",
       "DrawFrame*",
+      "GameThread*",
+      "GodotMain*",
+      "RHIThread*",
       "RenderThread",
-      "main"
+      "UnityMain*",
+      "VizCompositor",
+      "VizCompositor*",
+      "VizCompositorThread",
+      "VizCompositorThread*",
+      "main",
+      "surfaceflinger"
     ]
   },
   "id": "rendering_pipeline_detection",
@@ -81,41 +83,22 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "40048058243cbb91ef11082a06ba1e4d0f7d3c5a",
+    "commit": "68b113e0355716255af357e8396cd71c71e11d97",
     "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
-    "sha256": "daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a"
+    "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
   },
   "steps": [
     {
-      "id": "thread_signals",
-      "name": "采集线程信号",
-      "query_id": "rendering_pipeline_detection/thread_signals",
-      "result_dependencies": [],
-      "save_as": "thread_signals",
-      "type": "atomic"
-    },
-    {
-      "id": "slice_signals",
-      "name": "采集 Slice 信号",
-      "query_id": "rendering_pipeline_detection/slice_signals",
-      "result_dependencies": [],
-      "save_as": "slice_signals",
-      "type": "atomic"
-    },
-    {
       "id": "score_pipelines",
-      "name": "计算管线得分",
+      "name": "计算管线类型评分 (YAML 驱动)",
       "query_id": "rendering_pipeline_detection/score_pipelines",
-      "result_dependencies": [
-        "slice_signals",
-        "thread_signals"
-      ],
+      "result_dependencies": [],
       "save_as": "pipeline_scores",
       "type": "atomic"
     },
     {
       "id": "determine_pipeline",
-      "name": "确定主管线",
+      "name": "确定主管线 (YAML 驱动)",
       "query_id": "rendering_pipeline_detection/determine_pipeline",
       "result_dependencies": [
         "pipeline_scores"
@@ -127,31 +110,15 @@
       "id": "subvariants",
       "name": "确定子变体",
       "query_id": "rendering_pipeline_detection/subvariants",
-      "result_dependencies": [
-        "slice_signals",
-        "thread_signals"
-      ],
+      "result_dependencies": [],
       "save_as": "subvariants",
-      "type": "atomic"
-    },
-    {
-      "id": "pin_instructions",
-      "name": "生成 Pin 指令",
-      "query_id": "rendering_pipeline_detection/pin_instructions",
-      "result_dependencies": [
-        "pipeline_result"
-      ],
-      "save_as": "pin_instructions",
       "type": "atomic"
     },
     {
       "id": "trace_requirements",
       "name": "检查采集完整性",
       "query_id": "rendering_pipeline_detection/trace_requirements",
-      "result_dependencies": [
-        "slice_signals",
-        "thread_signals"
-      ],
+      "result_dependencies": [],
       "save_as": "trace_requirements",
       "type": "atomic"
     },
@@ -162,9 +129,33 @@
       "result_dependencies": [],
       "save_as": "active_rendering_processes",
       "type": "atomic"
+    },
+    {
+      "id": "layer_signals",
+      "name": "SF Layer 数与名字模式 (辅助证据)",
+      "query_id": "rendering_pipeline_detection/layer_signals",
+      "result_dependencies": [],
+      "save_as": "layer_signals",
+      "type": "atomic"
+    },
+    {
+      "id": "extra_rhythm_signals",
+      "name": "额外节奏源 (辅助证据)",
+      "query_id": "rendering_pipeline_detection/extra_rhythm_signals",
+      "result_dependencies": [],
+      "save_as": "extra_rhythm_signals",
+      "type": "atomic"
+    },
+    {
+      "id": "bufferqueue_path_signals",
+      "name": "BufferQueue 路径证据",
+      "query_id": "rendering_pipeline_detection/bufferqueue_path_signals",
+      "result_dependencies": [],
+      "save_as": "bufferqueue_path_signals",
+      "type": "atomic"
     }
   ],
   "type": "composite",
-  "version": "2.0",
+  "version": "4.0",
   "workflow": "rendering-pipeline"
 }

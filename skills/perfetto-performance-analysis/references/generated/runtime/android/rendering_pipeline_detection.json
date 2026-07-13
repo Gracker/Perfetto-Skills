@@ -75,34 +75,36 @@
   ],
   "signal_patterns": [
     "${package}*",
-    "*Camera*",
+    "*BLASTBufferQueue*",
+    "*Choreographer#doFrame*",
     "*Chrome*",
-    "*CompositorTileW*",
-    "*CrRenderer*",
-    "*Decoder*",
-    "*Flutter*",
-    "*GLSurface*",
-    "*GLThread*",
-    "*GameThread*",
-    "*GodotMain*",
-    "*MediaCodec*",
-    "*RHIThread*",
-    "*SurfaceFlinger*",
-    "*Unity*",
-    "*UnityGfx*",
-    "*UnityMain*",
-    "*VizCompositor*",
-    "*VkQueue*",
-    "*Vulkan*",
-    "*WebViewCore*",
-    "*io.flutter*",
-    "*io.flutter.impeller*",
-    "*raster*",
-    "*ui*",
-    "1.raster",
+    "*Engine::BeginFrame*",
+    "*EntityPass*",
+    "*FramePacing*",
+    "*FrameTimeline*",
+    "*Rasterizer::DrawToSurfaces*",
+    "*Swappy*",
+    "*applyTransaction*",
+    "*dequeueBuffer*",
+    "*eglSwapBuffers*",
+    "*lockCanvas*",
+    "*queueBuffer*",
+    "*unlockCanvasAndPost*",
+    "*updateTexImage*",
+    "*vkQueuePresentKHR*",
+    "CrRendererMain*",
     "DrawFrame*",
+    "GameThread*",
+    "GodotMain*",
+    "RHIThread*",
     "RenderThread",
-    "main"
+    "UnityMain*",
+    "VizCompositor",
+    "VizCompositor*",
+    "VizCompositorThread",
+    "VizCompositorThread*",
+    "main",
+    "surfaceflinger"
   ],
   "skill_id": "rendering_pipeline_detection",
   "steps": {
@@ -137,8 +139,10 @@
           "status": "capability_gated"
         },
         "35": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
+          "fixtures": [
+            "flutter-texture-api35"
+          ],
+          "status": "verified"
         },
         "36": {
           "reason": "No exact API semantic fixture; runtime capability proof required",
@@ -150,6 +154,53 @@
         }
       },
       "query_id": "rendering_pipeline_detection/active_rendering_processes"
+    },
+    "bufferqueue_path_signals": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "fixtures": [
+            "flutter-texture-api35"
+          ],
+          "status": "verified"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "rendering_pipeline_detection/bufferqueue_path_signals"
     },
     "determine_pipeline": {
       "api": {
@@ -196,7 +247,7 @@
       },
       "query_id": "rendering_pipeline_detection/determine_pipeline"
     },
-    "pin_instructions": {
+    "extra_rhythm_signals": {
       "api": {
         "28": {
           "reason": "No exact API semantic fixture; runtime capability proof required",
@@ -239,7 +290,52 @@
           "status": "capability_gated"
         }
       },
-      "query_id": "rendering_pipeline_detection/pin_instructions"
+      "query_id": "rendering_pipeline_detection/extra_rhythm_signals"
+    },
+    "layer_signals": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "rendering_pipeline_detection/layer_signals"
     },
     "score_pipelines": {
       "api": {
@@ -286,53 +382,6 @@
       },
       "query_id": "rendering_pipeline_detection/score_pipelines"
     },
-    "slice_signals": {
-      "api": {
-        "28": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "29": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "30": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "31": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "32": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "33": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "34": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "35": {
-          "fixtures": [
-            "flutter-texture-api35"
-          ],
-          "status": "verified"
-        },
-        "36": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "37": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        }
-      },
-      "query_id": "rendering_pipeline_detection/slice_signals"
-    },
     "subvariants": {
       "api": {
         "28": {
@@ -377,53 +426,6 @@
         }
       },
       "query_id": "rendering_pipeline_detection/subvariants"
-    },
-    "thread_signals": {
-      "api": {
-        "28": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "29": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "30": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "31": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "32": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "33": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "34": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "35": {
-          "fixtures": [
-            "flutter-texture-api35"
-          ],
-          "status": "verified"
-        },
-        "36": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "37": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        }
-      },
-      "query_id": "rendering_pipeline_detection/thread_signals"
     },
     "trace_requirements": {
       "api": {

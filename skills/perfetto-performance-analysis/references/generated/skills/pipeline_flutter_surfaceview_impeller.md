@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/flutter_surfaceview_impeller.skill.yaml
-Source SHA-256: b08301d7024ffb2cb00c1bda6ee04e5bbcf5f992a01650564b66511d3a9225d4
-Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
+Source SHA-256: fa252f18052f9439a0b1e0b21b8659fc471c9831a4bd1937fe5270d119309c21
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # Flutter SurfaceView (Impeller)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: Flutter SurfaceView (Impeller)
 description: Flutter + Impeller，引擎常见于 SurfaceView render mode
 icon: flutter
 family: flutter
-doc_path: rendering_pipelines/flutter_surfaceview.md
+doc_path: rendering_pipelines/S10_flutter_type.md
 s_article_ref: S10
 four_features:
   producer_threads:
@@ -45,9 +45,9 @@ subvariants_note: '文章 S10 的 Flutter SurfaceView 子变种：
 
   - FLUTTER_TEXTUREVIEW（texture 模式，回宿主，单 layer）— FLUTTER_TEXTUREVIEW 覆盖
 
-  - FLUTTER_IMAGVIEW_HC_OVERLAY / FLUTTER_HC_OVERLAY_PLATFORMVIEW（Hybrid Composition / PlatformView）— Phase E 拆分
+  - FLUTTER_IMAGVIEW_HC_OVERLAY / FLUTTER_HC_OVERLAY_PLATFORMVIEW（Hybrid Composition / PlatformView）— 作为 S10 子路径
 
-  - FLUTTER_TEXTUREVIEW_PLATFORMVIEW（PlatformView TextureLayer 路径）— Phase E 拆分
+  - FLUTTER_TEXTUREVIEW_PLATFORMVIEW（PlatformView TextureLayer 路径）— 作为 S10 子路径
 
   '
 impeller_advantage: 'Impeller 预编译 shader/pipeline，消除 Skia 时代的运行时 shader compilation jank。
@@ -94,48 +94,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: Flutter SurfaceView (Impeller) 渲染管线
-summary: 'Flutter 使用 Impeller 渲染引擎，通过 SurfaceView 独立渲染。
-
-  在 Android 上 Impeller 常使用 Vulkan（不支持时也可能回退到 OpenGL ES 路径），
-
-  通过更可预测的 shader/pipeline 建立流程减少 Skia 时代的运行时编译卡顿。
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant UI as ui/main (Dart)\n  participant IO as 1.io\n \
-  \ participant Raster as raster\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\
-  \n  Note over VA,SF: \U0001F4CD Flutter Frame Production (Impeller)\n  VA->>UI: \U0001F514 VSync → BeginFrame (常见)\n  activate\
-  \ UI\n  UI->>UI: Dart VM 执行 (build → layout → paint)\n  UI->>UI: 生成 Layer Tree\n  UI->>Raster: 提交 Layer Tree\n  deactivate\
-  \ UI\n\n  activate Raster\n  Raster->>Raster: Impeller raster / draw passes\n  Raster->>Raster: Vulkan 或 OpenGL ES GPU 光栅化\n\
-  \  Raster->>BQ: queueBuffer\n  deactivate Raster\n\n  Note over BQ,SF: \U0001F4CD Flutter Frame Consumption\n  BQ-->>SF:\
-  \ Buffer Ready\n  VS->>SF: \U0001F514 VSync-sf 触发\n  activate SF\n  SF->>SF: latchBuffer (独立 Layer)\n  SF->>SF: HWC Composite\n\
-  \  deactivate SF\n\n  Note over IO: IO 线程负责图片解码、资源加载\n  Note over VA,SF: ✨ Impeller 预编译 Shader，无首帧卡顿\n"
-thread_roles:
-- thread: ui / main / 1.ui
-  role: Dart UI 线程
-  description: 执行 Dart 代码，Build/Layout/Paint，生成 Layer Tree；线程名依版本变化
-  trace_tags: Engine::BeginFrame 等常见提示信号，不保证稳定
-- thread: raster / 1.raster
-  role: Impeller 光栅化
-  description: 使用 Impeller 光栅化 Layer Tree，常见后端为 Vulkan
-  trace_tags: Rasterizer::DrawToSurfaces, EntityPass::* 等提示信号
-- thread: 1.io
-  role: Flutter IO
-  description: 图片解码、资源加载
-  trace_tags: ImageDecoder
-- thread: SurfaceFlinger
-  role: 合成显示
-  description: 将 Flutter Layer 与系统 UI 合成
-key_slices:
-- name: Engine::BeginFrame (hint)
-  thread: ui / main / 1.ui
-  description: 帧开始提示信号，线程名与可见性依版本变化
-- name: EntityPass::* (hint)
-  thread: raster / 1.raster
-  description: Impeller 渲染提示信号，不应作为唯一判据
-- name: Rasterizer::DrawToSurfaces
-  thread: raster / 1.raster
-  description: 常见的光栅化输出提示信号
+source: rendering_pipelines/S10_flutter_type.md
 ```
 
 ## Analysis guidance
