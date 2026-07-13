@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/flutter_textureview.skill.yaml
-Source SHA-256: 73c239240fd7a0cdcfa32cbdce1c607ff0c23126be8b5bdeb9875b6b809f06f8
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 2d03797b34f4861a16e2fdbae1635978d0d1d773eb13c59bf4ea9db059e331a2
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # Flutter TextureView
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: Flutter TextureView
 description: Flutter TextureView render mode，宿主侧纹理合成路径
 icon: flutter
 family: flutter
-doc_path: rendering_pipelines/flutter_textureview.md
+doc_path: rendering_pipelines/S10_flutter_type.md
 s_article_ref: S10
 four_features:
   producer_threads:
@@ -80,45 +80,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-title: Flutter TextureView 渲染管线
-summary: 'Flutter 使用 TextureView render mode 时，内容先进入 SurfaceTexture，
-
-  再由宿主侧参与一次纹理采样/合成。它与 PlatformView 的 HC / TLHC
-
-  不是同一个概念，但二者组合后往往会放大宿主合成开销。
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant UI as ui/main (Dart)\n  participant Raster as raster\n\
-  \  participant RT as RenderThread (Host)\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF\
-  \ as SurfaceFlinger\n\n  Note over VA,SF: \U0001F4CD Flutter TextureView render mode\n  VA->>UI: \U0001F514 VSync → BeginFrame\
-  \ (常见)\n  activate UI\n  UI->>UI: Dart 构建 Widget Tree\n  UI->>Raster: 提交 Layer Tree\n  deactivate UI\n\n  activate Raster\n\
-  \  Raster->>Raster: 光栅化 Flutter 内容\n  Raster->>Raster: queueBuffer → SurfaceTexture\n  Note over Raster,RT: onFrameAvailable\
-  \ → Main → invalidate → RT\n  RT->>RT: updateTexImage\n  deactivate Raster\n\n  activate RT\n  RT->>RT: DrawFrame (合成 Flutter\
-  \ + Native)\n  RT->>BQ: queueBuffer\n  deactivate RT\n\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n  SF->>SF: latchBuffer\n\
-  \  SF->>SF: HWC Composite\n  deactivate SF\n\n  Note over VA,SF: ⚠️ 额外的宿主纹理采样/合成可能带来性能开销\n"
-thread_roles:
-- thread: ui / main / 1.ui
-  role: Dart UI 线程
-  description: Flutter UI 构建；线程名依版本变化
-- thread: raster / 1.raster
-  role: Flutter 光栅化
-  description: Flutter 内容光栅化；线程名依版本变化
-- thread: RenderThread
-  role: Android 合成
-  description: 将 Flutter 纹理与原生 View 合成
-key_slices:
-- name: Engine::BeginFrame
-  thread: ui / main / 1.ui
-  description: 帧开始提示信号，线程名与可见性依版本变化
-- name: Rasterizer::DrawToSurfaces
-  thread: raster / 1.raster
-  description: Flutter 光栅化输出（线程名与 slice 名不稳定）
-- name: SurfaceTexture
-  thread: any
-  description: TextureView / SurfaceTexture 的纹理生产-消费链路
-- name: updateTexImage (hint)
-  thread: RenderThread
-  description: 宿主侧常见的纹理消费提示信号
+source: rendering_pipelines/S10_flutter_type.md
 ```
 
 ## Analysis guidance

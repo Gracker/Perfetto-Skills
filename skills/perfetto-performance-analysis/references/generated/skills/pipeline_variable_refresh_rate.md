@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/variable_refresh_rate.skill.yaml
-Source SHA-256: 95cd800c2776cc4d8f2efcc6782e82eb8e61996346303edf2c0e6fce7c8ba554
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: edd77a4cea13be86568ffc8a2e5ef058b0b41ed2341850531c2c9cb8a23b2a23
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # 可变刷新率 (VRR)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: 可变刷新率 (VRR)
 description: VRR/ARR + FrameTimeline 动态刷新率
 icon: refresh
 family: specialized
-doc_path: rendering_pipelines/variable_refresh_rate.md
+doc_path: rendering_pipelines/S01_rendering_types_overview.md
 s_article_ref: S01
 four_features:
   producer_threads: []
@@ -89,54 +89,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-title: 可变刷新率 (VRR) 渲染管线
-summary: '可变刷新率 (VRR/ARR) 允许屏幕动态调整刷新率以匹配内容帧率。
-
-  结合 FrameTimeline，系统可以精确追踪每一帧的预期和实际显示时间，
-
-  实现更流畅的显示效果和更好的功耗表现。API 名称、可用性和
-
-  切换策略依 Android 版本、设备和 OEM 实现变化，不应把单个 slice 名当成稳定 contract。
-
-
-  关键机制（随 Android 版本持续演进）:
-
-  - Android 11+：应用侧可通过 Surface.setFrameRate 表达“期望帧率/稳定性/场景”（具体能力依设备）
-
-  - SurfaceFlinger 汇总多层的帧率偏好，做 DisplayMode/刷新率决策
-
-  - FrameTimeline 让“生产-合成-显示”的帧节拍可观测，便于定位抖动来源
-
-  '
-mermaid: "sequenceDiagram\n  participant App as App\n  participant RT as RenderThread\n  participant FT as FrameTimeline\n\
-  \  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n  participant Disp as\
-  \ Display (VRR)\n\n  Note over App,SF: \U0001F4CD Variable Refresh Rate (VRR/ARR)\n  Note over App: setFrameRate (一次性声明期望帧率)\n\
-  \  App->>RT: syncFrameState\n\n  activate RT\n  RT->>RT: DrawFrame\n  RT->>BQ: queueBuffer + presentTime\n  deactivate RT\n\
-  \n  FT-->>SF: FrameTimeline 信息\n  VS->>SF: \U0001F514 VSync-sf (动态间隔)\n  activate SF\n  SF->>SF: latchBuffer\n  SF->>SF:\
-  \ 检查 FrameTimeline\n  SF->>Disp: 按内容帧率刷新\n  deactivate SF\n\n  Note over App,SF: \U0001F4FA 支持 30/60/90/120Hz 等动态帧率切换\n"
-thread_roles:
-- thread: main
-  role: UI 构建
-  description: 应用 UI 渲染
-- thread: RenderThread
-  role: 帧渲染
-  description: GPU 渲染和帧提交
-- thread: SurfaceFlinger
-  role: VRR 控制
-  description: 动态刷新率控制
-key_slices:
-- name: FrameTimeline
-  thread: any
-  description: 帧时间线追踪
-- name: setFrameRate
-  thread: any
-  description: 应用表达期望帧率/稳定性（具体 trace 名称与实现有关）
-- name: setFrameRateCategory
-  thread: any
-  description: 帧率分类/场景提示（不同版本/厂商实现可能不同）
-- name: FrameRateVote
-  thread: SurfaceFlinger
-  description: 可能出现的帧率投票提示信号
+source: rendering_pipelines/S01_rendering_types_overview.md
 ```
 
 ## Analysis guidance

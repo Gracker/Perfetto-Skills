@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_pip_freeform.skill.yaml
-Source SHA-256: aecef1c3039235de2f9e42a20904afc0328cdfe103791e963040bcfabfc576c6
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: b33f9deea780ee4e15799d96eb4b84b88cec3e3394e25ce1cff31825a767b12a
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # Android PIP/Freeform
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: Android PIP/Freeform
 description: 画中画和自由窗口模式，特殊窗口管理与合成
 icon: pip
 family: surface
-doc_path: rendering_pipelines/android_pip_freeform.md
+doc_path: rendering_pipelines/S06_multi_window_type.md
 s_article_ref: S06
 four_features:
   producer_threads:
@@ -53,7 +53,9 @@ subvariants_note: '文章 S06 把多窗口拆为 4 子变种：
 
   - MULTI_WINDOW_FREEFORM（当前 ID 部分覆盖）
 
-  Phase E 拆 MULTI_WINDOW_PIP / MULTI_WINDOW_FREEFORM 独立 ID。
+  当前条目在 catalog 中作为 S06 的全局 feature；PIP 与 Freeform 是检测子路径，
+
+  不覆盖宿主应用的主渲染类型。
 
   '
 ```
@@ -76,60 +78,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-title: Android PIP/Freeform 渲染管线
-summary: '画中画 (PIP) 和自由窗口 (Freeform) 模式的渲染管线。这些窗口有特殊的
-
-  缩放、移动和 Z-order 管理需求，需要与系统合成器紧密配合。
-
-
-  版本要点（以 AOSP/厂商实现为准）:
-
-  - Android 8.0+：PIP 能力逐步完善（具体行为依设备/ROM）
-
-  - Android 12+：Freeform/多窗口 Resize 链路更依赖 BLAST Sync，减少“黑边/拉伸”类竞态
-
-  - 新版本持续在 Shell/WM 转场、SyncId、FrameTimeline 等可观测性上演进，建议用 trace 验证
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant Main as App (main)\n  participant RT as RenderThread\n\
-  \  participant WMS as WindowManager\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as\
-  \ SurfaceFlinger\n\n  Note over VA,SF: \U0001F4CD PIP/Freeform 窗口模式\n  VA->>Main: \U0001F514 VSync-app\n  activate Main\n\
-  \  Main->>Main: Choreographer#doFrame\n  Main->>Main: 处理特殊窗口尺寸/位置\n  Main->>RT: syncFrameState\n  deactivate Main\n\n  activate\
-  \ RT\n  RT->>RT: DrawFrame (缩放后尺寸)\n  RT->>BQ: queueBuffer\n  deactivate RT\n\n  WMS-->>SF: 窗口几何变换信息\n  VS->>SF: \U0001F514\
-  \ VSync-sf\n  activate SF\n  SF->>SF: 应用 PIP/Freeform 变换\n  SF->>SF: latchBuffer\n  SF->>SF: HWC 合成 (带变换)\n  deactivate\
-  \ SF\n\n  Note over VA,SF: \U0001F3AC 支持画中画和自由窗口特性\n"
-thread_roles:
-- thread: main
-  role: PIP 控制逻辑
-  description: 处理 PIP 进入/退出、手势控制
-- thread: RenderThread
-  role: 窗口渲染
-  description: 渲染 PIP 窗口内容
-- thread: SurfaceFlinger
-  role: 窗口变换/合成
-  description: 应用几何变换与 Z-order，合成并显示 PIP/Freeform Layer
-key_slices:
-- name: Choreographer#doFrame
-  thread: main
-  description: 帧回调入口，触发窗口位置/尺寸变化与 UI 构建
-- name: syncFrameState
-  thread: RenderThread
-  description: UI 线程与 RenderThread 同步 DisplayList/RenderNode
-- name: DrawFrame
-  thread: RenderThread
-  description: 渲染窗口内容（常伴随缩放/裁剪）
-- name: SurfaceControl / Transaction (hint)
-  thread: any
-  description: 窗口几何/Buffer 相关事务提示信号，名称依版本和 OEM 变化
-- name: WMS.resizeTask
-  thread: any
-  description: Freeform resize 相关标记（不同版本/厂商可能不同）
-- name: Transaction.apply
-  thread: any
-  description: Transaction 应用（可结合 SyncId 观察是否为同步提交）
-- name: SurfaceFlinger sync/wait (hint)
-  thread: any
-  description: 等待同步提交的提示信号，具体名字依版本而异
+source: rendering_pipelines/S06_multi_window_type.md
 ```
 
 ## Analysis guidance

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/lock_contention_module.skill.yaml
 -- Source SHA-256: ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 SELECT
   t.name AS binder_thread,

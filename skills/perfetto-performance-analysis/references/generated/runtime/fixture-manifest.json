@@ -144,22 +144,22 @@
     {
       "assertions": [
         {
-          "field": "flutter_ui_count",
-          "id": "flutter-texture-ui-thread",
+          "field": "frame_count",
+          "id": "flutter-texture-rendering-process",
           "kind": "field_positive",
           "params": {
             "package": "com.example.friendscircle.v27.textureview"
           },
-          "query_id": "rendering_pipeline_detection/thread_signals"
+          "query_id": "rendering_pipeline_detection/active_rendering_processes"
         },
         {
-          "field": "texture_view_count",
-          "id": "flutter-texture-slice",
+          "field": "queue_buffer_count",
+          "id": "flutter-texture-bufferqueue",
           "kind": "field_positive",
           "params": {
             "package": "com.example.friendscircle.v27.textureview"
           },
-          "query_id": "rendering_pipeline_detection/slice_signals"
+          "query_id": "rendering_pipeline_detection/bufferqueue_path_signals"
         }
       ],
       "capabilities": [

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_utilization_per_period.skill.yaml
 -- Source SHA-256: 0df1c92c4e548e72bb7d5e6ddb73270df2ea13c89ff46b4726d0877431b0852a
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 SELECT
   ts,

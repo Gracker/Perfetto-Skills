@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/rn_new_arch.skill.yaml
-Source SHA-256: b94227421d2d776d786f3557a60355a324b6f405cc9f4b06b57febab8b5af224
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: b1c2302f08990ed6de113cc0c6df17c823e84e7743529c3018ea18d1663068b3
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # React Native New Arch (Fabric + JSI)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: React Native New Arch (Fabric + JSI)
 description: RN 新架构：JSI 直接 C++ 调用 + Fabric C++ Shadow tree + TurboModules + 宿主 HWUI
 icon: react
 family: webview
-doc_path: rendering_pipelines/rn_new_arch.md
+doc_path: rendering_pipelines/S14_react_native_type.md
 s_article_ref: S14
 four_features:
   producer_threads:
@@ -83,33 +83,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: React Native New Arch (Fabric + JSI) 渲染管线
-summary: 'RN 新架构基于 Fabric 渲染器 + JSI：
-
-  - JS 线程（mqt_js）执行 React 业务逻辑
-
-  - JSI 直接 C++ 调用（无 JSON 序列化）
-
-  - Fabric C++ Shadow tree（不再有 mqt_shadow_queue）
-
-  - Fabric commit + mount 原子化 View 创建/更新
-
-  - 最终走宿主 HWUI RenderThread
-
-  '
-key_slices:
-- name: FabricUIManager
-  thread: any
-  description: Fabric UI manager 入口
-- name: FabricCommit / FabricMount
-  thread: any
-  description: Fabric 原子提交 View 更新
-- name: JSI
-  thread: any
-  description: JSI 直接 C++ 调用（无 JSON）
-- name: TurboModule
-  thread: any
-  description: TurboModule 同步调用 native 模块
+source: rendering_pipelines/S14_react_native_type.md
 ```
 
 ## Analysis guidance

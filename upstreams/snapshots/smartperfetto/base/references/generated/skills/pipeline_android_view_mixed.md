@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_mixed.skill.yaml
-Source SHA-256: f2d0fd7677db12a85dfdb68f6d477a1641ff04d6d9af90c7129c872a05ed2b97
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 12d5b834172b3c5517f36d3b378d7f9cffebbbfcc60c90c1b027fcf7dd8836c0
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # Android View 混合渲染
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: Android View 混合渲染
 description: View + SurfaceView 混合渲染，常见于视频播放器、内嵌游戏
 icon: layers
 family: hwui
-doc_path: rendering_pipelines/android_view_mixed.md
+doc_path: rendering_pipelines/S05_mixed_rendering_type.md
 s_article_ref: S05
 four_features:
   producer_threads:
@@ -38,7 +38,7 @@ four_features:
   bufferqueue_path: BBQ_TRANSACTION_INPROC + INDEPENDENT_LAYER
   extra_rhythm_sources:
   - video_codec_pacing
-  - camera_sensor_trigger
+  - camera_request_activity
 deviation_anchors: multi_path_anchor_4_5_6_8
 subvariants_note: '文章 S05 区分 3 个子变种：
 
@@ -48,7 +48,7 @@ subvariants_note: '文章 S05 区分 3 个子变种：
 
   - MIXED_RENDERING_HYBRID（两者都有）
 
-  Phase E 会拆分独立 ID。
+  三种形态统一属于 S05；检测结果保留具体子路径，但主类型仍为混合渲染。
 
   关键判别：在 SF 进程下查 layer 数量（>1 → SurfaceView，=1 → TextureView/纯宿主）。
 
@@ -89,52 +89,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: Android View 混合渲染管线
-summary: '同时使用 View 系统和 SurfaceView 进行渲染。View 部分通过 RenderThread，
-
-  SurfaceView 有独立的渲染线程 (GLThread/MediaCodec)。常见于视频播放器、
-
-  内嵌游戏等需要混合原生 UI 和自定义渲染的场景。
-
-  两条链路通常比纯 View 更解耦，但窗口几何和内容同步仍需以实际 trace 判断。
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant Main as App (main)\n  participant RT as RenderThread\n\
-  \  participant GL as GLThread (SurfaceView)\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant\
-  \ SF as SurfaceFlinger\n\n  Note over VA,SF: \U0001F4CD View + SurfaceView 混合渲染\n  VA->>Main: \U0001F514 VSync-app\n  activate\
-  \ Main\n  Main->>RT: syncFrameState (View 部分)\n  deactivate Main\n\n  par View 渲染链路\n    activate RT\n    RT->>RT: DrawFrame\
-  \ (HWUI)\n    RT->>BQ: queueBuffer (Layer 1)\n    deactivate RT\n  and SurfaceView 渲染链路\n    activate GL\n    GL->>GL: OpenGL/Vulkan\
-  \ 渲染\n    GL->>BQ: eglSwapBuffers (Layer 2)\n    deactivate GL\n  end\n\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n\
-  \  SF->>SF: latchBuffer (多 Layer)\n  SF->>SF: HWC 合成\n  deactivate SF\n\n  Note over VA,SF: ⚠️ 两条独立链路，需注意同步问题；BLAST 只会降低竞态，不保证逐帧完美同显\n"
-thread_roles:
-- thread: main
-  role: UI 协调
-  description: 协调 View 和 SurfaceView，处理布局
-- thread: RenderThread
-  role: View 层渲染
-  description: 渲染原生 View UI
-- thread: GLThread
-  role: SurfaceView 渲染
-  description: 独立渲染 SurfaceView 内容
-- thread: MediaCodec
-  role: 视频解码
-  description: 解码视频帧到 SurfaceView
-key_slices:
-- name: SurfaceView
-  thread: any
-  description: SurfaceView 相关操作
-- name: Choreographer#doFrame
-  thread: main
-  description: 帧回调入口，协调 View 与 SurfaceView 的布局/动画
-- name: syncFrameState
-  thread: RenderThread
-  description: 主线程与 RenderThread 同步 DisplayList/RenderNode（仅描述 View 子链路）
-- name: DrawFrame
-  thread: RenderThread
-  description: View 层渲染
-- name: eglSwapBuffers
-  thread: GLThread
-  description: SurfaceView 渲染线程提交帧
+source: rendering_pipelines/S05_mixed_rendering_type.md
 ```
 
 ## Analysis guidance

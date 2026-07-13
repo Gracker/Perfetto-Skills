@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/vulkan_native.skill.yaml
-Source SHA-256: 276ac4a394ba55e2936cc28bcc239d0bd485c4cb17c4b3e12fde9490bede6462
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: f2ebbc1d3e8b4454f4ea200f00bca9f606746d70eb395cf18ebfba854d6c4d50
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # Vulkan Native
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: Vulkan Native
 description: 原生 Vulkan 渲染，现代高性能图形 API
 icon: vulkan
 family: graphics
-doc_path: rendering_pipelines/vulkan_native.md
+doc_path: rendering_pipelines/S08_native_graphics_type.md
 s_article_ref: S08
 four_features:
   producer_threads:
@@ -78,43 +78,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-title: Vulkan Native 渲染管线
-summary: '使用 Vulkan API 进行高性能渲染。Vulkan 提供更低的 CPU 开销、
-
-  更好的多线程支持和更精细的 GPU 控制。适用于高端游戏和专业图形应用。
-
-  Swappy 库可提供更稳的帧节拍控制。不要把 `vkAcquireNextImageKHR` /
-
-  `vkQueuePresentKHR` 是否阻塞当作固定行为，它们在不同设备上可能表现不同。
-
-  '
-mermaid: "sequenceDiagram\n  participant App as App Thread\n  participant VK as Vulkan Thread\n  participant Swappy as Frame\
-  \ Pacing\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over\
-  \ App,SF: \U0001F4CD Vulkan Native 渲染链路\n  VK->>VK: vkAcquireNextImage\n  activate VK\n  VK->>VK: vkBeginCommandBuffer\n\
-  \  VK->>VK: Record Draw Commands\n  VK->>VK: vkEndCommandBuffer\n  VK->>VK: vkQueueSubmit\n  VK->>VK: vkQueuePresentKHR\n\
-  \  deactivate VK\n\n  Swappy-->>VK: Frame Pacing 控制\n  BQ-->>SF: Buffer Ready\n  VS->>SF: \U0001F514 VSync-sf\n  activate\
-  \ SF\n  SF->>SF: latchBuffer\n  SF->>SF: HWC 合成\n  deactivate SF\n\n  Note over App,SF: \U0001F680 现代高性能图形 API，支持 Frame\
-  \ Pacing\n"
-thread_roles:
-- thread: main
-  role: 应用逻辑
-  description: 游戏/应用主循环
-- thread: Vulkan
-  role: Vulkan 渲染线程
-  description: 记录/提交 Vulkan 命令（线程名通常包含 Vulkan/Vk/Render 等关键词）
-- thread: SurfaceFlinger
-  role: 合成显示
-  description: latch Buffer 并提交到 HWC
-key_slices:
-- name: vkQueuePresentKHR
-  thread: any
-  description: 提交帧到显示；可见但不代表其阻塞行为稳定
-- name: vkCmdDraw*
-  thread: any
-  description: Vulkan 绘制命令
-- name: Swappy
-  thread: any
-  description: 帧节拍控制
+source: rendering_pipelines/S08_native_graphics_type.md
 ```
 
 ## Analysis guidance

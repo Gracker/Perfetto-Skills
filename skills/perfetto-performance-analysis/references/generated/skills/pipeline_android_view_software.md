@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_software.skill.yaml
-Source SHA-256: ea10f9b97631e7af7693b5222246eb59e8e430fbbe8909533854db85d0095668
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 5de7469c18f360c86b277d6c21f8979afdb2885745cb8dad15682a2469eb44bd
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # Android View 软件渲染
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: Android View 软件渲染
 description: CPU Skia 软件渲染，无 RenderThread，用于低端设备或特殊场景
 icon: cpu
 family: hwui
-doc_path: rendering_pipelines/android_view_software.md
+doc_path: rendering_pipelines/S07_software_offscreen_type.md
 s_article_ref: S07
 four_features:
   producer_threads:
@@ -43,7 +43,9 @@ subvariants_note: '文章 S07 把 software/离屏拆为 4 子变种：
 
   4. OFFSCREEN_BITMAP（离屏 Bitmap + 纹理上传）
 
-  Phase E 会拆分独立 ID。
+  这些子路径统一映射到 S07；只有 catalog 标记为 variant 的条目参与主类型判定，
+
+  HardwareBufferRenderer、ImageReader 等条目作为 feature 保留附加证据。
 
   article-precise slice 名（用于 LLM 诊断参考）：
 
@@ -77,31 +79,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: Android View 软件渲染管线
-summary: '使用 CPU Skia 进行软件渲染，所有绘制都在主线程完成。
-
-  通常用于低端设备、特殊 View (如 SurfaceHolder.lockCanvas)，或硬件加速被禁用时。
-
-  性能较低，但兼容性最好。
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant Main as App (main)\n  participant Canvas as Canvas\
-  \ (CPU)\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over\
-  \ VA,SF: \U0001F4CD Software Rendering (无 RenderThread)\n  VA->>Main: \U0001F514 VSync-app 信号触发\n  activate Main\n  Main->>Main:\
-  \ Choreographer#doFrame\n  Main->>Canvas: lockCanvas\n  Main->>Canvas: Skia CPU 绘制 (drawXXX)\n  Main->>Canvas: unlockCanvasAndPost\n\
-  \  Main->>BQ: queueBuffer\n  deactivate Main\n\n  VS->>SF: \U0001F514 VSync-sf 触发\n  activate SF\n  SF->>SF: latchBuffer\n\
-  \  SF->>SF: HWC Composite\n  deactivate SF\n\n  Note over VA,SF: ⚠️ 无硬件加速，适用于简单 UI 或兼容模式\n"
-thread_roles:
-- thread: main
-  role: UI 构建 + 渲染
-  description: Measure/Layout/Draw 全在主线程，使用 CPU Skia 渲染
-key_slices:
-- name: lockCanvas
-  thread: main
-  description: 获取 CPU 画布
-- name: unlockCanvasAndPost
-  thread: main
-  description: 提交绘制结果
+source: rendering_pipelines/S07_software_offscreen_type.md
 ```
 
 ## Analysis guidance
@@ -140,7 +118,9 @@ common_issues:
 
     Trace 中表现为 RenderThread 仍存在（与纯软件不同），但额外伴随 Bitmap 分配 + uploadToTexture slice。
 
-    当前 ID 因 exclude_if RenderThread 排除此场景；Phase E 拆 SOFTWARE_RENDERING_LAYER 独立 ID。
+    当前 ID 因 exclude_if RenderThread 排除此场景；该现象作为 S07 内的软件 layer 子路径说明，
+
+    不单独提升为主渲染类型。
 
     '
   detection_skill: render_thread_slices

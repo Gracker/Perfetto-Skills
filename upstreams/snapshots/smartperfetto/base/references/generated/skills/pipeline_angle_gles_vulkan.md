@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/angle_gles_vulkan.skill.yaml
-Source SHA-256: 7b3def8ef242c31dcd795766b07fec97ec6ccc7b83e473b84994bee31dd31758
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 6534fbaf27524e1bb36aaa99335afadba617e5be071cd201e34b740930b94b02
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # ANGLE (GLES over Vulkan)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: ANGLE (GLES over Vulkan)
 description: 通过 ANGLE 将 OpenGL ES 翻译为 Vulkan
 icon: translate
 family: graphics
-doc_path: rendering_pipelines/angle_gles_vulkan.md
+doc_path: rendering_pipelines/S08_native_graphics_type.md
 s_article_ref: S08
 four_features:
   producer_threads:
@@ -61,36 +61,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-title: ANGLE GLES over Vulkan 渲染管线
-summary: "使用 ANGLE 库将 OpenGL ES 调用翻译为 Vulkan 命令。\n这种模式提供了更好的驱动兼容性和可能的性能提升，\n同时应用代码仍然使用熟悉的 OpenGL ES API。ANGLE 在 Android 15+\n\
-  生态中的重要性提升，但是否默认启用仍依设备和 OEM 策略而异。\n\n经验要点:\n- Android 生态中 ANGLE 常由 Chromium/WebView/自研内核启用（也可能被游戏引擎/应用直接集成）\n- 该 pipeline\
-  \ 关注“GLES → Vulkan”的翻译链路；若仅看到 eglSwapBuffers 而缺少 vkQueuePresentKHR，\n  更可能是 GLES 原生或 ANGLE 的 OpenGL 后端\n"
-mermaid: "sequenceDiagram\n  participant App as App (GLES)\n  participant ANGLE as ANGLE Layer\n  participant VK as Vulkan\
-  \ Backend\n  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over\
-  \ App,SF: \U0001F4CD ANGLE (GLES-over-Vulkan)\n  App->>ANGLE: glDraw* 调用\n  activate ANGLE\n  ANGLE->>VK: 转换为 Vulkan 命令\n\
-  \  VK->>VK: vkQueueSubmit\n  ANGLE->>ANGLE: eglSwapBuffers\n  VK->>BQ: vkQueuePresentKHR\n  deactivate ANGLE\n\n  VS->>SF:\
-  \ \U0001F514 VSync-sf\n  activate SF\n  SF->>SF: latchBuffer\n  SF->>SF: HWC 合成\n  deactivate SF\n\n  Note over App,SF:\
-  \ \U0001F504 GLES 应用透明迁移到 Vulkan 后端\n"
-thread_roles:
-- thread: main
-  role: 应用逻辑
-  description: 发起 OpenGL ES 调用
-- thread: GLThread
-  role: GLES/ANGLE 调用线程
-  description: 持有 EGL context 的线程；GLES 调用经 ANGLE 翻译为 Vulkan（线程名可能为 GLThread/RenderThread/自定义）
-key_slices:
-- name: glDraw*
-  thread: any
-  description: 应用侧 GLES 绘制调用（由 ANGLE 拦截并翻译）
-- name: eglSwapBuffers
-  thread: any
-  description: 交换 Buffer（最终触发 Present 路径）
-- name: ANGLE
-  thread: any
-  description: ANGLE 翻译/状态管理（trace 名称通常包含 ANGLE）
-- name: vkQueuePresentKHR
-  thread: any
-  description: Vulkan Present（ANGLE 后端常见）
+source: rendering_pipelines/S08_native_graphics_type.md
 ```
 
 ## Analysis guidance

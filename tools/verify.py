@@ -48,9 +48,11 @@ def build_commands(smartperfetto: Path | None = None) -> list[list[str]]:
             [
                 [
                     sys.executable,
-                    "tools/export_from_smartperfetto.py",
+                    "tools/sync_smartperfetto.py",
                     "--source",
                     str(smartperfetto),
+                    "--report-dir",
+                    "test-output/verify-smartperfetto",
                     "--check",
                 ],
                 [
@@ -88,6 +90,7 @@ def verification_environment(
         }
     )
     environment.pop("SMARTPERFETTO_TEST_TRACES", None)
+    environment.pop("SMARTPERFETTO_SOURCE", None)
     return environment
 
 
@@ -209,8 +212,6 @@ def main(arguments: list[str] | None = None) -> int:
         tier="offline" if args.offline else "full",
     )
     source = args.smartperfetto.expanduser().resolve() if args.smartperfetto else None
-    if source is not None:
-        environment["SMARTPERFETTO_SOURCE"] = str(source)
     for command in build_commands(source):
         run(command, env=environment)
     print(

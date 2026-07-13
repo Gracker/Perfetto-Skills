@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/sf_layer_count_in_range.skill.yaml
-Source SHA-256: a780be081f44b2db1942e76af09b9f252621deb1a24087e1c028cf0f40f847ff
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 32c86a668275bbbc02ac545c67d1fef7366d86414bac478468751d7dde71027a
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # SF 图层数统计
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -28,7 +28,7 @@ tags:
 - composition
 - diagnostics
 pipeline_aware: true
-pipeline_aware_note: 'Layer 数量是 4 特征分型的"特征 2"。expected_layer_count 按 pipeline 不同：
+pipeline_aware_note: 'Layer 数量是辅助证据轴之一，不是独立类型分类法。expected_layer_count 按 pipeline 不同：
 
   标准/TextureView=1, SurfaceView/Mixed≥2, HC overlay=N, WebView Functor=0。
 

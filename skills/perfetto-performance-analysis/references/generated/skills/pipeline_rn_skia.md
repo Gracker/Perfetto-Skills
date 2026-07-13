@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/rn_skia.skill.yaml
-Source SHA-256: cc6054986f7d91d0ab0ac819f5d11f251211ddb9db5cb83932fcdef678eb74de
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 5dcdc8cfea4ac1814a3752847cc411f2a696ddb9595b6a6b7bbfc552c8258486
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # React Native Skia (@shopify/react-native-skia)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: React Native Skia (@shopify/react-native-skia)
 description: RN + Skia 自绘渲染，绕过 HWUI 直接用 Skia 在 GPU 上画
 icon: react
 family: webview
-doc_path: rendering_pipelines/rn_skia.md
+doc_path: rendering_pipelines/S14_react_native_type.md
 s_article_ref: S14
 four_features:
   producer_threads:
@@ -82,28 +82,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: React Native Skia 渲染管线
-summary: '@shopify/react-native-skia 提供 RN 直接调用 Skia 自绘的能力：
-
-  - JS 通过 JSI 调用 Skia C++ API
-
-  - Skia 自己有渲染线程，绕过 HWUI RenderThread
-
-  - 输出到独立 Surface 或 TextureView
-
-  - 适用于复杂动画、shader、路径效果
-
-
-  与 NATIVE_GRAPHICS (S08) 代价模型相似：应用自绘 + GPU fence + Surface BufferQueue。
-
-  '
-key_slices:
-- name: SkiaRenderer / SkiaPicture
-  thread: any
-  description: Skia 渲染相关 slice
-- name: react-native-skia
-  thread: any
-  description: react-native-skia 库相关调用
+source: rendering_pipelines/S14_react_native_type.md
 ```
 
 ## Analysis guidance

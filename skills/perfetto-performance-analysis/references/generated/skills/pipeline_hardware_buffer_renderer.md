@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/hardware_buffer_renderer.skill.yaml
-Source SHA-256: 77f0c16c98124ea632834a8112a8afcd6458b6a40457d6f5fe010817005b0bbc
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: f5c8504e0f47225e7f38c91e84aab2c8bbba582347aea5ea42e5a0b0d9957d0a
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # HardwareBufferRenderer
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: HardwareBufferRenderer
 description: Android 14+ HBR API，直接 Buffer 渲染
 icon: memory
 family: specialized
-doc_path: rendering_pipelines/hardware_buffer_renderer.md
+doc_path: rendering_pipelines/S07_software_offscreen_type.md
 s_article_ref: S07
 four_features:
   producer_threads:
@@ -42,7 +42,9 @@ subvariants_note: '文章 S07 把 software/离屏拆为 4 子变种，HBR 对应
 
   OFFSCREEN_HARDWAREBUFFER（HardwareBufferRenderer 离屏 GPU，Android 14+/API 35）。
 
-  Phase E 拆 OFFSCREEN_BITMAP（离屏 Bitmap + 纹理上传）独立 ID。
+  该条目在 catalog 中是 S07 的 feature 证据，不参与主类型竞争；
+
+  OFFSCREEN_BITMAP 仍由 S07 文档中的子路径解释。
 
   '
 no_bbq_implication: '离屏结果直接通过 SurfaceControl.Transaction.setBuffer() 提交时跳过 BLASTBufferQueue。
@@ -75,67 +77,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-title: HardwareBufferRenderer 渲染管线
-summary: 'Android 14+ 新增的 HardwareBufferRenderer API，提供 GPU 硬件加速的离屏渲染，
-
-  替代传统的 lockCanvas() CPU 软件渲染。
-
-
-  核心优势:
-
-  - GPU 光栅化代替 CPU Skia 软件渲染
-
-  - 直接渲染到 HardwareBuffer（是否零拷贝取决于后续合成/采样/拷贝链路）
-
-  - 可选择 wide-gamut/HDR 相关 buffer format（取决于设备与格式支持，如 RGBA_FP16 等）
-
-  - 显式 Fence 控制
-
-
-  典型使用场景:
-
-  - 自定义绘图引擎 (PDF 渲染器、矢量编辑器)
-
-  - HDR 图像处理
-
-  - 高帧率软件渲染
-
-  '
-mermaid: "sequenceDiagram\n  participant App as App\n  participant HBR as HardwareBufferRenderer\n  participant GPU as GPU\n\
-  \  participant TX as Transaction\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over App,SF:\
-  \ \U0001F4CD HardwareBufferRenderer (Android 14+)\n  App->>HBR: create (HardwareBuffer)\n  activate HBR\n  HBR->>GPU: GPU\
-  \ 渲染到 HardwareBuffer\n  HBR->>HBR: 完成渲染\n  deactivate HBR\n\n  App->>TX: ASurfaceTransaction\n  App->>TX: setBuffer (HardwareBuffer)\n\
-  \  TX->>SF: Transaction 提交\n\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n  SF->>SF: setTransactionState\n  SF->>SF:\
-  \ latchBuffer\n  SF->>SF: HWC Composite\n  deactivate SF\n\n  Note over App,SF: \U0001F195 Android 14+ 新 API，无 SurfaceView\
-  \ 开销\n"
-thread_roles:
-- thread: main
-  role: HBR 控制
-  description: 创建 HardwareBuffer，记录绘制命令
-  trace_tags: HardwareBufferRenderer, RenderNode, RecordingCanvas
-- thread: RenderThread
-  role: GPU 光栅化
-  description: 执行 RenderNode 的 GPU 渲染
-  trace_tags: DrawRenderNode, GpuRasterize
-- thread: SurfaceFlinger
-  role: 合成显示
-  description: 等待 Fence，合成 HardwareBuffer
-key_slices:
-- name: HardwareBufferRenderer
-  thread: main
-  description: HBR 生命周期操作 (create/draw/close)
-- name: obtainRenderRequest
-  thread: main
-  description: 获取渲染请求
-- name: RenderNode
-  thread: main
-  description: 绘制命令容器
-- name: RecordingCanvas
-  thread: main
-  description: 记录绘制命令
-- name: SyncFence
-  thread: any
-  description: GPU 完成同步 Fence
+source: rendering_pipelines/S07_software_offscreen_type.md
 ```
 
 ## Analysis guidance

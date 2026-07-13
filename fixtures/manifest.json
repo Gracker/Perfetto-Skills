@@ -59,8 +59,8 @@
       "platform": {"api": 35, "oem": "Nubia", "kernel": "6.6.56-android15-8-g1b3a8e682e47-ab101-4k", "build_type": "user", "qpr": "unknown", "abi": "unknown"},
       "capabilities": ["flutter", "texture_view", "scrolling"],
       "assertions": [
-        {"id": "flutter-texture-ui-thread", "query_id": "rendering_pipeline_detection/thread_signals", "kind": "field_positive", "field": "flutter_ui_count", "params": {"package": "com.example.friendscircle.v27.textureview"}},
-        {"id": "flutter-texture-slice", "query_id": "rendering_pipeline_detection/slice_signals", "kind": "field_positive", "field": "texture_view_count", "params": {"package": "com.example.friendscircle.v27.textureview"}}
+        {"id": "flutter-texture-rendering-process", "query_id": "rendering_pipeline_detection/active_rendering_processes", "kind": "field_positive", "field": "frame_count", "params": {"package": "com.example.friendscircle.v27.textureview"}},
+        {"id": "flutter-texture-bufferqueue", "query_id": "rendering_pipeline_detection/bufferqueue_path_signals", "kind": "field_positive", "field": "queue_buffer_count", "params": {"package": "com.example.friendscircle.v27.textureview"}}
       ]
     },
     {

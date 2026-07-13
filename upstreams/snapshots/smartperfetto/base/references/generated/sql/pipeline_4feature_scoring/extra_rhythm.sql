@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/pipeline_4feature_scoring.skill.yaml
--- Source SHA-256: 510fbb63523a223a8d40f61f49a3090fc0b9dcc00bebf3a319e94aaf6506408a
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source SHA-256: 2188f6c3732115b4eac2d4d5250a23f8ff912ecab084d6aabc732df5c69ccef3
+-- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 WITH
 swappy AS (SELECT COUNT(*) as cnt FROM slice WHERE name GLOB '*Swappy*' OR name GLOB '*SwappyVk_*'),
@@ -15,7 +15,7 @@ SELECT
     WHEN (SELECT cnt FROM swappy) > 0 THEN 'swappy_pacing'
     WHEN (SELECT cnt FROM achoreographer) > 0 THEN 'achoreographer'
     WHEN (SELECT cnt FROM engine_loop) > 0 THEN 'engine_main_loop'
-    WHEN (SELECT cnt FROM camera) > 0 THEN 'camera_sensor_trigger'
+    WHEN (SELECT cnt FROM camera) > 0 THEN 'camera_request_activity'
     WHEN (SELECT cnt FROM codec) > 0 THEN 'video_codec_pacing'
     WHEN (SELECT cnt FROM set_frame_rate) > 0 THEN 'set_frame_rate_voted'
     ELSE 'vsync_app_only'

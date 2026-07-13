@@ -67,20 +67,20 @@
       },
       "assertions": [
         {
-          "field": "flutter_ui_count",
+          "field": "frame_count",
           "kind": "field_positive",
           "params": {
             "package": "com.example.friendscircle.v27.textureview"
           },
-          "query_id": "rendering_pipeline_detection/thread_signals"
+          "query_id": "rendering_pipeline_detection/active_rendering_processes"
         },
         {
-          "field": "texture_view_count",
+          "field": "queue_buffer_count",
           "kind": "field_positive",
           "params": {
             "package": "com.example.friendscircle.v27.textureview"
           },
-          "query_id": "rendering_pipeline_detection/slice_signals"
+          "query_id": "rendering_pipeline_detection/bufferqueue_path_signals"
         }
       ],
       "capture_config": "embedded_in_trace",
@@ -230,5 +230,5 @@
   ],
   "schema_version": 1,
   "source_path": "backend/skills/public-fixtures.yaml",
-  "source_sha256": "55f7e9ef115f20ab20d3bb1b27d76b2fefe916e3d82674809cdb4e21a12b9998"
+  "source_sha256": "5f4e50e9a2dc19e9b7c0e39986e48f6a6c6b1c4fa1725ae94030a9a87e110830"
 }

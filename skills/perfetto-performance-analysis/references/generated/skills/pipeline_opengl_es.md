@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/opengl_es.skill.yaml
-Source SHA-256: 718020f1cf9590a3a6fa703c9005e87e0701a56c4b21d2ac3211cbdf3458d809
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 7cb6f71330758b7f1f8984490877f18f7618b5f628145db2cf3a14e1649313b8
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # OpenGL ES
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: OpenGL ES
 description: 直接 OpenGL ES / EGL 渲染，用于游戏和自定义渲染引擎
 icon: gpu
 family: graphics
-doc_path: rendering_pipelines/opengl_es.md
+doc_path: rendering_pipelines/S08_native_graphics_type.md
 s_article_ref: S08
 four_features:
   producer_threads:
@@ -72,33 +72,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: OpenGL ES 渲染管线
-summary: '直接使用 OpenGL ES 和 EGL API 进行渲染。适用于自定义游戏引擎、
-
-  3D 应用等需要精细控制 GPU 的场景。通过 eglSwapBuffers 提交帧。
-
-  在新设备上也要考虑 ANGLE 作为可选后端的可能性，但不应假设所有 GLES 都会被强制翻译到 Vulkan。
-
-  '
-mermaid: "sequenceDiagram\n  participant App as App Thread\n  participant GL as GLThread\n  participant EGL as EGL Context\n\
-  \  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over App,SF:\
-  \ \U0001F4CD OpenGL ES 渲染链路\n  GL->>EGL: eglMakeCurrent\n  activate GL\n  GL->>GL: glClear / glDraw*\n  GL->>GL: GPU 命令提交\n\
-  \  GL->>EGL: eglSwapBuffers\n  EGL->>BQ: queueBuffer\n  deactivate GL\n\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n\
-  \  SF->>SF: latchBuffer\n  SF->>SF: HWC 合成\n  deactivate SF\n\n  Note over App,SF: \U0001F3AE 传统 OpenGL ES 游戏/渲染引擎常用\n"
-thread_roles:
-- thread: GLThread
-  role: GL 渲染线程
-  description: 执行 OpenGL 绘制命令
-- thread: SurfaceFlinger
-  role: 合成显示
-  description: latch Buffer 并提交到 HWC
-key_slices:
-- name: eglSwapBuffers
-  thread: GLThread
-  description: 交换 Buffer，提交帧
-- name: glDraw*
-  thread: GLThread
-  description: OpenGL 绘制调用
+source: rendering_pipelines/S08_native_graphics_type.md
 ```
 
 ## Analysis guidance

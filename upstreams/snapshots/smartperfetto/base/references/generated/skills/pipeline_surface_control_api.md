@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/surface_control_api.skill.yaml
-Source SHA-256: 2eb2e71b27a7efad70155707e0e860287258d2c677fc3f1c388aead8b6dac750
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 1266b84034af985d1a068b0c07d116bdae9ac9a81965014efb1ddcb9632912cd
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # SurfaceControl API
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: SurfaceControl API
 description: NDK SurfaceControl 直接事务提交，低级别表面控制
 icon: code
 family: surface
-doc_path: rendering_pipelines/surface_control_api.md
+doc_path: rendering_pipelines/S07_software_offscreen_type.md
 s_article_ref: S03
 four_features:
   producer_threads:
@@ -72,43 +72,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-title: SurfaceControl API 渲染管线
-summary: '使用 NDK SurfaceControl API 直接控制 Surface 和 Transaction。
-
-  提供最低级别的合成控制，可以创建子 Surface、控制 Z-order、
-
-  原子性更新多个属性。它与 BLAST 共享同一事务式更新体系，
-
-  但不应被简单理解为“SurfaceControl API 就等于 BLAST”。
-
-  '
-mermaid: "sequenceDiagram\n  participant App as App (NDK)\n  participant SC as SurfaceControl\n  participant TX as Transaction\n\
-  \  participant BQ as BufferQueue\n  participant VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over App,SF:\
-  \ \U0001F4CD NDK SurfaceControl API\n  App->>SC: ASurfaceControl_create\n  App->>BQ: ANativeWindow_dequeueBuffer\n  App->>App:\
-  \ GPU 渲染\n  App->>BQ: ANativeWindow_queueBuffer\n\n  App->>TX: ASurfaceTransaction_create\n  App->>TX: 设置 Buffer/几何/混合模式\n\
-  \  App->>TX: ASurfaceTransaction_apply\n\n  TX-->>SF: Transaction 提交\n  VS->>SF: \U0001F514 VSync-sf\n  activate SF\n  SF->>SF:\
-  \ 接收并处理 Transaction\n  SF->>SF: latchBuffer\n  SF->>SF: HWC 合成\n  deactivate SF\n\n  Note over App,SF: \U0001F527 低级别 API，完全控制\
-  \ Buffer 和 Surface\n"
-thread_roles:
-- thread: main
-  role: SurfaceControl 控制
-  description: 创建 Surface、构建和提交 Transaction
-- thread: any
-  role: 生产者线程
-  description: 在任意线程渲染/写入 Buffer，并与 Transaction 提交节拍对齐
-- thread: SurfaceFlinger
-  role: 事务处理/合成
-  description: 接收 Transaction、latch Buffer、合成并提交到 HWC
-key_slices:
-- name: ASurfaceControl
-  thread: any
-  description: NDK SurfaceControl 操作（create/destroy/reparent 等）
-- name: ASurfaceTransaction_apply
-  thread: any
-  description: 提交 Transaction（原子性更新多个属性）
-- name: setTransactionState
-  thread: SurfaceFlinger
-  description: SurfaceFlinger 处理 Transaction 的常见提示信号；名称依版本和 tracing 变化
+source: rendering_pipelines/S07_software_offscreen_type.md
 ```
 
 ## Analysis guidance

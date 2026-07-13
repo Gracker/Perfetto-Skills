@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/pipeline.strategy.md
-Source SHA-256: e934bc9e54bbbd75f8726714f35892ea17bd383e2011c916a08b7c4b8b6842ff
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 018e91d7c0c1f2c6f81f828e015e8a94ddd7569ecab51f04fdb666c80fa5afd1
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 # Pipeline Strategy
 
@@ -255,7 +255,8 @@ plan_template:
 <!-- strategy-detail id="full" title="pipeline full strategy detail" keywords="pipeline,管线识别,pipeline识别,渲染路径,渲染管线检测,管线类型,pipeline detection,rendering pipeline,render path,architecture detection,渲染架构检测,帧渲染路径,frame path,渲染管线识别与教学分析（用户提到 管线识别、pipeline 检测、渲染路径、渲染架构检测）,detail,full" default="true" -->
 #### 渲染管线识别与教学分析（用户提到 管线识别、pipeline 检测、渲染路径、渲染架构检测）
 
-**核心目标：** 识别 trace 中应用使用的渲染管线类型，展示管线架构图，并路由到对应的分析策略。
+**核心目标：** 先识别 S02-S14 出图类型，再报告细粒度检测子路径与正交
+feature，展示上游 Android 17 文章中的实际对象树，并路由到对应分析策略。
 
 **证据边界：**
 1. 渲染链路要拆成 Main/UI、RenderThread、BufferQueue、SurfaceFlinger、HWC/display 和 GPU/fence；不要把某一个 slice 当成整条链路结论。
@@ -263,6 +264,10 @@ plan_template:
 3. HWC 不是 BufferQueue consumer。SurfaceFlinger 才消费 buffer，HWC 参与后续 validate/accept/present。
 4. GraphicBuffer/dma-buf 是图形物理内存证据，不能等同 BufferQueue 槽位、队列深度或 fence backpressure。
 5. refresh rate / ARR / VRR 会改变帧预算；`setFrameRate()` / `View.setRequestedFrameRate()` 是 hint/vote，不是强制命令。报告必须用实际 VSync/FrameTimeline 证据说明预算。
+6. 只有 catalog 中 `classification_role: variant` 的条目能成为主出图类型；
+   VRR、PiP、多窗口、Video Overlay、ANGLE 等 feature 只能作为伴随证据。
+7. Producer/layer/提交路径/节奏四轴仅是辅助证据，不能替代 S02-S14 的最小
+   Producer、Surface/layer、BufferQueue 证据集。
 
 **Phase 1 — 自动检测：**
 - 返回：architectureType（Standard/Flutter/Compose/WebView/Game 等）、confidence、metadata（engine、surfaceType 等）
@@ -275,8 +280,8 @@ plan_template:
 
 | 架构类型 | Pipeline Skill | 说明 |
 |---------|---------------|------|
-| Standard BLAST | android_view_standard_blast | Android 13+ 默认管线，BLASTBufferQueue |
-| Standard Legacy | android_view_standard_legacy | Android 12- 传统 BufferQueue |
+| Standard BLAST | android_view_standard_blast | Android 12—17 现代基线，BLASTBufferQueue |
+| Standard Legacy | android_view_standard_legacy | Android 12 之前的兼容路径，不能按版本默认推断 |
 | Software Rendering | android_view_software | 软件渲染（无 RenderThread） |
 | Compose | compose_standard | Jetpack Compose 渲染管线 |
 | Flutter SurfaceView (Skia) | flutter_surfaceview_skia | Flutter Skia 引擎 + SurfaceView |
@@ -367,7 +372,7 @@ LIMIT 10
 | 问题类型 | 推荐 Skill | 解释边界 |
 |---|---|---|
 | BufferQueue/BLAST transaction 生命周期 | `buffer_transaction_lifecycle` | 区分 App `queueBuffer` 与 SF transaction/apply/latch，到达时机不能混用 |
-| acquire/present/release fence | `fence_wait_decomposition` + `present_fence_timing` | acquire 影响 SF latch，present 影响可见上屏，release 影响 producer 复用 buffer |
+| acquire/present/release fence | `fence_wait_decomposition` + `present_fence_timing` | acquire 保护读取，release 影响复用；present 是 Android 显示栈锚点，不证明 panel 光学完成或用户感知 |
 | SF/HWC 合成路径 | `surfaceflinger_analysis` | 区分 SF commit/composite、HWC present、RenderEngine/GPU fallback、layer 数和 transaction storm |
 | refresh-rate / ARR / VRR | `vsync_config` + `vsync_phase_alignment` | 用实际 VSync 周期计算预算，不默认 16.6ms |
 | GraphicBuffer/dma-buf 图形内存 | 先按内存策略补证 | 需要 meminfo/dma-buf/SurfaceFlinger dumpsys/heap/counter；BufferQueue slice 只能证明队列/同步候选 |
@@ -407,7 +412,8 @@ ORDER BY slice_cnt DESC
 ### 输出结构必须遵循：
 
 1. **检测结果**：
-   - 渲染管线类型 + 置信度
+   - S02-S14 出图类型 + 置信度
+   - 检测子路径 + 独立列出的正交 feature
    - 如有多管线共存，分别列出
 
 2. **管线架构图**（Mermaid 时序图，来自 Pipeline Skill 教学内容）

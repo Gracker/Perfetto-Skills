@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/webview_gl_functor.skill.yaml
-Source SHA-256: 70e83d7ea8c7de7cb707ee8f43dc18d1a91a936d7873e2abe816fe87cf00f679
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: f3cce36c857d9a7f0230a0fdc774d66920dcf35253596eef8419c18c59497206
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 # WebView GL Functor
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name: WebView GL Functor
 description: 传统 WebView 渲染，App RenderThread 同步等待
 icon: web
 family: webview
-doc_path: rendering_pipelines/webview_gl_functor.md
+doc_path: rendering_pipelines/S09_webview_type.md
 s_article_ref: S09
 four_features:
   producer_threads:
@@ -89,44 +89,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-title: WebView GL Functor 渲染管线
-summary: '传统 WebView 渲染模式，WebView 内容通过 GL Functor 机制嵌入到
-
-  App 的 RenderThread 中渲染。browser code 通常仍在宿主 app 进程内，
-
-  App 需要等待 WebView 完成 draw callback，可能拖慢 RenderThread。
-
-  '
-mermaid: "sequenceDiagram\n  participant VA as VSync-app\n  participant Main as App (main)\n  participant RT as RenderThread\n\
-  \  participant CR as CrRendererMain\n  participant Blink as Blink Engine\n  participant BQ as BufferQueue\n  participant\
-  \ VS as VSync-sf\n  participant SF as SurfaceFlinger\n\n  Note over VA,SF: \U0001F4CD WebView GL Functor 模式\n  VA->>Main:\
-  \ \U0001F514 VSync-app\n  activate Main\n  Main->>RT: syncFrameState\n  deactivate Main\n\n  activate RT\n  RT->>RT: DrawFrame\
-  \ 开始\n  RT->>CR: 调用 WebView draw callback\n  deactivate RT\n\n  activate CR\n  CR->>Blink: 渲染网页内容\n  CR->>CR: GPU 绘制\n \
-  \ CR-->>RT: 返回\n  deactivate CR\n\n  activate RT\n  RT->>RT: 继续 DrawFrame\n  RT->>BQ: queueBuffer\n  deactivate RT\n\n \
-  \ VS->>SF: \U0001F514 VSync-sf\n  activate SF\n  SF->>SF: latchBuffer\n  SF->>SF: HWC Composite\n  deactivate SF\n\n  Note\
-  \ over VA,SF: ⚠️ WebView 阻塞 RenderThread，可能影响流畅度\n"
-thread_roles:
-- thread: main
-  role: WebView 宿主 UI
-  description: 承载 WebView 的 Activity/Fragment
-- thread: RenderThread
-  role: App 渲染
-  description: 渲染 App UI，等待 WebView Functor
-  trace_tags: DrawFrame, DrawFunctor/DrawGL（是否可见依 tracing 配置）
-- thread: CrRendererMain
-  role: Chromium 主渲染
-  description: WebView/Chromium 内容渲染
-  trace_tags: Blink, V8
-key_slices:
-- name: DrawGL / DrawFn_DrawGL (hint)
-  thread: RenderThread
-  description: GL Functor 调用提示信号
-- name: DrawFunctor (hint)
-  thread: RenderThread
-  description: Functor 绘制提示信号
-- name: Blink
-  thread: CrRendererMain
-  description: Blink 渲染引擎
+source: rendering_pipelines/S09_webview_type.md
 ```
 
 ## Analysis guidance

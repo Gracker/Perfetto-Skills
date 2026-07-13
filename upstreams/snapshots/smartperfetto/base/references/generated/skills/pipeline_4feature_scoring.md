@@ -1,8 +1,8 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/pipeline_4feature_scoring.skill.yaml
-Source SHA-256: 510fbb63523a223a8d40f61f49a3090fc0b9dcc00bebf3a319e94aaf6506408a
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
-# Pipeline 4 特征分型综合评分
+Source SHA-256: 2188f6c3732115b4eac2d4d5250a23f8ff912ecab084d6aabc732df5c69ccef3
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+# Pipeline 4 轴辅助证据评分
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
@@ -19,8 +19,8 @@ tier: B
 ## Metadata
 
 ```yaml
-display_name: Pipeline 4 特征分型综合评分
-description: 按 S01 §4 特征分型（Producer 线程数/Layer 数/queueBuffer 路径/额外节奏点）综合评分输出分型结论
+display_name: Pipeline 4 轴辅助证据评分
+description: 归一化 Producer/Layer/BufferQueue/节奏证据；不能脱离 S02-S14 最小证据集单独定型
 icon: category
 tags:
 - pipeline

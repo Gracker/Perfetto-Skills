@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/pipeline_4feature_scoring.skill.yaml
--- Source SHA-256: 510fbb63523a223a8d40f61f49a3090fc0b9dcc00bebf3a319e94aaf6506408a
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source SHA-256: 2188f6c3732115b4eac2d4d5250a23f8ff912ecab084d6aabc732df5c69ccef3
+-- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
 
 WITH
 dominant_pkg AS (

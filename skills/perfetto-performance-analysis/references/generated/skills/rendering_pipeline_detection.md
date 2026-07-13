@@ -1,8 +1,8 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/rendering_pipeline_detection.skill.yaml
-Source SHA-256: daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
-# 渲染管线检测 (24 类型)
+Source SHA-256: 89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457
+Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+# 渲染管线检测 (YAML 驱动)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: rendering_pipeline_detection
-version: '2.0'
+version: '4.0'
 type: composite
 category: rendering
 tier: S
@@ -19,14 +19,15 @@ tier: S
 ## Metadata
 
 ```yaml
-display_name: 渲染管线检测 (24 类型)
-description: 细粒度识别应用使用的渲染管线类型，输出主链路+候选+特性
+display_name: 渲染管线检测 (YAML 驱动)
+description: 从 catalog 与 pipeline YAML 生成子路径评分、主出图类型、候选与正交特性
 icon: layers
 tags:
 - rendering
 - pipeline
 - detection
 - teaching
+- yaml
 ```
 
 ## Triggers
@@ -36,21 +37,22 @@ keywords:
   zh:
   - 渲染管线
   - 管线检测
+  - 出图类型
   - SurfaceView
   - TextureView
   - Flutter
   - WebView
-  - 游戏渲染
   en:
   - rendering pipeline
+  - rendering type
   - pipeline detection
   - surfaceview
   - textureview
   - flutter
   - webview
 patterns:
-- .*(渲染管线|SurfaceView|TextureView|WebView|Flutter).*
-- .*(rendering pipeline|surfaceview|textureview|webview|flutter).*
+- .*(渲染管线|出图类型|SurfaceView|TextureView|WebView|Flutter).*
+- .*(rendering pipeline|rendering type|surfaceview|textureview|webview|flutter).*
 ```
 
 ## Prerequisites
@@ -80,35 +82,7 @@ modules:
 
 ## Ordered execution
 
-### 采集线程信号
-
-- ID: `thread_signals`
-- Type: `atomic`
-- SQL: [`../sql/rendering_pipeline_detection/thread_signals.sql`](../sql/rendering_pipeline_detection/thread_signals.sql)
-
-```yaml
-id: thread_signals
-type: atomic
-display:
-  level: detail
-  title: 线程特征检测
-save_as: thread_signals
-```
-### 采集 Slice 信号
-
-- ID: `slice_signals`
-- Type: `atomic`
-- SQL: [`../sql/rendering_pipeline_detection/slice_signals.sql`](../sql/rendering_pipeline_detection/slice_signals.sql)
-
-```yaml
-id: slice_signals
-type: atomic
-display:
-  level: detail
-  title: Slice 特征检测
-save_as: slice_signals
-```
-### 计算管线得分
+### 计算管线类型评分 (YAML 驱动)
 
 - ID: `score_pipelines`
 - Type: `atomic`
@@ -122,7 +96,7 @@ display:
   title: 管线类型评分
 save_as: pipeline_scores
 ```
-### 确定主管线
+### 确定主管线 (YAML 驱动)
 
 - ID: `determine_pipeline`
 - Type: `atomic`
@@ -149,20 +123,6 @@ display:
   level: detail
   title: 子变体检测
 save_as: subvariants
-```
-### 生成 Pin 指令
-
-- ID: `pin_instructions`
-- Type: `atomic`
-- SQL: [`../sql/rendering_pipeline_detection/pin_instructions.sql`](../sql/rendering_pipeline_detection/pin_instructions.sql)
-
-```yaml
-id: pin_instructions
-type: atomic
-display:
-  level: detail
-  title: Track 固定建议
-save_as: pin_instructions
 ```
 ### 检查采集完整性
 
@@ -192,21 +152,66 @@ display:
   title: 活跃渲染进程
 save_as: active_rendering_processes
 ```
+### SF Layer 数与名字模式 (辅助证据)
+
+- ID: `layer_signals`
+- Type: `atomic`
+- SQL: [`../sql/rendering_pipeline_detection/layer_signals.sql`](../sql/rendering_pipeline_detection/layer_signals.sql)
+
+```yaml
+id: layer_signals
+type: atomic
+display:
+  level: detail
+  title: Layer 信号
+save_as: layer_signals
+```
+### 额外节奏源 (辅助证据)
+
+- ID: `extra_rhythm_signals`
+- Type: `atomic`
+- SQL: [`../sql/rendering_pipeline_detection/extra_rhythm_signals.sql`](../sql/rendering_pipeline_detection/extra_rhythm_signals.sql)
+
+```yaml
+id: extra_rhythm_signals
+type: atomic
+display:
+  level: detail
+  title: 额外节奏源
+save_as: extra_rhythm_signals
+```
+### BufferQueue 路径证据
+
+- ID: `bufferqueue_path_signals`
+- Type: `atomic`
+- SQL: [`../sql/rendering_pipeline_detection/bufferqueue_path_signals.sql`](../sql/rendering_pipeline_detection/bufferqueue_path_signals.sql)
+
+```yaml
+id: bufferqueue_path_signals
+type: atomic
+display:
+  level: detail
+  title: BufferQueue 路径
+save_as: bufferqueue_path_signals
+```
 ## Output and evidence contract
 
 ```yaml
-format: structured
 fields:
-- name: pipeline_result
-  description: 主管线识别结果
-- name: subvariants
-  description: 子变体信息
-- name: pin_instructions
-  description: Track 固定建议
-- name: trace_requirements
-  description: 采集完整性检查
 - name: pipeline_scores
-  description: 各管线类型得分 (调试用)
+  label: 各管线类型得分 (调试用)
+- name: pipeline_result
+  label: 主管线识别结果
+- name: subvariants
+  label: 子变体信息
+- name: trace_requirements
+  label: 采集完整性检查
 - name: active_rendering_processes
-  description: 活跃渲染进程列表 (用于智能 Pin)
+  label: 活跃渲染进程列表 (用于智能 Pin)
+- name: layer_signals
+  label: Layer 信号 (SF 侧 layer 数与命名模式)
+- name: extra_rhythm_signals
+  label: 额外节奏源 (Swappy/AChoreographer/Camera/Codec)
+- name: bufferqueue_path_signals
+  label: BufferQueue 路径分型
 ```
