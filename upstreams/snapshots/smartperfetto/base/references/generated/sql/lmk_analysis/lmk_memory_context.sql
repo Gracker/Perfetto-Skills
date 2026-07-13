@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/lmk_analysis.skill.yaml
 -- Source SHA-256: 32494b794e68cb6976f27938f66c022758ebf4fcc0826baa535203c36b6aaceb
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 WITH lmk_events AS (
   SELECT ts, process_name, kill_reason

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_detail.skill.yaml
 -- Source SHA-256: 3bf411e6c0f6db9de2434fb0ad420cb0a0140388c5968306f5ad569b3ff0c3e7
--- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 -- 从 deliverInputEvent slice 反向追踪完整输入管线
 -- 注意：时间窗口匹配在事件密集场景下可能绑错事件，click 场景通常事件稀疏

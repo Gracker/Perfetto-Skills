@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/wms_module.skill.yaml
 -- Source SHA-256: ec088f394851b6fb0426109a0105b0d0ae930adf759b15011ab45a18a1a5831f
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 SELECT
   s.ts,

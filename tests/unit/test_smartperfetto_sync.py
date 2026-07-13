@@ -6,10 +6,135 @@ import unittest
 from unittest import mock
 
 from tools import sync_smartperfetto
-from tools.sync_smartperfetto import apply_import, compare_import, validate_source
+from tools.sync_smartperfetto import (
+    apply_import,
+    compare_import,
+    compare_import_contract,
+    import_is_current,
+    validate_source,
+)
 
 
 class SmartPerfettoSyncTest(unittest.TestCase):
+    def test_import_is_current_only_when_no_paths_drift(self) -> None:
+        current = {
+            "added": [],
+            "removed": [],
+            "changed": [],
+            "unchanged": 3,
+        }
+        self.assertTrue(import_is_current(current))
+        for key in ("added", "removed", "changed"):
+            with self.subTest(key=key):
+                drift = {**current, key: ["path"]}
+                self.assertFalse(import_is_current(drift))
+
+    def test_import_contract_detects_catalog_migration_and_policy_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            base = root / "base"
+            imported_root = root / "imported"
+            imported_generated = imported_root / "generated"
+            base.mkdir()
+            imported_generated.mkdir(parents=True)
+            (base / "same").write_text("same", encoding="utf-8")
+            (imported_generated / "same").write_text("same", encoding="utf-8")
+            catalog = root / "catalog.json"
+            imported_catalog = imported_root / "catalog.json"
+            catalog_payload = '{"source":{"policy_sha256":"' + "a" * 64 + '"}}\n'
+            catalog.write_text(catalog_payload, encoding="utf-8")
+            imported_catalog.write_text(catalog_payload, encoding="utf-8")
+            migration = root / "migration.md"
+            imported_migration = imported_root / "migration.md"
+            migration.write_text("current\n", encoding="utf-8")
+            imported_migration.write_text("current\n", encoding="utf-8")
+            imported = {
+                "generated": imported_generated,
+                "catalog": imported_catalog,
+                "migration": imported_migration,
+            }
+
+            def compare() -> dict[str, object]:
+                return compare_import_contract(
+                    base,
+                    imported,
+                    catalog_target=catalog,
+                    migration_target=migration,
+                    policy_sha256="a" * 64,
+                )
+
+            self.assertTrue(import_is_current(compare()))
+            for path, payload, key in (
+                (imported_catalog, '{"source":{"policy_sha256":"' + "b" * 64 + '"}}\n', "catalog_changed"),
+                (imported_migration, "changed\n", "migration_changed"),
+            ):
+                with self.subTest(key=key):
+                    original = path.read_text(encoding="utf-8")
+                    path.write_text(payload, encoding="utf-8")
+                    self.assertTrue(compare()[key])
+                    self.assertFalse(import_is_current(compare()))
+                    path.write_text(original, encoding="utf-8")
+            self.assertTrue(
+                compare_import_contract(
+                    base,
+                    imported,
+                    catalog_target=catalog,
+                    migration_target=migration,
+                    policy_sha256="b" * 64,
+                )["policy_sha256_changed"]
+            )
+
+    def test_check_mode_returns_two_when_import_contract_drifts(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            lock = root / "smartperfetto.lock.json"
+            lock.write_text(
+                json.dumps(
+                    {
+                        "commit": "a" * 40,
+                        "repository": "https://github.com/Gracker/SmartPerfetto",
+                        "generated_base_root": "base",
+                        "policy_sha256": "b" * 64,
+                    }
+                ),
+                encoding="utf-8",
+            )
+            imported = {
+                "generated": root / "imported/generated",
+                "catalog": root / "imported/catalog.json",
+                "migration": root / "imported/migration.md",
+            }
+            with (
+                mock.patch.object(sync_smartperfetto, "ROOT", root),
+                mock.patch.object(sync_smartperfetto, "validate_source"),
+                mock.patch.object(sync_smartperfetto, "import_to_directory", return_value=imported),
+                mock.patch.object(
+                    sync_smartperfetto,
+                    "compare_import_contract",
+                    return_value={
+                        "added": ["new"],
+                        "removed": [],
+                        "changed": [],
+                        "unchanged": 0,
+                        "catalog_changed": False,
+                        "migration_changed": False,
+                        "policy_sha256_changed": False,
+                    },
+                ),
+            ):
+                result = sync_smartperfetto.main(
+                    [
+                        "--source",
+                        str(root / "source"),
+                        "--lock",
+                        str(lock),
+                        "--report-dir",
+                        str(root / "reports"),
+                        "--check",
+                    ]
+                )
+            self.assertEqual(result, 2)
+
     def test_compare_import_reports_added_removed_and_changed(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/app/systemui_module.skill.yaml
 -- Source SHA-256: 8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 SELECT
   p.upid,

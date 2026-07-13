@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_metrics.skill.yaml
 -- Source SHA-256: 7ec44d892abb05141d0c58bfb05944911a22d8a6d4252fc95aa9b12c5f4f800a
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 WITH
 time_bounds AS (

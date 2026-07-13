@@ -42,9 +42,11 @@ class VerifyCommandTest(unittest.TestCase):
         self.assertIn(
             [
                 verify.sys.executable,
-                "tools/export_from_smartperfetto.py",
+                "tools/sync_smartperfetto.py",
                 "--source",
                 str(source),
+                "--report-dir",
+                "test-output/verify-smartperfetto",
                 "--check",
             ],
             commands,
@@ -80,6 +82,23 @@ class VerifyCommandTest(unittest.TestCase):
                 environment["PERFETTO_TRACE_PROCESSOR"], str(processor.resolve())
             )
             self.assertEqual(environment["PERFETTO_FIXTURE_TIER"], "full")
+            self.assertNotIn("SMARTPERFETTO_SOURCE", environment)
+
+    def test_fixture_environment_removes_legacy_smartperfetto_source(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            fixtures = Path(temporary)
+            processor = fixtures / "trace_processor_shell"
+            processor.write_bytes(b"binary")
+            processor.chmod(0o755)
+            environment = verify.verification_environment(
+                fixtures,
+                processor,
+                tier="full",
+                base={
+                    "PATH": os.environ.get("PATH", ""),
+                    "SMARTPERFETTO_SOURCE": "/tmp/stale-source",
+                },
+            )
             self.assertNotIn("SMARTPERFETTO_SOURCE", environment)
 
 

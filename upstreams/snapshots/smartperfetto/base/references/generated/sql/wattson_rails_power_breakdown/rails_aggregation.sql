@@ -1,14 +1,8 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/wattson_rails_power_breakdown.skill.yaml
--- Source SHA-256: 8214b9e8c26e8130521fe0d2665da06cf7fa7d139bddbcd0a6f83543d3c09bdb
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source SHA-256: 9e2ae8ad5f92ade41fd691813c04bca6d79989977357e0f8f778201ac65a98bf
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
-WITH window AS (
-  SELECT
-    COALESCE(${start_ts}, trace_start()) AS ts,
-    MAX(COALESCE(${end_ts}, trace_end()) - COALESCE(${start_ts}, trace_start()), 0) AS dur,
-    0 AS period_id
-)
 SELECT
   subsystem,
   breakdown_type,
@@ -17,7 +11,12 @@ SELECT
   ROUND(SUM(estimated_mws) / 3600.0, 6) AS energy_mwh,
   ROUND(SUM(estimated_mws) * 1e9 / NULLIF(SUM(period_dur), 0), 2) AS avg_power_mw,
   'wattson_estimate' AS source_level
-FROM wattson_rails_aggregation!(window)
+FROM wattson_rails_aggregation!((
+  SELECT
+    COALESCE(${start_ts}, trace_start()) AS ts,
+    MAX(COALESCE(${end_ts}, trace_end()) - COALESCE(${start_ts}, trace_start()), 0) AS dur,
+    0 AS period_id
+))
 GROUP BY subsystem, breakdown_type, component_id
 ORDER BY total_energy_mws DESC
 LIMIT ${top_n|20}

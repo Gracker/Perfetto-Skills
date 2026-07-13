@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thermal_predictor.skill.yaml
 -- Source SHA-256: 16bb6ec7bc5e0769d25f1b2b46ed3a8d7d71648c6c6ae67e745ef86966aaa7ef
--- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 WITH freq_samples AS (
   SELECT

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/state_timeline.skill.yaml
--- Source SHA-256: e3ba12b4a53d3c90d152f942c7f910e4108218ef5da2c56c0e19561009686fc2
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source SHA-256: 847df75d4dff0db6d9e8a10b5d5654d248cc898fde909ce265075dfb85209401
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 WITH trace_bounds AS (
   SELECT MIN(ts) AS t_start, MAX(ts) AS t_end

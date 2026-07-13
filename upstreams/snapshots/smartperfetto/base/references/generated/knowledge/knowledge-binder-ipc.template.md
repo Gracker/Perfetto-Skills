@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-binder-ipc.template.md
 Source SHA-256: 0a1c550faa9c9931e3fd5cc8a215bef30dd2256d4cfce0d5d1e38eaa8084a6f8
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 # Knowledge Binder Ipc Template
 

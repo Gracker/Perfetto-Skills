@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/vsync_config.skill.yaml
 -- Source SHA-256: 7dbf90d2995e488a38404e815e4b85f2674d51b83d6a59b78ae3ed4bcc08d946
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 WITH
 -- 方法1: 从 expected_frame_timeline_slice 获取 vsync 周期（回退来源）

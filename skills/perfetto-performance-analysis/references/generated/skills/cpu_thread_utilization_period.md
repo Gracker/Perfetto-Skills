@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_thread_utilization_period.skill.yaml
-Source SHA-256: ce8310da44dc38f1cb55bd3e6768d15e6959ac0130ef320d511f5ba7d4a9deb6
-Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
+Source SHA-256: c8a23fe5e6ee9fe1e5138a2b5fa831ad15c09715f07fb81ca282c0f233074dec
+Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 # 线程 CPU 利用率（周期）
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

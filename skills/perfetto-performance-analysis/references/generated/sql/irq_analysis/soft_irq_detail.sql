@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/irq_analysis.skill.yaml
--- Source SHA-256: 01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576
--- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
+-- Source SHA-256: f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 SELECT
   name as irq_name,
@@ -15,8 +15,8 @@ SELECT
     WHEN MAX(dur) / 1e3 > ${soft_irq_long_threshold_us|10000} / 10 THEN 'notice'
     ELSE 'normal'
   END as severity
-FROM slice
-WHERE (name LIKE 'softirq/%' OR name LIKE 'softirq_%')
+FROM linux_irqs
+WHERE is_soft_irq = 1
   AND (${start_ts} IS NULL OR ts >= ${start_ts})
   AND (${end_ts} IS NULL OR ts < ${end_ts})
 GROUP BY name

@@ -66,6 +66,50 @@ def compare_import(base: Path, imported: Path) -> dict[str, object]:
     }
 
 
+def _is_sha256(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == 64
+        and all(character in "0123456789abcdef" for character in value)
+    )
+
+
+def compare_import_contract(
+    base: Path,
+    imported: dict[str, Path],
+    *,
+    catalog_target: Path,
+    migration_target: Path,
+    policy_sha256: object,
+) -> dict[str, object]:
+    catalog = json.loads(imported["catalog"].read_text(encoding="utf-8"))
+    imported_policy_sha256 = catalog.get("source", {}).get("policy_sha256")
+    return {
+        **compare_import(base, imported["generated"]),
+        "catalog_changed": not catalog_target.is_file()
+        or catalog_target.read_bytes() != imported["catalog"].read_bytes(),
+        "migration_changed": not migration_target.is_file()
+        or migration_target.read_bytes() != imported["migration"].read_bytes(),
+        "policy_sha256_changed": not _is_sha256(policy_sha256)
+        or not _is_sha256(imported_policy_sha256)
+        or imported_policy_sha256 != policy_sha256,
+    }
+
+
+def import_is_current(drift: dict[str, object]) -> bool:
+    return not any(
+        drift.get(key)
+        for key in (
+            "added",
+            "removed",
+            "changed",
+            "catalog_changed",
+            "migration_changed",
+            "policy_sha256_changed",
+        )
+    )
+
+
 def import_to_directory(source: Path, output: Path) -> dict[str, Path]:
     skill_root = output / "skill"
     references = skill_root / "references"
@@ -168,7 +212,13 @@ def main(arguments: list[str] | None = None) -> int:
     parser.add_argument("--lock", type=Path, default=DEFAULT_LOCK)
     parser.add_argument("--commit", help="Proposed immutable SmartPerfetto commit")
     parser.add_argument("--report-dir", type=Path, default=ROOT / "test-output/sync")
-    parser.add_argument("--apply", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--apply", action="store_true")
+    mode.add_argument(
+        "--check",
+        action="store_true",
+        help="Fail when the pinned imported snapshot differs from the source checkout.",
+    )
     args = parser.parse_args(arguments)
 
     lock = json.loads(args.lock.read_text(encoding="utf-8"))
@@ -177,7 +227,13 @@ def main(arguments: list[str] | None = None) -> int:
     with tempfile.TemporaryDirectory(prefix="perfetto-skills-smart-sync-") as temporary:
         imported = import_to_directory(args.source, Path(temporary))
         base = args.lock.parent / lock["generated_base_root"]
-        drift = compare_import(base, imported["generated"])
+        drift = compare_import_contract(
+            base,
+            imported,
+            catalog_target=ROOT / "catalog/smartperfetto-export.json",
+            migration_target=ROOT / "docs/migration-coverage.md",
+            policy_sha256=lock.get("policy_sha256"),
+        )
         report = {
             "schema_version": 1,
             "repository": lock["repository"],
@@ -194,6 +250,9 @@ def main(arguments: list[str] | None = None) -> int:
         if args.apply:
             apply_import(imported, args.lock, lock, requested_commit)
     print(report_path)
+    if args.check and not import_is_current(drift):
+        print("SmartPerfetto imported snapshot differs from the pinned source", file=sys.stderr)
+        return 2
     return 0
 
 

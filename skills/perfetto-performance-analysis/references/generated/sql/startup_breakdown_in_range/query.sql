@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_breakdown_in_range.skill.yaml
 -- Source SHA-256: acdca121c21c877922518048f6698fead940d1d8dadf91209910bbcd4be3810b
--- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 SELECT
   b.reason,

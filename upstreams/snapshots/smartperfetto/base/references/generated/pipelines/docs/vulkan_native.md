@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/vulkan_native.md
 Source SHA-256: 6c9038842921e80abae3859ad7a3ac4ad04e9b5ed194d155ecd22121b6b45165
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 # Vulkan Native Rendering Pipeline
 

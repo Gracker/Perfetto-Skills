@@ -1,19 +1,11 @@
 import json
-import os
 from pathlib import Path
-import subprocess
-import sys
 import unittest
 
 from tools import export_from_smartperfetto as exporter
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SMARTPERFETTO = (
-    Path(os.environ["SMARTPERFETTO_SOURCE"]).expanduser().resolve()
-    if os.environ.get("SMARTPERFETTO_SOURCE")
-    else None
-)
 EXPORTER = ROOT / "tools" / "export_from_smartperfetto.py"
 CATALOG = ROOT / "catalog" / "smartperfetto-export.json"
 MIGRATION_DOC = ROOT / "docs" / "migration-coverage.md"
@@ -27,24 +19,7 @@ class ExporterTest(unittest.TestCase):
         self.assertTrue(CATALOG.is_file(), "catalog/smartperfetto-export.json")
         return json.loads(CATALOG.read_text(encoding="utf-8"))
 
-    @unittest.skipUnless(
-        SMARTPERFETTO
-        and (SMARTPERFETTO / "backend/skills/public-export.yaml").is_file(),
-        "explicit SMARTPERFETTO_SOURCE not configured",
-    )
     def test_catalog_covers_every_runtime_candidate(self) -> None:
-        assert SMARTPERFETTO is not None
-        subprocess.run(
-            [
-                sys.executable,
-                str(EXPORTER),
-                "--source",
-                str(SMARTPERFETTO),
-                "--check",
-            ],
-            cwd=ROOT,
-            check=True,
-        )
         catalog = self.load_catalog()
         self.assertEqual(catalog["summary"]["skill_yaml_files"], 236)
         self.assertEqual(catalog["summary"]["runtime_candidates"], 231)

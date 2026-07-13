@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/memory_module.skill.yaml
 -- Source SHA-256: 4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd
--- Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 SELECT
   ct.name AS psi_type,

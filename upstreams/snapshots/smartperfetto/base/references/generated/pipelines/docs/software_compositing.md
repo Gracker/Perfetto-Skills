@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/software_compositing.md
 Source SHA-256: e383bf12af8e0d400cd0c319b643041678621027ec07bdcad09aad6b901eb200
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 # Software Compositing Pipeline
 

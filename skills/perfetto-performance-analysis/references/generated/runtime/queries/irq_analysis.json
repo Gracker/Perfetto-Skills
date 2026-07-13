@@ -54,23 +54,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/data_check.sql",
-      "sha256": "90d4856f7bb98187765bef27949e7773c9f6284d4d49c3c967ebb552b0da46a1",
-      "signal_patterns": [
-        "irq/%",
-        "irq_handler_%",
-        "softirq/%",
-        "softirq_"
-      ],
+      "sha256": "6608990beee6238d1bb0bc4655db0d6c0c2a0d42e7e405354822f3a1c879e36d",
+      "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+        "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [],
+        "declared_modules": [
+          "linux.irqs"
+        ],
         "drops": [],
         "required_tables": [
           "slice"
@@ -147,23 +144,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/irq_overview.sql",
-      "sha256": "668e7df57038c7c3ed3a6e0b96c6c5c55662f9566a6ca319d4a5a162670338b4",
-      "signal_patterns": [
-        "irq/%",
-        "irq_handler_%",
-        "softirq/%",
-        "softirq_%"
-      ],
+      "sha256": "2a58904789840265a4a81c7bec09a56b44746f710f694f04ab2b3251e355fbcc",
+      "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+        "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [],
+        "declared_modules": [
+          "linux.irqs"
+        ],
         "drops": [],
         "required_tables": [
           "slice"
@@ -243,23 +237,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/top_irq_sources.sql",
-      "sha256": "a05eca5edfe1e848ef79d12a539f5cacd89dad3584f82081add3952cb2764348",
-      "signal_patterns": [
-        "irq/%",
-        "irq_handler_%",
-        "softirq/%",
-        "softirq_%"
-      ],
+      "sha256": "a42c77ebd3b49b4eea451a7a4f1a7d22b6c4b24ddf15962f34abc92b34953678",
+      "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+        "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [],
+        "declared_modules": [
+          "linux.irqs"
+        ],
         "drops": [],
         "required_tables": [
           "slice"
@@ -339,21 +330,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/hard_irq_detail.sql",
-      "sha256": "3473eeb332f2b540248a4fc634f95c008b80e77d200072214e732f61904c4e4a",
-      "signal_patterns": [
-        "irq/%",
-        "irq_handler_%"
-      ],
+      "sha256": "2a621191dcbdd832c6b8f6d8117f8b9aaa8bb8112143e37e02d812fa56825550",
+      "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+        "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [],
+        "declared_modules": [
+          "linux.irqs"
+        ],
         "drops": [],
         "required_tables": [
           "slice"
@@ -434,21 +424,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/soft_irq_detail.sql",
-      "sha256": "02769925f05115c7f51d0d4b54c37a31d956ec29bb100bdd9e6918a8c07aa252",
-      "signal_patterns": [
-        "softirq/%",
-        "softirq_%"
-      ],
+      "sha256": "62f6a478e2f349f098ada8acf975a991d9689da3b39cb5eb1da75b646e237bb1",
+      "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+        "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [],
+        "declared_modules": [
+          "linux.irqs"
+        ],
         "drops": [],
         "required_tables": [
           "slice"
@@ -529,23 +518,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/long_irq_events.sql",
-      "sha256": "ccd406df0679376f7497f9c517c7dd5e8fc6d1dce20bea8302c244bdd6b57446",
-      "signal_patterns": [
-        "irq/%",
-        "irq_handler_%",
-        "softirq/%",
-        "softirq_%"
-      ],
+      "sha256": "d21e7ebce875ef8666a0e690464554d71bfc747aae617967614817742c6d5f0f",
+      "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+        "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [],
+        "declared_modules": [
+          "linux.irqs"
+        ],
         "drops": [],
         "required_tables": [
           "slice"
@@ -627,23 +613,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/irq_timeline.sql",
-      "sha256": "99491f1c4b0a55b0ec1fbbda7443cb2017e827739a0337320b8b3ad86f947d71",
-      "signal_patterns": [
-        "irq/%",
-        "irq_handler_%",
-        "softirq/%",
-        "softirq_%"
-      ],
+      "sha256": "98fc8c04e5d6f6d3f3b04d203c08b6d438250c28b4def0b76807f02331b91507",
+      "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+        "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [],
+        "declared_modules": [
+          "linux.irqs"
+        ],
         "drops": [],
         "required_tables": [
           "slice"
@@ -723,23 +706,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/root_cause_classification.sql",
-      "sha256": "61f9004e35938d5c401be3fce44d8be555d00ea1bff416b4a2cf21d3b15b02cf",
-      "signal_patterns": [
-        "irq/%",
-        "irq_handler_%",
-        "softirq/%",
-        "softirq_%"
-      ],
+      "sha256": "35187fac2d3389a7c05184ce858cac9edbb359930f935b6e89c41507ae2463bb",
+      "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+        "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [],
+        "declared_modules": [
+          "linux.irqs"
+        ],
         "drops": [],
         "required_tables": [
           "slice"
@@ -823,18 +803,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/no_data_fallback.sql",
-      "sha256": "602b434bf65cdaffdba3edc791dc64f1e65bf0c9e3f749398e8c3ef29fd5ffaa",
+      "sha256": "d347069cd3ce09f3dc8344b02911742bd963e58de4dbc057bc74534d8661e4f7",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576"
+        "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [],
+        "declared_modules": [
+          "linux.irqs"
+        ],
         "drops": [],
         "required_tables": [
           "slice"

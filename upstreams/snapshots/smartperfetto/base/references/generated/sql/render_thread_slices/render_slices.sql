@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/render_thread_slices.skill.yaml
 -- Source SHA-256: cc1e3d5e7156fb21c9208867164cb287e368f620dae68b1f3e289076316b4435
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 SELECT
   name,

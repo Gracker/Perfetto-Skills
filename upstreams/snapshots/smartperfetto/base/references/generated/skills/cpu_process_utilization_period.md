@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_process_utilization_period.skill.yaml
-Source SHA-256: 396d2f22f5fc3e74c65a12e598742afe1da04e59b47ac29093992f3d2938038b
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: a37173b25f5c40b5fdbe2f46e13e980b8eca451f7e52275826547e3480585ea2
+Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 # 进程 CPU 利用率
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

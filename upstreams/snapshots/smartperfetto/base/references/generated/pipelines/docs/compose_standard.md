@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/compose_standard.md
 Source SHA-256: 49370f861ca3195bcfe60f34124a8d4197a4cfd91a11e90cde2087e80df6db2f
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 # Jetpack Compose Standard Pipeline
 

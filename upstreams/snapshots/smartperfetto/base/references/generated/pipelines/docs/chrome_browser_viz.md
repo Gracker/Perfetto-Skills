@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/chrome_browser_viz.md
 Source SHA-256: e21fa53260bdc77cd4b041e8f45f595a1bbd7001b73cf4a573350b3574658aa6
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 # Chrome Browser Viz Pipeline
 

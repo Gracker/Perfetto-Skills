@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/selection-slice.template.md
 Source SHA-256: 564366085a8bf47a77e08a4041bdda2d0c8581c8febb8b9f6c45ee3cbafff681
-Source commit: 1e23eb4369431c88f9847dcec69ccb81946bdb26
+Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 # Selection Slice Template
 

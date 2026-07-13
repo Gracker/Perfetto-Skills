@@ -47,7 +47,9 @@
       "status": "capability_gated"
     }
   },
-  "required_modules": [],
+  "required_modules": [
+    "linux.irqs"
+  ],
   "required_tables": [
     "slice"
   ],
@@ -59,13 +61,7 @@
     "target_range_row_coverage",
     "api_hint"
   ],
-  "signal_patterns": [
-    "irq/%",
-    "irq_handler_%",
-    "softirq/%",
-    "softirq_",
-    "softirq_%"
-  ],
+  "signal_patterns": [],
   "skill_id": "irq_analysis",
   "steps": {
     "data_check": {

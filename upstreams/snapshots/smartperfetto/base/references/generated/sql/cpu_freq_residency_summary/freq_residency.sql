@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_freq_residency_summary.skill.yaml
 -- Source SHA-256: 574b201a6ed4593061204a5cda42d112cb63665150c965bf038ba6a7a075daca
--- Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+-- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 
 WITH clipped AS (
   SELECT

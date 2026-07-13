@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/pipeline_4feature_scoring.skill.yaml
-Source SHA-256: 510fbb63523a223a8d40f61f49a3090fc0b9dcc00bebf3a319e94aaf6506408a
-Source commit: cda248e2324a554220e15f8ce5ede39f2f53468d
+Source SHA-256: 1e79317b0855a512d32bbad13dab94931b70017b7cf9f585ab505151c272ea3a
+Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
 # Pipeline 4 特征分型综合评分
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
