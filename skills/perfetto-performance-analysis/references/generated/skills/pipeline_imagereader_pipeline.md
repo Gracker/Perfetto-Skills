@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/imagereader_pipeline.skill.yaml
 Source SHA-256: c016399e110f9f3bfe0ba8f599e4ad9a59889ac2c2eea78845816dd4c56a90fd
-Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
+Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
 # ImageReader 渲染管线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

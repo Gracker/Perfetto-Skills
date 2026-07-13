@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/block_io_analysis.skill.yaml
 -- Source SHA-256: 6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985
--- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
+-- Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
 
 SELECT
   printf('%d', ts) AS ts,

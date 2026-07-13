@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/irq_analysis.skill.yaml
 -- Source SHA-256: f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d
--- Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
+-- Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
 
 SELECT
   name as irq_name,

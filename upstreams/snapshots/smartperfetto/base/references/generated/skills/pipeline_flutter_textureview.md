@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/flutter_textureview.skill.yaml
 Source SHA-256: 73c239240fd7a0cdcfa32cbdce1c607ff0c23126be8b5bdeb9875b6b809f06f8
-Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
+Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
 # Flutter TextureView
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

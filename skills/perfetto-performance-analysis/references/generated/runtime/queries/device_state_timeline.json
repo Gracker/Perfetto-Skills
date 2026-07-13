@@ -54,13 +54,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/device_state_timeline/cpu_freq_transitions.sql",
-      "sha256": "0c99e3bba7ffbe6740263f938c100e8de3c989517e4117fa29fdec9ecd89fd29",
+      "sha256": "e0056b080bc001c923c6eae6a4bfb56b8644c0b0b8f8b3470260ec5280b6b56b",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "device_state_timeline",
       "source": {
-        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
+        "commit": "40048058243cbb91ef11082a06ba1e4d0f7d3c5a",
         "path": "backend/skills/atomic/device_state_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "706331c8ba61ce76147693d6cb6cdf6758bdfc7ecab0b035ab635b86002efd08"
@@ -148,7 +148,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/device_state_timeline/thermal_events.sql",
-      "sha256": "de9ce6d0337f5288f52c2a78d01f941c2474b6562492f516dad9aea9946ec562",
+      "sha256": "fdd393f3ee740e7457890222d253c29621c3308206d0385537a7b0e6b8595c4a",
       "signal_patterns": [
         "*Temperature*",
         "*temp*",
@@ -157,7 +157,7 @@
       ],
       "skill_id": "device_state_timeline",
       "source": {
-        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
+        "commit": "40048058243cbb91ef11082a06ba1e4d0f7d3c5a",
         "path": "backend/skills/atomic/device_state_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "706331c8ba61ce76147693d6cb6cdf6758bdfc7ecab0b035ab635b86002efd08"
@@ -245,7 +245,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/device_state_timeline/memory_pressure_events.sql",
-      "sha256": "84084b969f69fc0e161529c17d51dc2467dd283213e06c2a7f39fe654cd5b499",
+      "sha256": "92b02221efc36a0db4948f0341b0460213837f3c5eeae4e4a9733a72cee7bd6a",
       "signal_patterns": [
         "*MemAvailable*",
         "*MemFree*",
@@ -255,7 +255,7 @@
       ],
       "skill_id": "device_state_timeline",
       "source": {
-        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
+        "commit": "40048058243cbb91ef11082a06ba1e4d0f7d3c5a",
         "path": "backend/skills/atomic/device_state_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "706331c8ba61ce76147693d6cb6cdf6758bdfc7ecab0b035ab635b86002efd08"
@@ -344,7 +344,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/device_state_timeline/gpu_freq_transitions.sql",
-      "sha256": "237b7a77a560871e34c11537c72bb2bea61e00046df76972a3716fbcbe71df4c",
+      "sha256": "7193f54de8476d3142be830db8d5cf765284d22622d5c57ac73b47df6052bcfb",
       "signal_patterns": [
         "*GPU*Freq*",
         "*gpu*clock*",
@@ -353,7 +353,7 @@
       ],
       "skill_id": "device_state_timeline",
       "source": {
-        "commit": "a0c1029d26be661802c6ac4b6ae26ded35c8db31",
+        "commit": "40048058243cbb91ef11082a06ba1e4d0f7d3c5a",
         "path": "backend/skills/atomic/device_state_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "706331c8ba61ce76147693d6cb6cdf6758bdfc7ecab0b035ab635b86002efd08"

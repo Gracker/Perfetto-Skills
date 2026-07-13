@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/index.en.md
 Source SHA-256: 3f0578a5ece4bfdfeeafb1db78d7cfb7287b5b28e4686bebb8fa16bd2a00dbd6
-Source commit: a0c1029d26be661802c6ac4b6ae26ded35c8db31
+Source commit: 40048058243cbb91ef11082a06ba1e4d0f7d3c5a
 
 # Android Rendering Pipelines Overview
 
