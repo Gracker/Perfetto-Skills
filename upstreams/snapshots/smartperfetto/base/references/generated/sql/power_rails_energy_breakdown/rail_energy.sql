@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/power_rails_energy_breakdown.skill.yaml
 -- Source SHA-256: 6aaff1c3c000fd17b55820ae6849ffcf6d24beb72dd5a902f08144738181563f
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
 
 WITH bounds AS (
   SELECT
