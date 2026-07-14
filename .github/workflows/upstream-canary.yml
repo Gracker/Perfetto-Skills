@@ -1,0 +1,97 @@
+name: Upstream canary
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 4 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Perfetto Skills
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          path: Perfetto-Skills
+          persist-credentials: false
+      - name: Check out SmartPerfetto main
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: Gracker/SmartPerfetto
+          ref: main
+          path: SmartPerfetto
+          persist-credentials: false
+          submodules: recursive
+      - name: Check out Google Perfetto main
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: google/perfetto
+          ref: main
+          path: GooglePerfetto
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      - name: Discover upstream heads and run non-blocking canary
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p /tmp/perfetto-skills-canary
+          git -C Perfetto-Skills archive HEAD | tar -x -C /tmp/perfetto-skills-canary
+          cd /tmp/perfetto-skills-canary
+          uv sync --extra dev
+          mkdir -p test-output/canary
+          smart_head="$(git -C "$GITHUB_WORKSPACE/SmartPerfetto" rev-parse HEAD)"
+          google_head="$(git -C "$GITHUB_WORKSPACE/GooglePerfetto" rev-parse HEAD)"
+          latest_tag="$(git -C "$GITHUB_WORKSPACE/GooglePerfetto" tag --list 'v[0-9]*' \
+            --sort=-version:refname | grep -E '^v[0-9]+(\.[0-9]+)*$' | head -n 1)"
+          printf '{"smartperfetto_head":"%s","google_perfetto_head":"%s","google_perfetto_latest_tag":"%s"}\n' \
+            "$smart_head" "$google_head" "$latest_tag" > test-output/canary/discovered-heads.json
+          uv run python tools/sync_smartperfetto.py --source "$GITHUB_WORKSPACE/SmartPerfetto" \
+            --commit "$smart_head" --report-dir test-output/canary --apply
+          status=0
+          uv run python tools/sync_official_skill.py --perfetto "$GITHUB_WORKSPACE/GooglePerfetto" \
+            --revision "$latest_tag" --report-dir test-output/canary || status=1
+          uv run python tools/sync_perfetto_stdlib.py --perfetto "$GITHUB_WORKSPACE/GooglePerfetto" \
+            --revision "$latest_tag" --report-dir test-output/canary || status=1
+          candidate_commit="$(jq -r '.candidate_identity.commit' test-output/canary/perfetto-stdlib-drift.json)"
+          candidate_rpc="$(jq -r '.candidate_identity.rpc_api_version' test-output/canary/perfetto-stdlib-drift.json)"
+          processor="test-output/canary/trace_processor_shell"
+          if curl --fail --location --retry 3 \
+            "https://commondatastorage.googleapis.com/perfetto-luci-artifacts/${latest_tag}/linux-amd64/trace_processor_shell" \
+            --output "$processor"; then
+            chmod +x "$processor"
+            shasum -a 256 "$processor" > test-output/canary/latest-processor.SHA256SUMS
+            "$processor" --version > test-output/canary/latest-processor-version.txt
+            grep -F "Perfetto ${latest_tag}" test-output/canary/latest-processor-version.txt || status=1
+            grep -F "$candidate_commit" test-output/canary/latest-processor-version.txt || status=1
+            grep -F "RPC API version: ${candidate_rpc}" test-output/canary/latest-processor-version.txt || status=1
+            fixture_root="$(uv run python tools/download_fixture_pack.py \
+              --cache test-output/canary/fixtures | tail -n 1)"
+            PERFETTO_FIXTURE_ROOT="$fixture_root" \
+            PERFETTO_FIXTURE_TIER=full \
+            PERFETTO_TRACE_PROCESSOR="$PWD/$processor" \
+              uv run python tools/validate_all_queries.py --execute \
+                --allow-unsupported-processor \
+                --output test-output/canary/latest-release-query-validation.json || status=1
+          else
+            status=1
+          fi
+          uv run python tools/compile_skill.py --apply
+          uv run python tools/verify.py || status=1
+          exit "$status"
+      - name: Upload canary drift
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: upstream-canary
+          path: /tmp/perfetto-skills-canary/test-output/canary/
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,310 @@
+{
+  "adapters": [],
+  "api": {
+    "28": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "29": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "30": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "31": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "32": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "33": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "34": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "35": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "36": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "37": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    }
+  },
+  "required_modules": [
+    "android.dvfs",
+    "linux.cpu.idle",
+    "linux.cpu.utilization.process",
+    "linux.cpu.utilization.thread",
+    "android.gpu.work_period"
+  ],
+  "required_tables": [],
+  "schema_version": 1,
+  "selection_order": [
+    "device_capability",
+    "trace_config_and_setup_errors",
+    "engine_module_and_schema",
+    "target_range_row_coverage",
+    "api_hint"
+  ],
+  "signal_patterns": [],
+  "skill_id": "thermal_throttling_chain",
+  "steps": {
+    "cpu_idle": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "dvfs": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "gpu_work_period": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "mali_state": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "process_util": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "thermal": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "thread_util": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    }
+  }
+}

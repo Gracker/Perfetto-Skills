@@ -32,238 +32,6 @@
             "status": "capability_gated"
           },
           "35": {
-            "fixtures": [
-              "smart-flutter-texture-api35"
-            ],
-            "status": "verified"
-          },
-          "36": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "37": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          }
-        },
-        "probe_capabilities": [
-          "slices"
-        ]
-      },
-      "id": "rendering_pipeline_detection/thread_signals",
-      "license": {
-        "origin": "smartperfetto",
-        "spdx": "AGPL-3.0-or-later"
-      },
-      "path": "sql/rendering_pipeline_detection/thread_signals.sql",
-      "sha256": "cf7acbc75d9503b536dca21a965e41bd231fbb40e60f2e1102f14d864b2bac1c",
-      "signal_patterns": [
-        "${package}*",
-        "*Camera*",
-        "*Chrome*",
-        "*CompositorTileW*",
-        "*CrRenderer*",
-        "*Decoder*",
-        "*GLSurface*",
-        "*GLThread*",
-        "*GameThread*",
-        "*GodotMain*",
-        "*MediaCodec*",
-        "*RHIThread*",
-        "*UnityGfx*",
-        "*UnityMain*",
-        "*VizCompositor*",
-        "*VkQueue*",
-        "*Vulkan*",
-        "*WebViewCore*",
-        "*io.flutter*",
-        "*io.flutter.impeller*",
-        "*raster*",
-        "1.raster",
-        "RenderThread",
-        "main"
-      ],
-      "skill_id": "rendering_pipeline_detection",
-      "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
-        "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
-        "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a"
-      },
-      "sql_dependencies": {
-        "creates": [],
-        "declared_modules": [
-          "slices.with_context",
-          "android.frames.timeline"
-        ],
-        "drops": [],
-        "required_tables": [
-          "slice",
-          "thread_track",
-          "thread",
-          "process"
-        ],
-        "requires": [],
-        "setup_queries": []
-      },
-      "step_id": "thread_signals",
-      "template": {
-        "fragments": [],
-        "parameters": [
-          "package"
-        ],
-        "result_dependencies": []
-      },
-      "validation": {
-        "default_execution": "verified",
-        "execution_verified": true,
-        "fixtures": [
-          "smart-flutter-texture-api35"
-        ],
-        "runtime_compatible": true,
-        "semantic_verified": true,
-        "static_valid": true
-      }
-    },
-    {
-      "compatibility": {
-        "android": {
-          "28": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "29": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "30": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "31": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "32": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "33": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "34": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "35": {
-            "fixtures": [
-              "smart-flutter-texture-api35"
-            ],
-            "status": "verified"
-          },
-          "36": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "37": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          }
-        },
-        "probe_capabilities": [
-          "slices"
-        ]
-      },
-      "id": "rendering_pipeline_detection/slice_signals",
-      "license": {
-        "origin": "smartperfetto",
-        "spdx": "AGPL-3.0-or-later"
-      },
-      "path": "sql/rendering_pipeline_detection/slice_signals.sql",
-      "sha256": "05d6522dc1ba9f8d21982a8aec3cd55aa21a7d9ce90afd7b0d4959f576e22a4e",
-      "signal_patterns": [
-        "${package}*",
-        "*Chrome*",
-        "*CrRenderer*",
-        "*Flutter*",
-        "*Unity*",
-        "*ui*"
-      ],
-      "skill_id": "rendering_pipeline_detection",
-      "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
-        "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
-        "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a"
-      },
-      "sql_dependencies": {
-        "creates": [],
-        "declared_modules": [
-          "slices.with_context",
-          "android.frames.timeline"
-        ],
-        "drops": [],
-        "required_tables": [
-          "slice",
-          "thread_track",
-          "thread",
-          "process"
-        ],
-        "requires": [],
-        "setup_queries": []
-      },
-      "step_id": "slice_signals",
-      "template": {
-        "fragments": [],
-        "parameters": [
-          "package"
-        ],
-        "result_dependencies": []
-      },
-      "validation": {
-        "default_execution": "verified",
-        "execution_verified": true,
-        "fixtures": [
-          "smart-flutter-texture-api35"
-        ],
-        "runtime_compatible": true,
-        "semantic_verified": true,
-        "static_valid": true
-      }
-    },
-    {
-      "compatibility": {
-        "android": {
-          "28": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "29": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "30": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "31": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "32": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "33": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "34": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "35": {
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           },
@@ -286,14 +54,26 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/score_pipelines.sql",
-      "sha256": "cda2d85735839ceed2635f1c1e75ee9b08c4a45a5284d9a7fba628d4b3b8ac62",
-      "signal_patterns": [],
+      "sha256": "9275f8a50237413bab2e415e9acdafe582df25d7e2c5851f78ac7299fbc4425e",
+      "signal_patterns": [
+        "${package}*",
+        "*Choreographer#doFrame*",
+        "*FrameTimeline*",
+        "*Swappy*",
+        "*eglSwapBuffers*",
+        "*lockCanvas*",
+        "*updateTexImage*",
+        "*vkQueuePresentKHR*",
+        "DrawFrame*",
+        "RenderThread",
+        "main"
+      ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a"
+        "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
       },
       "sql_dependencies": {
         "creates": [],
@@ -314,11 +94,10 @@
       "step_id": "score_pipelines",
       "template": {
         "fragments": [],
-        "parameters": [],
-        "result_dependencies": [
-          "slice_signals",
-          "thread_signals"
-        ]
+        "parameters": [
+          "package"
+        ],
+        "result_dependencies": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -383,14 +162,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/determine_pipeline.sql",
-      "sha256": "8b72c0dd99c9caad608f60cd94800a86e3c339e0056675602191200535d5d3bc",
+      "sha256": "af7f54a1bd6185f103c80e7f3c870845f1eed72ef316034cbadc19ecebea8e19",
       "signal_patterns": [],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a"
+        "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
       },
       "sql_dependencies": {
         "creates": [],
@@ -479,14 +258,36 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/subvariants.sql",
-      "sha256": "730eaa4ae48cb7da48c33080caa6757db8b0d6abb69e8b54c338fbb3a97efb82",
-      "signal_patterns": [],
+      "sha256": "abf548f801187f0de7f1d4a072891f2f5622c1836ff4aaa9a79f83817231c888",
+      "signal_patterns": [
+        "${package}*",
+        "*Choreographer#doFrame*",
+        "*Chrome*",
+        "*FrameTimeline*",
+        "*Swappy*",
+        "*eglSwapBuffers*",
+        "*lockCanvas*",
+        "*updateTexImage*",
+        "*vkQueuePresentKHR*",
+        "CrRendererMain*",
+        "DrawFrame*",
+        "GameThread*",
+        "GodotMain*",
+        "RHIThread*",
+        "RenderThread",
+        "UnityMain*",
+        "VizCompositor",
+        "VizCompositor*",
+        "VizCompositorThread",
+        "VizCompositorThread*",
+        "main"
+      ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a"
+        "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
       },
       "sql_dependencies": {
         "creates": [],
@@ -507,107 +308,10 @@
       "step_id": "subvariants",
       "template": {
         "fragments": [],
-        "parameters": [],
-        "result_dependencies": [
-          "slice_signals",
-          "thread_signals"
-        ]
-      },
-      "validation": {
-        "default_execution": "capability_gate_required",
-        "execution_verified": false,
-        "fixtures": [],
-        "runtime_compatible": null,
-        "semantic_verified": false,
-        "static_valid": true
-      }
-    },
-    {
-      "compatibility": {
-        "android": {
-          "28": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "29": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "30": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "31": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "32": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "33": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "34": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "35": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "36": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "37": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          }
-        },
-        "probe_capabilities": [
-          "slices"
-        ]
-      },
-      "id": "rendering_pipeline_detection/pin_instructions",
-      "license": {
-        "origin": "smartperfetto",
-        "spdx": "AGPL-3.0-or-later"
-      },
-      "path": "sql/rendering_pipeline_detection/pin_instructions.sql",
-      "sha256": "00b459cab7db8a1b63dd00a84564f11c5774beeb4dee4e2d0d04d074d1c9411a",
-      "signal_patterns": [],
-      "skill_id": "rendering_pipeline_detection",
-      "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
-        "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
-        "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a"
-      },
-      "sql_dependencies": {
-        "creates": [],
-        "declared_modules": [
-          "slices.with_context",
-          "android.frames.timeline"
+        "parameters": [
+          "package"
         ],
-        "drops": [],
-        "required_tables": [
-          "slice",
-          "thread_track",
-          "thread",
-          "process"
-        ],
-        "requires": [],
-        "setup_queries": []
-      },
-      "step_id": "pin_instructions",
-      "template": {
-        "fragments": [],
-        "parameters": [],
-        "result_dependencies": [
-          "pipeline_result"
-        ]
+        "result_dependencies": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -672,16 +376,31 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/trace_requirements.sql",
-      "sha256": "768042283f0726c5e62b48de47f5889d7a6965128456b62dfc3cadecffe4e32b",
+      "sha256": "6463e2994a6aa51cf6bf28c2a8b887f26974757b9c6bb6b0abd8e03065f64e20",
       "signal_patterns": [
-        "*SurfaceFlinger*"
+        "${package}*",
+        "*BLASTBufferQueue*",
+        "*Choreographer#doFrame*",
+        "*FrameTimeline*",
+        "*Swappy*",
+        "*applyTransaction*",
+        "*dequeueBuffer*",
+        "*eglSwapBuffers*",
+        "*lockCanvas*",
+        "*queueBuffer*",
+        "*updateTexImage*",
+        "*vkQueuePresentKHR*",
+        "DrawFrame*",
+        "RenderThread",
+        "main",
+        "surfaceflinger"
       ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a"
+        "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
       },
       "sql_dependencies": {
         "creates": [],
@@ -702,11 +421,230 @@
       "step_id": "trace_requirements",
       "template": {
         "fragments": [],
-        "parameters": [],
-        "result_dependencies": [
-          "slice_signals",
-          "thread_signals"
+        "parameters": [
+          "package"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "fixtures": [
+              "flutter-texture-api35"
+            ],
+            "status": "verified"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
         ]
+      },
+      "id": "rendering_pipeline_detection/active_rendering_processes",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/rendering_pipeline_detection/active_rendering_processes.sql",
+      "sha256": "feeb15f38b453dc5d0fac6e2a04db47911b37f6984dab1e65aec43c5e0eaee1c",
+      "signal_patterns": [
+        "${package}*",
+        "*Choreographer#doFrame*",
+        "*Engine::BeginFrame*",
+        "*EntityPass*",
+        "*FramePacing*",
+        "*FrameTimeline*",
+        "*Rasterizer::DrawToSurfaces*",
+        "*Swappy*",
+        "*eglSwapBuffers*",
+        "*lockCanvas*",
+        "*unlockCanvasAndPost*",
+        "*updateTexImage*",
+        "*vkQueuePresentKHR*",
+        "DrawFrame*",
+        "RenderThread",
+        "main"
+      ],
+      "skill_id": "rendering_pipeline_detection",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "slices.with_context",
+          "android.frames.timeline"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread_track",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "active_rendering_processes",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "package"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "verified",
+        "execution_verified": true,
+        "fixtures": [
+          "flutter-texture-api35"
+        ],
+        "runtime_compatible": true,
+        "semantic_verified": true,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "rendering_pipeline_detection/layer_signals",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/rendering_pipeline_detection/layer_signals.sql",
+      "sha256": "fb2a8b76c62e3bb754c48598b2bad418377fbac571a920190ac7130331f98ade",
+      "signal_patterns": [
+        "*Choreographer#doFrame*",
+        "*FrameTimeline*",
+        "*eglSwapBuffers*",
+        "*vkQueuePresentKHR*",
+        "DrawFrame*",
+        "RenderThread"
+      ],
+      "skill_id": "rendering_pipeline_detection",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "slices.with_context",
+          "android.frames.timeline"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread_track",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "layer_signals",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "package"
+        ],
+        "result_dependencies": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -765,23 +703,27 @@
           "slices"
         ]
       },
-      "id": "rendering_pipeline_detection/active_rendering_processes",
+      "id": "rendering_pipeline_detection/extra_rhythm_signals",
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
-      "path": "sql/rendering_pipeline_detection/active_rendering_processes.sql",
-      "sha256": "b5bd6e12590a42dc348be3d12b71c45538f113b1fb381aa642ea80cc83c9dc83",
+      "path": "sql/rendering_pipeline_detection/extra_rhythm_signals.sql",
+      "sha256": "6839186f4110a4ccf81c62d76d362e978a4e22639c9ebe31e4fb33aeb0158c33",
       "signal_patterns": [
+        "${package}*",
+        "*Choreographer#doFrame*",
+        "*eglSwapBuffers*",
+        "*vkQueuePresentKHR*",
         "DrawFrame*",
         "RenderThread"
       ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "daafcab67c375034945bafa954cdc6e4dc9e1a61942fb303a42d6abf593d817a"
+        "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
       },
       "sql_dependencies": {
         "creates": [],
@@ -799,10 +741,12 @@
         "requires": [],
         "setup_queries": []
       },
-      "step_id": "active_rendering_processes",
+      "step_id": "extra_rhythm_signals",
       "template": {
         "fragments": [],
-        "parameters": [],
+        "parameters": [
+          "package"
+        ],
         "result_dependencies": []
       },
       "validation": {
@@ -811,6 +755,113 @@
         "fixtures": [],
         "runtime_compatible": null,
         "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "fixtures": [
+              "flutter-texture-api35"
+            ],
+            "status": "verified"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "rendering_pipeline_detection/bufferqueue_path_signals",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/rendering_pipeline_detection/bufferqueue_path_signals.sql",
+      "sha256": "ac947fc55b371f79900cc2bb209fec5aac06d782e8d0bd2067219e84cd89efbe",
+      "signal_patterns": [
+        "${package}*",
+        "*Choreographer#doFrame*",
+        "*eglSwapBuffers*",
+        "*vkQueuePresentKHR*",
+        "DrawFrame*",
+        "RenderThread"
+      ],
+      "skill_id": "rendering_pipeline_detection",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "slices.with_context",
+          "android.frames.timeline"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread_track",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "bufferqueue_path_signals",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "package"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "verified",
+        "execution_verified": true,
+        "fixtures": [
+          "flutter-texture-api35"
+        ],
+        "runtime_compatible": true,
+        "semantic_verified": true,
         "static_valid": true
       }
     }

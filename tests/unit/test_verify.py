@@ -1,11 +1,26 @@
 import unittest
 from pathlib import Path
+import os
 import tempfile
 
 from tools import verify
 
 
 class VerifyCommandTest(unittest.TestCase):
+    def test_processor_identity_requires_tag_commit_and_rpc(self) -> None:
+        lock = {"tag": "v57.2", "commit": "a" * 40, "rpc_api_version": 14}
+        verify.validate_processor_identity(
+            f"Perfetto v57.2-aaaaaaaaa ({'a' * 40})\n"
+            "Trace Processor RPC API version: 14\n",
+            lock,
+        )
+        with self.assertRaises(ValueError):
+            verify.validate_processor_identity(
+                f"Perfetto v57.2-aaaaaaaaa ({'a' * 40})\n"
+                "Trace Processor RPC API version: 13\n",
+                lock,
+            )
+
     def test_build_commands_includes_standard_validation(self) -> None:
         self.assertTrue(hasattr(verify, "build_commands"), "build_commands")
         commands = verify.build_commands()
@@ -17,24 +32,21 @@ class VerifyCommandTest(unittest.TestCase):
             ],
             commands,
         )
+        self.assertFalse(
+            any("--smartperfetto" in command for command in commands)
+        )
+
     def test_build_commands_adds_catalog_checks_for_smartperfetto(self) -> None:
         source = Path("/tmp/SmartPerfetto")
         commands = verify.build_commands(source)
-        self.assertEqual(
-            commands[0],
-            [
-                verify.sys.executable,
-                "tools/download_declared_fixtures.py",
-                "--smartperfetto",
-                str(source),
-            ],
-        )
         self.assertIn(
             [
                 verify.sys.executable,
-                "tools/export_from_smartperfetto.py",
+                "tools/sync_smartperfetto.py",
                 "--source",
                 str(source),
+                "--report-dir",
+                "test-output/verify-smartperfetto",
                 "--check",
             ],
             commands,
@@ -51,34 +63,43 @@ class VerifyCommandTest(unittest.TestCase):
             commands,
         )
 
-    def test_smartperfetto_environment_uses_repo_pinned_prebuilt(self) -> None:
+    def test_fixture_environment_uses_owned_fixture_root(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            source = Path(temporary)
-            traces = source / "test-traces"
-            traces.mkdir()
-            binary = (
-                source
-                / "backend"
-                / "prebuilts"
-                / "trace_processor"
-                / "darwin-arm64"
-                / "trace_processor_shell"
-            )
-            binary.parent.mkdir(parents=True)
-            binary.write_bytes(b"binary")
-            binary.chmod(0o755)
-            environment = verify.smartperfetto_environment(
-                source, system="Darwin", machine="arm64", base={}
+            fixtures = Path(temporary)
+            processor = fixtures / "trace_processor_shell"
+            processor.write_bytes(b"binary")
+            processor.chmod(0o755)
+            environment = verify.verification_environment(
+                fixtures,
+                processor,
+                tier="full",
+                base={"PATH": os.environ.get("PATH", "")},
             )
             self.assertEqual(
-                environment["SMARTPERFETTO_SOURCE"], str(source.resolve())
+                environment["PERFETTO_FIXTURE_ROOT"], str(fixtures.resolve())
             )
             self.assertEqual(
-                environment["SMARTPERFETTO_TEST_TRACES"], str(traces.resolve())
+                environment["PERFETTO_TRACE_PROCESSOR"], str(processor.resolve())
             )
-            self.assertEqual(
-                environment["PERFETTO_TRACE_PROCESSOR"], str(binary.resolve())
+            self.assertEqual(environment["PERFETTO_FIXTURE_TIER"], "full")
+            self.assertNotIn("SMARTPERFETTO_SOURCE", environment)
+
+    def test_fixture_environment_removes_legacy_smartperfetto_source(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            fixtures = Path(temporary)
+            processor = fixtures / "trace_processor_shell"
+            processor.write_bytes(b"binary")
+            processor.chmod(0o755)
+            environment = verify.verification_environment(
+                fixtures,
+                processor,
+                tier="full",
+                base={
+                    "PATH": os.environ.get("PATH", ""),
+                    "SMARTPERFETTO_SOURCE": "/tmp/stale-source",
+                },
             )
+            self.assertNotIn("SMARTPERFETTO_SOURCE", environment)
 
 
 if __name__ == "__main__":

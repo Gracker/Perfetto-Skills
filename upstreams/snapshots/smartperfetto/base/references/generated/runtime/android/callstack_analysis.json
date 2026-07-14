@@ -1,0 +1,336 @@
+{
+  "adapters": [],
+  "api": {
+    "28": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "29": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "30": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "31": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "32": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "33": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "34": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "35": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "36": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "37": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    }
+  },
+  "required_modules": [],
+  "required_tables": [],
+  "schema_version": 1,
+  "selection_order": [
+    "device_capability",
+    "trace_config_and_setup_errors",
+    "engine_module_and_schema",
+    "target_range_row_coverage",
+    "api_hint"
+  ],
+  "signal_patterns": [
+    "${package}*",
+    "%.apk",
+    "%.dex",
+    "%.so",
+    "%kernel%",
+    "%vmlinux%"
+  ],
+  "skill_id": "callstack_analysis",
+  "steps": {
+    "analysis_conclusion": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "callstack_analysis/analysis_conclusion"
+    },
+    "caller_analysis": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "callstack_analysis/caller_analysis"
+    },
+    "check_samples": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "callstack_analysis/check_samples"
+    },
+    "hot_functions": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "callstack_analysis/hot_functions"
+    },
+    "module_distribution": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "callstack_analysis/module_distribution"
+    },
+    "thread_hotspots": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "callstack_analysis/thread_hotspots"
+    }
+  }
+}

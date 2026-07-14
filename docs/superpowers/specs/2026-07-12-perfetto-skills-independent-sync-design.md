@@ -80,8 +80,9 @@ Skills.
 The project is split into four ownership layers:
 
 ```text
-upstream locks -> imported snapshots -> local source/overlays -> generated Skill
-                                      -> project-owned fixtures -> verification
+upstream locks -> committed immutable base tree -> local source/overlays
+                                                -> generated Skill
+                                                -> project-owned fixtures -> verification
 ```
 
 ### 5.1 Upstream locks
@@ -103,7 +104,12 @@ paths, source hashes, license, importer version, and import time. The Google
 Perfetto lock additionally records RPC API, stdlib tree ID, official Skill file
 hashes, and trace processor artifact hashes.
 
-Snapshots are sync inputs. They are never edited by hand.
+The SmartPerfetto snapshot contains the complete imported base content under a
+separate committed tree plus a path/hash manifest. Hashes alone are not a
+reconstructable base. The compiler never applies overlays in place to this
+tree, so the upstream original remains available for diff, rebase, and
+base-failure regression execution. Snapshots are sync inputs and are never
+edited by hand.
 
 ### 5.2 Local source and overlays
 
@@ -137,9 +143,10 @@ reapplying an old patch to new content.
 ### 5.3 Generated runtime
 
 The existing `skills/perfetto-performance-analysis/references/generated/`
-tree remains generated output. `tools/compile_skill.py` deterministically merges
-the imported snapshots with local source and overlays. Generated files must not
-be edited directly.
+tree remains generated output. `tools/compile_skill.py` deterministically
+materializes it from the separate committed base tree, local native source, and
+overlays. The compiler never uses the final generated tree as its base.
+Generated files must not be edited directly.
 
 The release Skill remains self-contained and does not contain the upstream
 checkouts, fixture pack, or synchronization tools unless they are required for
@@ -233,12 +240,15 @@ The review result is recorded as exactly one of:
 - `deferred`: record the required follow-up, reason it cannot be completed in
   the current task, and a durable issue or handoff reference.
 
-`tools/check_cross_repo_impact.py` classifies the changed paths and prints the
-required checklist. It does not decide product semantics automatically. The AI
-must inspect the actual diff and paired contracts. If the sibling checkout is
-available, a `required` decision runs its relevant validation too. If it is not
-available, the decision is still mandatory and uses the committed lock/catalog
-as the comparison boundary.
+`tools/check_cross_repo_impact.py` classifies committed branch changes plus the
+staged, unstaged, and untracked working tree and prints the required checklist.
+It does not decide product semantics automatically. The AI must inspect the
+actual diff and paired contracts. The decision is recorded in the commit or PR
+notes with the change-set fingerprint. A `required` decision also records and
+validates the paired repository identity and commit. A `deferred` decision
+records a durable issue or handoff. If the sibling checkout is unavailable,
+`required` cannot be declared complete; use `deferred` rather than implying the
+paired update was verified.
 
 The two directions are intentionally different:
 
@@ -280,6 +290,13 @@ column/value/relation assertions. Parse success or empty output is insufficient.
 Perfetto Skills owns a versioned fixture pack published as a GitHub Release
 asset. `fixtures/manifest.json` and `upstreams/fixture-pack.lock.json` record the
 asset URL, SHA-256, archive layout, and individual trace hashes.
+
+The manifest, committed smoke trace, builder/downloader, provisional lock, and
+reproducible asset hash are committed before the immutable `fixtures-v1` tag is
+created. The tag must point at all inputs needed to rebuild and audit the asset.
+The release is then published from that tag; a follow-up commit may only replace
+an explicitly provisional URL with the immutable release URL when the content
+hash is unchanged.
 
 One very small sanitized real trace is committed under `fixtures/smoke/`. It
 supports offline bootstrap tests without downloading the fixture pack. Larger

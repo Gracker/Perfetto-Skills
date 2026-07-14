@@ -1,23 +1,30 @@
 import json
-import os
 from pathlib import Path
 import tempfile
 import unittest
 
-from tests.support import run_public_compare, run_public_probe, run_public_query
-
-
-TRACE_ROOT = Path(os.environ["SMARTPERFETTO_TEST_TRACES"]) if os.environ.get("SMARTPERFETTO_TEST_TRACES") else None
+from tests.support import (
+    fixture_available,
+    fixture_path,
+    run_public_compare,
+    run_public_probe,
+    run_public_query,
+)
 
 
 @unittest.skipUnless(
-    TRACE_ROOT and TRACE_ROOT.is_dir(),
-    "SMARTPERFETTO_TEST_TRACES not configured",
+    all(
+        fixture_available(fixture_id)
+        for fixture_id in ("startup-light-api36", "startup-heavy-api36")
+    ),
+    "full PERFETTO_FIXTURE_ROOT not configured",
 )
 class ComparisonTest(unittest.TestCase):
     def test_startup_traces_remain_independent_before_delta(self) -> None:
-        traces = [TRACE_ROOT / "launch_light.pftrace", TRACE_ROOT / "lacunh_heavy.pftrace"]
-        self.assertTrue(all(trace.is_file() for trace in traces))
+        traces = [
+            fixture_path("startup-light-api36"),
+            fixture_path("startup-heavy-api36"),
+        ]
         sides = []
         for label, trace in zip(("baseline", "candidate"), traces, strict=True):
             probe = run_public_probe(trace)

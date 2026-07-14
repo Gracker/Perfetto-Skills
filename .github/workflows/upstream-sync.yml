@@ -1,0 +1,80 @@
+name: Upstream sync review
+
+on:
+  workflow_dispatch:
+    inputs:
+      smartperfetto_commit:
+        description: Immutable SmartPerfetto commit to review
+        required: true
+        type: string
+      perfetto_tag:
+        description: Canonical Google Perfetto tag to review
+        required: true
+        default: v57.2
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  sync-review:
+    runs-on: ubuntu-latest
+    env:
+      SMARTPERFETTO_COMMIT: ${{ inputs.smartperfetto_commit }}
+      PERFETTO_TAG: ${{ inputs.perfetto_tag }}
+    steps:
+      - name: Check out Perfetto Skills
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          path: Perfetto-Skills
+          persist-credentials: false
+      - name: Check out proposed SmartPerfetto source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: Gracker/SmartPerfetto
+          ref: ${{ inputs.smartperfetto_commit }}
+          path: SmartPerfetto
+          persist-credentials: false
+          submodules: recursive
+      - name: Check out canonical Google Perfetto source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: google/perfetto
+          ref: ${{ inputs.perfetto_tag }}
+          path: GooglePerfetto
+          persist-credentials: false
+      - name: Ensure SmartPerfetto submodule has the pinned official tag
+        shell: bash
+        run: |
+          git -C SmartPerfetto/perfetto fetch --depth=1 https://github.com/google/perfetto \
+            "refs/tags/${PERFETTO_TAG}:refs/tags/${PERFETTO_TAG}"
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.12"
+      - name: Set up uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+      - name: Build and validate a disposable synchronized candidate
+        shell: bash
+        run: |
+          mkdir -p /tmp/perfetto-skills-candidate
+          git -C Perfetto-Skills archive HEAD | tar -x -C /tmp/perfetto-skills-candidate
+          cd /tmp/perfetto-skills-candidate
+          uv sync --extra dev
+          mkdir -p test-output/sync
+          uv run python tools/sync_smartperfetto.py --source "$GITHUB_WORKSPACE/SmartPerfetto" \
+            --commit "$SMARTPERFETTO_COMMIT" --report-dir test-output/sync --apply
+          uv run python tools/sync_official_skill.py --perfetto "$GITHUB_WORKSPACE/GooglePerfetto" \
+            --report-dir test-output/sync --apply
+          uv run python tools/sync_perfetto_stdlib.py --perfetto "$GITHUB_WORKSPACE/GooglePerfetto" \
+            --report-dir test-output/sync --apply
+          uv run python tools/compile_skill.py --apply
+          uv run python tools/verify.py
+      - name: Upload immutable drift reports
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: upstream-sync-reports
+          path: /tmp/perfetto-skills-candidate/test-output/sync/
+          if-no-files-found: error
+          retention-days: 14

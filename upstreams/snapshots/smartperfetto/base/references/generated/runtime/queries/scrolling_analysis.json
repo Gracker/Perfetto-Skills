@@ -1,0 +1,1950 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "fixtures": [
+              "smart-aosp-scroll-api35"
+            ],
+            "status": "verified"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/frame_timeline_check",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/frame_timeline_check.sql",
+      "sha256": "58a89f8532975a73106d7303d27aecad150b47eca583fa6ee1290ceebeb4bb1a",
+      "signal_patterns": [
+        "actual_frame_timeline_slice"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "frame_timeline_check",
+      "template": {
+        "fragments": [],
+        "parameters": [],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "verified",
+        "execution_verified": true,
+        "fixtures": [
+          "smart-aosp-scroll-api35"
+        ],
+        "runtime_compatible": true,
+        "semantic_verified": true,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/vsync_config",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/vsync_config.sql",
+      "sha256": "9053503005100ad8e198ff4c5872246c925df81abafe932f72fb2e11f4107a0f",
+      "signal_patterns": [
+        "${package}*",
+        "VSYNC-sf"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "vsync_config",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/performance_summary",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/performance_summary.sql",
+      "sha256": "56bab154bce37695f58bd5637cbd50e56449c163eb5f0f67b827e10c004246e2",
+      "signal_patterns": [
+        "${package}*",
+        "VSYNC-sf"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "performance_summary",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/input_data_fallback_view",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/input_data_fallback_view.sql",
+      "sha256": "754342bb2d94ae3b9bee3e0a697f40b847eb33b176eb4d90076eb652ea38bb23",
+      "signal_patterns": [],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [
+          {
+            "kind": "view",
+            "name": "android_input_events"
+          }
+        ],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "input_data_fallback_view",
+      "template": {
+        "fragments": [],
+        "parameters": [],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/input_data_check",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/input_data_check.sql",
+      "sha256": "d4b923d264958f45420d5258e2129f7e09c4c4e97105c12108a6b45a6ea254b8",
+      "signal_patterns": [
+        "${package}*"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [
+          "android_input_events"
+        ],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view"
+        ]
+      },
+      "step_id": "input_data_check",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/input_latency_summary",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/input_latency_summary.sql",
+      "sha256": "2178ed1bf96b638b34beca4503e305e24d213517cabbba1f48639a6199cd7e68",
+      "signal_patterns": [
+        "${package}*",
+        "VSYNC-sf"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [
+          "android_input_events"
+        ],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view"
+        ]
+      },
+      "step_id": "input_latency_summary",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "input_event_backlog_threshold",
+          "input_handling_budget_ratio",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/expert_analysis_window",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/expert_analysis_window.sql",
+      "sha256": "3b924c395be51fcf89917d5679d8825f2053c268e1ce1815e37072348d62e52a",
+      "signal_patterns": [
+        "${package}*"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view"
+        ]
+      },
+      "step_id": "expert_analysis_window",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/jank_type_stats",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/jank_type_stats.sql",
+      "sha256": "3ae5d1643e0f31ad83ef882587867eef4cc522e53af4fa46ce696a8fca8afb83",
+      "signal_patterns": [
+        "${package}*",
+        "VSYNC-sf"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view"
+        ]
+      },
+      "step_id": "jank_type_stats",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/scroll_sessions",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/scroll_sessions.sql",
+      "sha256": "71ff501724ff19eb97545d7a95409b5cf66d73a0dc71def1acbfa52dab09ec1d",
+      "signal_patterns": [
+        "${package}*",
+        "VSYNC-sf"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view"
+        ]
+      },
+      "step_id": "scroll_sessions",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/session_stats_batch",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/session_stats_batch.sql",
+      "sha256": "8d656b76f24cde8acd119c67f1cb2724ff225138874bfadc1314cca555a890d8",
+      "signal_patterns": [
+        "${package}*",
+        "VSYNC-sf",
+        "cpufreq"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [
+          "_cpu_topology"
+        ],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view",
+          "cpu_topology_view/create_topology_view"
+        ]
+      },
+      "step_id": "session_stats_batch",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/session_jank",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/session_jank.sql",
+      "sha256": "d7007f20231db3dec97152abf166f1d7abf2df97bd0b05dddd624771099c32a3",
+      "signal_patterns": [
+        "${package}*",
+        "VSYNC-sf"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view"
+        ]
+      },
+      "step_id": "session_jank",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/get_app_jank_frames",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/get_app_jank_frames.sql",
+      "sha256": "7f5f128363005c10019fd33ec9db411ab2013801ab26c5577ad0f3d92ee9f60f",
+      "signal_patterns": [
+        "${package}*",
+        "Choreographer#doFrame%",
+        "DrawFrame%",
+        "Framework::BeginFrame%",
+        "PlayerLoop%",
+        "VSYNC-sf"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view"
+        ]
+      },
+      "step_id": "get_app_jank_frames",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "max_frames_per_session",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/batch_frame_root_cause",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/batch_frame_root_cause.sql",
+      "sha256": "af8112100a71b1e961e2ee219c3323502ef652ff442cb806725fb3e88a55d84d",
+      "signal_patterns": [
+        "${package}*",
+        "*.raster",
+        "*.ui",
+        "*Compile*",
+        "*Fence*",
+        "*InputConsumer*",
+        "*QueuedWork*",
+        "*RV Prefetch*",
+        "*RecyclerView*Prefetch*",
+        "*SQLiteDatabase*",
+        "*Shader*",
+        "*SharedPreferences*",
+        "*commit*SharedPref*",
+        "*compile*",
+        "*deliverInputEvent*",
+        "*dequeueBuffer*",
+        "*dispatchTouchEvent*",
+        "*eglSwapBuffers*",
+        "*fence*",
+        "*fsync*",
+        "*getSharedPreferences*",
+        "*onInterceptTouchEvent*",
+        "*onTouchEvent*",
+        "*openFile*",
+        "*processInputEventForCompatibility*",
+        "*shader*",
+        "*sqlite*",
+        "*waitToFinish*",
+        "RenderThread",
+        "VSYNC-sf",
+        "[0-9]*",
+        "[0-9]*.raster",
+        "[0-9]*.ui",
+        "cpufreq"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [
+          "_cpu_topology",
+          "android_input_events"
+        ],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view",
+          "cpu_topology_view/create_topology_view"
+        ]
+      },
+      "step_id": "batch_frame_root_cause",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "input_event_backlog_threshold",
+          "input_handling_budget_ratio",
+          "max_frames_per_session",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/global_context_flags",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/global_context_flags.sql",
+      "sha256": "73a5bde2723d9d94351e74f5e38b0cc4b740ffbb2a8433ff617aa20e9a6b47c6",
+      "signal_patterns": [
+        "${package}*",
+        "*CodecLooper*",
+        "*MediaCodec*",
+        "*NuPlayer*",
+        "*VideoDecoder*",
+        "*onOutputBufferAvailable*",
+        "*queueVideoBuffer*",
+        "cpufreq"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [
+          "_cpu_topology"
+        ],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view",
+          "cpu_topology_view/create_topology_view"
+        ]
+      },
+      "step_id": "global_context_flags",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/session_quadrant_summary",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/session_quadrant_summary.sql",
+      "sha256": "3965b476e2fa557b9ca2f4af905ab73f34b102adc0a5516ef3db1eba45a0360e",
+      "signal_patterns": [
+        "${package}*",
+        "RenderThread"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [
+          "_cpu_topology"
+        ],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view",
+          "cpu_topology_view/create_topology_view"
+        ]
+      },
+      "step_id": "session_quadrant_summary",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/session_cpu_freq",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/session_cpu_freq.sql",
+      "sha256": "29a75bd9fb27436e79ece9e0c8189dfeab2db2446518c085588fbad255029e09",
+      "signal_patterns": [
+        "cpufreq"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [
+          "_cpu_topology"
+        ],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view",
+          "cpu_topology_view/create_topology_view"
+        ]
+      },
+      "step_id": "session_cpu_freq",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/session_thread_core_affinity",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/session_thread_core_affinity.sql",
+      "sha256": "6fcf53c8cc15f072771bb1ffe19ba9ae732fcef8d17b4aa5ecb1c22786d02fd5",
+      "signal_patterns": [
+        "${package}*"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [
+          "_cpu_topology"
+        ],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view",
+          "cpu_topology_view/create_topology_view"
+        ]
+      },
+      "step_id": "session_thread_core_affinity",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/root_cause_classification",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/root_cause_classification.sql",
+      "sha256": "57864806004a8c285982b3e61595a9037a49c7f6c5f9cc5123f8d32416eeb33d",
+      "signal_patterns": [
+        "${package}*",
+        "*InputConsumer*",
+        "*RV Prefetch*",
+        "*RecyclerView*Prefetch*",
+        "*deliverInputEvent*",
+        "*dispatchTouchEvent*",
+        "*onInterceptTouchEvent*",
+        "*onTouchEvent*",
+        "*processInputEventForCompatibility*",
+        "RenderThread",
+        "VSYNC-sf",
+        "[0-9]*.ui"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [
+          "_cpu_topology"
+        ],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view",
+          "cpu_topology_view/create_topology_view"
+        ]
+      },
+      "step_id": "root_cause_classification",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "input_handling_budget_ratio",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/fallback_no_frame_timeline",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/fallback_no_frame_timeline.sql",
+      "sha256": "25a9aaac1c5d29c1323433699fcf0ae435ed84315d456332b1d39f1d4df6d5a1",
+      "signal_patterns": [],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": [
+          "scrolling_analysis/input_data_fallback_view"
+        ]
+      },
+      "step_id": "fallback_no_frame_timeline",
+      "template": {
+        "fragments": [],
+        "parameters": [],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "scrolling_analysis"
+}

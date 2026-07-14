@@ -1,4 +1,5 @@
 from importlib.util import module_from_spec, spec_from_file_location
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -17,6 +18,41 @@ GENERATED_SQL = (
     / "generated"
     / "sql"
 )
+FIXTURE_MANIFEST = ROOT / "fixtures" / "manifest.json"
+
+
+def fixture_root() -> Path | None:
+    value = os.environ.get("PERFETTO_FIXTURE_ROOT")
+    return Path(value).expanduser().resolve() if value else None
+
+
+def fixture_path(fixture_id: str, *, root: Path | None = None) -> Path:
+    manifest = json.loads(FIXTURE_MANIFEST.read_text(encoding="utf-8"))
+    fixtures = {fixture["id"]: fixture for fixture in manifest["fixtures"]}
+    if fixture_id not in fixtures:
+        raise KeyError(f"unknown fixture id: {fixture_id}")
+    resolved_root = root.expanduser().resolve() if root is not None else fixture_root()
+    if resolved_root is None:
+        raise RuntimeError("PERFETTO_FIXTURE_ROOT not configured")
+    fixture = fixtures[fixture_id]
+    path = resolved_root / fixture["path"]
+    if not path.is_file():
+        raise FileNotFoundError(f"fixture is missing: {fixture_id} ({path})")
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    if digest.hexdigest() != fixture["sha256"]:
+        raise ValueError(f"fixture checksum mismatch: {fixture_id}")
+    return path
+
+
+def fixture_available(fixture_id: str) -> bool:
+    try:
+        fixture_path(fixture_id)
+    except (FileNotFoundError, RuntimeError):
+        return False
+    return True
 
 
 def load_skill_script(name: str) -> ModuleType:

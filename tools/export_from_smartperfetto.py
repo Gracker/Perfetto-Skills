@@ -1179,7 +1179,9 @@ def git_file_bytes(repository: Path, revision: str, path: str) -> bytes:
     return completed.stdout
 
 
-def build_perfetto_source_lock(source: Path, catalog: dict[str, Any]) -> dict[str, Any]:
+def build_perfetto_source_lock(
+    source: Path, catalog: dict[str, Any], *, skill_root: Path = SKILL_ROOT
+) -> dict[str, Any]:
     policy = dict(catalog["official_perfetto"])
     perfetto = source / "perfetto"
     tag = str(policy["tag"])
@@ -1192,7 +1194,7 @@ def build_perfetto_source_lock(source: Path, catalog: dict[str, Any]) -> dict[st
         raise ExportError(f"Canonical Perfetto stdlib tree mismatch: {stdlib_tree}")
     official_path = str(policy["official_skill_reference"])
     official_bytes = git_file_bytes(perfetto, tag, official_path)
-    lock_path = SKILL_ROOT / "references" / "trace-processor-lock.json"
+    lock_path = skill_root / "references" / "trace-processor-lock.json"
     binary_lock = json.loads(lock_path.read_text(encoding="utf-8"))
     if binary_lock.get("perfetto_version") != tag:
         raise ExportError("Trace processor artifact lock does not match official tag")
@@ -1418,11 +1420,13 @@ def build_runtime_assets(
     source: Path,
     catalog: dict[str, Any],
     generated_root: Path,
+    *,
+    skill_root: Path = SKILL_ROOT,
 ) -> dict[str, int]:
     runtime_root = generated_root / "runtime"
     fixture_manifest, fixture_assertions = load_fixture_manifest(source, catalog)
     write_json(runtime_root / "fixture-manifest.json", fixture_manifest)
-    source_lock = build_perfetto_source_lock(source, catalog)
+    source_lock = build_perfetto_source_lock(source, catalog, skill_root=skill_root)
     write_json(runtime_root / "perfetto-source-lock.json", source_lock)
 
     symbol_source = source / "backend" / "data" / "perfettoStdlibSymbols.json"
@@ -1967,8 +1971,9 @@ def generate_references(
     catalog: dict[str, Any],
     *,
     check: bool,
+    skill_root: Path = SKILL_ROOT,
 ) -> None:
-    references_root = SKILL_ROOT / "references"
+    references_root = skill_root / "references"
     generated = references_root / "generated"
     references_root.mkdir(parents=True, exist_ok=True)
     transformations: list[dict[str, Any]] = []
@@ -2019,7 +2024,9 @@ def generate_references(
                 temporary_generated / destination_in_generated_root(entry["destination"]),
                 content,
             )
-        runtime_summary = build_runtime_assets(source, catalog, temporary_generated)
+        runtime_summary = build_runtime_assets(
+            source, catalog, temporary_generated, skill_root=skill_root
+        )
         generated_catalog = {
             "schema_version": 2,
             "source_commit": commit,
@@ -2064,6 +2071,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--source", required=True, type=Path)
     parser.add_argument("--policy", type=Path)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--skill-root", type=Path, default=SKILL_ROOT)
+    parser.add_argument("--migration-output", type=Path, default=MIGRATION_COVERAGE)
     parser.add_argument("--bootstrap-policy", type=Path)
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--allow-dirty", action="store_true")
@@ -2097,6 +2106,8 @@ def main(argv: list[str] | None = None) -> int:
     catalog = build_catalog(source, policy_path)
     serialized = serialize_catalog(catalog)
     output = args.output.expanduser().resolve()
+    skill_root = args.skill_root.expanduser().resolve()
+    migration_output = args.migration_output.expanduser().resolve()
     if args.check:
         if not output.is_file():
             raise ExportError(f"Catalog is missing: {output}")
@@ -2106,18 +2117,18 @@ def main(argv: list[str] | None = None) -> int:
                 f"Catalog drift detected: run {Path(__file__).name} --source {source}"
             )
         expected_migration = render_migration_coverage(catalog)
-        if not MIGRATION_COVERAGE.is_file():
-            raise ExportError(f"Migration coverage is missing: {MIGRATION_COVERAGE}")
-        if MIGRATION_COVERAGE.read_text(encoding="utf-8") != expected_migration:
+        if not migration_output.is_file():
+            raise ExportError(f"Migration coverage is missing: {migration_output}")
+        if migration_output.read_text(encoding="utf-8") != expected_migration:
             raise ExportError(
                 f"Migration coverage drift detected: run {Path(__file__).name} --source {source}"
             )
-        generate_references(source, catalog, check=True)
+        generate_references(source, catalog, check=True, skill_root=skill_root)
         print(f"Catalog is current: {output}")
         return 0
     write_text_atomic(output, serialized)
-    write_text_atomic(MIGRATION_COVERAGE, render_migration_coverage(catalog))
-    generate_references(source, catalog, check=False)
+    write_text_atomic(migration_output, render_migration_coverage(catalog))
+    generate_references(source, catalog, check=False, skill_root=skill_root)
     print(
         f"Exported {catalog['summary']['runtime_candidates']} runtime Skills, "
         f"{catalog['summary']['strategy_sources']} strategy sources, and "

@@ -35,6 +35,10 @@ class ReleaseTest(unittest.TestCase):
             self.assertIn("NOTICE", names)
             self.assertEqual(provenance["version"], "0.2.0")
             self.assertFalse(any(name.endswith(("trace_processor_shell", ".exe")) for name in names))
+            self.assertFalse(
+                any(name.endswith((".pftrace", ".perfetto-trace")) for name in names)
+            )
+            self.assertFalse(any("fixture-pack" in name for name in names))
             with tarfile.open(tar_path, "r:gz") as bundle:
                 self.assertEqual(names, {member.name for member in bundle.getmembers() if member.isfile()})
 
@@ -113,27 +117,36 @@ class ReleaseTest(unittest.TestCase):
             workflow["jobs"]["release"]["permissions"], {"contents": "write"}
         )
 
-    def test_source_checkout_includes_perfetto_submodule_for_export_verification(self) -> None:
+    def test_normal_workflows_are_independent_and_sync_workflow_is_explicit(self) -> None:
         root = Path(__file__).resolve().parents[2]
         for filename in ("verify.yml", "release.yml"):
-            workflow = yaml.safe_load(
-                (root / ".github" / "workflows" / filename).read_text(encoding="utf-8")
-            )
-            source_checkout = next(
-                step
-                for step in workflow["jobs"]["verify"]["steps"]
-                if step.get("name") == "Check out pinned SmartPerfetto source"
-            )
-            self.assertEqual(source_checkout["with"]["submodules"], "recursive")
+            text = (root / ".github" / "workflows" / filename).read_text(encoding="utf-8")
+            self.assertNotIn("Gracker/SmartPerfetto", text)
+            self.assertNotIn("submodules:", text)
+            self.assertIn("uv run python tools/verify.py", text)
 
-            release_fetch = next(
-                step
-                for step in workflow["jobs"]["verify"]["steps"]
-                if step.get("name") == "Fetch pinned official Perfetto release"
-            )
-            self.assertEqual(release_fetch["working-directory"], "SmartPerfetto/perfetto")
-            self.assertIn('catalog["official_perfetto"]', release_fetch["run"])
-            self.assertIn('refs/tags/${tag}:refs/tags/${tag}', release_fetch["run"])
+        sync = (root / ".github/workflows/upstream-sync.yml").read_text(encoding="utf-8")
+        self.assertIn("workflow_dispatch", sync)
+        self.assertIn("Gracker/SmartPerfetto", sync)
+        self.assertIn("google/perfetto", sync)
+        self.assertIn("sync_smartperfetto.py", sync)
+        self.assertIn("sync_official_skill.py", sync)
+        self.assertIn("sync_perfetto_stdlib.py", sync)
+        self.assertIn("/tmp/perfetto-skills-candidate", sync)
+        self.assertIn("--apply", sync)
+        self.assertIn("tools/compile_skill.py", sync)
+        self.assertNotIn('"${{ inputs.smartperfetto_commit }}"', sync)
+        self.assertNotIn('"refs/tags/${{ inputs.perfetto_tag }}', sync)
+        self.assertIn("actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a", sync)
+
+        canary = (root / ".github/workflows/upstream-canary.yml").read_text(encoding="utf-8")
+        self.assertIn("schedule:", canary)
+        self.assertIn("continue-on-error: true", canary)
+        self.assertIn("--sort=-version:refname", canary)
+        self.assertIn("sync_official_skill.py", canary)
+        self.assertIn("sync_perfetto_stdlib.py", canary)
+        self.assertIn("--revision", canary)
+        self.assertNotIn("git push", canary)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,1224 @@
+{
+  "adapters": [
+    {
+      "id": "kernel_tracepoints",
+      "selection": "available events, trace config/setup errors, schema, then rows"
+    }
+  ],
+  "api": {
+    "28": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "29": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "30": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "31": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "32": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "33": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "34": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "35": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "36": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    },
+    "37": {
+      "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
+      "status": "capability_gated"
+    }
+  },
+  "required_modules": [
+    "android.binder",
+    "android.slices",
+    "android.monitor_contention",
+    "android.garbage_collection",
+    "android.gpu.frequency"
+  ],
+  "required_tables": [],
+  "schema_version": 1,
+  "selection_order": [
+    "device_capability",
+    "trace_config_and_setup_errors",
+    "engine_module_and_schema",
+    "target_range_row_coverage",
+    "api_hint"
+  ],
+  "signal_patterns": [
+    "${package}*",
+    "*Compile*",
+    "*Draw*",
+    "*Fence*",
+    "*Pipeline*Create*",
+    "*Shader*",
+    "*compile*",
+    "*dequeueBuffer*",
+    "*eglSwap*",
+    "*eglSwapBuffers*",
+    "*fence*",
+    "*programCache*",
+    "*shader*",
+    "Choreographer#doFrame - resynced*",
+    "GrGLGpu*",
+    "RenderThread",
+    "[0-9]*.raster",
+    "[0-9]*.ui",
+    "android_binder_txns",
+    "android_garbage_collection_events",
+    "android_gpu_frequency",
+    "android_monitor_contention",
+    "cpufreq"
+  ],
+  "skill_id": "jank_frame_detail",
+  "steps": {
+    "binder_blocking": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "binder_calls": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/binder_calls"
+    },
+    "binder_table_check": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/binder_table_check"
+    },
+    "choreographer_resync_markers": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/choreographer_resync_markers"
+    },
+    "cpu_cluster_load": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "cpu_freq_analysis": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/cpu_freq_analysis"
+    },
+    "cpu_freq_timeline": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/cpu_freq_timeline"
+    },
+    "cpu_throttling": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "frame_diagnosis": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "gc_in_frame": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/gc_in_frame"
+    },
+    "gc_table_check": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/gc_table_check"
+    },
+    "gpu_freq": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "gpu_render": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "gpu_table_check": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/gpu_table_check"
+    },
+    "init_cpu_topology": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "io_blocking": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/io_blocking"
+    },
+    "lock_contention": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/lock_contention"
+    },
+    "main_thread_slices": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/main_thread_slices"
+    },
+    "monitor_contention_check": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/monitor_contention_check"
+    },
+    "page_fault": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "quadrant_analysis": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/quadrant_analysis"
+    },
+    "render_pipeline": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "render_thread_slices": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/render_thread_slices"
+    },
+    "root_cause_summary": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "jank_frame_detail/root_cause_summary"
+    },
+    "sched_latency": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "sf_composition": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "task_migration": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    },
+    "vsync_alignment": {
+      "api": {
+        "28": {
+          "status": "capability_gated"
+        },
+        "29": {
+          "status": "capability_gated"
+        },
+        "30": {
+          "status": "capability_gated"
+        },
+        "31": {
+          "status": "capability_gated"
+        },
+        "32": {
+          "status": "capability_gated"
+        },
+        "33": {
+          "status": "capability_gated"
+        },
+        "34": {
+          "status": "capability_gated"
+        },
+        "35": {
+          "status": "capability_gated"
+        },
+        "36": {
+          "status": "capability_gated"
+        },
+        "37": {
+          "status": "capability_gated"
+        }
+      },
+      "query_id": null
+    }
+  }
+}

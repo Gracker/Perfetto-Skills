@@ -1,0 +1,299 @@
+{
+  "generated_files": 1651,
+  "runtime_conditions": 607,
+  "runtime_queries": 643,
+  "runtime_skills": 231,
+  "schema_version": 2,
+  "source_catalog_sha256": "40f50e3c392056d747027cf909082fdb5abc0631ac68a937d1161795a64a843b",
+  "source_commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+  "sql_files": 643,
+  "transformations": [
+    {
+      "reason": "product snapshot comparison replaced by file-based JSON adapter",
+      "removed_lines": 0,
+      "source_path": "backend/skills/comparison/multi_trace_result_comparison.skill.yaml"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 39,
+      "replacements": 1,
+      "source_path": "backend/strategies/anr.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/arch-compose.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/arch-flutter.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/arch-standard.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/arch-webview.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/comparison-conclusion.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/comparison-context.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 21,
+      "replacements": 1,
+      "source_path": "backend/strategies/comparison-methodology.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 5,
+      "replacements": 1,
+      "source_path": "backend/strategies/comparison-result-methodology.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 31,
+      "replacements": 0,
+      "source_path": "backend/strategies/game.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 32,
+      "replacements": 0,
+      "source_path": "backend/strategies/general.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 40,
+      "replacements": 0,
+      "source_path": "backend/strategies/interaction.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 19,
+      "replacements": 0,
+      "source_path": "backend/strategies/io.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-binder-ipc.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-cpu-scheduler.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-data-sources.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 2,
+      "source_path": "backend/strategies/knowledge-evidence-provenance.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-gc-dynamics.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-harmonyos-rendering.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-harmonyos-tools.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-lock-contention.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-network-evidence.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-observability-diagnostics.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-pipeline-anchors.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-pipeline-fences.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-rendering-pipeline.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 1,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-startup-root-causes.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-thermal-throttling.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-thread-state-blocked-reason.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 20,
+      "replacements": 0,
+      "source_path": "backend/strategies/linux.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 18,
+      "replacements": 0,
+      "source_path": "backend/strategies/media.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 47,
+      "replacements": 0,
+      "source_path": "backend/strategies/memory.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 29,
+      "replacements": 0,
+      "source_path": "backend/strategies/multi-trace-result-comparison.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 27,
+      "replacements": 0,
+      "source_path": "backend/strategies/network.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 16,
+      "replacements": 0,
+      "source_path": "backend/strategies/overview.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 22,
+      "replacements": 0,
+      "source_path": "backend/strategies/pipeline.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 66,
+      "replacements": 1,
+      "source_path": "backend/strategies/power.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 31,
+      "replacements": 1,
+      "source_path": "backend/strategies/prompt-methodology.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 6,
+      "replacements": 1,
+      "source_path": "backend/strategies/prompt-output-format.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/scene-reconstruction-verifier.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 23,
+      "replacements": 0,
+      "source_path": "backend/strategies/scroll-response.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 123,
+      "replacements": 0,
+      "source_path": "backend/strategies/scrolling.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 15,
+      "replacements": 1,
+      "source_path": "backend/strategies/selection-area.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/selection-slice.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 87,
+      "replacements": 0,
+      "source_path": "backend/strategies/startup.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 29,
+      "replacements": 0,
+      "source_path": "backend/strategies/teaching.strategy.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 21,
+      "replacements": 0,
+      "source_path": "backend/strategies/touch-tracking.strategy.md"
+    }
+  ]
+}

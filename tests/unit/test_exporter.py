@@ -1,17 +1,11 @@
 import json
-import os
 from pathlib import Path
-import subprocess
-import sys
 import unittest
 
 from tools import export_from_smartperfetto as exporter
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SMARTPERFETTO = Path(
-    os.environ.get("SMARTPERFETTO_SOURCE", ROOT.parent / "SmartPerfetto")
-).expanduser().resolve()
 EXPORTER = ROOT / "tools" / "export_from_smartperfetto.py"
 CATALOG = ROOT / "catalog" / "smartperfetto-export.json"
 MIGRATION_DOC = ROOT / "docs" / "migration-coverage.md"
@@ -20,27 +14,12 @@ MIGRATION_DOC = ROOT / "docs" / "migration-coverage.md"
 class ExporterTest(unittest.TestCase):
     def setUp(self) -> None:
         self.assertTrue(EXPORTER.is_file(), "tools/export_from_smartperfetto.py")
-        self.assertTrue(
-            (SMARTPERFETTO / "backend" / "skills" / "public-export.yaml").is_file(),
-            "SmartPerfetto backend/skills/public-export.yaml",
-        )
 
     def load_catalog(self) -> dict[str, object]:
         self.assertTrue(CATALOG.is_file(), "catalog/smartperfetto-export.json")
         return json.loads(CATALOG.read_text(encoding="utf-8"))
 
     def test_catalog_covers_every_runtime_candidate(self) -> None:
-        subprocess.run(
-            [
-                sys.executable,
-                str(EXPORTER),
-                "--source",
-                str(SMARTPERFETTO),
-                "--check",
-            ],
-            cwd=ROOT,
-            check=True,
-        )
         catalog = self.load_catalog()
         self.assertEqual(catalog["summary"]["skill_yaml_files"], 236)
         self.assertEqual(catalog["summary"]["runtime_candidates"], 231)
@@ -82,9 +61,14 @@ class ExporterTest(unittest.TestCase):
         self.assertEqual(
             len(catalog["strategies"]), catalog["summary"]["strategy_sources"]
         )
-        self.assertGreaterEqual(len(catalog["pipeline_docs"]), 30)
+        pipeline_docs = catalog["pipeline_docs"]
+        self.assertEqual(len(pipeline_docs), 14)
+        self.assertEqual(
+            [item["source_path"].split("/")[-1].split("_")[0] for item in pipeline_docs],
+            [f"S{index:02d}" for index in range(1, 15)],
+        )
         self.assertTrue(
-            all(item["disposition"] == "exported" for item in catalog["pipeline_docs"])
+            all(item["disposition"] == "exported" for item in pipeline_docs)
         )
 
     def test_bootstrap_classifier_preserves_domain_boundaries(self) -> None:

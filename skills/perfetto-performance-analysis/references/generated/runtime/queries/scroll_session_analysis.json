@@ -52,14 +52,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_session_analysis/full_session_stats.sql",
-      "sha256": "829cd1ca880d20b2bcd4621b24fa623092686e83f8c43413d4c32d8f3675e43b",
+      "sha256": "4e19607fa73aab0a74f5aa7f58397b445b068165ee3d2b5eed62f99dec1af620",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*doFrame*"
       ],
       "skill_id": "scroll_session_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fd8dbf2ef3390842217b4b5877ff5a8dd65c44f0edbaaa4d59ba036370f53517"
@@ -69,7 +69,7 @@
         "declared_modules": [],
         "drops": [],
         "required_tables": [
-          "android_input_event"
+          "android_input_events"
         ],
         "requires": [],
         "setup_queries": []
@@ -146,14 +146,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_session_analysis/touch_phase_stats.sql",
-      "sha256": "51448c8dca31e7b2165276458302dc3a1e78e9ce340fffd747b540381ccb9541",
+      "sha256": "88669f25c0c43dbaf40ba4267612c65cb71a96a22c911e58b8d54fd722b9fc89",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*doFrame*"
       ],
       "skill_id": "scroll_session_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fd8dbf2ef3390842217b4b5877ff5a8dd65c44f0edbaaa4d59ba036370f53517"
@@ -163,7 +163,7 @@
         "declared_modules": [],
         "drops": [],
         "required_tables": [
-          "android_input_event"
+          "android_input_events"
         ],
         "requires": [],
         "setup_queries": []
@@ -239,14 +239,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_session_analysis/fling_phase_stats.sql",
-      "sha256": "99bae7fc84a00efb127446a04abc6cf2eeb69f86d897dfed5660b4fe75f0625a",
+      "sha256": "13d9571e9925b50ff81605e9b3adb19ac4ae5a927cafc7df8401cd3da9b8dba9",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*doFrame*"
       ],
       "skill_id": "scroll_session_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fd8dbf2ef3390842217b4b5877ff5a8dd65c44f0edbaaa4d59ba036370f53517"
@@ -256,7 +256,7 @@
         "declared_modules": [],
         "drops": [],
         "required_tables": [
-          "android_input_event"
+          "android_input_events"
         ],
         "requires": [],
         "setup_queries": []
@@ -332,7 +332,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_session_analysis/identify_janky_frames.sql",
-      "sha256": "bd96e28dfbc8bc24f6f9d39a3dd8c1ae2247c7d103c384b9c9e1798518886d88",
+      "sha256": "eee4bca223c4f00529e903e3c3079f1a3220d32ebea035ce3fafb43717be1fb8",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*DrawFrame*",
@@ -340,7 +340,7 @@
       ],
       "skill_id": "scroll_session_analysis",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fd8dbf2ef3390842217b4b5877ff5a8dd65c44f0edbaaa4d59ba036370f53517"
@@ -350,7 +350,7 @@
         "declared_modules": [],
         "drops": [],
         "required_tables": [
-          "android_input_event"
+          "android_input_events"
         ],
         "requires": [],
         "setup_queries": []

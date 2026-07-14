@@ -99,7 +99,7 @@ Add `.perfetto-fixtures/` and `test-output/fixtures/` to `.gitignore` without ig
 
 ---
 
-### Task 3: Commit a small real smoke trace and publish fixture pack v1
+### Task 3: Commit auditable fixture inputs, then publish fixture pack v1
 
 **Files:**
 - Create: `fixtures/smoke/api32_startup_warm.perfetto-trace`
@@ -139,11 +139,22 @@ Expected: identical hashes and `cmp` exit 0.
 
 Replace the lock's archive and manifest hashes with computed lowercase SHA-256 values; rerun manifest/pack tests.
 
-- [ ] **Step 5: Publish the fixture release**
+- [ ] **Step 5: Commit all release inputs before tagging**
 
-Create annotated tag `fixtures-v1`, then publish the archive, `fixtures/manifest.json`, and a generated `SHA256SUMS` to a GitHub Release named `fixtures-v1`. This tag must not match the product `v*` release workflow.
+Commit the validated manifest, smoke trace, builder/downloader, provisional lock
+containing the final archive/manifest hashes, privacy evidence, and tests. From a
+clean checkout of that commit, rebuild the archive twice and verify identical
+hashes. The provisional URL may use the deterministic release URL for
+`fixtures-v1`; its content hash is already final.
 
-- [ ] **Step 6: Download the public asset into an empty cache**
+- [ ] **Step 6: Publish the fixture release**
+
+Create annotated tag `fixtures-v1` at the committed, clean, rebuildable input
+commit, then publish the archive, `fixtures/manifest.json`, and generated
+`SHA256SUMS` to a GitHub Release named `fixtures-v1`. This tag must not match the
+product `v*` release workflow.
+
+- [ ] **Step 7: Download the public asset into an empty cache**
 
 Run: `uv run python tools/download_fixture_pack.py --cache /tmp/perfetto-skills-fixture-smoke`
 
@@ -247,7 +258,9 @@ Expected: all unit/integration tests and Agent Skill validation pass using owned
 
 - [ ] **Step 8: Commit fixture independence**
 
-Commit the fixture infrastructure, smoke trace, manifests, tests, CI, and docs in one independently reviewable commit after the public fixture asset exists.
+Commit the integration-test, CI, and documentation switch after the public
+fixture asset exists. The release inputs themselves were already committed
+before the `fixtures-v1` tag; never move or recreate that tag.
 
 ---
 

@@ -8,6 +8,36 @@ capability gates, identity/evidence rules, and deterministic Skill runner
 without requiring the SmartPerfetto backend, UI, provider runtime, or MCP
 server.
 
+<!-- android-performance-ecosystem:start -->
+## Android performance ecosystem
+
+This repository is one part of the [Android Performance Ecosystem](https://github.com/Gracker/android-performance-ecosystem): an optional path from instrumentation and capture to analysis, system knowledge, and reproducible cases.
+
+| Stage | Project | Purpose | Address |
+| --- | --- | --- | --- |
+| Instrument | [TraceFix](https://github.com/Gracker/TraceFix) | Inject app-side android.os.Trace sections at build time so method work is visible at runtime. | [GitHub](https://github.com/Gracker/TraceFix) |
+| Capture and measure | [Perfetto Tools](https://github.com/Gracker/perfetto-tools) | Capture repeatable Perfetto traces and collect FPS or Simpleperf measurements. | [GitHub](https://github.com/Gracker/perfetto-tools) |
+| Analyze | [SmartPerfetto](https://github.com/Gracker/SmartPerfetto) | Investigate traces with an AI-assisted Web UI, CLI, reports, sessions, comparisons, and evidence workflow. | [GitHub](https://github.com/Gracker/SmartPerfetto) |
+| Agent analysis | [Perfetto Skills](https://github.com/Gracker/Perfetto-Skills) | Give agents a portable Perfetto analysis Skill for Android, Linux, and Chromium, with selected assets synchronized through pinned workflows. | [GitHub](https://github.com/Gracker/Perfetto-Skills) |
+| Learn | [Android Performance Blog](https://github.com/Gracker/Gracker.github.io) | Teach Perfetto and Systrace analysis through articles, system explanations, and case studies. | [AndroidPerformance.com](https://www.androidperformance.com/) · [GitHub](https://github.com/Gracker/Gracker.github.io) |
+| System knowledge | Android Internal Wiki | An alpha knowledge base for Android mechanisms from App to Framework, Native, and Kernel. | **Coming soon** |
+| Reproduce | [Trace for Blog (SystraceForBlog)](https://github.com/Gracker/SystraceForBlog) | Provide the Perfetto, Systrace, and related case files used by articles for hands-on reproduction. | [GitHub](https://github.com/Gracker/SystraceForBlog) |
+<!-- android-performance-ecosystem:end -->
+
+## Choose the right Perfetto project
+
+These projects are complementary. Pick the smallest surface that matches how
+you want to work; none is a prerequisite for another.
+
+| Project | Form | Best for | Main boundary | Choose it when |
+|---|---|---|---|---|
+| [SmartPerfetto](https://github.com/Gracker/SmartPerfetto) | Full Web UI, CLI, and backend | End-to-end interactive Android investigations | Managed Skill runtime, reports, sessions, comparisons, and provider integration | You want a complete analysis product |
+| [Perfetto Skills](https://github.com/Gracker/Perfetto-Skills) | Portable standard Agent Skill | Local agents with filesystem and terminal access | Deterministic local runner, evidence contracts, and broad analysis workflows | You want trace analysis inside Codex, Claude Code, or OpenCode |
+| [Google official Perfetto Skill](https://github.com/google/perfetto/tree/main/ai/skills/perfetto) | Official upstream Agent Skill bundle | Upstream-first trace recording and analysis | Official recording, memory, GPU, and ad-hoc PerfettoSQL guidance | You want the smallest upstream-maintained starting point |
+
+See Google's [official Perfetto AI usage guide](https://perfetto.dev/docs/getting-started/using-ai)
+for the upstream Skill installation and release model.
+
 ## Is this a standard Agent Skill?
 
 Yes. `skills/perfetto-performance-analysis/SKILL.md` follows the
@@ -81,6 +111,8 @@ installation, refresh the client and ask it to use
 - Three SQL fragments, eight advisory-only OEM startup overrides, 65 strategy
   sources, and 32 rendering-pipeline documents.
 - A checksum-pinned cross-platform trace processor bootstrap.
+- A project-owned real-trace fixture pack with immutable provenance, privacy
+  scan evidence, per-file hashes, and a committed offline smoke trace.
 
 The SQL is not described as "official Perfetto SQL." It is SmartPerfetto SQL
 executed against a locked official Perfetto runtime. Queries without exact
@@ -89,13 +121,19 @@ causal conclusion merely because they parse.
 
 ## Development
 
-Requirements: Python 3.11+, `uv`, and a sibling SmartPerfetto checkout for
-source export and integration fixtures.
+Requirements: Python 3.11+ and `uv`. Normal development downloads the immutable
+[Perfetto Skills fixture pack](https://github.com/Gracker/Perfetto-Skills/releases/tag/fixtures-v2)
+and does not require a SmartPerfetto checkout.
 
 ```bash
 uv sync --extra dev
-uv run python tools/verify.py --smartperfetto ../SmartPerfetto
+uv run python tools/verify.py
 ```
+
+Use `uv run python tools/verify.py --offline` for the committed real smoke
+trace. SmartPerfetto is needed only for an explicit pinned import review; the
+three upstream sync procedures and local SQL red-green workflow are documented
+in [upstream synchronization](docs/maintenance/upstream-sync.md).
 
 Generated runtime indexes are sharded by Skill so agents load only the selected
 workflow/query. See [architecture](docs/architecture.md),
@@ -106,5 +144,7 @@ workflow/query. See [architecture](docs/architecture.md),
 
 Tagged releases contain reproducible `.zip` and `.tar.gz` bundles plus
 `SHA256SUMS`. Trace processor executables and trace fixtures are not bundled.
+The separately versioned fixture pack is a test asset, not an install/runtime
+dependency of the Skill archive.
 SmartPerfetto-derived work is AGPL-3.0-or-later; upstream Perfetto material
 retains Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).

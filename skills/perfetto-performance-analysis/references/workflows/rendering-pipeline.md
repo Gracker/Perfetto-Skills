@@ -15,7 +15,8 @@ Confirm target identity and the thread/slice signals used by candidate pipeline 
 ## Evidence sequence
 
 Evaluate required signals, exclusions, and weighted scoring in the generated
-[pipeline catalog](../generated/pipelines/docs/index.md); preserve competing
+[rendering type overview](../generated/pipelines/docs/S01_rendering_types_overview.md);
+preserve competing
 candidates. Load the candidate definition under `../generated/skills/`, then
 verify its producer, transfer, compositor, fence, and display anchors in the
 trace before using its teaching model.

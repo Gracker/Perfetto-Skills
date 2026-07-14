@@ -17,13 +17,13 @@
           },
           "31": {
             "fixtures": [
-              "upstream-startup-api31-cold"
+              "startup-api31-cold"
             ],
             "status": "verified"
           },
           "32": {
             "fixtures": [
-              "upstream-startup-api32-warm"
+              "startup-api32-warm-smoke"
             ],
             "status": "verified"
           },
@@ -33,7 +33,7 @@
           },
           "34": {
             "fixtures": [
-              "upstream-startup-api34-cold"
+              "startup-api34-cold"
             ],
             "status": "verified"
           },
@@ -43,7 +43,7 @@
           },
           "36": {
             "fixtures": [
-              "smart-launch-light-api36"
+              "startup-light-api36"
             ],
             "status": "verified"
           },
@@ -60,7 +60,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_slow_reasons/startup_overview.sql",
-      "sha256": "1962d61d4e37052ac8d86629a0c0536c462a87647820c0f9c87624812195adf5",
+      "sha256": "a07c807be20e64d9509989ad9943ad96bf28c56d64f5fa7cc1889a628ca80026",
       "signal_patterns": [
         "bindApplication",
         "handleRelaunchActivity*",
@@ -69,7 +69,7 @@
       ],
       "skill_id": "startup_slow_reasons",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58"
@@ -95,11 +95,11 @@
         "default_execution": "verified",
         "execution_verified": true,
         "fixtures": [
-          "smart-launch-light-api36",
-          "upstream-startup-api24-cold",
-          "upstream-startup-api31-cold",
-          "upstream-startup-api32-warm",
-          "upstream-startup-api34-cold"
+          "startup-light-api36",
+          "startup-api24-cold",
+          "startup-api31-cold",
+          "startup-api32-warm-smoke",
+          "startup-api34-cold"
         ],
         "runtime_compatible": true,
         "semantic_verified": true,
@@ -158,7 +158,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_slow_reasons/slow_reason_checks.sql",
-      "sha256": "719020d853da99dbc44286a5d296230de2ff80ebb7c6acb72499bfa590760af5",
+      "sha256": "35776b33e4a43c43b2f5c313e59eae021e84957b14f2985ba6d5b3eb4d250bcb",
       "signal_patterns": [
         "*GC*",
         "*Lock contention*",
@@ -186,7 +186,7 @@
       ],
       "skill_id": "startup_slow_reasons",
       "source": {
-        "commit": "1e23eb4369431c88f9847dcec69ccb81946bdb26",
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
         "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58"

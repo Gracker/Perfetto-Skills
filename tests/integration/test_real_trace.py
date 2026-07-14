@@ -1,31 +1,33 @@
-import os
-from pathlib import Path
 import unittest
 
-from tests.support import generated_sql, run_public_probe, run_public_query
+from tests.support import (
+    fixture_available,
+    fixture_path,
+    generated_sql,
+    run_public_probe,
+    run_public_query,
+)
 
 
-TRACE_ROOT = Path(os.environ["SMARTPERFETTO_TEST_TRACES"]) if os.environ.get("SMARTPERFETTO_TEST_TRACES") else None
+REAL_TRACE_IDS = (
+    "startup-light-api36",
+    "startup-heavy-api36",
+    "scroll-aosp-api35",
+    "flutter-texture-api35",
+    "flutter-surface-api35",
+    "scroll-oppo-api36",
+)
 
 
 @unittest.skipUnless(
-    TRACE_ROOT and TRACE_ROOT.is_dir(),
-    "SMARTPERFETTO_TEST_TRACES not configured",
+    all(fixture_available(fixture_id) for fixture_id in REAL_TRACE_IDS),
+    "full PERFETTO_FIXTURE_ROOT not configured",
 )
 class RealTraceTest(unittest.TestCase):
     def test_all_six_fixture_traces_are_parseable(self) -> None:
-        names = (
-            "launch_light.pftrace",
-            "lacunh_heavy.pftrace",
-            "scroll_Standard-AOSP-App-Without-PreAnimation.pftrace",
-            "Scroll-Flutter-327-TextureView.pftrace",
-            "Scroll-Flutter-SurfaceView-Wechat-Wenyiwen.pftrace",
-            "scroll-demo-customer-scroll.pftrace",
-        )
-        for name in names:
-            with self.subTest(trace=name):
-                trace = TRACE_ROOT / name
-                self.assertTrue(trace.is_file())
+        for fixture_id in REAL_TRACE_IDS:
+            with self.subTest(trace=fixture_id):
+                trace = fixture_path(fixture_id)
                 probe = run_public_probe(trace)
                 self.assertEqual(probe["status"], "ok", probe)
                 self.assertGreater(
@@ -33,8 +35,7 @@ class RealTraceTest(unittest.TestCase):
                 )
 
     def test_startup_probe_and_generated_query(self) -> None:
-        trace = TRACE_ROOT / "launch_light.pftrace"
-        self.assertTrue(trace.is_file())
+        trace = fixture_path("startup-light-api36")
         probe = run_public_probe(trace)
         self.assertEqual(probe["status"], "ok", probe)
         self.assertGreater(probe["trace"]["end_ns"], probe["trace"]["start_ns"])
@@ -48,8 +49,7 @@ class RealTraceTest(unittest.TestCase):
         self.assertIn("startup_type", result["rows"][0])
 
     def test_standard_scroll_has_frame_timeline_signal(self) -> None:
-        trace = TRACE_ROOT / "scroll_Standard-AOSP-App-Without-PreAnimation.pftrace"
-        self.assertTrue(trace.is_file())
+        trace = fixture_path("scroll-aosp-api35")
         result = run_public_query(
             trace,
             sql_file=generated_sql("scrolling_analysis", "frame_timeline_check.sql"),

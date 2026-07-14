@@ -1,0 +1,225 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "fixtures": [
+              "upstream-startup-api31-cold"
+            ],
+            "status": "verified"
+          },
+          "32": {
+            "fixtures": [
+              "upstream-startup-api32-warm"
+            ],
+            "status": "verified"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "fixtures": [
+              "upstream-startup-api34-cold"
+            ],
+            "status": "verified"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "fixtures": [
+              "smart-launch-light-api36"
+            ],
+            "status": "verified"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "startup_slow_reasons/startup_overview",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/startup_slow_reasons/startup_overview.sql",
+      "sha256": "a07c807be20e64d9509989ad9943ad96bf28c56d64f5fa7cc1889a628ca80026",
+      "signal_patterns": [
+        "bindApplication",
+        "handleRelaunchActivity*",
+        "performCreate:*",
+        "relaunchActivity*"
+      ],
+      "skill_id": "startup_slow_reasons",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.startup.startups",
+          "android.startup.time_to_display"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "startup_overview",
+      "template": {
+        "fragments": [],
+        "parameters": [],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "verified",
+        "execution_verified": true,
+        "fixtures": [
+          "smart-launch-light-api36",
+          "upstream-startup-api24-cold",
+          "upstream-startup-api31-cold",
+          "upstream-startup-api32-warm",
+          "upstream-startup-api34-cold"
+        ],
+        "runtime_compatible": true,
+        "semantic_verified": true,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "startup_slow_reasons/slow_reason_checks",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/startup_slow_reasons/slow_reason_checks.sql",
+      "sha256": "35776b33e4a43c43b2f5c313e59eae021e84957b14f2985ba6d5b3eb4d250bcb",
+      "signal_patterns": [
+        "*GC*",
+        "*Lock contention*",
+        "*WebView*",
+        "*art::Monitor*",
+        "*broadcastReceiveReg*",
+        "*contentProviderCreate*",
+        "*dex2oat*",
+        "*dex2oatd*",
+        "*gc*",
+        "*monitor contention*",
+        "*webview*",
+        "JIT compiling*",
+        "Lock contention*",
+        "VerifyClass*",
+        "bindApplication",
+        "cpufreq",
+        "dlopen:*",
+        "dlopen:*chromium*",
+        "dlopen:*webview*",
+        "inflate*",
+        "monitor contention*",
+        "system_server",
+        "verifyClass*"
+      ],
+      "skill_id": "startup_slow_reasons",
+      "source": {
+        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.startup.startups",
+          "android.startup.time_to_display"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "slow_reason_checks",
+      "template": {
+        "fragments": [],
+        "parameters": [],
+        "result_dependencies": [
+          "startup_overview"
+        ]
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "startup_slow_reasons"
+}
