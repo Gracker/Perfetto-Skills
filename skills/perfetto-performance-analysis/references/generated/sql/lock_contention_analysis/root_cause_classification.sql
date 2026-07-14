@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/lock_contention_analysis.skill.yaml
 -- Source SHA-256: 3ab24e4626566ee3a7eedcbdc46815378b714668c8dd6ee54ddd6d6c2f1b1b56
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
 
 WITH
 -- 主线程锁竞争统计

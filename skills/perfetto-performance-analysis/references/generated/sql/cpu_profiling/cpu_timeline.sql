@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/deep/cpu_profiling.skill.yaml
 -- Source SHA-256: 747b9f8972708ad1e4c8449ab8e9876c58138f44ae4f3515d87232a9173a4772
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
 
 WITH
 time_range AS (

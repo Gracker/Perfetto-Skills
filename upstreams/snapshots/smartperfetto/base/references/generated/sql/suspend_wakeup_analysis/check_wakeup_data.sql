@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/suspend_wakeup_analysis.skill.yaml
 -- Source SHA-256: cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
 
 SELECT
   COUNT(*) as wakeup_count,
