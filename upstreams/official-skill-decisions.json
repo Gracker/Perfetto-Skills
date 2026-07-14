@@ -1,4 +1,326 @@
 {
   "schema_version": 1,
-  "decisions": []
+  "decisions": [
+    {
+      "path": "ai/skills/perfetto/SKILL-template.md",
+      "sha256": "4bbe57d18f7d8dc56ca9379046397c2cb21bb7d55f4c29a7c50533b492097a14",
+      "outcome": "already_covered",
+      "reason": "The public Skill entrypoint routes portable Perfetto analysis through the generated workflow catalog and bounded local runtime.",
+      "local_path": "skills/perfetto-performance-analysis/SKILL.md",
+      "test_id": "tests.unit.test_skill_contract",
+      "reviewed_source_commit": "a731f4573cd62ef4ccb5abf5b4e427b88f6c99f1"
+    },
+    {
+      "path": "ai/skills/perfetto/environment-references/setup.md",
+      "sha256": "8ca18d0ebe58dfff768e2f8644e45fa002f798c0009a8d227ad3de7d0f4b39a1",
+      "outcome": "already_covered",
+      "reason": "The public runtime has a checksum-pinned cross-platform trace processor bootstrap and doctor contract.",
+      "local_path": "skills/perfetto-performance-analysis/scripts/bootstrap_trace_processor.py",
+      "test_id": "tests.unit.test_bootstrap",
+      "reviewed_source_commit": "a731f4573cd62ef4ccb5abf5b4e427b88f6c99f1"
+    },
+    {
+      "path": "ai/skills/perfetto/infra-references/querying.md",
+      "sha256": "196f98d4b893bd3dea7b8f1e3b21fc91b485abf90841186551a610e134c8fc2b",
+      "outcome": "already_covered",
+      "reason": "The portable query runtime validates processor identity, uses argument arrays, bounds output, and preserves query provenance.",
+      "local_path": "skills/perfetto-performance-analysis/scripts/perfetto_query.py",
+      "test_id": "tests.unit.test_runtime",
+      "reviewed_source_commit": "a731f4573cd62ef4ccb5abf5b4e427b88f6c99f1"
+    },
+    {
+      "path": "ai/skills/perfetto/infra-references/recording_android_traces.md",
+      "sha256": "a71c03edbe9370b3b847cffd581d4517a8d617beed0b785508a5f89324549518",
+      "outcome": "not_applicable",
+      "reason": "Perfetto-Skills is an analysis runtime and does not ship or claim an Android device trace-recording workflow."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/heap_dump.md",
+      "sha256": "0903ae5586914bad1eb4e1d23cf0da2d3d01fe21890958966bf15c92559a5e74",
+      "outcome": "adopted",
+      "reason": "SmartPerfetto now extracts a bounded per-dump dominator path with propagated root identity and retained size from real managed-heap graph data.",
+      "local_path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
+      "test_id": "execute-android_heap_dominator_path_extract",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/heap_dump_caching_optimizer.md",
+      "sha256": "d6509e436a206b7badd4ccb1a8297293ce66025675ab20bf0c90864108b2a5b3",
+      "outcome": "already_covered",
+      "reason": "The deterministic memory diagnostic Skill reports repeated objects and size-frequency evidence with explicit no-data semantics.",
+      "local_path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-android_memory_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/heap_dump_cluster.md",
+      "sha256": "51b6b58e37446cd2765651e9f129cc24fc22b02c08d1c2cf3d15457c82bdae18",
+      "outcome": "adopted",
+      "reason": "SmartPerfetto owns deterministic sparse TF-IDF, K-Means, Silhouette selection, bounded evidence, and batch-only cluster reporting.",
+      "local_path": "backend/src/services/batchTrace/heapPathClusterService.ts",
+      "test_id": "heap path normalization and clustering",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/java_allocation_profile.md",
+      "sha256": "c06372498d76a4a7cd8ac159cd79101b976fe3b6bd8051f740ac76f2727d2881",
+      "outcome": "already_covered",
+      "reason": "The memory diagnostic Skill exposes bounded ART heap-profile hotspot evidence and keeps allocation churn separate from retained heap evidence.",
+      "local_path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+      "test_id": "memory skill SQL semantic guards",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/native_heap.md",
+      "sha256": "7734b7c0501bb9049c14f833dfcca090b956ce13fc79ae3965975b3b76eb8bfd",
+      "outcome": "already_covered",
+      "reason": "The native heap Skill reports bounded allocation callstack evidence and explicitly distinguishes unreleased retention from allocation churn.",
+      "local_path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
+      "test_id": "memory skill SQL semantic guards",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/cluster_paths.py",
+      "sha256": "27660428eb54b579383ae9eadc05cd76b214fa7152aa3f99d6035c30659ea406",
+      "outcome": "adopted",
+      "reason": "The product batch service implements deterministic bounded sparse clustering without a pandas or scikit-learn runtime dependency.",
+      "local_path": "backend/src/services/batchTrace/heapPathClusterService.ts",
+      "test_id": "heap path normalization and clustering",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/query_heap_references.sql",
+      "sha256": "2852498ed449b25a1d9b465feeda3a9cb7487174751e804459e4f32175dc1db9",
+      "outcome": "already_covered",
+      "reason": "The heap leak-candidate Skill resolves bounded suspect-object reference holders and excludes Perfetto-internal references.",
+      "local_path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
+      "test_id": "execute-android_heap_graph_leak_candidates",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/query_most_repeated_objects.sql",
+      "sha256": "38270f2b769d1afa6f10a23000480fb8d8def3e1cb0f635a0cd24ffd457b317a",
+      "outcome": "already_covered",
+      "reason": "The memory diagnostic Skill reports bounded repeated-object counts against owned managed-heap graph evidence.",
+      "local_path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-android_memory_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/query_size_frequencies.sql",
+      "sha256": "26d85380225e86aa5043a77b67740a2f2126f86e38198fcb5c8bdb0ac1f3fd7c",
+      "outcome": "already_covered",
+      "reason": "The memory diagnostic Skill reports object-size frequency evidence without converting frequency alone into a leak conclusion.",
+      "local_path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-android_memory_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/summarize_clusters.py",
+      "sha256": "ad0e790566b3c6e227d9602aa27c5a178027e222661a3b38d3059c3c4acb97c2",
+      "outcome": "adopted",
+      "reason": "The batch result contract reports representative signatures, trace/sample support, retained-size percentiles, limitations, and evidence references.",
+      "local_path": "backend/src/services/batchTrace/heapPathClusterService.ts",
+      "test_id": "heap path normalization and clustering",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/triage_dominator_path.sql",
+      "sha256": "7acdbef0a8ed3386d83ade63e16220d2381f2bc4bdeeeff42c762789723d6fbc",
+      "outcome": "adopted",
+      "reason": "The extraction Skill uses the dominator class tree, bottom-up retained aggregation, and recursive root-to-node path construction on a data-present fixture.",
+      "local_path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
+      "test_id": "execute-android_heap_dominator_path_extract",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/triage_java_allocation.sql",
+      "sha256": "7b5566738253dd5c21142620ac920ea26b50600523f062f597aac13ae3fd3c24",
+      "outcome": "already_covered",
+      "reason": "The memory diagnostic Skill contains the bounded heap-profile hotspot query and preserves unavailable-data semantics.",
+      "local_path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+      "test_id": "memory skill SQL semantic guards",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/triage_native_heap.sql",
+      "sha256": "b73e75c2f3ebeb83d61009e91ee35e7132ffaa2d0f72a2def5b36907a28c138f",
+      "outcome": "already_covered",
+      "reason": "The native heap Skill provides the bounded top-callstack query and does not infer source-code root cause from allocation evidence alone.",
+      "local_path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
+      "test_id": "memory skill SQL semantic guards",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/kernel_analysis.md",
+      "sha256": "312862c81eecf05cb64a155391c4ea0cc81dba5fd2984c49fea92d3fcc41ba21",
+      "outcome": "adopted",
+      "reason": "The vendor-neutral first pass is implemented with real compute-category slices; counter-derived bound classification remains explicitly excluded by separate decisions.",
+      "local_path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
+      "test_id": "execute-gpu_compute_kernel_analysis",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/launch_statistics.md",
+      "sha256": "1fd70a24d229c36ef81bf3c08dd73f92b9c0b51666dff50e8656a953af0fe3a4",
+      "outcome": "adopted",
+      "reason": "The compute Skill reports producer-provided grid, workgroup, register, shared-memory, barrier, and wave evidence with overflow-safe derived thread counts.",
+      "local_path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
+      "test_id": "execute-gpu_compute_kernel_analysis",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/occupancy.md",
+      "sha256": "8b182a7044106418d7fe2a17b88b867cde91a4589c86dab3efb134875142ca40",
+      "outcome": "not_applicable",
+      "reason": "No owned NVIDIA producer-counter schema or data-present fixture proves achieved or theoretical occupancy; launch arguments alone are insufficient."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/scripts/occupancy.sql",
+      "sha256": "a9ba5e5ea21969e86696e22e5d9c1ba4f539d8c7132edaf9641620cd5888800b",
+      "outcome": "not_applicable",
+      "reason": "No owned NVIDIA producer-counter schema or data-present fixture proves the counter names and occupancy calculations."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/scripts/speed_of_light.sql",
+      "sha256": "b718218fd24556a068637f8f8dcf2498bf227895300a8b2951ea84c4c8e807fa",
+      "outcome": "not_applicable",
+      "reason": "No owned NVIDIA producer-counter schema or data-present fixture proves compute, cache, or DRAM throughput percentages."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/scripts/workload_analysis.sql",
+      "sha256": "53da15ecafbcef31b5931c3f7fa28b6828929a82beb669e9f07cffd4400881c8",
+      "outcome": "not_applicable",
+      "reason": "No owned NVIDIA producer-counter schema or data-present fixture proves instruction-pipeline utilization."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/speed_of_light.md",
+      "sha256": "a981b36d0b38059b6ed2fda837fcc3d792cce6194ad5b7fc61285c7a6d7067c7",
+      "outcome": "not_applicable",
+      "reason": "SmartPerfetto does not claim NVIDIA Speed-of-Light analysis without owned throughput-counter evidence."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/workload_analysis.md",
+      "sha256": "09e0049d58aaff291fda27d8f078500b37db5711d84c004aaa8efaf8b8ad7818",
+      "outcome": "not_applicable",
+      "reason": "SmartPerfetto does not claim NVIDIA workload-pipeline attribution without owned counter evidence."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/occupancy.md",
+      "sha256": "82f29d1d13c1dfd2cc9a1c6104baee387421e5bf58328c1d8a00731af9ce6872",
+      "outcome": "not_applicable",
+      "reason": "The generic interpretation still requires vendor achieved-occupancy counters; SmartPerfetto only exposes descriptive launch evidence."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/scripts/kernels_summary.sql",
+      "sha256": "c9adacc20501f6ea26680664d7478b0cd723b9c09eb987b7250801bf1d07b0f3",
+      "outcome": "adopted",
+      "reason": "The compute Skill provides bounded per-kernel duration, launch order, name, GPU identity, and compute-time share from real compute-category slices.",
+      "local_path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
+      "test_id": "execute-gpu_compute_kernel_analysis",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/scripts/launch_statistics.sql",
+      "sha256": "2713c5b5cc6a9df261eb471bccf1b183743b4c1652f792de2e87b6699b2b5db8",
+      "outcome": "adopted",
+      "reason": "The compute Skill extracts producer-provided launch arguments using the data-present argument keys emitted by the owned trace fixture.",
+      "local_path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
+      "test_id": "execute-gpu_compute_kernel_analysis",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/speed_of_light.md",
+      "sha256": "9c9fe7a31b0afcf98f9ef224012b51c1f285305f61559dec4363e0264e490704",
+      "outcome": "not_applicable",
+      "reason": "The workflow requires vendor throughput counters; kernel duration and launch shape cannot establish compute-bound or memory-bound behavior."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/workload_analysis.md",
+      "sha256": "14a598043d43838d7b32db7a949a323ae9e1953d0e35bb3807757e7101d7fe6c",
+      "outcome": "not_applicable",
+      "reason": "The workflow requires vendor instruction-pipeline counters that are absent from the owned schema and data-present fixture."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/frequency_residency.md",
+      "sha256": "7cdb354de25e0cc48ac89ac06aa41c27c5120542479a1cbfff4707c2da1f24a6",
+      "outcome": "already_covered",
+      "reason": "The v57 GPU diagnostic Skill reports busy-frequency residency, DVFS ramp, and sustained throttle evidence.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/gpu_info.md",
+      "sha256": "2e7f40a7ac0905d8868b6f0b04b05b0e4e85c126fa4fcc9723cf80b43c084243",
+      "outcome": "already_covered",
+      "reason": "The v57 GPU diagnostic Skill reports per-GPU inventory and identity without assuming a vendor from kernel names.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_dvfs_ramp.sql",
+      "sha256": "2188a625af48933ae026a95b6d5145063ccc94db6d174e4501260f6ac9308e40",
+      "outcome": "already_covered",
+      "reason": "The v57 GPU diagnostic Skill implements a bounded DVFS ramp query.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_frequency_residency.sql",
+      "sha256": "6f2b1787d52573b64df94e2364e6c61aafbf44d8d9abfbb920508b689818b19d",
+      "outcome": "already_covered",
+      "reason": "The v57 GPU diagnostic Skill implements busy-frequency residency with explicit data availability.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_idle_gaps.sql",
+      "sha256": "1a188e3a6afa2d34ad085fca3587319afe5fbc980d2dc9fc1333198598058734",
+      "outcome": "already_covered",
+      "reason": "The v57 GPU diagnostic Skill reports bounded GPU idle-gap evidence separately from busy occupancy.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_info.sql",
+      "sha256": "f9d24307195ae68f37474d335dafc7b5b4474389577cd32b071e78df91156efc",
+      "outcome": "already_covered",
+      "reason": "The v57 GPU diagnostic Skill implements the GPU inventory query with stable per-GPU identity.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_sustained_throttle.sql",
+      "sha256": "1bc95836af045a74463db78acecae161bc4b0db87827fb492fe2d0f704c0eed7",
+      "outcome": "already_covered",
+      "reason": "The v57 GPU diagnostic Skill implements sustained-throttle evidence with explicit duration thresholds.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_timeline_decomposition.sql",
+      "sha256": "cd7a474f840bd8fa10ef77ae22d475d678ad0c010ac3e754f439b9d60c77f92e",
+      "outcome": "already_covered",
+      "reason": "The v57 GPU diagnostic Skill implements timeline occupancy and idle decomposition without treating it as kernel throughput.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/timeline_occupancy.md",
+      "sha256": "c994a9984fea8b2d3fce124562aba88c347c1fa4cf692a75f80c8f64b36f8ad3",
+      "outcome": "already_covered",
+      "reason": "The v57 GPU diagnostic Skill separates device-busy occupancy, idle gaps, and host-side timing evidence.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    }
+  ]
 }
