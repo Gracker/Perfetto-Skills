@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling_chain.skill.yaml
 Source SHA-256: 840d149570c40efdadb929920141eec03d3e578709be09c9bc99fa3510efd39f
-Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+Source commit: a5cefea76e5dfa550683414ffe23ec3a65a46bfb
 # 温控降频链路分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

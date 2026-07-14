@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-data-sources.template.md
 Source SHA-256: eb034d0e2cd592b9279a3efc87c6573d4ce857e2c928fd30ec2df7949d2e2556
-Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+Source commit: a5cefea76e5dfa550683414ffe23ec3a65a46bfb
 
 # Knowledge Data Sources Template
 

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_slice_analysis.skill.yaml
 -- Source SHA-256: 2309b7c7da0ad9c74d1d781a1b5d0ea4b1466bc6f0ebd8757a467d36a7a59853
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: a5cefea76e5dfa550683414ffe23ec3a65a46bfb
 
 WITH
 target_threads AS (

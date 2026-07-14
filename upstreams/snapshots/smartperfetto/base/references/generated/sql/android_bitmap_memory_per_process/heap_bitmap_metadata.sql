@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml
 -- Source SHA-256: 3c84f44d6c902b27eaae06e9700024c9d6954005525a587cdbf9f2863e52423b
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: a5cefea76e5dfa550683414ffe23ec3a65a46bfb
 
 WITH bitmap_rows AS (
   SELECT

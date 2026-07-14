@@ -1,12 +1,15 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_gpu_work_period_track.skill.yaml
--- Source SHA-256: 1ca33ba4563f2acd3f76a752f728eaa1b22e66bd299430dddfbe5960379dd9ff
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source SHA-256: 8a497f4a41658ca2975e94bec53ccda4461bdd56763195ae3a57f32807c97017
+-- Source commit: a5cefea76e5dfa550683414ffe23ec3a65a46bfb
 
 SELECT
-  ts,
-  ROUND(dur / 1e6, 2) AS dur_ms,
-  uid
-FROM android_gpu_work_period_track
-ORDER BY ts ASC
+  s.ts,
+  ROUND(s.dur / 1e6, 2) AS dur_ms,
+  t.uid,
+  t.gpu_id
+FROM android_gpu_work_period_track t
+JOIN slice s ON s.track_id = t.id
+WHERE s.dur > 0
+ORDER BY s.ts ASC
 LIMIT 100

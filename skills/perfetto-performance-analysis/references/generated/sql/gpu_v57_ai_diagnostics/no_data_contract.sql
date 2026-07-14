@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml
 -- Source SHA-256: ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: a5cefea76e5dfa550683414ffe23ec3a65a46bfb
 
 SELECT
   'no_gpu_v57_activity_or_frequency_rows' AS status,

@@ -61,7 +61,35 @@
       "sha256": "6c5479fd1b765ee4d29692c43a8204b972bc0f97eb373aca98ea7e11e99fd8b4"
     },
     {
-      "assertions": [],
+      "assertions": [
+        {
+          "field": "callback_count",
+          "id": "startup-heavy-handler-callback-positive",
+          "kind": "field_positive",
+          "params": {
+            "end_ts": 0,
+            "min_dur_ns": 100000,
+            "package": "com.android.systemui",
+            "start_ts": 0,
+            "top_k": 20
+          },
+          "query_id": "main_thread_handler_callback_slices/callback_slices"
+        },
+        {
+          "field": "first_ts",
+          "id": "startup-heavy-handler-range-clipped-first-ts",
+          "kind": "field_equals",
+          "params": {
+            "end_ts": 564165861430471,
+            "min_dur_ns": 1,
+            "package": "com.android.systemui",
+            "start_ts": 564165861330471,
+            "top_k": 20
+          },
+          "query_id": "main_thread_handler_callback_slices/callback_slices",
+          "value": 564165861330471
+        }
+      ],
       "capabilities": [
         "android_startup"
       ],

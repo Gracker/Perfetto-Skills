@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/chrome_scroll_jank_frame_timeline.skill.yaml
 -- Source SHA-256: 2aa88e4f3cc40101c7a97eefeb3cfa517026c5c827e22d0cd8894af2a57da2a4
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: a5cefea76e5dfa550683414ffe23ec3a65a46bfb
 
 SELECT
   stats.scroll_id,

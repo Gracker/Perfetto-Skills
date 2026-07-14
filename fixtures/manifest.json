@@ -32,7 +32,35 @@
       "capture": {"config": "embedded_in_trace", "setup_errors": "unknown"},
       "platform": {"api": 36, "oem": "Xiaomi", "kernel": "6.12.23-android16-5-gb23e74f69076-abogki452159376-4k", "build_type": "user", "qpr": "unknown", "abi": "unknown"},
       "capabilities": ["android_startup"],
-      "assertions": []
+      "assertions": [
+        {
+          "id": "startup-heavy-handler-callback-positive",
+          "query_id": "main_thread_handler_callback_slices/callback_slices",
+          "kind": "field_positive",
+          "field": "callback_count",
+          "params": {
+            "package": "com.android.systemui",
+            "start_ts": 0,
+            "end_ts": 0,
+            "min_dur_ns": 100000,
+            "top_k": 20
+          }
+        },
+        {
+          "id": "startup-heavy-handler-range-clipped-first-ts",
+          "query_id": "main_thread_handler_callback_slices/callback_slices",
+          "kind": "field_equals",
+          "field": "first_ts",
+          "value": 564165861330471,
+          "params": {
+            "package": "com.android.systemui",
+            "start_ts": 564165861330471,
+            "end_ts": 564165861430471,
+            "min_dur_ns": 1,
+            "top_k": 20
+          }
+        }
+      ]
     },
     {
       "id": "scroll-aosp-api35",

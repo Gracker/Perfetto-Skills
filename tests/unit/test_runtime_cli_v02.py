@@ -24,8 +24,8 @@ class RuntimeCliV02Test(unittest.TestCase):
             exit_code = cli.main(["list", "--format", "json"])
         self.assertEqual(exit_code, 0)
         result = json.loads(output.getvalue())
-        self.assertEqual(result["summary"]["skills"], 231)
-        self.assertEqual(result["summary"]["executable"], 199)
+        self.assertEqual(result["summary"]["skills"], 232)
+        self.assertEqual(result["summary"]["executable"], 200)
         self.assertEqual(result["summary"]["knowledge_only"], 32)
 
     def test_manifest_query_loads_modules_fragments_and_validation(self) -> None:

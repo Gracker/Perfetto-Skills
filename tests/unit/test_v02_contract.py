@@ -34,17 +34,17 @@ class V02ContractTest(unittest.TestCase):
         strategy_index = json.loads(
             (runtime / "strategy-index.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(skill_index["summary"]["skills"], 231)
-        self.assertEqual(skill_index["summary"]["steps"], 746)
+        self.assertEqual(skill_index["summary"]["skills"], 232)
+        self.assertEqual(skill_index["summary"]["steps"], 747)
         self.assertEqual(skill_index["summary"]["step_conditions"], 246)
-        self.assertEqual(len(skill_index["skills"]), 231)
-        self.assertEqual(sql_index["summary"]["queries"], 643)
+        self.assertEqual(len(skill_index["skills"]), 232)
+        self.assertEqual(sql_index["summary"]["queries"], 644)
         self.assertEqual(strategy_index["summary"]["sources"], 65)
         self.assertEqual(len(strategy_index["strategies"]), 65)
         queries = []
         for shard in sql_index["shards"]:
             queries.extend(json.loads((runtime / shard).read_text(encoding="utf-8"))["queries"])
-        self.assertEqual(len(queries), 643)
+        self.assertEqual(len(queries), 644)
         for query in queries:
             self.assertEqual(len(query["compatibility"]["android"]), 10)
             self.assertRegex(query["sha256"], r"^[0-9a-f]{64}$")
@@ -56,9 +56,9 @@ class V02ContractTest(unittest.TestCase):
         validation = json.loads(
             (runtime / "sql-validation-report.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(validation["summary"]["static_valid"], 643)
-        self.assertEqual(validation["summary"]["execution_verified"], 5)
-        self.assertEqual(validation["summary"]["semantic_verified"], 5)
+        self.assertEqual(validation["summary"]["static_valid"], 644)
+        self.assertEqual(validation["summary"]["execution_verified"], 6)
+        self.assertEqual(validation["summary"]["semantic_verified"], 6)
         self.assertEqual(validation["summary"]["capability_gated"], 638)
 
     def test_android_matrix_is_capability_first_for_api_28_through_37(self) -> None:
@@ -77,7 +77,7 @@ class V02ContractTest(unittest.TestCase):
                 "unknown",
             },
         )
-        self.assertEqual(len(matrix["skills"]), 231)
+        self.assertEqual(len(matrix["skills"]), 232)
         for skill_id, relative in matrix["skills"].items():
             with self.subTest(skill=skill_id):
                 entry = json.loads((runtime / relative).read_text(encoding="utf-8"))

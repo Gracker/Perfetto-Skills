@@ -19,7 +19,7 @@
       "kernel": "6.1.129-android14-11-gdc1fbab45e9b-ab13299063",
       "license": "AGPL-3.0-or-later",
       "sha256": "6c5479fd1b765ee4d29692c43a8204b972bc0f97eb373aca98ea7e11e99fd8b4",
-      "source": "test-traces/launch_light.pftrace"
+      "source": "Trace/real/android-startup-light/trace.pftrace"
     },
     {
       "android": {
@@ -28,13 +28,34 @@
         "oem": "Xiaomi",
         "qpr": "unknown"
       },
-      "assertions": [],
+      "assertions": [
+        {
+          "field": "callback_count",
+          "kind": "field_positive",
+          "params": {
+            "package": "com.android.systemui"
+          },
+          "query_id": "main_thread_handler_callback_slices/callback_slices"
+        },
+        {
+          "field": "first_ts",
+          "kind": "field_equals",
+          "params": {
+            "end_ts": 564165861430471,
+            "min_dur_ns": 1,
+            "package": "com.android.systemui",
+            "start_ts": 564165861330471
+          },
+          "query_id": "main_thread_handler_callback_slices/callback_slices",
+          "value": 564165861330471
+        }
+      ],
       "capture_config": "embedded_in_trace",
       "id": "smart-launch-heavy-api36",
       "kernel": "6.12.23-android16-5-gb23e74f69076-abogki452159376-4k",
       "license": "AGPL-3.0-or-later",
       "sha256": "2a0c7b85e7f4a14e43b7f8d6de21172e05eba1ed3ad8ef7df539bb5e59b6ba63",
-      "source": "test-traces/lacunh_heavy.pftrace"
+      "source": "Trace/real/android-startup-heavy/trace.pftrace"
     },
     {
       "android": {
@@ -56,7 +77,7 @@
       "kernel": "6.6.56-android15-8-g1b3a8e682e47-ab101-4k",
       "license": "AGPL-3.0-or-later",
       "sha256": "df7eebc5c6ff19b48331f8f1bca346612d86a5ae26eae202d46842a83f87a653",
-      "source": "test-traces/scroll_Standard-AOSP-App-Without-PreAnimation.pftrace"
+      "source": "Trace/real/android-scroll-standard/trace.pftrace"
     },
     {
       "android": {
@@ -88,7 +109,7 @@
       "kernel": "6.6.56-android15-8-g1b3a8e682e47-ab101-4k",
       "license": "AGPL-3.0-or-later",
       "sha256": "645deaa9fc564e0ea33072c83f5ecf1d0a6f53a97055cc98c640e8294deb315e",
-      "source": "test-traces/Scroll-Flutter-327-TextureView.pftrace"
+      "source": "Trace/real/flutter-scroll-texture-view/trace.pftrace"
     },
     {
       "android": {
@@ -103,7 +124,7 @@
       "kernel": "6.6.56-android15-8-g1b3a8e682e47-ab101-4k",
       "license": "AGPL-3.0-or-later",
       "sha256": "e876c56b5d7290acda596e73929c1a127df4255e9ca6951605dad40833e67a53",
-      "source": "test-traces/Scroll-Flutter-SurfaceView-Wechat-Wenyiwen.pftrace"
+      "source": "Trace/real/flutter-scroll-surface-view/trace.pftrace"
     },
     {
       "android": {
@@ -118,7 +139,7 @@
       "kernel": "6.6.89-android15-8-g97a9aaefab9a-ab14519050-4k",
       "license": "AGPL-3.0-or-later",
       "sha256": "1015ba963c49cd57d08d8997c4c48027026f2d6e41f7eb72b4b1356e39f7af3a",
-      "source": "test-traces/scroll-demo-customer-scroll.pftrace"
+      "source": "Trace/real/android-scroll-customer/trace.pftrace"
     },
     {
       "android": {
@@ -230,5 +251,5 @@
   ],
   "schema_version": 1,
   "source_path": "backend/skills/public-fixtures.yaml",
-  "source_sha256": "5f4e50e9a2dc19e9b7c0e39986e48f6a6c6b1c4fa1725ae94030a9a87e110830"
+  "source_sha256": "f58c509c360aa195999ebe6293af41cff16f33b1a6eeb42501a77a55c310599d"
 }

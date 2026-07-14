@@ -1,42 +1,37 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/irq_analysis.skill.yaml
--- Source SHA-256: 01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source SHA-256: f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d
+-- Source commit: a5cefea76e5dfa550683414ffe23ec3a65a46bfb
 
 SELECT
-  printf('%d', s.ts) as ts,
-  s.name as irq_name,
+  printf('%d', li.ts) as ts,
+  li.name as irq_name,
+  CASE WHEN li.is_soft_irq = 1 THEN 'Soft IRQ' ELSE 'Hard IRQ' END AS irq_type,
+  ROUND(li.dur / 1e3, 2) AS dur_us,
+  extract_arg(t.dimension_arg_set_id, 'cpu') as cpu,
   CASE
-    WHEN s.name LIKE 'irq/%' OR s.name LIKE 'irq_handler_%' THEN 'Hard IRQ'
-    ELSE 'Soft IRQ'
-  END AS irq_type,
-  ROUND(s.dur / 1e3, 2) AS dur_us,
-  t.cpu as cpu,
-  CASE
-    WHEN s.name LIKE 'irq/%' OR s.name LIKE 'irq_handler_%' THEN
+    WHEN li.is_soft_irq = 0 THEN
       CASE
-        WHEN s.dur / 1e3 > ${hard_irq_long_threshold_us|1000} * 5 THEN 'critical'
-        WHEN s.dur / 1e3 > ${hard_irq_long_threshold_us|1000} THEN 'warning'
+        WHEN li.dur / 1e3 > ${hard_irq_long_threshold_us|1000} * 5 THEN 'critical'
+        WHEN li.dur / 1e3 > ${hard_irq_long_threshold_us|1000} THEN 'warning'
         ELSE 'notice'
       END
     ELSE
       CASE
-        WHEN s.dur / 1e3 > ${soft_irq_long_threshold_us|10000} * 5 THEN 'critical'
-        WHEN s.dur / 1e3 > ${soft_irq_long_threshold_us|10000} THEN 'warning'
+        WHEN li.dur / 1e3 > ${soft_irq_long_threshold_us|10000} * 5 THEN 'critical'
+        WHEN li.dur / 1e3 > ${soft_irq_long_threshold_us|10000} THEN 'warning'
         ELSE 'notice'
       END
   END as severity
-FROM slice s
-LEFT JOIN thread_track tt ON s.track_id = tt.id
-LEFT JOIN thread t ON tt.utid = t.utid
-WHERE (s.name LIKE 'irq/%' OR s.name LIKE 'softirq/%'
-       OR s.name LIKE 'irq_handler_%' OR s.name LIKE 'softirq_%')
-  AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
-  AND (${end_ts} IS NULL OR s.ts < ${end_ts})
+FROM linux_irqs li
+JOIN slice s ON s.id = li.id
+JOIN track t ON t.id = s.track_id
+WHERE (${start_ts} IS NULL OR li.ts >= ${start_ts})
+  AND (${end_ts} IS NULL OR li.ts < ${end_ts})
   -- 硬中断 > threshold 或 软中断 > threshold
   AND (
-    ((s.name LIKE 'irq/%' OR s.name LIKE 'irq_handler_%') AND s.dur > ${hard_irq_long_threshold_us|1000} * 1000)
-    OR ((s.name LIKE 'softirq/%' OR s.name LIKE 'softirq_%') AND s.dur > ${soft_irq_long_threshold_us|10000} * 1000)
+    (li.is_soft_irq = 0 AND li.dur > ${hard_irq_long_threshold_us|1000} * 1000)
+    OR (li.is_soft_irq = 1 AND li.dur > ${soft_irq_long_threshold_us|10000} * 1000)
   )
-ORDER BY s.dur DESC
+ORDER BY li.dur DESC
 LIMIT 30

@@ -1,0 +1,113 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "fixtures": [
+              "smart-launch-heavy-api36",
+              "smart-launch-heavy-api36"
+            ],
+            "status": "verified"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "main_thread_handler_callback_slices/callback_slices",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/main_thread_handler_callback_slices/callback_slices.sql",
+      "sha256": "92a0f31f2e734b199115452a78b4b824e20639c7e5eaac4347db66f33bd15a9f",
+      "signal_patterns": [
+        "${package}*",
+        "*Handler: *"
+      ],
+      "skill_id": "main_thread_handler_callback_slices",
+      "source": {
+        "commit": "a5cefea76e5dfa550683414ffe23ec3a65a46bfb",
+        "path": "backend/skills/atomic/main_thread_handler_callback_slices.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "a143b158022ef674ec5b0171ce6e62301fa5e0cc95e2f7a202c82508e7383765"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.slices"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread_track",
+          "thread",
+          "process"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "callback_slices",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "min_dur_ns",
+          "package",
+          "start_ts",
+          "top_k"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "verified",
+        "execution_verified": true,
+        "fixtures": [
+          "smart-launch-heavy-api36"
+        ],
+        "runtime_compatible": true,
+        "semantic_verified": true,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "main_thread_handler_callback_slices"
+}

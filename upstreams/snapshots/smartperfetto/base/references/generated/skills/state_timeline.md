@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/state_timeline.skill.yaml
-Source SHA-256: e3ba12b4a53d3c90d152f942c7f910e4108218ef5da2c56c0e19561009686fc2
-Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+Source SHA-256: 847df75d4dff0db6d9e8a10b5d5654d248cc898fde909ce265075dfb85209401
+Source commit: a5cefea76e5dfa550683414ffe23ec3a65a46bfb
 # 连续状态时间线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -138,6 +138,7 @@ display:
 id: device_state_lane_fallback
 type: atomic
 condition: timeline_bounds.data[0]?.has_screen_state !== 1
+optional: true
 display:
   level: detail
   layer: list
@@ -333,6 +334,7 @@ display:
 id: app_state_lane_fallback
 type: atomic
 condition: timeline_bounds.data[0]?.has_battery_top !== 1
+optional: true
 display:
   level: detail
   layer: list
