@@ -7,7 +7,9 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import subprocess
+from typing import NotRequired, TypedDict
 
 try:
     from tools.upstream_locks import load_and_validate_google_lock
@@ -18,6 +20,17 @@ except ModuleNotFoundError:  # Direct script execution.
 ROOT = Path(__file__).resolve().parents[1]
 PREFIX = "ai/skills/perfetto"
 OUTCOMES = {"adopted", "already_covered", "not_applicable", "pending_review"}
+REVIEWED_OUTCOMES = OUTCOMES - {"pending_review"}
+HEX_SHA256 = re.compile(r"[0-9a-f]{64}")
+HEX_COMMIT = re.compile(r"[0-9a-f]{40}")
+
+
+class ReviewedDecision(TypedDict):
+    outcome: str
+    reason: str
+    local_path: NotRequired[str]
+    test_id: NotRequired[str]
+    reviewed_source_commit: NotRequired[str]
 
 
 def _git(repository: Path, *arguments: str, text: bool = True) -> str | bytes:
@@ -61,8 +74,7 @@ def inventory_official_skill(perfetto: Path, revision: str) -> dict[str, object]
 def build_gap_report(
     previous: dict[str, object],
     current: dict[str, object],
-    local_contract: dict[str, str],
-    reviewed_decisions: dict[tuple[str, str], str] | None = None,
+    reviewed_decisions: dict[tuple[str, str], ReviewedDecision] | None = None,
 ) -> dict[str, object]:
     reviewed_decisions = reviewed_decisions or {}
     before = {item["path"]: item["sha256"] for item in previous.get("files", [])}
@@ -73,34 +85,36 @@ def build_gap_report(
     }
     classifications = []
     for path in sorted(after):
-        outcome = "pending_review"
-        if path in added or path in changed:
-            outcome = reviewed_decisions.get((path, after[path]), "pending_review")
-        else:
-            for prefix in sorted(local_contract, key=len, reverse=True):
-                if path.startswith(prefix):
-                    outcome = local_contract[prefix]
-                    break
-        if outcome not in OUTCOMES:
-            raise ValueError(f"invalid official Skill gap outcome: {outcome}")
-        classifications.append({"path": path, "outcome": outcome})
+        decision = reviewed_decisions.get((path, after[path]))
+        classification: dict[str, object] = {
+            "path": path,
+            "sha256": after[path],
+            "outcome": "pending_review",
+        }
+        if decision is not None:
+            classification.update(decision)
+        if classification["outcome"] not in OUTCOMES:
+            raise ValueError(
+                f"invalid official Skill gap outcome: {classification['outcome']}"
+            )
+        classifications.append(classification)
     removed = sorted(set(before) - set(after))
-    removed_classifications = [
-        {
+    removed_classifications = []
+    for path in removed:
+        decision = reviewed_decisions.get((path, before[path]))
+        classification = {
             "path": path,
             "sha256": before[path],
-            "outcome": reviewed_decisions.get(
-                (path, before[path]), "pending_review"
-            ),
+            "outcome": "pending_review",
         }
-        for path in removed
-    ]
+        if decision is not None:
+            classification.update(decision)
+        removed_classifications.append(classification)
     unresolved = sorted(
         [
             item["path"]
             for item in classifications
             if item["outcome"] == "pending_review"
-            and item["path"] in added | changed
         ]
         + [
             item["path"]
@@ -122,28 +136,55 @@ def build_gap_report(
     }
 
 
-def load_reviewed_decisions(path: Path) -> dict[tuple[str, str], str]:
+def load_reviewed_decisions(
+    path: Path,
+) -> dict[tuple[str, str], ReviewedDecision]:
     document = json.loads(path.read_text(encoding="utf-8"))
     if document.get("schema_version") != 1 or not isinstance(
         document.get("decisions"), list
     ):
         raise ValueError("invalid official Skill decision registry")
-    decisions = {}
+    decisions: dict[tuple[str, str], ReviewedDecision] = {}
     for item in document["decisions"]:
+        common_keys = {"path", "sha256", "outcome", "reason"}
+        evidence_keys = {"local_path", "test_id", "reviewed_source_commit"}
+        outcome = item.get("outcome") if isinstance(item, dict) else None
+        expected_keys = (
+            common_keys | evidence_keys
+            if outcome in {"adopted", "already_covered"}
+            else common_keys
+        )
         if (
             not isinstance(item, dict)
+            or set(item) != expected_keys
             or not isinstance(item.get("path"), str)
+            or not item["path"].strip()
             or not isinstance(item.get("sha256"), str)
-            or len(item["sha256"]) != 64
-            or item.get("outcome") not in OUTCOMES - {"pending_review"}
+            or HEX_SHA256.fullmatch(item["sha256"]) is None
+            or outcome not in REVIEWED_OUTCOMES
             or not isinstance(item.get("reason"), str)
             or not item["reason"].strip()
+            or (
+                outcome in {"adopted", "already_covered"}
+                and (
+                    not isinstance(item.get("local_path"), str)
+                    or not item["local_path"].strip()
+                    or not isinstance(item.get("test_id"), str)
+                    or not item["test_id"].strip()
+                    or not isinstance(item.get("reviewed_source_commit"), str)
+                    or HEX_COMMIT.fullmatch(item["reviewed_source_commit"]) is None
+                )
+            )
         ):
             raise ValueError("invalid official Skill reviewed decision")
         key = (item["path"], item["sha256"])
         if key in decisions:
             raise ValueError(f"duplicate official Skill reviewed decision: {key[0]}")
-        decisions[key] = item["outcome"]
+        decisions[key] = {
+            key: value
+            for key, value in item.items()
+            if key not in {"path", "sha256"}
+        }
     return decisions
 
 
@@ -179,18 +220,9 @@ def main(arguments: list[str] | None = None) -> int:
         if snapshot_path.is_file()
         else {"files": []}
     )
-    local_contract = {
-        f"{PREFIX}/environment-references/": "already_covered",
-        f"{PREFIX}/infra-references/": "already_covered",
-        f"{PREFIX}/workflows/android_memory/": "already_covered",
-        f"{PREFIX}/workflows/gpu/compute/nvidia/": "not_applicable",
-        f"{PREFIX}/workflows/gpu/": "already_covered",
-        f"{PREFIX}/SKILL-template.md": "already_covered",
-    }
     report = build_gap_report(
         previous,
         current,
-        local_contract,
         load_reviewed_decisions(args.decisions),
     )
     args.report_dir.mkdir(parents=True, exist_ok=True)

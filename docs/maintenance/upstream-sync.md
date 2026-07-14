@@ -69,12 +69,17 @@ runtime dependency.
    `upstreams/google-perfetto.lock.json`.
 2. Run `uv run python tools/sync_official_skill.py --perfetto PATH --report-dir
    test-output/sync`.
-3. Classify every added or changed concept as `adopted`, `already_covered`,
-   `not_applicable`, or `pending_review`. New behavior is never auto-adopted.
-   Record a non-pending result in `upstreams/official-skill-decisions.json`
-   using the exact upstream path and content SHA-256 plus a concrete reason.
-   Removed files require the same exact-hash review. Unresolved paths make both
-   pinned synchronization and `--apply` fail.
+3. Classify every current or removed file as `adopted`, `already_covered`,
+   `not_applicable`, or `pending_review`. The synchronizer applies only an
+   exact `(path, SHA-256)` decision; unchanged files do not inherit an outcome
+   from their directory. Record a non-pending result in
+   `upstreams/official-skill-decisions.json` with a concrete reason.
+   `adopted` and `already_covered` additionally require the implementing local
+   path, stable test id, and exact 40-character reviewed source commit.
+   `not_applicable` must explain the missing product/runtime boundary rather
+   than imply implementation. Unknown fields, malformed hashes, duplicate
+   decisions, and unresolved paths make pinned synchronization and `--apply`
+   fail.
 4. If adopted, implement it through this repository's normal source and tests,
    then refresh the snapshot with `--apply`; the tool refreshes the lock's
    complete snapshot hash before the complete gate runs.
