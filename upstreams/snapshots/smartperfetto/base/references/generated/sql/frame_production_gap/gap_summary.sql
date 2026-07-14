@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/frame_production_gap.skill.yaml
 -- Source SHA-256: f533dbd058eb314ef6dc1c8e1517275fb7432c17d5f0c2e136536a0c9a26acf2
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: e656c756ddaf23a13c7cffdced2f87f75aa07e49
 
 WITH
 vsync_intervals AS (

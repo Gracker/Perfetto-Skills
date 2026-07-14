@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_class_loading_in_range.skill.yaml
 Source SHA-256: 67a9f4747f25293a9194b9302ad554294fbc8efdd5397b50c7f74664a0899a34
-Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+Source commit: e656c756ddaf23a13c7cffdced2f87f75aa07e49
 # 启动类加载分析 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

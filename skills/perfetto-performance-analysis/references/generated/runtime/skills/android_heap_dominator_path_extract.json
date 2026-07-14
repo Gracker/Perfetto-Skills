@@ -1,0 +1,82 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "android_heap_dominator_path_extract",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Optional stable process identity",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "Optional process name substring",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "Optional heap dump sample timestamp",
+      "name": "graph_sample_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 500,
+      "description": "Maximum dominator rows returned per trace, clamped to 500",
+      "name": "max_rows",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.memory.heap_graph.dominator_class_tree",
+      "graphs.scan",
+      "graphs.hierarchy"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49",
+    "path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
+    "sha256": "de4b9f64860789167409e6604441d8c932167169e8bed9c34ff6cbd580dc0daf"
+  },
+  "steps": [
+    {
+      "id": "data_check",
+      "name": "Heap graph availability",
+      "query_id": "android_heap_dominator_path_extract/data_check",
+      "result_dependencies": [],
+      "save_as": "data_check",
+      "type": "atomic"
+    },
+    {
+      "id": "dominator_paths",
+      "name": "Bounded dominator paths",
+      "optional": true,
+      "query_id": "android_heap_dominator_path_extract/dominator_paths",
+      "result_dependencies": [],
+      "save_as": "dominator_paths",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "memory"
+}

@@ -45,6 +45,7 @@ def validate_sql_syntax(
         ),
         sql,
     )
+    rendered = re.sub(r"\$table\b", "__perfetto_macro_table", rendered)
     rendered = re.sub(r"\$[A-Za-z_][A-Za-z0-9_]*", "NULL", rendered)
     rendered = re.sub(r"\b([A-Za-z_][A-Za-z0-9_]*)!\(", r"\1(", rendered)
     rendered = re.sub(

@@ -1,0 +1,113 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "gpu_compute_kernel_analysis",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "Optional inclusive start timestamp in ns",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Optional exclusive end timestamp in ns",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "Optional host-unique GPU id",
+      "name": "ugpu",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "default": 50,
+      "description": "Maximum kernel or launch rows, clamped to 200",
+      "name": "max_rows",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "prelude.after_eof.events"
+    ],
+    "required_tables": [
+      "gpu_slice",
+      "gpu_track"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49",
+    "path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
+    "sha256": "04ce0fdb105d89c591b8d24656540615492754eb847da9f8bec211de2a39e9df"
+  },
+  "steps": [
+    {
+      "id": "data_check",
+      "name": "GPU compute data availability",
+      "query_id": "gpu_compute_kernel_analysis/data_check",
+      "result_dependencies": [],
+      "save_as": "data_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.compute_rows > 0",
+      "id": "kernel_summary",
+      "name": "GPU compute kernel timing",
+      "query_id": "gpu_compute_kernel_analysis/kernel_summary",
+      "result_dependencies": [],
+      "save_as": "kernel_summary",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.launch_arg_rows > 0",
+      "id": "launch_configuration",
+      "name": "Producer-provided compute launch configuration",
+      "optional": true,
+      "query_id": "gpu_compute_kernel_analysis/launch_configuration",
+      "result_dependencies": [],
+      "save_as": "launch_configuration",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.compute_rows === 0",
+      "id": "no_compute_contract",
+      "name": "No GPU compute kernels",
+      "optional": true,
+      "query_id": "gpu_compute_kernel_analysis/no_compute_contract",
+      "result_dependencies": [],
+      "save_as": "no_compute_contract",
+      "type": "atomic"
+    },
+    {
+      "condition": "data_check.data[0]?.compute_rows > 0 && data_check.data[0]?.launch_arg_rows === 0",
+      "id": "missing_launch_args_contract",
+      "name": "Compute launch arguments unavailable",
+      "optional": true,
+      "query_id": "gpu_compute_kernel_analysis/missing_launch_args_contract",
+      "result_dependencies": [],
+      "save_as": "missing_launch_args_contract",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "gpu-rendering"
+}

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/game_main_loop_jank.skill.yaml
 -- Source SHA-256: 174f4c55bf6e3f9deed54eb0413221f154230454cb2b49437a87e6831cd3a251
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: e656c756ddaf23a13c7cffdced2f87f75aa07e49
 
 WITH
 input AS (

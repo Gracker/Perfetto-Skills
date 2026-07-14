@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rn_fabric_render_jank.skill.yaml
 -- Source SHA-256: fdfb43f4d0487f058bf09549e6a0be4d373503cd106e5e8344e77129265ead8a
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: e656c756ddaf23a13c7cffdced2f87f75aa07e49
 
 WITH
 input AS (

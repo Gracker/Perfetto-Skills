@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_idle_state_residency.skill.yaml
 -- Source SHA-256: 7ca1a5633d514d72c2e841694bf0c3eb19be753350fdd1168e412761c8337eec
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: e656c756ddaf23a13c7cffdced2f87f75aa07e49
 
 WITH clipped AS (
   SELECT

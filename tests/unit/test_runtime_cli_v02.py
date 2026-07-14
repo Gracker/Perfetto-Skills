@@ -24,9 +24,16 @@ class RuntimeCliV02Test(unittest.TestCase):
             exit_code = cli.main(["list", "--format", "json"])
         self.assertEqual(exit_code, 0)
         result = json.loads(output.getvalue())
-        self.assertEqual(result["summary"]["skills"], 231)
-        self.assertEqual(result["summary"]["executable"], 199)
-        self.assertEqual(result["summary"]["knowledge_only"], 32)
+        index = json.loads(
+            (SKILL / "references/generated/runtime/skill-index.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(result["summary"], index["summary"])
+        self.assertEqual(
+            result["summary"]["skills"],
+            result["summary"]["executable"] + result["summary"]["knowledge_only"],
+        )
 
     def test_manifest_query_loads_modules_fragments_and_validation(self) -> None:
         query_cli = load_skill_script("perfetto_query")

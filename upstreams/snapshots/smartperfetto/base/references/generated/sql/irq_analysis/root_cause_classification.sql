@@ -1,42 +1,38 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/irq_analysis.skill.yaml
--- Source SHA-256: 01c95791e727e794914309ad6d43a4c1031919d195ae01d52f20ce5420d70576
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source SHA-256: f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d
+-- Source commit: e656c756ddaf23a13c7cffdced2f87f75aa07e49
 
 WITH
 irq_totals AS (
   SELECT
     COUNT(*) as total_count,
     SUM(dur) / 1e6 as total_dur_ms,
-    SUM(CASE WHEN (name LIKE 'irq/%' OR name LIKE 'irq_handler_%') THEN 1 ELSE 0 END) as hard_count,
-    SUM(CASE WHEN (name LIKE 'softirq/%' OR name LIKE 'softirq_%') THEN 1 ELSE 0 END) as soft_count
-  FROM slice
-  WHERE (name LIKE 'irq/%' OR name LIKE 'softirq/%'
-         OR name LIKE 'irq_handler_%' OR name LIKE 'softirq_%')
-    AND (${start_ts} IS NULL OR ts >= ${start_ts})
+    SUM(CASE WHEN is_soft_irq = 0 THEN 1 ELSE 0 END) as hard_count,
+    SUM(CASE WHEN is_soft_irq = 1 THEN 1 ELSE 0 END) as soft_count
+  FROM linux_irqs
+  WHERE (${start_ts} IS NULL OR ts >= ${start_ts})
     AND (${end_ts} IS NULL OR ts < ${end_ts})
 ),
 long_hard AS (
   SELECT COUNT(*) as cnt
-  FROM slice
-  WHERE (name LIKE 'irq/%' OR name LIKE 'irq_handler_%')
+  FROM linux_irqs
+  WHERE is_soft_irq = 0
     AND dur > ${hard_irq_long_threshold_us|1000} * 1000
     AND (${start_ts} IS NULL OR ts >= ${start_ts})
     AND (${end_ts} IS NULL OR ts < ${end_ts})
 ),
 long_soft AS (
   SELECT COUNT(*) as cnt
-  FROM slice
-  WHERE (name LIKE 'softirq/%' OR name LIKE 'softirq_%')
+  FROM linux_irqs
+  WHERE is_soft_irq = 1
     AND dur > ${soft_irq_long_threshold_us|10000} * 1000
     AND (${start_ts} IS NULL OR ts >= ${start_ts})
     AND (${end_ts} IS NULL OR ts < ${end_ts})
 ),
 trace_duration AS (
   SELECT (MAX(ts) - MIN(ts)) / 1e9 as trace_sec
-  FROM slice
-  WHERE (name LIKE 'irq/%' OR name LIKE 'softirq/%'
-         OR name LIKE 'irq_handler_%' OR name LIKE 'softirq_%')
+  FROM linux_irqs
 )
 SELECT
   CASE

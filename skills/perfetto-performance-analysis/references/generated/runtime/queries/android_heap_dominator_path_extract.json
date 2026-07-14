@@ -1,0 +1,212 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "android_heap_dominator_path_extract/data_check",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/android_heap_dominator_path_extract/data_check.sql",
+      "sha256": "3e41719ad1e4ee0abc17968fa8fe4ab1534ce7f51941c43636077a826f59646e",
+      "signal_patterns": [],
+      "skill_id": "android_heap_dominator_path_extract",
+      "source": {
+        "commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49",
+        "path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "de4b9f64860789167409e6604441d8c932167169e8bed9c34ff6cbd580dc0daf"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.memory.heap_graph.dominator_class_tree",
+          "graphs.scan",
+          "graphs.hierarchy"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "data_check",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "graph_sample_ts",
+          "process_name",
+          "upid"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "android_heap_dominator_path_extract/dominator_paths",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/android_heap_dominator_path_extract/dominator_paths.sql",
+      "sha256": "3dd8849b0c710dcc6807808aa21d081ffe2c3f61e8fa92c8ba24494e59822431",
+      "signal_patterns": [],
+      "skill_id": "android_heap_dominator_path_extract",
+      "source": {
+        "commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49",
+        "path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "de4b9f64860789167409e6604441d8c932167169e8bed9c34ff6cbd580dc0daf"
+      },
+      "sql_dependencies": {
+        "creates": [
+          {
+            "kind": "table",
+            "name": "__sp_heap_dominator_cumulatives"
+          },
+          {
+            "kind": "table",
+            "name": "__sp_heap_top_dominator_nodes"
+          },
+          {
+            "kind": "table",
+            "name": "__sp_heap_dominator_ancestor_ids"
+          },
+          {
+            "kind": "table",
+            "name": "__sp_heap_dominator_labels"
+          },
+          {
+            "kind": "table",
+            "name": "__sp_heap_dominator_paths"
+          }
+        ],
+        "declared_modules": [
+          "android.memory.heap_graph.dominator_class_tree",
+          "graphs.scan",
+          "graphs.hierarchy"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "dominator_paths",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "graph_sample_ts",
+          "max_rows",
+          "process_name",
+          "upid"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "android_heap_dominator_path_extract"
+}

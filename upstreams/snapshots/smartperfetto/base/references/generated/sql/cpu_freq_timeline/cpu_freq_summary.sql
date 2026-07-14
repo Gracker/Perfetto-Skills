@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_freq_timeline.skill.yaml
 -- Source SHA-256: 1e522ca6fb183f6510f044547c8d5f97b82b8de7b181ceeae96795b0b1e8fe84
--- Source commit: 68b113e0355716255af357e8396cd71c71e11d97
+-- Source commit: e656c756ddaf23a13c7cffdced2f87f75aa07e49
 
 WITH
 freq_data AS (
