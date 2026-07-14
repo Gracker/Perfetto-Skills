@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/vsync_phase_alignment.skill.yaml
 -- Source SHA-256: f1629db2e1ddf7711964f2b32f51d60012885ff3c966af974128cb5ed150e700
--- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+-- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 
 WITH vsync_events AS (
   SELECT c.ts as vsync_ts

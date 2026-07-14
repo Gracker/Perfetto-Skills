@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/lmk_kill_attribution.skill.yaml
 Source SHA-256: 4c299b78e625d37ee05fb8288a3b072ab6151ce29c5f98780a038913d06664ae
-Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 # LMK 杀进程归因
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

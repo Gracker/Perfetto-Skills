@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/filesystem_module.skill.yaml
--- Source SHA-256: f09b8fa67e639a8b6825f4e99517b4cf82b8fae75c585d2c96f928f28e3c7f24
--- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+-- Source SHA-256: e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94
+-- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 
 SELECT
   s.ts,
@@ -17,11 +17,11 @@ JOIN thread_track tt ON s.track_id = tt.id
 JOIN thread t ON tt.utid = t.utid
 JOIN process p ON t.upid = p.upid
 WHERE p.name LIKE '%${package}%'
-  AND (s.name GLOB '*SharedPreferences*'
-       OR s.name GLOB '*sharedpref*'
-       OR s.name GLOB '*getShared*'
-       OR s.name GLOB '*apply*'
-       OR s.name GLOB '*commit*')
+  -- apply/commit are generic method names; only accept an explicit
+  -- SharedPreferences namespace in the trace slice.
+  AND (LOWER(s.name) GLOB '*sharedpreferences*'
+       OR LOWER(s.name) GLOB '*sharedpref*'
+       OR LOWER(s.name) GLOB '*shared preferences*')
   AND s.dur > 500000
 ORDER BY s.dur DESC
 LIMIT 20

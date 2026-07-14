@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/filesystem_module.skill.yaml
-Source SHA-256: f09b8fa67e639a8b6825f4e99517b4cf82b8fae75c585d2c96f928f28e3c7f24
-Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+Source SHA-256: e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94
+Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 # 文件系统 I/O 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -246,7 +246,7 @@ display:
 save_as: io_wait_state
 synthesize: true
 ```
-### 慢 I/O 操作
+### 疑似慢 I/O 命名切片
 
 - ID: `slow_io_operations`
 - Type: `atomic`
@@ -258,7 +258,7 @@ type: atomic
 display:
   level: detail
   layer: list
-  title: 慢 I/O 操作 (>10ms)
+  title: 疑似慢 I/O 命名切片 (>10ms)
 save_as: slow_io
 ```
 ### I/O 诊断
@@ -277,8 +277,8 @@ inputs:
 - slow_io
 rules:
 - condition: main_thread_io.data.length > 0
-  diagnosis: 检测到 ${main_thread_io.data.length} 次主线程 I/O 操作，最长 ${main_thread_io.data[0]?.dur_ms}ms
-  confidence: critical
+  diagnosis: 主线程观测到 ${main_thread_io.data.length} 个疑似 I/O 命名切片，最长 ${main_thread_io.data[0]?.dur_ms}ms；切片名本身不能证明底层存储阻塞
+  confidence: medium
   suggestions:
   - 将 I/O 操作移至后台线程
   - 使用 Kotlin 协程或 RxJava 异步处理
@@ -288,8 +288,8 @@ rules:
   - main_thread_io.data[0]?.dur_ms
   - main_thread_io.data[0]?.io_operation
 - condition: db_operations.data.filter(op => op.thread_type === 'main_thread').length > 5
-  diagnosis: 主线程进行了多次数据库操作
-  confidence: high
+  diagnosis: 主线程观测到多次疑似数据库命名切片；需结合 SQL/atrace 埋点确认具体 Room/SQLite 调用
+  confidence: medium
   suggestions:
   - 数据库查询应在后台线程执行
   - 使用 Room 的 @Query 配合 LiveData/Flow
@@ -308,11 +308,12 @@ rules:
   - io_wait_state.data[0]?.thread_name
   - io_wait_state.data[0]?.io_wait_ms
 - condition: slow_io.data.filter(op => op.severity === 'CRITICAL').length > 0
-  diagnosis: '主线程存在严重慢 I/O: ${slow_io.data.filter(op => op.severity === ''CRITICAL'')[0]?.operation}'
-  confidence: critical
+  diagnosis: '主线程观测到疑似慢 I/O 命名切片: ${slow_io.data.filter(op => op.severity === ''CRITICAL'')[0]?.operation}；需结合线程状态或明确 I/O
+    埋点确认'
+  confidence: medium
   suggestions:
-  - 立即将此操作移至后台
-  - 这可能导致 ANR
+  - 确认该切片是否代表真实同步文件 I/O，再决定是否移至后台
+  - 若它持续阻塞主线程并超过响应阈值，再结合调度状态评估 ANR 风险
   evidence_fields:
   - slow_io.data[0]?.operation
   - slow_io.data[0]?.dur_ms

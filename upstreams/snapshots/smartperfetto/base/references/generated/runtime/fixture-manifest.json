@@ -28,7 +28,28 @@
         "oem": "Xiaomi",
         "qpr": "unknown"
       },
-      "assertions": [],
+      "assertions": [
+        {
+          "field": "callback_count",
+          "kind": "field_positive",
+          "params": {
+            "package": "com.android.systemui"
+          },
+          "query_id": "main_thread_handler_callback_slices/callback_slices"
+        },
+        {
+          "field": "first_ts",
+          "kind": "field_equals",
+          "params": {
+            "end_ts": 564165861430471,
+            "min_dur_ns": 1,
+            "package": "com.android.systemui",
+            "start_ts": 564165861330471
+          },
+          "query_id": "main_thread_handler_callback_slices/callback_slices",
+          "value": 564165861330471
+        }
+      ],
       "capture_config": "embedded_in_trace",
       "id": "smart-launch-heavy-api36",
       "kernel": "6.12.23-android16-5-gb23e74f69076-abogki452159376-4k",
@@ -230,5 +251,5 @@
   ],
   "schema_version": 1,
   "source_path": "backend/skills/public-fixtures.yaml",
-  "source_sha256": "855a010827af782f4f51334b946d1ce3056d4f3f94e2e3871a5752a303de4b6d"
+  "source_sha256": "f58c509c360aa195999ebe6293af41cff16f33b1a6eeb42501a77a55c310599d"
 }

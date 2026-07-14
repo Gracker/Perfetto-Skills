@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S05_mixed_rendering_type.md
 Source SHA-256: 0df7e009bcbd198f98837a68719d5fa39a04b17fb1b7ef752b700112ae5cdfd2
-Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 
 # Android Perfetto 系列 - App 出图类型 - 混合出图类型
 

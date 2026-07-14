@@ -147,6 +147,18 @@
     },
     {
       "category": "memory",
+      "destination": "references/generated/skills/android_heap_dominator_path_extract.md",
+      "disposition": "exported",
+      "name": "android_heap_dominator_path_extract",
+      "runtime_type": "composite",
+      "source_path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
+      "source_sha256": "de4b9f64860789167409e6604441d8c932167169e8bed9c34ff6cbd580dc0daf",
+      "tier": "B",
+      "version": "1.0",
+      "workflow": "memory"
+    },
+    {
+      "category": "memory",
       "destination": "references/generated/skills/android_heap_graph_leak_candidates.md",
       "disposition": "exported",
       "name": "android_heap_graph_leak_candidates",
@@ -855,7 +867,7 @@
       "name": "filesystem_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
-      "source_sha256": "f09b8fa67e639a8b6825f4e99517b4cf82b8fae75c585d2c96f928f28e3c7f24",
+      "source_sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94",
       "version": "1.0",
       "workflow": "io-network-media"
     },
@@ -1036,6 +1048,18 @@
       "source_sha256": "c99bd1159e7f337b0d5dd490100f66e9134271d55a7bbf0362ebf64d3a1d9602",
       "tier": "S",
       "version": "3.0",
+      "workflow": "gpu-rendering"
+    },
+    {
+      "category": "gpu",
+      "destination": "references/generated/skills/gpu_compute_kernel_analysis.md",
+      "disposition": "exported",
+      "name": "gpu_compute_kernel_analysis",
+      "runtime_type": "composite",
+      "source_path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
+      "source_sha256": "04ce0fdb105d89c591b8d24656540615492754eb847da9f8bec211de2a39e9df",
+      "tier": "B",
+      "version": "1.0",
       "workflow": "gpu-rendering"
     },
     {
@@ -1364,10 +1388,22 @@
       "name": "main_thread_file_io_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/main_thread_file_io_in_range.skill.yaml",
-      "source_sha256": "445bb9c9c1c3650896f9bc8d15f7338b57a09c8a28bc3a844cc4be55ae7e6a13",
+      "source_sha256": "e96c4772975c5a3a1f3a11164d8a61b17275ce0526269a589687536fbf290c6f",
       "tier": "B",
       "version": "1.0",
       "workflow": "io-network-media"
+    },
+    {
+      "category": "app_lifecycle",
+      "destination": "references/generated/skills/main_thread_handler_callback_slices.md",
+      "disposition": "exported",
+      "name": "main_thread_handler_callback_slices",
+      "runtime_type": "atomic",
+      "source_path": "backend/skills/atomic/main_thread_handler_callback_slices.skill.yaml",
+      "source_sha256": "a143b158022ef674ec5b0171ce6e62301fa5e0cc95e2f7a202c82508e7383765",
+      "tier": "B",
+      "version": "1.0",
+      "workflow": "interaction"
     },
     {
       "category": "kernel",
@@ -2815,10 +2851,10 @@
     }
   ],
   "source": {
-    "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+    "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "b86ae07fc5ec123a36d4361b1ee1f366bcf6c1cc1653e71e369a663825400513",
+    "policy_sha256": "af72415c532a76bc9ecf005d6e723f6960be0c4fd0418c01d7ea22cf8ced1fc8",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3288,15 +3324,15 @@
     "exported_strategy_sources": 50,
     "pipeline_docs": 14,
     "product_only_strategy_sources": 15,
-    "runtime_candidates": 231,
+    "runtime_candidates": 234,
     "runtime_types": {
-      "atomic": 119,
+      "atomic": 120,
       "comparison": 1,
-      "composite": 78,
+      "composite": 80,
       "deep": 2,
       "pipeline_definition": 31
     },
-    "skill_yaml_files": 236,
+    "skill_yaml_files": 239,
     "sql_fragments": 3,
     "strategy_sources": 65,
     "vendor_overrides": 8

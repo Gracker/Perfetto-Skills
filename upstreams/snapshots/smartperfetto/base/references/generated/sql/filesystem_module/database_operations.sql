@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/filesystem_module.skill.yaml
--- Source SHA-256: f09b8fa67e639a8b6825f4e99517b4cf82b8fae75c585d2c96f928f28e3c7f24
--- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+-- Source SHA-256: e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94
+-- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 
 SELECT
   s.ts,
@@ -17,14 +17,12 @@ JOIN thread_track tt ON s.track_id = tt.id
 JOIN thread t ON tt.utid = t.utid
 JOIN process p ON t.upid = p.upid
 WHERE p.name LIKE '%${package}%'
-  AND (s.name GLOB '*sqlite*'
-       OR s.name GLOB '*SQLite*'
-       OR s.name GLOB '*database*'
-       OR s.name GLOB '*query*'
-       OR s.name GLOB '*Query*'
-       OR s.name GLOB '*transaction*'
-       OR s.name GLOB '*cursor*'
-       OR s.name GLOB '*Room*')
+  -- Slice names are heuristic attribution only. Require a database
+  -- namespace/product signal; generic "query"/"transaction" names are
+  -- common outside storage and must not be promoted as DB evidence.
+  AND (LOWER(s.name) GLOB '*sqlite*'
+       OR LOWER(s.name) GLOB '*android.database*'
+       OR LOWER(s.name) GLOB '*room*database*')
   AND s.dur > 500000  -- > 0.5ms
 ORDER BY s.dur DESC
 LIMIT 30

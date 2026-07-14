@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/wattson_app_startup_power.skill.yaml
 -- Source SHA-256: 306e55087c67e9f4fe2d3c6bf37e5372a3ed7019c0470eb97e07921adf210f1f
--- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+-- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 
 WITH startup_windows AS (
   SELECT ts, dur, period_id

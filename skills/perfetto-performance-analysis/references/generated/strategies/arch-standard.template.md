@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/arch-standard.template.md
 Source SHA-256: 232617991e3a3521fbcc1ada6390c9745e291caa1a68e19838128b779710575f
-Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 
 # Arch Standard Template
 

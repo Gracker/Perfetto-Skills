@@ -54,13 +54,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/main_thread_state.sql",
-      "sha256": "108d621c5aabf115b1c7e6061972091b250fa014b3440bc2e983cba089505713",
+      "sha256": "1044bbf564e3d0f863b15bd75171c394c830ce75fb60b93f696ddc8bd3737126",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
@@ -154,13 +154,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/blocked_functions.sql",
-      "sha256": "cdd6789e0678241326cd162dac54a4e0d6c12df39d4854a9a1f89208937ce468",
+      "sha256": "55bddcd74afb9d14ddb66a490fcfb0ad67b496193fd92b2f8ca3671d6daf1333",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
@@ -254,13 +254,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/wakeup_chain.sql",
-      "sha256": "a6c16bd048177461e17a70d643decc20207ff2b2869a24203ad2769b74cba768",
+      "sha256": "e3462890889fe2d25a6ba7793adbd88c5fd5dfae9fcb9a81b5e268b5bb7d13f5",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
@@ -354,13 +354,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/binder_blocking.sql",
-      "sha256": "1f1058479e13ed8a0b78e9b5d7f5101d0172cc5d51dfa7b48980b2765c15718b",
+      "sha256": "4a380bcf16f7d9ad51d3cf7b5f1a346379500859751be5d516dc8d093d9acfa7",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
@@ -454,14 +454,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/lock_contention.sql",
-      "sha256": "7108992d20793c489dae324a45f1da499e31cf00cd36dac93e39d377d29ce14c",
+      "sha256": "857bb280c4b250d39417ff13173eb17bca3a1a2d85e3895cd164052f9fca931e",
       "signal_patterns": [
         "${process_name}*",
         "*futex*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "a683f7c10493d63ecfafe51652f068c9c9694cba",
+        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"

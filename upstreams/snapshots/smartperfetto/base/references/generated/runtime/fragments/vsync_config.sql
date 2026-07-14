@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/vsync_config.sql
 -- Source SHA-256: cf00555528fd2ad63aae7a38b5ec667384ca65535843b0b039ca997d17f56d04
--- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+-- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 
 -- Fragment: vsync_config
 -- Estimates VSync period using median of VSYNC-sf intervals, fallback to 16.67ms (60Hz)

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_in_range.skill.yaml
 -- Source SHA-256: 3090864d8a14556995865f69ccf951cc39e5c1be1a8fca9fe2a2baf94d282e04
--- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+-- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 
 SELECT
   client_process,

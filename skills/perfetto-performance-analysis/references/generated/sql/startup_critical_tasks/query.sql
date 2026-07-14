@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_critical_tasks.skill.yaml
 -- Source SHA-256: 8d9ffc04a4543994c80e63aba04812d897f68580cb39396c9600aafb01cf51dc
--- Source commit: a683f7c10493d63ecfafe51652f068c9c9694cba
+-- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
 
 -- Step 1: 识别目标进程的所有线程并自动分配角色
 WITH process_threads AS (
