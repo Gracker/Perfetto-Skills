@@ -34,6 +34,18 @@ class AllQueryValidationTest(unittest.TestCase):
             )
         )
 
+    def test_syntax_probe_treats_graph_macro_table_as_missing_schema(self) -> None:
+        sql = """
+        SELECT *
+        FROM _graph_aggregating_scan!(
+          (SELECT id AS source_node_id, parent_id AS dest_node_id FROM graph),
+          (SELECT id, size FROM leaves),
+          (size),
+          (SELECT id, SUM(size) AS size FROM $table GROUP BY id)
+        );
+        """
+        self.assertEqual(validate_sql_syntax(sql), [])
+
     def test_reports_four_validation_axes(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

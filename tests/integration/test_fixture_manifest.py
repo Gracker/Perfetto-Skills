@@ -71,7 +71,7 @@ class FixtureManifestTest(unittest.TestCase):
                         rows = json.loads(output.read_text(encoding="utf-8"))
                         assert_semantic_assertion(self, rows, assertion)
                         executed += 1
-        expected = 1 if os.environ.get("PERFETTO_FIXTURE_TIER") == "offline" else 9
+        expected = 1 if os.environ.get("PERFETTO_FIXTURE_TIER") == "offline" else 11
         self.assertEqual(executed, expected)
 
 

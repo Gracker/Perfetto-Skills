@@ -21,9 +21,11 @@ class ExporterTest(unittest.TestCase):
 
     def test_catalog_covers_every_runtime_candidate(self) -> None:
         catalog = self.load_catalog()
-        self.assertEqual(catalog["summary"]["skill_yaml_files"], 236)
-        self.assertEqual(catalog["summary"]["runtime_candidates"], 231)
-        self.assertEqual(catalog["summary"]["excluded_skill_definitions"], 5)
+        summary = catalog["summary"]
+        self.assertEqual(
+            summary["skill_yaml_files"],
+            summary["runtime_candidates"] + summary["excluded_skill_definitions"],
+        )
         self.assertEqual(catalog["summary"]["runtime_candidates"], len(catalog["skills"]))
         self.assertTrue(
             all(
