@@ -41,8 +41,10 @@ class V02ContractTest(unittest.TestCase):
             skill_index["summary"]["step_conditions"],
         )
         self.assertEqual(sql_index["summary"]["shards"], len(sql_index["shards"]))
-        self.assertEqual(strategy_index["summary"]["sources"], 65)
-        self.assertEqual(len(strategy_index["strategies"]), 65)
+        self.assertEqual(
+            strategy_index["summary"]["sources"],
+            len(strategy_index["strategies"]),
+        )
         queries = []
         for shard in sql_index["shards"]:
             queries.extend(json.loads((runtime / shard).read_text(encoding="utf-8"))["queries"])

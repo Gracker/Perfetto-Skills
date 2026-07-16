@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/scheduler_module.skill.yaml
 -- Source SHA-256: 170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452
--- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
+-- Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
 
 WITH
 cpu_info AS (

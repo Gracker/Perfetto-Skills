@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/wattson_thread_power_attribution.skill.yaml
 Source SHA-256: e22c251fa6dd0676e46b46628c57cd64a4c406774957749e51f5e1cd3233f1e5
-Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
+Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
 # 线程功耗归因
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

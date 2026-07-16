@@ -52,13 +52,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/vsync_period.sql",
-      "sha256": "d9fd56e9aa0b9a7f7627178bd3079968d14d4cb7d6eda355a72670824a1ebb60",
+      "sha256": "f67c447bf181b7a1757e0e2dfa1389ef1967cf2dc749dea75a460b914cfb2508",
       "signal_patterns": [
         "VSYNC-app"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
+        "commit": "eb4ef81e660fc397c8cabe90ab0b499899931909",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "3f8a18a4750d12e34a5556236cf069b5e09eaf1c3c3cf2cc5af513f635809c46"
@@ -140,13 +140,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/input_sampling_rate.sql",
-      "sha256": "948f630ab3058517e931ddbfd86127ae19341cfae585af2a62d27bf2d185d5d2",
+      "sha256": "45af7a7c8a2f0fe8f77b99eb6f6f5104078c63371700d7f661e690dd624bf2d0",
       "signal_patterns": [
         "${package}*"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
+        "commit": "eb4ef81e660fc397c8cabe90ab0b499899931909",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "3f8a18a4750d12e34a5556236cf069b5e09eaf1c3c3cf2cc5af513f635809c46"
@@ -236,14 +236,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/per_frame_latency.sql",
-      "sha256": "dd13d486f84b7219799a2d33e44f1aab966304fc8969ea5af926cdaef53e1da3",
+      "sha256": "5edf3c7337b17c4ca43a6df8261f02c6937c4f32b8941b2a75559291652741da",
       "signal_patterns": [
         "${package}*",
         "VSYNC-app"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
+        "commit": "eb4ef81e660fc397c8cabe90ab0b499899931909",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "3f8a18a4750d12e34a5556236cf069b5e09eaf1c3c3cf2cc5af513f635809c46"
@@ -334,14 +334,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/latency_statistics.sql",
-      "sha256": "1a4cc65d72f3769ba1733f07a996c4e308f1343eff47e219965f029fa09f46bf",
+      "sha256": "85689dd88a53f15bc25b261b1ed64669fd00ecc7ee6fab7afb6486db4b19dd9a",
       "signal_patterns": [
         "${package}*",
         "VSYNC-app"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
+        "commit": "eb4ef81e660fc397c8cabe90ab0b499899931909",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "3f8a18a4750d12e34a5556236cf069b5e09eaf1c3c3cf2cc5af513f635809c46"
@@ -431,13 +431,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/latency_spikes.sql",
-      "sha256": "b02a3c708d8e452d9cf9fc4a8a739d2ac64040399ee2a2cf46b3783aa677bd48",
+      "sha256": "b86c19cee03940f94c9522f4f00bd7b7634cd46c7c4b718c764626e8d21e0039",
       "signal_patterns": [
         "${package}*"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
+        "commit": "eb4ef81e660fc397c8cabe90ab0b499899931909",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "3f8a18a4750d12e34a5556236cf069b5e09eaf1c3c3cf2cc5af513f635809c46"

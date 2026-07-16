@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/fpsgo_analysis.skill.yaml
 -- Source SHA-256: 6ee6815848f62092599d709a15c857835fb298f96733192f8fc113c03acb42c3
--- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
+-- Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
 
 SELECT
   CASE

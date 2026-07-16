@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/comparison-context.template.md
-Source SHA-256: 8edaa9edc02920c58f8ed92e27847c67986981e2a74f10fcfd718c72cc558b1b
-Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
+Source SHA-256: 4af493e3b629244036e15bd54a46bd6c8cdf96775070407f4c7acd2c48d8069e
+Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
 
 # Comparison Context Template
 
@@ -31,3 +31,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 {{packageAlignment}}
 {{referenceArchitecture}}
 {{capabilityAlignment}}
+
+### 最终交付身份契约
+- 最终报告必须显式写出两侧完整包名，并说明各自对应的 Trace 侧；不能只用“左侧/右侧”“主/参考”或业务别名替代包名。
+- 即使两侧包名相同，也要在首次对比结论中明确当前 Trace 与参考 Trace 的映射。

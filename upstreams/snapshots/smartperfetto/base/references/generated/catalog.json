@@ -1,11 +1,11 @@
 {
-  "generated_files": 1671,
+  "generated_files": 1676,
   "runtime_conditions": 611,
   "runtime_queries": 651,
   "runtime_skills": 234,
   "schema_version": 2,
-  "source_catalog_sha256": "3a3db56e89a8b892565171aea25c2df1619966e5e0c55e2f114c270d46eaba54",
-  "source_commit": "053b09e27d56c7727cbe5d7447e32a50b41c5bee",
+  "source_catalog_sha256": "73ca478492dbe5c49c65880e7746c57c184df96738affdbdfdde4bdd9aefed13",
+  "source_commit": "eb4ef81e660fc397c8cabe90ab0b499899931909",
   "sql_files": 651,
   "transformations": [
     {
@@ -48,6 +48,12 @@
       "removed_lines": 0,
       "replacements": 1,
       "source_path": "backend/strategies/comparison-conclusion.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/comparison-context-en.template.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -237,7 +243,7 @@
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
-      "removed_lines": 31,
+      "removed_lines": 32,
       "replacements": 1,
       "source_path": "backend/strategies/prompt-methodology.template.md"
     },
@@ -246,6 +252,24 @@
       "removed_lines": 6,
       "replacements": 1,
       "source_path": "backend/strategies/prompt-output-format.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/prompt-scene-stage3-summary.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/retrieved-context-safety.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/retrieved-context-tool-safety.template.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",

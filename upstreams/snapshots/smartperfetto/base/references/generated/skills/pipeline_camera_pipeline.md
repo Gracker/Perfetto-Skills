@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/camera_pipeline.skill.yaml
-Source SHA-256: b61f90b3c1e9832a39519c1b465663073c65009e4fba3b6442df4d6738335045
-Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
+Source SHA-256: 71e8231904220fd671deda7e3eee30333fcfc609394f91dc11f4e400127739af
+Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
 # 相机管线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -104,15 +104,15 @@ common_issues:
     需要 buffer ownership、acquire/release 或 fence 证据支持，不能仅凭 PSS/RSS 增长判定泄漏。
 
     '
-  detection_skill: gpu_render_in_range
 - id: release_fence_late_blocks_hal
   name: Release fence 晚回阻塞 HAL
   description: '消费侧 release fence 晚回（HWC/SurfaceFlinger/宿主采样/Codec 编码） →
 
-    HAL 拿不到新 buffer → request pipeline 整体 back-pressure。
+    HAL 拿不到新 buffer → request pipeline 整体 back-pressure。必须有 Camera buffer ownership、
+
+    acquire/release 与 fence 的同一生命周期关联；display present fence 不能替代 Camera completion。
 
     '
-  detection_skill: present_fence_timing
 - id: textureview_extra_resample_overhead
   name: TextureView 模式宿主 RT 采样开销
   description: '预览承载若是 TextureView，宿主 RT updateTexImage acquire + GPU 重采样可能引入额外延迟。

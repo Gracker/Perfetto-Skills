@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_kernel_wakelock_summary.skill.yaml
--- Source SHA-256: 460ab6fbd3f45ed72d7f8492cd2f73ce2d0205a7d72326f470b52d22b6c54ff0
--- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
+-- Source SHA-256: b87beb54fd7e610df76952ec79d79249a37e510e08dd650fae66893a20e4af63
+-- Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
 
 WITH window_bounds AS (
   SELECT
@@ -11,27 +11,27 @@ WITH window_bounds AS (
 ),
 clipped AS (
   SELECT
-    name,
-    type,
+    akw.name,
+    akw.type,
     wb.observed_window_ns,
     CASE
-      WHEN dur > 0 THEN held_dur * (
-        MIN(ts + dur, wb.win_end) -
-        MAX(ts, wb.win_start)
-      ) / dur
-      ELSE held_dur
+      WHEN akw.dur > 0 THEN akw.held_dur * (
+        MIN(akw.ts + akw.dur, wb.win_end) -
+        MAX(akw.ts, wb.win_start)
+      ) / akw.dur
+      ELSE akw.held_dur
     END AS clipped_held_dur,
     CASE
-      WHEN dur > 0 THEN awake_dur * (
-        MIN(ts + dur, wb.win_end) -
-        MAX(ts, wb.win_start)
-      ) / dur
-      ELSE awake_dur
+      WHEN akw.dur > 0 THEN akw.awake_dur * (
+        MIN(akw.ts + akw.dur, wb.win_end) -
+        MAX(akw.ts, wb.win_start)
+      ) / akw.dur
+      ELSE akw.awake_dur
     END AS clipped_awake_dur
-  FROM android_kernel_wakelocks
+  FROM android_kernel_wakelocks akw
   CROSS JOIN window_bounds wb
-  WHERE ts < wb.win_end
-    AND ts + dur > wb.win_start
+  WHERE akw.ts < wb.win_end
+    AND akw.ts + akw.dur > wb.win_start
 )
 SELECT
   name,

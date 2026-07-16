@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml
--- Source SHA-256: 7b56ba3235b7962f0119ea09d450af39eba9c021da1cb714c40db3d5c2064ce7
--- Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
+-- Source SHA-256: 5a497025f4e9173dd75f17f48a649046d8be6bf4b9777a146a6ab2a3291fc4c3
+-- Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
 
 WITH
 input AS (
@@ -113,12 +113,12 @@ suspect_classes AS (
 suspect_objects AS (
   SELECT
     h.*,
-    s.leak_state
+    sc.leak_state
   FROM heap_objects h
-  JOIN suspect_classes s
-    ON s.upid = h.upid
-    AND s.graph_sample_ts = h.graph_sample_ts
-    AND s.class_name = h.class_name
+  JOIN suspect_classes sc
+    ON sc.upid = h.upid
+    AND sc.graph_sample_ts = h.graph_sample_ts
+    AND sc.class_name = h.class_name
 )
 SELECT
   so.process_name,

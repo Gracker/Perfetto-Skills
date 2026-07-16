@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/startup.strategy.md
-Source SHA-256: d9d24aca67b7773992faa9712569c3c4fdcd250068962b54536ef2049d66ff02
-Source commit: 053b09e27d56c7727cbe5d7447e32a50b41c5bee
+Source SHA-256: e9b4aa3588c1f083607be37cfc6121121243f552ccd7cec11c9943a28fd2b2b6
+Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
 
 # Startup Strategy
 
@@ -104,6 +104,14 @@ final_report_contract:
   - id: audience_recommendations
     label: App/系统分层建议
     description: 优化建议必须区分 App 层和系统/平台/ROM 层。
+    recovery_text:
+      zh:
+      - App 层：仅对已完成阶段证据直接指向的应用瓶颈实施优化。
+      - 系统/平台层：若已完成阶段没有平台归因证据，保持为未验证并继续监测。
+      en:
+      - 'App layer: optimize only application bottlenecks directly supported by completed-phase evidence.'
+      - 'System/Platform: when completed phases contain no platform-attribution evidence, keep that path unverified and monitor
+        it.'
     pattern_groups:
     - - App\s*层
       - 应用\s*层
@@ -177,7 +185,8 @@ phase_hints:
   - 阶段
   - startup_detail
   - 耗时
-  constraints: 必须用 Phase 1 的 ttid_ts/ttfd_ts 作为 startup_detail 的时间边界参数。使用 self_ms（排除子切片）而非 wall-time。
+  constraints: 必须把 Phase 1 的 startup_id/start_ts/end_ts/dur_ms/package/startup_type 原样传给 startup_detail；TTID/TTFD 只能作为可选 ttid_ms/ttfd_ms，不能充当时间边界。使用
+    self_ms（排除子切片）而非 wall-time。
   critical_tools:
   - startup_detail
   critical: false
