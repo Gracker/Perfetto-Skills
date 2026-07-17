@@ -22,7 +22,7 @@ class UpstreamLockTest(unittest.TestCase):
         google = load_and_validate_google_lock(
             ROOT / "upstreams/google-perfetto.lock.json"
         )
-        self.assertEqual(smart["commit"], "eb4ef81e660fc397c8cabe90ab0b499899931909")
+        self.assertEqual(smart["commit"], "ff5d4a00696318f7bfc5868fb54c84b38c32b880")
         self.assertEqual(google["tag"], "v57.2")
         self.assertEqual(google["official_skill"]["role"], "gap_check_only")
 

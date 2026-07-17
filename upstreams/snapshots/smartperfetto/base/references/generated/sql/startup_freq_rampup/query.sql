@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_freq_rampup.skill.yaml
 -- Source SHA-256: 5fdc44a881eba8aac3be4fc8cc7f6175bd41bc13c9a6fc164f19ec3b4bda8f28
--- Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
+-- Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
 
 -- Early phase: first 100ms of startup
 WITH early_freq AS (

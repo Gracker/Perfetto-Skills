@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: 03fc4a4a91245ee6973c0a8236b5f9821ace5fedc2ae7085f7a5f3692d93f4d7
-Source commit: eb4ef81e660fc397c8cabe90ab0b499899931909
+Source SHA-256: e4b6c20093cb77a04b4dfcfc602539cdbd8b1001927eca76b6670cac4c974c82
+Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
 
 # Scrolling Strategy
 
@@ -113,6 +113,15 @@ final_report_contract:
   - id: peak_and_semantic_metrics
     label: 峰值/口径指标
     description: 说明总帧数、真实掉帧、假阳性/Buffer Stuffing、最长帧和最长连续丢帧等口径。
+    recovery_text:
+      zh:
+      - 真实掉帧口径：以以下已完成阶段中确认的用户可感知卡顿为准；仅在阶段证据明确区分时排除假阳性/Buffer Stuffing，否则保留为口径限制。
+      - 最长帧/峰值口径：以下阶段证据中的最长单帧与最长连续丢帧代表当前采集窗口峰值；缺失项保持为数据缺口。
+      en:
+      - 'Real jank semantics: use user-visible jank confirmed by the completed phases below; exclude false positives or Buffer
+        Stuffing only when the phase evidence distinguishes them, otherwise keep that boundary as a limitation.'
+      - 'Longest frame / peak semantics: the longest single frame and longest consecutive missed-frame interval in the phase
+        evidence below represent the current capture-window peak; keep missing fields as data gaps.'
     pattern_groups:
     - - 真实掉帧
       - real[_\s-]?jank
