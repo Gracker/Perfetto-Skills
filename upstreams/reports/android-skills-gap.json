@@ -14,7 +14,7 @@
       "reason": "The portable implementation adopts the reviewable SQL invariants while retaining its checksum-pinned local runtime instead of the upstream workspace downloader.",
       "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
       "sha256": "13e701190c529212ada3c6252c18a3cac8f33b1027b72db8c0bdd2f7726eb5ca",
-      "test_id": "tests.unit.test_sql_guardrails"
+      "test_id": "tests.integration.test_real_trace.RealTraceTest.test_guarded_span_join_executes_with_non_overlap_witnesses"
     },
     {
       "local_path": "upstreams/snapshots/google-perfetto/stdlib-index.json",
@@ -104,7 +104,7 @@
       "reason": "The portable SQL contract adopts the evidence-safe query invariants and documents dynamic non-overlap witness queries without the upstream downloader dependency.",
       "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
       "sha256": "5483af1377ff700ae33d9ee2ede1720aa751d24d6c33ea91740b70767c643adb",
-      "test_id": "tests.unit.test_sql_guardrails"
+      "test_id": "tests.integration.test_real_trace.RealTraceTest.test_guarded_span_join_executes_with_non_overlap_witnesses"
     }
   ],
   "current_commit": "47e1dff74a5cde5d0128c5d15e74e000323135ea",
