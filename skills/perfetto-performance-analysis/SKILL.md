@@ -30,12 +30,15 @@ for the selected workflow.
    or one manifest query through `scripts/perfetto_query.py --query-id`. Keep query source,
    parameters, trace identity, timestamps, durations, units, and returned row
    bounds with every saved result.
-6. Separate observations, correlations, mechanisms, and verified root causes.
+6. Before executing authored or modified SQL, run
+   `scripts/perfetto_sql_guardrails.py`. Resolve blocking findings and review
+   advisories using [the SQL guardrail contract](references/evidence/sql-guardrails.md).
+7. Separate observations, correlations, mechanisms, and verified root causes.
    Do not promote a hypothesis without evidence that supports the claimed
    process, thread, time window, and trace.
-7. For comparisons, analyze each trace independently before computing deltas.
+8. For comparisons, analyze each trace independently before computing deltas.
    Never use a missing metric on one side as proof that the other side regressed.
-8. Emit the structure in `assets/report-schema.json`. List missing evidence and
+9. Emit the structure in `assets/report-schema.json`. List missing evidence and
    unresolved alternatives under `limitations`.
 
 Read [the evidence contract](references/evidence/evidence-contract.md), then use

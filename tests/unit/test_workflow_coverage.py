@@ -84,6 +84,18 @@ class WorkflowCoverageTest(unittest.TestCase):
         self.assertIn("comparison-input-schema.json", comparison)
         self.assertNotIn("snapshot_id", comparison)
 
+    def test_trace_overview_has_bounded_secondary_sweep(self) -> None:
+        overview = (SKILL / "references/workflows/trace-overview.md").read_text(
+            encoding="utf-8"
+        )
+        for phrase in (
+            "at most three",
+            "already repeat evidence",
+            "unresolved alternatives",
+            "specific bounded question",
+        ):
+            self.assertIn(phrase, overview)
+
 
 if __name__ == "__main__":
     unittest.main()

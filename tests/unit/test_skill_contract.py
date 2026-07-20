@@ -62,12 +62,18 @@ class SkillContractTest(unittest.TestCase):
     def test_portable_parameter_and_comparison_adapters_exist(self) -> None:
         for relative in (
             "scripts/perfetto_compare.py",
+            "scripts/perfetto_sql_guardrails.py",
             "assets/comparison-input-schema.json",
+            "references/evidence/sql-guardrails.md",
         ):
             self.assertTrue((SKILL / relative).is_file(), relative)
         query_help = (SKILL / "scripts/perfetto_query.py").read_text(encoding="utf-8")
         for option in ("--param", "--result", "--module", "--max-output-bytes"):
             self.assertIn(option, query_help)
+
+        skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("perfetto_sql_guardrails.py", skill_text)
+        self.assertIn("sql-guardrails.md", skill_text)
 
 
 if __name__ == "__main__":

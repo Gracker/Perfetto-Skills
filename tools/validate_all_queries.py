@@ -33,6 +33,12 @@ SEMANTIC_PREPARE_ERRORS = (
     "ambiguous column name:",
 )
 
+sys.path.insert(0, str(SCRIPTS))
+try:
+    from perfetto_sql_guardrails import analyze_sql
+finally:
+    sys.path.remove(str(SCRIPTS))
+
 
 def validate_sql_syntax(
     sql: str, result_dependencies: list[str] | tuple[str, ...] = ()
@@ -124,6 +130,7 @@ def validate_query(
         errors.append("invalid query id")
     path_value = query.get("path")
     sql_path = generated_root / str(path_value)
+    guardrail_findings: list[dict[str, object]] = []
     if not sql_path.is_file():
         errors.append("SQL path is missing")
         sql = ""
@@ -142,6 +149,12 @@ def validate_query(
         syntax_errors = validate_sql_syntax(sql, result_dependencies_value)
         if syntax_errors:
             errors.append(f"SQL syntax invalid: {syntax_errors[0]}")
+        guardrail_findings = [issue.to_dict() for issue in analyze_sql(sql)]
+        errors.extend(
+            f"SQL guardrail {finding['rule_id']}: {finding['message']}"
+            for finding in guardrail_findings
+            if finding["severity"] == "error"
+        )
     dependencies = query.get("sql_dependencies")
     modules = (
         dependencies.get("declared_modules", [])
@@ -232,6 +245,7 @@ def validate_query(
         "runtime_compatible": validation.get("runtime_compatible"),
         "execution_verified": bool(validation.get("execution_verified")),
         "semantic_verified": semantic_verified,
+        "guardrail_findings": guardrail_findings,
         "errors": errors,
     }
 

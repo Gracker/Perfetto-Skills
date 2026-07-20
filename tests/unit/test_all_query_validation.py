@@ -87,6 +87,58 @@ class AllQueryValidationTest(unittest.TestCase):
                     "semantic_verified": True,
                 },
             )
+            self.assertEqual(result["guardrail_findings"], [])
+
+    def test_span_join_guardrail_errors_fail_static_validation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            sql = root / "query.sql"
+            sql.write_text(
+                """
+                DROP TABLE IF EXISTS joined;
+                CREATE VIRTUAL TABLE joined
+                USING SPAN_JOIN(a PARTITIONED utid, b PARTITIONED utid);
+                """,
+                encoding="utf-8",
+            )
+            query = {
+                "id": "skill/step",
+                "path": "query.sql",
+                "sha256": hashlib.sha256(sql.read_bytes()).hexdigest(),
+                "sql_dependencies": {
+                    "declared_modules": [],
+                    "required_tables": [],
+                },
+                "template": {
+                    "parameters": [],
+                    "fragments": [],
+                    "result_dependencies": [],
+                },
+                "compatibility": {
+                    "android": {
+                        str(api): {"status": "capability_gated"}
+                        for api in range(28, 38)
+                    }
+                },
+                "validation": {},
+            }
+
+            result = validate_query(
+                query,
+                root,
+                stdlib_modules=set(),
+                fixtures=set(),
+                semantic_queries=set(),
+            )
+
+        self.assertFalse(result["static_valid"])
+        self.assertTrue(
+            any(
+                finding["rule_id"] == "span-join-non-overlap"
+                and finding["severity"] == "error"
+                for finding in result["guardrail_findings"]
+            )
+        )
 
     def test_hash_module_and_semantic_mismatch_fail_truthfully(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

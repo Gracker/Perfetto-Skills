@@ -28,6 +28,18 @@ Do not treat absent tracks as absent system behavior until capture support is pr
 
 Route each verified anomaly to the narrowest domain workflow.
 
+## Bounded closing sweep
+
+For an open-ended investigation, run one secondary sweep after the primary
+evidence chain. Select at most three still-unchecked domains from signals that
+are both observed and available in this trace. Stop when no independent
+high-impact anomaly is found, the next query would already repeat evidence,
+required data is unavailable, or the query budget is exhausted.
+
+Do not add this sweep to a specific bounded question. An empty secondary sweep
+does not weaken a verified primary finding. Record the checked domains, missing
+data, and unresolved alternatives in the report.
+
 ## Report requirements
 
 Report trace identity, bounds, available/missing sources, selected target, and routing decision.
