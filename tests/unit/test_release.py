@@ -134,6 +134,7 @@ class ReleaseTest(unittest.TestCase):
         self.assertIn("sync_official_skill.py", sync)
         self.assertIn("sync_android_skills.py", sync)
         self.assertIn("sync_perfetto_stdlib.py", sync)
+        self.assertNotIn("snapshots/android-skills", sync)
         self.assertIn("/tmp/perfetto-skills-candidate", sync)
         self.assertIn("--apply", sync)
         self.assertIn("tools/compile_skill.py", sync)

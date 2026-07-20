@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 from pathlib import Path
 
@@ -67,19 +66,23 @@ def main(arguments: list[str] | None = None) -> int:
     if args.apply and args.revision:
         parser.error("--revision is a dry-run canary input")
 
-    lock = load_and_validate_android_skills_lock(
-        args.lock, validate_snapshot=not args.apply
+    lock = load_and_validate_android_skills_lock(args.lock)
+    pinned_commit = validate_git_source(
+        args.source, lock["repository"], lock["commit"]
     )
     candidate = args.revision or args.commit or lock["commit"]
     candidate_commit = validate_git_source(
         args.source, lock["repository"], candidate
     )
-    current = inventory_android_skills(args.source, candidate_commit)
-    snapshot_path = args.lock.parent / str(lock["snapshot_path"])
-    previous = (
-        json.loads(snapshot_path.read_text(encoding="utf-8"))
-        if snapshot_path.is_file()
-        else {"files": []}
+    previous = inventory_android_skills(args.source, pinned_commit)
+    if previous["trees"] != lock["trees"]:
+        raise ValueError(
+            "pinned Android Skills subtree trees differ from the reviewed lock"
+        )
+    current = (
+        previous
+        if candidate_commit == pinned_commit
+        else inventory_android_skills(args.source, candidate_commit)
     )
     report = build_gap_report(
         previous,
@@ -100,15 +103,8 @@ def main(arguments: list[str] | None = None) -> int:
                 "Android Skills gap has unresolved review: "
                 + ", ".join(report["unresolved"])
             )
-        snapshot_path.parent.mkdir(parents=True, exist_ok=True)
-        snapshot_path.write_text(
-            json.dumps(current, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-        )
         lock["commit"] = candidate_commit
         lock["trees"] = current["trees"]
-        lock["snapshot_sha256"] = hashlib.sha256(
-            snapshot_path.read_bytes()
-        ).hexdigest()
         args.lock.write_text(
             json.dumps(lock, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )

@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import shutil
 import tempfile
@@ -33,6 +34,13 @@ class UpstreamLockTest(unittest.TestCase):
             android["commit"], "47e1dff74a5cde5d0128c5d15e74e000323135ea"
         )
         self.assertEqual(android["role"], "gap_check_only")
+        self.assertEqual(android["schema_version"], 2)
+        self.assertNotIn("snapshot_path", android)
+        self.assertNotIn("snapshot_sha256", android)
+        self.assertFalse(
+            (ROOT / "upstreams/snapshots/android-skills").exists(),
+            "gap-check-only Android guidance must never be stored as a snapshot",
+        )
 
     def test_committed_base_tree_matches_manifest_and_generated_output(self) -> None:
         base_root = ROOT / "upstreams/snapshots/smartperfetto/base/references/generated"
@@ -103,25 +111,29 @@ class UpstreamLockTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "snapshot bytes"):
                 load_and_validate_google_lock(lock)
 
-    def test_android_lock_rejects_forged_snapshot_inventory(self) -> None:
+    def test_android_lock_rejects_snapshot_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             upstreams = Path(temporary) / "upstreams"
-            snapshot = upstreams / "snapshots/android-skills/profilers.json"
-            snapshot.parent.mkdir(parents=True)
+            upstreams.mkdir(parents=True)
             lock = upstreams / "android-skills.lock.json"
             shutil.copyfile(ROOT / "upstreams/android-skills.lock.json", lock)
-            shutil.copyfile(
-                ROOT / "upstreams/snapshots/android-skills/profilers.json",
-                snapshot,
-            )
-            load_and_validate_android_skills_lock(lock)
-            snapshot.write_text(
-                snapshot.read_text(encoding="utf-8").replace(
-                    '"files": [', '"files": [{"path":"forged","sha256":"' + "0" * 64 + '"},'
-                ),
-                encoding="utf-8",
-            )
-            with self.assertRaisesRegex(ValueError, "snapshot bytes"):
+            document = json.loads(lock.read_text(encoding="utf-8"))
+            document["snapshot_path"] = "snapshots/android-skills/profilers.json"
+            lock.write_text(json.dumps(document), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "must not persist snapshots"):
+                load_and_validate_android_skills_lock(lock)
+
+    def test_android_lock_rejects_snapshot_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            upstreams = Path(temporary) / "upstreams"
+            upstreams.mkdir(parents=True)
+            lock = upstreams / "android-skills.lock.json"
+            shutil.copyfile(ROOT / "upstreams/android-skills.lock.json", lock)
+            snapshot = upstreams / "snapshots/android-skills/profilers.json"
+            snapshot.parent.mkdir(parents=True)
+            snapshot.write_text("copied upstream material", encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "must not persist snapshots"):
                 load_and_validate_android_skills_lock(lock)
 
 

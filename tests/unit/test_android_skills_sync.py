@@ -1,5 +1,4 @@
 import json
-import hashlib
 from pathlib import Path
 import subprocess
 import tempfile
@@ -46,6 +45,26 @@ class AndroidSkillsSyncTest(unittest.TestCase):
             text=True,
         ).stdout.strip()
         return repo, revision
+
+    def _lock(self, path: Path, commit: str, trees: dict[str, str]) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 2,
+                    "repository": ANDROID_SKILLS_REPOSITORY,
+                    "role": "gap_check_only",
+                    "tracked_ref": "main",
+                    "commit": commit,
+                    "subtrees": list(TRACKED_SUBTREES),
+                    "trees": trees,
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
 
     def test_inventory_is_deterministic_and_pins_each_subtree_tree(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -100,49 +119,50 @@ class AndroidSkillsSyncTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "reviewed decision"):
                 load_reviewed_decisions(path)
 
-    def test_apply_refuses_unresolved_change_without_mutating_lock_or_snapshot(
-        self,
-    ) -> None:
+    def test_sync_rejects_forged_pinned_subtree_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repo, initial_commit = self._repository(root)
+            inventory = inventory_android_skills(repo, initial_commit)
+            forged_trees = dict(inventory["trees"])
+            forged_trees[TRACKED_SUBTREES[0]] = "f" * 40
+            upstreams = root / "upstreams"
+            lock = upstreams / "android-skills.lock.json"
+            self._lock(lock, initial_commit, forged_trees)
+            decisions = upstreams / "android-skills-decisions.json"
+            decisions.write_text(
+                json.dumps({"schema_version": 1, "decisions": []}),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "subtree trees differ"):
+                main(
+                    [
+                        "--source",
+                        str(repo),
+                        "--lock",
+                        str(lock),
+                        "--decisions",
+                        str(decisions),
+                        "--report-dir",
+                        str(root / "reports"),
+                    ]
+                )
+
+    def test_apply_refuses_unresolved_change_without_mutating_lock(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             repo, initial_commit = self._repository(root)
             upstreams = root / "upstreams"
-            snapshot = upstreams / "snapshots/android-skills/profilers.json"
-            snapshot.parent.mkdir(parents=True)
             initial_inventory = inventory_android_skills(repo, initial_commit)
-            snapshot.write_text(
-                json.dumps(initial_inventory, indent=2, sort_keys=True) + "\n",
-                encoding="utf-8",
-            )
             lock = upstreams / "android-skills.lock.json"
-            lock.write_text(
-                json.dumps(
-                    {
-                        "schema_version": 1,
-                        "repository": ANDROID_SKILLS_REPOSITORY,
-                        "role": "gap_check_only",
-                        "tracked_ref": "main",
-                        "commit": initial_commit,
-                        "subtrees": list(TRACKED_SUBTREES),
-                        "trees": initial_inventory["trees"],
-                        "snapshot_path": "snapshots/android-skills/profilers.json",
-                        "snapshot_sha256": hashlib.sha256(
-                            snapshot.read_bytes()
-                        ).hexdigest(),
-                    },
-                    indent=2,
-                    sort_keys=True,
-                )
-                + "\n",
-                encoding="utf-8",
-            )
+            self._lock(lock, initial_commit, initial_inventory["trees"])
             decisions = upstreams / "android-skills-decisions.json"
             decisions.write_text(
                 json.dumps({"schema_version": 1, "decisions": []}),
                 encoding="utf-8",
             )
             original_lock = lock.read_bytes()
-            original_snapshot = snapshot.read_bytes()
             changed = repo / TRACKED_SUBTREES[0] / "SKILL.md"
             changed.write_text("changed", encoding="utf-8")
             subprocess.run(
@@ -173,7 +193,77 @@ class AndroidSkillsSyncTest(unittest.TestCase):
                 )
 
             self.assertEqual(lock.read_bytes(), original_lock)
-            self.assertEqual(snapshot.read_bytes(), original_snapshot)
+            self.assertFalse((upstreams / "snapshots/android-skills").exists())
+
+    def test_apply_updates_only_lock_and_gap_report_without_persisting_upstream_copy(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repo, initial_commit = self._repository(root)
+            upstreams = root / "upstreams"
+            initial_inventory = inventory_android_skills(repo, initial_commit)
+            lock = upstreams / "android-skills.lock.json"
+            self._lock(lock, initial_commit, initial_inventory["trees"])
+
+            upstream_marker = "OFFICIAL_UPSTREAM_BODY_MUST_NOT_BE_PERSISTED"
+            changed = repo / TRACKED_SUBTREES[0] / "SKILL.md"
+            changed.write_text(upstream_marker, encoding="utf-8")
+            subprocess.run(
+                ["git", "-C", repo, "commit", "-qam", "candidate"], check=True
+            )
+            candidate = subprocess.run(
+                ["git", "-C", repo, "rev-parse", "HEAD"],
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            candidate_inventory = inventory_android_skills(repo, candidate)
+            decisions = []
+            for item in candidate_inventory["files"]:
+                decisions.append(
+                    {
+                        "path": item["path"],
+                        "sha256": item["sha256"],
+                        "outcome": "already_covered",
+                        "reason": "Local behavior was reviewed independently",
+                        "local_path": "skills/perfetto-performance-analysis/SKILL.md",
+                        "test_id": "tests.unit.test_android_skills_sync",
+                        "reviewed_source_commit": "b" * 40,
+                    }
+                )
+            decisions_path = upstreams / "android-skills-decisions.json"
+            decisions_path.write_text(
+                json.dumps({"schema_version": 1, "decisions": decisions}),
+                encoding="utf-8",
+            )
+
+            result = main(
+                [
+                    "--source",
+                    str(repo),
+                    "--lock",
+                    str(lock),
+                    "--decisions",
+                    str(decisions_path),
+                    "--commit",
+                    candidate,
+                    "--report-dir",
+                    str(root / "reports"),
+                    "--apply",
+                ]
+            )
+
+            self.assertEqual(result, 0)
+            self.assertEqual(json.loads(lock.read_text())["commit"], candidate)
+            self.assertTrue((upstreams / "reports/android-skills-gap.json").is_file())
+            self.assertFalse((upstreams / "snapshots/android-skills").exists())
+            persisted = "\n".join(
+                path.read_text(encoding="utf-8")
+                for path in upstreams.rglob("*")
+                if path.is_file()
+            )
+            self.assertNotIn(upstream_marker, persisted)
 
 
 if __name__ == "__main__":

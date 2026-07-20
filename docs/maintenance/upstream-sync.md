@@ -88,12 +88,16 @@ runtime dependency.
 
 `android/skills` is a second, independent gap-check-only upstream. It does not
 share a release identity with `google/perfetto` and cannot change the pinned
-trace processor or stdlib.
+trace processor or stdlib. Its repository content is read only from a
+disposable or maintainer-owned checkout during review; no Android Skill,
+reference, source inventory, or repository snapshot is stored here.
 
 1. Review only `profilers/perfetto-sql/**` and
    `profilers/perfetto-trace-analysis/**`.
-2. Pin the exact commit, both subtree tree IDs, and the generated snapshot hash
-   in `upstreams/android-skills.lock.json`.
+2. Pin only the exact commit and both subtree tree IDs in
+   `upstreams/android-skills.lock.json`. Keep exact path/hash classifications
+   in the reviewed decision registry; do not copy upstream Markdown or
+   materialize an upstream snapshot.
 3. Run a dry review:
 
    ```bash
@@ -107,16 +111,20 @@ trace processor or stdlib.
    `upstreams/android-skills-decisions.json`. `adopted` and
    `already_covered` require a local path, test id, and immutable local source
    commit. Unknown content remains `pending_review`.
-5. To promote a reviewed commit, run the same tool with `--commit <commit>
-   --apply`. It writes the snapshot, lock hash, and committed gap report only
-   when no unresolved decision remains.
+5. To promote a reviewed commit, make the pinned commit and candidate commit
+   available in the local source checkout, then run the same tool with
+   `--commit <commit> --apply`. It updates only the commit/tree lock and the
+   committed gap report when no unresolved decision remains. The source
+   checkout is never copied into this repository.
 6. Run `uv run python tools/verify.py`. The scheduled canary inventories
    Android Skills `main` without applying it, so new behavior can fail the
    non-blocking canary but cannot enter the package automatically.
 
 Do not import the upstream workspace downloader, trace-adjacent scratchpad, or
 repository-wide Android development Skills. Translate only portable
-methodology, and retain exact evidence for any claimed local coverage.
+methodology into repository-owned wording, architecture, and tests. Retain
+only the upstream identity, immutable Git pins, reviewed path/hash decisions,
+and the gap report needed to audit a claimed local coverage decision.
 
 ## Synchronize the official PerfettoSQL library
 
@@ -195,8 +203,10 @@ replace an existing asset.
 
 ## Rollback
 
-Locks, generated-base snapshots, reports, and fixture locks are ordinary
-versioned files. If promotion fails, abandon the uncommitted applied output or
-revert the synchronization commit, restore the previous immutable locks, clear
-only the local test cache, and rerun the prior complete gate. Never rewrite an
-existing fixture release asset or supported upstream tag.
+Locks, imported SmartPerfetto bases, Google Perfetto indexes, reports, and
+fixture locks are ordinary versioned files. If promotion fails, abandon the
+uncommitted applied output or revert the synchronization commit, restore the
+previous immutable locks, clear only the local test cache, and rerun the prior
+complete gate. Android Skills remains gap-check-only and has no committed
+snapshot to restore. Never rewrite an existing fixture release asset or
+supported upstream tag.
