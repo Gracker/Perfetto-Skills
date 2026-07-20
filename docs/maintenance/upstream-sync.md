@@ -84,6 +84,40 @@ runtime dependency.
    then refresh the snapshot with `--apply`; the tool refreshes the lock's
    complete snapshot hash before the complete gate runs.
 
+## Synchronize Android Skills profiler guidance
+
+`android/skills` is a second, independent gap-check-only upstream. It does not
+share a release identity with `google/perfetto` and cannot change the pinned
+trace processor or stdlib.
+
+1. Review only `profilers/perfetto-sql/**` and
+   `profilers/perfetto-trace-analysis/**`.
+2. Pin the exact commit, both subtree tree IDs, and the generated snapshot hash
+   in `upstreams/android-skills.lock.json`.
+3. Run a dry review:
+
+   ```bash
+   uv run python tools/sync_android_skills.py \
+     --source /absolute/path/to/android-skills \
+     --revision <candidate-commit> \
+     --report-dir test-output/android-skills-review
+   ```
+
+4. Classify every exact changed path/hash in
+   `upstreams/android-skills-decisions.json`. `adopted` and
+   `already_covered` require a local path, test id, and immutable local source
+   commit. Unknown content remains `pending_review`.
+5. To promote a reviewed commit, run the same tool with `--commit <commit>
+   --apply`. It writes the snapshot, lock hash, and committed gap report only
+   when no unresolved decision remains.
+6. Run `uv run python tools/verify.py`. The scheduled canary inventories
+   Android Skills `main` without applying it, so new behavior can fail the
+   non-blocking canary but cannot enter the package automatically.
+
+Do not import the upstream workspace downloader, trace-adjacent scratchpad, or
+repository-wide Android development Skills. Translate only portable
+methodology, and retain exact evidence for any claimed local coverage.
+
 ## Synchronize the official PerfettoSQL library
 
 1. Verify that tag, peeled commit, RPC API, trace-processor binary lock, and

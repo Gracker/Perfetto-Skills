@@ -1,0 +1,129 @@
+{
+  "added": [
+    "profilers/perfetto-sql/SKILL.md",
+    "profilers/perfetto-sql/references/perfetto-stdlib.md",
+    "profilers/perfetto-trace-analysis/SKILL.md",
+    "profilers/perfetto-trace-analysis/references/hints_cpu.md",
+    "profilers/perfetto-trace-analysis/references/hints_graphics.md",
+    "profilers/perfetto-trace-analysis/references/hints_io.md",
+    "profilers/perfetto-trace-analysis/references/hints_ipc.md",
+    "profilers/perfetto-trace-analysis/references/hints_memory.md",
+    "profilers/perfetto-trace-analysis/references/hints_power.md",
+    "profilers/perfetto-trace-analysis/references/perfetto-stdlib.md",
+    "profilers/perfetto-trace-analysis/references/sql.md"
+  ],
+  "applied": true,
+  "candidate_trees": {
+    "profilers/perfetto-sql": "2035e9e4bea41e7e637004254bd9cab3788c5e21",
+    "profilers/perfetto-trace-analysis": "87eb325a0053e9ec5cd882e81345c18db939a3b1"
+  },
+  "changed": [],
+  "classifications": [
+    {
+      "local_path": "skills/perfetto-performance-analysis/scripts/perfetto_sql_guardrails.py",
+      "outcome": "adopted",
+      "path": "profilers/perfetto-sql/SKILL.md",
+      "reason": "The portable implementation adopts the reviewable SQL invariants while retaining its checksum-pinned local runtime instead of the upstream workspace downloader.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "13e701190c529212ada3c6252c18a3cac8f33b1027b72db8c0bdd2f7726eb5ca",
+      "test_id": "tests.unit.test_sql_guardrails"
+    },
+    {
+      "local_path": "upstreams/snapshots/google-perfetto/stdlib-index.json",
+      "outcome": "already_covered",
+      "path": "profilers/perfetto-sql/references/perfetto-stdlib.md",
+      "reason": "Perfetto-Skills pins a release-specific machine-readable stdlib index and validates every referenced module and symbol.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "08dba63c0fd843fe0cd8c16d17f276853f15540106c4ff2ea2b304f38191e629",
+      "test_id": "tests.unit.test_upstream_locks"
+    },
+    {
+      "local_path": "skills/perfetto-performance-analysis/references/workflows/trace-overview.md",
+      "outcome": "adopted",
+      "path": "profilers/perfetto-trace-analysis/SKILL.md",
+      "reason": "The portable workflow keeps the evidence chain and adds a bounded secondary sweep without adopting trace-adjacent scratchpads or an unbounded exhaustive loop.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "cb1b5b16a4c74b7e18bed1b07217867c9e3c0155b4d3ce4dfb5800737f75f3db",
+      "test_id": "tests.unit.test_workflow_coverage"
+    },
+    {
+      "local_path": "skills/perfetto-performance-analysis/references/workflows/cpu-scheduling.md",
+      "outcome": "already_covered",
+      "path": "profilers/perfetto-trace-analysis/references/hints_cpu.md",
+      "reason": "The CPU workflow already routes topology, utilization, frequency, idle, IRQ, runnable latency, and thread-state evidence with explicit availability gates.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "9a7cc69715b7a887150c4fda53c387bdd81751f9959af1258d59e93d2c6f1a08",
+      "test_id": "tests.unit.test_workflow_coverage"
+    },
+    {
+      "local_path": "skills/perfetto-performance-analysis/references/workflows/gpu-rendering.md",
+      "outcome": "already_covered",
+      "path": "profilers/perfetto-trace-analysis/references/hints_graphics.md",
+      "reason": "The rendering workflows already separate app production, presentation, SurfaceFlinger, fences, GPU, and pipeline evidence.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "f62986eff49afd66740141bd8bfbbcfd6a3a6a636013bd6ec374ef2d5231b481",
+      "test_id": "tests.unit.test_workflow_coverage"
+    },
+    {
+      "local_path": "skills/perfetto-performance-analysis/references/workflows/io-network-media.md",
+      "outcome": "already_covered",
+      "path": "profilers/perfetto-trace-analysis/references/hints_io.md",
+      "reason": "The IO workflow already distinguishes filesystem, block IO, page faults, storage pressure, network, modem, and media evidence.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "48caa7a06f338596645f4ee5d7bcb98a3e848783d450d4cc317b30e3f12d9c39",
+      "test_id": "tests.unit.test_workflow_coverage"
+    },
+    {
+      "local_path": "skills/perfetto-performance-analysis/references/workflows/anr-blocking.md",
+      "outcome": "already_covered",
+      "path": "profilers/perfetto-trace-analysis/references/hints_ipc.md",
+      "reason": "The blocking workflow already follows Binder, locks, futex, scheduler, waker, and cross-process dependency evidence.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "9c8ab30ad807a9eab88597b0425aceb229fc031b404a87f55975fe16a32e2188",
+      "test_id": "tests.unit.test_workflow_coverage"
+    },
+    {
+      "local_path": "skills/perfetto-performance-analysis/references/workflows/memory.md",
+      "outcome": "already_covered",
+      "path": "profilers/perfetto-trace-analysis/references/hints_memory.md",
+      "reason": "The memory workflow already separates RSS, heap graphs, allocations, GC, LMK, DMA-BUF, and missing-profile evidence.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "5bc5ab0177e3e7b0883bfda108960e70001bff605a35199642186747b4ccd14a",
+      "test_id": "tests.unit.test_workflow_coverage"
+    },
+    {
+      "local_path": "skills/perfetto-performance-analysis/references/workflows/power-thermal.md",
+      "outcome": "already_covered",
+      "path": "profilers/perfetto-trace-analysis/references/hints_power.md",
+      "reason": "The power workflow already gates rails, Wattson, battery, wakelocks, suspend, DVFS, and thermal evidence independently.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "9a886c4d2085d9f2c3dfe505356238009c3b7fe47825c254b92e95c6d34abeaa",
+      "test_id": "tests.unit.test_workflow_coverage"
+    },
+    {
+      "local_path": "upstreams/snapshots/google-perfetto/stdlib-index.json",
+      "outcome": "already_covered",
+      "path": "profilers/perfetto-trace-analysis/references/perfetto-stdlib.md",
+      "reason": "The same release-pinned stdlib inventory is shared by all portable workflows and validated before query execution.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "08dba63c0fd843fe0cd8c16d17f276853f15540106c4ff2ea2b304f38191e629",
+      "test_id": "tests.unit.test_upstream_locks"
+    },
+    {
+      "local_path": "skills/perfetto-performance-analysis/references/evidence/sql-guardrails.md",
+      "outcome": "adopted",
+      "path": "profilers/perfetto-trace-analysis/references/sql.md",
+      "reason": "The portable SQL contract adopts the evidence-safe query invariants and documents dynamic non-overlap witness queries without the upstream downloader dependency.",
+      "reviewed_source_commit": "dea0d1f0bca38678ccaf2325fa68b8103fcc9032",
+      "sha256": "5483af1377ff700ae33d9ee2ede1720aa751d24d6c33ea91740b70767c643adb",
+      "test_id": "tests.unit.test_sql_guardrails"
+    }
+  ],
+  "current_commit": "47e1dff74a5cde5d0128c5d15e74e000323135ea",
+  "previous_commit": null,
+  "removed": [],
+  "removed_classifications": [],
+  "role": "gap_check_only",
+  "schema_version": 1,
+  "unresolved": []
+}

@@ -33,6 +33,14 @@ jobs:
           path: GooglePerfetto
           persist-credentials: false
           fetch-depth: 0
+      - name: Check out Android Skills main
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: android/skills
+          ref: main
+          path: AndroidSkills
+          persist-credentials: false
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
@@ -50,15 +58,19 @@ jobs:
           mkdir -p test-output/canary
           smart_head="$(git -C "$GITHUB_WORKSPACE/SmartPerfetto" rev-parse HEAD)"
           google_head="$(git -C "$GITHUB_WORKSPACE/GooglePerfetto" rev-parse HEAD)"
+          android_skills_head="$(git -C "$GITHUB_WORKSPACE/AndroidSkills" rev-parse HEAD)"
           latest_tag="$(git -C "$GITHUB_WORKSPACE/GooglePerfetto" tag --list 'v[0-9]*' \
             --sort=-version:refname | grep -E '^v[0-9]+(\.[0-9]+)*$' | head -n 1)"
-          printf '{"smartperfetto_head":"%s","google_perfetto_head":"%s","google_perfetto_latest_tag":"%s"}\n' \
-            "$smart_head" "$google_head" "$latest_tag" > test-output/canary/discovered-heads.json
+          printf '{"smartperfetto_head":"%s","google_perfetto_head":"%s","google_perfetto_latest_tag":"%s","android_skills_head":"%s"}\n' \
+            "$smart_head" "$google_head" "$latest_tag" "$android_skills_head" \
+            > test-output/canary/discovered-heads.json
           uv run python tools/sync_smartperfetto.py --source "$GITHUB_WORKSPACE/SmartPerfetto" \
             --commit "$smart_head" --report-dir test-output/canary --apply
           status=0
           uv run python tools/sync_official_skill.py --perfetto "$GITHUB_WORKSPACE/GooglePerfetto" \
             --revision "$latest_tag" --report-dir test-output/canary || status=1
+          uv run python tools/sync_android_skills.py --source "$GITHUB_WORKSPACE/AndroidSkills" \
+            --revision "$android_skills_head" --report-dir test-output/canary || status=1
           uv run python tools/sync_perfetto_stdlib.py --perfetto "$GITHUB_WORKSPACE/GooglePerfetto" \
             --revision "$latest_tag" --report-dir test-output/canary || status=1
           candidate_commit="$(jq -r '.candidate_identity.commit' test-output/canary/perfetto-stdlib-drift.json)"

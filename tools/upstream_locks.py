@@ -129,6 +129,85 @@ def load_and_validate_google_lock(
     return lock
 
 
+def load_and_validate_android_skills_lock(
+    path: Path, *, validate_snapshot: bool = True
+) -> dict[str, Any]:
+    lock = _read(path)
+    if lock.get("schema_version") != 1:
+        raise ValueError("unsupported Android Skills lock schema")
+    repository = lock.get("repository")
+    if repository != "https://github.com/android/skills" or not GITHUB.fullmatch(
+        repository
+    ):
+        raise ValueError("unexpected Android Skills repository")
+    _require_hash(lock.get("commit"), "Android Skills commit", COMMIT)
+    if lock.get("role") != "gap_check_only":
+        raise ValueError("Android Skills must remain gap_check_only")
+    if lock.get("tracked_ref") != "main":
+        raise ValueError("Android Skills tracked ref must be main")
+    subtrees = lock.get("subtrees")
+    if (
+        not isinstance(subtrees, list)
+        or not subtrees
+        or subtrees != sorted(set(subtrees))
+        or any(
+            not isinstance(value, str)
+            or not value.startswith("profilers/")
+            or ".." in Path(value).parts
+            for value in subtrees
+        )
+    ):
+        raise ValueError("Android Skills subtrees must be safe and sorted")
+    trees = lock.get("trees")
+    if not isinstance(trees, dict) or list(trees) != subtrees:
+        raise ValueError("Android Skills subtree trees must match tracked subtrees")
+    for subtree, tree in trees.items():
+        _require_hash(tree, f"Android Skills tree {subtree}", COMMIT)
+    snapshot_value = lock.get("snapshot_path")
+    if (
+        not isinstance(snapshot_value, str)
+        or Path(snapshot_value).is_absolute()
+        or ".." in Path(snapshot_value).parts
+    ):
+        raise ValueError("Android Skills snapshot path must be safe")
+    snapshot_sha256 = _require_hash(
+        lock.get("snapshot_sha256"), "Android Skills snapshot hash"
+    )
+    if not validate_snapshot:
+        return lock
+
+    snapshot_path = path.parent / snapshot_value
+    if hashlib.sha256(snapshot_path.read_bytes()).hexdigest() != snapshot_sha256:
+        raise ValueError("Android Skills snapshot bytes differ from lock")
+    snapshot = _read(snapshot_path)
+    if (
+        snapshot.get("repository") != repository
+        or snapshot.get("commit") != lock["commit"]
+        or snapshot.get("trees") != trees
+        or snapshot.get("role") != "gap_check_only"
+    ):
+        raise ValueError("Android Skills snapshot identity differs from lock")
+    files = snapshot.get("files")
+    if not isinstance(files, list):
+        raise ValueError("Android Skills snapshot files must be a list")
+    paths = [item.get("path") for item in files if isinstance(item, dict)]
+    if len(paths) != len(files) or paths != sorted(paths) or len(paths) != len(set(paths)):
+        raise ValueError("Android Skills snapshot paths must be unique and sorted")
+    for item in files:
+        item_path = item["path"]
+        if not any(
+            item_path == subtree or item_path.startswith(subtree + "/")
+            for subtree in subtrees
+        ):
+            raise ValueError(f"Android Skills snapshot path is outside lock: {item_path}")
+        _require_hash(item.get("sha256"), f"Android Skills file {item_path}")
+        if not isinstance(item.get("size"), int) or item["size"] < 0:
+            raise ValueError(f"Android Skills file size is invalid: {item_path}")
+        if item.get("license") != "Apache-2.0":
+            raise ValueError(f"Android Skills file license is invalid: {item_path}")
+    return lock
+
+
 def write_generated_base_manifest(lock_path: Path) -> None:
     lock = _read(lock_path)
     root = lock_path.parent / str(lock["generated_base_root"])
@@ -156,13 +235,19 @@ def main(arguments: list[str] | None = None) -> int:
         type=Path,
         default=Path("upstreams/google-perfetto.lock.json"),
     )
+    parser.add_argument(
+        "--android-skills-lock",
+        type=Path,
+        default=Path("upstreams/android-skills.lock.json"),
+    )
     parser.add_argument("--write-base-manifest", action="store_true")
     args = parser.parse_args(arguments)
     if args.write_base_manifest:
         write_generated_base_manifest(args.smart_lock)
     load_and_validate_smartperfetto_lock(args.smart_lock)
     load_and_validate_google_lock(args.google_lock)
-    print("upstream locks and committed base are valid")
+    load_and_validate_android_skills_lock(args.android_skills_lock)
+    print("upstream locks, reviewed snapshots, and committed base are valid")
     return 0
 
 

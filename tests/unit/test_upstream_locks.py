@@ -5,6 +5,7 @@ import unittest
 
 from tools.upstream_locks import (
     build_generated_base,
+    load_and_validate_android_skills_lock,
     load_and_validate_google_lock,
     load_and_validate_smartperfetto_lock,
 )
@@ -22,9 +23,16 @@ class UpstreamLockTest(unittest.TestCase):
         google = load_and_validate_google_lock(
             ROOT / "upstreams/google-perfetto.lock.json"
         )
+        android = load_and_validate_android_skills_lock(
+            ROOT / "upstreams/android-skills.lock.json"
+        )
         self.assertEqual(smart["commit"], "ff5d4a00696318f7bfc5868fb54c84b38c32b880")
         self.assertEqual(google["tag"], "v57.2")
         self.assertEqual(google["official_skill"]["role"], "gap_check_only")
+        self.assertEqual(
+            android["commit"], "47e1dff74a5cde5d0128c5d15e74e000323135ea"
+        )
+        self.assertEqual(android["role"], "gap_check_only")
 
     def test_committed_base_tree_matches_manifest_and_generated_output(self) -> None:
         base_root = ROOT / "upstreams/snapshots/smartperfetto/base/references/generated"
@@ -94,6 +102,27 @@ class UpstreamLockTest(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "snapshot bytes"):
                 load_and_validate_google_lock(lock)
+
+    def test_android_lock_rejects_forged_snapshot_inventory(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            upstreams = Path(temporary) / "upstreams"
+            snapshot = upstreams / "snapshots/android-skills/profilers.json"
+            snapshot.parent.mkdir(parents=True)
+            lock = upstreams / "android-skills.lock.json"
+            shutil.copyfile(ROOT / "upstreams/android-skills.lock.json", lock)
+            shutil.copyfile(
+                ROOT / "upstreams/snapshots/android-skills/profilers.json",
+                snapshot,
+            )
+            load_and_validate_android_skills_lock(lock)
+            snapshot.write_text(
+                snapshot.read_text(encoding="utf-8").replace(
+                    '"files": [', '"files": [{"path":"forged","sha256":"' + "0" * 64 + '"},'
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "snapshot bytes"):
+                load_and_validate_android_skills_lock(lock)
 
 
 if __name__ == "__main__":

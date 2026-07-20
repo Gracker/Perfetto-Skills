@@ -88,13 +88,28 @@ class WorkflowCoverageTest(unittest.TestCase):
         overview = (SKILL / "references/workflows/trace-overview.md").read_text(
             encoding="utf-8"
         )
-        for phrase in (
-            "at most three",
-            "already repeat evidence",
-            "unresolved alternatives",
-            "specific bounded question",
-        ):
-            self.assertIn(phrase, overview)
+        match = re.search(
+            r"```json analysis-closure-contract\n([\s\S]*?)\n```",
+            overview,
+        )
+        self.assertIsNotNone(match)
+        contract = json.loads(match.group(1))
+        self.assertEqual(contract["applies_to"], "open_ended_investigation")
+        self.assertEqual(contract["max_secondary_domains"], 3)
+        self.assertEqual(contract["skip_for"], "bounded_question")
+        self.assertEqual(
+            set(contract["stop_conditions"]),
+            {
+                "no_independent_high_impact_anomaly",
+                "repeated_evidence",
+                "missing_data",
+                "budget_exhausted",
+            },
+        )
+        self.assertEqual(
+            set(contract["report_fields"]),
+            {"checked_domains", "missing_data", "unresolved_alternatives"},
+        )
 
 
 if __name__ == "__main__":

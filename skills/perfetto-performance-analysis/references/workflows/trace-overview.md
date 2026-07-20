@@ -30,6 +30,28 @@ Route each verified anomaly to the narrowest domain workflow.
 
 ## Bounded closing sweep
 
+The following structured block is the source of truth for this workflow's
+closing behavior:
+
+```json analysis-closure-contract
+{
+  "applies_to": "open_ended_investigation",
+  "max_secondary_domains": 3,
+  "report_fields": [
+    "checked_domains",
+    "missing_data",
+    "unresolved_alternatives"
+  ],
+  "skip_for": "bounded_question",
+  "stop_conditions": [
+    "no_independent_high_impact_anomaly",
+    "repeated_evidence",
+    "missing_data",
+    "budget_exhausted"
+  ]
+}
+```
+
 For an open-ended investigation, run one secondary sweep after the primary
 evidence chain. Select at most three still-unchecked domains from signals that
 are both observed and available in this trace. Stop when no independent

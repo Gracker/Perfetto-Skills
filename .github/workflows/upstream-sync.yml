@@ -12,6 +12,11 @@ on:
         required: true
         default: v57.2
         type: string
+      android_skills_commit:
+        description: Immutable android/skills commit to review
+        required: true
+        default: 47e1dff74a5cde5d0128c5d15e74e000323135ea
+        type: string
 
 permissions:
   contents: read
@@ -22,6 +27,7 @@ jobs:
     env:
       SMARTPERFETTO_COMMIT: ${{ inputs.smartperfetto_commit }}
       PERFETTO_TAG: ${{ inputs.perfetto_tag }}
+      ANDROID_SKILLS_COMMIT: ${{ inputs.android_skills_commit }}
     steps:
       - name: Check out Perfetto Skills
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -42,6 +48,13 @@ jobs:
           repository: google/perfetto
           ref: ${{ inputs.perfetto_tag }}
           path: GooglePerfetto
+          persist-credentials: false
+      - name: Check out Android Skills source
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          repository: android/skills
+          ref: ${{ inputs.android_skills_commit }}
+          path: AndroidSkills
           persist-credentials: false
       - name: Ensure SmartPerfetto submodule has the pinned official tag
         shell: bash
@@ -66,6 +79,8 @@ jobs:
             --commit "$SMARTPERFETTO_COMMIT" --report-dir test-output/sync --apply
           uv run python tools/sync_official_skill.py --perfetto "$GITHUB_WORKSPACE/GooglePerfetto" \
             --report-dir test-output/sync --apply
+          uv run python tools/sync_android_skills.py --source "$GITHUB_WORKSPACE/AndroidSkills" \
+            --commit "$ANDROID_SKILLS_COMMIT" --report-dir test-output/sync --apply
           uv run python tools/sync_perfetto_stdlib.py --perfetto "$GITHUB_WORKSPACE/GooglePerfetto" \
             --report-dir test-output/sync --apply
           uv run python tools/compile_skill.py --apply

@@ -31,7 +31,7 @@ for the selected workflow.
    parameters, trace identity, timestamps, durations, units, and returned row
    bounds with every saved result.
 6. Before executing authored or modified SQL, run
-   `scripts/perfetto_sql_guardrails.py`. Resolve blocking findings and review
+   [the SQL guardrail script](scripts/perfetto_sql_guardrails.py). Resolve blocking findings and review
    advisories using [the SQL guardrail contract](references/evidence/sql-guardrails.md).
 7. Separate observations, correlations, mechanisms, and verified root causes.
    Do not promote a hypothesis without evidence that supports the claimed

@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import re
 import unittest
 
 import yaml
@@ -72,8 +73,16 @@ class SkillContractTest(unittest.TestCase):
             self.assertIn(option, query_help)
 
         skill_text = (SKILL / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("perfetto_sql_guardrails.py", skill_text)
-        self.assertIn("sql-guardrails.md", skill_text)
+        links = {
+            target for target in re.findall(r"\[[^]]+\]\(([^)]+)\)", skill_text)
+        }
+        required_links = {
+            "scripts/perfetto_sql_guardrails.py",
+            "references/evidence/sql-guardrails.md",
+        }
+        self.assertTrue(required_links.issubset(links))
+        for relative in required_links:
+            self.assertTrue((SKILL / relative).is_file(), relative)
 
 
 if __name__ == "__main__":

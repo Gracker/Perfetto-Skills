@@ -47,6 +47,19 @@ class SqlGuardrailTest(unittest.TestCase):
         self.assertIn("same partition key", errors["span-join-safety"])
         self.assertIn("DROP TABLE IF EXISTS", errors["span-join-idempotency"])
 
+    def test_rejects_span_join_without_a_partition_key(self) -> None:
+        issues = analyze_sql(
+            """
+            DROP TABLE IF EXISTS joined;
+            -- perfetto-span-join-non-overlap-proof: assertion inputs-disjoint
+            CREATE VIRTUAL TABLE joined
+            USING SPAN_JOIN(a, b);
+            """
+        )
+
+        errors = {issue.rule_id: issue.message for issue in issues if issue.severity == "error"}
+        self.assertIn("PARTITIONED", errors["span-join-safety"])
+
     def test_literal_empty_and_non_adjacent_markers_do_not_count(self) -> None:
         issues = analyze_sql(
             """
