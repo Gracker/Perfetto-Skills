@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/power_consumption_overview.skill.yaml
-Source SHA-256: 500e56c35f463dfbfe88e8ac5f45c7882c5010b2212f2139e5b421f659d1b6f2
-Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
+Source SHA-256: 3fd570b2fe2d876beed93fc701e9e78467b57f17c24fdc5de0bcc741cf156af8
+Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
 # 功耗总览分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -308,7 +308,7 @@ id: gpu_work_period
 type: skill
 skill: android_gpu_work_period_track
 params:
-  package: ${package|${process_name|}}
+  package: ${package || process_name || ''}
   start_ts: ${start_ts}
   end_ts: ${end_ts}
 display:

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
 -- Source SHA-256: 0f803fbe7f82fcbcf288bfe2fb88bab8e0ad54cb2df2995d710a285a31b733c6
--- Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
+-- Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
 
 WITH main_thread AS (
   SELECT t.utid, p.name as process_name

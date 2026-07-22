@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S03_surfaceview_type.md
 Source SHA-256: bc36006cf53cb28f45d888aa4f9fbf28c4f6a3e0b511be7f8db36857c1e26630
-Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
+Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
 
 # Android Perfetto 系列 - App 出图类型 - SurfaceView 类型
 

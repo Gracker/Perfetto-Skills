@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/angle_gles_vulkan.skill.yaml
 Source SHA-256: 6534fbaf27524e1bb36aaa99335afadba617e5be071cd201e34b740930b94b02
-Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
+Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
 # ANGLE (GLES over Vulkan)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

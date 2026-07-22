@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/main_thread_sched_latency_in_range.skill.yaml
 Source SHA-256: de053b0fa4190314df852b3a55b169077626cae09d319365cdaff98c5ec3ad1e
-Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
+Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
 # 主线程调度延迟 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

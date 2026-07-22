@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-harmonyos-rendering.template.md
 Source SHA-256: a35f16d1313d5eb713799b17d3f0876ac83e0c3af1fa8f139d943e9845bd3b2e
-Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
+Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
 
 # Knowledge Harmonyos Rendering Template
 

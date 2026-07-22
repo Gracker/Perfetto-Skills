@@ -54,14 +54,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_gpu_work_period_track/gpu_work.sql",
-      "sha256": "5b53e80106410749aacfb37812ba693da901f5873d467871102b6f81393c998c",
+      "sha256": "6dce9ecdcef60c044eb6b4967fe6b263a65363a42d11aabf6e93a24937c6deb9",
       "signal_patterns": [],
       "skill_id": "android_gpu_work_period_track",
       "source": {
-        "commit": "ff5d4a00696318f7bfc5868fb54c84b38c32b880",
+        "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
         "path": "backend/skills/atomic/android_gpu_work_period_track.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8a497f4a41658ca2975e94bec53ccda4461bdd56763195ae3a57f32807c97017"
+        "sha256": "89ee7d1b0cea4d3a9b04eca1c6861f1df717154d04473c1e5f3634676c910bab"
       },
       "sql_dependencies": {
         "creates": [],
@@ -76,7 +76,11 @@
       "step_id": "gpu_work",
       "template": {
         "fragments": [],
-        "parameters": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
         "result_dependencies": []
       },
       "validation": {
