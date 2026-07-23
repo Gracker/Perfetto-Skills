@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_process_utilization_period.skill.yaml
-Source SHA-256: 7ab91a94b9e4a6be4e1b8224e9e1b993140280825cff454d6124a73e98b00ec8
-Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+Source SHA-256: a37173b25f5c40b5fdbe2f46e13e980b8eca451f7e52275826547e3480585ea2
+Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
 # 进程 CPU 利用率
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -34,20 +34,6 @@ tags:
 ```yaml
 modules:
 - linux.cpu.utilization.process
-```
-
-## Inputs
-
-```yaml
-- name: process_name
-  type: string
-  required: false
-- name: start_ts
-  type: timestamp
-  required: false
-- name: end_ts
-  type: timestamp
-  required: false
 ```
 
 ## Ordered execution

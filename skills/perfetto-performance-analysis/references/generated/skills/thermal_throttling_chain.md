@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling_chain.skill.yaml
-Source SHA-256: 991cd6311377d2d5446d03c874a39dd294ff9a16d0202253290af0144446639b
-Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+Source SHA-256: 840d149570c40efdadb929920141eec03d3e578709be09c9bc99fa3510efd39f
+Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
 # 温控降频链路分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -96,7 +96,7 @@ id: thermal
 type: skill
 skill: thermal_throttling
 params:
-  package: ${package || process_name || ''}
+  package: ${package|${process_name|}}
   start_ts: ${start_ts}
   end_ts: ${end_ts}
 display:
@@ -148,7 +148,7 @@ id: process_util
 type: skill
 skill: cpu_process_utilization_period
 params:
-  process_name: ${package || process_name || ''}
+  package: ${package|${process_name|}}
   start_ts: ${start_ts}
   end_ts: ${end_ts}
 display:
@@ -166,7 +166,7 @@ id: thread_util
 type: skill
 skill: cpu_thread_utilization_period
 params:
-  process_name: ${package || process_name || ''}
+  package: ${package|${process_name|}}
   start_ts: ${start_ts}
   end_ts: ${end_ts}
 display:
@@ -184,7 +184,7 @@ id: gpu_work_period
 type: skill
 skill: android_gpu_work_period_track
 params:
-  package: ${package || process_name || ''}
+  package: ${package|${process_name|}}
   start_ts: ${start_ts}
   end_ts: ${end_ts}
 display:

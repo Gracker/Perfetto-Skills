@@ -55,7 +55,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lock_contention_module/lock_contention_overview.sql",
-      "sha256": "7777ef8cd7c187ed8e7d78a33306a16763ed2de936bee9eca4ae9e401057bb1a",
+      "sha256": "2a465e56da7dd126e5b640a70e0fb162b35f3f23673dcb09ea6924f34ffe6b22",
       "signal_patterns": [
         "%${package}%",
         "*Lock*",
@@ -70,7 +70,7 @@
       ],
       "skill_id": "lock_contention_module",
       "source": {
-        "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
+        "commit": "ff5d4a00696318f7bfc5868fb54c84b38c32b880",
         "path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118"
@@ -160,7 +160,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lock_contention_module/monitor_contention.sql",
-      "sha256": "58865806cc17d064bb9e513cd2318ff8eda28948cb929f772365b0062e3babfd",
+      "sha256": "220b25a46e99d88a00dd14372ca20ffc6b9035709fd0096c5d66ac69afa12480",
       "signal_patterns": [
         "%${package}%",
         "*LockContention*",
@@ -170,7 +170,7 @@
       ],
       "skill_id": "lock_contention_module",
       "source": {
-        "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
+        "commit": "ff5d4a00696318f7bfc5868fb54c84b38c32b880",
         "path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118"
@@ -260,13 +260,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lock_contention_module/blocked_threads.sql",
-      "sha256": "f264ca7afefc00e7a0496e4b3cd41174de27269ec001d7509418da3b64515d6f",
+      "sha256": "ce8425e1473c02bd0ac50049e887609680440ffdca7dd6fb46988d1a17b7a9be",
       "signal_patterns": [
         "%${package}%"
       ],
       "skill_id": "lock_contention_module",
       "source": {
-        "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
+        "commit": "ff5d4a00696318f7bfc5868fb54c84b38c32b880",
         "path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118"
@@ -356,7 +356,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lock_contention_module/main_thread_locks.sql",
-      "sha256": "5ae6079911025125eff4d64ef9366f5b000b2b3b36df67dc915dc66801584ecb",
+      "sha256": "f60fe4cd2dfa864f792f8a9f5b609ab68d5534a2e9bf99180ff214f59d072c12",
       "signal_patterns": [
         "%${package}%",
         "*Lock*",
@@ -368,7 +368,7 @@
       ],
       "skill_id": "lock_contention_module",
       "source": {
-        "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
+        "commit": "ff5d4a00696318f7bfc5868fb54c84b38c32b880",
         "path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118"
@@ -458,7 +458,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lock_contention_module/binder_thread_locks.sql",
-      "sha256": "082f30b0a8f560c7e28c373a4e75927efb5a3ff0151a42d51b6365bef87de56e",
+      "sha256": "ec4e182dacd7b3be46dd579d3aa1bd465843d2e0aabadfa770b897e06b51354f",
       "signal_patterns": [
         "%${package}%",
         "%Binder%",
@@ -469,7 +469,7 @@
       ],
       "skill_id": "lock_contention_module",
       "source": {
-        "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
+        "commit": "ff5d4a00696318f7bfc5868fb54c84b38c32b880",
         "path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118"
@@ -559,7 +559,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lock_contention_module/long_lock_holds.sql",
-      "sha256": "0595b619398f5bbed4a57d58d361653937142da2780c2c522daf0aae5b0a6144",
+      "sha256": "fb11360e084030249e48d373e10e0cb640ae45b59dc726e3b18e4c23b9865dcc",
       "signal_patterns": [
         "%${package}%",
         "*acquired*",
@@ -569,7 +569,7 @@
       ],
       "skill_id": "lock_contention_module",
       "source": {
-        "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
+        "commit": "ff5d4a00696318f7bfc5868fb54c84b38c32b880",
         "path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118"
@@ -659,13 +659,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lock_contention_module/thread_contention_pairs.sql",
-      "sha256": "6448efdacb493bbee1aeb34a37c0d75c7be5a248bca317bbbc9de576e85077f8",
+      "sha256": "382aca7bcd22510b3fb5dc612659b39394f648bbca73c034e169486c66e0eb47",
       "signal_patterns": [
         "%${package}%"
       ],
       "skill_id": "lock_contention_module",
       "source": {
-        "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
+        "commit": "ff5d4a00696318f7bfc5868fb54c84b38c32b880",
         "path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118"

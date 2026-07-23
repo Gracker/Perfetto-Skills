@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/arch-webview.template.md
 Source SHA-256: b8a937586f62b7401f1fcf7071de354b108be6a7dcbb8f9f72157215451321f6
-Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
 
 # Arch Webview Template
 
