@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/startup_analysis.skill.yaml
 -- Source SHA-256: 96b682a4206afafddcfb6e63c60e842921381a674744f413881a609e862ef41b
--- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
+-- Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
 
 WITH filtered AS (
   SELECT

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/system_load_in_range.skill.yaml
 -- Source SHA-256: 34013d7fab4cc44f7b9247884e5eedbc9c1d4c6d9a60097fb27a1348815a88bb
--- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
+-- Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
 
 WITH time_range AS (
   SELECT ${end_ts} - ${start_ts} as duration_ns

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/startup_detail.skill.yaml
 -- Source SHA-256: 27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6
--- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
+-- Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
 
 WITH main_thread AS (
   SELECT t.utid

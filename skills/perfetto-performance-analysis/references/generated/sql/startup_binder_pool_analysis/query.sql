@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_binder_pool_analysis.skill.yaml
 -- Source SHA-256: 10d4853d77be31976d5238ca1b58dbda245f3e8372eca058a69fbd8303127584
--- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
+-- Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
 
 WITH binder_threads AS (
   SELECT t.utid, t.name as thread_name

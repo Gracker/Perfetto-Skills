@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/prompt-output-format.template.md
 Source SHA-256: c8379ddd0be62c25186cf36e22889065c8c4dc054981280e7ef75a39729b8290
-Source commit: 014f85f56ddbac288cbf30faed548086506f968a
+Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
 
 # Prompt Output Format Template
 

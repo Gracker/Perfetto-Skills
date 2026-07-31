@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml
 -- Source SHA-256: 31127ebb648421f06248c4ceb054d614d12df318c63b0a652a41f341b556310e
--- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
+-- Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
 
 SELECT
   COALESCE(p.name, '<unknown>') AS process_name,

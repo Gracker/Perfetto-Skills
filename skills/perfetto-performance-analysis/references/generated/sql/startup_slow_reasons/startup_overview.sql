@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_slow_reasons.skill.yaml
 -- Source SHA-256: 9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58
--- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
+-- Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
 
 WITH startup_type_signals AS (
   SELECT
