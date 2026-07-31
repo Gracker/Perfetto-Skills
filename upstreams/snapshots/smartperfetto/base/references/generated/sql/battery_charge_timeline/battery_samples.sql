@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/battery_charge_timeline.skill.yaml
 -- Source SHA-256: f2c833e0011fe26b5fa5876a09017049993e4ccd8fb399900e18e730417a037b
--- Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+-- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 SELECT
   ts,

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/startup_analysis.skill.yaml
 -- Source SHA-256: 96b682a4206afafddcfb6e63c60e842921381a674744f413881a609e862ef41b
--- Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
+-- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 SELECT
   'MainThread Hot Slice' as item,

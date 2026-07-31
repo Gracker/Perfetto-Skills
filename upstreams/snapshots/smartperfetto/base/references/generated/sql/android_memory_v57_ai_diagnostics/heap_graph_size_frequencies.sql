@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml
 -- Source SHA-256: 7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da
--- Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+-- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 WITH input AS (
   SELECT MIN(MAX(COALESCE(${max_rows|40}, 40), 1), 500) AS max_rows

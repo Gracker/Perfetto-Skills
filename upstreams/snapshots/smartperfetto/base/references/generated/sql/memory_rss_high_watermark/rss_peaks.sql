@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/memory_rss_high_watermark.skill.yaml
 -- Source SHA-256: 4cf80939e6b952de97407a954e1b420e4a2e52e02330c003a6cd1fa148a49cd7
--- Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+-- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 SELECT
   process_name,

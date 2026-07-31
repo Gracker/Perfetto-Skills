@@ -54,9 +54,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
+    "commit": "014f85f56ddbac288cbf30faed548086506f968a",
     "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
-    "sha256": "3c4b708b7b84c9206463877bf914275bb2d48df15eef7c821ebe6eeaf4a8e263"
+    "sha256": "40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575"
   },
   "steps": [
     {
@@ -70,10 +70,14 @@
     {
       "id": "top_long_slices",
       "name": "最长 Slice",
-      "query_id": "global_trace_sanity_check/top_long_slices",
-      "result_dependencies": [],
+      "params": {
+        "end_ts": "${end_ts}",
+        "max_rows": "${max_rows}",
+        "start_ts": "${start_ts}"
+      },
       "save_as": "top_long_slices",
-      "type": "atomic"
+      "skill": "longest_process_slices",
+      "type": "skill"
     },
     {
       "id": "top_d_state_threads",

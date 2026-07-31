@@ -1034,7 +1034,7 @@
       "name": "global_trace_sanity_check",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
-      "source_sha256": "3c4b708b7b84c9206463877bf914275bb2d48df15eef7c821ebe6eeaf4a8e263",
+      "source_sha256": "40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575",
       "tier": "S",
       "version": "1.0",
       "workflow": "trace-overview"
@@ -1380,6 +1380,18 @@
       "tier": "B",
       "version": "1.0",
       "workflow": "io-network-media"
+    },
+    {
+      "category": "system",
+      "destination": "references/generated/skills/longest_process_slices.md",
+      "disposition": "exported",
+      "name": "longest_process_slices",
+      "runtime_type": "atomic",
+      "source_path": "backend/skills/atomic/longest_process_slices.skill.yaml",
+      "source_sha256": "afd2f8caa3379888693e359840046ddb1c854202cdfe90578fc67ddd9a4916a8",
+      "tier": "B",
+      "version": "1.0",
+      "workflow": "trace-overview"
     },
     {
       "category": "app_lifecycle",
@@ -2851,10 +2863,10 @@
     }
   ],
   "source": {
-    "commit": "6333623a96295c1ad76e28bf1f5eb7a9ecd39864",
+    "commit": "014f85f56ddbac288cbf30faed548086506f968a",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "6ae5d558a1616d387301f26ed4525665254f97d54d01fb2560d5975350f90dd3",
+    "policy_sha256": "f3202d7701c0a0cf5b6b8e4ed9385a7563d7787c8c8f136e57a8262a23cff3f9",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -2983,6 +2995,12 @@
       "source_path": "backend/strategies/comparison-result-methodology.template.md",
       "source_sha256": "7e90c0a2fb309eaabb079e038748338fad67cd988bdff2fc82ad2bcd48780732",
       "workflow": "trace-comparison"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto feedback sessions, provider pinning, review attestation, and draft-only GitHub handoff",
+      "source_path": "backend/strategies/external-issue-triage.template.md",
+      "source_sha256": "7be09bbe91fb0cf989a9e0514343c28370e6a9e094451f7779fee435c617acd2"
     },
     {
       "destination": "references/generated/strategies/game.strategy.md",
@@ -3517,6 +3535,18 @@
       "workflow": "trace-overview"
     },
     {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto self-evolution proposal generation, persistence, and gated overlay lifecycle",
+      "source_path": "backend/strategies/selfevolve-proposal.template.md",
+      "source_sha256": "6f0cb08d742ff10d2dc707e8d2304f21e6bcaa20989dd2effcd0f0ce57ea6f1e"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto self-evolution evaluation corpus and gated overlay lifecycle",
+      "source_path": "backend/strategies/selfevolve-synthetic-eval-seeds.registry.yaml",
+      "source_sha256": "bde3be32f26de6f63979f9561b646fb063996ab24f2c42930d479621bd13ce25"
+    },
+    {
       "destination": "references/generated/strategies/smart.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/smart.strategy.md",
@@ -3556,18 +3586,18 @@
     "excluded_skill_definitions": 5,
     "exported_strategy_sources": 55,
     "pipeline_docs": 14,
-    "product_only_strategy_sources": 48,
-    "runtime_candidates": 234,
+    "product_only_strategy_sources": 51,
+    "runtime_candidates": 235,
     "runtime_types": {
-      "atomic": 120,
+      "atomic": 121,
       "comparison": 1,
       "composite": 80,
       "deep": 2,
       "pipeline_definition": 31
     },
-    "skill_yaml_files": 239,
+    "skill_yaml_files": 240,
     "sql_fragments": 3,
-    "strategy_sources": 103,
+    "strategy_sources": 106,
     "vendor_overrides": 8
   },
   "vendor_overrides": [

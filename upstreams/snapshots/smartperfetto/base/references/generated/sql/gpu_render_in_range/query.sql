@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_render_in_range.skill.yaml
 -- Source SHA-256: 8bb5be71c0b5a94ecc3eb2ce24af291332227634bafef0a5423144dfcd48dab6
--- Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+-- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 WITH gpu_slices AS (
   SELECT

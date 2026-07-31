@@ -1,0 +1,103 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "longest_process_slices/root",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/longest_process_slices/query.sql",
+      "sha256": "b1e709bb6140e98a8381b99f052e4fdb6825826cefd9aba8b48bfe7e8841cf83",
+      "signal_patterns": [],
+      "skill_id": "longest_process_slices",
+      "source": {
+        "commit": "014f85f56ddbac288cbf30faed548086506f968a",
+        "path": "backend/skills/atomic/longest_process_slices.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "afd2f8caa3379888693e359840046ddb1c854202cdfe90578fc67ddd9a4916a8"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "track",
+          "thread_track",
+          "thread",
+          "process",
+          "process_track"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "root",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "end_ts",
+          "max_rows",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "longest_process_slices"
+}

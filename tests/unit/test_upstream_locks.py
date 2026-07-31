@@ -27,7 +27,7 @@ class UpstreamLockTest(unittest.TestCase):
         android = load_and_validate_android_skills_lock(
             ROOT / "upstreams/android-skills.lock.json"
         )
-        self.assertEqual(smart["commit"], "6333623a96295c1ad76e28bf1f5eb7a9ecd39864")
+        self.assertEqual(smart["commit"], "014f85f56ddbac288cbf30faed548086506f968a")
         self.assertEqual(google["tag"], "v57.2")
         self.assertEqual(google["official_skill"]["role"], "gap_check_only")
         self.assertEqual(

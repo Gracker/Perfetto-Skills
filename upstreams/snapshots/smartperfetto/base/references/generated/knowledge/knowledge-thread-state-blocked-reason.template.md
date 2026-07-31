@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-thread-state-blocked-reason.template.md
 Source SHA-256: dd8f6737c3f5a62a376d1d44aa26b635232e13c6eb9a02f4b4289fa1ac38632e
-Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 # Knowledge Thread State Blocked Reason Template
 

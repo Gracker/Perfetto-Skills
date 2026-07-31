@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/choreographer_module.skill.yaml
 -- Source SHA-256: 4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916
--- Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
+-- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 SELECT
   s.name AS pipeline_stage,

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/arch-compose.template.md
 Source SHA-256: 6a46163bb5da7bba10ce66b7617c3f8a87851185766c0a8221e185e5e05308cb
-Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 # Arch Compose Template
 

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/app_process_starts_summary.skill.yaml
 -- Source SHA-256: d6ed1ec16d3db9336e685be79eb01e3f42baea1e5ef2ff0145a20281405a9cbd
--- Source commit: ff5d4a00696318f7bfc5868fb54c84b38c32b880
+-- Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 SELECT
   process_name,

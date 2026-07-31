@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/global_trace_sanity_check.skill.yaml
-Source SHA-256: 3c4b708b7b84c9206463877bf914275bb2d48df15eef7c821ebe6eeaf4a8e263
-Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+Source SHA-256: 40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575
+Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 # 全局 Trace Sanity 检查
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -135,12 +135,12 @@ save_as: trace_window
 ### 最长 Slice
 
 - ID: `top_long_slices`
-- Type: `atomic`
-- SQL: [`../sql/global_trace_sanity_check/top_long_slices.sql`](../sql/global_trace_sanity_check/top_long_slices.sql)
+- Type: `skill`
 
 ```yaml
 id: top_long_slices
-type: atomic
+type: skill
+skill: longest_process_slices
 synthesize:
   role: list
   fields:
@@ -196,6 +196,10 @@ display:
     type: duration
     unit: ns
     hidden: true
+params:
+  start_ts: ${start_ts}
+  end_ts: ${end_ts}
+  max_rows: ${max_rows}
 save_as: top_long_slices
 ```
 ### D 状态线程

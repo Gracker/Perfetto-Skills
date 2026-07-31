@@ -1,0 +1,61 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "longest_process_slices",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "分析起始时间戳(ns)，默认 trace_start()",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)，默认 trace_end()",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 20,
+      "description": "返回行数，范围 1-100",
+      "name": "max_rows",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "track",
+      "thread_track",
+      "thread",
+      "process",
+      "process_track"
+    ]
+  },
+  "query_id": "longest_process_slices/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "014f85f56ddbac288cbf30faed548086506f968a",
+    "path": "backend/skills/atomic/longest_process_slices.skill.yaml",
+    "sha256": "afd2f8caa3379888693e359840046ddb1c854202cdfe90578fc67ddd9a4916a8"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "trace-overview"
+}

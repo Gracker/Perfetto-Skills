@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S07_software_offscreen_type.md
 Source SHA-256: 574e42119ec2f7761dfeb4ca4d46dc07d45f71140d0d0012d13c16e4982a1d94
-Source commit: 6333623a96295c1ad76e28bf1f5eb7a9ecd39864
+Source commit: 014f85f56ddbac288cbf30faed548086506f968a
 
 # Android Perfetto 系列 - App 出图类型 - Software / 离屏类型
 
