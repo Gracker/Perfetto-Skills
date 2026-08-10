@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/irq_analysis.skill.yaml
 -- Source SHA-256: f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d
--- Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
+-- Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
 
 WITH
 irq_totals AS (

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/choreographer_module.skill.yaml
 -- Source SHA-256: 4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916
--- Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
+-- Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
 
 SELECT
   s.ts,

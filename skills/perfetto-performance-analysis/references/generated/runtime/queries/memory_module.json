@@ -54,7 +54,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/memory_overview.sql",
-      "sha256": "b82e0110a980ab43cbbed95755722945a2d7fdad2cffbbbe17c59842513db22b",
+      "sha256": "6a76cb06a0970d3b337896232dd1a08d200763f6f0461faa7cb2ecd09645f1b0",
       "signal_patterns": [
         "%Buffers%",
         "%Cached%",
@@ -68,7 +68,7 @@
       ],
       "skill_id": "memory_module",
       "source": {
-        "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"
@@ -153,7 +153,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/lmk_events.sql",
-      "sha256": "f6ed08971a38a7e4fa03852af0f5211788d334679a5e2a8503366ebd1bc25eaf",
+      "sha256": "65aea63bb61cabe608751a0a14d00807dbe4c937d2b732a365b72dca6cf7d827",
       "signal_patterns": [
         "*LMK*",
         "*OOM*",
@@ -164,7 +164,7 @@
       ],
       "skill_id": "memory_module",
       "source": {
-        "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"
@@ -249,7 +249,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/dmabuf_usage.sql",
-      "sha256": "20a5d020f55121cab7db2cc89e933fa9766a7172b03c74a6a3b89e86a6bf45c0",
+      "sha256": "be33efb8c7477e6bf2de825b4d807f737974ee359689f9dada3b24ab08aa6c01",
       "signal_patterns": [
         "*dmabuf*",
         "*gpu*mem*",
@@ -258,7 +258,7 @@
       ],
       "skill_id": "memory_module",
       "source": {
-        "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"
@@ -343,7 +343,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/memory_psi.sql",
-      "sha256": "add2ad600f2451ce34ac5cdc8bc11a242490c4ef2657c2715a4963883949c674",
+      "sha256": "ddabe96492569885c140ae84423a2864ea73817e0dfb7071c15e1f6316e2a6ad",
       "signal_patterns": [
         "*PSI*",
         "*pressure*",
@@ -351,7 +351,7 @@
       ],
       "skill_id": "memory_module",
       "source": {
-        "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"
@@ -436,7 +436,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/process_memory.sql",
-      "sha256": "f87d8c9132e0847a2e708806432f113e5c3f0874b4738566c5cc271eaa0287c3",
+      "sha256": "d89e421229f51f41fb60058fc1f652324b66a59e6d63fe783147885189a24e03",
       "signal_patterns": [
         "%RSS%",
         "%heap%",
@@ -445,7 +445,7 @@
       ],
       "skill_id": "memory_module",
       "source": {
-        "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"
@@ -530,14 +530,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/memory_timeline.sql",
-      "sha256": "ae4a0e7ea823b116a9290373f17059df1c0120fdaf153307249b10b551c7f9bf",
+      "sha256": "31f9b439932855d33dc9d9e7270ae56a2f1a877b2c91ffd4dbf68f099d8f7798",
       "signal_patterns": [
         "%MemAvailable%",
         "%MemFree%"
       ],
       "skill_id": "memory_module",
       "source": {
-        "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"
@@ -622,7 +622,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/page_fault_analysis.sql",
-      "sha256": "dd69c2af00a4415e4aea38dc178fd59335d87030bbf504836f25c1b3dcc62bc2",
+      "sha256": "701e7db65191fa81d6cfd631a97bf59ec6a42633bdd589b58066c95c8c20e1be",
       "signal_patterns": [
         "*fault*",
         "*page*fault*",
@@ -630,7 +630,7 @@
       ],
       "skill_id": "memory_module",
       "source": {
-        "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"
@@ -715,7 +715,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/allocation_events.sql",
-      "sha256": "f358fba84dfbd0cdcfed0cfd472e1a9e7f9821b589fd5b1cb3d649adefa34ae1",
+      "sha256": "0ffe90788f8d8a8c99d31d4770b0a4ce13cdf3fc68c43e7b235ee4353271d2be",
       "signal_patterns": [
         "%${package}%",
         "*Alloc*",
@@ -725,7 +725,7 @@
       ],
       "skill_id": "memory_module",
       "source": {
-        "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"

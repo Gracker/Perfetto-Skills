@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling_chain.skill.yaml
-Source SHA-256: 991cd6311377d2d5446d03c874a39dd294ff9a16d0202253290af0144446639b
-Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
+Source SHA-256: 88ca7678544866f3bdf2f6bf2981c58e877c818ed37501a056c0e7cb57bc3ce7
+Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
 # 温控降频链路分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -147,6 +147,7 @@ optional: true
 id: process_util
 type: skill
 skill: cpu_process_utilization_period
+condition: Boolean(package || process_name)
 params:
   process_name: ${package || process_name || ''}
   start_ts: ${start_ts}
@@ -165,6 +166,7 @@ optional: true
 id: thread_util
 type: skill
 skill: cpu_thread_utilization_period
+condition: Boolean(package || process_name)
 params:
   process_name: ${package || process_name || ''}
   start_ts: ${start_ts}

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scene_reconstruction.skill.yaml
 -- Source SHA-256: ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978
--- Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
+-- Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
 
 WITH time_bounds AS (
   SELECT MIN(ts) AS t_start, MAX(ts) AS t_end

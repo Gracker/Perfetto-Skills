@@ -1,21 +1,26 @@
 {
-  "commit": "da1d152cff27890903d158fe96751de3aab883cc",
-  "official_skill": {
-    "path": "ai/skills/perfetto/SKILL-template.md",
-    "role": "gap_check_only",
-    "runtime_dependency": false,
-    "sha256": "4bbe57d18f7d8dc56ca9379046397c2cb21bb7d55f4c29a7c50533b492097a14",
-    "snapshot_sha256": "f6d7c6056d318da4a662d3cff3ce7cf10e78fb821dc047a3dc29257e2dc80ee8"
+  "official_reference": {
+    "commit": "da1d152cff27890903d158fe96751de3aab883cc",
+    "skill": {
+      "path": "ai/skills/perfetto/SKILL-template.md",
+      "role": "gap_check_only",
+      "runtime_dependency": false,
+      "sha256": "4bbe57d18f7d8dc56ca9379046397c2cb21bb7d55f4c29a7c50533b492097a14",
+      "snapshot_sha256": "f6d7c6056d318da4a662d3cff3ce7cf10e78fb821dc047a3dc29257e2dc80ee8"
+    },
+    "tag": "v57.2"
   },
   "repository": "https://github.com/google/perfetto",
-  "rpc_api_version": 14,
-  "schema_version": 1,
-  "stdlib_snapshot_sha256": "7d5b242bb6f580005e671b327e7c80380fdb5100c400c1fa8e2c8446c7403aad",
-  "stdlib_tree": "7f0459ca3eed8372a8762ae052ed7fdb48eb3d88",
-  "tag": "v57.2",
-  "trace_processor": {
-    "lock_path": "skills/perfetto-performance-analysis/references/trace-processor-lock.json",
-    "lock_sha256": "3a6ffeff9742385cc91a9255559d31158a19f5dc5917ebc4b21de6bedd8fe0ad",
-    "version": "v57.2"
-  }
+  "runtime": {
+    "reported_version": "v57.2",
+    "revision": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+    "rpc_api_version": 14,
+    "stdlib_snapshot_sha256": "c347ae063801f873bfd58a07ea6e389bdae5bcd080310cf68631eecc54498339",
+    "stdlib_tree": "0f6529d3ecf91c15c1572044c60512dcf14593d5",
+    "trace_processor": {
+      "lock_path": "skills/perfetto-performance-analysis/references/trace-processor-lock.json",
+      "lock_sha256": "1364ccdaefcf6806aa247b8ac2202fea5685b3bc0e6e39074ca2167bfa6bf6a4"
+    }
+  },
+  "schema_version": 2
 }

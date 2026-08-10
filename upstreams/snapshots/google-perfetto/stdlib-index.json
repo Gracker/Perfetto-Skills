@@ -1,5 +1,5 @@
 {
-  "commit": "da1d152cff27890903d158fe96751de3aab883cc",
+  "commit": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
   "intrinsic_schema_sources": [
     {
       "path": "src/trace_processor/tables/android_tables.py",
@@ -31,7 +31,7 @@
     },
     {
       "path": "src/trace_processor/tables/metadata_tables.py",
-      "sha256": "6eb09ae172ec03b143978ab611340d99fee7f185ed680e51593e822c5fca20d4"
+      "sha256": "c3ba62cf95e3c6990ec955d8af4cb219d8f17372ebbcb389c8384c9125f5b97f"
     },
     {
       "path": "src/trace_processor/tables/perf_tables.py",
@@ -39,7 +39,7 @@
     },
     {
       "path": "src/trace_processor/tables/profiler_tables.py",
-      "sha256": "572399ec3e79d07df3339bee67acd50858be5a5e9a931e7730f29e408f3d112e"
+      "sha256": "7222546fdd83b25613a67a36b4eb4fa0745bce3cca21621f8c97e94829a292ae"
     },
     {
       "path": "src/trace_processor/tables/sched_tables.py",
@@ -47,7 +47,7 @@
     },
     {
       "path": "src/trace_processor/tables/slice_tables.py",
-      "sha256": "c2fc71086ce91de599f02e6755d178c864382394509deb8192e3b5203c67f626"
+      "sha256": "eeed165c0d0d777db6419d3cb2559dadde01c7bd63926ac06ff86a7ee49cebf5"
     },
     {
       "path": "src/trace_processor/tables/state_tables.py",
@@ -459,8 +459,12 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. ",
       "module": "android.critical_blocking_calls",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/critical_blocking_calls.sql",
-      "sha256": "c2b9ff051b659def904d8ac3960ebf8ce11b1da1ed3b0af6d5d62030c4b7f2f8",
+      "sha256": "72c5d4cfdf15841a8d56804cabc4f0021ebf822ce1596a0ea4ee8b6060ff09e0",
       "symbols": [
+        {
+          "kind": "MACRO",
+          "name": "_is_relevant_blocking_call_expr"
+        },
         {
           "kind": "FUNCTION",
           "name": "_is_relevant_blocking_call"
@@ -479,7 +483,7 @@
       "doc": " Copyright 2025 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "android.cujs.base",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/cujs/base.sql",
-      "sha256": "44afdbe185a8a9741312af4341edf79346facddaf97cf9f59cebe9e7e3f25ce5",
+      "sha256": "b4fbd29a0abe1f85da55d66043fd6a9700d15acf6225ad2256d2786c5387aa32",
       "symbols": [
         {
           "kind": "MACRO",
@@ -519,7 +523,59 @@
         },
         {
           "kind": "TABLE",
+          "name": "android_jank_cuj_layer_name"
+        },
+        {
+          "kind": "TABLE",
           "name": "android_jank_cuj"
+        }
+      ]
+    },
+    {
+      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
+      "module": "android.cujs.boundaries",
+      "path": "src/trace_processor/perfetto_sql/stdlib/android/cujs/boundaries.sql",
+      "sha256": "ce89050f5297804a6a29768a95b18b81766217378a4ee52b66f868f4da32abf8",
+      "symbols": [
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_vsync_boundary"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_main_thread_frame_boundary"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_main_thread_cuj_boundary"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_boundary"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_render_thread_frame_boundary"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_render_thread_cuj_boundary"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_vsync_boundary"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_main_thread_cuj_boundary"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_render_engine_frame_boundary"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_boundary"
         }
       ]
     },
@@ -527,7 +583,7 @@
       "doc": " Copyright 2025 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. This module captures the various counter values associated with Jank CUJs. These counters can be missedFrames, missedSFFrames, missedCallbacks etc. These tables are beneficial while querying for jank related metrics.",
       "module": "android.cujs.cuj_frame_counters",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/cujs/cuj_frame_counters.sql",
-      "sha256": "bfd0f9d9a545a1956797c993a24f735d1d141e13c372c6edddb178a38fb9ab72",
+      "sha256": "b3c9799b982c270bc6b4efe6b2880ff552fcba0cd50c425ce4a6cf2810ccc468",
       "symbols": [
         {
           "kind": "VIEW",
@@ -544,6 +600,118 @@
         {
           "kind": "FUNCTION",
           "name": "_android_jank_cuj_counter_value"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_counter_metrics"
+        }
+      ]
+    },
+    {
+      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. ",
+      "module": "android.cujs.frames",
+      "path": "src/trace_processor/perfetto_sql/stdlib/android/cujs/frames.sql",
+      "sha256": "26f4f4b7f00b49f269df3f182ff277044b7035b15729e9faf633de640052ad01",
+      "symbols": [
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_frame_timeline"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_frame"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_frame"
+        }
+      ]
+    },
+    {
+      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
+      "module": "android.cujs.relevant_slices",
+      "path": "src/trace_processor/perfetto_sql/stdlib/android/cujs/relevant_slices.sql",
+      "sha256": "91df46f2532c8f6692ee71f18de98d7030ba10b37d9b55d6eadc1b4e1116ce5e",
+      "symbols": [
+        {
+          "kind": "FUNCTION",
+          "name": "_vsync_from_name"
+        },
+        {
+          "kind": "FUNCTION",
+          "name": "_gpu_completion_fence_id_from_name"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_do_frame_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_draw_frame_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_gpu_completion_fence"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_hwc_release_fence"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_hwc_release_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_gpu_completion_slice"
+        },
+        {
+          "kind": "VIEW",
+          "name": "_android_jank_cuj_sf_root_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_gpu_completion_fence"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_gpu_completion_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_draw_layers_slice"
+        }
+      ]
+    },
+    {
+      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
+      "module": "android.cujs.slices",
+      "path": "src/trace_processor/perfetto_sql/stdlib/android/cujs/slices.sql",
+      "sha256": "5b82d27d846e825c9ec48729ce84713fc340f3a811cb3a7f574bce596002cf6d",
+      "symbols": [
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_main_thread_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_render_thread_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_main_thread_slice"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_render_engine_slice"
         }
       ]
     },
@@ -551,7 +719,7 @@
       "doc": " Copyright 2025 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "android.cujs.sysui_cujs",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/cujs/sysui_cujs.sql",
-      "sha256": "d809ebb2e4fc1b858e9a8dc3e2e8d32af430190679315399bbb4f6f59846b9f0",
+      "sha256": "26c712919ea77f96be643b47d16a7a38075ed982d2bb41e64af85dfd5d37509c",
       "symbols": [
         {
           "kind": "TABLE",
@@ -579,7 +747,7 @@
       "doc": " Copyright 2025 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "android.cujs.threads",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/cujs/threads.sql",
-      "sha256": "ea227ce722a226832c8fce2683d2a2c4b3b2a8e57a224cbdf6673a2895798f46",
+      "sha256": "b0cabe30e8548807a9e5c48779fc97a2e07079022e352cbc83cc364f55f0b299",
       "symbols": [
         {
           "kind": "FUNCTION",
@@ -588,6 +756,30 @@
         {
           "kind": "TABLE",
           "name": "android_jank_cuj_render_thread"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_main_thread"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_gpu_completion_thread"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_hwc_release_thread"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_process"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_gpu_completion_thread"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_android_jank_cuj_sf_render_engine_thread"
         }
       ]
     },
@@ -604,11 +796,15 @@
       ]
     },
     {
-      "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. Extract name of the device based on metadata from the trace.",
+      "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. Extracts the device code name from an Android build fingerprint.",
       "module": "android.device",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/device.sql",
-      "sha256": "814d2943680eb0a97352339961d012c170512f405b7fd3ecbf6609e030053878",
+      "sha256": "819aca2d34c09df54f0352134c8ef8f959b90f2dbad27058282c18879906a811",
       "symbols": [
+        {
+          "kind": "FUNCTION",
+          "name": "android_device_name_from_fingerprint"
+        },
         {
           "kind": "TABLE",
           "name": "android_device_name"
@@ -675,7 +871,7 @@
       "doc": " Copyright 2025 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. This module primarily performs composition between the blocking calls, frames and CUJs. This is used for capturing blocking call per frame metrics, and the related plugins.",
       "module": "android.frame_blocking_calls.blocking_calls_aggregation",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/frame_blocking_calls/blocking_calls_aggregation.sql",
-      "sha256": "7c9329ad9e1d703dea872edf53d6edf47faca37f9f5f23010f54ad53b0b3fca1",
+      "sha256": "62a82b90541b60b51180639989655f0cf85b02cb278a9bcace0b6fb2b6df5cd6",
       "symbols": [
         {
           "kind": "TABLE",
@@ -935,7 +1131,7 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "android.input",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/input.sql",
-      "sha256": "718a7630daee0734744b5edd9c21142ffc9a3bdfa5cfe51b2a695df793e945b9",
+      "sha256": "acb55b5bcf6f1dd9b3561fbdded24b1dae4275a920347c1512ec00952a7f4544",
       "symbols": [
         {
           "kind": "TABLE",
@@ -1028,6 +1224,26 @@
         {
           "kind": "FUNCTION",
           "name": "_android_input_lifecycle_by_slice_id"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_input_sf_composite"
+        },
+        {
+          "kind": "INDEX",
+          "name": "_input_sf_composite_idx"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_input_sf_resolved"
+        },
+        {
+          "kind": "INDEX",
+          "name": "_input_sf_resolved_idx"
+        },
+        {
+          "kind": "VIEW",
+          "name": "_android_input_frames"
         }
       ]
     },
@@ -1327,7 +1543,7 @@
       "doc": " Copyright 2025 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. ",
       "module": "android.memory.heap_graph.heap_graph_stats",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/memory/heap_graph/heap_graph_stats.sql",
-      "sha256": "aff7f8e24d8231947b161975685aae351350b1b0c07cf2e07fc1498e5581ec0d",
+      "sha256": "f8078b6b723cb8cfc1a5903773a018b5606751a9d4dc7d15fc88c3349e8b2509",
       "symbols": [
         {
           "kind": "MACRO",
@@ -1343,8 +1559,12 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed ON an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "android.memory.heap_graph.helpers",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/memory/heap_graph/helpers.sql",
-      "sha256": "94706fe15b27ab4363a0161b21790601163786e034fdaa7ce2f2d41ea286f154",
+      "sha256": "29eddc45fe60c2e87d9632da8d69100c5277740448b4004bb214f1294d05c951",
       "symbols": [
+        {
+          "kind": "TABLE",
+          "name": "_heap_graph_class_name_hash"
+        },
         {
           "kind": "MACRO",
           "name": "_heap_graph_type_path_hash"
@@ -1424,6 +1644,18 @@
         {
           "kind": "MACRO",
           "name": "_android_heap_profile_callstacks_for_allocations"
+        }
+      ]
+    },
+    {
+      "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. One row per (process, heap, dump): the dump as a slice over its profiling interval. The end is heap_profile.ts_end (the dump timestamp); the start is heap_profile.ts when present. For older producers without a start (ts == ts_end) we fall back to just after the previous dump of the same heap (or the trace start for the first), so continuous dumps tile the timeline without gaps.  Each row also carries three byte totals for the interval: * allocated: bytes allocated during the interval. * retained:  bytes allocated during the interval that were still live at the dump (allocated but not freed within the interval). * delta:     net change (allocations minus all frees in the interval, including frees of memory allocated before the interval), so it can differ from retained. These are 1:1 with the flamegraph roots shown when a slice is selected (see heap_profile_details_panel.ts): allocated == \"Total\" (self_alloc_size) and retained == \"Unreleased\" (self_size).",
+      "module": "android.memory.heap_profile.intervals",
+      "path": "src/trace_processor/perfetto_sql/stdlib/android/memory/heap_profile/intervals.sql",
+      "sha256": "1da8eecc15dadd7fade2e6c18dc71e57159381e87bbf48ab8eb614e19b0bae6b",
+      "symbols": [
+        {
+          "kind": "TABLE",
+          "name": "_android_heap_profile_intervals"
         }
       ]
     },
@@ -1515,7 +1747,7 @@
       "doc": " Copyright 2023 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. ",
       "module": "android.monitor_contention",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/monitor_contention.sql",
-      "sha256": "22bffbdcda6e0f3f57b6be85908c731f8caff918999a242841e849df3683b27b",
+      "sha256": "6fe4e932710290f0be2f0aee1fab925849965deee02ac0141a69cf40647ce074",
       "symbols": [
         {
           "kind": "FUNCTION",
@@ -1575,11 +1807,7 @@
         },
         {
           "kind": "TABLE",
-          "name": "_parents"
-        },
-        {
-          "kind": "TABLE",
-          "name": "_isolated"
+          "name": "_child_of"
         },
         {
           "kind": "TABLE",
@@ -1667,7 +1895,7 @@
       "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. sqlformat file off Returns the package name associated with the provided uid. If more than one package matches the uid, a scoring system will pick the best one.",
       "module": "android.package_lookup",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/package_lookup.sql",
-      "sha256": "b65ec3b6f940090dab884117269de855b67441d7f8e43d97eabb1c5a3e2e5dc2",
+      "sha256": "11051eecbc2b7502f12a873f9a44cc7cc9a963623cb1102f010bde7b62863f11",
       "symbols": [
         {
           "kind": "FUNCTION",
@@ -1831,7 +2059,7 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "android.startup.startup_breakdowns",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/startup/startup_breakdowns.sql",
-      "sha256": "01666080543b00342785295efcbf6628d20cd3a0e5f3d6f7db43d5e343c8e1e7",
+      "sha256": "bbe77f351edf1184453bd068eca2377941ca8df39ee3866ce8ffb833ba1d22ed",
       "symbols": [
         {
           "kind": "FUNCTION",
@@ -1844,6 +2072,10 @@
         {
           "kind": "TABLE",
           "name": "_startup_root_slices"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_startup_relevant_slices"
         },
         {
           "kind": "TABLE",
@@ -2331,7 +2563,7 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "callstacks.stack_profile",
       "path": "src/trace_processor/perfetto_sql/stdlib/callstacks/stack_profile.sql",
-      "sha256": "90f4d8f7e4d29c9b27513bc26dee4b4de49d81cc4cf469f1f0716f64586f7ac7",
+      "sha256": "39ce6d470802ff58b87004e9ef1384b97569e8ae28f6c791dc7a5e96a255421e",
       "symbols": [
         {
           "kind": "TABLE",
@@ -2459,7 +2691,7 @@
       "doc": "Copyright 2026 The Chromium Authors Use of this source code is governed by a BSD-style license that can be found in the LICENSE file.",
       "module": "chrome.chrome_scrolls_v4",
       "path": "src/trace_processor/perfetto_sql/stdlib/chrome/chrome_scrolls_v4.sql",
-      "sha256": "d06d85c2f2603e298eb9412c257a7ad091ea50c99a71e82291386d231ec3496c",
+      "sha256": "895cdf6eee7c965e91846f06bc5e04d47a8a3a27327a9a9ad8c7c681aaf4802e",
       "symbols": [
         {
           "kind": "MACRO",
@@ -3051,7 +3283,7 @@
       "doc": "Copyright 2026 The Chromium Authors Use of this source code is governed by a BSD-style license that can be found in the LICENSE file. Finds the timestamps and durations of sub-slices of 'ScrollJankV4' main slices with the given `sub_slice_names`.  If available (in newer Chrome versions), we associate sub-slices with the main slice based on the `scroll_jank_v4.result_id` argument. Otherwise (in older Chrome versions), we associate sub-slices with the main slice based on the `descendant_slice` operator instead. We prefer the former approach because it's more robust. See below for more details.  The returned table is guaranteed to contain at most one row for each 'ScrollJankV4' slice ID in `scroll_jank_v4_slice`.",
       "module": "chrome.scroll_jank_v4",
       "path": "src/trace_processor/perfetto_sql/stdlib/chrome/scroll_jank_v4.sql",
-      "sha256": "cbebeb52a7a8a8ddcf209b84f875119246f92d20c72f709aa753fa977bb859bd",
+      "sha256": "393dd9dbaebd5f0a03db407b7c27cc8521dfb9910663ed8fd83462775631dc44",
       "symbols": [
         {
           "kind": "MACRO",
@@ -3679,7 +3911,7 @@
       "doc": " Copyright 2023 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "intervals.overlap",
       "path": "src/trace_processor/perfetto_sql/stdlib/intervals/overlap.sql",
-      "sha256": "3d55addbf433f33dc03eef8d6d24792148e742769d5f2cce00519566d0e8a650",
+      "sha256": "1232fcb0fe82c39fa943ee99b5a8056569d23102d1d320a32d79f3503e7d05ca",
       "symbols": [
         {
           "kind": "MACRO",
@@ -4059,7 +4291,7 @@
       "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. sqlformat file off Returns the counter value for a perf sample given the sample ID and counter name.",
       "module": "linux.perf.counters",
       "path": "src/trace_processor/perfetto_sql/stdlib/linux/perf/counters.sql",
-      "sha256": "70f1913736492d5a9bdc6ad69cad70f291e1970b72d89d61600af486fb974511",
+      "sha256": "fdeb2280a8c84169be88054e4b66996748607e23a47f2086ce2e11ac50f5698f",
       "symbols": [
         {
           "kind": "FUNCTION",
@@ -4168,6 +4400,30 @@
         {
           "kind": "TABLE",
           "name": "pixel_camera_memory_span"
+        }
+      ]
+    },
+    {
+      "doc": "Copyright (C) 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. you may obtain a copy of the License at  http://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
+      "module": "pixel.touch",
+      "path": "src/trace_processor/perfetto_sql/stdlib/pixel/touch.sql",
+      "sha256": "25e5efaf388e54affd122a0d7c5f4a0b4e923c8ba43ff238abca30666b75a526",
+      "symbols": [
+        {
+          "kind": "TABLE",
+          "name": "_pixel_touch_twoshay_events"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_pixel_touch_bottom_half_events"
+        },
+        {
+          "kind": "TABLE",
+          "name": "_pixel_touch_top_half_events"
+        },
+        {
+          "kind": "TABLE",
+          "name": "pixel_touch_events"
         }
       ]
     },
@@ -4331,7 +4587,7 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. @module prelude.after_eof.memory Memory and heap analysis tables.  This module provides tables and views for analyzing memory usage, including heap graphs for Android Runtime (ART) and memory snapshots for detailed memory profiling.",
       "module": "prelude.after_eof.memory",
       "path": "src/trace_processor/perfetto_sql/stdlib/prelude/after_eof/memory.sql",
-      "sha256": "0c3c297b3aa3918bda1545989ccaca82ba934ab11578b4f21f8316d38a8215b3",
+      "sha256": "736e5a3325b861eb28bb5095853882398eeaa39a0c9fb2b6840c44bb20766fe1",
       "symbols": [
         {
           "kind": "VIEW",
@@ -4375,6 +4631,10 @@
         },
         {
           "kind": "VIEW",
+          "name": "heap_profile"
+        },
+        {
+          "kind": "VIEW",
           "name": "heap_graph_thread_callsite"
         }
       ]
@@ -4388,6 +4648,62 @@
         {
           "kind": "FUNCTION",
           "name": "slice_is_ancestor"
+        }
+      ]
+    },
+    {
+      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
+      "module": "prelude.after_eof.stack_samples",
+      "path": "src/trace_processor/perfetto_sql/stdlib/prelude/after_eof/stack_samples.sql",
+      "sha256": "f641defab2a8bb631adae26e33b3d07a8cf786119349bc498165d25f26a8562d",
+      "symbols": [
+        {
+          "kind": "TABLE",
+          "name": "stack_sample_session"
+        },
+        {
+          "kind": "TABLE",
+          "name": "stack_sample_async_context"
+        },
+        {
+          "kind": "TABLE",
+          "name": "stack_sample_task_context"
+        },
+        {
+          "kind": "TABLE",
+          "name": "stack_sample_execution_context"
+        },
+        {
+          "kind": "VIEW",
+          "name": "stack_sample"
+        },
+        {
+          "kind": "TABLE",
+          "name": "stack_sample_counter_track"
+        },
+        {
+          "kind": "VIEW",
+          "name": "stack_sample_counter"
+        }
+      ]
+    },
+    {
+      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. @module prelude.after_eof.state State tracks and state events.  This module provides state-related tables and views for analyzing states collected across processes and other contexts.",
+      "module": "prelude.after_eof.state",
+      "path": "src/trace_processor/perfetto_sql/stdlib/prelude/after_eof/state.sql",
+      "sha256": "801265aedd7603bd52929b694d1b62e8a9ef46c51b6a893cd0c16976ff7301aa",
+      "symbols": [
+        {
+          "kind": "VIEW",
+          "name": "state_track"
+        },
+        {
+          "kind": "TABLE",
+          "name": "process_state_track"
+        },
+        {
+          "kind": "TABLE",
+          "name": "thread_state_track"
         }
       ]
     },
@@ -4423,7 +4739,7 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "prelude.after_eof.views",
       "path": "src/trace_processor/perfetto_sql/stdlib/prelude/after_eof/views.sql",
-      "sha256": "c891ff50cee49581df327436d11bf78f1c622a82ed7e4ff1b9bf9ce3a92a10a3",
+      "sha256": "6406ea93dee3892ada83771d9a6ce039f97df7e08d31eac98fdb48b21a236972",
       "symbols": [
         {
           "kind": "VIEW",
@@ -4584,11 +4900,19 @@
       ]
     },
     {
-      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. sqlformat file off Replaces all occurrences of a regular expression with a constant replacement string. Note that there is no way to substitute matching groups into the replacement, and all matching is case-sensitive.",
+      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. sqlformat file off Returns whether a regular expression partially matches an input string. This two-argument overload is also used by the `input REGEXP pattern` operator and performs case-sensitive matching.",
       "module": "prelude.before_eof.functions",
       "path": "src/trace_processor/perfetto_sql/stdlib/prelude/before_eof/functions.sql",
-      "sha256": "8f2245405f897fa75fb2455227fdc7968b1e503de218fa496dda642831af6897",
+      "sha256": "9232a1bd6936e04c7279d6ae531e715d638809d56a1700c446c0cd57168d6e89",
       "symbols": [
+        {
+          "kind": "FUNCTION",
+          "name": "regexp"
+        },
+        {
+          "kind": "FUNCTION",
+          "name": "regexp"
+        },
         {
           "kind": "FUNCTION",
           "name": "regexp_replace_simple"
@@ -4663,7 +4987,7 @@
       "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. Diagnostic stats and parser errors collected at trace time and during import. One row per (key, idx, machine_id, trace_id) combination.",
       "module": "prelude.before_eof.stats",
       "path": "src/trace_processor/perfetto_sql/stdlib/prelude/before_eof/stats.sql",
-      "sha256": "6f7a5bab17ccf8dc028e84cd5644ec124e039fc34328105602af4060c33b5d93",
+      "sha256": "33c12322798d9957c491d3274681e841381468293687380f9ec280f48ffe19b8",
       "symbols": [
         {
           "kind": "VIEW",
@@ -4699,10 +5023,10 @@
       ]
     },
     {
-      "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. Samples from the traced_perf profiler.",
+      "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. Samples from the traced_perf profiler and perf.data files. One row per perf sample, including counter-only samples which have no callstack.",
       "module": "prelude.before_eof.views",
       "path": "src/trace_processor/perfetto_sql/stdlib/prelude/before_eof/views.sql",
-      "sha256": "d99b7bb44bdc4bbe380e31e5deb3b1e3230032a71109c745325d69a773d81b90",
+      "sha256": "f0e646504576ac0abfa9483a2a0527982fcb470268f016bf8ccab9c2d7fb237d",
       "symbols": [
         {
           "kind": "VIEW",
@@ -4959,10 +5283,10 @@
       ]
     },
     {
-      "doc": " Copyright 2025 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. View of scheduling slices with extended information. It holds slices with kernel thread scheduling information. These slices are collected when the Linux \"ftrace\" data source is used with the \"sched/switch\" and \"sched/wakeup*\" events enabled.  The rows in this table will always have a matching row in the |thread_state| table with |thread_state.state| = 'Running'",
+      "doc": " Copyright 2025 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "sched.with_context",
       "path": "src/trace_processor/perfetto_sql/stdlib/sched/with_context.sql",
-      "sha256": "0e0e30f6fb20fa37fb80d07db44accec88275724bb80474401f28835c1822a46",
+      "sha256": "2b4b1fd48740a22b6a59ad66940bc7f4e978b41d98c6d4ea759c3a398c29240d",
       "symbols": [
         {
           "kind": "VIEW",
@@ -5087,10 +5411,10 @@
       ]
     },
     {
-      "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. All thread slices with data about thread, thread track and process.",
+      "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "slices.with_context",
       "path": "src/trace_processor/perfetto_sql/stdlib/slices/with_context.sql",
-      "sha256": "40f6de83da9609aa707ac4afe6f743e658b4ce0aa012efc05de0a2e81135a449",
+      "sha256": "77b20c797ec972dfd5bf8db7f386cdf6a11a1847d042eb8543eabba0b360e442",
       "symbols": [
         {
           "kind": "VIEW",
@@ -5126,7 +5450,7 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the 'License'); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "stacks.cpu_profiling",
       "path": "src/trace_processor/perfetto_sql/stdlib/stacks/cpu_profiling.sql",
-      "sha256": "034e4d45f1cda9129586d7cdc253aa0e20e10872729119f75c1e10f25197d715",
+      "sha256": "47c6d11a8ea8029dcd38b666e7a8925fcd1046c7878678d8ded2689875d6e656",
       "symbols": [
         {
           "kind": "TABLE",
@@ -5187,6 +5511,18 @@
       ]
     },
     {
+      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. Each thread joined with its (optional) process, materialized into a table so that callers can attach thread+process context with a single INNER JOIN on `utid` instead of writing `thread LEFT JOIN process`.  Why this exists: SQLite will not reorder a virtual table across a LEFT JOIN, so a context view that embeds `thread ... LEFT JOIN process` directly cannot be driven from a point-lookup on the fact table's id when it is joined into from another table (the id constraint is never offered to xBestIndex, and the join collapses into a full scan). Pre-computing the thread/process LEFT JOIN here lets those views use only INNER joins, which the planner can reorder freely. Internal only for now.",
+      "module": "std.thread.with_context",
+      "path": "src/trace_processor/perfetto_sql/stdlib/std/thread/with_context.sql",
+      "sha256": "9ada783b6f06175b8cb5e5462bebd2e11533d745615b227dde2c3d9ce696a458",
+      "symbols": [
+        {
+          "kind": "TABLE",
+          "name": "_thread_with_process"
+        }
+      ]
+    },
+    {
       "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. @module std.traceinfo.metadata_for_primary_scope Metadata summary table. A table containing a summary of metadata entries, picking the primary entry for each name (favoring the root trace and machine).",
       "module": "std.traceinfo.metadata_for_primary_scope",
       "path": "src/trace_processor/perfetto_sql/stdlib/std/traceinfo/metadata_for_primary_scope.sql",
@@ -5207,38 +5543,6 @@
         {
           "kind": "TABLE",
           "name": "_metadata_by_trace"
-        }
-      ]
-    },
-    {
-      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. sqlformat file off Creates a filter constraint for tree operations.  Example: _tree_constraint('name', '!=', 'skip')",
-      "module": "std.trees.filter",
-      "path": "src/trace_processor/perfetto_sql/stdlib/std/trees/filter.sql",
-      "sha256": "a38e946387ec13c11a3548aff497aebc1fdfd68461bc8fab107e03968c0dea34",
-      "symbols": [
-        {
-          "kind": "FUNCTION",
-          "name": "_tree_constraint"
-        },
-        {
-          "kind": "FUNCTION",
-          "name": "_tree_where"
-        },
-        {
-          "kind": "FUNCTION",
-          "name": "_tree_filter"
-        }
-      ]
-    },
-    {
-      "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. sqlformat file off Propagates column values from root toward leaves using BFS.  For each spec, a new output column is created by copying the source column and then applying the aggregate operation downward through the tree. For each parent\u2192child edge: output[child] = agg(output[parent], output[child]).  Each spec is a string of the form 'AGG(source_col) AS output_col' where AGG is one of SUM, MIN, MAX, FIRST, LAST. Case-insensitive.  Example usage: ``` SELECT * FROM _tree_to_table!( _tree_propagate_down( _tree_from_table!((SELECT * FROM calls), (fn, ones)), 'SUM(ones) AS depth' ), (fn, depth) ); ```",
-      "module": "std.trees.propagate",
-      "path": "src/trace_processor/perfetto_sql/stdlib/std/trees/propagate.sql",
-      "sha256": "6d6ced95e251bb72994033eb703937290279ae8b1692168a114f35ef88cabef6",
-      "symbols": [
-        {
-          "kind": "FUNCTION",
-          "name": "_tree_propagate_down"
         }
       ]
     },
@@ -5470,7 +5774,7 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "viz.summary.processes",
       "path": "src/trace_processor/perfetto_sql/stdlib/viz/summary/processes.sql",
-      "sha256": "e682d4fdbf7974bf53d4b4c8e2ba152e3ca13b7fb8bbf1635241bbd924f77891",
+      "sha256": "a2d6a59903ec94d87837b18ca32417152b994963504130ff748d66ab9f41d3da",
       "symbols": [
         {
           "kind": "TABLE",
@@ -5510,7 +5814,7 @@
       "doc": " Copyright 2024 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "viz.summary.threads",
       "path": "src/trace_processor/perfetto_sql/stdlib/viz/summary/threads.sql",
-      "sha256": "edf8597f3fef25aac7f32ae54b09cf9634f2814b21d0456dc100c6899def92ce",
+      "sha256": "e3c8b08f60d105c01d4a2f31c7cded3bc4512946839b9f6033beeb65fe659f9b",
       "symbols": [
         {
           "kind": "TABLE",
@@ -5522,11 +5826,7 @@
         },
         {
           "kind": "TABLE",
-          "name": "_perf_sample_summary"
-        },
-        {
-          "kind": "TABLE",
-          "name": "_instruments_sample_summary"
+          "name": "_stack_sample_summary"
         },
         {
           "kind": "TABLE",
@@ -6364,7 +6664,7 @@
     }
   ],
   "parse_warnings": [],
-  "revision": "v57.2",
+  "revision": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
   "schema_version": 1,
-  "stdlib_tree": "7f0459ca3eed8372a8762ae052ed7fdb48eb3d88"
+  "stdlib_tree": "0f6529d3ecf91c15c1572044c60512dcf14593d5"
 }

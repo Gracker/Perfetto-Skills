@@ -127,17 +127,17 @@ def compare_stdlib(old: dict[str, object], new: dict[str, object]) -> dict[str, 
     }
 
 
-def _validate_release(perfetto: Path, lock: dict[str, object]) -> None:
-    tag = str(lock["tag"])
-    if str(_git(perfetto, "rev-parse", f"{tag}^{{}}")).strip() != lock["commit"]:
-        raise ValueError("Perfetto tag and peeled commit differ")
-    if str(_git(perfetto, "rev-parse", f"{tag}:{STDLIB}")).strip() != lock["stdlib_tree"]:
+def _validate_runtime(perfetto: Path, runtime: dict[str, object]) -> None:
+    revision = str(runtime["revision"])
+    if str(_git(perfetto, "rev-parse", f"{revision}^{{commit}}")).strip() != revision:
+        raise ValueError("Perfetto runtime revision is not the locked commit")
+    if str(_git(perfetto, "rev-parse", f"{revision}:{STDLIB}")).strip() != runtime["stdlib_tree"]:
         raise ValueError("Perfetto stdlib tree differs from lock")
     proto = _bytes(
-        perfetto, tag, "protos/perfetto/trace_processor/trace_processor.proto"
+        perfetto, revision, "protos/perfetto/trace_processor/trace_processor.proto"
     ).decode("utf-8")
     match = RPC.search(proto)
-    if match is None or int(match.group(1)) != lock["rpc_api_version"]:
+    if match is None or int(match.group(1)) != runtime["rpc_api_version"]:
         raise ValueError("Perfetto RPC API differs from lock")
 
 
@@ -170,9 +170,10 @@ def main(arguments: list[str] | None = None) -> int:
     lock = load_and_validate_google_lock(
         args.lock, validate_snapshots=not args.apply
     )
-    revision = args.revision or lock["tag"]
+    runtime = lock["runtime"]
+    revision = args.revision or runtime["revision"]
     if args.revision is None:
-        _validate_release(args.perfetto, lock)
+        _validate_runtime(args.perfetto, runtime)
     if args.apply and args.revision is not None:
         raise ValueError("canary revision cannot be applied without updating the lock")
     identity = release_identity(args.perfetto, revision)
@@ -193,9 +194,9 @@ def main(arguments: list[str] | None = None) -> int:
         "current_commit": current["commit"],
         "candidate_identity": identity,
         "lock_compatible": {
-            "commit": identity["commit"] == lock["commit"],
-            "stdlib_tree": identity["stdlib_tree"] == lock["stdlib_tree"],
-            "rpc_api_version": identity["rpc_api_version"] == lock["rpc_api_version"],
+            "revision": identity["commit"] == runtime["revision"],
+            "stdlib_tree": identity["stdlib_tree"] == runtime["stdlib_tree"],
+            "rpc_api_version": identity["rpc_api_version"] == runtime["rpc_api_version"],
         },
         "drift": compare_stdlib(previous, current),
         "intrinsic_schema_source_count": len(current["intrinsic_schema_sources"]),
@@ -210,7 +211,7 @@ def main(arguments: list[str] | None = None) -> int:
         snapshot_path.write_text(
             json.dumps(current, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
-        lock["stdlib_snapshot_sha256"] = hashlib.sha256(
+        lock["runtime"]["stdlib_snapshot_sha256"] = hashlib.sha256(
             snapshot_path.read_bytes()
         ).hexdigest()
         args.lock.write_text(

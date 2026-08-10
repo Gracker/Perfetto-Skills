@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/phase_hint_templates/misdiagnosis_vsync_vrr.template.yaml
 Source SHA-256: 3be98f9aee8cdcc3fb82c38e8f9e87e7cf3f1e802a52394bd191343271b23125
-Source commit: 1da78346e61c6ed087c1ac5ed1441d8849eeb810
+Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
 
 # Misdiagnosis_Vsync_Vrr Template Yaml
 

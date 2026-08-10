@@ -8,7 +8,13 @@ from tools import verify
 
 class VerifyCommandTest(unittest.TestCase):
     def test_processor_identity_requires_tag_commit_and_rpc(self) -> None:
-        lock = {"tag": "v57.2", "commit": "a" * 40, "rpc_api_version": 14}
+        lock = {
+            "runtime": {
+                "reported_version": "v57.2",
+                "revision": "a" * 40,
+                "rpc_api_version": 14,
+            }
+        }
         verify.validate_processor_identity(
             f"Perfetto v57.2-aaaaaaaaa ({'a' * 40})\n"
             "Trace Processor RPC API version: 14\n",
@@ -20,6 +26,17 @@ class VerifyCommandTest(unittest.TestCase):
                 "Trace Processor RPC API version: 13\n",
                 lock,
             )
+        with self.assertRaisesRegex(ValueError, "version or commit"):
+            verify.validate_processor_identity(
+                f"Perfetto v57.2-deadbeef ({'a' * 40})\n"
+                "Trace Processor RPC API version: 14\n",
+                lock,
+            )
+        verify.validate_processor_identity(
+            f"Perfetto v57.2 ({'a' * 40})\n"
+            "Trace Processor RPC API version: 14\n",
+            lock,
+        )
 
     def test_build_commands_includes_standard_validation(self) -> None:
         self.assertTrue(hasattr(verify, "build_commands"), "build_commands")

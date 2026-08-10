@@ -149,14 +149,24 @@ def resolve_trace_processor(cache: Path) -> Path:
 
 
 def validate_processor_identity(output: str, lock: dict[str, object]) -> None:
-    version_line = re.search(r"Perfetto (v[^ ]+) \(([0-9a-f]{40})\)", output)
+    version_line = re.search(
+        r"Perfetto (v\d+(?:\.\d+)*)(?:-([0-9a-f]+))? \(([0-9a-f]{40})\)",
+        output,
+    )
     rpc_line = re.search(r"Trace Processor RPC API version: (\d+)", output)
     if version_line is None or rpc_line is None:
         raise ValueError("trace processor did not report version/commit/RPC identity")
-    reported_version = version_line.group(1).split("-", 1)[0]
-    if reported_version != lock["tag"] or version_line.group(2) != lock["commit"]:
+    reported_version = version_line.group(1)
+    reported_revision = version_line.group(2)
+    commit = version_line.group(3)
+    runtime = lock["runtime"]
+    if (
+        reported_version != runtime["reported_version"]
+        or commit != runtime["revision"]
+        or (reported_revision is not None and not commit.startswith(reported_revision))
+    ):
         raise ValueError("trace processor version or commit differs from lock")
-    if int(rpc_line.group(1)) != lock["rpc_api_version"]:
+    if int(rpc_line.group(1)) != runtime["rpc_api_version"]:
         raise ValueError("trace processor RPC API differs from lock")
 
 

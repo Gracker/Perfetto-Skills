@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from pathlib import PurePosixPath
 import re
 from typing import Any
 
@@ -14,6 +15,13 @@ from typing import Any
 COMMIT = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 GITHUB = re.compile(r"^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$")
+TRACE_PROCESSOR_EXECUTABLES = {
+    "linux-amd64": "trace_processor_shell",
+    "linux-arm64": "trace_processor_shell",
+    "mac-amd64": "trace_processor_shell",
+    "mac-arm64": "trace_processor_shell",
+    "windows-amd64": "trace_processor_shell.exe",
+}
 
 
 def _read(path: Path) -> dict[str, Any]:
@@ -72,44 +80,81 @@ def load_and_validate_google_lock(
     path: Path, *, validate_snapshots: bool = True
 ) -> dict[str, Any]:
     lock = _read(path)
-    if lock.get("schema_version") != 1:
+    if lock.get("schema_version") != 2:
         raise ValueError("unsupported Google Perfetto lock schema")
     repository = lock.get("repository")
     if repository != "https://github.com/google/perfetto" or not GITHUB.fullmatch(repository):
         raise ValueError("unexpected Google Perfetto repository")
-    _require_hash(lock.get("commit"), "Google Perfetto commit", COMMIT)
-    _require_hash(lock.get("stdlib_tree"), "Perfetto stdlib tree", COMMIT)
-    if not isinstance(lock.get("tag"), str) or not re.fullmatch(r"v\d+(?:\.\d+)*", lock["tag"]):
+
+    official_reference = lock.get("official_reference")
+    if not isinstance(official_reference, dict):
+        raise ValueError("official Perfetto reference is required")
+    _require_hash(
+        official_reference.get("commit"), "official Perfetto commit", COMMIT
+    )
+    if not isinstance(official_reference.get("tag"), str) or not re.fullmatch(
+        r"v\d+(?:\.\d+)*", official_reference["tag"]
+    ):
         raise ValueError("Google Perfetto tag is invalid")
-    if not isinstance(lock.get("rpc_api_version"), int) or lock["rpc_api_version"] <= 0:
-        raise ValueError("Google Perfetto RPC API version is invalid")
-    official = lock.get("official_skill")
+    official = official_reference.get("skill")
     if not isinstance(official, dict) or official.get("role") != "gap_check_only":
         raise ValueError("official Skill must remain gap_check_only")
     _require_hash(official.get("sha256"), "official Skill hash")
     official_snapshot_sha256 = _require_hash(
         official.get("snapshot_sha256"), "official Skill snapshot hash"
     )
+
+    runtime = lock.get("runtime")
+    if not isinstance(runtime, dict):
+        raise ValueError("runtime Perfetto reference is required")
+    revision = _require_hash(runtime.get("revision"), "runtime Perfetto revision", COMMIT)
+    if not isinstance(runtime.get("reported_version"), str) or not re.fullmatch(
+        r"v\d+(?:\.\d+)*", runtime["reported_version"]
+    ):
+        raise ValueError("runtime Perfetto reported version is invalid")
+    _require_hash(runtime.get("stdlib_tree"), "runtime Perfetto stdlib tree", COMMIT)
+    if not isinstance(runtime.get("rpc_api_version"), int) or runtime["rpc_api_version"] <= 0:
+        raise ValueError("Google Perfetto RPC API version is invalid")
     stdlib_snapshot_sha256 = _require_hash(
-        lock.get("stdlib_snapshot_sha256"), "Perfetto stdlib snapshot hash"
+        runtime.get("stdlib_snapshot_sha256"), "Perfetto stdlib snapshot hash"
     )
-    binary = lock.get("trace_processor")
+    binary = runtime.get("trace_processor")
     if not isinstance(binary, dict):
         raise ValueError("trace_processor lock metadata is required")
-    if binary.get("version") != lock.get("tag"):
-        raise ValueError("trace processor version does not match Perfetto tag")
     lock_path = path.parents[1] / str(binary.get("lock_path"))
     expected = _require_hash(binary.get("lock_sha256"), "trace processor lock hash")
     actual = hashlib.sha256(lock_path.read_bytes()).hexdigest()
     if actual != expected:
         raise ValueError("trace processor lock bytes do not match Google Perfetto lock")
+    trace_lock = _read(lock_path)
+    if trace_lock.get("schema_version") != 2:
+        raise ValueError("unsupported trace processor lock schema")
+    if trace_lock.get("revision") != revision:
+        raise ValueError("trace processor revision does not match runtime")
+    if trace_lock.get("reported_version") != runtime["reported_version"]:
+        raise ValueError("trace processor reported version does not match runtime")
+    if trace_lock.get("rpc_api_version") != runtime["rpc_api_version"]:
+        raise ValueError("trace processor RPC API does not match runtime")
+    platforms = trace_lock.get("platforms")
+    if not isinstance(platforms, dict) or set(platforms) != set(
+        TRACE_PROCESSOR_EXECUTABLES
+    ):
+        raise ValueError("trace processor platform set is incomplete")
+    for key, executable in TRACE_PROCESSOR_EXECUTABLES.items():
+        entry = platforms[key]
+        if not isinstance(entry, dict):
+            raise ValueError(f"trace processor platform entry is invalid: {key}")
+        expected_path = PurePosixPath(revision, key, executable)
+        if PurePosixPath(str(entry.get("path"))) != expected_path:
+            raise ValueError(f"trace processor path differs from runtime revision: {key}")
+        _require_hash(entry.get("sha256"), f"trace processor platform hash {key}")
     if not validate_snapshots:
         return lock
     official_snapshot_path = path.parent / "snapshots/google-perfetto/official-skill.json"
     if hashlib.sha256(official_snapshot_path.read_bytes()).hexdigest() != official_snapshot_sha256:
         raise ValueError("official Skill snapshot bytes differ from lock")
     official_snapshot = _read(official_snapshot_path)
-    if official_snapshot.get("commit") != lock["commit"]:
+    if official_snapshot.get("commit") != official_reference["commit"]:
         raise ValueError("official Skill snapshot commit differs from lock")
     official_files = {
         item["path"]: item["sha256"] for item in official_snapshot.get("files", [])
@@ -121,8 +166,8 @@ def load_and_validate_google_lock(
         raise ValueError("Perfetto stdlib snapshot bytes differ from lock")
     stdlib_snapshot = _read(stdlib_snapshot_path)
     if (
-        stdlib_snapshot.get("commit") != lock["commit"]
-        or stdlib_snapshot.get("stdlib_tree") != lock["stdlib_tree"]
+        stdlib_snapshot.get("commit") != runtime["revision"]
+        or stdlib_snapshot.get("stdlib_tree") != runtime["stdlib_tree"]
         or stdlib_snapshot.get("parse_warnings") != []
     ):
         raise ValueError("Perfetto stdlib snapshot differs from lock")

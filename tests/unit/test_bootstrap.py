@@ -39,11 +39,13 @@ class BootstrapTest(unittest.TestCase):
         payload = b"verified executable"
         expected = hashlib.sha256(payload).hexdigest()
         lock = {
-            "perfetto_version": "v-test",
+            "revision": "a" * 40,
+            "reported_version": "v57.2",
+            "rpc_api_version": 14,
             "base_url": "https://example.invalid",
             "platforms": {
                 "mac-arm64": {
-                    "path": "v-test/mac-arm64/trace_processor_shell",
+                    "path": f"{'a' * 40}/mac-arm64/trace_processor_shell",
                     "sha256": expected,
                 }
             },
@@ -58,6 +60,65 @@ class BootstrapTest(unittest.TestCase):
             )
             self.assertEqual(installed.read_bytes(), payload)
             self.assertTrue(installed.stat().st_mode & 0o100)
+            self.assertIn("a" * 40, installed.parts)
+
+    def test_load_lock_rejects_paths_outside_the_revision_platform(self) -> None:
+        valid = {
+            "schema_version": 2,
+            "revision": "a" * 40,
+            "reported_version": "v57.2",
+            "rpc_api_version": 14,
+            "base_url": "https://example.invalid",
+            "source": "test",
+            "platforms": {
+                "mac-arm64": {
+                    "path": f"{'a' * 40}/mac-arm64/trace_processor_shell",
+                    "sha256": "b" * 64,
+                }
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "lock.json"
+            for forged in (
+                "../trace_processor_shell",
+                f"{'c' * 40}/mac-arm64/trace_processor_shell",
+                f"{'a' * 40}/linux-amd64/trace_processor_shell",
+                f"{'a' * 40}/mac-arm64/trace_processor_shell.exe",
+            ):
+                with self.subTest(path=forged):
+                    document = json.loads(json.dumps(valid))
+                    document["platforms"]["mac-arm64"]["path"] = forged
+                    path.write_text(json.dumps(document), encoding="utf-8")
+                    with self.assertRaises(ValueError):
+                        self.bootstrap.load_lock(path)
+
+    def test_revision_separates_binary_caches_with_same_reported_version(self) -> None:
+        payload = b"verified executable"
+        expected = hashlib.sha256(payload).hexdigest()
+        with tempfile.TemporaryDirectory() as tmp:
+            installed = []
+            for revision in ("a" * 40, "b" * 40):
+                lock = {
+                    "revision": revision,
+                    "reported_version": "v57.2",
+                    "rpc_api_version": 14,
+                    "base_url": "https://example.invalid",
+                    "platforms": {
+                        "mac-arm64": {
+                            "path": f"{revision}/mac-arm64/trace_processor_shell",
+                            "sha256": expected,
+                        }
+                    },
+                }
+                installed.append(
+                    self.bootstrap.install_locked_binary(
+                        lock,
+                        "mac-arm64",
+                        Path(tmp),
+                        opener=lambda _: io.BytesIO(payload),
+                    )
+                )
+            self.assertNotEqual(installed[0], installed[1])
 
     def test_committed_lock_covers_supported_platforms(self) -> None:
         lock_path = (
@@ -65,7 +126,13 @@ class BootstrapTest(unittest.TestCase):
         )
         self.assertTrue(lock_path.is_file(), "references/trace-processor-lock.json")
         lock = json.loads(lock_path.read_text(encoding="utf-8"))
-        self.assertEqual(lock["perfetto_version"], "v57.2")
+        self.assertEqual(
+            lock["revision"],
+            "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+        )
+        self.assertEqual(lock["schema_version"], 2)
+        self.assertEqual(lock["reported_version"], "v57.2")
+        self.assertEqual(lock["rpc_api_version"], 14)
         self.assertEqual(
             set(lock["platforms"]),
             {

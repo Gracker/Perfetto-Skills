@@ -100,18 +100,22 @@ class RuntimeCliV02Test(unittest.TestCase):
     def test_binary_identity_requires_hash_commit_and_rpc(self) -> None:
         doctor = load_skill_script("perfetto_doctor")
         lock = {
-            "release": {"commit": "abc123", "rpc_api_version": 14},
+            "runtime": {
+                "reported_version": "v57.2",
+                "revision": "a" * 40,
+                "rpc_api_version": 14,
+            },
             "runtime_substrate": {"platforms": {"test": {"sha256": "deadbeef"}}},
         }
         ok = doctor.verify_binary_identity(
-            version_text="Perfetto v57.1 (abc123) RPC API: 14",
+            version_text=f"Perfetto v57.2-aaaaaaaaaa ({'a' * 40}) RPC API: 14",
             binary_sha256="deadbeef",
             platform_key="test",
             source_lock=lock,
         )
         self.assertEqual(ok["status"], "verified")
         mismatch = doctor.verify_binary_identity(
-            version_text="Perfetto v57.1 (other) RPC API: 14",
+            version_text=f"Perfetto v57.2-deadbeef ({'a' * 40}) RPC API: 14",
             binary_sha256="deadbeef",
             platform_key="test",
             source_lock=lock,

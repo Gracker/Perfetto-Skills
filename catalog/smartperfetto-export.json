@@ -96,6 +96,13 @@
     }
   ],
   "public_skill": "perfetto-performance-analysis",
+  "runtime_perfetto": {
+    "reported_version": "v57.2",
+    "repository": "https://github.com/google/perfetto",
+    "revision": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+    "rpc_api_version": 14,
+    "stdlib_tree": "0f6529d3ecf91c15c1572044c60512dcf14593d5"
+  },
   "schema_version": 1,
   "skills": [
     {
@@ -557,7 +564,7 @@
       "name": "click_response_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/click_response_detail.skill.yaml",
-      "source_sha256": "3bf411e6c0f6db9de2434fb0ad420cb0a0140388c5968306f5ad569b3ff0c3e7",
+      "source_sha256": "051bdc9c5edc28e6120e77e34dfa9036ffbfc5b1c4ea529604ca31a7435714b5",
       "tier": "S",
       "version": "2.0",
       "workflow": "interaction"
@@ -2642,7 +2649,7 @@
       "name": "thermal_throttling_chain",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/thermal_throttling_chain.skill.yaml",
-      "source_sha256": "991cd6311377d2d5446d03c874a39dd294ff9a16d0202253290af0144446639b",
+      "source_sha256": "88ca7678544866f3bdf2f6bf2981c58e877c818ed37501a056c0e7cb57bc3ce7",
       "tier": "S",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -2863,10 +2870,10 @@
     }
   ],
   "source": {
-    "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+    "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "f3202d7701c0a0cf5b6b8e4ed9385a7563d7787c8c8f136e57a8262a23cff3f9",
+    "policy_sha256": "699a883c95343d05f40532909db2dd0e2fb73a277bdf215c2e8e6d1bed211ff5",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -2959,7 +2966,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/code-aware.template.md",
-      "source_sha256": "b4a46ebe530ca4da7c32f7bbfd7f071b1882bd1c6068777e051dae6e8cd09fdf"
+      "source_sha256": "cac352f081f5c2de95c1d21bf85e3cb32a522d904b21281656f680496054d0fd"
     },
     {
       "destination": "references/generated/strategies/comparison-conclusion.template.md",
@@ -3000,7 +3007,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto feedback sessions, provider pinning, review attestation, and draft-only GitHub handoff",
       "source_path": "backend/strategies/external-issue-triage.template.md",
-      "source_sha256": "7be09bbe91fb0cf989a9e0514343c28370e6a9e094451f7779fee435c617acd2"
+      "source_sha256": "a9015372847ff1ab85eedf7373992be777251f7f9ffd01263ff89b834a51a116"
     },
     {
       "destination": "references/generated/strategies/game.strategy.md",
@@ -3209,19 +3216,25 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto source lookup tools and codebase-aware report orchestration",
       "source_path": "backend/strategies/prompt-code-reference-contract-en.template.md",
-      "source_sha256": "b548fa4f4d99d9d6fed0ab07f64675e21e61dca53357b3ad258db4c6f101cce1"
+      "source_sha256": "76d0633e784920bbb2f7b610dd228b7bfc8e8738e76f0652b383741f0fe05c14"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto source lookup tools and codebase-aware report orchestration",
       "source_path": "backend/strategies/prompt-code-reference-contract-zh.template.md",
-      "source_sha256": "772df88580e444559247fb36ca1e9220f7a0a4a15efa3ac2a260dee17b919271"
+      "source_sha256": "db1f884f3bce6c200c7978118ebb5e43fc2d302b10aa3f3e19dffff1cd117b77"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-complexity-classifier.template.md",
       "source_sha256": "952f2dd4a2df522bc1e7d2d2eecf98a45a63a06617a0e8f5feddc1d2c023de9c"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto runtime session and conversation orchestration",
+      "source_path": "backend/strategies/prompt-conversation.template.md",
+      "source_sha256": "343df7adf104a91e4ae3e4d00797cbfce6481845f33ffcf668c9a646968ec883"
     },
     {
       "disposition": "product-only",
@@ -3263,20 +3276,32 @@
       "destination": "references/generated/strategies/prompt-methodology.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/prompt-methodology.template.md",
-      "source_sha256": "d4e1a967f540ec715ba4dee27fd22a23a55b82d2a5bc75e4b2257be241926602",
+      "source_sha256": "6fd388210532a515aabfcc268720cea087fb6da7f8bc38541c62d24667aa2caf",
       "workflow": "trace-overview"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-openai-final-report-continuation-en.template.md",
-      "source_sha256": "ac8f41489bae5ba9939fc342d28c3a220d0b9fccc719a624a721b2015062f78a"
+      "source_sha256": "bec9ad3ee55c709fe0ef9c5da26dec586b21b615754e81e0df2c7ca344158482"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-openai-final-report-continuation-zh.template.md",
-      "source_sha256": "004d418904c1a6df237e2b02885431d99668f87dc062d53679121780e24a7ec2"
+      "source_sha256": "d4337f309dffe82559678abdf2d6d63037bf1b187aa77274ca9b8b2694dd0ae4"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto final-report runtime orchestration",
+      "source_path": "backend/strategies/prompt-opencode-final-report-quality-issue-en.template.md",
+      "source_sha256": "c8292201c96fa1265bd82e9aaecdb9fbd84fff584ad96d3419cdd833aaa618fa"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto final-report runtime orchestration",
+      "source_path": "backend/strategies/prompt-opencode-final-report-quality-issue-zh.template.md",
+      "source_sha256": "31250f4e75ec6c986cbb0748fecd1e985c51e3839377ce2eb56f5b36c5d2bb0f"
     },
     {
       "destination": "references/generated/strategies/prompt-output-format.template.md",
@@ -3284,6 +3309,18 @@
       "source_path": "backend/strategies/prompt-output-format.template.md",
       "source_sha256": "c8379ddd0be62c25186cf36e22889065c8c4dc054981280e7ef75a39729b8290",
       "workflow": "trace-overview"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto runtime plan-completion orchestration",
+      "source_path": "backend/strategies/prompt-pi-plan-completion-continuation-en.template.md",
+      "source_sha256": "8bb7feeea2e1cec10d06552146b8ea13d8a4100cefc9b9bd3c4859710c41b969"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto runtime plan-completion orchestration",
+      "source_path": "backend/strategies/prompt-pi-plan-completion-continuation-zh.template.md",
+      "source_sha256": "facd698fc085c2845db74d6fba726a28b19d0a3a7f73434f6746fe3d95c239cf"
     },
     {
       "disposition": "product-only",
@@ -3586,7 +3623,7 @@
     "excluded_skill_definitions": 5,
     "exported_strategy_sources": 55,
     "pipeline_docs": 14,
-    "product_only_strategy_sources": 51,
+    "product_only_strategy_sources": 56,
     "runtime_candidates": 235,
     "runtime_types": {
       "atomic": 121,
@@ -3597,7 +3634,7 @@
     },
     "skill_yaml_files": 240,
     "sql_fragments": 3,
-    "strategy_sources": 106,
+    "strategy_sources": 111,
     "vendor_overrides": 8
   },
   "vendor_overrides": [

@@ -74,6 +74,7 @@
     "api_hint"
   ],
   "signal_patterns": [
+    "${process_name}",
     "${process_name}*",
     "*InputDispatcher*",
     "*InputEvent*",
@@ -81,9 +82,9 @@
     "*deliverInput*",
     "*dispatchMotion*",
     "/system/bin/%",
+    "UnwantedInteractionBlocker::notifyMotion*",
     "aq:pending:deliver*",
     "cpufreq",
-    "deliverInputEvent src=*",
     "system_server"
   ],
   "skill_id": "click_response_detail",

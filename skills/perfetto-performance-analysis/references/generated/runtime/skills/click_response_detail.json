@@ -21,6 +21,7 @@
       "api_hint"
     ],
     "signal_patterns": [
+      "${process_name}",
       "${process_name}*",
       "*InputDispatcher*",
       "*InputEvent*",
@@ -28,9 +29,9 @@
       "*deliverInput*",
       "*dispatchMotion*",
       "/system/bin/%",
+      "UnwantedInteractionBlocker::notifyMotion*",
       "aq:pending:deliver*",
       "cpufreq",
-      "deliverInputEvent src=*",
       "system_server"
     ]
   },
@@ -117,9 +118,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+    "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
     "path": "backend/skills/composite/click_response_detail.skill.yaml",
-    "sha256": "3bf411e6c0f6db9de2434fb0ad420cb0a0140388c5968306f5ad569b3ff0c3e7"
+    "sha256": "051bdc9c5edc28e6120e77e34dfa9036ffbfc5b1c4ea529604ca31a7435714b5"
   },
   "steps": [
     {

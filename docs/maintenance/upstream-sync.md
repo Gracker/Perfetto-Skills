@@ -126,20 +126,31 @@ methodology into repository-owned wording, architecture, and tests. Retain
 only the upstream identity, immutable Git pins, reviewed path/hash decisions,
 and the gap report needed to audit a claimed local coverage decision.
 
-## Synchronize the official PerfettoSQL library
+## Synchronize the Perfetto runtime substrate
 
-1. Verify that tag, peeled commit, RPC API, trace-processor binary lock, and
-   stdlib tree ID agree in `upstreams/google-perfetto.lock.json`.
+The Google lock intentionally separates two identities. `official_reference`
+is the stable tagged release used only for the official Skill gap review.
+`runtime` is the exact source revision used by the shipped trace processor,
+PerfettoSQL stdlib, generated SQL indexes, and runtime compatibility checks.
+`runtime.reported_version` records what the binary prints; it is not a Git tag
+or a claim that the runtime revision descends from the official release tag.
+
+1. Verify the official tag and peeled commit independently. Then verify that
+   the runtime revision, RPC API, trace-processor v2 lock, and runtime stdlib
+   tree ID agree in `upstreams/google-perfetto.lock.json`. The trace lock paths,
+   binary cache key, and all five platform artifacts must use the full runtime
+   revision.
 2. Run `uv run python tools/sync_perfetto_stdlib.py --perfetto PATH
    --report-dir test-output/sync` to index modules, exported symbols, hashes,
    documentation, and parse warnings through `git ls-tree` and `git show`.
 3. Resolve every removed/changed dependency and parse warning. Do not promote a
    lock while an imported query references an unresolved module or symbol.
-4. Apply the reviewed index with `--apply`; the tool refreshes the complete
-   stdlib snapshot hash in the Google lock. Bootstrap the locked processor, then run
+4. Apply the reviewed runtime index with `--apply`; the tool refreshes only the
+   runtime stdlib snapshot hash in the Google lock. It must not update the
+   official Skill snapshot or its decisions. Bootstrap the locked processor, then run
    `uv run python tools/validate_all_queries.py` plus the complete gate. The
-   scheduled canary additionally downloads the newest tagged official processor,
-   verifies its tag/commit/RPC identity, and executes owned real-trace semantic
+   scheduled canary additionally downloads the newest reviewed processor,
+   verifies its reported-version/revision/RPC identity, and executes owned real-trace semantic
    assertions with the current Skill queries without promoting that processor.
 
 ## Modify local SQL safely

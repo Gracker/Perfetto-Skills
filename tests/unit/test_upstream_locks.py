@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 import shutil
@@ -27,9 +28,29 @@ class UpstreamLockTest(unittest.TestCase):
         android = load_and_validate_android_skills_lock(
             ROOT / "upstreams/android-skills.lock.json"
         )
-        self.assertEqual(smart["commit"], "1da78346e61c6ed087c1ac5ed1441d8849eeb810")
-        self.assertEqual(google["tag"], "v57.2")
-        self.assertEqual(google["official_skill"]["role"], "gap_check_only")
+        self.assertEqual(smart["commit"], "d370620ee53fa3b255e1b519b9592a6780a0b2b9")
+        self.assertEqual(google["schema_version"], 2)
+        self.assertEqual(google["official_reference"]["tag"], "v57.2")
+        self.assertEqual(
+            google["official_reference"]["commit"],
+            "da1d152cff27890903d158fe96751de3aab883cc",
+        )
+        self.assertEqual(
+            google["runtime"]["revision"],
+            "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+        )
+        self.assertEqual(google["runtime"]["reported_version"], "v57.2")
+        self.assertEqual(
+            google["official_reference"]["skill"]["role"], "gap_check_only"
+        )
+        runtime_stdlib = json.loads(
+            (
+                ROOT / "upstreams/snapshots/google-perfetto/stdlib-index.json"
+            ).read_text(encoding="utf-8")
+        )
+        runtime_modules = {item["module"] for item in runtime_stdlib["modules"]}
+        self.assertIn("android.memory.heap_profile.intervals", runtime_modules)
+        self.assertNotIn("std.trees.filter", runtime_modules)
         self.assertEqual(
             android["commit"], "47e1dff74a5cde5d0128c5d15e74e000323135ea"
         )
@@ -110,6 +131,43 @@ class UpstreamLockTest(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "snapshot bytes"):
                 load_and_validate_google_lock(lock)
+
+    def test_google_lock_rejects_trace_lock_identity_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            upstreams = root / "upstreams"
+            snapshots = upstreams / "snapshots/google-perfetto"
+            snapshots.mkdir(parents=True)
+            document = json.loads(
+                (ROOT / "upstreams/google-perfetto.lock.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            trace_path = (
+                root
+                / document["runtime"]["trace_processor"]["lock_path"]
+            )
+            trace_path.parent.mkdir(parents=True)
+            trace = json.loads(
+                (
+                    ROOT
+                    / "skills/perfetto-performance-analysis/references/trace-processor-lock.json"
+                ).read_text(encoding="utf-8")
+            )
+            trace["revision"] = "c" * 40
+            trace_path.write_text(json.dumps(trace), encoding="utf-8")
+            document["runtime"]["trace_processor"]["lock_sha256"] = hashlib.sha256(
+                trace_path.read_bytes()
+            ).hexdigest()
+            lock_path = upstreams / "google-perfetto.lock.json"
+            lock_path.write_text(json.dumps(document), encoding="utf-8")
+            for name in ("official-skill.json", "stdlib-index.json"):
+                shutil.copyfile(
+                    ROOT / "upstreams/snapshots/google-perfetto" / name,
+                    snapshots / name,
+                )
+            with self.assertRaisesRegex(ValueError, "revision"):
+                load_and_validate_google_lock(lock_path, validate_snapshots=False)
 
     def test_android_lock_rejects_snapshot_metadata(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

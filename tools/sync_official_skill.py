@@ -63,13 +63,14 @@ def main(arguments: list[str] | None = None) -> int:
     lock = load_and_validate_google_lock(
         args.lock, validate_snapshots=not args.apply
     )
-    tag = args.revision or lock["tag"]
-    peeled = str(git_output(args.perfetto, "rev-parse", f"{tag}^{{}}")).strip()
-    if args.revision is None and peeled != lock["commit"]:
-        raise ValueError(f"official Perfetto tag mismatch: {tag} -> {peeled}")
+    official_reference = lock["official_reference"]
+    revision = args.revision or official_reference["tag"]
+    peeled = str(git_output(args.perfetto, "rev-parse", f"{revision}^{{}}")).strip()
+    if args.revision is None and peeled != official_reference["commit"]:
+        raise ValueError(f"official Perfetto tag mismatch: {revision} -> {peeled}")
     if args.apply and args.revision is not None:
         raise ValueError("canary revision cannot be applied without updating the lock")
-    current = inventory_official_skill(args.perfetto, tag)
+    current = inventory_official_skill(args.perfetto, revision)
     snapshot_path = ROOT / "upstreams/snapshots/google-perfetto/official-skill.json"
     previous = (
         json.loads(snapshot_path.read_text(encoding="utf-8"))
@@ -96,7 +97,7 @@ def main(arguments: list[str] | None = None) -> int:
         snapshot_path.write_text(
             json.dumps(current, indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
-        official = lock["official_skill"]
+        official = lock["official_reference"]["skill"]
         official["snapshot_sha256"] = hashlib.sha256(
             snapshot_path.read_bytes()
         ).hexdigest()

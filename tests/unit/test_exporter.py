@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
+import tempfile
 import unittest
+from unittest import mock
 
 from tools import export_from_smartperfetto as exporter
 
@@ -47,6 +49,8 @@ class ExporterTest(unittest.TestCase):
 
     def test_catalog_has_unique_sources_names_and_destinations(self) -> None:
         catalog = self.load_catalog()
+        self.assertIn("official_perfetto", catalog)
+        self.assertIn("runtime_perfetto", catalog)
         for key in ("source_path", "name"):
             values = [item[key] for item in catalog["skills"]]
             self.assertEqual(len(values), len(set(values)), key)
@@ -90,6 +94,154 @@ class ExporterTest(unittest.TestCase):
                 self.assertEqual(
                     exporter.classify_skill(name, {"type": "atomic"}), expected
                 )
+
+    def test_perfetto_source_lock_separates_official_skill_from_runtime(self) -> None:
+        official_commit = "a" * 40
+        official_tree = "b" * 40
+        runtime_revision = "c" * 40
+        runtime_tree = "d" * 40
+        official_skill = b"official tagged Skill"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "SmartPerfetto"
+            (source / "perfetto").mkdir(parents=True)
+            data = source / "backend/data"
+            data.mkdir(parents=True)
+            (data / "perfettoStdlibSymbols.json").write_text(
+                json.dumps({"generatedFrom": runtime_revision}), encoding="utf-8"
+            )
+            (data / "perfettoSqlDocs.json").write_text(
+                json.dumps({"generatedFrom": runtime_revision}), encoding="utf-8"
+            )
+            skill_root = root / "skill"
+            lock_path = skill_root / "references/trace-processor-lock.json"
+            lock_path.parent.mkdir(parents=True)
+            lock_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 2,
+                        "revision": runtime_revision,
+                        "reported_version": "v57.2",
+                        "rpc_api_version": 14,
+                        "platforms": {"test": {"path": "unused", "sha256": "e" * 64}},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            catalog = {
+                "official_perfetto": {
+                    "repository": "https://github.com/google/perfetto",
+                    "tag": "v57.2",
+                    "commit": official_commit,
+                    "rpc_api_version": 14,
+                    "stdlib_tree": official_tree,
+                    "official_skill_reference": "ai/skills/perfetto/SKILL-template.md",
+                    "official_skill_role": "gap_check_only",
+                },
+                "runtime_perfetto": {
+                    "repository": "https://github.com/google/perfetto",
+                    "reported_version": "v57.2",
+                    "revision": runtime_revision,
+                    "rpc_api_version": 14,
+                    "stdlib_tree": runtime_tree,
+                },
+            }
+
+            def git_identity(_repository: Path, *arguments: str) -> str:
+                revision = arguments[-1]
+                values = {
+                    "v57.2^{}": official_commit,
+                    "v57.2:src/trace_processor/perfetto_sql/stdlib": official_tree,
+                    f"{runtime_revision}^{{commit}}": runtime_revision,
+                    f"{runtime_revision}:src/trace_processor/perfetto_sql/stdlib": runtime_tree,
+                }
+                return values[revision]
+
+            with mock.patch.object(exporter, "git_output", side_effect=git_identity), mock.patch.object(
+                exporter, "git_file_bytes", return_value=official_skill
+            ):
+                result = exporter.build_perfetto_source_lock(
+                    source, catalog, skill_root=skill_root
+                )
+
+        self.assertEqual(result["official_reference"]["commit"], official_commit)
+        self.assertEqual(result["official_reference"]["stdlib_tree"], official_tree)
+        self.assertEqual(result["runtime"]["revision"], runtime_revision)
+        self.assertEqual(result["runtime"]["stdlib_tree"], runtime_tree)
+        self.assertNotIn("release", result)
+        self.assertEqual(
+            result["official_reference"]["skill"]["sha256"],
+            exporter.hashlib.sha256(official_skill).hexdigest(),
+        )
+
+    def test_perfetto_source_lock_rejects_generated_assets_from_another_revision(self) -> None:
+        runtime_revision = "c" * 40
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "SmartPerfetto"
+            (source / "perfetto").mkdir(parents=True)
+            data = source / "backend/data"
+            data.mkdir(parents=True)
+            (data / "perfettoStdlibSymbols.json").write_text(
+                json.dumps({"generatedFrom": "f" * 40}), encoding="utf-8"
+            )
+            (data / "perfettoSqlDocs.json").write_text(
+                json.dumps({"generatedFrom": runtime_revision}), encoding="utf-8"
+            )
+            skill_root = root / "skill"
+            lock_path = skill_root / "references/trace-processor-lock.json"
+            lock_path.parent.mkdir(parents=True)
+            lock_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 2,
+                        "revision": runtime_revision,
+                        "reported_version": "v57.2",
+                        "rpc_api_version": 14,
+                        "platforms": {"test": {"path": "unused", "sha256": "e" * 64}},
+                    }
+                ),
+                encoding="utf-8",
+            )
+            catalog = {
+                "official_perfetto": {
+                    "repository": "https://github.com/google/perfetto",
+                    "tag": "v57.2",
+                    "commit": "a" * 40,
+                    "rpc_api_version": 14,
+                    "stdlib_tree": "b" * 40,
+                    "official_skill_reference": "ai/skills/perfetto/SKILL-template.md",
+                    "official_skill_role": "gap_check_only",
+                },
+                "runtime_perfetto": {
+                    "repository": "https://github.com/google/perfetto",
+                    "reported_version": "v57.2",
+                    "revision": runtime_revision,
+                    "rpc_api_version": 14,
+                    "stdlib_tree": "d" * 40,
+                },
+            }
+
+            def git_identity(_repository: Path, *arguments: str) -> str:
+                revision = arguments[-1]
+                values = {
+                    "v57.2^{}": "a" * 40,
+                    "v57.2:src/trace_processor/perfetto_sql/stdlib": "b" * 40,
+                    f"{runtime_revision}^{{commit}}": runtime_revision,
+                    f"{runtime_revision}:src/trace_processor/perfetto_sql/stdlib": "d" * 40,
+                }
+                return values[revision]
+
+            with mock.patch.object(exporter, "git_output", side_effect=git_identity), mock.patch.object(
+                exporter, "git_file_bytes", return_value=b"official tagged Skill"
+            ):
+                with self.assertRaisesRegex(
+                    exporter.ExportError,
+                    "perfettoStdlibSymbols.json.*does not match runtime revision",
+                ):
+                    exporter.build_perfetto_source_lock(
+                        source, catalog, skill_root=skill_root
+                    )
 
     def test_migration_coverage_is_rendered_from_catalog(self) -> None:
         catalog = self.load_catalog()

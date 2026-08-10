@@ -114,16 +114,23 @@ class V02ContractTest(unittest.TestCase):
         source_lock = json.loads(
             (runtime / "perfetto-source-lock.json").read_text(encoding="utf-8")
         )
-        self.assertEqual(source_lock["release"]["tag"], "v57.2")
+        self.assertEqual(source_lock["schema_version"], 2)
+        self.assertEqual(source_lock["official_reference"]["tag"], "v57.2")
         self.assertEqual(
-            source_lock["release"]["commit"],
+            source_lock["official_reference"]["commit"],
             "da1d152cff27890903d158fe96751de3aab883cc",
         )
         self.assertEqual(
-            source_lock["release"]["stdlib_tree"],
-            "7f0459ca3eed8372a8762ae052ed7fdb48eb3d88",
+            source_lock["runtime"]["revision"],
+            "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
         )
-        self.assertEqual(source_lock["official_skill_reference"]["role"], "gap_check_only")
+        self.assertEqual(
+            source_lock["runtime"]["stdlib_tree"],
+            "0f6529d3ecf91c15c1572044c60512dcf14593d5",
+        )
+        self.assertEqual(
+            source_lock["official_reference"]["skill"]["role"], "gap_check_only"
+        )
         fixture_manifest = json.loads(
             (runtime / "fixture-manifest.json").read_text(encoding="utf-8")
         )

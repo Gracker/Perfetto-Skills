@@ -54,9 +54,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "1da78346e61c6ed087c1ac5ed1441d8849eeb810",
+    "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
     "path": "backend/skills/composite/thermal_throttling_chain.skill.yaml",
-    "sha256": "991cd6311377d2d5446d03c874a39dd294ff9a16d0202253290af0144446639b"
+    "sha256": "88ca7678544866f3bdf2f6bf2981c58e877c818ed37501a056c0e7cb57bc3ce7"
   },
   "steps": [
     {
@@ -97,6 +97,7 @@
       "type": "skill"
     },
     {
+      "condition": "Boolean(package || process_name)",
       "id": "process_util",
       "name": "进程 CPU 利用率",
       "optional": true,
@@ -110,6 +111,7 @@
       "type": "skill"
     },
     {
+      "condition": "Boolean(package || process_name)",
       "id": "thread_util",
       "name": "线程 CPU 利用率",
       "optional": true,

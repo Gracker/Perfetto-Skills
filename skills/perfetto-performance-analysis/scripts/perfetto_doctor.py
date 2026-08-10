@@ -21,7 +21,7 @@ def verify_binary_identity(
     platform_key: str,
     source_lock: dict[str, object],
 ) -> dict[str, object]:
-    release = source_lock["release"]
+    runtime = source_lock["runtime"]
     platforms = source_lock["runtime_substrate"]["platforms"]
     expected_platform = platforms.get(platform_key)
     issues: list[str] = []
@@ -29,11 +29,24 @@ def verify_binary_identity(
         issues.append(f"platform is not locked: {platform_key}")
     elif binary_sha256 != expected_platform["sha256"]:
         issues.append("binary SHA-256 does not match the release lock")
-    if str(release["commit"]) not in version_text:
-        issues.append("trace processor commit does not match the release lock")
+    identity = re.search(
+        r"Perfetto (v\d+(?:\.\d+)*)(?:-([0-9a-f]+))? \(([0-9a-f]{40})\)",
+        version_text,
+    )
+    if identity is None:
+        issues.append("trace processor version identity is missing")
+    elif (
+        identity.group(1) != runtime["reported_version"]
+        or identity.group(3) != runtime["revision"]
+        or (
+            identity.group(2) is not None
+            and not identity.group(3).startswith(identity.group(2))
+        )
+    ):
+        issues.append("trace processor commit does not match the runtime lock")
     rpc_match = re.search(r"RPC(?: API(?: version)?)?\D+(\d+)", version_text, flags=re.I)
-    if not rpc_match or int(rpc_match.group(1)) != int(release["rpc_api_version"]):
-        issues.append("trace processor RPC API does not match the release lock")
+    if not rpc_match or int(rpc_match.group(1)) != int(runtime["rpc_api_version"]):
+        issues.append("trace processor RPC API does not match the runtime lock")
     return {
         "status": "verified" if not issues else "unsupported",
         "platform": platform_key,

@@ -85,7 +85,7 @@
       "destination": null,
       "replacement": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/code-aware.template.md",
-      "source_sha256": "b4a46ebe530ca4da7c32f7bbfd7f071b1882bd1c6068777e051dae6e8cd09fdf",
+      "source_sha256": "cac352f081f5c2de95c1d21bf85e3cb32a522d904b21281656f680496054d0fd",
       "status": "product_only",
       "workflow": null
     },
@@ -133,7 +133,7 @@
       "destination": null,
       "replacement": "SmartPerfetto feedback sessions, provider pinning, review attestation, and draft-only GitHub handoff",
       "source_path": "backend/strategies/external-issue-triage.template.md",
-      "source_sha256": "7be09bbe91fb0cf989a9e0514343c28370e6a9e094451f7779fee435c617acd2",
+      "source_sha256": "a9015372847ff1ab85eedf7373992be777251f7f9ffd01263ff89b834a51a116",
       "status": "product_only",
       "workflow": null
     },
@@ -373,7 +373,7 @@
       "destination": null,
       "replacement": "SmartPerfetto source lookup tools and codebase-aware report orchestration",
       "source_path": "backend/strategies/prompt-code-reference-contract-en.template.md",
-      "source_sha256": "b548fa4f4d99d9d6fed0ab07f64675e21e61dca53357b3ad258db4c6f101cce1",
+      "source_sha256": "76d0633e784920bbb2f7b610dd228b7bfc8e8738e76f0652b383741f0fe05c14",
       "status": "product_only",
       "workflow": null
     },
@@ -381,7 +381,7 @@
       "destination": null,
       "replacement": "SmartPerfetto source lookup tools and codebase-aware report orchestration",
       "source_path": "backend/strategies/prompt-code-reference-contract-zh.template.md",
-      "source_sha256": "772df88580e444559247fb36ca1e9220f7a0a4a15efa3ac2a260dee17b919271",
+      "source_sha256": "db1f884f3bce6c200c7978118ebb5e43fc2d302b10aa3f3e19dffff1cd117b77",
       "status": "product_only",
       "workflow": null
     },
@@ -390,6 +390,14 @@
       "replacement": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-complexity-classifier.template.md",
       "source_sha256": "952f2dd4a2df522bc1e7d2d2eecf98a45a63a06617a0e8f5feddc1d2c023de9c",
+      "status": "product_only",
+      "workflow": null
+    },
+    {
+      "destination": null,
+      "replacement": "SmartPerfetto runtime session and conversation orchestration",
+      "source_path": "backend/strategies/prompt-conversation.template.md",
+      "source_sha256": "343df7adf104a91e4ae3e4d00797cbfce6481845f33ffcf668c9a646968ec883",
       "status": "product_only",
       "workflow": null
     },
@@ -445,7 +453,7 @@
       "destination": "references/generated/strategies/prompt-methodology.template.md",
       "replacement": "manifest-backed Skill/query/evidence operations",
       "source_path": "backend/strategies/prompt-methodology.template.md",
-      "source_sha256": "d4e1a967f540ec715ba4dee27fd22a23a55b82d2a5bc75e4b2257be241926602",
+      "source_sha256": "6fd388210532a515aabfcc268720cea087fb6da7f8bc38541c62d24667aa2caf",
       "status": "portable_transformed",
       "workflow": "trace-overview"
     },
@@ -453,7 +461,7 @@
       "destination": null,
       "replacement": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-openai-final-report-continuation-en.template.md",
-      "source_sha256": "ac8f41489bae5ba9939fc342d28c3a220d0b9fccc719a624a721b2015062f78a",
+      "source_sha256": "bec9ad3ee55c709fe0ef9c5da26dec586b21b615754e81e0df2c7ca344158482",
       "status": "product_only",
       "workflow": null
     },
@@ -461,7 +469,23 @@
       "destination": null,
       "replacement": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-openai-final-report-continuation-zh.template.md",
-      "source_sha256": "004d418904c1a6df237e2b02885431d99668f87dc062d53679121780e24a7ec2",
+      "source_sha256": "d4337f309dffe82559678abdf2d6d63037bf1b187aa77274ca9b8b2694dd0ae4",
+      "status": "product_only",
+      "workflow": null
+    },
+    {
+      "destination": null,
+      "replacement": "SmartPerfetto final-report runtime orchestration",
+      "source_path": "backend/strategies/prompt-opencode-final-report-quality-issue-en.template.md",
+      "source_sha256": "c8292201c96fa1265bd82e9aaecdb9fbd84fff584ad96d3419cdd833aaa618fa",
+      "status": "product_only",
+      "workflow": null
+    },
+    {
+      "destination": null,
+      "replacement": "SmartPerfetto final-report runtime orchestration",
+      "source_path": "backend/strategies/prompt-opencode-final-report-quality-issue-zh.template.md",
+      "source_sha256": "31250f4e75ec6c986cbb0748fecd1e985c51e3839377ce2eb56f5b36c5d2bb0f",
       "status": "product_only",
       "workflow": null
     },
@@ -472,6 +496,22 @@
       "source_sha256": "c8379ddd0be62c25186cf36e22889065c8c4dc054981280e7ef75a39729b8290",
       "status": "portable_transformed",
       "workflow": "trace-overview"
+    },
+    {
+      "destination": null,
+      "replacement": "SmartPerfetto runtime plan-completion orchestration",
+      "source_path": "backend/strategies/prompt-pi-plan-completion-continuation-en.template.md",
+      "source_sha256": "8bb7feeea2e1cec10d06552146b8ea13d8a4100cefc9b9bd3c4859710c41b969",
+      "status": "product_only",
+      "workflow": null
+    },
+    {
+      "destination": null,
+      "replacement": "SmartPerfetto runtime plan-completion orchestration",
+      "source_path": "backend/strategies/prompt-pi-plan-completion-continuation-zh.template.md",
+      "source_sha256": "facd698fc085c2845db74d6fba726a28b19d0a3a7f73434f6746fe3d95c239cf",
+      "status": "product_only",
+      "workflow": null
     },
     {
       "destination": null,
@@ -851,6 +891,6 @@
     }
   ],
   "summary": {
-    "sources": 106
+    "sources": 111
   }
 }

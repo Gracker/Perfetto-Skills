@@ -502,6 +502,16 @@ def validate_policy_sources(
     }
     if not isinstance(official, dict) or not required_official.issubset(official):
         raise ExportError("Policy official_perfetto lock is incomplete")
+    runtime = policy.get("runtime_perfetto")
+    required_runtime = {
+        "repository",
+        "reported_version",
+        "revision",
+        "rpc_api_version",
+        "stdlib_tree",
+    }
+    if not isinstance(runtime, dict) or not required_runtime.issubset(runtime):
+        raise ExportError("Policy runtime_perfetto lock is incomplete")
 
     runtime_by_name: dict[str, str] = {}
     for path in runtime_files:
@@ -692,6 +702,7 @@ def build_catalog(source: Path, policy_path: Path) -> dict[str, Any]:
         "sql_fragments": fragment_entries,
         "vendor_overrides": override_entries,
         "official_perfetto": policy["official_perfetto"],
+        "runtime_perfetto": policy["runtime_perfetto"],
         "fixture_manifest_source": policy["fixture_manifest_source"],
     }
 
@@ -1182,32 +1193,70 @@ def git_file_bytes(repository: Path, revision: str, path: str) -> bytes:
 def build_perfetto_source_lock(
     source: Path, catalog: dict[str, Any], *, skill_root: Path = SKILL_ROOT
 ) -> dict[str, Any]:
-    policy = dict(catalog["official_perfetto"])
+    official_policy = dict(catalog["official_perfetto"])
+    runtime_policy = dict(catalog["runtime_perfetto"])
     perfetto = source / "perfetto"
-    tag = str(policy["tag"])
+    tag = str(official_policy["tag"])
     commit = git_output(perfetto, "rev-parse", f"{tag}^{{}}")
-    if commit != policy["commit"]:
+    if commit != official_policy["commit"]:
         raise ExportError(f"Canonical Perfetto tag mismatch: {tag} -> {commit}")
     stdlib_path = "src/trace_processor/perfetto_sql/stdlib"
-    stdlib_tree = git_output(perfetto, "rev-parse", f"{tag}:{stdlib_path}")
-    if stdlib_tree != policy["stdlib_tree"]:
-        raise ExportError(f"Canonical Perfetto stdlib tree mismatch: {stdlib_tree}")
-    official_path = str(policy["official_skill_reference"])
+    official_stdlib_tree = git_output(perfetto, "rev-parse", f"{tag}:{stdlib_path}")
+    if official_stdlib_tree != official_policy["stdlib_tree"]:
+        raise ExportError(f"Canonical Perfetto stdlib tree mismatch: {official_stdlib_tree}")
+    official_path = str(official_policy["official_skill_reference"])
     official_bytes = git_file_bytes(perfetto, tag, official_path)
+
+    revision = str(runtime_policy["revision"])
+    runtime_commit = git_output(perfetto, "rev-parse", f"{revision}^{{commit}}")
+    if runtime_commit != revision:
+        raise ExportError(f"Perfetto runtime revision is not an exact commit: {revision}")
+    runtime_stdlib_tree = git_output(perfetto, "rev-parse", f"{revision}:{stdlib_path}")
+    if runtime_stdlib_tree != runtime_policy["stdlib_tree"]:
+        raise ExportError(f"Runtime Perfetto stdlib tree mismatch: {runtime_stdlib_tree}")
     lock_path = skill_root / "references" / "trace-processor-lock.json"
     binary_lock = json.loads(lock_path.read_text(encoding="utf-8"))
-    if binary_lock.get("perfetto_version") != tag:
-        raise ExportError("Trace processor artifact lock does not match official tag")
+    if binary_lock.get("schema_version") != 2:
+        raise ExportError("Trace processor artifact lock schema is unsupported")
+    if binary_lock.get("revision") != revision:
+        raise ExportError("Trace processor artifact lock does not match runtime revision")
+    if binary_lock.get("reported_version") != runtime_policy["reported_version"]:
+        raise ExportError("Trace processor reported version does not match runtime")
+    if binary_lock.get("rpc_api_version") != runtime_policy["rpc_api_version"]:
+        raise ExportError("Trace processor RPC API does not match runtime")
     symbol_path = source / "backend" / "data" / "perfettoStdlibSymbols.json"
     docs_path = source / "backend" / "data" / "perfettoSqlDocs.json"
+    for generated_path in (symbol_path, docs_path):
+        try:
+            generated_payload = json.loads(generated_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            raise ExportError(
+                f"Cannot validate generated Perfetto asset {generated_path.name}: {error}"
+            ) from error
+        if not isinstance(generated_payload, dict) or generated_payload.get("generatedFrom") != revision:
+            raise ExportError(
+                f"{generated_path.name} generatedFrom does not match runtime revision {revision}"
+            )
     return {
-        "schema_version": 1,
-        "repository": policy["repository"],
-        "release": {
+        "schema_version": 2,
+        "repository": runtime_policy["repository"],
+        "official_reference": {
             "tag": tag,
             "commit": commit,
-            "rpc_api_version": policy["rpc_api_version"],
-            "stdlib_tree": stdlib_tree,
+            "rpc_api_version": official_policy["rpc_api_version"],
+            "stdlib_tree": official_stdlib_tree,
+            "skill": {
+                "role": official_policy["official_skill_role"],
+                "path": official_path,
+                "sha256": hashlib.sha256(official_bytes).hexdigest(),
+                "runtime_dependency": False,
+            },
+        },
+        "runtime": {
+            "reported_version": runtime_policy["reported_version"],
+            "revision": revision,
+            "rpc_api_version": runtime_policy["rpc_api_version"],
+            "stdlib_tree": runtime_stdlib_tree,
         },
         "runtime_substrate": {
             "trace_processor_lock": "../../../trace-processor-lock.json",
@@ -1219,18 +1268,11 @@ def build_perfetto_source_lock(
             "stdlib_symbols_sha256": sha256_file(symbol_path),
             "stdlib_docs_sha256": sha256_file(docs_path),
         },
-        "official_skill_reference": {
-            "role": policy["official_skill_role"],
-            "path": official_path,
-            "tag": tag,
-            "sha256": hashlib.sha256(official_bytes).hexdigest(),
-            "runtime_dependency": False,
-        },
         "canary": {
-            "tag": policy.get("latest_canary_tag"),
-            "commit": policy.get("latest_canary_commit"),
+            "tag": runtime_policy.get("latest_canary_tag"),
+            "commit": runtime_policy.get("latest_canary_commit"),
             "release_blocking": False,
-            "stdlib_tree_matches_release": True,
+            "stdlib_tree_matches_runtime": True,
         },
     }
 
@@ -1439,7 +1481,7 @@ def build_runtime_assets(
             "ls-tree",
             "-r",
             "--name-only",
-            str(source_lock["release"]["tag"]),
+            str(source_lock["runtime"]["revision"]),
             stdlib_prefix.rstrip("/"),
         ).splitlines()
         if path.endswith(".sql")
@@ -1449,8 +1491,9 @@ def build_runtime_assets(
         {
             **symbol_index,
             "source_sha256": sha256_file(symbol_source),
-            "official_tag": source_lock["release"]["tag"],
-            "official_stdlib_tree": source_lock["release"]["stdlib_tree"],
+            "runtime_reported_version": source_lock["runtime"]["reported_version"],
+            "runtime_revision": source_lock["runtime"]["revision"],
+            "runtime_stdlib_tree": source_lock["runtime"]["stdlib_tree"],
         },
     )
 
@@ -1690,7 +1733,7 @@ def build_runtime_assets(
         {
             "schema_version": 1,
             "source_commit": commit,
-            "perfetto": source_lock["release"],
+            "perfetto": source_lock["runtime"],
             "summary": {
                 "queries": total_queries,
                 "static_valid": total_queries,
