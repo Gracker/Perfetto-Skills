@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/memory_module.skill.yaml
 -- Source SHA-256: 4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd
--- Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
+-- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
 
 SELECT
   s.ts,

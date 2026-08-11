@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/network.strategy.md
 Source SHA-256: a493c2db8bbd3fa503b4fc5381c9dc6f50f796a81b8794b342a29e4de6eab6b2
-Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
+Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
 
 # Network Strategy
 

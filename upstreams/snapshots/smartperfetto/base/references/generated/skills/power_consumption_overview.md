@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/power_consumption_overview.skill.yaml
 Source SHA-256: 3fd570b2fe2d876beed93fc701e9e78467b57f17c24fdc5de0bcc741cf156af8
-Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
+Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
 # 功耗总览分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

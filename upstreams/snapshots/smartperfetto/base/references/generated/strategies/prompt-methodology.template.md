@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/prompt-methodology.template.md
 Source SHA-256: 6fd388210532a515aabfcc268720cea087fb6da7f8bc38541c62d24667aa2caf
-Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
+Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
 
 # Prompt Methodology Template
 

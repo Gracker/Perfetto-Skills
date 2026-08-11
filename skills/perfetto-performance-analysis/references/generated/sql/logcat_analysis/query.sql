@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/logcat_analysis.skill.yaml
 -- Source SHA-256: 8c0018e6416eba29e18bcde7319b929fcc73db350ceff3d87b86e2e2b66e0f60
--- Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
+-- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
 
 WITH tagged AS (
   SELECT

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_jit_analysis.skill.yaml
 -- Source SHA-256: 3b238fd00ac7450afc57b24ada44cbcb0b1c9f11a83cba1a91e1af48addd169a
--- Source commit: d370620ee53fa3b255e1b519b9592a6780a0b2b9
+-- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
 
 WITH jit_threads AS (
   SELECT t.utid, t.name as thread_name

@@ -54,7 +54,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/fence_wait_decomposition/acquire_fence_wait.sql",
-      "sha256": "b6f9838d918332dfe40215b527ab27615f20faeb5c4f436922fe205568eebf59",
+      "sha256": "c0128cc572ad29c995933aff4a0e4f1bd91f09aeb43f043c123ef476a2b818ea",
       "signal_patterns": [
         "*acquireBuffer*",
         "*latchBuffer*",
@@ -62,7 +62,7 @@
       ],
       "skill_id": "fence_wait_decomposition",
       "source": {
-        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
+        "commit": "eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc",
         "path": "backend/skills/atomic/fence_wait_decomposition.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "182d5e6b03a0ccfbd53f5da992628513e87e9afe773539e0fc312d54148568af"
@@ -151,14 +151,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/fence_wait_decomposition/present_fence_timing.sql",
-      "sha256": "9247e5dd976c7be198f0c08de667e1ddcd9306a8550ce15971f4646991ee83cb",
+      "sha256": "d1acaea2657cfd2982b733dcc3dd98b30c672a6f4132a3a037cd82e2c6a8f15b",
       "signal_patterns": [
         "*presentDisplay*",
         "surfaceflinger"
       ],
       "skill_id": "fence_wait_decomposition",
       "source": {
-        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
+        "commit": "eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc",
         "path": "backend/skills/atomic/fence_wait_decomposition.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "182d5e6b03a0ccfbd53f5da992628513e87e9afe773539e0fc312d54148568af"
@@ -247,14 +247,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/fence_wait_decomposition/release_fence_impact.sql",
-      "sha256": "c801d422de9493c3ba8cb2a574797f74c36c25bfa9b616739b417d7e951a43dd",
+      "sha256": "6de7148ddbfd2732ff1435cfafae3adaee863db5e129e775664dc433c5696c18",
       "signal_patterns": [
         "${package}*",
         "*dequeueBuffer*"
       ],
       "skill_id": "fence_wait_decomposition",
       "source": {
-        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
+        "commit": "eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc",
         "path": "backend/skills/atomic/fence_wait_decomposition.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "182d5e6b03a0ccfbd53f5da992628513e87e9afe773539e0fc312d54148568af"
@@ -344,7 +344,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/fence_wait_decomposition/fence_attribution_hint.sql",
-      "sha256": "e229097dd9dd8703b79f36851c0b8968b2e3845de9319743e9a8f385b7062e67",
+      "sha256": "24154f85625bf72f05d9f2873f1de95dcaccb51591c2ce76989bbc8b041528d7",
       "signal_patterns": [
         "*acquireBuffer*",
         "*dequeueBuffer*",
@@ -354,7 +354,7 @@
       ],
       "skill_id": "fence_wait_decomposition",
       "source": {
-        "commit": "d370620ee53fa3b255e1b519b9592a6780a0b2b9",
+        "commit": "eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc",
         "path": "backend/skills/atomic/fence_wait_decomposition.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "182d5e6b03a0ccfbd53f5da992628513e87e9afe773539e0fc312d54148568af"
