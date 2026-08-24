@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/android_heap_dominator_path_extract.skill.yaml
 -- Source SHA-256: de4b9f64860789167409e6604441d8c932167169e8bed9c34ff6cbd580dc0daf
--- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+-- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 CREATE OR REPLACE PERFETTO TABLE __sp_heap_dominator_cumulatives AS
 SELECT *

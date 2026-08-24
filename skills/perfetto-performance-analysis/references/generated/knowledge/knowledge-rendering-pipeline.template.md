@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-rendering-pipeline.template.md
 Source SHA-256: 647f1c76a6b387ddf8ba479a55dbc2d1d5dbc62a28d71d55e16844b53fd1e8b8
-Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 # Knowledge Rendering Pipeline Template
 

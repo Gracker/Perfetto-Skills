@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/sf_frame_consumption.skill.yaml
 -- Source SHA-256: 45c4f9d714bd602d37b6011a5c75d3aa1293dc5e685525319a2af173b801d580
--- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+-- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 WITH
 time_bounds AS (

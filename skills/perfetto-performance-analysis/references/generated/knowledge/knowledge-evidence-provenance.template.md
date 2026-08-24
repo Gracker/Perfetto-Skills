@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-evidence-provenance.template.md
 Source SHA-256: 2d9053f33f224f11f3c38086602477834282da9988d6df5a45ffb80320a2dff8
-Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 # Knowledge Evidence Provenance Template
 

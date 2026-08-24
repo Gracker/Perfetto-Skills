@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/scheduling_analysis.skill.yaml
 Source SHA-256: 1e143b06981a9c0792d2263ba7c2d42a08a87a69f9257a6af7305abdc3080cab
-Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 # 调度延迟分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

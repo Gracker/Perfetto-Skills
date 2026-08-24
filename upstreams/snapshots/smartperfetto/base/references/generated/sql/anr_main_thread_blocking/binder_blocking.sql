@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
 -- Source SHA-256: 752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9
--- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+-- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 -- 使用 stdlib android_binder_txns 替代手动 binder slice 解析
 WITH analysis_window AS (

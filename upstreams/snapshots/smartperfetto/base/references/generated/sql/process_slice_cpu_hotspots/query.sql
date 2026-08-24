@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/process_slice_cpu_hotspots.skill.yaml
 -- Source SHA-256: fd6bc72d2cee67b783f9795e253586db60f2b7a3c3e786495b6d998e69403a8a
--- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+-- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 WITH
 raw_input AS (

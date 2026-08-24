@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S13_game_type.md
 Source SHA-256: febe59cdcbfc9f84b238e4f2ea104001c70a1ec9f4aed057f2da5fb9e6ee44b0
-Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 # Android Perfetto 系列 - App 出图类型 - Game 类型
 

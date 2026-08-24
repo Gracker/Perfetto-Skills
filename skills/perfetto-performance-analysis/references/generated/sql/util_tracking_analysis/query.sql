@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/util_tracking_analysis.skill.yaml
 -- Source SHA-256: 05f535c2fcad4c73b0f5d2dbe56e94502556a6b720d7c85bf8dcd54146c732b2
--- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+-- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 -- 分析启动/滑动前 100ms 的频率 vs 实际负载，检测 util 建模延迟
 -- 如果任务一直在 Running 但频率低，说明 util_avg 还没反映真实负载

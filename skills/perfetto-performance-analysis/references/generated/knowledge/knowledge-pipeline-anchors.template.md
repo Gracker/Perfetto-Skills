@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-pipeline-anchors.template.md
 Source SHA-256: 398f2233633ac13b9932f6bf6563ea6b68ae20615868ed42d4ba205dc0970c56
-Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 # Knowledge Pipeline Anchors Template
 

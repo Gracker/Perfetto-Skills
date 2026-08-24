@@ -2870,10 +2870,10 @@
     }
   ],
   "source": {
-    "commit": "eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc",
+    "commit": "9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "ad9499473017ad616784c61cac1ed4f69e543baada879b7e48ecc53356c70412",
+    "policy_sha256": "2ccb6920076ccf05aced04a7508bb1add77a859b6a8fff1168d557872befdb67",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3022,6 +3022,12 @@
       "source_path": "backend/strategies/general.strategy.md",
       "source_sha256": "55e68c199e703ddf8070d9fecdbdb4019605b393811b5b2db6c9427ab54c9fd8",
       "workflow": "trace-overview"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto golden trace evaluation corpus and gated overlay lifecycle",
+      "source_path": "backend/strategies/golden-trace-eval.registry.json",
+      "source_sha256": "bd9c4e1bd4815449f4943f529887dd7c0b7a1ee4bcafd6cc8045b1c927887642"
     },
     {
       "destination": "references/generated/strategies/interaction.strategy.md",
@@ -3262,6 +3268,18 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto final-report runtime orchestration",
+      "source_path": "backend/strategies/prompt-final-report-quality-issue-en.template.md",
+      "source_sha256": "a6e2e9fc88ae0ca5aa721c8019911814de6735463dd6ba8804b5b6eb1bd4c59c"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto final-report runtime orchestration",
+      "source_path": "backend/strategies/prompt-final-report-quality-issue-zh.template.md",
+      "source_sha256": "e3e7df54410c37e2da18dfe77f479326618f70661844be3315f339836529290b"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-language-en.template.md",
       "source_sha256": "82fe961b8104c927675bad447569926438407b1f4d5c8043583cf63799620df0"
@@ -3292,18 +3310,6 @@
       "source_sha256": "5440b5f79bb0d49148d1387608956e308cd4e8549456eca8a8e8dc5a45c4f901"
     },
     {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto final-report runtime orchestration",
-      "source_path": "backend/strategies/prompt-opencode-final-report-quality-issue-en.template.md",
-      "source_sha256": "c8292201c96fa1265bd82e9aaecdb9fbd84fff584ad96d3419cdd833aaa618fa"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto final-report runtime orchestration",
-      "source_path": "backend/strategies/prompt-opencode-final-report-quality-issue-zh.template.md",
-      "source_sha256": "31250f4e75ec6c986cbb0748fecd1e985c51e3839377ce2eb56f5b36c5d2bb0f"
-    },
-    {
       "destination": "references/generated/strategies/prompt-output-format.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/prompt-output-format.template.md",
@@ -3326,7 +3332,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-quick.template.md",
-      "source_sha256": "c8144f506b0a7561fcd64dcb936a9964ae0d5171dd4f7967dcabe561490f8b79"
+      "source_sha256": "8e2b85060d1974b7879abde3897ad18a74c3654c1a9a78316ef0396eaeca3bc2"
     },
     {
       "disposition": "product-only",
@@ -3368,13 +3374,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime session and memory orchestration",
       "source_path": "backend/strategies/prompt-runtime-fast-memory-en.template.md",
-      "source_sha256": "e778127dbbb9714d8aad5662e58b9c400d692b43fb99bfee10e9609216d74dcc"
+      "source_sha256": "d6322dcdb01280d380b188bfd89fac2d4744f1da3b20c1b045a6ab7d28a07ae4"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime session and memory orchestration",
       "source_path": "backend/strategies/prompt-runtime-fast-memory-zh.template.md",
-      "source_sha256": "8432f26ee3d508ade8eb6b3621652bc80a9237e77c98d5376ce30e6de51e1a5d"
+      "source_sha256": "f2e99352054dde6eba2a23c14e762585a28d201b31a186be75ede2db04dfbb59"
     },
     {
       "disposition": "product-only",
@@ -3392,13 +3398,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto frontend pre-query and evidence-reference orchestration",
       "source_path": "backend/strategies/prompt-runtime-trace-context-en.template.md",
-      "source_sha256": "83ae0150deab16f7ea7a6a90e98d4f193e15f989547a9dc47270d723b5256ba6"
+      "source_sha256": "80399d034d90ce05daf42b62148440e702b1d479d32f2f5de89a2c1d26cbb023"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto frontend pre-query and evidence-reference orchestration",
       "source_path": "backend/strategies/prompt-runtime-trace-context-zh.template.md",
-      "source_sha256": "491750d958dd2b913487d2d5381cc8797b741651058ee6cbaec02c7ed70e755e"
+      "source_sha256": "d1480c4e134e5017f86055f92ccc766688c92459b8348a560dc01fc9ba32d3f6"
     },
     {
       "destination": "references/generated/strategies/prompt-scene-stage3-summary.template.md",
@@ -3561,14 +3567,14 @@
       "destination": "references/generated/strategies/selection-area.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/selection-area.template.md",
-      "source_sha256": "3166bc6d4745e6b42148a4642349254d11d5b1dddb1a0aeaa7a6baa635462f76",
+      "source_sha256": "ce1ecbde75384022d028e1025ca885e1984539d80131f57e7d25dcfedd3d0aee",
       "workflow": "trace-overview"
     },
     {
       "destination": "references/generated/strategies/selection-slice.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/selection-slice.template.md",
-      "source_sha256": "564366085a8bf47a77e08a4041bdda2d0c8581c8febb8b9f6c45ee3cbafff681",
+      "source_sha256": "5f8cd9bb4c7f260b3754be777224e199a353948d70053b9dc2655dec25ab086c",
       "workflow": "trace-overview"
     },
     {
@@ -3576,12 +3582,6 @@
       "reason": "SmartPerfetto self-evolution proposal generation, persistence, and gated overlay lifecycle",
       "source_path": "backend/strategies/selfevolve-proposal.template.md",
       "source_sha256": "6f0cb08d742ff10d2dc707e8d2304f21e6bcaa20989dd2effcd0f0ce57ea6f1e"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto self-evolution evaluation corpus and gated overlay lifecycle",
-      "source_path": "backend/strategies/selfevolve-synthetic-eval-seeds.registry.yaml",
-      "source_sha256": "bde3be32f26de6f63979f9561b646fb063996ab24f2c42930d479621bd13ce25"
     },
     {
       "destination": "references/generated/strategies/smart.strategy.md",

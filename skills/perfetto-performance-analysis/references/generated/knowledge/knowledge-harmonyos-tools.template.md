@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-harmonyos-tools.template.md
 Source SHA-256: 6e2d08433c55123070f50bc80d0c7f2df4d4a8df156d3c86157d09cc03a2cb2e
-Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 # Knowledge Harmonyos Tools Template
 

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/selection-area.template.md
-Source SHA-256: 3166bc6d4745e6b42148a4642349254d11d5b1dddb1a0aeaa7a6baa635462f76
-Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+Source SHA-256: ce1ecbde75384022d028e1025ca885e1984539d80131f57e7d25dcfedd3d0aee
+Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 # Selection Area Template
 
@@ -20,14 +20,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
 
-<!-- Template variables (substituted by claudeSystemPrompt.ts):
-  {{startNs}}     - Area start timestamp in ns (number)
-  {{endNs}}       - Area end timestamp in ns (number)
-  {{durationMs}}  - Duration in ms, e.g. "19.30"
-  {{trackCount}}  - Number of selected tracks (number or "未知")
-  {{trackSummary}} - Pre-formatted track list grouped by process (string, may be empty)
-  {{sourceLabel}} - Selection source label, e.g. Perfetto area/time-range selection or current visible timeline window
--->
 ## 用户选区上下文
 
 用户当前问题带有一个明确的时间范围 scope（来源: {{sourceLabel}}）：
@@ -37,27 +29,6 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - **选中 Track 数:** {{trackCount}}{{trackSummary}}
 
 **分析约束:**
-- 选区/窗口只定义时间和可选 track scope；用户真正要看的指标由用户问题决定，不要用固定 pattern 代替意图判断
-- SQL 查询必须限制在上述时间范围。对 `slice` / `thread_state` / `sched_slice` 这类带持续时间的表，优先使用 overlap clipping：`ts < {{endNs}} AND ts + dur > {{startNs}}`，并用 `MIN(ts + dur, {{endNs}}) - MAX(ts, {{startNs}})` 计算区间内贡献
-- 上述时间戳是 trace_processor 原始时间戳（ns），可直接用于 slice/thread_state/sched 等所有表的 ts 列
-- 分析结论应聚焦于用户选择的这段区间
-- 如果需要全局上下文（如整体 VSync 周期）来做对比，可以额外查询，但核心分析范围是选区内
-- 当用户提到"选中的区间"/"这一段"/"选择的范围"/"marked area"/"current window"等，指的就是上述时间窗口
-- 如果前端请求附带了 `traceContext` datasets，优先复用其中已经预取的选区数据；缺少用户所问的指标时，再调用工具补齐
-
-**选区内常用 SQL 查询模板（需要自定义 SQL 时使用）:**
-```sql
--- 1) 选区内某线程的调度状态分布（大小核、Running/Sleeping/Runnable）
-SELECT cpu, state,
-       SUM(MIN(ts + dur, {{endNs}}) - MAX(ts, {{startNs}}))/1e6 AS total_ms,
-       COUNT(*) AS count
-FROM thread_state
-WHERE utid = <UTID>
-  AND ts < {{endNs}} AND ts + dur > {{startNs}}
-GROUP BY cpu, state ORDER BY total_ms DESC;
-
--- 2) 选区内 CPU 频率变化（使用 counter + cpu_counter_track，不要用 cpu_frequency_counters）
-SELECT ct.cpu, c.ts, c.value AS freq_khz
-FROM counter c JOIN cpu_counter_track ct ON c.track_id = ct.id
-WHERE ct.name = 'cpufreq' AND c.ts >= {{startNs}} AND c.ts <= {{endNs}}
-ORDER BY ct.cpu, c.ts;
+- 这些字段只定义时间/Track 身份，不是 Trace 事实；名称、进程、线程和指标必须由后端工具查询后才能作为证据
+- 指标由用户问题决定，核心查询限制在该区间；全局数据只能作为显式对照
+- 持续时间表使用 overlap clipping：`ts < {{endNs}} AND ts + dur > {{startNs}}`；区间贡献为 `MIN(ts + dur, {{endNs}}) - MAX(ts, {{startNs}})`

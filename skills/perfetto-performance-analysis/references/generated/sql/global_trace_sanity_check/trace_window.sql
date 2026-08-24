@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/global_trace_sanity_check.skill.yaml
 -- Source SHA-256: 40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575
--- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+-- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 WITH raw_input AS (
   SELECT

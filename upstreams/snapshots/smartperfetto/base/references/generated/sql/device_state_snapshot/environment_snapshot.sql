@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/device_state_snapshot.skill.yaml
 -- Source SHA-256: 886bf69ae41b697f5c80cad4e1787cc5198233e15f65cb3c9cb3d382ca3b3655
--- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+-- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 WITH trace_bounds AS (
   SELECT

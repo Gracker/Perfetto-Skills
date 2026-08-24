@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
 Source SHA-256: 2a4b0b4e4ca2c5ab0d9682f1b272e83dcd5a282ad60e5e79f512a9193bbd132b
-Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 # Scrolling Strategy
 

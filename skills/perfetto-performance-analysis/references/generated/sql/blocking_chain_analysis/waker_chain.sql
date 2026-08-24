@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/blocking_chain_analysis.skill.yaml
 -- Source SHA-256: d2c7a63dade5310e92b508c129b78b4e3a420c57d613ac75107d93e89f7418cf
--- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+-- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 WITH main_thread AS (
   SELECT t.utid

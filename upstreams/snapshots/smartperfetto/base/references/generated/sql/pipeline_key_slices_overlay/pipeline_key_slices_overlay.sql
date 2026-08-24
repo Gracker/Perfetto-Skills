@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/pipeline_key_slices_overlay.skill.yaml
 -- Source SHA-256: 34b2abe52c508a34d1fb3f9794fbac79210dc3ee9fb9e3d4305b68a4c3699b97
--- Source commit: eec8bff767eb3277f1f0dd106d0d7a0cfdab2dfc
+-- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
 
 SELECT
   s.ts,
