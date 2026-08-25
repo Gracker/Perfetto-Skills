@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/arch-flutter.template.md
 Source SHA-256: e9390b364cd97b5cb28319401df7c000e46e1dbf3b3f77d8b35cef2cfafe41e7
-Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
+Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
 
 # Arch Flutter Template
 

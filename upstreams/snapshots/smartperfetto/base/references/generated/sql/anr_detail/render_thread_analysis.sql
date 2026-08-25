@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
 -- Source SHA-256: e48c73408b2775bed099612d32832cde9f70ca33cd1cc462e0275b1454588359
--- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
+-- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
 
 WITH render_thread AS (
   SELECT t.utid, t.tid

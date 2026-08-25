@@ -135,6 +135,17 @@ def load_and_validate_google_lock(
         raise ValueError("trace processor reported version does not match runtime")
     if trace_lock.get("rpc_api_version") != runtime["rpc_api_version"]:
         raise ValueError("trace processor RPC API does not match runtime")
+    artifact_version = trace_lock.get("artifact_version", revision)
+    if not isinstance(artifact_version, str) or not (
+        artifact_version == revision
+        or re.fullmatch(r"v\d+(?:\.\d+)*", artifact_version)
+    ):
+        raise ValueError("trace processor artifact version is invalid")
+    if (
+        "artifact_version" in trace_lock
+        and artifact_version != runtime["reported_version"]
+    ):
+        raise ValueError("trace processor artifact version does not match reported version")
     platforms = trace_lock.get("platforms")
     if not isinstance(platforms, dict) or set(platforms) != set(
         TRACE_PROCESSOR_EXECUTABLES
@@ -144,9 +155,9 @@ def load_and_validate_google_lock(
         entry = platforms[key]
         if not isinstance(entry, dict):
             raise ValueError(f"trace processor platform entry is invalid: {key}")
-        expected_path = PurePosixPath(revision, key, executable)
+        expected_path = PurePosixPath(artifact_version, key, executable)
         if PurePosixPath(str(entry.get("path"))) != expected_path:
-            raise ValueError(f"trace processor path differs from runtime revision: {key}")
+            raise ValueError(f"trace processor path differs from artifact version: {key}")
         _require_hash(entry.get("sha256"), f"trace processor platform hash {key}")
     if not validate_snapshots:
         return lock

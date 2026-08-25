@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/multi-trace-result-comparison.strategy.md
 Source SHA-256: 361979e0bd5f57353028a1ff2d5e9003f9ef20ad310b114545246d357f2b4687
-Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
+Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
 
 # Multi Trace Result Comparison Strategy
 

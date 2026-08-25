@@ -1,11 +1,11 @@
 {
-  "commit": "da1d152cff27890903d158fe96751de3aab883cc",
+  "commit": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
   "files": [
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/SKILL-template.md",
-      "sha256": "4bbe57d18f7d8dc56ca9379046397c2cb21bb7d55f4c29a7c50533b492097a14",
-      "size": 3962
+      "sha256": "cf1fe648f526ff4e5a179c9c099f05f97ee0fe7519772b701d1a85481af1a913",
+      "size": 4646
     },
     {
       "license": "Apache-2.0",
@@ -15,21 +15,75 @@
     },
     {
       "license": "Apache-2.0",
+      "path": "ai/skills/perfetto/infra-references/example-configs/app_jank.pftxt",
+      "sha256": "41bcc23a2300eb8913fc51b4e57578701bbb286cd60b549e3acec6b48da125ca",
+      "size": 1040
+    },
+    {
+      "license": "Apache-2.0",
+      "path": "ai/skills/perfetto/infra-references/example-configs/cpu_profile.pftxt",
+      "sha256": "62b0a152896bd4a99e4296770baff539c05bf79692818b33fa6d2043bc2a4092",
+      "size": 773
+    },
+    {
+      "license": "Apache-2.0",
+      "path": "ai/skills/perfetto/infra-references/example-configs/java_heap_dump.pftxt",
+      "sha256": "5b47447092cfdf81f780fd695fce7ca7aa70d5330325ae4f2cc67c504877159d",
+      "size": 566
+    },
+    {
+      "license": "Apache-2.0",
+      "path": "ai/skills/perfetto/infra-references/example-configs/long_background.pftxt",
+      "sha256": "87b1aa82a782941b15278678b9bd0a44db2d91165b7062b27dd16a6cf3110b71",
+      "size": 1006
+    },
+    {
+      "license": "Apache-2.0",
+      "path": "ai/skills/perfetto/infra-references/example-configs/memory_counters.pftxt",
+      "sha256": "e4298731b59c3a01cdfa5151446d3f3af845491ff8b98694357e09de58fc49df",
+      "size": 1069
+    },
+    {
+      "license": "Apache-2.0",
+      "path": "ai/skills/perfetto/infra-references/example-configs/native_heap.pftxt",
+      "sha256": "e67c5ad23119c08ede35468e2b66ee63317ae55b54e4a06c9b0af2c043459be8",
+      "size": 589
+    },
+    {
+      "license": "Apache-2.0",
+      "path": "ai/skills/perfetto/infra-references/example-configs/sched_cpu.pftxt",
+      "sha256": "a37c989c0b3aa5d1d609f138d52c0625b728a2ec140ba8603991f562e614d9e0",
+      "size": 836
+    },
+    {
+      "license": "Apache-2.0",
       "path": "ai/skills/perfetto/infra-references/querying.md",
-      "sha256": "196f98d4b893bd3dea7b8f1e3b21fc91b485abf90841186551a610e134c8fc2b",
-      "size": 16057
+      "sha256": "2d3b0918a7171ea01e79fbf1827aa5d930e086abe2a1fe85e40ecb01f53b7371",
+      "size": 15970
     },
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/infra-references/recording_android_traces.md",
-      "sha256": "a71c03edbe9370b3b847cffd581d4517a8d617beed0b785508a5f89324549518",
-      "size": 5007
+      "sha256": "cba75c6aa71c2d4ed4965660af6f50703e601cf6b9e53a14fbeddcaffc5f2d06",
+      "size": 5479
+    },
+    {
+      "license": "Apache-2.0",
+      "path": "ai/skills/perfetto/infra-references/recording_linux_traces.md",
+      "sha256": "3dfc3801bac4ed0412643710e768df865959c383bad491a61cfd65df3c774404",
+      "size": 2677
+    },
+    {
+      "license": "Apache-2.0",
+      "path": "ai/skills/perfetto/infra-references/trace_config_reference.md",
+      "sha256": "5cce2b54ea660bec3d90262aad384e93dd92c1abce48ad843e4c15aea14a863c",
+      "size": 5597
     },
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/android_memory/heap_dump.md",
-      "sha256": "0903ae5586914bad1eb4e1d23cf0da2d3d01fe21890958966bf15c92559a5e74",
-      "size": 9678
+      "sha256": "eda9a4cfb8a06a90e5d8ba68249d7ecd6b43d6f36ac13caacd155396bb62924c",
+      "size": 9684
     },
     {
       "license": "Apache-2.0",
@@ -46,14 +100,14 @@
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/android_memory/java_allocation_profile.md",
-      "sha256": "c06372498d76a4a7cd8ac159cd79101b976fe3b6bd8051f740ac76f2727d2881",
-      "size": 7677
+      "sha256": "89c0ff35d0eb9e3b0e09feb0f794fdb4eaf8aaf34447433d825da4b383fea815",
+      "size": 7683
     },
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/android_memory/native_heap.md",
-      "sha256": "7734b7c0501bb9049c14f833dfcca090b956ce13fc79ae3965975b3b76eb8bfd",
-      "size": 7881
+      "sha256": "9e6f210c82c6a87ab8c32f14c8121d07a98de7f8789a19f34cf6f57698f5f7be",
+      "size": 7887
     },
     {
       "license": "Apache-2.0",
@@ -106,20 +160,20 @@
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/gpu/compute/kernel_analysis.md",
-      "sha256": "312862c81eecf05cb64a155391c4ea0cc81dba5fd2984c49fea92d3fcc41ba21",
-      "size": 4728
+      "sha256": "bbad22bab465764d7cc7ad140df149b286ea53f3b1b2666250d21253e4376010",
+      "size": 4734
     },
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/gpu/compute/launch_statistics.md",
-      "sha256": "1fd70a24d229c36ef81bf3c08dd73f92b9c0b51666dff50e8656a953af0fe3a4",
-      "size": 2533
+      "sha256": "d77a18a0150f4c3b45f5eead6de6b239e2afabd29bcd1840863968375da13c73",
+      "size": 2539
     },
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/occupancy.md",
-      "sha256": "8b182a7044106418d7fe2a17b88b867cde91a4589c86dab3efb134875142ca40",
-      "size": 1722
+      "sha256": "a7a3834d27125af4e1018915a82b9787797990b4c2ff934bd709ce19c262f906",
+      "size": 1728
     },
     {
       "license": "Apache-2.0",
@@ -142,14 +196,14 @@
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/speed_of_light.md",
-      "sha256": "a981b36d0b38059b6ed2fda837fcc3d792cce6194ad5b7fc61285c7a6d7067c7",
-      "size": 1725
+      "sha256": "95fd2685a600a1739e98a41925b4809095e9b13cd18f490b051133dd391f6c3a",
+      "size": 1731
     },
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/workload_analysis.md",
-      "sha256": "09e0049d58aaff291fda27d8f078500b37db5711d84c004aaa8efaf8b8ad7818",
-      "size": 2011
+      "sha256": "7f289472f5583612af6008dd2dd2bc570dab5bd324f7c7aaf522bfd3a0e04fd9",
+      "size": 2017
     },
     {
       "license": "Apache-2.0",
@@ -184,14 +238,14 @@
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/gpu/frequency_residency.md",
-      "sha256": "7cdb354de25e0cc48ac89ac06aa41c27c5120542479a1cbfff4707c2da1f24a6",
-      "size": 11232
+      "sha256": "182bd185f3b4df3d6aba16367e8a105916f9158471ee5900fe62fc87561cb821",
+      "size": 11250
     },
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/gpu/gpu_info.md",
-      "sha256": "2e7f40a7ac0905d8868b6f0b04b05b0e4e85c126fa4fcc9723cf80b43c084243",
-      "size": 3302
+      "sha256": "eff0b853538d84df24224f933799556822e6c0fc3735b488b132a7d2860e3edb",
+      "size": 3308
     },
     {
       "license": "Apache-2.0",
@@ -232,13 +286,13 @@
     {
       "license": "Apache-2.0",
       "path": "ai/skills/perfetto/workflows/gpu/timeline_occupancy.md",
-      "sha256": "c994a9984fea8b2d3fce124562aba88c347c1fa4cf692a75f80c8f64b36f8ad3",
-      "size": 6493
+      "sha256": "b8c8d3f9a36f4a37834cbd144d5caa3dbfd90d2e3483a756890a6322a8a4269d",
+      "size": 6505
     }
   ],
   "repository": "https://github.com/google/perfetto",
-  "revision": "v57.2",
+  "revision": "v58.2",
   "role": "gap_check_only",
   "schema_version": 1,
-  "tree": "6e84bc58bfe5983f19ecd1809da0511791b15d4f"
+  "tree": "999119a2617e9f043d5ff006e69a2a668034b28a"
 }

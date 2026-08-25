@@ -62,6 +62,49 @@ class BootstrapTest(unittest.TestCase):
             self.assertTrue(installed.stat().st_mode & 0o100)
             self.assertIn("a" * 40, installed.parts)
 
+    def test_release_artifact_path_stays_separate_from_revision_cache_key(self) -> None:
+        payload = b"verified executable"
+        expected = hashlib.sha256(payload).hexdigest()
+        revision = "a" * 40
+        lock = {
+            "schema_version": 2,
+            "revision": revision,
+            "artifact_version": "v58.2",
+            "reported_version": "v58.2",
+            "rpc_api_version": 14,
+            "base_url": "https://example.invalid",
+            "source": "test",
+            "platforms": {
+                "mac-arm64": {
+                    "path": "v58.2/mac-arm64/trace_processor_shell",
+                    "sha256": expected,
+                }
+            },
+        }
+        urls: list[str] = []
+
+        def open_artifact(url: str) -> io.BytesIO:
+            urls.append(url)
+            return io.BytesIO(payload)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "lock.json"
+            path.write_text(json.dumps(lock), encoding="utf-8")
+            loaded = self.bootstrap.load_lock(path)
+            installed = self.bootstrap.install_locked_binary(
+                loaded,
+                "mac-arm64",
+                Path(tmp) / "cache",
+                opener=open_artifact,
+            )
+
+            self.assertEqual(
+                urls,
+                ["https://example.invalid/v58.2/mac-arm64/trace_processor_shell"],
+            )
+            self.assertIn(revision, installed.parts)
+            self.assertNotIn("v58.2", installed.parts)
+
     def test_load_lock_rejects_paths_outside_the_revision_platform(self) -> None:
         valid = {
             "schema_version": 2,
@@ -128,10 +171,11 @@ class BootstrapTest(unittest.TestCase):
         lock = json.loads(lock_path.read_text(encoding="utf-8"))
         self.assertEqual(
             lock["revision"],
-            "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+            "add693d8b338ba9599dbcbc3e300b1ab8c000897",
         )
         self.assertEqual(lock["schema_version"], 2)
-        self.assertEqual(lock["reported_version"], "v57.2")
+        self.assertEqual(lock["artifact_version"], "v58.2")
+        self.assertEqual(lock["reported_version"], "v58.2")
         self.assertEqual(lock["rpc_api_version"], 14)
         self.assertEqual(
             set(lock["platforms"]),

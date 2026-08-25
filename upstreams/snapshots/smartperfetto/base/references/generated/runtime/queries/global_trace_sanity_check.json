@@ -55,14 +55,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/trace_window.sql",
-      "sha256": "ebb99756556fb4d35ea32f1069ccfb7221a76dc13dcfea2fa2a46e5e5fec95f2",
+      "sha256": "8422e93cc9546c882270d84e872eb138a61689a287e8834d3417449d99aab4c3",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4",
+        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575"
+        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
       },
       "sql_dependencies": {
         "creates": [],
@@ -146,20 +146,115 @@
           "thread_states"
         ]
       },
+      "id": "global_trace_sanity_check/trace_diagnostics",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/global_trace_sanity_check/trace_diagnostics.sql",
+      "sha256": "ae923a326bfcff6a106855bae7ae20428578611114d86c18c099b944bd1ce0c7",
+      "signal_patterns": [],
+      "skill_id": "global_trace_sanity_check",
+      "source": {
+        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "sched.thread_level_parallelism"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread_state",
+          "sched_slice"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "trace_diagnostics",
+      "template": {
+        "fragments": [],
+        "parameters": [
+          "max_rows"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices",
+          "thread_states"
+        ]
+      },
       "id": "global_trace_sanity_check/top_d_state_threads",
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/top_d_state_threads.sql",
-      "sha256": "958bf5b55b06ff45c719ac079e20d23028a0f8276598d487ae82e4502399c8a3",
+      "sha256": "d5ec91d82697a93c2acb58eec7a203ed1980be83e4e3c3e5dddf93ca3e7963e0",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4",
+        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575"
+        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
       },
       "sql_dependencies": {
         "creates": [],
@@ -249,14 +344,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/top_runnable_waits.sql",
-      "sha256": "41b6348ec6036d729ecdb0f687cc0cf0992d6a7f50d1b97698878aec24540d3b",
+      "sha256": "2213631a145cf638f9e022484b47280ac6fb47330c6dfd7e88ff8c81599b8ee2",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4",
+        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575"
+        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
       },
       "sql_dependencies": {
         "creates": [],
@@ -346,14 +441,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/runqueue_pressure.sql",
-      "sha256": "29b90583804fb8fd73eb0a27f9017e25d6a8e0ea64279066f53477cbbad1a4ab",
+      "sha256": "0a47a8580bc2d71b8993f21d949e22eb464617f5e64e510073de66a96bae54c7",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4",
+        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575"
+        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
       },
       "sql_dependencies": {
         "creates": [],
@@ -442,14 +537,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/top_cpu_processes.sql",
-      "sha256": "d069581c0f279364d819718d869fbcd2842a80e86cbaa8d87c9789f83439dd94",
+      "sha256": "34b9c49a3b700c70a13831aeda6eba0c4b0a60203988087bf616733d8edcafd6",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4",
+        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575"
+        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
       },
       "sql_dependencies": {
         "creates": [],

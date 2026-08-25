@@ -22,6 +22,7 @@ DEFAULT_LOCK = SKILL_ROOT / "references" / "trace-processor-lock.json"
 COMMIT = re.compile(r"^[0-9a-f]{40}$")
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 REPORTED_VERSION = re.compile(r"^v\d+(?:\.\d+)*$")
+ARTIFACT_VERSION = re.compile(r"^(?:[0-9a-f]{40}|v\d+(?:\.\d+)*)$")
 PLATFORM_EXECUTABLES = {
     "linux-amd64": "trace_processor_shell",
     "linux-arm64": "trace_processor_shell",
@@ -48,6 +49,11 @@ def load_lock(path: str | Path = DEFAULT_LOCK) -> dict[str, object]:
         reported_version
     ):
         raise ValueError(f"Lock file has invalid reported version: {lock_path}")
+    artifact_version = data.get("artifact_version", revision)
+    if not isinstance(artifact_version, str) or not ARTIFACT_VERSION.fullmatch(
+        artifact_version
+    ):
+        raise ValueError(f"Lock file has invalid artifact version: {lock_path}")
     if not isinstance(data.get("rpc_api_version"), int) or data["rpc_api_version"] <= 0:
         raise ValueError(f"Lock file has invalid RPC API version: {lock_path}")
     platforms = data.get("platforms")
@@ -57,9 +63,9 @@ def load_lock(path: str | Path = DEFAULT_LOCK) -> dict[str, object]:
         executable = PLATFORM_EXECUTABLES.get(key)
         if executable is None or not isinstance(entry, dict):
             raise ValueError(f"Lock file has invalid platform entry: {key}")
-        expected_path = PurePosixPath(revision, key, executable)
+        expected_path = PurePosixPath(artifact_version, key, executable)
         if PurePosixPath(str(entry.get("path"))) != expected_path:
-            raise ValueError(f"Lock file path is not bound to runtime revision: {key}")
+            raise ValueError(f"Lock file path is not bound to artifact version: {key}")
         digest = entry.get("sha256")
         if not isinstance(digest, str) or not SHA256.fullmatch(digest):
             raise ValueError(f"Lock file has invalid SHA-256: {key}")

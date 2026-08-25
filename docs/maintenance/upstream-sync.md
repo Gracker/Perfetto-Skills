@@ -137,9 +137,11 @@ or a claim that the runtime revision descends from the official release tag.
 
 1. Verify the official tag and peeled commit independently. Then verify that
    the runtime revision, RPC API, trace-processor v2 lock, and runtime stdlib
-   tree ID agree in `upstreams/google-perfetto.lock.json`. The trace lock paths,
-   binary cache key, and all five platform artifacts must use the full runtime
-   revision.
+   tree ID agree in `upstreams/google-perfetto.lock.json`. The binary cache key
+   must use the full runtime revision. When Google publishes release-addressed
+   artifacts instead of commit-addressed artifacts, the trace lock records a
+   separate `artifact_version`; all five platform paths use that locator while
+   source identity and cache isolation remain bound to the full revision.
 2. Run `uv run python tools/sync_perfetto_stdlib.py --perfetto PATH
    --report-dir test-output/sync` to index modules, exported symbols, hashes,
    documentation, and parse warnings through `git ls-tree` and `git show`.

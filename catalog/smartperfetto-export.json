@@ -1,13 +1,13 @@
 {
   "fixture_manifest_source": "backend/skills/public-fixtures.yaml",
   "official_perfetto": {
-    "commit": "da1d152cff27890903d158fe96751de3aab883cc",
+    "commit": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
     "official_skill_reference": "ai/skills/perfetto/SKILL-template.md",
     "official_skill_role": "gap_check_only",
     "repository": "https://github.com/google/perfetto",
     "rpc_api_version": 14,
-    "stdlib_tree": "7f0459ca3eed8372a8762ae052ed7fdb48eb3d88",
-    "tag": "v57.2"
+    "stdlib_tree": "54fc9f0b5c8dedb8772283b6786753fbb918da0d",
+    "tag": "v58.2"
   },
   "pipeline_docs": [
     {
@@ -97,11 +97,11 @@
   ],
   "public_skill": "perfetto-performance-analysis",
   "runtime_perfetto": {
-    "reported_version": "v57.2",
+    "reported_version": "v58.2",
     "repository": "https://github.com/google/perfetto",
-    "revision": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+    "revision": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
     "rpc_api_version": 14,
-    "stdlib_tree": "0f6529d3ecf91c15c1572044c60512dcf14593d5"
+    "stdlib_tree": "54fc9f0b5c8dedb8772283b6786753fbb918da0d"
   },
   "schema_version": 1,
   "skills": [
@@ -1041,7 +1041,7 @@
       "name": "global_trace_sanity_check",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
-      "source_sha256": "40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575",
+      "source_sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec",
       "tier": "S",
       "version": "1.0",
       "workflow": "trace-overview"
@@ -2870,10 +2870,10 @@
     }
   ],
   "source": {
-    "commit": "9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4",
+    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "2ccb6920076ccf05aced04a7508bb1add77a859b6a8fff1168d557872befdb67",
+    "policy_sha256": "604fa5974ed1f8f0b823b275b6d69eb3655e39e01e7b02cecd9c2746d1fc290f",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3294,7 +3294,7 @@
       "destination": "references/generated/strategies/prompt-methodology.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/prompt-methodology.template.md",
-      "source_sha256": "6fd388210532a515aabfcc268720cea087fb6da7f8bc38541c62d24667aa2caf",
+      "source_sha256": "d917364ff7727725e17f6cfb9e2a17cdc7c5b49272a65fd2bf4a0cebce9effa8",
       "workflow": "trace-overview"
     },
     {

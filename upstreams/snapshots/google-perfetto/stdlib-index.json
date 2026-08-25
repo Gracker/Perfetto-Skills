@@ -1,5 +1,5 @@
 {
-  "commit": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+  "commit": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
   "intrinsic_schema_sources": [
     {
       "path": "src/trace_processor/tables/android_tables.py",
@@ -611,7 +611,7 @@
       "doc": " Copyright 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. ",
       "module": "android.cujs.frames",
       "path": "src/trace_processor/perfetto_sql/stdlib/android/cujs/frames.sql",
-      "sha256": "26f4f4b7f00b49f269df3f182ff277044b7035b15729e9faf633de640052ad01",
+      "sha256": "f662aaa337e8c9fe997a6c9a5b310a55009e6b6779e9d6d9a1e4d58d43925da5",
       "symbols": [
         {
           "kind": "TABLE",
@@ -624,6 +624,10 @@
         {
           "kind": "TABLE",
           "name": "_android_jank_cuj_sf_frame"
+        },
+        {
+          "kind": "TABLE",
+          "name": "android_jank_cuj_slice_summary"
         }
       ]
     },
@@ -4407,7 +4411,7 @@
       "doc": "Copyright (C) 2026 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. you may obtain a copy of the License at  http://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "pixel.touch",
       "path": "src/trace_processor/perfetto_sql/stdlib/pixel/touch.sql",
-      "sha256": "25e5efaf388e54affd122a0d7c5f4a0b4e923c8ba43ff238abca30666b75a526",
+      "sha256": "fff447ed479e1850afbb9326cc1d9ac9eab2596c1cd400cafb84c3fd61fd96cf",
       "symbols": [
         {
           "kind": "TABLE",
@@ -6554,54 +6558,54 @@
       "doc": " Copyright 2025 The Android Open Source Project  Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at  https://www.apache.org/licenses/LICENSE-2.0  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.",
       "module": "wattson.ui.continuous_estimates",
       "path": "src/trace_processor/perfetto_sql/stdlib/wattson/ui/continuous_estimates.sql",
-      "sha256": "dadbbf17992b96315c910d342f626efbfff41323a267a7ce50e825d8e0bc8651",
+      "sha256": "b209722a656f9ad8ec6fef209abef7317e94c3e513896e4c811663dc65b8adde",
       "symbols": [
         {
           "kind": "MACRO",
           "name": "_get_continuous_estimates"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_cpu0_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_cpu1_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_cpu2_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_cpu3_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_cpu4_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_cpu5_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_cpu6_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_cpu7_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_dsu_scu_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_gpu_mw"
         },
         {
-          "kind": "TABLE",
+          "kind": "VIEW",
           "name": "_system_state_tpu_mw"
         }
       ]
@@ -6664,7 +6668,7 @@
     }
   ],
   "parse_warnings": [],
-  "revision": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+  "revision": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
   "schema_version": 1,
-  "stdlib_tree": "0f6529d3ecf91c15c1572044c60512dcf14593d5"
+  "stdlib_tree": "54fc9f0b5c8dedb8772283b6786753fbb918da0d"
 }

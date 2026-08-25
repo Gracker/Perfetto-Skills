@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_dvfs_counter_stats.skill.yaml
 -- Source SHA-256: cf8599903da332db1aff2c03d179ffd4c5dd3ecd90fed3c66e1aafa3d74df84a
--- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
+-- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
 
 WITH clipped AS (
   SELECT

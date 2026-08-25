@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/thread_states_quadrant.sql
 -- Source SHA-256: ed6b54485655100dd9d525ec671ecc5c2a060f131457c501e09b26715dbe1766
--- Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
+-- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
 
 -- Fragment: thread_states_quadrant
 -- Depends on: target_threads (CTE), _cpu_topology (VIEW)

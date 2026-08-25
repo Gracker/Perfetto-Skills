@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/global_trace_sanity_check.skill.yaml
-Source SHA-256: 40eb466a75eceb554305c30faaaae38f2741a7efda2d7f091bd40975d42ef575
-Source commit: 9d0d444f8891a0fc47d7ede0da6ef5f758f9ede4
+Source SHA-256: a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec
+Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
 # 全局 Trace Sanity 检查
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -20,12 +20,14 @@ tier: S
 
 ```yaml
 display_name: 全局 Trace Sanity 检查
-description: 在目标时间窗内快速枚举最长 slice、D 状态、Runnable 等待、Runqueue 压力和 CPU 热点进程
+description: 在目标时间窗内检查 Trace Doctor 诊断，并快速枚举最长 slice、D 状态、Runnable 等待、Runqueue 压力和 CPU 热点进程
 icon: fact_check
 tags:
 - system
 - sanity
 - trace
+- trace-doctor
+- diagnostics
 - scheduler
 - cpu
 - global
@@ -38,6 +40,8 @@ keywords:
   zh:
   - 全局检查
   - trace sanity
+  - trace doctor
+  - trace诊断
   - 系统级瓶颈
   - 全局瓶颈
   - 最长slice
@@ -46,6 +50,8 @@ keywords:
   en:
   - global sanity
   - trace sanity
+  - trace doctor
+  - trace diagnostics
   - system stall
   - longest slices
   - d-state
@@ -131,6 +137,55 @@ display:
     label: 明细上限
     type: number
 save_as: trace_window
+```
+### Trace Doctor 诊断
+
+- ID: `trace_diagnostics`
+- Type: `atomic`
+- SQL: [`../sql/global_trace_sanity_check/trace_diagnostics.sql`](../sql/global_trace_sanity_check/trace_diagnostics.sql)
+
+```yaml
+id: trace_diagnostics
+type: atomic
+synthesize:
+  role: list
+  fields:
+  - key: title
+    label: 问题
+  - key: confidence
+    label: 置信度
+  - key: remediation
+    label: 修复建议
+  - key: trace_id
+    label: Trace ID
+display:
+  level: summary
+  layer: list
+  title: Trace Doctor 诊断
+  columns:
+  - name: key
+    label: 诊断标识
+    type: string
+    hidden: true
+  - name: title
+    label: 问题
+    type: string
+  - name: description
+    label: 说明
+    type: string
+    format: truncate
+  - name: remediation
+    label: 修复建议
+    type: string
+    format: truncate
+  - name: confidence
+    label: 置信度
+    type: number
+  - name: trace_id
+    label: Trace ID
+    type: number
+    hidden: true
+save_as: trace_diagnostics
 ```
 ### 最长 Slice
 

@@ -1,57 +1,19 @@
 {
   "candidate_identity": {
-    "commit": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
-    "revision": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+    "commit": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
+    "revision": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
     "rpc_api_version": 14,
-    "stdlib_tree": "0f6529d3ecf91c15c1572044c60512dcf14593d5"
+    "stdlib_tree": "54fc9f0b5c8dedb8772283b6786753fbb918da0d"
   },
-  "current_commit": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
+  "current_commit": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
   "drift": {
-    "added": [
-      "android.cujs.boundaries",
-      "android.cujs.frames",
-      "android.cujs.relevant_slices",
-      "android.cujs.slices",
-      "android.memory.heap_profile.intervals",
-      "pixel.touch",
-      "prelude.after_eof.stack_samples",
-      "prelude.after_eof.state",
-      "std.thread.with_context"
-    ],
+    "added": [],
     "changed": [
-      "android.critical_blocking_calls",
-      "android.cujs.base",
-      "android.cujs.cuj_frame_counters",
-      "android.cujs.sysui_cujs",
-      "android.cujs.threads",
-      "android.device",
-      "android.frame_blocking_calls.blocking_calls_aggregation",
-      "android.input",
-      "android.memory.heap_graph.heap_graph_stats",
-      "android.memory.heap_graph.helpers",
-      "android.monitor_contention",
-      "android.package_lookup",
-      "android.startup.startup_breakdowns",
-      "callstacks.stack_profile",
-      "chrome.chrome_scrolls_v4",
-      "chrome.scroll_jank_v4",
-      "intervals.overlap",
-      "linux.perf.counters",
-      "prelude.after_eof.memory",
-      "prelude.after_eof.views",
-      "prelude.before_eof.functions",
-      "prelude.before_eof.stats",
-      "prelude.before_eof.views",
-      "sched.with_context",
-      "slices.with_context",
-      "stacks.cpu_profiling",
-      "viz.summary.processes",
-      "viz.summary.threads"
+      "android.cujs.frames",
+      "pixel.touch",
+      "wattson.ui.continuous_estimates"
     ],
-    "removed": [
-      "std.trees.filter",
-      "std.trees.propagate"
-    ]
+    "removed": []
   },
   "intrinsic_schema_source_count": 17,
   "lock_compatible": {
@@ -59,6 +21,6 @@
     "rpc_api_version": true,
     "stdlib_tree": true
   },
-  "previous_commit": "da1d152cff27890903d158fe96751de3aab883cc",
+  "previous_commit": "7b573c1c00f5d5890f496a87b4876a995b6a1c66",
   "schema_version": 1
 }
