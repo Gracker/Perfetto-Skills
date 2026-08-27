@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "target": "sql/code_pinpoint/native_modules.sql",
+  "kind": "sql",
+  "expected_base_sha256": "8343caea53324bf22d9caeb826fd2499ba35fea4184656b033597ec75d955e51",
+  "replacement": "native_symbols.sql",
+  "replacement_sha256": "98e5d91419e20530e9d037b4275fbc152b7362528dbed97d35a7c69b730daf5b",
+  "reason": "Replace the global frame inventory with actual perf-sample callsite symbols scoped to the selected process and time window.",
+  "regression_ids": ["callstack-code-pinpoint-function"],
+  "base_failure_signature": "None != '_ZN5scudo9Allocator",
+  "upstream_candidate": "propose"
+}

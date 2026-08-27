@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "target": "sql/code_pinpoint/hot_slices.sql",
+  "kind": "sql",
+  "expected_base_sha256": "ee571e5b49fcad7683f43a5905e7e25b5f1e5821c6d2a7c9428e934a6bb95416",
+  "replacement": "hot_slices.sql",
+  "replacement_sha256": "38a523230dfaf98952649ffe72cc48dbe6f206a3ebd3ee193cca476cd12e6d6c",
+  "reason": "Return stable trace identifiers and only trace-derived source-search hints within the exact process and fully-contained time window.",
+  "regression_ids": ["startup-heavy-code-pinpoint-anchor-kind"],
+  "base_failure_signature": "None != 'app_trace_label'",
+  "upstream_candidate": "propose"
+}

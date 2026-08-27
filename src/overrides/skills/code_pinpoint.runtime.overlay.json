@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "target": "runtime/skills/code_pinpoint.json",
+  "kind": "skill",
+  "expected_base_sha256": "db7266fc39ca97f3573c1977d248f654231da6d50202612c319f60223d4f03ad",
+  "replacement": "code_pinpoint.runtime.json",
+  "replacement_sha256": "5d964cab9202b0634f099f6a96c1f8fb7e4ec0295e35a65045b761c46e380525",
+  "reason": "Expose deterministic trace-derived slice anchors and process/window-scoped sampled symbols without depending on SmartPerfetto runtime services.",
+  "regression_ids": [
+    "startup-heavy-code-pinpoint-anchor-kind",
+    "callstack-code-pinpoint-function"
+  ],
+  "dependent_replacements": [
+    {
+      "target": "runtime/android/code_pinpoint.json",
+      "expected_base_sha256": "a666514d292005aaa978aee20f41d1894e356ef9b84f862cf2313d7c6b207b73",
+      "replacement": "code_pinpoint.android.json",
+      "replacement_sha256": "aef51cd202281dec76224685e1039245ffdd55dfe8562a8a4bc494be1fbc7bc1"
+    },
+    {
+      "target": "runtime/queries/code_pinpoint.json",
+      "expected_base_sha256": "8c90c6e3a2e8c5167ca015e13fdcf83222212b072a770b690f74bfb6d42fc610",
+      "replacement": "code_pinpoint.queries.json",
+      "replacement_sha256": "bacb85945b9cf8e8d9303184c52d9b9b16bce074305aa2a40a41e523e843ac05"
+    },
+    {
+      "target": "skills/code_pinpoint.md",
+      "expected_base_sha256": "6bb50b8f29ddff3adda0636a980c997e493061a539284939fd4c33470f0511fb",
+      "replacement": "code_pinpoint.md",
+      "replacement_sha256": "a7e4efd9431e1ae4d5a07cd8e8ac56200bc15c9e2b88734821025d4fe1314486"
+    }
+  ],
+  "upstream_candidate": "propose"
+}
