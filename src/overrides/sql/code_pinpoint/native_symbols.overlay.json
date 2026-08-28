@@ -4,7 +4,7 @@
   "kind": "sql",
   "expected_base_sha256": "8343caea53324bf22d9caeb826fd2499ba35fea4184656b033597ec75d955e51",
   "replacement": "native_symbols.sql",
-  "replacement_sha256": "98e5d91419e20530e9d037b4275fbc152b7362528dbed97d35a7c69b730daf5b",
+  "replacement_sha256": "a8b0357bcd44f89828227fa1e9a27923e1d2c55a1e9b469b16fbb657b6a66080",
   "reason": "Replace the global frame inventory with actual perf-sample callsite symbols scoped to the selected process and time window.",
   "regression_ids": ["callstack-code-pinpoint-function"],
   "base_failure_signature": "None != '_ZN5scudo9Allocator",

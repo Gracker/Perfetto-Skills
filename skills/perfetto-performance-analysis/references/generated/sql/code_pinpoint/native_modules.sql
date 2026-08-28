@@ -13,7 +13,10 @@ scoped_samples AS (
   WHERE (
     '${package}' = ''
     OR p.name = '${package}'
-    OR p.name GLOB '${package}:*'
+    OR (
+      '${package}' != ''
+      AND SUBSTR(p.name, 1, LENGTH('${package}') + 1) = '${package}' || ':'
+    )
   )
     AND (${start_ts} IS NULL OR ps.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR ps.ts <= ${end_ts})

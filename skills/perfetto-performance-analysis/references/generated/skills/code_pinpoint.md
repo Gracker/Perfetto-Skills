@@ -93,9 +93,14 @@ synthesize:
   - key: source_query_hint
 ```
 
-`source_query_hint` is copied only from a trace-derived searchable name. A
-plain span that does not carry such a name uses `generic_anchor_only` and a
-null hint; never invent a class, function, file, or package from context.
+`source_query_hint` is copied only when a non-empty, identity-verified package
+selects the exact process or its literal `package:` child, the slice is on that
+process's verified main thread, and the trace name is a 2-64 character ASCII
+PascalCase-style identifier: uppercase first character, only letters/digits,
+and at least one lowercase character. Namespace, descriptor, whitespace,
+lowercase-first, render-thread, framework, and vendor labels use
+`generic_anchor_only` with a null hint. Never invent or normalize a class,
+function, file, package, or query term from context.
 
 ### Sampled native symbols
 

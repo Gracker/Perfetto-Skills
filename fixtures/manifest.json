@@ -107,6 +107,30 @@
             "start_ts": 564166760908543,
             "end_ts": 564166774418230
           }
+        },
+        {
+          "id": "startup-heavy-code-pinpoint-non-chaos-anchor",
+          "query_id": "code_pinpoint/hot_slices",
+          "kind": "field_equals",
+          "field": "anchor_kind",
+          "value": "app_trace_label",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564167376544116,
+            "end_ts": 564167555386251
+          }
+        },
+        {
+          "id": "startup-heavy-code-pinpoint-non-chaos-hint",
+          "query_id": "code_pinpoint/hot_slices",
+          "kind": "field_equals",
+          "field": "source_query_hint",
+          "value": "SimulateInflation",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564167376544116,
+            "end_ts": 564167555386251
+          }
         }
       ]
     },

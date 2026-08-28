@@ -136,6 +136,30 @@
           },
           "query_id": "code_pinpoint/hot_slices",
           "value": 564166760908543
+        },
+        {
+          "field": "anchor_kind",
+          "id": "startup-heavy-code-pinpoint-non-chaos-anchor",
+          "kind": "field_equals",
+          "params": {
+            "end_ts": 564167555386251,
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564167376544116
+          },
+          "query_id": "code_pinpoint/hot_slices",
+          "value": "app_trace_label"
+        },
+        {
+          "field": "source_query_hint",
+          "id": "startup-heavy-code-pinpoint-non-chaos-hint",
+          "kind": "field_equals",
+          "params": {
+            "end_ts": 564167555386251,
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564167376544116
+          },
+          "query_id": "code_pinpoint/hot_slices",
+          "value": "SimulateInflation"
         }
       ],
       "capabilities": [
