@@ -18,7 +18,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "app_frame_production",
@@ -54,9 +55,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/app_frame_production.skill.yaml",
-    "sha256": "c8e21c57ef149119c22d8a07d0dd4abed6c9b41b2a7542f8ed748adadb10621b"
+    "sha256": "9075a3b0edb9b8303d56b8b1ba7d6555fdaec9d878ffaad7d9f798fbec6bf616"
   },
   "steps": [
     {

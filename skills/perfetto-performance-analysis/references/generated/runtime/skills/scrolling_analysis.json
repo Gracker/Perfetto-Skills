@@ -29,11 +29,13 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "*.raster",
       "*.ui",
       "*CodecLooper*",
       "*Compile*",
+      "*DrawFrame*",
       "*Fence*",
       "*InputConsumer*",
       "*MediaCodec*",
@@ -58,10 +60,13 @@
       "*onOutputBufferAvailable*",
       "*onTouchEvent*",
       "*openFile*",
+      "*postAndWait*",
       "*processInputEventForCompatibility*",
       "*queueVideoBuffer*",
       "*shader*",
       "*sqlite*",
+      "*syncAndDrawFrame*",
+      "*syncFrameState*",
       "*waitToFinish*",
       "Choreographer#doFrame%",
       "DrawFrame%",
@@ -73,7 +78,8 @@
       "[0-9]*.raster",
       "[0-9]*.ui",
       "actual_frame_timeline_slice",
-      "cpufreq"
+      "cpufreq",
+      "frame_slice"
     ]
   },
   "id": "scrolling_analysis",
@@ -157,6 +163,7 @@
     "modules": [
       "android.input",
       "android.frames.timeline",
+      "android.frames.jank_type",
       "android.binder",
       "android.garbage_collection",
       "android.monitor_contention"
@@ -167,9 +174,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-    "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+    "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
   },
   "steps": [
     {
@@ -197,10 +204,29 @@
       "type": "atomic"
     },
     {
-      "condition": "frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1",
+      "condition": "frame_timeline.data[0]?.has_frame_timeline === 1",
+      "id": "buffer_tx_coverage_probe",
+      "name": "BufferTX / FrameTimeline 覆盖探针",
+      "optional": true,
+      "query_id": "scrolling_analysis/buffer_tx_coverage_probe",
+      "result_dependencies": [],
+      "save_as": "buffer_tx_coverage",
+      "type": "atomic"
+    },
+    {
+      "condition": "frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1 && buffer_tx_coverage.data[0]?.coverage_status !== 'target_process_not_found' && buffer_tx_coverage.data[0]?.should_fallback !== 1",
       "id": "performance_summary",
       "name": "帧性能汇总",
       "query_id": "scrolling_analysis/performance_summary",
+      "result_dependencies": [],
+      "save_as": "perf_summary",
+      "type": "atomic"
+    },
+    {
+      "condition": "frame_timeline.data[0]?.has_frame_timeline === 1 && buffer_tx_coverage.data[0]?.should_fallback === 1",
+      "id": "buffer_tx_performance_fallback",
+      "name": "BufferTX 帧率回退",
+      "query_id": "scrolling_analysis/buffer_tx_performance_fallback",
       "result_dependencies": [],
       "save_as": "perf_summary",
       "type": "atomic"
@@ -264,7 +290,9 @@
       "id": "jank_type_stats",
       "name": "掉帧类型统计",
       "query_id": "scrolling_analysis/jank_type_stats",
-      "result_dependencies": [],
+      "result_dependencies": [
+        "buffer_tx_coverage"
+      ],
       "save_as": "jank_stats",
       "type": "atomic"
     },
@@ -312,7 +340,9 @@
       "name": "掉帧列表（含根因分类）",
       "optional": true,
       "query_id": "scrolling_analysis/batch_frame_root_cause",
-      "result_dependencies": [],
+      "result_dependencies": [
+        "buffer_tx_coverage"
+      ],
       "save_as": "batch_root_cause",
       "type": "atomic"
     },
@@ -366,11 +396,13 @@
       "type": "atomic"
     },
     {
-      "condition": "frame_timeline.data[0]?.has_frame_timeline === 0",
+      "condition": "frame_timeline.data[0]?.has_frame_timeline === 0 || (environment?.data?.[0]?.has_data !== 1 && (perf_summary?.data?.[0]?.total_frames || 0) === 0)",
       "id": "fallback_no_frame_timeline",
       "name": "数据源不可用提示",
       "query_id": "scrolling_analysis/fallback_no_frame_timeline",
-      "result_dependencies": [],
+      "result_dependencies": [
+        "buffer_tx_coverage"
+      ],
       "save_as": "fallback_info",
       "type": "atomic"
     }

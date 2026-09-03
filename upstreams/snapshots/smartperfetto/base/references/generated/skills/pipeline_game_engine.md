@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/game_engine.skill.yaml
 Source SHA-256: f757768862f521ac5c841eea741273b89f3bf3b80090a1bf2f18b605d629e7bd
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # 游戏引擎
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

@@ -14,7 +14,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "cpu*freq*"
     ]
   },
@@ -50,9 +51,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/util_tracking_analysis.skill.yaml",
-    "sha256": "05f535c2fcad4c73b0f5d2dbe56e94502556a6b720d7c85bf8dcd54146c732b2"
+    "sha256": "f43141f7af054b22d9f434f439e6b550daf56200f0ea5b3ba014c7055dd975b0"
   },
   "steps": [],
   "type": "atomic",

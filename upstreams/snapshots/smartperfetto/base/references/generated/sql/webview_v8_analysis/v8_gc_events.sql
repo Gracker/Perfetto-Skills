@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/webview_v8_analysis.skill.yaml
--- Source SHA-256: 2049705d85775c01fb32fc6391b66c22d69cd8ec313a1543111b4c0fbb42ad9f
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: a542665b367b80c7ecf200ccc5ab2abe452baed0039e724d59ab30515c30b284
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   CASE
@@ -25,7 +25,7 @@ FROM slice s
 JOIN thread_track tt ON s.track_id = tt.id
 JOIN thread t ON tt.utid = t.utid
 JOIN process p ON t.upid = p.upid
-WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
   AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
   AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})
   AND (s.name GLOB '*v8.gc*' OR s.name GLOB '*V8.GC*'

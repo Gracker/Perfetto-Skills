@@ -52,9 +52,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_jit_analysis/query.sql",
-      "sha256": "1288c8ffa197a09b7944b9dd5ff815e6244b9a356a3b7d39eed8773baf585b32",
+      "sha256": "25882c8f1357062c8c0c885f610669bc25009a5846ec161bbe7a0827f99d5503",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "*GarbageCollectCache*",
         "*ScopedCodeCacheWrite*",
         "JIT compiling*",
@@ -64,10 +65,10 @@
       ],
       "skill_id": "startup_jit_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/startup_jit_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "3b238fd00ac7450afc57b24ada44cbcb0b1c9f11a83cba1a91e1af48addd169a"
+        "sha256": "ceeb85896261dfa2e0996f9b4e23ff635538913ec2cd0de9c5bb0b820fcc48f0"
       },
       "sql_dependencies": {
         "creates": [],

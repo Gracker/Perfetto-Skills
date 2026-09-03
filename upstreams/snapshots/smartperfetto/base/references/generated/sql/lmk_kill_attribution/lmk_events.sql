@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/lmk_kill_attribution.skill.yaml
 -- Source SHA-256: 4c299b78e625d37ee05fb8288a3b072ab6151ce29c5f98780a038913d06664ae
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   ts,

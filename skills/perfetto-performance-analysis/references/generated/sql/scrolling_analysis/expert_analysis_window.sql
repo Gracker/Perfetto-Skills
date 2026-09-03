@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH frame_bounds AS (
   SELECT
@@ -9,7 +9,11 @@ WITH frame_bounds AS (
     MAX(a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END) as max_ts
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND COALESCE(a.display_frame_token, a.surface_frame_token) IS NOT NULL
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})

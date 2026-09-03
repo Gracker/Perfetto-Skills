@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/cpu_module.skill.yaml
 -- Source SHA-256: d035f125f1bd29ac6f675796781f4037254da8283f6dc51f661b1b9e5afaa51e
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH freq_changes AS (
   SELECT

@@ -8,7 +8,10 @@
       "target_range_row_coverage",
       "api_hint"
     ],
-    "signal_patterns": []
+    "signal_patterns": [
+      "${package}",
+      "*[a-z]*"
+    ]
   },
   "id": "code_pinpoint",
   "identity": {
@@ -51,9 +54,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/composite/code_pinpoint.skill.yaml",
-    "sha256": "2a96d49f363c3a2c12b64d46cf466a3457020d6b5ade488a7ac8360a28e35bad"
+    "sha256": "c2560c8a63a870cc090ef0176632c2c572fd52bb4301adaa16342cbb651204ce"
   },
   "steps": [
     {
@@ -64,15 +67,16 @@
       "type": "atomic"
     },
     {
-      "id": "native_modules",
-      "name": "Native module / build-id 线索",
+      "id": "native_symbols",
+      "name": "Native symbol / module / build-id 线索",
+      "on_empty": "no_symbol_data: trace 中没有符合当前进程与时间窗的 CPU profiling 符号数据",
       "optional": true,
-      "query_id": "code_pinpoint/native_modules",
+      "query_id": "code_pinpoint/native_symbols",
       "result_dependencies": [],
       "type": "atomic"
     }
   ],
   "type": "composite",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "trace-overview"
 }

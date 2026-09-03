@@ -54,10 +54,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/textureview_producer_frame_timing/textureview_signal_summary.sql",
-      "sha256": "029222acf385517aa5d514722afd827499f1625c3440de81e26aeb1862f49339",
+      "sha256": "551c81cf4de500e3568a023438787fa8868c8cbdd3d99c9bb25b22f17a9ad67c",
       "signal_patterns": [
         "*DeferredLayerUpdater*",
         "*SurfaceTexture*",
+        "*dequeueBuffer*",
         "*eglSwapBuffers*",
         "*onFrameAvailable*",
         "*queueBuffer*",
@@ -66,15 +67,16 @@
       ],
       "skill_id": "textureview_producer_frame_timing",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/textureview_producer_frame_timing.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9c4d5fb0a318772a5c5a9b3998e6489d3ca70d4d6ebc88330940731518a9f30a"
+        "sha256": "a2c34451c741e02fc6d13ed92dc82fdb910606ab79c16c5996ce90becc55c588"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "slices.with_context"
+          "slices.with_context",
+          "android.frames.timeline"
         ],
         "drops": [],
         "required_tables": [
@@ -160,7 +162,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/textureview_producer_frame_timing/textureview_producer_intervals.sql",
-      "sha256": "7aaec3174b247da7dabdded1113d3b387159c3e3ffe4f435e632409f444a2c68",
+      "sha256": "da255036626201eab4cf3139b437cc0d91dbacf3fe314e64065b6431d569fa9d",
       "signal_patterns": [
         "*DeferredLayerUpdater*",
         "*SurfaceTexture*",
@@ -168,19 +170,21 @@
         "*onFrameAvailable*",
         "*queueBuffer*",
         "*updateTexImage*",
-        "*vkQueuePresent*"
+        "*vkQueuePresent*",
+        "VSYNC-sf"
       ],
       "skill_id": "textureview_producer_frame_timing",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/textureview_producer_frame_timing.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9c4d5fb0a318772a5c5a9b3998e6489d3ca70d4d6ebc88330940731518a9f30a"
+        "sha256": "a2c34451c741e02fc6d13ed92dc82fdb910606ab79c16c5996ce90becc55c588"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "slices.with_context"
+          "slices.with_context",
+          "android.frames.timeline"
         ],
         "drops": [],
         "required_tables": [
@@ -194,7 +198,13 @@
       },
       "step_id": "textureview_producer_intervals",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/vsync_config.sql",
+            "source_sha256": "96a6e07816d67db7ac8db23c91406a6abca0b42c314c66a06843dbbf57d0faa5"
+          }
+        ],
         "parameters": [
           "end_ts",
           "package",

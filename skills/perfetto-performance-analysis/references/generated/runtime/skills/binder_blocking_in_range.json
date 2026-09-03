@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "binder_blocking_in_range",
@@ -46,9 +47,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/binder_blocking_in_range.skill.yaml",
-    "sha256": "9e8a00b4d97ea3da1311a06c95ec77bc9e499ff4cd0237d28bebfbb1c720ee48"
+    "sha256": "ecb23e83b369cbe9a5cc799acee101ebc72c1bad057f3bced12d29bd10d1b4e3"
   },
   "steps": [],
   "type": "atomic",

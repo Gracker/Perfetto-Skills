@@ -53,7 +53,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*"
+    "${package}",
+    "${package}:*"
   ],
   "skill_id": "main_thread_sched_latency_in_range",
   "steps": {}

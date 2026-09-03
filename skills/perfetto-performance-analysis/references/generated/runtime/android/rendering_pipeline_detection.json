@@ -74,7 +74,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "*BLASTBufferQueue*",
     "*Choreographer#doFrame*",
     "*Chrome*",

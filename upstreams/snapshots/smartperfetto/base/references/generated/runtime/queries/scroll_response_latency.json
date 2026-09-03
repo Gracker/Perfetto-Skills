@@ -52,16 +52,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_response_latency/query.sql",
-      "sha256": "013e2488f0ea7e7e311e8ee1d4a85ccad6bc06a8ffaeb65e693cb106771ee1e2",
+      "sha256": "6ca50f36151977d3c49d6c79d1a8faa46bb2c52b8fe1ddbc070bb42f75198cab",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "scroll_response_latency",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/scroll_response_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d89dec74765b5e8b1f68f450ec1579c149e0d6b3db6adb5e0ffe9c04b2799859"
+        "sha256": "da35bbd788db3f909aaf7b95ab17b841c7e57a3d6e1bfc17ed9b974541569485"
       },
       "sql_dependencies": {
         "creates": [],

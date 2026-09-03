@@ -34,7 +34,7 @@
         "for_each": "startups",
         "id": "vivo_system_services",
         "name": "vivo 系统服务调用",
-        "sql": "SELECT\n  server_process,\n  client_dur / 1e6 as dur_ms,\n  COUNT(*) as call_count\nFROM android_binder_txns\nWHERE client_process GLOB '${package}*'\n  AND (server_process GLOB '*vivo*'\n       OR server_process GLOB '*bbk*'\n       OR server_process GLOB '*jovi*')\n  AND client_ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND client_ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nGROUP BY server_process\nORDER BY SUM(client_dur) DESC\n"
+        "sql": "SELECT\n  server_process,\n  client_dur / 1e6 as dur_ms,\n  COUNT(*) as call_count\nFROM android_binder_txns\nWHERE ('${package}' = '' OR client_process = '${package}' OR client_process GLOB '${package}:*')\n  AND (server_process GLOB '*vivo*'\n       OR server_process GLOB '*bbk*'\n       OR server_process GLOB '*jovi*')\n  AND client_ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND client_ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nGROUP BY server_process\nORDER BY SUM(client_dur) DESC\n"
       },
       {
         "for_each": "startups",
@@ -98,8 +98,8 @@
   },
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/vendors/vivo/startup.override.yaml",
-    "sha256": "d67e640d98f6738490d0fcc1486e7ae23523cd1404f35a063aaff12eb549f1bf"
+    "sha256": "359c45c4ae940b065938e3298fcd1e2ba15ceda5d3f245e7dface089faa1967d"
   }
 }

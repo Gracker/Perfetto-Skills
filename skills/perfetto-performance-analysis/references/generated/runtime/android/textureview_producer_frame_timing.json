@@ -1,5 +1,14 @@
 {
-  "adapters": [],
+  "adapters": [
+    {
+      "id": "official_frame_timeline_or_legacy",
+      "selection": "actual rows first; legacy Choreographer/DrawFrame fallback",
+      "source": "perfetto stdlib android/frames/timeline.sql",
+      "version_hint": {
+        "frame_timeline_min_api": 31
+      }
+    }
+  ],
   "api": {
     "28": {
       "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
@@ -43,7 +52,8 @@
     }
   },
   "required_modules": [
-    "slices.with_context"
+    "slices.with_context",
+    "android.frames.timeline"
   ],
   "required_tables": [
     "slice",
@@ -62,6 +72,7 @@
   "signal_patterns": [
     "*DeferredLayerUpdater*",
     "*SurfaceTexture*",
+    "*dequeueBuffer*",
     "*eglSwapBuffers*",
     "*onFrameAvailable*",
     "*queueBuffer*",

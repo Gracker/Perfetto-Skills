@@ -65,7 +65,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "actual_frame_timeline_slice",
     "android_gpu_frequency",
     "android_gpu_memory_per_process"

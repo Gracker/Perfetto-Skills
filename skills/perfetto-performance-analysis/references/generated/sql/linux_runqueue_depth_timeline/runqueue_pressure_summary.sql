@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/linux_runqueue_depth_timeline.skill.yaml
--- Source SHA-256: 97534c690220e660274868201d0a31f13496a46e688ce0b95a08558ad75197af
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: df8e54081665caab0f1d374c13f7ceb343c0f20209e1e1b699da6ee24688ba35
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 input AS (
@@ -21,7 +21,7 @@ rq AS (
 SELECT
   COUNT(*) AS samples,
   ROUND(AVG(runnable_thread_count), 2) AS avg_runnable,
-  ROUND(PERCENTILE(runnable_thread_count, 0.95), 2) AS p95_runnable,
+  ROUND(PERCENTILE(runnable_thread_count, 95), 2) AS p95_runnable,
   MAX(runnable_thread_count) AS max_runnable,
   SUM(CASE WHEN runnable_thread_count >= (SELECT pressure_threshold FROM input) THEN 1 ELSE 0 END) AS pressure_samples
 FROM rq

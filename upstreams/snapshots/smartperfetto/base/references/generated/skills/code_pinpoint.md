@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/code_pinpoint.skill.yaml
-Source SHA-256: 2a96d49f363c3a2c12b64d46cf466a3457020d6b5ade488a7ac8360a28e35bad
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: c2560c8a63a870cc090ef0176632c2c572fd52bb4301adaa16342cbb651204ce
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # 代码定位线索
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: code_pinpoint
-version: '1.0'
+version: '1.1'
 type: composite
 tier: S
 ```
@@ -101,6 +101,24 @@ display:
   layer: list
   title: Code Pinpoint Candidates
   columns:
+  - name: slice_id
+    label: Slice ID
+    type: number
+  - name: ts
+    label: Timestamp
+    type: timestamp
+    unit: ns
+    clickAction: navigate_timeline
+  - name: dur_ms
+    label: Duration
+    type: duration
+    unit: ms
+  - name: upid
+    label: UPID
+    type: number
+  - name: utid
+    label: UTID
+    type: number
   - name: process_name
     label: Process
     type: string
@@ -110,33 +128,60 @@ display:
   - name: slice_name
     label: Slice
     type: string
-  - name: dur_ms
-    label: Duration
-    type: duration
-    unit: ms
+  - name: anchor_kind
+    label: Anchor Kind
+    type: string
+  - name: source_query_hint
+    label: Source Query Hint
+    type: string
+synthesize:
+  role: list
+  fields:
+  - key: slice_name
+    label: Trace 锚点
+  - key: anchor_kind
+    label: 锚点类型
+  - key: source_query_hint
+    label: 源码检索词
 ```
-### Native module / build-id 线索
+### Native symbol / module / build-id 线索
 
-- ID: `native_modules`
+- ID: `native_symbols`
 - Type: `atomic`
-- SQL: [`../sql/code_pinpoint/native_modules.sql`](../sql/code_pinpoint/native_modules.sql)
+- SQL: [`../sql/code_pinpoint/native_symbols.sql`](../sql/code_pinpoint/native_symbols.sql)
 
 ```yaml
-id: native_modules
+id: native_symbols
 type: atomic
 display:
   level: debug
   layer: deep
-  title: Native Module Hints
+  title: Native Symbol Anchors
   columns:
+  - name: function_name
+    label: Function
+    type: string
   - name: module_name
     label: Module
     type: string
   - name: build_id
     label: Build ID
     type: string
-  - name: frame_count
-    label: Frames
+  - name: sample_count
+    label: Samples
     type: number
+    format: compact
+synthesize:
+  role: list
+  fields:
+  - key: function_name
+    label: 函数名
+  - key: module_name
+    label: 模块
+  - key: build_id
+    label: Build ID
+  - key: sample_count
+    label: 采样数
 optional: true
+on_empty: 'no_symbol_data: trace 中没有符合当前进程与时间窗的 CPU profiling 符号数据'
 ```

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/game_fps_analysis.skill.yaml
--- Source SHA-256: 149fad0ed589259b19b7d70e8969cf12c77fc86255551b55aeea19b9705ed7fe
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: b1c2c2f4499e3075a69a03b7dbde88b4145a3b8dea465d645cd175f697d90442
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 time_bounds AS (
@@ -17,7 +17,7 @@ frame_intervals AS (
     a.dur
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND a.surface_frame_token IS NOT NULL
     AND a.ts >= (SELECT start_ts FROM time_bounds)
     AND a.ts <= (SELECT end_ts FROM time_bounds)
@@ -29,9 +29,9 @@ SELECT
   ROUND(AVG(interval_ns) / 1e6, 2) as avg_interval_ms,
   ROUND(MIN(interval_ns) / 1e6, 2) as min_interval_ms,
   ROUND(MAX(interval_ns) / 1e6, 2) as max_interval_ms,
-  ROUND(PERCENTILE(interval_ns, 0.5) / 1e6, 2) as p50_interval_ms,
-  ROUND(PERCENTILE(interval_ns, 0.95) / 1e6, 2) as p95_interval_ms,
-  ROUND(PERCENTILE(interval_ns, 0.99) / 1e6, 2) as p99_interval_ms,
+  ROUND(PERCENTILE(interval_ns, 50) / 1e6, 2) as p50_interval_ms,
+  ROUND(PERCENTILE(interval_ns, 95) / 1e6, 2) as p95_interval_ms,
+  ROUND(PERCENTILE(interval_ns, 99) / 1e6, 2) as p99_interval_ms,
   -- 帧间隔标准差 (稳定性指标)
   ROUND(SQRT(AVG(interval_ns * interval_ns) - AVG(interval_ns) * AVG(interval_ns)) / 1e6, 2) as interval_stddev_ms
 FROM frame_intervals

@@ -14,7 +14,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "*AsyncTask*",
       "*DefaultDispatcher*",
       "*Dispatchers.Default*",
@@ -72,9 +73,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
-    "sha256": "8d9ffc04a4543994c80e63aba04812d897f68580cb39396c9600aafb01cf51dc"
+    "sha256": "f460c66ed18a0b8aef8f2b45c8295ba56c2a3ef06324f87d5d22f2a01e03c877"
   },
   "steps": [],
   "type": "atomic",

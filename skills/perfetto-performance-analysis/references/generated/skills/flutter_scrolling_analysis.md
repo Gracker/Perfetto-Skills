@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/flutter_scrolling_analysis.skill.yaml
-Source SHA-256: 1948ff2572667b9c7ccba73cb1bc9334c36b3ae6f6ae78371b7c64e154421c72
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 1f345fc088535bbce0d3edac849ed979ebf199178b142f2f24cc08d716a5a5f0
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # Flutter 滑动分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: flutter_scrolling_analysis
-version: '1.0'
+version: '1.2'
 type: composite
 category: interaction
 tier: S
@@ -37,6 +37,7 @@ required_tables:
 - actual_frame_timeline_slice
 modules:
 - android.frames.timeline
+- android.frames.jank_type
 ```
 
 ## Inputs
@@ -84,6 +85,8 @@ display:
   layer: overview
   title: Flutter 帧渲染概览
   format: table
+sql_fragments:
+- fragments/flutter_process_identity.sql
 save_as: overview
 ```
 ### Flutter 线程耗时
@@ -100,6 +103,8 @@ display:
   layer: list
   title: Flutter 线程耗时分布
   format: table
+sql_fragments:
+- fragments/flutter_process_identity.sql
 ```
 ### Flutter 消费端掉帧检测
 
@@ -142,6 +147,14 @@ display:
   - name: responsibility
     label: 类型标签
     type: string
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+  - name: claim_boundary
+    label: 结论边界
+    type: string
+sql_fragments:
+- fragments/flutter_process_identity.sql
 save_as: flutter_jank_stats
 ```
 ### Flutter 掉帧列表
@@ -169,6 +182,8 @@ display:
     type: string
   - name: frames_dropped
     type: number
+sql_fragments:
+- fragments/flutter_process_identity.sql
 save_as: jank_frames
 ```
 ### UI 线程长耗时
@@ -192,6 +207,8 @@ display:
   - name: dur_ms
     type: duration
     format: duration_ms
+sql_fragments:
+- fragments/flutter_process_identity.sql
 ```
 ### Raster 线程长耗时
 
@@ -214,4 +231,6 @@ display:
   - name: dur_ms
     type: duration
     format: duration_ms
+sql_fragments:
+- fragments/flutter_process_identity.sql
 ```

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/comparison-context-en.template.md
-Source SHA-256: e909f9da3dda33a089edf10c2022932117fc7407c014d9364805b55c9770ddd8
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: f25baa74f86327cb52dbf6c39778a3f1d001a0c5390c24f33df6d696df65151a
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 # Comparison Context En Template
 
@@ -25,13 +25,13 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 You are performing a **dual-trace comparison**. Both traces are loaded and may be queried independently.
 
 ### Trace identity
-- **{{currentTraceLabel}}**: {{currentPackageName}}
-- **{{referenceTraceLabel}}**: {{referencePackageName}}
+- **Baseline (compatibility role `current`, {{currentTraceLabel}})**: {{currentPackageName}}
+- **Comparison (compatibility role `reference`, {{referenceTraceLabel}})**: {{referencePackageName}}
 {{tracePairMapping}}
 {{packageAlignment}}
 {{referenceArchitecture}}
 {{capabilityAlignment}}
 
 ### Final delivery identity contract
-- The final report must explicitly state the full package name for both sides and map each package to its trace side; do not replace package names with only left/right, current/reference, or business aliases.
-- Even when both package names are identical, state the current-trace and reference-trace mapping in the first comparison conclusion.
+- The final report must explicitly state the full package name for both sides and map each package to its baseline/comparison role and physical pane; do not replace package names with only left/right or business aliases.
+- Even when both package names are identical, state the baseline-trace and comparison-trace mapping in the first comparison conclusion.

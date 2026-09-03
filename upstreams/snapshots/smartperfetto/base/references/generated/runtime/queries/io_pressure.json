@@ -54,14 +54,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/data_check.sql",
-      "sha256": "78e1a0fee6154eab5a2cf5f27ac180fb31be49f4455dde05ed7b59782f9cdb17",
+      "sha256": "ce746b6cdaf1bdcd27bdc52123a901bf06a7e81215bf9a669d63b904269728ff",
       "signal_patterns": [],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571"
+        "sha256": "446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd"
       },
       "sql_dependencies": {
         "creates": [],
@@ -149,14 +149,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/io_wait_overview.sql",
-      "sha256": "9a7037de4cc99c6ab99ca91ab64d92c1f89cce328a468259341e5eeb59ce3932",
+      "sha256": "17f2e15e9364f28f86019a08a57afd53ddf1618a0672dccc8e547d090fb1957d",
       "signal_patterns": [],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571"
+        "sha256": "446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd"
       },
       "sql_dependencies": {
         "creates": [],
@@ -245,16 +245,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/process_io_distribution.sql",
-      "sha256": "ea20136d52bc7698b3848b7493f16bc2ae6c37511f0456b4266bb714958460b2",
+      "sha256": "8a923a06669e3dc262c23f6428d0b844da66959eba5e773e75375321dc2dcdc9",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571"
+        "sha256": "446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd"
       },
       "sql_dependencies": {
         "creates": [],
@@ -343,14 +344,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/blocking_functions.sql",
-      "sha256": "602d24e2a4693da551c6f34e63e6fa8f373cdaf20c0c24fc4b04f9e819e43faa",
+      "sha256": "9d7b7b3339c7195292beb0e0b9c8bc0d866c3e44168ab294dcb354b59f15e36d",
       "signal_patterns": [],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571"
+        "sha256": "446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd"
       },
       "sql_dependencies": {
         "creates": [],
@@ -438,16 +439,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/thread_io_details.sql",
-      "sha256": "de11b896e04862fc0e6c37244ba4e2e581544de0c2b37d2e68dafef93c8c3625",
+      "sha256": "a4e03d6f8ddf8df48161151d59b3dcaf70aa7b121ba985037298895036966647",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571"
+        "sha256": "446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd"
       },
       "sql_dependencies": {
         "creates": [],
@@ -536,16 +538,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/long_io_events.sql",
-      "sha256": "e98eaa7ac71f7815cd4fb64145e227bdb0ea66ce3c617afda0febd13d71dca92",
+      "sha256": "3c2a89a64adcc9994eb527255f6ceb18322f1afff3f417caae20f4b6fb4f6ec0",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571"
+        "sha256": "446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd"
       },
       "sql_dependencies": {
         "creates": [],
@@ -634,14 +637,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/root_cause_classification.sql",
-      "sha256": "1bbbab8c71e9d16d96982cd66372c28f656071dfc2c4dbcaed9a13bf44b9c6a1",
+      "sha256": "d198242092b76d1a671913d33ccdb9e466592ff5f834842c92ef07fab139acbc",
       "signal_patterns": [],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571"
+        "sha256": "446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd"
       },
       "sql_dependencies": {
         "creates": [],

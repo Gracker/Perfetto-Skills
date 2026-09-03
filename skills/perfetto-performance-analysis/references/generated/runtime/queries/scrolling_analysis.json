@@ -54,22 +54,23 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/frame_timeline_check.sql",
-      "sha256": "ab63be856dbae696ae8b4b5b8f6fbcb6dcf04deea8ef1dced6caaef501215067",
+      "sha256": "a4b5695e421661a9f6fa69db6d02b7c15ca92b050ef19680cc2ad5b1f0f23795",
       "signal_patterns": [
         "actual_frame_timeline_slice"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -148,23 +149,25 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/vsync_config.sql",
-      "sha256": "4a19fbc68e8eef5f0510de23472d293520029878d053714244e1b41d44043a91",
+      "sha256": "8aa777edf33ce6ade950bc3451e5404d0eafdd7242df092d5660f37cf9bee03f",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "VSYNC-sf"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -176,7 +179,124 @@
       },
       "step_id": "vsync_config",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/vsync_config.sql",
+            "source_sha256": "b2b263be6af3e588bae036502e10f857cb7355a798ae7e79627b368355abbd17"
+          }
+        ],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scrolling_analysis/buffer_tx_coverage_probe",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/buffer_tx_coverage_probe.sql",
+      "sha256": "e66c4deeaadb9c869b0d61e787a1c4c70af1a2dfc8fca32bfdb4f0e9cbae354c",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*",
+        "BufferTX - *",
+        "VSYNC-sf"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.frames.jank_type",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "buffer_tx_coverage_probe",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/vsync_config.sql",
+            "source_sha256": "b2b263be6af3e588bae036502e10f857cb7355a798ae7e79627b368355abbd17"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/buffer_tx_frame_production.sql",
+            "source_sha256": "9ed3f3fa724bf67d58ed63a12ea0b4e77ed1eb8770f729a9007c7ec6be722b89"
+          }
+        ],
         "parameters": [
           "end_ts",
           "package",
@@ -245,23 +365,25 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/performance_summary.sql",
-      "sha256": "3229f653d7686a51206f916492085f4b573e543df7851fd9e7cba45082f110a0",
+      "sha256": "a047d8b6cd044cb49b81f8517061aa9c8d9bbf015fb81c74d06f3e78dde85d87",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "VSYNC-sf"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -336,20 +458,131 @@
         },
         "probe_capabilities": []
       },
+      "id": "scrolling_analysis/buffer_tx_performance_fallback",
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/buffer_tx_performance_fallback.sql",
+      "sha256": "e8772629b8cf8e812ba6e1fd05b9f97c8188c71a2dc7b2f89d6cce7ed042b096",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*",
+        "BufferTX - *",
+        "VSYNC-sf"
+      ],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.frames.jank_type",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "buffer_tx_performance_fallback",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/vsync_config.sql",
+            "source_sha256": "b2b263be6af3e588bae036502e10f857cb7355a798ae7e79627b368355abbd17"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/buffer_tx_frame_production.sql",
+            "source_sha256": "9ed3f3fa724bf67d58ed63a12ea0b4e77ed1eb8770f729a9007c7ec6be722b89"
+          }
+        ],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
       "id": "scrolling_analysis/input_data_fallback_view",
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/input_data_fallback_view.sql",
-      "sha256": "b2db4c6b078ef3f1083f679574e0d8a148ac59870b7776621c482f0143766047",
+      "sha256": "8c109c6fb5ff519dc1300adc38b0e1e09ced2ab4bff5ee4f2398cda6084422b1",
       "signal_patterns": [],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [
@@ -361,6 +594,7 @@
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -437,22 +671,24 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/input_data_check.sql",
-      "sha256": "e49ae37dc8c7cc782962cb6f696d878fd175f077f13c91053dd9262aca30d794",
+      "sha256": "e740a17a522f9c444dcd49be742d7cd308978d8e6d594ab3939f9a52b94086cc",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -537,23 +773,25 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/input_latency_summary.sql",
-      "sha256": "8a05296ca4b6d696305fe5b809fcbbacde04b53365a7c7ca9ac833819a8ae17e",
+      "sha256": "e8d1496e1c33407611fc6fa12d7fa0a185c882cb72b1ceafa69e90d1f3d458b9",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "VSYNC-sf"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -640,22 +878,24 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/expert_analysis_window.sql",
-      "sha256": "f0bf2a793ff928cf1afb10fd4468652a1fd1f2866196af91410e125647d44a32",
+      "sha256": "734b3d9e1d0a3a033c3d7ffc8b253dee99a2e130cfc9e89839baa8713258cb1a",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -738,23 +978,25 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/jank_type_stats.sql",
-      "sha256": "450f02f1ff56eb28f426114ef65083400a6264826c79386ceca502d4c0917a64",
+      "sha256": "da96e7b9a9515715af9d9fb074e202d5daa5b79e1af3678cbf14468b971cb827",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "VSYNC-sf"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -774,7 +1016,9 @@
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [
+          "buffer_tx_coverage"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -837,23 +1081,25 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/scroll_sessions.sql",
-      "sha256": "80d015a1d4e701ff8c8e47233ad14667500212cbba23f05ba44c00ee47ae301f",
+      "sha256": "fbcd8164377ef70079282927a5d705624a5f2a5c14b89419f4e93d32ed359e63",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "VSYNC-sf"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -936,24 +1182,26 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/session_stats_batch.sql",
-      "sha256": "b88f91748392e1c38f5f3c95c1fc8f8e6f8fa78905c3e98c7d0c982044a3d2b5",
+      "sha256": "409a57685afe75c26ad785554f246b56f1547e80f1c6155a8bc4c4aa96367429",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "VSYNC-sf",
         "cpufreq"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1039,23 +1287,25 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/session_jank.sql",
-      "sha256": "db0422851e286c64e97d714dd0fc892c3b2af0b1fce58a7061d3bf1996d18cf0",
+      "sha256": "ae903e57508da8ae9daa5fb79a0bf6e8c74701ace9d5bab03a66182b21f9580a",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "VSYNC-sf"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1138,9 +1388,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/get_app_jank_frames.sql",
-      "sha256": "d91406a3489670ad20ab93cc785367cb3a485e306f8884f4c9cacab31d6e0073",
+      "sha256": "282ac4f7291074e930ea38e4f94c0cba1a57aecfb6447bed0cfd27354e935808",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "Choreographer#doFrame%",
         "DrawFrame%",
         "Framework::BeginFrame%",
@@ -1149,16 +1400,17 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1172,7 +1424,13 @@
       },
       "step_id": "get_app_jank_frames",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/root_cause_sample_cap.sql",
+            "source_sha256": "c662791c572510cfca111f0929e7341e482d6d85aa33db88b92da08c86019d7f"
+          }
+        ],
         "parameters": [
           "end_ts",
           "max_frames_per_session",
@@ -1242,12 +1500,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/batch_frame_root_cause.sql",
-      "sha256": "b64e7588abd724d4edcb01e0c0b62f951ca67c81b0a3f50c047fcd7b45e59650",
+      "sha256": "3af16fb708c9420958b69bb47581fd20635f5a244a9d06295c0d015b0910bb95",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "*.raster",
         "*.ui",
         "*Compile*",
+        "*DrawFrame*",
         "*Fence*",
         "*InputConsumer*",
         "*QueuedWork*",
@@ -1268,9 +1528,12 @@
         "*onInterceptTouchEvent*",
         "*onTouchEvent*",
         "*openFile*",
+        "*postAndWait*",
         "*processInputEventForCompatibility*",
         "*shader*",
         "*sqlite*",
+        "*syncAndDrawFrame*",
+        "*syncFrameState*",
         "*waitToFinish*",
         "RenderThread",
         "VSYNC-sf",
@@ -1281,16 +1544,17 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1308,7 +1572,18 @@
       },
       "step_id": "batch_frame_root_cause",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/vsync_config.sql",
+            "source_sha256": "b2b263be6af3e588bae036502e10f857cb7355a798ae7e79627b368355abbd17"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/root_cause_sample_cap.sql",
+            "source_sha256": "c662791c572510cfca111f0929e7341e482d6d85aa33db88b92da08c86019d7f"
+          }
+        ],
         "parameters": [
           "end_ts",
           "input_event_backlog_threshold",
@@ -1317,7 +1592,9 @@
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [
+          "buffer_tx_coverage"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1380,9 +1657,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/global_context_flags.sql",
-      "sha256": "51c42f8ca86b74d3632e2b502e6562243bb01359612338e22b79c5b256084f55",
+      "sha256": "e2e4cf64460d2bd11e64dd84b113ff690e7db04a4d466ca872d3e17c8e8ae56c",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "*CodecLooper*",
         "*MediaCodec*",
         "*NuPlayer*",
@@ -1393,16 +1671,17 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1488,23 +1767,25 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/session_quadrant_summary.sql",
-      "sha256": "6cd13de137e9540a5cc280323429a727de485c8a38da153a198ebb3b0d9fcca2",
+      "sha256": "0e0c77b80026baa9be7eb7bf5f73ddbb11fd4af9950128972c2218ae35d7a70b",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "RenderThread"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1590,22 +1871,23 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/session_cpu_freq.sql",
-      "sha256": "a44d110a14828546c9a6199a8cfa9e64978a8912b8cd552cc7d2979ee9943677",
+      "sha256": "10c97dc049a15e90fd7736b5a7b94aa614a4869e1f7b8b3d93d76a7f2b53b4ae",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1690,22 +1972,24 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/session_thread_core_affinity.sql",
-      "sha256": "63773ff51399d4d51b8443ebc8d2dd628dfd49f31ca47a01daa16bcc0e86c2d5",
+      "sha256": "6a05cfa7e10d4a76257ef3f6fdeaaa757023c4e9b03a1e9ca3c5031064604bd0",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1791,9 +2075,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/root_cause_classification.sql",
-      "sha256": "e236fe1515bf4ac6642f2d293b9a2a7ef66ff8be472bfaaa710d7d22512514a3",
+      "sha256": "f86071621dfe053c44b3fea4ecdd1b72f945353dd215aa8814954bece55a6eeb",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "*InputConsumer*",
         "*RV Prefetch*",
         "*RecyclerView*Prefetch*",
@@ -1808,16 +2093,17 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1904,20 +2190,24 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scrolling_analysis/fallback_no_frame_timeline.sql",
-      "sha256": "eb594da8ee8846274bc6ce13840586c9b83157febd7ca43538c53a7d954f526d",
-      "signal_patterns": [],
+      "sha256": "b2de2dd28a8c21c2ebd172e9b22a680ba5e981e631490a493ab5ab7d8bb7d9e8",
+      "signal_patterns": [
+        "actual_frame_timeline_slice",
+        "frame_slice"
+      ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126"
+        "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.input",
           "android.frames.timeline",
+          "android.frames.jank_type",
           "android.binder",
           "android.garbage_collection",
           "android.monitor_contention"
@@ -1932,8 +2222,12 @@
       "step_id": "fallback_no_frame_timeline",
       "template": {
         "fragments": [],
-        "parameters": [],
-        "result_dependencies": []
+        "parameters": [
+          "package"
+        ],
+        "result_dependencies": [
+          "buffer_tx_coverage"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

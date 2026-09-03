@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/memory_growth_detector.skill.yaml
--- Source SHA-256: d088a4f84486f3486d78bca495692f08bcfb5082ca1116aa968809851ef1873d
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 2b08097c2ecf0e91bbf533df7818050073340606df64e9e4587fc5b6ddafa7bd
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 input AS (
@@ -31,7 +31,7 @@ samples AS (
     COALESCE(swap, 0) AS swap,
     anon_rss_and_swap
   FROM memory_rss_and_swap_per_process, input
-  WHERE (input.target_process = '' OR process_name GLOB input.target_process || '*')
+  WHERE (input.target_process = '' OR process_name = input.target_process OR process_name GLOB input.target_process || ':*')
     AND ts >= input.start_ts
     AND ts < input.end_ts
     AND rss IS NOT NULL

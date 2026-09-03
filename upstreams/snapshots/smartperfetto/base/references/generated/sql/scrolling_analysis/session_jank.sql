@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 -- 动态 VSync 周期检测（限定在分析区间内，仅用于 session 切分）
@@ -25,7 +25,7 @@ vsync_config_for_session AS (
   END AS vsync_period_ns
   FROM (
     SELECT CAST(COALESCE(
-      (SELECT PERCENTILE(interval_ns, 0.5)
+      (SELECT PERCENTILE(interval_ns, 50)
        FROM vsync_intervals_for_session
        WHERE interval_ns > 5500000 AND interval_ns < 50000000),
       16666667
@@ -39,6 +39,14 @@ frame_gaps AS (
     a.layer_name,
     a.jank_type,
     COALESCE(a.present_type, 'Unknown Present') as present_type,
+    CASE
+      WHEN a.jank_type GLOB '*Self Jank*' OR android_is_app_jank_type(a.jank_type) THEN 'APP'
+      WHEN a.jank_type GLOB '*SurfaceFlinger*' THEN 'SF'
+      WHEN a.jank_type GLOB '*Buffer Stuffing*' THEN 'BUFFER_STUFFING'
+      WHEN android_is_sf_jank_type(a.jank_type) THEN 'SF'
+      WHEN a.jank_type = 'None' OR a.jank_type IS NULL THEN 'HIDDEN'
+      ELSE 'UNKNOWN'
+    END as jank_responsibility,
     p.name as process_name,
     a.ts - LAG(a.ts + a.dur) OVER (PARTITION BY a.upid ORDER BY a.ts) as time_gap_ns,
     a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END as present_ts,
@@ -46,7 +54,11 @@ frame_gaps AS (
       OVER (PARTITION BY a.layer_name ORDER BY a.ts) as prev_present_ts
   FROM actual_frame_timeline_slice a
   JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
@@ -82,20 +94,21 @@ session_token_gap_jank AS (
     -- 感知掉帧：双信号混合检测
     SUM(CASE
       WHEN sr.present_type IN ('Late Present', 'Dropped Frame')
-        AND sr.jank_type != 'Buffer Stuffing' THEN 1
-      WHEN sr.jank_type = 'Buffer Stuffing'
+        AND (sr.jank_responsibility != 'BUFFER_STUFFING' OR android_is_missed_frame_type(sr.jank_type)) THEN 1
+      WHEN sr.jank_responsibility = 'BUFFER_STUFFING'
         AND sr.prev_present_ts IS NOT NULL
         AND sr.present_ts - sr.prev_present_ts > (SELECT vsync_period_ns FROM vsync_config_for_session) * 1.5
         AND sr.present_ts - sr.prev_present_ts <= (SELECT vsync_period_ns FROM vsync_config_for_session) * 6 THEN 1
       ELSE 0 END) as consumer_jank_count,
     SUM(CASE WHEN sr.present_type IN ('Late Present', 'Dropped Frame')
-      AND sr.jank_type IN ('Self Jank', 'App Deadline Missed', 'App Resynced Jitter') THEN 1 ELSE 0 END) as app_jank_count,
+      AND sr.jank_responsibility = 'APP' THEN 1 ELSE 0 END) as app_jank_count,
     -- Buffer Stuffing 总帧数（管线背压，含正常 BS 和异常 BS）
-    SUM(CASE WHEN sr.jank_type = 'Buffer Stuffing' THEN 1 ELSE 0 END) as buffer_stuffing_count,
+    SUM(CASE WHEN sr.jank_responsibility = 'BUFFER_STUFFING' THEN 1 ELSE 0 END) as buffer_stuffing_count,
     MAX(CASE
       WHEN (
-        (sr.present_type IN ('Late Present', 'Dropped Frame') AND sr.jank_type != 'Buffer Stuffing')
-        OR (sr.jank_type = 'Buffer Stuffing' AND sr.prev_present_ts IS NOT NULL
+        (sr.present_type IN ('Late Present', 'Dropped Frame')
+          AND (sr.jank_responsibility != 'BUFFER_STUFFING' OR android_is_missed_frame_type(sr.jank_type)))
+        OR (sr.jank_responsibility = 'BUFFER_STUFFING' AND sr.prev_present_ts IS NOT NULL
             AND sr.present_ts - sr.prev_present_ts > (SELECT vsync_period_ns FROM vsync_config_for_session) * 1.5
             AND sr.present_ts - sr.prev_present_ts <= (SELECT vsync_period_ns FROM vsync_config_for_session) * 6)
       ) AND sr.prev_present_ts IS NOT NULL
@@ -103,8 +116,9 @@ session_token_gap_jank AS (
       THEN MAX(CAST(ROUND((sr.present_ts - sr.prev_present_ts) * 1.0 / (SELECT vsync_period_ns FROM vsync_config_for_session) - 1, 0) AS INTEGER), 0)
       ELSE 0 END) as max_vsync_missed,
     GROUP_CONCAT(DISTINCT CASE
-      WHEN (sr.present_type IN ('Late Present', 'Dropped Frame') AND sr.jank_type != 'Buffer Stuffing')
-        OR (sr.jank_type = 'Buffer Stuffing' AND sr.prev_present_ts IS NOT NULL
+      WHEN (sr.present_type IN ('Late Present', 'Dropped Frame')
+        AND (sr.jank_responsibility != 'BUFFER_STUFFING' OR android_is_missed_frame_type(sr.jank_type)))
+        OR (sr.jank_responsibility = 'BUFFER_STUFFING' AND sr.prev_present_ts IS NOT NULL
             AND sr.present_ts - sr.prev_present_ts > (SELECT vsync_period_ns FROM vsync_config_for_session) * 1.5)
       THEN COALESCE(sr.jank_type, 'None') END) as jank_types
   FROM sessions_raw sr

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/frame_production_gap.skill.yaml
-Source SHA-256: f533dbd058eb314ef6dc1c8e1517275fb7432c17d5f0c2e136536a0c9a26acf2
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 3c2acc9ac336d6298038424ccd0591a13b9b569accff00c49d1b5fe05ab4c7a6
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # 帧生产 Gap 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

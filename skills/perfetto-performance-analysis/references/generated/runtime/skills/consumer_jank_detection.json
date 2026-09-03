@@ -18,8 +18,6 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "%${package}%",
-      "%BufferTX%",
       "VSYNC-sf"
     ]
   },
@@ -59,7 +57,8 @@
   ],
   "prerequisites": {
     "modules": [
-      "android.frames.timeline"
+      "android.frames.timeline",
+      "android.frames.jank_type"
     ],
     "required_tables": [
       "actual_frame_timeline_slice"
@@ -69,9 +68,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
-    "sha256": "55465b17c1e74abda8e2e04bb70d0c079459a9f4095de2b56b420ac9721ee0c0"
+    "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
   },
   "steps": [
     {
@@ -108,6 +107,6 @@
     }
   ],
   "type": "atomic",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "scrolling"
 }

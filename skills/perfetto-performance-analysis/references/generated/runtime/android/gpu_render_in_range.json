@@ -53,7 +53,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "*DrawFrame*",
     "*Fence*signal*",
     "*Flush*",

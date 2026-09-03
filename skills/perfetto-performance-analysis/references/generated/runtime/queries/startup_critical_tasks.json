@@ -52,9 +52,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_critical_tasks/query.sql",
-      "sha256": "c5a7151d11725760c13ffed62996295fc4fba829c240395488c075765688d881",
+      "sha256": "1f8c0e4fbaf6f9b31aec5a845628aa59f4938f29dee158dd713a5f2d3d0a25a2",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "*AsyncTask*",
         "*DefaultDispatcher*",
         "*Dispatchers.Default*",
@@ -77,10 +78,10 @@
       ],
       "skill_id": "startup_critical_tasks",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8d9ffc04a4543994c80e63aba04812d897f68580cb39396c9600aafb01cf51dc"
+        "sha256": "f460c66ed18a0b8aef8f2b45c8295ba56c2a3ef06324f87d5d22f2a01e03c877"
       },
       "sql_dependencies": {
         "creates": [],

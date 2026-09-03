@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/util_tracking_analysis.skill.yaml
--- Source SHA-256: 05f535c2fcad4c73b0f5d2dbe56e94502556a6b720d7c85bf8dcd54146c732b2
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: f43141f7af054b22d9f434f439e6b550daf56200f0ea5b3ba014c7055dd975b0
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 -- 分析启动/滑动前 100ms 的频率 vs 实际负载，检测 util 建模延迟
 -- 如果任务一直在 Running 但频率低，说明 util_avg 还没反映真实负载
@@ -11,7 +11,7 @@ WITH task_running AS (
   JOIN thread t ON ss.utid = t.utid
   JOIN process p ON t.upid = p.upid
   WHERE t.is_main_thread = 1
-    AND p.name GLOB '${package}*'
+    AND ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND ss.ts BETWEEN ${start_ts} AND CAST(${start_ts} AS INTEGER) + 100000000
 ),
 freq_at_time AS (

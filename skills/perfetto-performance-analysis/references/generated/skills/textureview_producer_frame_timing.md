@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/textureview_producer_frame_timing.skill.yaml
-Source SHA-256: 9c4d5fb0a318772a5c5a9b3998e6489d3ca70d4d6ebc88330940731518a9f30a
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: a2c34451c741e02fc6d13ed92dc82fdb910606ab79c16c5996ce90becc55c588
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # TextureView 生产端帧时序
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: textureview_producer_frame_timing
-version: '1.0'
+version: '1.1'
 type: atomic
 category: rendering
 tier: B
@@ -20,7 +20,7 @@ tier: B
 
 ```yaml
 display_name: TextureView 生产端帧时序
-description: 检测非 Flutter TextureView / SurfaceTexture 生产端 queueBuffer、swapBuffers、onFrameAvailable 的帧间隔异常
+description: 区分 TextureView / SurfaceTexture 生产、出队与消费通知，并检测同类事件流中的帧节奏缺口候选
 icon: texture
 tags:
 - textureview
@@ -63,6 +63,7 @@ required_tables:
 - process
 modules:
 - slices.with_context
+- android.frames.timeline
 ```
 
 ## Inputs
@@ -87,7 +88,7 @@ modules:
 - name: target_frame_ms
   type: number
   required: false
-  description: 目标帧预算(ms)，默认 16.67
+  description: 显示帧预算(ms)覆盖值；默认从 trace 的 VSync / FrameTimeline 推断
 ```
 
 ## Ordered execution
@@ -109,6 +110,9 @@ display:
   - name: signal_role
     label: 角色
     type: string
+  - name: signal_type
+    label: 信号类型
+    type: string
   - name: process_name
     label: 进程
     type: string
@@ -116,7 +120,7 @@ display:
     label: 线程
     type: string
   - name: event_count
-    label: 次数
+    label: 信号次数（非帧数）
     type: number
     format: compact
   - name: avg_dur_ms
@@ -131,9 +135,15 @@ display:
     label: 最大耗时
     type: duration
     format: duration_ms
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+  - name: claim_boundary
+    label: 结论边界
+    type: string
 save_as: textureview_signal_summary
 ```
-### TextureView 生产端帧间隔
+### TextureView 事件流帧间隔
 
 - ID: `textureview_producer_intervals`
 - Type: `atomic`
@@ -145,7 +155,7 @@ type: atomic
 display:
   level: detail
   layer: list
-  title: TextureView 生产端慢帧间隔
+  title: TextureView 事件流节奏缺口候选
   columns:
   - name: ts
     label: 时间
@@ -163,9 +173,15 @@ display:
     type: duration
     format: duration_ms
   - name: vsync_missed
-    label: 疑似漏帧
+    label: 疑似漏生产帧
     type: number
     format: compact
+  - name: event_role
+    label: 事件角色
+    type: string
+  - name: event_stream
+    label: 事件流
+    type: string
   - name: event_name
     label: 事件
     type: string
@@ -178,9 +194,32 @@ display:
   - name: process_name
     label: 进程
     type: string
+  - name: display_vsync_ms
+    label: 显示 VSync
+    type: duration
+    format: duration_ms
+  - name: stream_period_ms
+    label: 事件流周期
+    type: duration
+    format: duration_ms
+  - name: cadence_baseline_ms
+    label: 节奏基线
+    type: duration
+    format: duration_ms
+  - name: vsync_source
+    label: VSync 来源
+    type: string
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+  - name: claim_boundary
+    label: 结论边界
+    type: string
   - name: rating
     label: 评级
     type: string
+sql_fragments:
+- fragments/vsync_config.sql
 save_as: textureview_producer_intervals
 ```
 ## Output and evidence contract

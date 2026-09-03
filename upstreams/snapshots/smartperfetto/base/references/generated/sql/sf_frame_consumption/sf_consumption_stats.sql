@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/sf_frame_consumption.skill.yaml
--- Source SHA-256: 45c4f9d714bd602d37b6011a5c75d3aa1293dc5e685525319a2af173b801d580
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 4c3292178277986593209bee8ad4583c853ee005e59e1b2ceb217fbae7701a3f
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 time_bounds AS (
@@ -25,7 +25,7 @@ sf_frames AS (
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
   WHERE a.surface_frame_token IS NOT NULL
-    AND (p.name GLOB '${package}*' OR '${package}' = '' OR a.layer_name GLOB '*${package}*')
+    AND (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '' OR a.layer_name GLOB '*${package}*')
     AND a.ts >= (SELECT start_ts FROM time_bounds)
     AND a.ts <= (SELECT end_ts FROM time_bounds)
 ),
@@ -45,7 +45,7 @@ consumption_stats AS (
     COUNT(CASE WHEN jank_type = 'None' THEN 1 END) as on_time_frames,
     COUNT(CASE WHEN jank_type != 'None' THEN 1 END) as janky_frames,
     AVG(interval_ns) as avg_interval_ns,
-    PERCENTILE(interval_ns, 0.5) as median_interval_ns,
+    PERCENTILE(interval_ns, 50) as median_interval_ns,
     MIN(interval_ns) as min_interval_ns,
     MAX(interval_ns) as max_interval_ns
   FROM frame_intervals

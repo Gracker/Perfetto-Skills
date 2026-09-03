@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "%Binder%",
       "RenderThread"
     ]
@@ -46,9 +47,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/page_fault_in_range.skill.yaml",
-    "sha256": "70c0fb8c89dddfe8a92611deb19c60d9126c1ed8c1e5c43e8d5639ce5f451a37"
+    "sha256": "8f9945a4764e7aa65e2fa83e6d547437865157eef7897a6ab6643c199d4018f2"
   },
   "steps": [],
   "type": "atomic",

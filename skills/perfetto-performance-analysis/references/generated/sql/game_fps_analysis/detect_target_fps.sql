@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/game_fps_analysis.skill.yaml
--- Source SHA-256: 149fad0ed589259b19b7d70e8969cf12c77fc86255551b55aeea19b9705ed7fe
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: b1c2c2f4499e3075a69a03b7dbde88b4145a3b8dea465d645cd175f697d90442
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 time_bounds AS (
@@ -15,7 +15,7 @@ frame_intervals AS (
     a.ts - LAG(a.ts) OVER (ORDER BY a.ts) as interval_ns
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND a.surface_frame_token IS NOT NULL
     AND a.ts >= (SELECT start_ts FROM time_bounds)
     AND a.ts <= (SELECT end_ts FROM time_bounds)

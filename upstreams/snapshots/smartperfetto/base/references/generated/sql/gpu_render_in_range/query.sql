@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_render_in_range.skill.yaml
--- Source SHA-256: 8bb5be71c0b5a94ecc3eb2ce24af291332227634bafef0a5423144dfcd48dab6
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 06ea425f109301061fa4939fe042767b99a582ebba749c63c654a294e82d882b
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH gpu_slices AS (
   SELECT
@@ -24,7 +24,7 @@ WITH gpu_slices AS (
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
   WHERE (${start_ts} IS NULL OR s.ts >= ${start_ts}) AND (${end_ts} IS NULL OR s.ts < ${end_ts})
-    AND (p.name GLOB '${package}*' OR '${package}' = '' OR p.name = 'surfaceflinger')
+    AND (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '' OR p.name = 'surfaceflinger')
     AND s.dur > 10000  -- > 10us
 )
 SELECT

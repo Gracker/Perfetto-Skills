@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/rn_fabric_render_jank.skill.yaml
-Source SHA-256: fdfb43f4d0487f058bf09549e6a0be4d373503cd106e5e8344e77129265ead8a
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 8a15553a9c2c082197a2e71d1a5134684efba677cbc45dab9a717b2084ddaabe
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # RN Fabric/JSI 渲染卡顿
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

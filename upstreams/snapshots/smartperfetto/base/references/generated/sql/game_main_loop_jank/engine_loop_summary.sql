@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/game_main_loop_jank.skill.yaml
--- Source SHA-256: 174f4c55bf6e3f9deed54eb0413221f154230454cb2b49437a87e6831cd3a251
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: af3cf3d17241144bf6c76fedf398ba64afce96ad2290b098e3e7c9e628aa7d17
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 input AS (
@@ -18,7 +18,7 @@ engine_processes AS (
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
   CROSS JOIN input i
-  WHERE (i.target_process = '' OR p.name GLOB i.target_process || '*')
+  WHERE (i.target_process = '' OR p.name = i.target_process OR p.name GLOB i.target_process || ':*')
     AND s.ts >= i.start_ts
     AND s.ts < i.end_ts
     AND (
@@ -56,7 +56,7 @@ engine_slices AS (
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
   CROSS JOIN input i
-  WHERE (i.target_process = '' OR p.name GLOB i.target_process || '*')
+  WHERE (i.target_process = '' OR p.name = i.target_process OR p.name GLOB i.target_process || ':*')
     AND p.upid IN (SELECT upid FROM engine_processes)
     AND s.ts >= i.start_ts
     AND s.ts < i.end_ts
@@ -78,12 +78,12 @@ SELECT
   COUNT(*) AS slice_count,
   ROUND(SUM(dur_ms), 2) AS total_dur_ms,
   ROUND(AVG(dur_ms), 2) AS avg_dur_ms,
-  ROUND(PERCENTILE(dur_ms, 0.95), 2) AS p95_dur_ms,
+  ROUND(PERCENTILE(dur_ms, 95), 2) AS p95_dur_ms,
   ROUND(MAX(dur_ms), 2) AS max_dur_ms,
   SUM(CASE WHEN dur_ms > (SELECT target_frame_ms * 1.5 FROM input) THEN 1 ELSE 0 END) AS over_budget_count,
   CASE
     WHEN MAX(dur_ms) > (SELECT target_frame_ms * 4 FROM input) THEN 'critical'
-    WHEN PERCENTILE(dur_ms, 0.95) > (SELECT target_frame_ms * 2 FROM input) THEN 'warning'
+    WHEN PERCENTILE(dur_ms, 95) > (SELECT target_frame_ms * 2 FROM input) THEN 'warning'
     WHEN SUM(CASE WHEN dur_ms > (SELECT target_frame_ms * 1.5 FROM input) THEN 1 ELSE 0 END) > 0 THEN 'notice'
     ELSE 'normal'
   END AS rating

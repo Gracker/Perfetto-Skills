@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/thread_states_quadrant.sql
--- Source SHA-256: ed6b54485655100dd9d525ec671ecc5c2a060f131457c501e09b26715dbe1766
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 512212a2b2350517a03e07a45f0711715f13b761db20622ea7cff756de0eb869
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 -- Fragment: thread_states_quadrant
 -- Depends on: target_threads (CTE), _cpu_topology (VIEW)
@@ -11,7 +11,9 @@
 -- Q3: Runnable but not scheduled (scheduling contention)
 -- Q4a: Uninterruptible wait (D/DK). Treat as IO only when io_wait=1
 --       or blocked_function matches an IO/page-cache family.
--- Q4b: Voluntary sleep (S=interruptible sleep, I=idle) — waiting on lock/futex/binder
+-- Q4b: Voluntary/interruptible sleep (S/I). This is an observed wait state,
+--       not a root cause; lock, Binder, futex, timer, event-loop, and
+--       UI-to-RenderThread synchronization need independent direct evidence.
 thread_states AS (
   SELECT
     tt.thread_type,

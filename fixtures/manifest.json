@@ -256,7 +256,7 @@
         {"id": "callstack-total-samples", "query_id": "callstack_analysis/check_samples", "kind": "field_positive", "field": "total_samples"},
         {
           "id": "callstack-code-pinpoint-function",
-          "query_id": "code_pinpoint/native_modules",
+          "query_id": "code_pinpoint/native_symbols",
           "kind": "field_equals",
           "field": "function_name",
           "value": "_ZN5scudo9AllocatorINS_13AndroidConfigEXadL_Z21scudo_malloc_postinitEEE27quarantineOrDeallocateChunkENS_7OptionsEPvPNS_5Chunk14UnpackedHeaderEm",
@@ -264,7 +264,7 @@
         },
         {
           "id": "callstack-code-pinpoint-module",
-          "query_id": "code_pinpoint/native_modules",
+          "query_id": "code_pinpoint/native_symbols",
           "kind": "field_equals",
           "field": "module_name",
           "value": "/apex/com.android.runtime/lib64/bionic/libc.so",
@@ -272,7 +272,7 @@
         },
         {
           "id": "callstack-code-pinpoint-build-id",
-          "query_id": "code_pinpoint/native_modules",
+          "query_id": "code_pinpoint/native_symbols",
           "kind": "field_equals",
           "field": "build_id",
           "value": "ba489d4985c0cf173209da67405662f9",
@@ -280,7 +280,7 @@
         },
         {
           "id": "callstack-code-pinpoint-sample-count",
-          "query_id": "code_pinpoint/native_modules",
+          "query_id": "code_pinpoint/native_symbols",
           "kind": "field_equals",
           "field": "sample_count",
           "value": 1,

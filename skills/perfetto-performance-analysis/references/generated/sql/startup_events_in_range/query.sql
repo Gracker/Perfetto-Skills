@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_events_in_range.skill.yaml
--- Source SHA-256: 8a3f5c3f6cd06de0c739aa95edaa12efc05d0935a8403ae6614654012c3d7e94
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 3c39c9e592a65c6658573a29c979ab0e061b421e67010515cafd7ddf75feb080
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 -- Multi-signal startup type validation:
 --   bindApplication exists           → cold  (process created from zygote)
@@ -103,7 +103,7 @@ validated AS (
   LEFT JOIN android_startup_time_to_display ttd USING (startup_id)
   LEFT JOIN startup_type_signals sts USING (startup_id)
   LEFT JOIN process_age pa USING (startup_id)
-  WHERE (s.package GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*') OR '${package}' = '')
     AND (${startup_id} IS NULL OR s.startup_id = ${startup_id})
     AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})

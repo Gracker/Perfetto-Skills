@@ -63,7 +63,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "VSYNC-app"
   ],
   "skill_id": "vsync_phase_alignment",

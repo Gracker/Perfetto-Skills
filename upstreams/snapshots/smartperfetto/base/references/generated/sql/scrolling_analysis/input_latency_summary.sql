@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 vsync_intervals AS (
@@ -24,7 +24,7 @@ timing_config AS (
   END AS vsync_period_ns
   FROM (
     SELECT CAST(COALESCE(
-      (SELECT PERCENTILE(interval_ns, 0.5)
+      (SELECT PERCENTILE(interval_ns, 50)
        FROM vsync_intervals
        WHERE interval_ns > 5500000 AND interval_ns < 50000000),
       16666667
@@ -34,7 +34,11 @@ timing_config AS (
 scoped_events AS (
   SELECT *
   FROM android_input_events
-  WHERE (process_name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR process_name = '${package}'
+    OR process_name GLOB '${package}:*'
+  )
     AND (${start_ts} IS NULL OR receive_ts + receive_dur > ${start_ts})
     AND (${end_ts} IS NULL OR dispatch_ts < ${end_ts})
 ),
@@ -69,7 +73,7 @@ SELECT
   ROUND(AVG(dispatch_latency_dur) / 1e6, 2) as avg_dispatch_ms,
   ROUND(MAX(dispatch_latency_dur) / 1e6, 2) as max_dispatch_ms,
   ROUND(AVG(handling_latency_dur) / 1e6, 2) as avg_handling_ms,
-  ROUND(PERCENTILE(handling_latency_dur, 0.95) / 1e6, 2) as p95_handling_ms,
+  ROUND(PERCENTILE(handling_latency_dur, 95) / 1e6, 2) as p95_handling_ms,
   ROUND(MAX(handling_latency_dur) / 1e6, 2) as max_handling_ms,
   ROUND(AVG(ack_latency_dur) / 1e6, 2) as avg_ack_ms,
   ROUND(MAX(ack_latency_dur) / 1e6, 2) as max_ack_ms,

@@ -71,7 +71,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "VSYNC-app"
   ],
   "skill_id": "input_to_frame_latency",

@@ -59,7 +59,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "*monitor*",
     "*mutex*",
     "Lock contention*(owner tid: *)*"

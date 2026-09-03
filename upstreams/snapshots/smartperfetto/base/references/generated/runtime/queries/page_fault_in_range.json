@@ -52,18 +52,19 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/page_fault_in_range/query.sql",
-      "sha256": "d2e54faad77c6c0a296d5ba9ae0a87115a581c10d6e6dec95010d8889ac76c64",
+      "sha256": "d6cac7a100e553644da63e86df39a94f6e208330535a2584b4f7380c37c5427d",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "%Binder%",
         "RenderThread"
       ],
       "skill_id": "page_fault_in_range",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/page_fault_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "70c0fb8c89dddfe8a92611deb19c60d9126c1ed8c1e5c43e8d5639ce5f451a37"
+        "sha256": "8f9945a4764e7aa65e2fa83e6d547437865157eef7897a6ab6643c199d4018f2"
       },
       "sql_dependencies": {
         "creates": [],

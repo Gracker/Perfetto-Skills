@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_in_range.skill.yaml
--- Source SHA-256: 3090864d8a14556995865f69ccf951cc39e5c1be1a8fca9fe2a2baf94d282e04
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 1f3c07eaa19d4249b09850bb9425b7394450088bee25f08b416e472519f725e0
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   client_process,
@@ -14,7 +14,7 @@ SELECT
 FROM android_binder_txns
 WHERE (${start_ts} IS NULL OR client_ts >= ${start_ts})
   AND (${end_ts} IS NULL OR client_ts < ${end_ts})
-  AND (client_process GLOB '${package}*' OR '${package}' = '')
+  AND (('${package}' = '' OR client_process = '${package}' OR client_process GLOB '${package}:*') OR '${package}' = '')
 GROUP BY client_process, server_process
 HAVING total_client_ms > 1
 ORDER BY total_client_ms DESC

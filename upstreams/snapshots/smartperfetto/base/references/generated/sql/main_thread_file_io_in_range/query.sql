@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_file_io_in_range.skill.yaml
--- Source SHA-256: e96c4772975c5a3a1f3a11164d8a61b17275ce0526269a589687536fbf290c6f
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: deec5e688be3e7a7018f727c113fe6c6f3b38a5754d8dd8c26f7c228cb094d5b
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH main_thread AS (
   SELECT t.utid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND t.tid = p.pid
 ),
 io_slices AS (

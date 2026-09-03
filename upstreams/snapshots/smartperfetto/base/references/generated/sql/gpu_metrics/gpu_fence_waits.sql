@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_metrics.skill.yaml
--- Source SHA-256: 7ec44d892abb05141d0c58bfb05944911a22d8a6d4252fc95aa9b12c5f4f800a
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 9456c4556e1e976ba2c42d7261839a9deac5ebd010487a69b95b965f094a68b2
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 time_bounds AS (
@@ -13,7 +13,7 @@ time_bounds AS (
 -- 动态检测 VSync 周期（VSYNC-sf 中位数优先，expected_frame 回退）
 vsync_config AS (
   SELECT CAST(COALESCE(
-    (SELECT PERCENTILE(interval_ns, 0.5)
+    (SELECT PERCENTILE(interval_ns, 50)
      FROM (
        SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) AS interval_ns
        FROM counter c
@@ -22,7 +22,7 @@ vsync_config AS (
          AND c.ts >= (SELECT start_ts FROM time_bounds)
          AND c.ts <= (SELECT end_ts FROM time_bounds)
      ) WHERE interval_ns > 5500000 AND interval_ns < 50000000),
-    (SELECT CAST(PERCENTILE(dur, 0.5) AS INTEGER)
+    (SELECT CAST(PERCENTILE(dur, 50) AS INTEGER)
      FROM expected_frame_timeline_slice
      WHERE dur > 5000000 AND dur < 50000000
        AND ts >= (SELECT start_ts FROM time_bounds)
@@ -50,7 +50,7 @@ SELECT
   ROUND(SUM(dur) / 1e6, 2) as total_wait_ms,
   ROUND(AVG(dur) / 1e6, 2) as avg_wait_ms,
   ROUND(MAX(dur) / 1e6, 2) as max_wait_ms,
-  ROUND(PERCENTILE(dur, 0.95) / 1e6, 2) as p95_wait_ms,
+  ROUND(PERCENTILE(dur, 95) / 1e6, 2) as p95_wait_ms,
   ROUND((SELECT vsync_period_ns FROM vsync_config) / 1e6, 2) as vsync_period_ms,
   -- 使用动态 VSync 周期
   COUNT(CASE WHEN dur > (SELECT vsync_period_ns FROM vsync_config) THEN 1 END) as waits_over_vsync,

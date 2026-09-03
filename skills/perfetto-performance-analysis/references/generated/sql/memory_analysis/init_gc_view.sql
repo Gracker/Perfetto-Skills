@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/memory_analysis.skill.yaml
--- Source SHA-256: cdec84f3101148083ffa1b4e4d4fd0fd16bfcac16c0a71b257ca50f86c84311c
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 DROP VIEW IF EXISTS _gc_events;
 CREATE VIEW _gc_events AS
@@ -29,7 +29,7 @@ FROM slice s
 JOIN thread_track tt ON s.track_id = tt.id
 JOIN thread t ON tt.utid = t.utid
 JOIN process p ON t.upid = p.upid
-WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
   AND (s.name GLOB '*GC*' OR s.name GLOB '*gc*' OR s.name GLOB '*ConcurrentCopying*')
   AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
   AND (${end_ts} IS NULL OR s.ts < ${end_ts})

@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "scheduling_analysis",
@@ -45,9 +46,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/scheduling_analysis.skill.yaml",
-    "sha256": "1e143b06981a9c0792d2263ba7c2d42a08a87a69f9257a6af7305abdc3080cab"
+    "sha256": "8e315933d2728d1e6f812ae3c548dd938ad3442d70ffbbfca1e05a9fcc39e853"
   },
   "steps": [],
   "type": "atomic",

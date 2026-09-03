@@ -54,21 +54,28 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/flutter_scrolling_analysis/flutter_frame_overview.sql",
-      "sha256": "8e1403193f4fd730890522e2b5e74d1d16b432c9ac02e1d06e247625ad3b656d",
+      "sha256": "bef8d402aa389307f927680e60ab3c3e3c496dbc616767920eddc7d849e57cad",
       "signal_patterns": [
-        "%${package}%"
+        "${package}",
+        "${package}:*",
+        "DartWorker*",
+        "VSYNC-sf",
+        "[0-9]*.io",
+        "[0-9]*.raster",
+        "[0-9]*.ui"
       ],
       "skill_id": "flutter_scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/flutter_scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "1948ff2572667b9c7ccba73cb1bc9334c36b3ae6f6ae78371b7c64e154421c72"
+        "sha256": "1f345fc088535bbce0d3edac849ed979ebf199178b142f2f24cc08d716a5a5f0"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -79,7 +86,13 @@
       },
       "step_id": "flutter_frame_overview",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/flutter_process_identity.sql",
+            "source_sha256": "cf8f4b8c4ca9d6f62b2f69f9acda09229d7f3a6ac0824c1d6f3b7fab4af3295c"
+          }
+        ],
         "parameters": [
           "end_ts",
           "package",
@@ -151,9 +164,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/flutter_scrolling_analysis/flutter_thread_analysis.sql",
-      "sha256": "87771e5f511adc095d6c123bf079d55407241d5f828b8d41f821c43d6e5aedd9",
+      "sha256": "bdedaa970a41fbdae1783037377dab6612e052b3946bafbde7aee76a05760e2a",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "*1.io*",
         "*1.raster*",
         "*1.ui*",
@@ -161,19 +175,24 @@
         "*SurfaceTexture*",
         "*queueBuffer*",
         "*updateTexImage*",
-        "RenderThread"
+        "DartWorker*",
+        "RenderThread",
+        "[0-9]*.io",
+        "[0-9]*.raster",
+        "[0-9]*.ui"
       ],
       "skill_id": "flutter_scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/flutter_scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "1948ff2572667b9c7ccba73cb1bc9334c36b3ae6f6ae78371b7c64e154421c72"
+        "sha256": "1f345fc088535bbce0d3edac849ed979ebf199178b142f2f24cc08d716a5a5f0"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -184,7 +203,13 @@
       },
       "step_id": "flutter_thread_analysis",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/flutter_process_identity.sql",
+            "source_sha256": "cf8f4b8c4ca9d6f62b2f69f9acda09229d7f3a6ac0824c1d6f3b7fab4af3295c"
+          }
+        ],
         "parameters": [
           "end_ts",
           "package",
@@ -256,22 +281,28 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/flutter_scrolling_analysis/flutter_consumer_jank.sql",
-      "sha256": "ae2ad4336ee059c257d5177bba99bd6874e8da23aabffb325b3c17c1f242afac",
+      "sha256": "4418e8ac3f789bfcd9570bdc932ca618e5627c2f698b51ecf945451d8fcbac00",
       "signal_patterns": [
-        "%${package}%",
-        "VSYNC-sf"
+        "${package}",
+        "${package}:*",
+        "DartWorker*",
+        "VSYNC-sf",
+        "[0-9]*.io",
+        "[0-9]*.raster",
+        "[0-9]*.ui"
       ],
       "skill_id": "flutter_scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/flutter_scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "1948ff2572667b9c7ccba73cb1bc9334c36b3ae6f6ae78371b7c64e154421c72"
+        "sha256": "1f345fc088535bbce0d3edac849ed979ebf199178b142f2f24cc08d716a5a5f0"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -282,7 +313,13 @@
       },
       "step_id": "flutter_consumer_jank",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/flutter_process_identity.sql",
+            "source_sha256": "cf8f4b8c4ca9d6f62b2f69f9acda09229d7f3a6ac0824c1d6f3b7fab4af3295c"
+          }
+        ],
         "parameters": [
           "end_ts",
           "package",
@@ -353,21 +390,27 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/flutter_scrolling_analysis/flutter_jank_frames.sql",
-      "sha256": "86527ff1f80a61035454530d74b2abb45ea4be1415098a27f09cf22dd1ddd3a4",
+      "sha256": "b71aa17a1d606f11d5106120ddf74492b5f6e30059492d5a937534c4ca1a7c81",
       "signal_patterns": [
-        "%${package}%"
+        "${package}",
+        "${package}:*",
+        "DartWorker*",
+        "[0-9]*.io",
+        "[0-9]*.raster",
+        "[0-9]*.ui"
       ],
       "skill_id": "flutter_scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/flutter_scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "1948ff2572667b9c7ccba73cb1bc9334c36b3ae6f6ae78371b7c64e154421c72"
+        "sha256": "1f345fc088535bbce0d3edac849ed979ebf199178b142f2f24cc08d716a5a5f0"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -378,7 +421,13 @@
       },
       "step_id": "flutter_jank_frames",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/flutter_process_identity.sql",
+            "source_sha256": "cf8f4b8c4ca9d6f62b2f69f9acda09229d7f3a6ac0824c1d6f3b7fab4af3295c"
+          }
+        ],
         "parameters": [
           "end_ts",
           "package",
@@ -450,27 +499,33 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/flutter_scrolling_analysis/flutter_ui_thread_long_slices.sql",
-      "sha256": "972f02a3ae3f32bc720d553e497f2642cae66bc8bbad91471cee836532ae4795",
+      "sha256": "df1b8fe5637ab0f8d2e6027a9cbb086ee98bac8f222225403da65b68bc103c22",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "%BeginFrame%",
         "%Build%",
         "%Layout%",
         "%Paint%",
         "%Semantics%",
-        "*1.ui*"
+        "*1.ui*",
+        "DartWorker*",
+        "[0-9]*.io",
+        "[0-9]*.raster",
+        "[0-9]*.ui"
       ],
       "skill_id": "flutter_scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/flutter_scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "1948ff2572667b9c7ccba73cb1bc9334c36b3ae6f6ae78371b7c64e154421c72"
+        "sha256": "1f345fc088535bbce0d3edac849ed979ebf199178b142f2f24cc08d716a5a5f0"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -481,7 +536,13 @@
       },
       "step_id": "flutter_ui_thread_long_slices",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/flutter_process_identity.sql",
+            "source_sha256": "cf8f4b8c4ca9d6f62b2f69f9acda09229d7f3a6ac0824c1d6f3b7fab4af3295c"
+          }
+        ],
         "parameters": [
           "end_ts",
           "package",
@@ -553,26 +614,32 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/flutter_scrolling_analysis/flutter_raster_thread_long_slices.sql",
-      "sha256": "5a8ed8962fe508f3de956fe7b74241e4abc4c765ea95862a2db26b560e923bcd",
+      "sha256": "754924b2dbbd74a9e04b96a1380604c5b50d40c78e2fe283d4509d0438600eae",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "%Compositor%",
         "%DrawToSurface%",
         "%EntityPass%",
         "%SkGpu%",
-        "*1.raster*"
+        "*1.raster*",
+        "DartWorker*",
+        "[0-9]*.io",
+        "[0-9]*.raster",
+        "[0-9]*.ui"
       ],
       "skill_id": "flutter_scrolling_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/flutter_scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "1948ff2572667b9c7ccba73cb1bc9334c36b3ae6f6ae78371b7c64e154421c72"
+        "sha256": "1f345fc088535bbce0d3edac849ed979ebf199178b142f2f24cc08d716a5a5f0"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -583,7 +650,13 @@
       },
       "step_id": "flutter_raster_thread_long_slices",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/flutter_process_identity.sql",
+            "source_sha256": "cf8f4b8c4ca9d6f62b2f69f9acda09229d7f3a6ac0824c1d6f3b7fab4af3295c"
+          }
+        ],
         "parameters": [
           "end_ts",
           "package",

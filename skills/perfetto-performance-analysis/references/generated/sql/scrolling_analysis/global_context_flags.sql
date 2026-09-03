@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 -- 1. 视频解码活动检测：滑动期间是否有 MediaCodec/视频线程活跃
@@ -22,7 +22,11 @@ interpolation_check AS (
   SELECT COUNT(*) as interpolation_frame_count
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND COALESCE(a.display_frame_token, -999) = -1
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
@@ -55,7 +59,11 @@ thermal_check AS (
 -- 4. 非 App 大核 CPU 占用（后台干扰指标）
 background_cpu AS (
   SELECT
-    ROUND(100.0 * SUM(CASE WHEN '${package}' != '' AND p.name NOT GLOB '${package}*' AND ts.state = 'Running' THEN ts.dur ELSE 0 END)
+    ROUND(100.0 * SUM(CASE
+      WHEN '${package}' != ''
+        AND NOT (p.name = '${package}' OR p.name GLOB '${package}:*')
+        AND ts.state = 'Running'
+      THEN ts.dur ELSE 0 END)
       / NULLIF(SUM(CASE WHEN ts.state = 'Running' THEN ts.dur ELSE 0 END), 0), 1) as non_app_big_core_pct
   FROM thread_state ts
   JOIN thread t ON ts.utid = t.utid

@@ -1,10 +1,11 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/vsync_config.sql
--- Source SHA-256: cf00555528fd2ad63aae7a38b5ec667384ca65535843b0b039ca997d17f56d04
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 96a6e07816d67db7ac8db23c91406a6abca0b42c314c66a06843dbbf57d0faa5
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 -- Fragment: vsync_config
--- Estimates VSync period using median of VSYNC-sf intervals, fallback to 16.67ms (60Hz)
+-- Estimates VSync period using scoped then trace-wide VSYNC/FrameTimeline evidence.
+-- The explicit 16.67ms default is used only when the trace has no usable timing evidence.
 -- Snaps to nearest standard refresh rate (30/60/90/120/144/165 Hz) to avoid
 -- half-period toggle contamination and jitter-induced miscalculation.
 -- Params: ${start_ts}, ${end_ts}
@@ -13,25 +14,69 @@ vsync_ticks AS (
   FROM counter c
   JOIN counter_track t ON c.track_id = t.id
   WHERE t.name = 'VSYNC-sf'
-    AND c.ts >= ${start_ts} - 100000000
-    AND c.ts < ${end_ts} + 100000000
+    AND (${start_ts} IS NULL OR c.ts >= ${start_ts} - 100000000)
+    AND (${end_ts} IS NULL OR c.ts < ${end_ts} + 100000000)
 ),
-vsync_config AS (
-  SELECT CASE
-    WHEN raw_ns BETWEEN 5500000 AND 6500000 THEN 6060606
-    WHEN raw_ns BETWEEN 6500001 AND 7500000 THEN 6944444
-    WHEN raw_ns BETWEEN 7500001 AND 9500000 THEN 8333333
-    WHEN raw_ns BETWEEN 9500001 AND 12500000 THEN 11111111
-    WHEN raw_ns BETWEEN 12500001 AND 20000000 THEN 16666667
-    WHEN raw_ns BETWEEN 20000001 AND 35000000 THEN 33333333
-    ELSE raw_ns
-  END AS vsync_period_ns
-  FROM (
-    SELECT CAST(COALESCE(
-      (SELECT PERCENTILE(interval_ns, 0.5)
+trace_vsync_ticks AS (
+  SELECT c.ts, c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
+  FROM counter c
+  JOIN counter_track t ON c.track_id = t.id
+  WHERE t.name = 'VSYNC-sf'
+),
+expected_frame_vsync AS (
+  SELECT CAST(PERCENTILE(dur, 50) AS INTEGER) as period_ns
+  FROM expected_frame_timeline_slice
+  WHERE dur > 5000000 AND dur < 50000000
+    AND (${start_ts} IS NULL OR ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR ts < ${end_ts})
+),
+trace_expected_frame_vsync AS (
+  SELECT CAST(PERCENTILE(dur, 50) AS INTEGER) as period_ns
+  FROM expected_frame_timeline_slice
+  WHERE dur > 5000000 AND dur < 50000000
+),
+raw_vsync_config AS (
+  SELECT
+    CAST(COALESCE(
+      (SELECT PERCENTILE(interval_ns, 50)
        FROM vsync_ticks
        WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      (SELECT period_ns FROM expected_frame_vsync WHERE period_ns > 0),
+      (SELECT PERCENTILE(interval_ns, 50)
+       FROM trace_vsync_ticks
+       WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      (SELECT period_ns FROM trace_expected_frame_vsync WHERE period_ns > 0),
       16666667
-    ) AS INTEGER) AS raw_ns
-  )
+    ) AS INTEGER) as raw_ns,
+    CASE
+      WHEN (SELECT COUNT(*) FROM vsync_ticks WHERE interval_ns > 5500000 AND interval_ns < 50000000) > 0
+        THEN CASE
+          WHEN ${start_ts} IS NULL OR ${end_ts} IS NULL THEN 'trace_wide_vsync_counter'
+          ELSE 'scoped_vsync_counter'
+        END
+      WHEN (SELECT period_ns FROM expected_frame_vsync WHERE period_ns > 0) IS NOT NULL
+        THEN CASE
+          WHEN ${start_ts} IS NULL OR ${end_ts} IS NULL THEN 'trace_wide_expected_frame'
+          ELSE 'scoped_expected_frame'
+        END
+      WHEN (SELECT COUNT(*) FROM trace_vsync_ticks WHERE interval_ns > 5500000 AND interval_ns < 50000000) > 0
+        THEN 'trace_wide_vsync_counter'
+      WHEN (SELECT period_ns FROM trace_expected_frame_vsync WHERE period_ns > 0) IS NOT NULL
+        THEN 'trace_wide_expected_frame'
+      ELSE 'default_60hz_no_trace_timing'
+    END as vsync_source
+),
+vsync_config AS (
+  SELECT
+    CASE
+      WHEN raw_ns BETWEEN 5500000 AND 6500000 THEN 6060606
+      WHEN raw_ns BETWEEN 6500001 AND 7500000 THEN 6944444
+      WHEN raw_ns BETWEEN 7500001 AND 9500000 THEN 8333333
+      WHEN raw_ns BETWEEN 9500001 AND 12500000 THEN 11111111
+      WHEN raw_ns BETWEEN 12500001 AND 20000000 THEN 16666667
+      WHEN raw_ns BETWEEN 20000001 AND 35000000 THEN 33333333
+      ELSE raw_ns
+    END AS vsync_period_ns,
+    vsync_source
+  FROM raw_vsync_config
 )

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_critical_tasks.skill.yaml
--- Source SHA-256: 8d9ffc04a4543994c80e63aba04812d897f68580cb39396c9600aafb01cf51dc
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: f460c66ed18a0b8aef8f2b45c8295ba56c2a3ef06324f87d5d22f2a01e03c877
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 -- Step 1: 识别目标进程的所有线程并自动分配角色
 WITH process_threads AS (
@@ -32,7 +32,7 @@ WITH process_threads AS (
     END as role
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${package}*'
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
 ),
 -- Step 2: 计算每个线程的四象限分布
 thread_quadrant_raw AS (

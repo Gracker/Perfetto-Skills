@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_sched_latency_in_range.skill.yaml
--- Source SHA-256: 868ae912f8997443ef08fdde6c3ceddbf4fb19eb4eff2517d5aec6048a897e81
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: b1100f6cdbc7e6e81be79602fdd5e7088eed25b60557368416dc94c4a6bf0e2c
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   ts.state,
@@ -14,7 +14,7 @@ FROM thread_state ts
 JOIN android_startup_threads st ON ts.utid = st.utid
 JOIN android_startups s ON st.startup_id = s.startup_id
 WHERE st.is_main_thread = 1
-  AND (s.package GLOB '${package}*' OR '${package}' = '')
+  AND (('${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*') OR '${package}' = '')
   AND (${startup_id} IS NULL OR s.startup_id = ${startup_id})
   AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
   AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})

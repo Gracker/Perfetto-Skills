@@ -25,7 +25,7 @@
         "for_each": "startups",
         "id": "honor_system_services",
         "name": "Honor 系统服务调用",
-        "sql": "SELECT\n  server_process,\n  client_dur / 1e6 as dur_ms,\n  COUNT(*) as call_count\nFROM android_binder_txns\nWHERE client_process GLOB '${package}*'\n  AND (server_process GLOB '*honor*'\n       OR server_process GLOB '*Honor*'\n       OR server_process GLOB '*magic*')\n  AND client_ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND client_ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nGROUP BY server_process\nORDER BY SUM(client_dur) DESC\n"
+        "sql": "SELECT\n  server_process,\n  client_dur / 1e6 as dur_ms,\n  COUNT(*) as call_count\nFROM android_binder_txns\nWHERE ('${package}' = '' OR client_process = '${package}' OR client_process GLOB '${package}:*')\n  AND (server_process GLOB '*honor*'\n       OR server_process GLOB '*Honor*'\n       OR server_process GLOB '*magic*')\n  AND client_ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND client_ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nGROUP BY server_process\nORDER BY SUM(client_dur) DESC\n"
       }
     ],
     "extends": "composite/startup_analysis",
@@ -83,8 +83,8 @@
   },
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/vendors/honor/startup.override.yaml",
-    "sha256": "aafadcba4fc1ebda6e2e0a17693dc1f77ee338a4c6508e749eeb6e9789da9642"
+    "sha256": "920dd0c8279987157a9cc9a510a3b2c08444715f952506939d04087f5858a29d"
   }
 }

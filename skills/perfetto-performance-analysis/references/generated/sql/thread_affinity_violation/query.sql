@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thread_affinity_violation.skill.yaml
--- Source SHA-256: 8b1f713a09cd8c1f1725b590ab20764687be3783a8ff9004606bbd80927bfecb
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: d66b29385d8481d5950b064fbc5c7fa8f18e83ee05c5ff08e5c5e9fa535469fb
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH target_threads AS (
   SELECT
@@ -12,7 +12,7 @@ WITH target_threads AS (
     t.tid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND (
       t.tid = p.pid
       OR t.name = 'RenderThread'

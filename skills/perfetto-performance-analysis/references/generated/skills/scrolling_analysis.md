@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -72,6 +72,7 @@ patterns:
 modules:
 - android.input
 - android.frames.timeline
+- android.frames.jank_type
 - android.binder
 - android.garbage_collection
 - android.monitor_contention
@@ -174,6 +175,8 @@ save_as: frame_timeline
 ```yaml
 id: vsync_config
 type: atomic
+sql_fragments:
+- fragments/vsync_config.sql
 display:
   level: summary
   layer: overview
@@ -196,6 +199,23 @@ display:
     type: number
     format: compact
 save_as: environment
+condition: frame_timeline.data[0]?.has_frame_timeline === 1
+```
+### BufferTX / FrameTimeline 覆盖探针
+
+- ID: `buffer_tx_coverage_probe`
+- Type: `atomic`
+- SQL: [`../sql/scrolling_analysis/buffer_tx_coverage_probe.sql`](../sql/scrolling_analysis/buffer_tx_coverage_probe.sql)
+
+```yaml
+id: buffer_tx_coverage_probe
+type: atomic
+optional: true
+display: false
+sql_fragments:
+- fragments/vsync_config.sql
+- fragments/buffer_tx_frame_production.sql
+save_as: buffer_tx_coverage
 condition: frame_timeline.data[0]?.has_frame_timeline === 1
 ```
 ### 帧性能汇总
@@ -285,7 +305,83 @@ display:
     label: 评级
     type: string
 save_as: perf_summary
-condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1
+condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1 && buffer_tx_coverage.data[0]?.coverage_status
+  !== 'target_process_not_found' && buffer_tx_coverage.data[0]?.should_fallback !== 1
+```
+### BufferTX 帧率回退
+
+- ID: `buffer_tx_performance_fallback`
+- Type: `atomic`
+- SQL: [`../sql/scrolling_analysis/buffer_tx_performance_fallback.sql`](../sql/scrolling_analysis/buffer_tx_performance_fallback.sql)
+
+```yaml
+id: buffer_tx_performance_fallback
+type: atomic
+sql_fragments:
+- fragments/vsync_config.sql
+- fragments/buffer_tx_frame_production.sql
+synthesize:
+  role: overview
+  fields:
+  - key: total_frames
+    label: BufferTX 产出帧
+  - key: actual_fps
+    label: 平均 FPS
+  - key: fps_source
+    label: 帧率来源
+  - key: duration_sec
+    label: 有效时段
+  - key: frame_source_track
+    label: BufferTX 证据轨道
+  - key: coverage_status
+    label: FrameTimeline 覆盖状态
+  - key: frame_timeline_to_buffer_tx_ratio
+    label: FrameTimeline 覆盖率
+  - key: vsync_source
+    label: VSync 证据来源
+  - key: evidence_status
+    label: 可交付证据范围
+display:
+  level: summary
+  layer: overview
+  title: 滑动帧率概览（BufferTX 回退）
+  columns:
+  - name: total_frames
+    label: BufferTX 产出帧
+    type: number
+    format: compact
+  - name: actual_fps
+    label: 实际 FPS
+    type: number
+  - name: duration_sec
+    label: 有效时段(s)
+    type: number
+  - name: refresh_rate
+    label: 刷新率
+    type: number
+  - name: fps_source
+    label: 帧率来源
+    type: string
+  - name: vsync_source
+    label: VSync 证据来源
+    type: string
+  - name: frame_source_track
+    label: BufferTX 证据轨道
+    type: string
+  - name: frame_timeline_to_buffer_tx_ratio
+    label: FrameTimeline/BufferTX 帧数比
+    type: number
+  - name: coverage_status
+    label: FrameTimeline 覆盖状态
+    type: string
+  - name: evidence_status
+    label: 可交付证据范围
+    type: string
+  - name: rating
+    label: 证据边界
+    type: string
+save_as: perf_summary
+condition: frame_timeline.data[0]?.has_frame_timeline === 1 && buffer_tx_coverage.data[0]?.should_fallback === 1
 ```
 ### Input 数据源回退视图
 
@@ -527,6 +623,18 @@ display:
   - name: responsibility
     label: 类型标签
     type: string
+  - name: frame_timeline_coverage_status
+    label: FrameTimeline 覆盖状态
+    type: string
+    hidden: true
+  - name: frame_timeline_to_buffer_tx_ratio
+    label: FrameTimeline/BufferTX 帧数比
+    type: number
+    hidden: true
+  - name: evidence_scope
+    label: 根因证据范围
+    type: string
+    hidden: true
 save_as: jank_stats
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1
 ```
@@ -663,6 +771,8 @@ condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[
 ```yaml
 id: get_app_jank_frames
 type: atomic
+sql_fragments:
+- fragments/root_cause_sample_cap.sql
 synthesize:
   role: list
   groupBy:
@@ -685,6 +795,9 @@ condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment?.data
 id: batch_frame_root_cause
 type: atomic
 optional: true
+sql_fragments:
+- fragments/vsync_config.sql
+- fragments/root_cause_sample_cap.sql
 synthesize:
   role: list
   groupBy:
@@ -692,6 +805,9 @@ synthesize:
     title: 责任归属分布
   - field: reason_code
     title: 根因分类分布
+  insights:
+  - template: 根因分析覆盖 {{root_cause_analyzed_frame_count}}/{{root_cause_eligible_frame_count}} 帧，coverage={{root_cause_coverage_ratio}}，每
+      Session 上限 {{root_cause_sample_limit_per_session}}，scope={{root_cause_analysis_scope}}
 display:
   level: detail
   layer: list
@@ -707,6 +823,14 @@ display:
   - name: frame_id
     label: 帧 ID
     type: string
+  - name: frame_identity_key
+    label: 帧身份键
+    type: string
+    hidden: true
+  - name: layer_name
+    label: Layer
+    type: string
+    hidden: true
   - name: frame_index
     label: 帧序号
     type: number
@@ -740,6 +864,42 @@ display:
   - name: jank_responsibility
     label: 责任归属
     type: string
+  - name: frame_timeline_coverage_status
+    label: FrameTimeline 覆盖状态
+    type: string
+    hidden: true
+  - name: frame_timeline_to_buffer_tx_ratio
+    label: FrameTimeline/BufferTX 帧数比
+    type: number
+    hidden: true
+  - name: evidence_scope
+    label: 根因证据范围
+    type: string
+    hidden: true
+  - name: root_cause_eligible_frame_count
+    label: 可分析掉帧
+    type: number
+    format: compact
+    hidden: true
+  - name: root_cause_analyzed_frame_count
+    label: 已分析掉帧
+    type: number
+    format: compact
+    hidden: true
+  - name: root_cause_coverage_ratio
+    label: 根因分析覆盖率
+    type: percentage
+    format: percentage
+    hidden: true
+  - name: root_cause_sample_limit_per_session
+    label: 每 Session 采样上限
+    type: number
+    format: compact
+    hidden: true
+  - name: root_cause_analysis_scope
+    label: 根因分析范围
+    type: string
+    hidden: true
   - name: reason_code
     label: 根因分类
     type: string
@@ -777,7 +937,7 @@ display:
     format: percentage
     hidden: true
   - name: main_q4b_pct
-    label: Q4b 锁/等待%
+    label: Q4b 可中断睡眠/同步等待%
     type: percentage
     format: percentage
     hidden: true
@@ -802,7 +962,7 @@ display:
     format: percentage
     hidden: true
   - name: render_q4b_pct
-    label: RT Q4b 锁/等待%
+    label: RT Q4b 可中断睡眠/同步等待%
     type: percentage
     format: percentage
     hidden: true
@@ -857,6 +1017,25 @@ display:
     label: Binder重叠
     type: duration
     format: duration_ms
+    unit: ms
+    hidden: true
+  - name: lock_contention_ms
+    label: Monitor锁竞争重叠
+    type: duration
+    format: duration_ms
+    unit: ms
+    hidden: true
+  - name: render_sync_wait_ms
+    label: 主线程等待RenderThread
+    type: duration
+    format: duration_ms
+    unit: ms
+    hidden: true
+  - name: render_sync_rt_work_ms
+    label: RenderThread同步阶段工作
+    type: duration
+    format: duration_ms
+    unit: ms
     hidden: true
   - name: gc_overlap_ms
     label: GC重叠
@@ -871,6 +1050,10 @@ display:
     label: 帧预算
     type: duration
     format: duration_ms
+    hidden: true
+  - name: vsync_source
+    label: 帧预算来源
+    type: string
     hidden: true
   - name: device_peak_freq_mhz
     label: 设备峰值频率
@@ -1074,7 +1257,8 @@ condition: frame_timeline.data[0]?.has_frame_timeline === 1 && (perf_summary?.da
 ```yaml
 id: fallback_no_frame_timeline
 type: atomic
-condition: frame_timeline.data[0]?.has_frame_timeline === 0
+condition: frame_timeline.data[0]?.has_frame_timeline === 0 || (environment?.data?.[0]?.has_data !== 1 && (perf_summary?.data?.[0]?.total_frames
+  || 0) === 0)
 display:
   level: summary
   layer: overview

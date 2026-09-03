@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/vsync_period_detection.skill.yaml
-Source SHA-256: b6139b2a252fbc4644978e6801b666ac16d081516ec77a75c8cb3d86da538043
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 3e6fef81b5490d36eb957296b47334e49b8c55adb5509d01ad7dae8765c6bec1
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # Detect VSync period from trace data using median of VSYNC-sf intervals.
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

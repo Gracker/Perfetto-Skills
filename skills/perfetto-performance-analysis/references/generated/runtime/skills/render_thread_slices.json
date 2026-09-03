@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "RenderThread"
     ]
   },
@@ -52,9 +53,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/render_thread_slices.skill.yaml",
-    "sha256": "cc1e3d5e7156fb21c9208867164cb287e368f620dae68b1f3e289076316b4435"
+    "sha256": "8ddac0e2dc4a11ec52133865f9c7be4c33cae1f207852349f0757d5049168649"
   },
   "steps": [
     {

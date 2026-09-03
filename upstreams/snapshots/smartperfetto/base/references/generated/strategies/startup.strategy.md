@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/startup.strategy.md
-Source SHA-256: e9b4aa3588c1f083607be37cfc6121121243f552ccd7cec11c9943a28fd2b2b6
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 8d2ca3e24f6304a5f371b93da0cbeedad3a1eb22d5dfc289ca34e85055ef04e2
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 # Startup Strategy
 
@@ -625,7 +625,7 @@ plan_template:
 ```sql
 SELECT name AS slice_name, dur / 1e6 AS dur_ms, thread_name
 FROM thread_slice
-WHERE process_name GLOB '{process_name}*'
+WHERE ('{process_name}' = '' OR process_name = '{process_name}' OR process_name GLOB '{process_name}:*')
   AND (is_main_thread = 1 OR thread_name = 'RenderThread')
   AND ts BETWEEN {end_ts} AND {end_ts} + 500000000
   AND dur > 5000000

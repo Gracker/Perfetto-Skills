@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/input_to_frame_latency.skill.yaml
--- Source SHA-256: 3f8a18a4750d12e34a5556236cf069b5e09eaf1c3c3cf2cc5af513f635809c46
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH vsync_intervals AS (
   SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
@@ -24,7 +24,7 @@ snapped AS (
     ELSE raw_ns
   END AS vsync_period_ns
   FROM (
-    SELECT CAST(PERCENTILE(interval_ns, 0.5) AS INTEGER) AS raw_ns
+    SELECT CAST(PERCENTILE(interval_ns, 50) AS INTEGER) AS raw_ns
     FROM filtered
   )
 )

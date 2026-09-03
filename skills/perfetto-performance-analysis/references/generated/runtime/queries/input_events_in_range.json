@@ -52,16 +52,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_events_in_range/query.sql",
-      "sha256": "6d8d87e499d637ad89fc4b0db2de09770c940a55b81a806e66bf2ffff4012c21",
+      "sha256": "0c08ab89469a68829d411d87c6998996b7a62eb8ca6fcc90d35dc257c31ebd8d",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "input_events_in_range",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/input_events_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "55d6681383a486d2bb4ba6b2229acb5445d935eb1b8e27148503595a16ff137b"
+        "sha256": "b7265363c10d92317461adfe71626b4fa2edd15b86edb523146dc565ce4cd042"
       },
       "sql_dependencies": {
         "creates": [],

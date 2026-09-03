@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/scroll_response_latency.skill.yaml
--- Source SHA-256: d89dec74765b5e8b1f68f450ec1579c149e0d6b3db6adb5e0ffe9c04b2799859
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: da35bbd788db3f909aaf7b95ab17b841c7e57a3d6e1bfc17ed9b974541569485
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH move_events AS (
   SELECT
@@ -10,7 +10,7 @@ WITH move_events AS (
     upid,
     ROW_NUMBER() OVER (PARTITION BY upid ORDER BY dispatch_ts) as move_idx
   FROM android_input_events
-  WHERE (process_name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*') OR '${package}' = '')
     AND event_action = 'MOVE'
     AND (${start_ts} IS NULL OR dispatch_ts >= ${start_ts})
     AND (${end_ts} IS NULL OR dispatch_ts <= ${end_ts})

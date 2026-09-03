@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/sched_latency_in_range.skill.yaml
--- Source SHA-256: 698297e54cca86ca36dc17117b27568195ae8f1b0f9d7c7e3c25922c969fc82c
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 27015e72f5b20d3dc85010dd507c2510afcc4b6a9c12515bea3fb478e09e446d
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH target_threads AS (
   SELECT t.utid, t.name as thread_name, p.pid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND (t.tid = p.pid OR t.name = 'RenderThread' OR t.name LIKE '%UI%')
 ),
 runnable_states AS (

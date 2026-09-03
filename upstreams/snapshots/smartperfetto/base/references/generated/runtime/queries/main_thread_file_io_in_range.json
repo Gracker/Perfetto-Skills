@@ -52,16 +52,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/main_thread_file_io_in_range/query.sql",
-      "sha256": "fc05a91da6b67cab3b6337b1d1c02366bd6da557b95307109e30440c85fde027",
+      "sha256": "da90681088c5dac11b6d83ff639daae480c0ea8a51110fcdcbd364cd6a644da1",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "main_thread_file_io_in_range",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/main_thread_file_io_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e96c4772975c5a3a1f3a11164d8a61b17275ce0526269a589687536fbf290c6f"
+        "sha256": "deec5e688be3e7a7018f727c113fe6c6f3b38a5754d8dd8c26f7c228cb094d5b"
       },
       "sql_dependencies": {
         "creates": [],

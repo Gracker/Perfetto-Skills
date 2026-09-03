@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/pipeline_key_slices_overlay.skill.yaml
--- Source SHA-256: 34b2abe52c508a34d1fb3f9794fbac79210dc3ee9fb9e3d4305b68a4c3699b97
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 254612bd358826352dc175fa3530bb7f926ca3dd77c3d6a5965e2891f5f9e262
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   s.ts,
@@ -31,7 +31,7 @@ WHERE s.name IN (${slice_names})
   AND (${end_ts|NULL} IS NULL OR s.ts < ${end_ts|NULL})
   AND (
     '${package}' = ''
-    OR p.name GLOB '${package}*'
+    OR ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     OR p.name LIKE '%surfaceflinger%'
     OR p.name = 'system_server'
   )

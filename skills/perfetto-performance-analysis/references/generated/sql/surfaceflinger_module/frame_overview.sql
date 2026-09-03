@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/surfaceflinger_module.skill.yaml
--- Source SHA-256: d456d7df46f6aec95de47a77dc360d10ac0154b45fa9ed8e8a779c8ea356bffd
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: a56ccb9b89cffa35d9a98573a6b43fbcaf3fba59658a7a74b91d4676d6947e05
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH frames AS (
   SELECT
@@ -12,7 +12,7 @@ WITH frames AS (
   JOIN process p ON a.upid = p.upid
   WHERE
     a.surface_frame_token IS NOT NULL
-    AND (p.name GLOB '${package}*' OR '${package}' = '')
+    AND (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
 )
 SELECT
   COUNT(*) AS total_frames,

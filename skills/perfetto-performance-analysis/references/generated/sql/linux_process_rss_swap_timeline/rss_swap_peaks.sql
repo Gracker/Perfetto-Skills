@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/linux_process_rss_swap_timeline.skill.yaml
--- Source SHA-256: f53d47d4593d8d3df74a9e33510f95984897d677cb882cd2a9d39494e4432c1f
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 4e9734f2e05a2e53ac4713dd8f51e7c0c93911207208fa847a936c48930a2b27
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 input AS (
@@ -20,7 +20,7 @@ SELECT
   ROUND(MAX(anon_rss_and_swap) / 1024.0 / 1024.0, 2) AS max_anon_swap_mb,
   ROUND(MAX(COALESCE(swap, 0)) / 1024.0 / 1024.0, 2) AS max_swap_mb
 FROM memory_rss_and_swap_per_process, input
-WHERE (input.target_process = '' OR process_name GLOB input.target_process || '*')
+WHERE (input.target_process = '' OR process_name = input.target_process OR process_name GLOB input.target_process || ':*')
   AND ts >= input.start_ts
   AND ts < input.end_ts
 GROUP BY process_name

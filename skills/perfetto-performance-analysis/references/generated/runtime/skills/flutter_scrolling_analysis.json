@@ -18,7 +18,6 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "%${package}%",
       "%BeginFrame%",
       "%Build%",
       "%Compositor%",
@@ -71,7 +70,8 @@
   ],
   "prerequisites": {
     "modules": [
-      "android.frames.timeline"
+      "android.frames.timeline",
+      "android.frames.jank_type"
     ],
     "required_tables": [
       "actual_frame_timeline_slice"
@@ -81,9 +81,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/composite/flutter_scrolling_analysis.skill.yaml",
-    "sha256": "1948ff2572667b9c7ccba73cb1bc9334c36b3ae6f6ae78371b7c64e154421c72"
+    "sha256": "1f345fc088535bbce0d3edac849ed979ebf199178b142f2f24cc08d716a5a5f0"
   },
   "steps": [
     {
@@ -133,6 +133,6 @@
     }
   ],
   "type": "composite",
-  "version": "1.0",
+  "version": "1.2",
   "workflow": "frameworks-games"
 }

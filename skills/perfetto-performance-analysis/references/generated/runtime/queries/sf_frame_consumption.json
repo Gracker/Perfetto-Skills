@@ -54,16 +54,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/sf_frame_consumption/sf_consumption_stats.sql",
-      "sha256": "913248bae070867713a1475d5804b930278d8b6db8ee52f17ccbb638fad31c5d",
+      "sha256": "52315938e396b09a23811188a948778838a43a3c8a764a5b8c4445cb6817881c",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "sf_frame_consumption",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/sf_frame_consumption.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "45c4f9d714bd602d37b6011a5c75d3aa1293dc5e685525319a2af173b801d580"
+        "sha256": "4c3292178277986593209bee8ad4583c853ee005e59e1b2ceb217fbae7701a3f"
       },
       "sql_dependencies": {
         "creates": [],

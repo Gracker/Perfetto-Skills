@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "RenderThread"
     ]
   },
@@ -45,9 +46,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/task_migration_in_range.skill.yaml",
-    "sha256": "1b05bdb3c94d10130b9a0a89dc4e197560e6c66e235eca7924f7b6fe80d9df88"
+    "sha256": "7b947c3b5e2f9a4e3c945f4b914eeb74e2b5bbe7d7f208a7d90c1913177aaf3f"
   },
   "steps": [
     {

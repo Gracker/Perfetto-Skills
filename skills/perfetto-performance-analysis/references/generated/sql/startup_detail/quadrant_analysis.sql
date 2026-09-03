@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/startup_detail.skill.yaml
--- Source SHA-256: 27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH main_thread AS (
   SELECT t.utid, t.tid, t.name as thread_name, p.pid, p.name as process_name
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${package}*'
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND t.tid = p.pid
 ),
 thread_states AS (

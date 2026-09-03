@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/input_events_in_range.skill.yaml
--- Source SHA-256: 55d6681383a486d2bb4ba6b2229acb5445d935eb1b8e27148503595a16ff137b
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: b7265363c10d92317461adfe71626b4fa2edd15b86edb523146dc565ce4cd042
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   printf('%d', dispatch_ts) as event_ts,
@@ -21,7 +21,7 @@ SELECT
     ELSE '正常'
   END as dispatch_status
 FROM android_input_events
-WHERE (process_name GLOB '${package}*' OR '${package}' = '')
+WHERE (('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*') OR '${package}' = '')
   AND (${start_ts} IS NULL OR dispatch_ts >= ${start_ts})
   AND (${end_ts} IS NULL OR dispatch_ts <= ${end_ts})
   AND ('${event_type}' = '' OR event_type = '${event_type}')

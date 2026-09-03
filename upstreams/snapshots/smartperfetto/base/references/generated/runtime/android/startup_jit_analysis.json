@@ -58,7 +58,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "*GarbageCollectCache*",
     "*ScopedCodeCacheWrite*",
     "JIT compiling*",

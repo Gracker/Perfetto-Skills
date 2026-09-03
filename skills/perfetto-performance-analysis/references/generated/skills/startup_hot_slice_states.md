@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_hot_slice_states.skill.yaml
-Source SHA-256: 7b53b185503a7dbaaf1ddc0527728dc763324f140dc4b673f65e56d18926eba6
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 459330b21f16b3e1f5eac9374dde4074253c8f5ac6179813b88ed7c25a503249
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # 热点 Slice 线程状态分布
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

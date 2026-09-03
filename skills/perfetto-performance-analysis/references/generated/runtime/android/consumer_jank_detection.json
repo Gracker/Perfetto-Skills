@@ -52,7 +52,8 @@
     }
   },
   "required_modules": [
-    "android.frames.timeline"
+    "android.frames.timeline",
+    "android.frames.jank_type"
   ],
   "required_tables": [
     "actual_frame_timeline_slice"
@@ -66,8 +67,6 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "%${package}%",
-    "%BufferTX%",
     "VSYNC-sf"
   ],
   "skill_id": "consumer_jank_detection",

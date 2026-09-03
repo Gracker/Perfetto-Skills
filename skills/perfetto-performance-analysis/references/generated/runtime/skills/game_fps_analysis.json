@@ -18,7 +18,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "game_fps_analysis",
@@ -62,9 +63,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/game_fps_analysis.skill.yaml",
-    "sha256": "149fad0ed589259b19b7d70e8969cf12c77fc86255551b55aeea19b9705ed7fe"
+    "sha256": "b1c2c2f4499e3075a69a03b7dbde88b4145a3b8dea465d645cd175f697d90442"
   },
   "steps": [
     {

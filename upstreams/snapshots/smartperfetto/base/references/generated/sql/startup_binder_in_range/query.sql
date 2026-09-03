@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_binder_in_range.skill.yaml
--- Source SHA-256: 634089d0758acaec85224ca0440cd8e33c26da6dc537b93e0ee0f3e54d663f6c
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 4e757ef8d702d4fd72e6dd729c45081bd1fae0f86b5c1ef482bf438acc0c7ab6
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   bt.server_process,
@@ -16,9 +16,9 @@ SELECT
 FROM android_binder_txns bt
 JOIN android_startups s ON (
   bt.client_ts >= s.ts AND bt.client_ts <= s.ts + s.dur
-  AND bt.client_process GLOB s.package || '*'
+  AND (bt.client_process = s.package OR bt.client_process GLOB s.package || ':*')
 )
-WHERE (s.package GLOB '${package}*' OR '${package}' = '')
+WHERE (('${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*') OR '${package}' = '')
   AND (${startup_id} IS NULL OR s.startup_id = ${startup_id})
   AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
   AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})

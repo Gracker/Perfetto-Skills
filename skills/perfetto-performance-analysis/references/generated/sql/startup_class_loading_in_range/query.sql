@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_class_loading_in_range.skill.yaml
--- Source SHA-256: 67a9f4747f25293a9194b9302ad554294fbc8efdd5397b50c7f74664a0899a34
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 664d113170724cd4624484f648f9f4570e1b77552d7e57bbb821ac28786465ea
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   cl.slice_name,
@@ -13,7 +13,7 @@ SELECT
   ROUND(100.0 * SUM(cl.slice_dur) / s.dur, 1) as percent_of_startup
 FROM android_class_loading_for_startup cl
 JOIN android_startups s ON cl.startup_id = s.startup_id
-WHERE (s.package GLOB '${package}*' OR '${package}' = '')
+WHERE (('${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*') OR '${package}' = '')
   AND (${startup_id} IS NULL OR s.startup_id = ${startup_id})
   AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
   AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})

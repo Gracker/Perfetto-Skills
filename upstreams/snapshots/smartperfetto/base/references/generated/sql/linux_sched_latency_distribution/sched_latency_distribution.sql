@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/linux_sched_latency_distribution.skill.yaml
--- Source SHA-256: b193794805d2765d8923aeb693fe88709520ebe0d0b3c9ff5eb44a2e0a9afe73
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: c8f9e7708b0a70437c81fbaec17831e3c0285e840a77f485d5f6fdcdfbb0cbba
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 input AS (
@@ -20,7 +20,7 @@ latency AS (
   JOIN thread t ON sl.utid = t.utid
   JOIN process p ON t.upid = p.upid
   CROSS JOIN input i
-  WHERE (i.target_process = '' OR p.name GLOB i.target_process || '*')
+  WHERE (i.target_process = '' OR p.name = i.target_process OR p.name GLOB i.target_process || ':*')
     AND ts.ts >= i.start_ts
     AND ts.ts < i.end_ts
     AND sl.latency_dur > 10000
@@ -31,7 +31,7 @@ SELECT
   COUNT(*) AS runnable_count,
   ROUND(SUM(latency_dur) / 1e6, 2) AS total_latency_ms,
   ROUND(AVG(latency_dur) / 1e6, 2) AS avg_latency_ms,
-  ROUND(PERCENTILE(latency_dur, 0.95) / 1e6, 2) AS p95_latency_ms,
+  ROUND(PERCENTILE(latency_dur, 95) / 1e6, 2) AS p95_latency_ms,
   ROUND(MAX(latency_dur) / 1e6, 2) AS max_latency_ms,
   SUM(CASE WHEN latency_dur > 8000000 THEN 1 ELSE 0 END) AS severe_waits
 FROM latency

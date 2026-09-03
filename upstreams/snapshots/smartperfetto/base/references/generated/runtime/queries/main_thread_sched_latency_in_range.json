@@ -52,16 +52,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/main_thread_sched_latency_in_range/query.sql",
-      "sha256": "090879268fa04843d821ab8d864666dd12ace05ce37bb5cf00b796e06d72bc80",
+      "sha256": "69837baed02c112a8852ac4e02aec38deb23b1353624f70f412ec2467530d7c8",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "main_thread_sched_latency_in_range",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/main_thread_sched_latency_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "de053b0fa4190314df852b3a55b169077626cae09d319365cdaff98c5ec3ad1e"
+        "sha256": "ec7378f70acb64450db21e4b4e2b3a58143cd67cb78c6cdb61a5bd1f67b4b3ef"
       },
       "sql_dependencies": {
         "creates": [],

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_thread_blocking_graph.skill.yaml
--- Source SHA-256: efc99dd7288f62ffa136feb19c852594d545620e9a17523b1070b71f14041d67
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 4842ac687887d681fcf0035d3094b2e943929e86cdca2a836edcc8b7517897dc
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH process_threads AS (
   SELECT
@@ -19,7 +19,7 @@ WITH process_threads AS (
     END as role
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${package}*'
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
 ),
 -- 查找所有阻塞事件（S/D 状态 > min_block_ms）及其唤醒者
 blocking_events AS (

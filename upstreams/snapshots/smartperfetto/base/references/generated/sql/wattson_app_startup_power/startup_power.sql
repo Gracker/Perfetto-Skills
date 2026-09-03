@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/wattson_app_startup_power.skill.yaml
--- Source SHA-256: 306e55087c67e9f4fe2d3c6bf37e5372a3ed7019c0470eb97e07921adf210f1f
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 24ebfcd8723a851df141ead1b24968cdf4a24cfba83d676f80853c803f812452
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH startup_windows AS (
   SELECT ts, dur, period_id
@@ -26,5 +26,5 @@ JOIN android_startups AS s
   ON s.startup_id = w.period_id
 LEFT JOIN startup_energy AS e
   ON e.period_id = w.period_id
-WHERE (s.package GLOB '${package}*' OR '${package}' = '')
+WHERE (('${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*') OR '${package}' = '')
 ORDER BY w.ts ASC

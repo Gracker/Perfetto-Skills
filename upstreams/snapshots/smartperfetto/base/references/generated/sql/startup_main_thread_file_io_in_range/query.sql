@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_main_thread_file_io_in_range.skill.yaml
--- Source SHA-256: 436027333c6a01850793d5d5bb3e6d8d51be54fbd9812155923edf9367425f33
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 9778e081f1ab5672f1368b855233c8da09ec995a7321b0154566169a4874b212
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   ts.slice_name as io_slice,
@@ -15,7 +15,7 @@ SELECT
 FROM android_thread_slices_for_all_startups ts
 JOIN android_startups s ON ts.startup_id = s.startup_id
 WHERE ts.is_main_thread = 1
-  AND (s.package GLOB '${package}*' OR '${package}' = '')
+  AND (('${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*') OR '${package}' = '')
   AND (${startup_id} IS NULL OR s.startup_id = ${startup_id})
   AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
   AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})

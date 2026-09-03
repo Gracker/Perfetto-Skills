@@ -52,16 +52,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_phase_alignment/vsync_timeline.sql",
-      "sha256": "32d68d04a61d066cb0af0d7cd5f7575d2b93d1869ce585b221893fbfd00fa2e7",
+      "sha256": "4d5424dd9d41dd166c35621fcfc54f5654b73bc728814b9ba526a61881a38fcb",
       "signal_patterns": [
         "VSYNC-app"
       ],
       "skill_id": "vsync_phase_alignment",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f1629db2e1ddf7711964f2b32f51d60012885ff3c966af974128cb5ed150e700"
+        "sha256": "aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -140,17 +140,18 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_phase_alignment/phase_analysis.sql",
-      "sha256": "2a7f4c575dee2a9290b1eca5ca1543cd0c5fea4d432f765e1956d8c29664cf5c",
+      "sha256": "9ec8005b4b01c1836f7853a888b9d4ddb5ce7a5669f5b6ea2601955eb531ad44",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "VSYNC-app"
       ],
       "skill_id": "vsync_phase_alignment",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f1629db2e1ddf7711964f2b32f51d60012885ff3c966af974128cb5ed150e700"
+        "sha256": "aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -237,17 +238,18 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_phase_alignment/phase_distribution.sql",
-      "sha256": "3014226609b58cc77c2dde83debb0cc9af565cff4717e604edaf15e3cff1707f",
+      "sha256": "8778cca77d4b745fcd92e43c2cfbf7709521fbf64523026df97f07325b09d03f",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "VSYNC-app"
       ],
       "skill_id": "vsync_phase_alignment",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f1629db2e1ddf7711964f2b32f51d60012885ff3c966af974128cb5ed150e700"
+        "sha256": "aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c"
       },
       "sql_dependencies": {
         "creates": [],

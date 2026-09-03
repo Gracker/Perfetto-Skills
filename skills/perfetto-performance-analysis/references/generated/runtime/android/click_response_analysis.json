@@ -73,7 +73,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "${target_process.data[0].process_name}"
   ],
   "skill_id": "click_response_analysis",

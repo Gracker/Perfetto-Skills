@@ -58,7 +58,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "cpu*freq*"
   ],
   "skill_id": "util_tracking_analysis",

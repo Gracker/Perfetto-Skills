@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 -- 双信号混合掉帧检测（与 performance_summary/get_app_jank_frames 保持同口径）
@@ -25,7 +25,7 @@ vsync_config AS (
   END AS vsync_period_ns
   FROM (
     SELECT CAST(COALESCE(
-      (SELECT PERCENTILE(interval_ns, 0.5)
+      (SELECT PERCENTILE(interval_ns, 50)
        FROM vsync_intervals
        WHERE interval_ns > 5500000 AND interval_ns < 50000000),
       16666667
@@ -48,15 +48,20 @@ frame_jank_data AS (
     a.ts - LAG(a.ts + a.dur)
       OVER (PARTITION BY a.layer_name ORDER BY a.ts) as time_gap_ns,
     CASE
-      WHEN a.jank_type IN ('Self Jank', 'App Deadline Missed', 'App Resynced Jitter') THEN 'APP'
+      WHEN a.jank_type GLOB '*Self Jank*' OR android_is_app_jank_type(a.jank_type) THEN 'APP'
       WHEN a.jank_type GLOB '*SurfaceFlinger*' THEN 'SF'
-      WHEN a.jank_type = 'Buffer Stuffing' THEN 'BUFFER_STUFFING'
+      WHEN a.jank_type GLOB '*Buffer Stuffing*' THEN 'BUFFER_STUFFING'
+      WHEN android_is_sf_jank_type(a.jank_type) THEN 'SF'
       WHEN a.jank_type = 'None' OR a.jank_type IS NULL THEN 'HIDDEN'
       ELSE 'UNKNOWN'
     END as jank_responsibility
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
@@ -67,8 +72,8 @@ token_gap_jank AS (
     -- 感知掉帧总数：双信号混合检测
     SUM(CASE
       WHEN present_type IN ('Late Present', 'Dropped Frame')
-        AND jank_type != 'Buffer Stuffing' THEN 1
-      WHEN jank_type = 'Buffer Stuffing'
+        AND (jank_responsibility != 'BUFFER_STUFFING' OR android_is_missed_frame_type(jank_type)) THEN 1
+      WHEN jank_responsibility = 'BUFFER_STUFFING'
         AND prev_present_ts IS NOT NULL
         AND present_ts - prev_present_ts > (SELECT vsync_period_ns FROM vsync_config) * 1.5
         AND present_ts - prev_present_ts <= (SELECT vsync_period_ns FROM vsync_config) * 6
@@ -76,9 +81,9 @@ token_gap_jank AS (
       ELSE 0 END) as total_jank_count,
     -- App 侧掉帧（BS 帧的 jank_type 不可能是 Self Jank/App Deadline Missed/App Resynced Jitter）
     SUM(CASE WHEN present_type IN ('Late Present', 'Dropped Frame')
-      AND jank_type IN ('Self Jank', 'App Deadline Missed', 'App Resynced Jitter') THEN 1 ELSE 0 END) as app_jank_count,
+      AND jank_responsibility = 'APP' THEN 1 ELSE 0 END) as app_jank_count,
     SUM(CASE WHEN present_type IN ('Late Present', 'Dropped Frame')
-      AND jank_type GLOB '*SurfaceFlinger*' THEN 1 ELSE 0 END) as sf_jank_count
+      AND jank_responsibility = 'SF' THEN 1 ELSE 0 END) as sf_jank_count
   FROM frame_jank_data
 ),
 jank_frame_windows AS (
@@ -91,7 +96,7 @@ jank_frame_windows AS (
   FROM frame_jank_data
   WHERE jank_responsibility IN ('APP', 'HIDDEN')
     AND (
-      (present_type IN ('Late Present', 'Dropped Frame') AND (jank_type IS NULL OR jank_type != 'Buffer Stuffing'))
+      present_type IN ('Late Present', 'Dropped Frame')
       OR (
         jank_type = 'None'
         AND prev_present_ts IS NOT NULL
@@ -109,7 +114,11 @@ app_frames AS (
     MAX(CASE WHEN dur > 0 THEN dur ELSE NULL END) / 1e6 as max_dur_ms
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
@@ -138,7 +147,11 @@ main_thread_analysis AS (
   JOIN thread t ON ts.utid = t.utid
   JOIN process p ON t.upid = p.upid
   LEFT JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND t.tid = p.pid
     AND (${start_ts} IS NULL OR ts.ts >= ${start_ts})
@@ -156,7 +169,11 @@ render_thread_analysis AS (
   JOIN thread t ON ts.utid = t.utid
   JOIN process p ON t.upid = p.upid
   LEFT JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND t.name = 'RenderThread'
     AND (${start_ts} IS NULL OR ts.ts >= ${start_ts})
@@ -224,7 +241,11 @@ binder_stats AS (
     MAX(client_dur) / 1e6 as max_dur_ms,
     AVG(client_dur) / 1e6 as avg_dur_ms
   FROM android_binder_txns
-  WHERE (client_process GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR client_process = '${package}'
+    OR client_process GLOB '${package}:*'
+  )
     AND (${start_ts} IS NULL OR client_ts >= ${start_ts})
     AND (${end_ts} IS NULL OR client_ts < ${end_ts})
 ),

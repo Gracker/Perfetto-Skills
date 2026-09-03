@@ -52,17 +52,18 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_binder_pool_analysis/query.sql",
-      "sha256": "dba32b4ae8d04502dc7933b17726c159fcc5fe9a45949784b62cd7d74725fecb",
+      "sha256": "5d7e6c0b136384bf3732a9a4eacd7257aaf7aa231b296683b4f8db42ee084d36",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "Binder:*"
       ],
       "skill_id": "startup_binder_pool_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/startup_binder_pool_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "10d4853d77be31976d5238ca1b58dbda245f3e8372eca058a69fbd8303127584"
+        "sha256": "d4fc47a1ff64ab95374facdfd1b58e5a6d0867ba16d61590848524557fecae80"
       },
       "sql_dependencies": {
         "creates": [],

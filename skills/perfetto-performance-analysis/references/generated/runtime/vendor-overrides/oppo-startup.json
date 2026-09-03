@@ -87,7 +87,7 @@
         "for_each": "startups",
         "id": "oppo_system_services",
         "name": "OPPO 系统服务调用",
-        "sql": "SELECT\n  server_process,\n  client_dur / 1e6 as dur_ms,\n  COUNT(*) as call_count\nFROM android_binder_txns\nWHERE client_process GLOB '${package}*'\n  AND (server_process GLOB '*oppo*'\n       OR server_process GLOB '*oplus*'\n       OR server_process GLOB '*color*')\n  AND client_ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND client_ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nGROUP BY server_process\nORDER BY SUM(client_dur) DESC\n"
+        "sql": "SELECT\n  server_process,\n  client_dur / 1e6 as dur_ms,\n  COUNT(*) as call_count\nFROM android_binder_txns\nWHERE ('${package}' = '' OR client_process = '${package}' OR client_process GLOB '${package}:*')\n  AND (server_process GLOB '*oppo*'\n       OR server_process GLOB '*oplus*'\n       OR server_process GLOB '*color*')\n  AND client_ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND client_ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\nGROUP BY server_process\nORDER BY SUM(client_dur) DESC\n"
       },
       {
         "description": "检查应用是否从冻结状态恢复",
@@ -166,8 +166,8 @@
   },
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/vendors/oppo/startup.override.yaml",
-    "sha256": "e5fcacb9241865a82427cf9cd78d4ae7430d3a655238b41a23015168b6f94326"
+    "sha256": "e09d1bdc17b17e5e5ca98f4d55cb6ae982757998f7b915a4abe06a118291dd19"
   }
 }

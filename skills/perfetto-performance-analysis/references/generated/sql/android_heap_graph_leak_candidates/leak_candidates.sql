@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml
--- Source SHA-256: 5a497025f4e9173dd75f17f48a649046d8be6bf4b9777a146a6ab2a3291fc4c3
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 input AS (
@@ -25,7 +25,7 @@ heap_objects AS (
   LEFT JOIN process p ON p.upid = o.upid
   CROSS JOIN input
   WHERE o.reachable = 1
-    AND (input.target_process = '' OR p.name GLOB input.target_process || '*')
+    AND (input.target_process = '' OR p.name = input.target_process OR p.name GLOB input.target_process || ':*')
     AND (${graph_sample_ts} IS NULL OR o.graph_sample_ts = ${graph_sample_ts})
     AND COALESCE(c.deobfuscated_name, c.name) NOT IN (
       'android.app.Activity',

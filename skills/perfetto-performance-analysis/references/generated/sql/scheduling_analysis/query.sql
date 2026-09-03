@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/scheduling_analysis.skill.yaml
--- Source SHA-256: 1e143b06981a9c0792d2263ba7c2d42a08a87a69f9257a6af7305abdc3080cab
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 8e315933d2728d1e6f812ae3c548dd938ad3442d70ffbbfca1e05a9fcc39e853
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH target_threads AS (
   SELECT t.utid, t.tid, t.name as thread_name, p.pid, p.name as process_name
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${package}*' OR '${package}' = ''
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = ''
 ),
 thread_states AS (
   SELECT

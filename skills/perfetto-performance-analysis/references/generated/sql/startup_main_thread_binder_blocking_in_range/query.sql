@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_main_thread_binder_blocking_in_range.skill.yaml
--- Source SHA-256: 0866842cce23d699030aca963d06aa7ea25eda19327dcc62360550adb2fa3395
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: fa1c46b5cd242ec0ea44c94e5a2bb4126e4a8da0d846bd67e74402d88452d20c
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT DISTINCT
   bt.server_process,
@@ -19,7 +19,7 @@ SELECT DISTINCT
 FROM android_binder_txns bt
 JOIN android_startups s ON (
   bt.client_ts >= s.ts AND bt.client_ts <= s.ts + s.dur
-  AND bt.client_process GLOB s.package || '*'
+  AND (bt.client_process = s.package OR bt.client_process GLOB s.package || ':*')
 )
 LEFT JOIN thread_state ts ON (
   ts.utid = bt.client_utid
@@ -28,7 +28,7 @@ LEFT JOIN thread_state ts ON (
 )
 WHERE bt.is_main_thread = 1
   AND bt.is_sync = 1
-  AND (s.package GLOB '${package}*' OR '${package}' = '')
+  AND (('${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*') OR '${package}' = '')
   AND (${startup_id} IS NULL OR s.startup_id = ${startup_id})
   AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
   AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})

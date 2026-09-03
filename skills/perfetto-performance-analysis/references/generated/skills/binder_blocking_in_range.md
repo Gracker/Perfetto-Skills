@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/binder_blocking_in_range.skill.yaml
-Source SHA-256: 9e8a00b4d97ea3da1311a06c95ec77bc9e499ff4cd0237d28bebfbb1c720ee48
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: ecb23e83b369cbe9a5cc799acee101ebc72c1bad057f3bced12d29bd10d1b4e3
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # Binder 阻塞分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

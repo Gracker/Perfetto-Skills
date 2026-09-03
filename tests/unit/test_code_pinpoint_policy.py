@@ -4,7 +4,13 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[2]
-SQL_PATH = ROOT / "src/overrides/sql/code_pinpoint/hot_slices.sql"
+# The hot_slices overlay was upstreamed into SmartPerfetto, so this policy
+# test now guards the compiled query that ships in the Skill tree.
+SQL_PATH = (
+    ROOT
+    / "skills/perfetto-performance-analysis/references/generated"
+    / "sql/code_pinpoint/hot_slices.sql"
+)
 
 
 def render_sql(package: str) -> str:

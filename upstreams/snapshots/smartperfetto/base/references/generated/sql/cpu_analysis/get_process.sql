@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_analysis.skill.yaml
--- Source SHA-256: c2723137b1cdfaa2c0f8b23cc62a9133aa534e56dc981c472ddc8d28ca6dff14
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: bbe145b95ab30fa9dd885a45be7807284558b2acb6ae49984bc6a0c137982397
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 cpu_by_process AS (
@@ -23,7 +23,7 @@ candidates AS (
     COALESCE(cb.cpu_dur, 0) as cpu_dur
   FROM process p
   LEFT JOIN cpu_by_process cb USING (upid)
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     -- 避免 package 为空时选到内核线程 (kworker 等)
     AND p.name NOT GLOB 'kworker*'
     AND p.name NOT GLOB 'swapper*'
@@ -38,7 +38,7 @@ SELECT
   process_name
 FROM candidates
 ORDER BY
-  CASE WHEN '${package}' != '' AND process_name GLOB '${package}*' THEN 0 ELSE 1 END,
+  CASE WHEN '${package}' != '' AND ('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*') THEN 0 ELSE 1 END,
   -- package 为空时优先选择 app 进程（通常包含 '.'）
   CASE WHEN '${package}' = '' AND process_name LIKE '%.%' THEN 0 ELSE 1 END,
   cpu_dur DESC,

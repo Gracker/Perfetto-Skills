@@ -1,13 +1,14 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: 0403339f9ba204e964aa7ccab7130157ed7149b13da3cfd63bb807484e4bbb96
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: cc19de68a5c179e17af405bf32f9ca75f56af0c5a4ccf970ede72790c558942b
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 -- 根因分析: 综合四象限、CPU频率、耗时操作等数据，输出明确的根因结论
 -- CTEs vsync_ticks, vsync_config, target_threads, thread_states injected via sql_fragments
 WITH
 -- Fragment: vsync_config
--- Estimates VSync period using median of VSYNC-sf intervals, fallback to 16.67ms (60Hz)
+-- Estimates VSync period using scoped then trace-wide VSYNC/FrameTimeline evidence.
+-- The explicit 16.67ms default is used only when the trace has no usable timing evidence.
 -- Snaps to nearest standard refresh rate (30/60/90/120/144/165 Hz) to avoid
 -- half-period toggle contamination and jitter-induced miscalculation.
 -- Params: ${start_ts}, ${end_ts}
@@ -16,28 +17,73 @@ vsync_ticks AS (
   FROM counter c
   JOIN counter_track t ON c.track_id = t.id
   WHERE t.name = 'VSYNC-sf'
-    AND c.ts >= ${start_ts} - 100000000
-    AND c.ts < ${end_ts} + 100000000
+    AND (${start_ts} IS NULL OR c.ts >= ${start_ts} - 100000000)
+    AND (${end_ts} IS NULL OR c.ts < ${end_ts} + 100000000)
 ),
-vsync_config AS (
-  SELECT CASE
-    WHEN raw_ns BETWEEN 5500000 AND 6500000 THEN 6060606
-    WHEN raw_ns BETWEEN 6500001 AND 7500000 THEN 6944444
-    WHEN raw_ns BETWEEN 7500001 AND 9500000 THEN 8333333
-    WHEN raw_ns BETWEEN 9500001 AND 12500000 THEN 11111111
-    WHEN raw_ns BETWEEN 12500001 AND 20000000 THEN 16666667
-    WHEN raw_ns BETWEEN 20000001 AND 35000000 THEN 33333333
-    ELSE raw_ns
-  END AS vsync_period_ns
-  FROM (
-    SELECT CAST(COALESCE(
-      (SELECT PERCENTILE(interval_ns, 0.5)
+trace_vsync_ticks AS (
+  SELECT c.ts, c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
+  FROM counter c
+  JOIN counter_track t ON c.track_id = t.id
+  WHERE t.name = 'VSYNC-sf'
+),
+expected_frame_vsync AS (
+  SELECT CAST(PERCENTILE(dur, 50) AS INTEGER) as period_ns
+  FROM expected_frame_timeline_slice
+  WHERE dur > 5000000 AND dur < 50000000
+    AND (${start_ts} IS NULL OR ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR ts < ${end_ts})
+),
+trace_expected_frame_vsync AS (
+  SELECT CAST(PERCENTILE(dur, 50) AS INTEGER) as period_ns
+  FROM expected_frame_timeline_slice
+  WHERE dur > 5000000 AND dur < 50000000
+),
+raw_vsync_config AS (
+  SELECT
+    CAST(COALESCE(
+      (SELECT PERCENTILE(interval_ns, 50)
        FROM vsync_ticks
        WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      (SELECT period_ns FROM expected_frame_vsync WHERE period_ns > 0),
+      (SELECT PERCENTILE(interval_ns, 50)
+       FROM trace_vsync_ticks
+       WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      (SELECT period_ns FROM trace_expected_frame_vsync WHERE period_ns > 0),
       16666667
-    ) AS INTEGER) AS raw_ns
-  )
+    ) AS INTEGER) as raw_ns,
+    CASE
+      WHEN (SELECT COUNT(*) FROM vsync_ticks WHERE interval_ns > 5500000 AND interval_ns < 50000000) > 0
+        THEN CASE
+          WHEN ${start_ts} IS NULL OR ${end_ts} IS NULL THEN 'trace_wide_vsync_counter'
+          ELSE 'scoped_vsync_counter'
+        END
+      WHEN (SELECT period_ns FROM expected_frame_vsync WHERE period_ns > 0) IS NOT NULL
+        THEN CASE
+          WHEN ${start_ts} IS NULL OR ${end_ts} IS NULL THEN 'trace_wide_expected_frame'
+          ELSE 'scoped_expected_frame'
+        END
+      WHEN (SELECT COUNT(*) FROM trace_vsync_ticks WHERE interval_ns > 5500000 AND interval_ns < 50000000) > 0
+        THEN 'trace_wide_vsync_counter'
+      WHEN (SELECT period_ns FROM trace_expected_frame_vsync WHERE period_ns > 0) IS NOT NULL
+        THEN 'trace_wide_expected_frame'
+      ELSE 'default_60hz_no_trace_timing'
+    END as vsync_source
 ),
+vsync_config AS (
+  SELECT
+    CASE
+      WHEN raw_ns BETWEEN 5500000 AND 6500000 THEN 6060606
+      WHEN raw_ns BETWEEN 6500001 AND 7500000 THEN 6944444
+      WHEN raw_ns BETWEEN 7500001 AND 9500000 THEN 8333333
+      WHEN raw_ns BETWEEN 9500001 AND 12500000 THEN 11111111
+      WHEN raw_ns BETWEEN 12500001 AND 20000000 THEN 16666667
+      WHEN raw_ns BETWEEN 20000001 AND 35000000 THEN 33333333
+      ELSE raw_ns
+    END AS vsync_period_ns,
+    vsync_source
+  FROM raw_vsync_config
+)
+,
 -- Fragment: target_threads
 -- Resolves MainThread + RenderThread for the target package.
 -- Supports standard Android (RenderThread), Flutter (N.raster/N.ui), and Compose.
@@ -68,10 +114,15 @@ target_threads AS (
     END as thread_end_ts
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+      '${package}' = ''
+      OR p.name = '${package}'
+      OR p.name GLOB '${package}:*'
+    )
     AND (t.tid = p.pid OR t.name = 'RenderThread'
          OR t.name GLOB '[0-9]*.raster' OR t.name GLOB '[0-9]*.ui')
-),
+)
+,
 -- Fragment: thread_states_quadrant
 -- Depends on: target_threads (CTE), _cpu_topology (VIEW)
 -- Maps thread states to Q1-Q4 quadrant classification
@@ -80,7 +131,9 @@ target_threads AS (
 -- Q3: Runnable but not scheduled (scheduling contention)
 -- Q4a: Uninterruptible wait (D/DK). Treat as IO only when io_wait=1
 --       or blocked_function matches an IO/page-cache family.
--- Q4b: Voluntary sleep (S=interruptible sleep, I=idle) — waiting on lock/futex/binder
+-- Q4b: Voluntary/interruptible sleep (S/I). This is an observed wait state,
+--       not a root cause; lock, Binder, futex, timer, event-loop, and
+--       UI-to-RenderThread synchronization need independent direct evidence.
 thread_states AS (
   SELECT
     tt.thread_type,
@@ -98,7 +151,8 @@ thread_states AS (
   LEFT JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
   WHERE ts.ts >= tt.thread_start_ts AND ts.ts < tt.thread_end_ts
   GROUP BY tt.thread_type, quadrant
-),
+)
+,
 -- 3. 计算各线程四象限百分比
 quadrant_pct AS (
   SELECT
@@ -131,12 +185,12 @@ render_summary AS (
 main_thread_utid AS (
   SELECT t.utid
   FROM thread t JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '') AND (t.tid = p.pid OR t.name GLOB '[0-9]*.ui')
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') AND (t.tid = p.pid OR t.name GLOB '[0-9]*.ui')
 ),
 main_thread_tid AS (
   SELECT t.tid
   FROM thread t JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '') AND (t.tid = p.pid OR t.name GLOB '[0-9]*.ui')
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') AND (t.tid = p.pid OR t.name GLOB '[0-9]*.ui')
 ),
 top_slice AS (
   SELECT
@@ -160,6 +214,91 @@ top_slice_bounds AS (
     slice_ts + slice_dur_ns as slice_end_ns,
     slice_dur_ns
   FROM top_slice
+),
+monitor_lock_overlap AS (
+  SELECT ROUND(COALESCE(SUM(
+    MAX(
+      MIN(amc.ts + amc.dur, ${end_ts}) - MAX(amc.ts, ${start_ts}),
+      0
+    )
+  ), 0) / 1e6, 2) as lock_contention_ms
+  FROM android_monitor_contention amc
+  WHERE amc.ts < ${end_ts}
+    AND amc.ts + amc.dur > ${start_ts}
+    AND amc.is_blocked_thread_main = 1
+    AND (
+      '${package}' = ''
+      OR amc.process_name = '${package}'
+      OR amc.process_name GLOB '${package}:*'
+    )
+),
+-- DEEP_RENDER_SYNC_CTES_BEGIN
+render_sync_intervals AS (
+  SELECT
+    MAX(s.ts, ${start_ts}) as sync_start,
+    MIN(s.ts + s.dur, ${end_ts}) as sync_end
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  WHERE tt.utid IN (SELECT utid FROM main_thread_utid)
+    AND s.ts < ${end_ts}
+    AND s.ts + s.dur > ${start_ts}
+    AND (
+      s.name GLOB '*postAndWait*'
+      OR s.name GLOB '*syncAndDrawFrame*'
+      OR s.name GLOB '*syncFrameState*'
+    )
+),
+render_sync_ordered AS (
+  SELECT
+    *,
+    MAX(sync_end) OVER (
+      ORDER BY sync_start, sync_end
+      ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+    ) as previous_max_end
+  FROM render_sync_intervals
+  WHERE sync_end > sync_start
+),
+render_sync_labeled AS (
+  SELECT
+    *,
+    SUM(
+      CASE
+        WHEN previous_max_end IS NULL OR sync_start > previous_max_end THEN 1
+        ELSE 0
+      END
+    ) OVER (
+      ORDER BY sync_start, sync_end
+      ROWS UNBOUNDED PRECEDING
+    ) as interval_group
+  FROM render_sync_ordered
+),
+render_sync_union AS (
+  SELECT
+    interval_group,
+    MIN(sync_start) as sync_start,
+    MAX(sync_end) as sync_end
+  FROM render_sync_labeled
+  GROUP BY interval_group
+),
+render_sync_wait AS (
+  SELECT ROUND(COALESCE(SUM(sync_end - sync_start), 0) / 1e6, 2) as render_sync_wait_ms
+  FROM render_sync_union
+),
+-- DEEP_RENDER_SYNC_CTES_END
+render_sync_rt_work AS (
+  SELECT ROUND(COALESCE(MAX(
+    MAX(MIN(s.ts + s.dur, ${end_ts}) - MAX(s.ts, ${start_ts}), 0)
+  ), 0) / 1e6, 2) as render_sync_rt_work_ms
+  FROM slice s
+  JOIN thread_track track ON s.track_id = track.id
+  JOIN target_threads target ON track.utid = target.utid
+  WHERE target.thread_type = 'RenderThread'
+    AND s.ts < ${end_ts}
+    AND s.ts + s.dur > ${start_ts}
+    AND (
+      s.name GLOB '*syncFrameState*'
+      OR s.name GLOB '*DrawFrame*'
+    )
 ),
 top_slice_state_overlap AS (
   SELECT
@@ -326,7 +465,7 @@ gpu_fence AS (
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND (t.name = 'RenderThread' OR t.name GLOB '[0-9]*.raster')
     AND s.ts >= ${start_ts} AND s.ts < ${end_ts}
     AND (s.name GLOB '*Fence*' OR s.name GLOB '*fence*'
@@ -342,7 +481,7 @@ shader_compile AS (
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND (t.name = 'RenderThread' OR t.name GLOB '[0-9]*.raster')
     AND s.ts >= ${start_ts} AND s.ts < ${end_ts}
     AND (s.name GLOB '*shader*' OR s.name GLOB '*Shader*'
@@ -392,7 +531,7 @@ gc_frame_overlap AS (
   FROM android_garbage_collection_events gc
   JOIN thread t ON gc.tid = t.tid
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND gc.gc_ts < ${end_ts}
     AND gc.gc_ts + gc.gc_dur > ${start_ts}
 ),
@@ -519,6 +658,9 @@ analysis AS (
     (SELECT sync_total_ms FROM binder_frame) as binder_sync_total_ms,
     (SELECT sync_max_ms FROM binder_frame) as binder_sync_max_ms,
     (SELECT sync_count FROM binder_frame) as binder_sync_count,
+    (SELECT lock_contention_ms FROM monitor_lock_overlap) as lock_contention_ms,
+    (SELECT render_sync_wait_ms FROM render_sync_wait) as render_sync_wait_ms,
+    (SELECT render_sync_rt_work_ms FROM render_sync_rt_work) as render_sync_rt_work_ms,
     (SELECT io_block_ms FROM io_block) as io_block_ms,
     (SELECT max_sched_ms FROM sched_latency) as max_sched_ms,
     (SELECT total_sched_ms FROM sched_latency) as total_sched_ms,
@@ -529,6 +671,7 @@ analysis AS (
     (SELECT gc_count FROM gc_frame_overlap) as gc_count,
     (SELECT big_load_pct FROM cluster_load) as big_load_pct,
     (SELECT little_load_pct FROM cluster_load) as little_load_pct,
+    ROUND((${end_ts} - ${start_ts}) / 1e6, 2) as frame_duration_ms,
     ROUND((SELECT vsync_period_ns FROM vsync_config) / 1e6, 2) as frame_budget_ms,
     ROUND(((SELECT vsync_period_ns FROM vsync_config) / 1e6) * 0.50, 2) as slice_critical_ms,
     ROUND(MAX(((SELECT vsync_period_ns FROM vsync_config) / 1e6) * 0.20, 2.0), 2) as slice_warning_ms,
@@ -551,6 +694,9 @@ analysis AS (
       WHEN slice_dur > slice_critical_ms
         AND binder_overlap_ms >= binder_overlap_critical_ms
         THEN 'binder_sync_blocking'
+      -- P1.25: 主线程 monitor contention 与当前帧有直接重叠。
+      WHEN lock_contention_ms > 0.2
+        THEN 'lock_contention'
       -- P2: 小核调度（可能导致 3-4x 性能损失，可操作）
       WHEN slice_dur > slice_critical_ms
         AND COALESCE(top_slice_little_pct, 0) >= 45
@@ -559,6 +705,9 @@ analysis AS (
       WHEN slice_dur > slice_critical_ms
         AND COALESCE(top_slice_runnable_pct, 0) >= 15
         THEN 'sched_delay_in_slice'
+      -- P3.5: RenderThread 主动运行占比高，且不是等待型 RT 卡顿。
+      WHEN (render_q1 + render_q2) > 70 AND render_q4b < 20
+        THEN 'render_thread_heavy'
       -- P4: 重度业务负载（>2x 帧预算）— 即使在满频下也会超时
       -- 频率/调度等供给侧因素只是放大因素，不是根因
       WHEN slice_dur > frame_budget_ms * 2.0
@@ -602,7 +751,12 @@ analysis AS (
       WHEN main_q4a > 20
         THEN 'uninterruptible_wait'
       WHEN main_q4b > 30
-        THEN 'lock_binder_wait'
+        AND render_sync_wait_ms >= MAX(frame_budget_ms * 0.20, frame_duration_ms * 0.25)
+        AND (
+          (render_q1 + render_q2) >= 30
+          OR render_sync_rt_work_ms > 0
+        )
+        THEN 'render_sync_wait'
       ELSE 'unknown'
     END as reason_code
   FROM analysis
@@ -610,6 +764,12 @@ analysis AS (
 , base_result AS (
   SELECT
     CASE
+      WHEN reason_code = 'render_thread_heavy' THEN
+        'RenderThread 主动运行占比 ' || ROUND(render_q1 + render_q2, 1) ||
+        '%，RT 工作主导；UI→RT 同步等待 ' || COALESCE(render_sync_wait_ms, 0) || 'ms 为依赖放大'
+      WHEN reason_code = 'render_sync_wait' THEN
+        '主线程发生 material UI→RenderThread 同步等待 ' || render_sync_wait_ms ||
+        'ms（帧预算 ' || frame_budget_ms || 'ms，帧耗时 ' || frame_duration_ms || 'ms）'
       -- 优先级1: 主线程有明确耗时操作（相对帧预算）
       WHEN slice_dur > slice_critical_ms THEN
         '主线程耗时操作 "' || slice_name || '" 占用 ' || slice_dur || 'ms (帧预算 ' || frame_budget_ms || 'ms)'
@@ -631,9 +791,6 @@ analysis AS (
       -- 优先级7a: 主线程不可中断等待 (Q4a > 20%)
       WHEN main_q4a > 20 THEN
         '主线程不可中断等待 (D/DK 状态)，占比 ' || main_q4a || '%；IO 归因需 io_wait/blocked_function'
-      -- 优先级7b: 主线程锁/Binder等待 (Q4b > 30%)
-      WHEN main_q4b > 30 THEN
-        '主线程锁/Binder 等待 (S/I 状态)，占比 ' || main_q4b || '%'
       -- 优先级8: RenderThread 休眠 (Q4 > 50%)
       WHEN (render_q4a + render_q4b) > 50 THEN
         'RenderThread 长时间休眠 (' || (render_q4a + render_q4b) || '%)，等待主线程或 GPU'
@@ -668,6 +825,13 @@ analysis AS (
           WHEN COALESCE(binder_overlap_server, '') != '' THEN '，对端 ' || binder_overlap_server || ''
           ELSE ''
         END || '）'
+      WHEN reason_code = 'lock_contention' THEN
+        'Monitor 锁竞争：主线程在帧窗口内直接等待 ' || lock_contention_ms || 'ms'
+      WHEN reason_code = 'render_sync_wait' THEN
+        'UI→RenderThread 同步等待：postAndWait/syncFrameState 与帧重叠 ' || render_sync_wait_ms || 'ms'
+      WHEN reason_code = 'render_thread_heavy' THEN
+        'RenderThread 负载主导：主动运行占比 ' || ROUND(render_q1 + render_q2, 1) ||
+        '%，UI→RT 同步等待 ' || COALESCE(render_sync_wait_ms, 0) || 'ms 是依赖放大而非锁/Binder'
       WHEN reason_code = 'small_core_placement' THEN
         '线程更多跑在小核：关键操作小核运行占比 ' || COALESCE(top_slice_little_pct, 0) ||
         '%（大核占比 ' || COALESCE(top_slice_big_pct, 0) || '%）'
@@ -699,8 +863,6 @@ analysis AS (
         'IO/page-cache 等待候选：主线程 D/DK 且有 io_wait/blocked_function ' || COALESCE(io_block_ms, 0) || 'ms，Q4a 占比 ' || COALESCE(main_q4a, 0) || '%'
       WHEN reason_code = 'uninterruptible_wait' THEN
         '不可中断等待：主线程 Q4a(D/DK) 占比 ' || COALESCE(main_q4a, 0) || '%；IO 归因需 io_wait/blocked_function'
-      WHEN reason_code = 'lock_binder_wait' THEN
-        '锁/Binder 等待：主线程可中断睡眠(S/I)，Q4b 占比 ' || COALESCE(main_q4b, 0) || '%'
       WHEN reason_code = 'shader_compile' THEN
         'Shader 编译：RenderThread 上着色器编译耗时 ' || COALESCE(shader_ms, 0) || 'ms（' || COALESCE(shader_count, 0) || ' 次），首次渲染或新视觉效果触发'
       WHEN reason_code = 'gpu_wait' THEN
@@ -712,6 +874,9 @@ analysis AS (
     CASE
       WHEN reason_code = 'buffer_stuffing' THEN '非 App 问题：BufferQueue 管线背压导致跳帧。检查帧率设置是否匹配显示刷新率，或优化渲染管线吞吐'
       WHEN reason_code = 'binder_sync_blocking' THEN '优化方向：减少主线程同步 Binder（异步化/批量化/结果缓存）并压缩关键路径 IPC'
+      WHEN reason_code = 'lock_contention' THEN '优化方向：缩短主线程 monitor 临界区，移出帧内共享锁并减少锁持有者工作量'
+      WHEN reason_code = 'render_sync_wait' THEN '优化方向：减少 doFrame/DisplayList 工作量与 RenderThread 回放压力，缩短 postAndWait 同步边界'
+      WHEN reason_code = 'render_thread_heavy' THEN '优化方向：定位并削减 RenderThread 的 DrawFrame、flush commands、Vulkan/Skia 回放与提交工作量'
       WHEN reason_code = 'small_core_placement' THEN '优化方向：保证关键滚动路径优先使用大核，减少后台线程对主线程的抢占'
       WHEN reason_code = 'sched_delay_in_slice' OR reason_code = 'scheduling_delay' THEN '优化方向：降低同窗并发与高优线程竞争，缩短主线程 Runnable 等待'
       WHEN reason_code = 'big_core_low_freq' THEN '优化方向：在输入/滚动前预拉频，避免大核低频执行关键 UI 热路径'
@@ -725,7 +890,6 @@ analysis AS (
       WHEN reason_code = 'cpu_load_high' THEN '优化方向：降低 CPU 总负载并限制后台并发，优先保障 UI 与 RenderThread 预算'
       WHEN reason_code = 'io_page_cache_wait' THEN '优化方向：补齐文件/数据库/Provider 证据；确认后将同步 IO 移至后台线程或使用异步 IO'
       WHEN reason_code = 'uninterruptible_wait' THEN '优化方向：先查 io_wait、blocked_function、page fault 和文件/数据库 slice，确认是否为 IO 后再定向优化'
-      WHEN reason_code = 'lock_binder_wait' THEN '优化方向：减少主线程同步等待（Binder/锁/futex），缩短临界区和同步链路'
       WHEN reason_code = 'shader_compile' THEN '优化方向：使用 PrecompiledShaders / Shader Warm-up 在启动时预编译着色器，避免滑动时动态编译'
       WHEN reason_code = 'gpu_wait' THEN '优化方向：降低 draw 复杂度/overdraw，减少 GPU Fence 等待'
       WHEN reason_code = 'gc_jank' THEN '优化方向：减少帧渲染路径上的对象分配，使用对象池化/预分配，避免 GC 暂停重叠关键帧'
@@ -735,6 +899,9 @@ analysis AS (
     CASE
       WHEN reason_code = 'buffer_stuffing' THEN 'Buffer Stuffing 管线背压（jank_type=${jank_type}）'
       WHEN reason_code = 'binder_sync_blocking' THEN '同步 Binder 重叠 ' || COALESCE(binder_overlap_ms, 0) || 'ms'
+      WHEN reason_code = 'lock_contention' THEN 'Monitor 锁竞争重叠 ' || COALESCE(lock_contention_ms, 0) || 'ms'
+      WHEN reason_code = 'render_sync_wait' THEN 'UI→RenderThread 同步等待 ' || COALESCE(render_sync_wait_ms, 0) || 'ms'
+      WHEN reason_code = 'render_thread_heavy' THEN 'RenderThread 主动运行 ' || ROUND(COALESCE(render_q1, 0) + COALESCE(render_q2, 0), 1) || '%，同步等待 ' || COALESCE(render_sync_wait_ms, 0) || 'ms'
       WHEN reason_code = 'small_core_placement' THEN '关键操作小核占比 ' || COALESCE(top_slice_little_pct, 0) || '%'
       WHEN reason_code = 'sched_delay_in_slice' THEN '关键操作 Runnable 占比 ' || COALESCE(top_slice_runnable_pct, 0) || '%'
       WHEN reason_code = 'big_core_low_freq' THEN '关键操作大核频率 ' || COALESCE(top_big_avg_freq_mhz, big_freq) || 'MHz'
@@ -751,6 +918,8 @@ analysis AS (
       ELSE NULL
     END as secondary_info,
     CASE
+      WHEN reason_code = 'lock_contention' THEN '高'
+      WHEN reason_code IN ('render_sync_wait', 'render_thread_heavy') THEN '中'
       WHEN slice_dur > slice_critical_ms THEN '高'
       WHEN gc_overlap_ms > 1.0 THEN '高'
       WHEN fence_ms > gpu_fence_critical_ms THEN '高'
@@ -760,7 +929,7 @@ analysis AS (
       WHEN total_sched_ms > total_sched_critical_ms THEN '高'
       WHEN big_load_pct > 90 THEN '高'
       WHEN COALESCE(shader_ms, 0) > gpu_fence_warning_ms THEN '高'
-      WHEN main_q4a > 20 OR main_q4b > 30 THEN '中'
+      WHEN main_q4a > 20 THEN '中'
       WHEN fence_ms > gpu_fence_warning_ms THEN '中'
       WHEN big_load_pct > 70 AND little_load_pct > 70 THEN '中'
       WHEN slice_dur > slice_warning_ms THEN '中'
@@ -769,6 +938,9 @@ analysis AS (
     CASE
       -- SF 合成超时短路：jank_responsibility 指向 SF，App 侧指标不相关
       WHEN '${jank_responsibility}' = 'SF' THEN 'sf_composition'
+      WHEN reason_code = 'render_thread_heavy' THEN 'render_heavy'
+      WHEN reason_code = 'render_sync_wait' THEN 'render_wait'
+      WHEN reason_code = 'lock_contention' THEN 'blocking'
       WHEN slice_dur > slice_critical_ms THEN 'slice'
       WHEN fence_ms > gpu_fence_critical_ms THEN 'gpu_fence'
       WHEN max_sched_ms > sched_max_critical_ms THEN 'sched_latency'
@@ -776,7 +948,6 @@ analysis AS (
       WHEN io_block_ms > io_block_critical_ms THEN 'io_blocking'
       WHEN total_sched_ms > total_sched_critical_ms THEN 'sched_latency'
       WHEN main_q4a > 20 THEN 'io_blocking'
-      WHEN main_q4b > 30 THEN 'blocking'
       -- RenderThread 负载过重：RT 主动运行，非等待 GPU/SF
       WHEN render_q4a < 10 AND render_q4b < 20 AND COALESCE(shader_ms, 0) <= gpu_fence_warning_ms
         AND fence_ms <= gpu_fence_warning_ms
@@ -794,7 +965,7 @@ analysis AS (
     slice_name,
     slice_dur,
     frame_budget_ms,
-    ${dur_ms} as frame_dur_ms,
+    frame_duration_ms as frame_dur_ms,
     '${jank_type}' as jank_type,
     '${jank_responsibility}' as jank_responsibility,
     max_sched_ms,
@@ -812,6 +983,9 @@ analysis AS (
     top_big_max_freq_mhz,
     ramp_to_high_ms,
     binder_overlap_ms,
+    lock_contention_ms,
+    render_sync_wait_ms,
+    render_sync_rt_work_ms,
     binder_sync_total_ms,
     big_load_pct,
     little_load_pct,
@@ -845,6 +1019,8 @@ SELECT
   max_sched_ms as main_max_sched_ms,
   io_block_ms as main_io_block_ms,
   fence_ms as gpu_fence_ms,
+  render_sync_wait_ms,
+  render_sync_rt_work_ms,
   frame_dur_ms,
   jank_type,
   CASE
@@ -860,7 +1036,8 @@ SELECT
     WHEN reason_code = 'buffer_stuffing' THEN 'none'
     WHEN reason_code = 'sf_composition_slow' THEN 'none'
     WHEN reason_code = 'thermal_throttling' THEN 'thermal_throttle'
-    WHEN reason_code IN ('binder_sync_blocking', 'io_page_cache_wait', 'uninterruptible_wait', 'lock_binder_wait', 'binder_timeout') THEN 'blocking_wait'
+    WHEN reason_code IN ('binder_sync_blocking', 'lock_contention', 'io_page_cache_wait', 'uninterruptible_wait', 'lock_binder_wait', 'binder_timeout') THEN 'blocking_wait'
+    WHEN reason_code = 'render_sync_wait' THEN 'none'
     WHEN reason_code = 'gc_jank' THEN 'gc_pause'
     WHEN reason_code = 'gc_pressure_cascade' THEN 'gc_pause'
     WHEN reason_code = 'small_core_placement' THEN 'core_placement'
@@ -871,7 +1048,7 @@ SELECT
     WHEN reason_code = 'render_thread_heavy' THEN 'none'
     WHEN reason_code = 'shader_compile' THEN 'none'
     WHEN reason_code = 'workload_heavy' THEN 'none'
-    WHEN io_block_ms > io_block_critical_ms OR main_q4a > 20 OR main_q4b > 30 THEN 'blocking_wait'
+    WHEN io_block_ms > io_block_critical_ms OR main_q4a > 20 THEN 'blocking_wait'
     WHEN big_freq < 1200 AND big_freq > 0 THEN 'frequency_insufficient'
     WHEN main_q2 > 50 THEN 'core_placement'
     WHEN max_sched_ms > sched_max_critical_ms OR total_sched_ms > total_sched_critical_ms OR main_q3 > 20 THEN 'scheduling_delay'

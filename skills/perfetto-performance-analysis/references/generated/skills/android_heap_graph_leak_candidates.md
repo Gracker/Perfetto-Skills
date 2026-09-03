@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml
-Source SHA-256: 5a497025f4e9173dd75f17f48a649046d8be6bf4b9777a146a6ab2a3291fc4c3
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # Android Heap Graph Leak Candidates
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

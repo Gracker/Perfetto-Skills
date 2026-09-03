@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "Binder:*"
     ]
   },
@@ -42,9 +43,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/startup_binder_pool_analysis.skill.yaml",
-    "sha256": "10d4853d77be31976d5238ca1b58dbda245f3e8372eca058a69fbd8303127584"
+    "sha256": "d4fc47a1ff64ab95374facdfd1b58e5a6d0867ba16d61590848524557fecae80"
   },
   "steps": [],
   "type": "atomic",

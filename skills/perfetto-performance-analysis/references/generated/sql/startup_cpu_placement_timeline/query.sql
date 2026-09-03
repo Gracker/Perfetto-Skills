@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_cpu_placement_timeline.skill.yaml
--- Source SHA-256: 2697e8f8785a219d21dc73847d18ecba03b50728a78f3eab6721dfebee25ff4b
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 3fed5fa06ac7c9d8b6d9382413c9eeb9dcecee347a95c9d3035d0766fa69dbba
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH main_thread AS (
   SELECT t.utid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${package}*' AND t.tid = p.pid
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') AND t.tid = p.pid
   LIMIT 1
 ),
 -- Generate time buckets (max 30 buckets)

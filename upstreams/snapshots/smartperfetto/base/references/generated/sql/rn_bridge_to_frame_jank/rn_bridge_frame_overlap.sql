@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rn_bridge_to_frame_jank.skill.yaml
--- Source SHA-256: d2cce13360dd218d1931638ebf4d69f3b01a43c9ae5c3470bb7c9ba5e3202311
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: ad2f132e37678faad64409bf393833b3ad9d793854bbdd442e507dabf5dab6af
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 input AS (
@@ -12,7 +12,7 @@ input AS (
 ),
 frame_budget AS (
   SELECT COALESCE(
-    (SELECT CAST(PERCENTILE(dur, 0.5) AS INTEGER)
+    (SELECT CAST(PERCENTILE(dur, 50) AS INTEGER)
      FROM actual_frame_timeline_slice
      WHERE dur BETWEEN 5000000 AND 50000000),
     16666667
@@ -40,7 +40,7 @@ rn_slices AS (
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
   CROSS JOIN input i
-  WHERE (i.target_process = '' OR p.name GLOB i.target_process || '*')
+  WHERE (i.target_process = '' OR p.name = i.target_process OR p.name GLOB i.target_process || ':*')
     AND s.ts >= i.start_ts
     AND s.ts < i.end_ts
     AND s.dur > 0
@@ -62,7 +62,7 @@ frames AS (
   FROM actual_frame_timeline_slice a
   JOIN process p ON a.upid = p.upid
   CROSS JOIN input i
-  WHERE (i.target_process = '' OR p.name GLOB i.target_process || '*')
+  WHERE (i.target_process = '' OR p.name = i.target_process OR p.name GLOB i.target_process || ':*')
     AND a.ts >= i.start_ts
     AND a.ts < i.end_ts
     AND COALESCE(a.display_frame_token, a.surface_frame_token) IS NOT NULL

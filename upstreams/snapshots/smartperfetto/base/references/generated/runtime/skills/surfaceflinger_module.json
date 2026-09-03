@@ -18,7 +18,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "surfaceflinger_module",
@@ -62,9 +63,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/modules/framework/surfaceflinger_module.skill.yaml",
-    "sha256": "d456d7df46f6aec95de47a77dc360d10ac0154b45fa9ed8e8a779c8ea356bffd"
+    "sha256": "a56ccb9b89cffa35d9a98573a6b43fbcaf3fba59658a7a74b91d4676d6947e05"
   },
   "steps": [
     {

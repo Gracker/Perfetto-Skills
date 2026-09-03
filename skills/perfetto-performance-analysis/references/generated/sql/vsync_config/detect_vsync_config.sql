@@ -1,14 +1,14 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/vsync_config.skill.yaml
--- Source SHA-256: 7dbf90d2995e488a38404e815e4b85f2674d51b83d6a59b78ae3ed4bcc08d946
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 858c68177948578c7ae8c5322363a3a413fa92c30afdf297fc3bd64f41a80bef
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 -- 方法1: 从 expected_frame_timeline_slice 获取 vsync 周期（回退来源）
 -- 当提供 start_ts/end_ts 时，只看该区间内的帧（避免 VRR 省电时段干扰）
 expected_frame_vsync AS (
   SELECT
-    CAST(PERCENTILE(dur, 0.5) AS INTEGER) as vsync_period_ns,
+    CAST(PERCENTILE(dur, 50) AS INTEGER) as vsync_period_ns,
     'expected_frame_dur' as source
   FROM expected_frame_timeline_slice
   WHERE dur > 5000000 AND dur < 50000000  -- 5ms-50ms 覆盖 24Hz VRR
@@ -43,7 +43,7 @@ vsync_median AS (
   FROM (
     SELECT
       CAST(COALESCE(
-        (SELECT PERCENTILE(interval_ns, 0.5)
+        (SELECT PERCENTILE(interval_ns, 50)
          FROM sf_vsync_intervals
          WHERE interval_ns > 5500000 AND interval_ns < 50000000),
         (SELECT vsync_period_ns FROM expected_frame_vsync WHERE vsync_period_ns > 0),

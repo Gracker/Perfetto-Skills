@@ -14,7 +14,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "*Hwui*",
       "RenderThread"
     ]
@@ -62,9 +63,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/thread_affinity_violation.skill.yaml",
-    "sha256": "8b1f713a09cd8c1f1725b590ab20764687be3783a8ff9004606bbd80927bfecb"
+    "sha256": "d66b29385d8481d5950b064fbc5c7fa8f18e83ee05c5ff08e5c5e9fa535469fb"
   },
   "steps": [],
   "type": "atomic",

@@ -54,16 +54,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/frame_pipeline_variance/query.sql",
-      "sha256": "42b246e744dea606090e41d11238aa7e56cd9f0b602ce99541d72ccbda28beb2",
+      "sha256": "3e55d0137ca08ca4dfbda8f6f254147e8ff3bb1380c2595b257fb5489846411c",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "frame_pipeline_variance",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/frame_pipeline_variance.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "950462b8e2b44ec13d3e9173fa31326ad38fd20335c64190a8a35c9111e9af9c"
+        "sha256": "371a11a05e1735c9a5ef91771956d7304d2f0613e653c48c830946646dcf6b6f"
       },
       "sql_dependencies": {
         "creates": [],

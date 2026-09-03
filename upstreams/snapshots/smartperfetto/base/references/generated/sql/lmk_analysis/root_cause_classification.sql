@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/lmk_analysis.skill.yaml
--- Source SHA-256: d1aa0860a3371aeb91af3a7e07f864dba1a417a0e9e9d1e3d1387ef0bb02aec2
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH lmk_stats AS (
   SELECT
@@ -36,7 +36,7 @@ restart_stats AS (
       le.process_name,
       (MIN(p.start_ts) - le.ts) / 1e6 AS avg_delay_ms
     FROM android_lmk_events le
-    JOIN process p ON p.name GLOB le.process_name || '*' AND p.start_ts > le.ts
+    JOIN process p ON p.name = le.process_name AND p.start_ts > le.ts
     WHERE CASE WHEN '${package}' != ''
                THEN le.process_name GLOB '*${package}*'
                ELSE 1 END

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/comparison-methodology.template.md
-Source SHA-256: 504450e6dc153aee444a0915d50b996a51afe84c809efe2db28b61f1800a60a7
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: d2234499ab776a677fed95f4b8ee774f89dbf7a3c88a88ddf68b501be39f1657
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 # Comparison Methodology Template
 
@@ -28,7 +28,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 输出格式：
 
 1. **Delta 表格**（必须）：
-| 指标 | 当前 Trace | 参考 Trace | 变化 | 评估 |
+| 指标 | 基线 Trace | 对比 Trace | 变化（对比 - 基线） | 评估 |
 |------|-----------|-----------|------|------|
 
 2. **根因分析**：解释主要差异的根本原因
@@ -37,4 +37,4 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 ### 约束
 - 所有数值必须标注归一化方式（绝对值 / 百分比变化 / 占总时长比例）
 - 不要对比单侧缺失的数据 — 在 delta 表中标注 "N/A"
-- 每个数据引用必须标注来源：`[当前 Trace]` / `[参考 Trace]`，如果有窗口映射则写成 `[左侧/当前 Trace]`、`[右侧/参考 Trace]` 或对应的上/下侧标签
+- 每个数据引用必须标注来源：`[基线 Trace]` / `[对比 Trace]`，如果有窗口映射则写成 `[左侧/基线 Trace]`、`[右侧/对比 Trace]` 或对应的上/下侧标签

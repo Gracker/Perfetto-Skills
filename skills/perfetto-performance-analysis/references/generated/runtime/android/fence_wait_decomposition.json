@@ -57,7 +57,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "*acquireBuffer*",
     "*dequeueBuffer*",
     "*latchBuffer*",

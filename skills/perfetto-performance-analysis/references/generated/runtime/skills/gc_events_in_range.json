@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "gc_events_in_range",
@@ -46,9 +47,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/gc_events_in_range.skill.yaml",
-    "sha256": "1b3a5a7f2e13ed61dddef00d1d78f2fb1032e35ed9bcccb6559913ea8ca73d11"
+    "sha256": "91fc6c615999ab34fd4c1098ff858d19be4f2ec4cd50099f4679fbe57bd85c11"
   },
   "steps": [],
   "type": "atomic",

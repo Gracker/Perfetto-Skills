@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/vsync_phase_alignment.skill.yaml
--- Source SHA-256: f1629db2e1ddf7711964f2b32f51d60012885ff3c966af974128cb5ed150e700
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH vsync_intervals AS (
   SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) AS interval_ns
@@ -11,7 +11,7 @@ WITH vsync_intervals AS (
 ),
 vsync_cfg AS (
   SELECT COALESCE(
-    CAST(PERCENTILE(interval_ns, 0.5) AS INTEGER),
+    CAST(PERCENTILE(interval_ns, 50) AS INTEGER),
     16666667
   ) as period_ns
   FROM vsync_intervals
@@ -27,7 +27,7 @@ vsync_events AS (
 input_events AS (
   SELECT dispatch_ts as input_ts
   FROM android_input_events
-  WHERE (process_name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*') OR '${package}' = '')
     AND event_action = 'MOVE'
     AND (${start_ts} IS NULL OR dispatch_ts >= ${start_ts})
     AND (${end_ts} IS NULL OR dispatch_ts <= ${end_ts})

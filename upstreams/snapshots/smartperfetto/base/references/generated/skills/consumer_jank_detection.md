@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/consumer_jank_detection.skill.yaml
-Source SHA-256: 55465b17c1e74abda8e2e04bb70d0c079459a9f4095de2b56b420ac9721ee0c0
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # Consumer Jank 检测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: consumer_jank_detection
-version: '1.0'
+version: '1.1'
 type: atomic
 category: rendering
 tier: A
@@ -70,6 +70,7 @@ required_tables:
 - actual_frame_timeline_slice
 modules:
 - android.frames.timeline
+- android.frames.jank_type
 ```
 
 ## Inputs
@@ -154,6 +155,9 @@ display:
   - name: app_jank_type
     label: App标记
     type: string
+  - name: present_type
+    label: 呈现状态
+    type: string
   - name: jank_severity
     label: 严重程度
     type: string
@@ -161,6 +165,12 @@ display:
     label: 延迟来源
     type: string
     description: app_late=应用渲染超时, sf_late=SF/显示延迟, buffer_stuffing=缓冲区满
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+  - name: claim_boundary
+    label: 结论边界
+    type: string
 save_as: consumer_jank_frames
 ```
 ### 消费端掉帧汇总
@@ -197,6 +207,12 @@ display:
     type: number
   - name: rating
     label: 评级
+    type: string
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+  - name: claim_boundary
+    label: 结论边界
     type: string
 save_as: consumer_jank_summary
 ```

@@ -14,7 +14,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "cpu_slice_analysis",
@@ -51,9 +52,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/cpu_slice_analysis.skill.yaml",
-    "sha256": "2309b7c7da0ad9c74d1d781a1b5d0ea4b1466bc6f0ebd8757a467d36a7a59853"
+    "sha256": "1bd7040a3223370ecf29a5a3df06150037eae83b5c3497e0b64cd983f2117cb2"
   },
   "steps": [
     {

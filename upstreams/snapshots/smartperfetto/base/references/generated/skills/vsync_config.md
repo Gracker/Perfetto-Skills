@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/vsync_config.skill.yaml
-Source SHA-256: 7dbf90d2995e488a38404e815e4b85f2674d51b83d6a59b78ae3ed4bcc08d946
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 858c68177948578c7ae8c5322363a3a413fa92c30afdf297fc3bd64f41a80bef
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # VSync 配置分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

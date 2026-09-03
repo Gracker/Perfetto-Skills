@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scroll-response.strategy.md
-Source SHA-256: 8a21157416c0175602c7366081b6c506bb21eb45f608c793011a8b8c4cfc87ad
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 979cb4f67a0da1bba7f120f8f4adcbc65b20e061b9bc52e1ead8844e3e1a7899
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 # Scroll Response Strategy
 
@@ -282,7 +282,7 @@ SELECT
   a.on_time_finish
 FROM actual_frame_timeline_slice a
 LEFT JOIN process p ON a.upid = p.upid
-WHERE p.name GLOB '{process_name}*'
+WHERE ('{process_name}' = '' OR p.name = '{process_name}' OR p.name GLOB '{process_name}:*')
   AND a.ts >= {gesture_start_ts}
 ORDER BY a.ts
 LIMIT 1

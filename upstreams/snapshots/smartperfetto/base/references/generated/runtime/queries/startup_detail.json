@@ -52,14 +52,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/startup_info.sql",
-      "sha256": "356cd1538f5d9dc4727ba4fbe9d3d8e3b5dec87e87302b4268ca46caccfb827e",
+      "sha256": "88f9df1e22122626e4735e6e0b70095b21656aba8c14338461dae29453413186",
       "signal_patterns": [],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6"
+        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
       },
       "sql_dependencies": {
         "creates": [],
@@ -153,16 +153,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/cpu_core_analysis.sql",
-      "sha256": "54653e522ce1985c3d46358c7a95e8dfec2ec36393ef4251f6417e2c93102cfc",
+      "sha256": "d80ef427590de09c3de5464089be50337d5d1cfaefa1bde1484b1a238ca2ba92",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6"
+        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
       },
       "sql_dependencies": {
         "creates": [],
@@ -253,16 +254,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/cpu_freq_analysis.sql",
-      "sha256": "a25dff7430e7e1a084e6f86879b745f801726f59884af1bd2b3956cc53f07022",
+      "sha256": "e02caba78aded37db19dcb41175de829beb67c672261c5eca96a96271d5f97ab",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6"
+        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
       },
       "sql_dependencies": {
         "creates": [],
@@ -353,16 +355,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/quadrant_analysis.sql",
-      "sha256": "7c91f72b9000ba3f3c3a5e4d03814b546576dea4cb5551cc2b402870f9b99ac3",
+      "sha256": "b1ebfba2d7641b2f5d6932587d27c2635bf0c4bdc2eef955dc3e0eccca07a73c",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6"
+        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
       },
       "sql_dependencies": {
         "creates": [],
@@ -453,16 +456,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/actionable_main_thread_slices.sql",
-      "sha256": "c400ee0ee17ee079139919c35e065e3e5374485aeba8e9b195a0daf39449b4df",
+      "sha256": "a2c20b4b4ff5527718ae45783c33561c406527499f238e30f9716db7572c1cd4",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6"
+        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
       },
       "sql_dependencies": {
         "creates": [],

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 vsync_intervals AS (
@@ -25,7 +25,7 @@ vsync_config AS (
   END AS vsync_period_ns
   FROM (
     SELECT CAST(COALESCE(
-      (SELECT PERCENTILE(interval_ns, 0.5)
+      (SELECT PERCENTILE(interval_ns, 50)
        FROM vsync_intervals
        WHERE interval_ns > 5500000 AND interval_ns < 50000000),
       16666667
@@ -34,40 +34,89 @@ vsync_config AS (
 ),
 app_frames AS (
   SELECT
+    CASE
+      WHEN a.display_frame_token IS NOT NULL
+        THEN 'display:' || CAST(a.display_frame_token AS TEXT)
+      WHEN a.surface_frame_token IS NOT NULL
+        THEN 'surface:' || COALESCE(a.layer_name, '') || ':' || CAST(a.surface_frame_token AS TEXT)
+      ELSE NULL
+    END as frame_key,
     COALESCE(a.display_frame_token, a.surface_frame_token) as display_frame_token,
     a.ts,
     CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END as dur,
     COALESCE(a.jank_type, 'Unknown') as jank_type,
     COALESCE(a.present_type, 'Unknown Present') as present_type,
+    CASE
+      WHEN a.jank_type GLOB '*Self Jank*' OR android_is_app_jank_type(a.jank_type) THEN 'APP'
+      WHEN a.jank_type GLOB '*SurfaceFlinger*' THEN 'SF'
+      WHEN a.jank_type GLOB '*Buffer Stuffing*' THEN 'BUFFER_STUFFING'
+      WHEN android_is_sf_jank_type(a.jank_type) THEN 'SF'
+      WHEN a.jank_type = 'None' OR a.jank_type IS NULL THEN 'HIDDEN'
+      ELSE 'UNKNOWN'
+    END as jank_responsibility,
     a.layer_name,
     a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END as present_ts,
     LAG(a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END)
       OVER (PARTITION BY a.layer_name ORDER BY a.ts) as prev_present_ts
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
     AND COALESCE(a.display_frame_token, a.surface_frame_token) IS NOT NULL
 ),
 -- 掉帧检测：双信号混合策略
-jank_analysis AS (
+jank_row_signals AS (
   SELECT
+    frame_key,
     jank_type,
     dur,
+    layer_name,
     -- is_consumer_jank: 双信号混合检测
     CASE
       WHEN present_type IN ('Late Present', 'Dropped Frame')
-        AND jank_type != 'Buffer Stuffing' THEN 1
-      WHEN jank_type = 'Buffer Stuffing'
+        AND (jank_responsibility != 'BUFFER_STUFFING' OR android_is_missed_frame_type(jank_type)) THEN 1
+      WHEN jank_responsibility = 'BUFFER_STUFFING'
         AND prev_present_ts IS NOT NULL
         AND present_ts - prev_present_ts > (SELECT vsync_period_ns FROM vsync_config) * 1.5
         AND present_ts - prev_present_ts <= (SELECT vsync_period_ns FROM vsync_config) * 6 THEN 1
       ELSE 0
-    END as is_consumer_jank
+    END as row_is_consumer_jank
   FROM app_frames
+),
+-- JANK_TYPE_DISPLAY_DEDUP_CTES_BEGIN
+ranked_jank_rows AS (
+  SELECT
+    *,
+    MAX(row_is_consumer_jank) OVER (PARTITION BY frame_key) as is_consumer_jank,
+    ROW_NUMBER() OVER (
+      PARTITION BY frame_key
+      ORDER BY
+        row_is_consumer_jank DESC,
+        CASE
+          WHEN jank_type GLOB '*Self Jank*' OR android_is_app_jank_type(jank_type) THEN 1
+          WHEN jank_type GLOB '*SurfaceFlinger*' THEN 2
+          WHEN jank_type GLOB '*Buffer Stuffing*' THEN 3
+          WHEN android_is_sf_jank_type(jank_type) THEN 4
+          WHEN jank_type != 'None' THEN 5
+          ELSE 6
+        END,
+        dur DESC,
+        layer_name ASC
+    ) as frame_row_rank
+  FROM jank_row_signals
+),
+jank_analysis AS (
+  SELECT frame_key, jank_type, dur, is_consumer_jank
+  FROM ranked_jank_rows
+  WHERE frame_row_rank = 1
 )
+-- JANK_TYPE_DISPLAY_DEDUP_CTES_END
 SELECT
   jank_type,
   COUNT(*) as count,
@@ -78,12 +127,22 @@ SELECT
   CAST(SUM(CASE WHEN dur > 0 THEN dur ELSE 0 END) AS REAL) as total_dur,
   CAST(ROUND(AVG(CASE WHEN dur > 0 THEN dur ELSE NULL END)) AS INTEGER) as avg_dur,
   CASE
-    WHEN jank_type GLOB '*App*' OR jank_type = 'Self Jank' THEN '标签:App'
+    WHEN jank_type GLOB '*Self Jank*' OR android_is_app_jank_type(jank_type) THEN '标签:App'
     WHEN jank_type GLOB '*SurfaceFlinger*' THEN '标签:SurfaceFlinger'
-    WHEN jank_type = 'Buffer Stuffing' THEN '标签:Buffer Stuffing(需验证)'
+    WHEN jank_type GLOB '*Buffer Stuffing*' THEN '标签:Buffer Stuffing(需验证)'
+    WHEN android_is_sf_jank_type(jank_type) THEN '标签:SurfaceFlinger'
     WHEN jank_type = 'None' THEN '标签:None(可能漏检)'
     ELSE '标签:Other'
-  END as responsibility
+  END as responsibility,
+  '${buffer_tx_coverage.data[0].coverage_status}' as frame_timeline_coverage_status,
+  ${buffer_tx_coverage.data[0].frame_timeline_to_buffer_tx_ratio} as frame_timeline_to_buffer_tx_ratio,
+  CASE
+    WHEN '${buffer_tx_coverage.data[0].coverage_status}' = 'partial_frame_timeline_coverage'
+      THEN 'partial_sample'
+    WHEN '${buffer_tx_coverage.data[0].coverage_status}' = 'no_buffer_tx_candidate'
+      THEN 'frame_timeline_only_unbenchmarked'
+    ELSE 'full_frame_timeline'
+  END as evidence_scope
 FROM jank_analysis
 GROUP BY jank_type
 ORDER BY real_jank_count DESC, count DESC

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/surfaceflinger_analysis.skill.yaml
--- Source SHA-256: 883c9e637f8166269939f7f817af9ef900c89e2215ca90cb3c0ad0d45443daad
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 sf_compositions AS (
@@ -26,7 +26,7 @@ SELECT
   COUNT(*) as total_compositions,
   CAST(ROUND(AVG(dur)) AS INTEGER) as avg_composition_dur,
   MAX(dur) as max_composition_dur,
-  CAST(ROUND(PERCENTILE(dur, 0.95)) AS INTEGER) as p95_composition_dur,
+  CAST(ROUND(PERCENTILE(dur, 95)) AS INTEGER) as p95_composition_dur,
   ROUND(AVG(dur) / 1e6, 2) as avg_composition_ms,
   SUM(CASE WHEN dur > ${vsync_env.data[0].vsync_period_ns} * ${slow_composition_multiplier|1.5} THEN 1 ELSE 0 END) as slow_composition_count,
   CASE

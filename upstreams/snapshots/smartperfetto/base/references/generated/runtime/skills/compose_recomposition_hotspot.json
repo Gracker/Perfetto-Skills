@@ -18,7 +18,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "*CompositionLocal*",
       "Compose:*",
       "Recompos*",
@@ -65,9 +66,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/compose_recomposition_hotspot.skill.yaml",
-    "sha256": "2895ae93d263a1097b752875bc22c0e4521e6f96b6ad4feb319da03a76a0d59b"
+    "sha256": "7f426a90804f6efc3d8ec7d94af37a4b4879abfa2ff4c95cf6360b70d16ca06a"
   },
   "steps": [
     {

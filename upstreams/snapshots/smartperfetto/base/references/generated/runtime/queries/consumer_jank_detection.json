@@ -54,21 +54,22 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/consumer_jank_detection/vsync_config.sql",
-      "sha256": "8e9ad2952e38e404bba624d921e1db411adddee7e908f802a3525b208bce00d4",
+      "sha256": "57cbef7585aa98dcb004fefbce060f1049e55d62ccf492241af067c3dd2419ec",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "consumer_jank_detection",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "55465b17c1e74abda8e2e04bb70d0c079459a9f4095de2b56b420ac9721ee0c0"
+        "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -149,21 +150,22 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/consumer_jank_detection/consumer_jank_frames.sql",
-      "sha256": "5ad8326f8fb9f50af774a1483649f3489884821b3dc777392ebf2db04a836878",
+      "sha256": "e19ce741768603d1eeba413c37966fa94adcfb88c5374cef478268c523d2b105",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "consumer_jank_detection",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "55465b17c1e74abda8e2e04bb70d0c079459a9f4095de2b56b420ac9721ee0c0"
+        "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -246,23 +248,22 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/consumer_jank_detection/consumer_jank_summary.sql",
-      "sha256": "34f2482d3add5cdc50c029ce58b96b4d869fc2f9261bed333f679e9e47cfe0d6",
+      "sha256": "3e3ac9021e65c1b6caf010e4085746d8a2459a966425539570a4b08f87bd90e1",
       "signal_patterns": [
-        "%${package}%",
-        "%BufferTX%",
         "VSYNC-sf"
       ],
       "skill_id": "consumer_jank_detection",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "55465b17c1e74abda8e2e04bb70d0c079459a9f4095de2b56b420ac9721ee0c0"
+        "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -345,23 +346,22 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/consumer_jank_detection/jank_severity_distribution.sql",
-      "sha256": "bb467be523cabd886341a98aabe4c1b8a9555ac3b9adbe237c288fe7a7f1ab0a",
+      "sha256": "7690babcbecdb7d7cd0fdba2ca0367f9635d02ab83ecc1a9143c4b7e50d71ade",
       "signal_patterns": [
-        "%${package}%",
-        "%BufferTX%",
         "VSYNC-sf"
       ],
       "skill_id": "consumer_jank_detection",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "55465b17c1e74abda8e2e04bb70d0c079459a9f4095de2b56b420ac9721ee0c0"
+        "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.frames.timeline"
+          "android.frames.timeline",
+          "android.frames.jank_type"
         ],
         "drops": [],
         "required_tables": [
@@ -375,6 +375,7 @@
         "fragments": [],
         "parameters": [
           "end_ts",
+          "layer_name",
           "package",
           "start_ts"
         ],

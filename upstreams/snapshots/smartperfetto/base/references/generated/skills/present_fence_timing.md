@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/present_fence_timing.skill.yaml
-Source SHA-256: 13da4eb5934736e0b60cb39f01f7e306b873de90f9f210090bb4dcd3a0a62c7d
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 9e5adfaae742b5ab37687acc966a57565c867df82c5a3c63c794d89bf486b258
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # Present Fence 时序分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

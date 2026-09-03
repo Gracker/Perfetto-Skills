@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_blocking_in_range.skill.yaml
--- Source SHA-256: 9e8a00b4d97ea3da1311a06c95ec77bc9e499ff4cd0237d28bebfbb1c720ee48
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: ecb23e83b369cbe9a5cc799acee101ebc72c1bad057f3bced12d29bd10d1b4e3
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH target_main_thread AS (
   SELECT t.tid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND t.tid = p.pid  -- 主线程
 )
 SELECT
@@ -22,7 +22,7 @@ FROM android_binder_txns bt
 WHERE (${start_ts} IS NULL OR bt.client_ts >= ${start_ts})
   AND (${end_ts} IS NULL OR bt.client_ts < ${end_ts})
   AND bt.is_sync = 1  -- 只关注同步调用
-  AND (bt.client_process GLOB '${package}*' OR '${package}' = '')
+  AND (('${package}' = '' OR bt.client_process = '${package}' OR bt.client_process GLOB '${package}:*') OR '${package}' = '')
   AND bt.client_dur > 500000  -- > 0.5ms
 GROUP BY bt.server_process, interface
 HAVING total_block_ms > 0.5

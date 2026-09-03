@@ -52,16 +52,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/touch_to_display_latency/query.sql",
-      "sha256": "983536e5aa2c40d25ebb809ec3366ee54db04630553c036667fb762def822eb6",
+      "sha256": "b5b7a1e6129ed1963807b63c1414c623483b78b79018b3006af9f05dbb35650f",
       "signal_patterns": [
-        "${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "touch_to_display_latency",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/touch_to_display_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "1eae013ffdaba631ee4959847e00cae0c4786b003c28a3a01975e8592b873da3"
+        "sha256": "e8e103d0fc42354515cf44afdb33a1507e394a29f4c0d29142e35bc52917df15"
       },
       "sql_dependencies": {
         "creates": [],

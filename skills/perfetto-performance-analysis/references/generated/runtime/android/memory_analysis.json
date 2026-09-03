@@ -62,7 +62,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "*Alloc*",
     "*Background*",
     "*ConcurrentCopying*",

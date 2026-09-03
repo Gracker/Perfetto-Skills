@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/media_codec_activity.skill.yaml
--- Source SHA-256: f9785c4a5b759aab3f1efe3c1d4faede153488cd9f89592428318f926cda0bbb
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 4c2f8a88c5136c0aba56f85e44b7b404428ca80272a013a9b41c6fd04f96d3c2
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 input AS (
@@ -32,7 +32,7 @@ codec_slices AS (
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
   CROSS JOIN input i
-  WHERE (i.target_process = '' OR p.name GLOB i.target_process || '*')
+  WHERE (i.target_process = '' OR p.name = i.target_process OR p.name GLOB i.target_process || ':*')
     AND s.ts >= i.start_ts
     AND s.ts < i.end_ts
     AND s.dur > 0
@@ -51,7 +51,7 @@ SELECT
   thread_name,
   COUNT(*) AS slice_count,
   ROUND(SUM(dur_ms), 2) AS total_dur_ms,
-  ROUND(PERCENTILE(dur_ms, 0.95), 2) AS p95_dur_ms,
+  ROUND(PERCENTILE(dur_ms, 95), 2) AS p95_dur_ms,
   ROUND(MAX(dur_ms), 2) AS max_dur_ms
 FROM codec_slices
 GROUP BY phase, process_name, thread_name

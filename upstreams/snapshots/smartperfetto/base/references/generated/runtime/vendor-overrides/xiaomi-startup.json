@@ -13,7 +13,7 @@
         "for_each": "startups",
         "id": "xiaomi_cloud_services",
         "name": "小米云服务检测",
-        "sql": "SELECT\n  s.name as service_event,\n  s.dur / 1e6 as dur_ms,\n  t.name as thread_name\nFROM slice s\nJOIN thread_track tt ON s.track_id = tt.id\nJOIN thread t ON tt.utid = t.utid\nJOIN process p ON t.upid = p.upid\nWHERE p.name GLOB '${package}*'\n  AND (s.name GLOB '*MiPush*'\n       OR s.name GLOB '*XMPush*'\n       OR s.name GLOB '*Analytics*'\n       OR s.name GLOB '*cloud*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.dur > 1000000\nORDER BY s.dur DESC\n"
+        "sql": "SELECT\n  s.name as service_event,\n  s.dur / 1e6 as dur_ms,\n  t.name as thread_name\nFROM slice s\nJOIN thread_track tt ON s.track_id = tt.id\nJOIN thread t ON tt.utid = t.utid\nJOIN process p ON t.upid = p.upid\nWHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')\n  AND (s.name GLOB '*MiPush*'\n       OR s.name GLOB '*XMPush*'\n       OR s.name GLOB '*Analytics*'\n       OR s.name GLOB '*cloud*')\n  AND s.ts >= (SELECT ts FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.ts <= (SELECT ts + dur FROM android_startups WHERE startup_id = ${item.startup_id})\n  AND s.dur > 1000000\nORDER BY s.dur DESC\n"
       },
       {
         "for_each": "startups",
@@ -57,8 +57,8 @@
   },
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/vendors/xiaomi/startup.override.yaml",
-    "sha256": "9f34231ee4ad502a6475d24d55c3d45f76f547afb1c52b7c5d5381a52b591f3a"
+    "sha256": "ad9506741d04ca248e6b86b88140a915748c71522422c8433dc244a652257284"
   }
 }

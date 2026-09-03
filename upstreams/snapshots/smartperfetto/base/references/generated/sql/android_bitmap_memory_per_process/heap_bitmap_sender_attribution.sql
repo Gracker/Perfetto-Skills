@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml
--- Source SHA-256: 3c84f44d6c902b27eaae06e9700024c9d6954005525a587cdbf9f2863e52423b
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: fcb998f355d4b59effa774ad1bbdf5e5f786de7a6b686385a57f6cfea779555f
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH bitmap_rows AS (
   SELECT
@@ -14,7 +14,7 @@ WITH bitmap_rows AS (
     AND (
       ('${process_name}' = '' AND '${package}' = '')
       OR receiver.name GLOB '${process_name}*'
-      OR receiver.name GLOB '${package}*'
+      OR ('${package}' = '' OR receiver.name = '${package}' OR receiver.name GLOB '${package}:*')
     )
 )
 SELECT

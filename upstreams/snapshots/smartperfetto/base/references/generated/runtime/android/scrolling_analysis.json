@@ -65,6 +65,7 @@
   "required_modules": [
     "android.input",
     "android.frames.timeline",
+    "android.frames.jank_type",
     "android.binder",
     "android.garbage_collection",
     "android.monitor_contention"
@@ -79,11 +80,13 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "*.raster",
     "*.ui",
     "*CodecLooper*",
     "*Compile*",
+    "*DrawFrame*",
     "*Fence*",
     "*InputConsumer*",
     "*MediaCodec*",
@@ -108,10 +111,13 @@
     "*onOutputBufferAvailable*",
     "*onTouchEvent*",
     "*openFile*",
+    "*postAndWait*",
     "*processInputEventForCompatibility*",
     "*queueVideoBuffer*",
     "*shader*",
     "*sqlite*",
+    "*syncAndDrawFrame*",
+    "*syncFrameState*",
     "*waitToFinish*",
     "Choreographer#doFrame%",
     "DrawFrame%",
@@ -123,7 +129,8 @@
     "[0-9]*.raster",
     "[0-9]*.ui",
     "actual_frame_timeline_slice",
-    "cpufreq"
+    "cpufreq",
+    "frame_slice"
   ],
   "skill_id": "scrolling_analysis",
   "steps": {
@@ -171,6 +178,96 @@
         }
       },
       "query_id": "scrolling_analysis/batch_frame_root_cause"
+    },
+    "buffer_tx_coverage_probe": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "scrolling_analysis/buffer_tx_coverage_probe"
+    },
+    "buffer_tx_performance_fallback": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "scrolling_analysis/buffer_tx_performance_fallback"
     },
     "expert_analysis_window": {
       "api": {

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/io_pressure.skill.yaml
--- Source SHA-256: 4799f46bab6741b4894853f4a43ace14682cc8fff4ebdcb8cfc01e9c3606f571
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   t.name as thread_name,
@@ -32,7 +32,7 @@ WHERE ts.state IN ('D', 'DK')
     OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%dm_%'
   )
   AND ts.dur > ${min_duration_ms|1} * 1e6
-  AND ('${package}' = '' OR p.name GLOB '${package}*')
+  AND ('${package}' = '' OR ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*'))
   AND (${start_ts} IS NULL OR ts.ts + ts.dur > ${start_ts})
   AND (${end_ts} IS NULL OR ts.ts < ${end_ts})
 GROUP BY ts.utid

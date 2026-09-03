@@ -54,17 +54,18 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/render_thread_slices/render_slices.sql",
-      "sha256": "514bbe41e899f68968960c1f0838507c26cfbb4039c4b83863697a95bcefa8b7",
+      "sha256": "7b6bedb90b29d0a96380f7a4429452bd9928f78002bd93ca079392b2920abc91",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "RenderThread"
       ],
       "skill_id": "render_thread_slices",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/render_thread_slices.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "cc1e3d5e7156fb21c9208867164cb287e368f620dae68b1f3e289076316b4435"
+        "sha256": "8ddac0e2dc4a11ec52133865f9c7be4c33cae1f207852349f0757d5049168649"
       },
       "sql_dependencies": {
         "creates": [],

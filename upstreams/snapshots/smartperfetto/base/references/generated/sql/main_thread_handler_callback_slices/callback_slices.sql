@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_handler_callback_slices.skill.yaml
--- Source SHA-256: a143b158022ef674ec5b0171ce6e62301fa5e0cc95e2f7a202c82508e7383765
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 33502513a6be13a722153be01a9eebf84781088e428b1ccd383a3b8f72f0d1de
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 INCLUDE PERFETTO MODULE android.slices;
 
@@ -24,7 +24,7 @@ observed_callbacks AS (
   JOIN process p ON t.upid = p.upid
   CROSS JOIN bounds b
   WHERE t.tid = p.pid
-    AND (p.name GLOB '${package}*' OR '${package}' = '')
+    AND (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND s.ts < b.end_ts
     AND s.ts + s.dur > b.start_ts
     AND s.dur > 0

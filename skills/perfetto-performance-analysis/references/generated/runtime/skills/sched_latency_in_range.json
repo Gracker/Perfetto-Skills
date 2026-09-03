@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "%UI%",
       "RenderThread"
     ]
@@ -46,9 +47,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/sched_latency_in_range.skill.yaml",
-    "sha256": "698297e54cca86ca36dc17117b27568195ae8f1b0f9d7c7e3c25922c969fc82c"
+    "sha256": "27015e72f5b20d3dc85010dd507c2510afcc4b6a9c12515bea3fb478e09e446d"
   },
   "steps": [],
   "type": "atomic",

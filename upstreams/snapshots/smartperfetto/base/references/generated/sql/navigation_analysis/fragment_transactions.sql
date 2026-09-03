@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/navigation_analysis.skill.yaml
--- Source SHA-256: 1ebfd2d987dc15689b41fd76a43570d53d80c2054b688b131b355b37c3585b99
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   printf('%d', s.ts) as frag_ts,
@@ -12,7 +12,7 @@ FROM slice s
 JOIN thread_track tt ON s.track_id = tt.id
 JOIN thread t ON tt.utid = t.utid
 JOIN process p ON t.upid = p.upid
-WHERE (p.name GLOB '${package}*' OR p.name = '${target_process.data[0].process_name}')
+WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR p.name = '${target_process.data[0].process_name}')
   AND (${start_ts} IS NULL OR s.ts + s.dur > ${start_ts})
   AND (${end_ts} IS NULL OR s.ts < ${end_ts})
   AND (

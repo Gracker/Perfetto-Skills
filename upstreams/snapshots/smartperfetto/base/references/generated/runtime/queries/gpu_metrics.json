@@ -54,7 +54,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_metrics/gpu_frequency.sql",
-      "sha256": "ff7feb0167d872922a9158e292f39a6b3bbf1d77f698f02532cea944f251d45f",
+      "sha256": "af5b338a74781b44db4a736c15f062dd166c4859fdfd084fe3a1dd89a8c5bfd2",
       "signal_patterns": [
         "*Freq*",
         "*clock*",
@@ -62,10 +62,10 @@
       ],
       "skill_id": "gpu_metrics",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/gpu_metrics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7ec44d892abb05141d0c58bfb05944911a22d8a6d4252fc95aa9b12c5f4f800a"
+        "sha256": "9456c4556e1e976ba2c42d7261839a9deac5ebd010487a69b95b965f094a68b2"
       },
       "sql_dependencies": {
         "creates": [],
@@ -149,7 +149,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_metrics/gpu_utilization.sql",
-      "sha256": "1ef944a62b13e2f723af99f22a2a3f4118b51578ea512b331b36029e1c1197b2",
+      "sha256": "4aec432f3082531b4839ba67ab7984f3513446131c5aee9a582c039b577aeb51",
       "signal_patterns": [
         "*Busy*",
         "*Util*",
@@ -158,10 +158,10 @@
       ],
       "skill_id": "gpu_metrics",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/gpu_metrics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7ec44d892abb05141d0c58bfb05944911a22d8a6d4252fc95aa9b12c5f4f800a"
+        "sha256": "9456c4556e1e976ba2c42d7261839a9deac5ebd010487a69b95b965f094a68b2"
       },
       "sql_dependencies": {
         "creates": [],
@@ -245,7 +245,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_metrics/gpu_render_time.sql",
-      "sha256": "baf5664aef376ba24283edec76184904a068e79cd68932965c116594fcdb2fa8",
+      "sha256": "0d756b3b1a25b72ca42e218bddac7e78f7cf39c6728063571862686ed14aa547",
       "signal_patterns": [
         "*Draw*Call*",
         "*GPU*",
@@ -258,10 +258,10 @@
       ],
       "skill_id": "gpu_metrics",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/gpu_metrics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7ec44d892abb05141d0c58bfb05944911a22d8a6d4252fc95aa9b12c5f4f800a"
+        "sha256": "9456c4556e1e976ba2c42d7261839a9deac5ebd010487a69b95b965f094a68b2"
       },
       "sql_dependencies": {
         "creates": [],
@@ -345,7 +345,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_metrics/gpu_fence_waits.sql",
-      "sha256": "5e2a5e8c63e430563308d536ad604989d971956d8d83f34348fa11a4fd24d055",
+      "sha256": "afd57129ed77f1df0af91cb449a3ea0f0abd316fe34cd76f53be573e01255d25",
       "signal_patterns": [
         "*Fence*",
         "*GPU completion*",
@@ -355,10 +355,10 @@
       ],
       "skill_id": "gpu_metrics",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/gpu_metrics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7ec44d892abb05141d0c58bfb05944911a22d8a6d4252fc95aa9b12c5f4f800a"
+        "sha256": "9456c4556e1e976ba2c42d7261839a9deac5ebd010487a69b95b965f094a68b2"
       },
       "sql_dependencies": {
         "creates": [],
@@ -442,7 +442,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_metrics/gpu_summary.sql",
-      "sha256": "bf6f566cf3083ec2c0c4e6ef632fd90748806f4318eba30458068c3f503cfe82",
+      "sha256": "d259d16b47d535359e51a42aa178f107e209d861a6970664afe0b023477dd938",
       "signal_patterns": [
         "*GPU*",
         "*fence*",
@@ -451,10 +451,10 @@
       ],
       "skill_id": "gpu_metrics",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/gpu_metrics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7ec44d892abb05141d0c58bfb05944911a22d8a6d4252fc95aa9b12c5f4f800a"
+        "sha256": "9456c4556e1e976ba2c42d7261839a9deac5ebd010487a69b95b965f094a68b2"
       },
       "sql_dependencies": {
         "creates": [],

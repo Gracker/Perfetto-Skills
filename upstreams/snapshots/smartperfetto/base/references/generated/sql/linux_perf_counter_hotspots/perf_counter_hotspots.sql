@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/linux_perf_counter_hotspots.skill.yaml
--- Source SHA-256: a45de9aedc3fc4f3cf6cf9056e2e50d0de44ab20831abdaa17a1351352564370
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: e626f52d15d809aef38cbdcc4ba3e597ff08de9f37353328d71d16426405dfcc
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 input AS (
@@ -22,7 +22,7 @@ LEFT JOIN thread t ON l.utid = t.utid
 LEFT JOIN process p ON t.upid = p.upid
 LEFT JOIN track tr ON l.track_id = tr.id
 CROSS JOIN input i
-WHERE (i.target_process = '' OR p.name GLOB i.target_process || '*')
+WHERE (i.target_process = '' OR p.name = i.target_process OR p.name GLOB i.target_process || ':*')
   AND l.ts >= i.start_ts
   AND l.ts < i.end_ts
 GROUP BY counter_name, process_name, thread_name

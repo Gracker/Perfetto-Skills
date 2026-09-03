@@ -18,7 +18,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "frame_pipeline_variance",
@@ -64,9 +65,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/frame_pipeline_variance.skill.yaml",
-    "sha256": "950462b8e2b44ec13d3e9173fa31326ad38fd20335c64190a8a35c9111e9af9c"
+    "sha256": "371a11a05e1735c9a5ef91771956d7304d2f0613e653c48c830946646dcf6b6f"
   },
   "steps": [],
   "type": "atomic",

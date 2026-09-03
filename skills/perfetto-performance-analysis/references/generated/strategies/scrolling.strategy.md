@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: 2a4b0b4e4ca2c5ab0d9682f1b272e83dcd5a282ad60e5e79f512a9193bbd132b
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: ca8fc0f296988295263a6fa8875203a512540047638f7057151cba2aca06bdc2
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 # Scrolling Strategy
 
@@ -78,10 +78,12 @@ keywords:
 final_report_contract:
   required_sections:
   - id: root_cause_distribution
-    label: 全帧根因分布
-    description: 按 reason_code / 责任方聚合，列出帧数、占比、关键四象限或频率特征。
+    label: 掉帧与根因分布
+    description: 用 jank_type_stats 报告全量掉帧类型/责任；用 batch_frame_root_cause 报告已分析帧的 reason_code，并在采样截断时明确 X/Y、coverage 和 scope，禁止外推样本百分比。
     pattern_groups:
-    - - 全帧根因分布
+    - - 掉帧与根因分布
+      - 根因样本分布
+      - 全帧根因分布
       - 根因分布
       - root[-\s]?cause distribution
       - reason_code
@@ -150,7 +152,8 @@ phase_hints:
   - 卡顿
   - scrolling_analysis
   - 统计
-  constraints: 必须调用 scrolling_analysis 获取全帧统计。注意区分 buffer_stuffing（非真实掉帧）和感知掉帧。
+  constraints: 必须调用 scrolling_analysis 获取 jank_type_stats 全量统计和 batch 根因分析覆盖信息。注意区分 buffer_stuffing（非真实掉帧）和感知掉帧；root_cause_analysis_scope=capped_frame_sample
+    时不得把 reason_code 样本写成全量分布。
   critical_tools:
   - scrolling_analysis
   critical: false
@@ -166,12 +169,12 @@ phase_hints:
   - 代表帧
   - representative
   - 逐帧
-  constraints: 对占比 >15% 且绝对帧数 >3 的 reason_code，必须选最严重帧执行 jank_frame_detail/frame_blocking_calls/blocking_chain_analysis 深钻。禁止仅靠
-    batch_frame_root_cause 统计分类直接出结论。workload_heavy 必须最后兜底。
-  critical_tools:
-  - jank_frame_detail
-  - frame_blocking_calls
-  - blocking_chain_analysis
+  constraints: 对占比 >15% 且绝对帧数 >3 的 reason_code，先读已有 direct evidence，再只选择能补齐当前证据缺口的深钻工具：RT/slice/unknown 用 jank_frame_detail，Binder/锁/IO
+    用 frame_blocking_calls，未解释的 Q4/wakeup 链才用 blocking_chain_analysis。无信息增益的工具必须跳过并说明，禁止机械执行三件套。workload_heavy 必须最后兜底。只有能命名一个尚缺字段时才允许最多一次定向
+    SQL；失败后标注证据边界并收口。
+  critical_tools: []
+  max_tool_calls:
+    execute_sql: 1
   critical: true
 - id: frame_metrics_overlay
   keywords:
@@ -244,16 +247,11 @@ phase_hints:
   - 混合
   - 架构
   - 生产端
-  critical_tools:
-  - scrolling_analysis
-  - flutter_scrolling_analysis
-  - textureview_producer_frame_timing
-  - webview_drawfunctor_jank_chain
-  - rn_bridge_to_frame_jank
-  - rn_fabric_render_jank
-  - gl_standalone_swap_jank
-  - compose_recomposition_hotspot
-  - surfaceflinger_analysis
+  constraints: 只执行当前 plan/gate 已激活的架构专属 Skill；runner-up 和静态工具列表不触发调用。aggregate/direct evidence 与已声明架构 Skill 已回答阶段目标时，立即 completed。只有能命名一个尚缺字段时才允许最多一次定向
+    SQL；失败后标注证据边界并收口，禁止 schema lookup + SQL 探索循环。用户显式要求额外 SQL/源码，或新 direct evidence 激活第二链路时，再用 revise_plan 最小补充。
+  critical_tools: []
+  max_tool_calls:
+    execute_sql: 1
   critical: false
 - id: display_pipeline_boundary
   keywords:
@@ -278,13 +276,12 @@ phase_hints:
   - App Resynced Jitter
   constraints: 当掉帧证据涉及 BufferQueue、Fence、SF/HWC、Buffer Stuffing、隐形掉帧或刷新率变化时，必须把 App/RenderThread、BufferQueue queue/dequeue/latch、SF
     commit/composite/present、HWC/display 与 acquire/present/release fence 拆开。queueBuffer 快不等于已上屏；dequeueBuffer 等待更接近 release
-    fence/backpressure；刷新率/ARR/VRR 要用实际 VSync 周期，不默认 16.6ms。
+    fence/backpressure；刷新率/ARR/VRR 要用实际 VSync 周期，不默认 16.6ms。已有 scrolling_analysis:vsync_config artifact 时直接复用；只有该证据缺失时才调用
+    standalone vsync_config，不要把可选补充工具预先写成无条件 expectedCalls。
   critical_tools:
   - surfaceflinger_analysis
   - buffer_transaction_lifecycle
   - fence_wait_decomposition
-  - present_fence_timing
-  - vsync_config
   critical: false
 - id: resync_sf_backlog
   keywords:
@@ -317,9 +314,9 @@ phase_hints:
   - 报告
   - report
   - 总结
-  constraints: 输出必须包含：全帧根因分布表（按 reason_code 聚合）+ 代表帧分析（含四象限+频率+根因推理链）+ 按优先级排序的优化建议。每个 CRITICAL/HIGH 必须有量化证据+因果链。若深钻证据纠正了 batch
-    reason_code（例如 lock_binder_wait 但 binder_overlap_ms=0，render_slices_json 指向 cache_miss/makePipeline/shader 编译），最终结论必须使用纠正后的根因命名，并明确标注原
-    reason_code 为误分类。
+  constraints: 输出必须包含：掉帧与根因分布（jank_type_stats 全量类型/责任 + batch 已分析帧 reason_code，并报告 root-cause X/Y coverage）+ 代表帧分析（含四象限+频率+根因推理链）+
+    按优先级排序的优化建议。截断时禁止外推样本百分比。每个 CRITICAL/HIGH 必须有量化证据+因果链。lock_contention / binder_sync_blocking / render_sync_wait 必须分别引用对应
+    direct overlap；Q4b 可中断睡眠本身不能命名根因。
   critical_tools: []
   critical: false
 plan_template:
@@ -341,10 +338,13 @@ plan_template:
     match_keywords:
     - batch_frame_root_cause
     - artifact
-    - 全帧根因分布
+    - 掉帧与根因分布
+    - 根因样本分布
     - 代表帧
     - reason_code
-    suggestion: 滑动场景必须计划读取 scrolling_analysis 返回的 batch/root-cause artifact；缺失或无掉帧时执行阶段标记 skipped 并说明
+    suggestion: 滑动场景先用 detail=summary 读取 scrolling_analysis 返回的 batch/root-cause artifact 聚合，并检查 root_cause_analysis_scope、已分析/eligible
+      帧数和 coverage。aggregate.complete 只证明 artifact 行聚合完整，不证明覆盖全部 eligible jank。只有聚合不完整、缺少结论所需字段或需要代表帧证据时，才读取解决该证据缺口所需的最少 rows。缺失或无掉帧时执行阶段标记
+      skipped 并说明。
     required_expected_calls:
     - {}
   - id: root_cause_diagnosis
@@ -358,11 +358,7 @@ plan_template:
     - deep
     - jank_frame_detail
     - frame_blocking_calls
-    suggestion: 滑动场景建议包含完整卡顿帧根因分析阶段 (jank_frame_detail + frame_blocking_calls + blocking_chain_analysis)
-    required_expected_calls:
-    - skill_id: jank_frame_detail
-    - skill_id: frame_blocking_calls
-    - skill_id: blocking_chain_analysis
+    suggestion: 滑动场景必须包含证据驱动的根因判读阶段；先读取 batch direct evidence，再仅为可行动且尚未解释的证据缺口 revise_plan 添加一个最小深钻工具。terminal code 不预占调用。
   - id: architecture_specific_jank
     waivable: false
     trigger_keywords:
@@ -398,8 +394,6 @@ plan_template:
     - mixed
     - 混合
     - 架构
-    suggestion: 非标准/混合渲染架构必须在 plan.expectedCalls 声明对应专属 skill：Flutter 用 flutter_scrolling_analysis，TextureView 用 textureview_producer_frame_timing，其他架构选门禁返回的匹配
-      producer/SF skill。执行时拆 HWUI host 链路 + producer 链路 + SF 合成链路，再合并因果，避免只看 FrameTimeline。
     conditional_required_expected_calls:
     - trigger_keywords:
       - Flutter
@@ -456,7 +450,7 @@ plan_template:
 **Route card**: 滑动 / 卡顿 / 掉帧 / jank / scroll / fps / list / fling
 
 **Final report must include**
-- 必须显式出现 `### 全帧根因分布`：reason_code/责任方、帧数、占比。
+- 必须显式出现 `### 掉帧与根因分布`：先给 jank_type_stats 全量类型/责任，再给 batch 已分析帧 reason_code；同时写根因分析 X/Y、coverage 和 scope。截断时禁止外推样本百分比。
 - 必须显式出现 `### 代表帧分析`：耗时、超预算、vsync_missed、四象限/频率、关键 slice/阻塞点、因果链。
 - 必须显式出现 `### 峰值/口径指标`：真实掉帧、假阳性、最长帧、最长连续丢帧；缺数据时写缺失来源和降级口径。
 - 必须显式分层给出 App/系统建议。
@@ -472,11 +466,11 @@ plan_template:
 
 **⚠️ 核心原则：**
 1. **逐帧根因诊断是最重要的**。概览统计（帧率、卡顿率）只是入口，真正有价值的是每一个掉帧帧的根因分析。
-2. **掉帧检测以 present_ts 间隔为主**（> 1.5x VSync = 用户可感知卡顿），token_gap 为辅助信号。Buffer Stuffing 帧的 present_type 可以是 Late/Early/On-Time，需用 present_ts 间隔做二次验证。
+2. **掉帧检测使用混合证据口径**：非 Buffer Stuffing 帧以 `present_type in (Late Present, Dropped Frame)` 为权威消费状态；Buffer Stuffing 才用同 layer `present_ts` 间隔 `>1.5x && <=6x VSync` 二次验证。`On-time Present` 仅有长间隔时只能记为 cadence candidate，不能升级为 hidden jank。
    - **Per-Layer Buffer 枯竭检测（token-gap 辅助模型）**：当 App Layer 在连续 SF DisplayFrame 中出现 token 跳跃（gap > 1），说明 SF 在中间帧合成时该 Layer 没有新 Buffer = 缓冲区枯竭
    - `token_gap = 1` → 正常（每帧都有新 buffer），`token_gap = N` → 跳过 N-1 个 DisplayFrame
    - 这是 per-layer 检测，不受 SF 全局合成状态影响（SF 可能在消费其他 Layer 的 buffer）
-   - **Prediction Error 帧处理**：Prediction Error 帧不应一律忽略。检查 prediction_type = 'Expired Prediction' 的比例：>5% 时标注"FrameTimeline 预测精度不足"。在管线 2-3 帧缓冲下用户可能感知延迟
+   - **Prediction Error 帧处理**：Prediction Error 帧不应一律忽略。检查 prediction_type = 'Expired Prediction' 的比例：>5% 时标注"FrameTimeline 预测精度不足"。在管线 2-3 帧缓冲下用户可能感知延迟。孤立 Prediction Error 通常不代表用户可感知的 App 卡顿，但不能把密集或连续 Prediction Error 一概称为“统计噪声/统计假象”；present gap、Dropped Frame 或成簇异常必须单独报告。即使 App Deadline Missed 是唯一可直接归因到 App 的类别，也不能写成“唯一真实/唯一用户可感知掉帧”，不能用“仅 N 帧真实/可感知”排除其余呈现间隔异常。
 3. **Guilty Frame 溯源**：
    - BlastBufferQueue 三缓冲下，可见卡顿通常出现在慢帧 2-3 帧之后（管线排空）
    - `guilty_frame_id` 字段指向导致管线枯竭的实际慢帧（向前回溯 ≤5 帧，取最慢的超预算帧）
@@ -511,8 +505,10 @@ plan_template:
 
 **混合出图规则：**
 1. **先分开看 HWUI host 链路**：始终调用 `scrolling_analysis` 获取宿主 App FrameTimeline、MainThread/RenderThread、SF 责任分布。
-2. **再分开看 producer/embedded 链路**：按候选 pipeline 调用对应 skill（Flutter、WebView、TextureView、RN、GL、游戏/媒体）。
+2. **再分开看 producer/embedded 链路**：只按 selected/明确激活的 pipeline 调用对应 skill（Flutter、WebView、TextureView、RN、GL、游戏/媒体）；runner-up 仅说明检测不确定性。
 3. **最后合并看链路依赖**：判断 producer 是否阻塞/拖慢 host RT、host 是否吞掉 producer 帧、SF 是否在多 layer 中沿用旧 buffer，或两条链路只是并行同屏但无依赖。
+
+架构 aggregate 和已激活专属 Skill 已能回答上述依赖时应直接闭合阶段。只有一个可命名的结论字段仍缺失时，才补一次定向 SQL；查询失败或字段不可用后记录边界并收口，不得转入 schema lookup + 多轮探索 SQL。
 
 **输出必须分三段**：`HWUI host 证据`、`嵌入/独立 producer 证据`、`合并因果判断`。不能只说“这是 Flutter/WebView/RN 架构所以改用某一个 skill”，也不能只说“FrameTimeline 正常所以无卡顿”。
 
@@ -533,15 +529,23 @@ plan_template:
 - Fence 要拆成 acquire / present / release：acquire 影响 SF latch，present 影响用户可见上屏，release 影响 producer 复用上一帧 buffer。
 - HWC 不是 BufferQueue consumer；SurfaceFlinger 消费 buffer 后，再通过 HWC validate/accept/present 或 RenderEngine 合成。
 - 刷新率/ARR/VRR 会改变帧预算。报告必须基于 `vsync_config`、VSYNC-sf、FrameTimeline 或等价证据，不默认 16.6ms。
+- 当 `performance_summary.fps_source = buffer_tx_rising_edge_fallback` 时，必须引用 `coverage_status`、`frame_timeline_to_buffer_tx_ratio`、`frame_source_track` 和 effective span，并按覆盖模式分层：
+  - `no_frame_timeline_coverage`：只能交付目标包 BufferTX 正向 delta 支持的帧产出数和 FPS；不支持 App/SF 责任、掉帧率、峰值长帧或根因结论。相应小节标记“当前 trace 证据不可用”，不得填 0 或根据 FPS 推断无卡顿。
+  - `partial_frame_timeline_coverage`：overview 帧数/FPS 以 BufferTX 为准；`jank_type_stats` / `batch_frame_root_cause` 仅是 FrameTimeline 覆盖到的 sparse sample。只能表述“已观测样本中的根因”，必须引用 `evidence_scope=partial_sample` 和 coverage ratio，不得写成全量根因分布或用样本比例估算全量帧数。
+  - `frame_timeline_to_buffer_tx_ratio` = FrameTimeline 帧数 / BufferTX 产出帧数，是两个独立来源的比值，**不是有界覆盖率**（字段与标签都已按"帧数比"命名，不要再当成百分比覆盖率读）：`> 1 说明 BufferTX 少计`（track 选择或 rising-edge 判定漏帧），不代表覆盖超过 100%。此时以 FrameTimeline 为准并写明 BufferTX 少计，不要表述成“覆盖率 100.x%”。
 - GraphicBuffer/dma-buf 是图形物理内存证据面；BufferQueue/Fence slice 只能证明队列、同步和背压候选，不能单独证明图形内存泄漏或占用峰值。
 
 **Phase 1.8 — 帧内指标 / GPU / CPU 利用率补充（按需执行）：**
 
 当用户追问"每帧 CPU/UI 时间"、"GPU work period"、"Mali power state"、"是 CPU 还是 GPU 限制"时，优先调用已落地的 B-tier atomic skill：
 
-这些是补充证据，不替代 Phase 1.9 的根因深钻。若 Trace 数据完整度提示 `gpu_work_period` / `cpu_freq_idle` 缺失，结论中必须说明 GPU/CPU 供应侧判断的可信度下降。
+这些是补充证据，不替代 Phase 1.9 对可行动根因的按需深钻。`prediction_error`、`display_hal`、`app_jank_unattributed`、`frame_timeline_unattributed` 按下述 terminal-code 例外处理。若 Trace 数据完整度提示 `gpu_work_period` / `cpu_freq_idle` 缺失，结论中必须说明 GPU/CPU 供应侧判断的可信度下降。
 
-**Phase 1.9 — 根因深钻（🔴 强制执行，不可跳过）：**
+**Phase 1.9 — 可行动根因深钻（有信息增益时强制）：**
+
+对 `batch_frame_root_cause` 中**占比 >15% 且绝对帧数 >3** 的可行动 reason_code，先读 batch 已有 direct evidence；仍有明确证据缺口时，**必须**选最严重的 1 帧并调用一个能补齐该缺口的最小工具。不得为了满足流程重复查询已有字段。
+`prediction_error`、`display_hal`、`app_jank_unattributed`、`frame_timeline_unattributed` 是 evidence-bound terminal codes：前两者已有 FrameTimeline 系统边界，`app_jank_unattributed` 表示 App 责任已确认但底层机制证据不足，`frame_timeline_unattributed` 表示原始 Unknown Jank 在当前 trace 中没有 App、SF 或帧内直接机制证据。仅因占比超过阈值，不得强制调用逐帧 App 深钻工具。若同一报告还包含 workload/freq/lock/GC/render/SF composition 等可行动 reason，仍须对那些 reason 执行本阶段。
+**⛔ 禁止**仅靠 workload_heavy 等统计分类直接出结论，也禁止把 terminal code 扩写成其证据不支持的具体原因。
 
 **常见错误：** 看到 reason_code=workload_heavy 就结论"工作负载过重"，但没有回答：具体是哪段代码？为什么在这个时机执行？是否可异步/分帧？这不是根因分析，这只是分类。
 
@@ -593,9 +597,9 @@ plan_template:
 ⚠️ 缺帧和肥帧可以同时存在。**先分析 batch_frame_root_cause（肥帧），再用 frame_production_gap（缺帧）补充**。
 <!-- /strategy-detail -->
 
-<!-- strategy-detail id="final_report_and_sql_fallback" title="滑动最终报告结构和 SQL 回退方案" keywords="conclusion,final report,SQL,fallback,全帧根因分布,代表帧" -->
+<!-- strategy-detail id="final_report_and_sql_fallback" title="滑动最终报告结构和 SQL 回退方案" keywords="conclusion,final report,SQL,fallback,掉帧与根因分布,根因样本分布,代表帧" -->
 **Phase 2 — 补充深钻（可选，仅在 Phase 1.9 深钻后仍需更多细节时执行）：**
-Phase 1 的 `batch_frame_root_cause` 已包含每帧的**完整统计数据**（但统计数据 ≠ 根因，Phase 1.9 的工具调用深钻不可省略）：
+Phase 1 的 `batch_frame_root_cause` 已包含每个**已分析帧**的完整统计数据。先检查 root-cause X/Y coverage；可行动分类仍需按 Phase 1.9 补齐机制证据，terminal codes 按其证据边界直接收口：
 - MainThread 四象限（Q1 大核运行 / Q2 小核运行 / Q3 调度等待 / Q4 休眠）
 - RenderThread 四象限（render_q1 大核 / render_q3 调度 / render_q4 休眠）
 - CPU 大核频率（big_avg_freq_mhz / big_max_freq_mhz）+ 升频延迟（ramp_ms）
@@ -605,25 +609,27 @@ Phase 1 的 `batch_frame_root_cause` 已包含每帧的**完整统计数据**（
 
 此外，每个滑动区间的**整体运行特征**（四象限分布、CPU 频率、关键线程大小核分布）已内嵌在 `scroll_sessions` 的展开行中（由 `session_stats_batch` 提供），无需调用 jank_frame_detail 或 blocking_chain_analysis 来获取全局指标。兼容数据源 `session_quadrant_summary`、`session_cpu_freq`、`session_thread_core_affinity` 仍可通过 save_as 引用。
 
-**batch_frame_root_cause 的统计数据可用于分类和概览，但 Phase 1.9 的深钻工具调用不可省略**。jank_frame_detail 仅在以下特殊情况需要调用：
+**batch_frame_root_cause 的统计数据可用于分类和概览；只有存在可补齐的机制证据缺口时才执行 Phase 1.9 工具调用。** jank_frame_detail 仅在以下特殊情况需要调用：
 仅在以下情况才调用 jank_frame_detail（**最多 2 帧**）：
 - 需要查看 CPU 频率**时间线**（帧内频率变化过程）
 - 需要查看 RenderThread 或主线程的 top N slices 详情
 - **reason_code 为 unknown 且帧数 >5%**：必须对至少 1 帧调用 jank_frame_detail 获取更多线索，不能在分布表中仅标记"未分类"就跳过
-- reason_code 与实际数据矛盾时（如 `lock_binder_wait` 但 Binder 耗时 0ms）：应在结论中标注可能的误分类原因
+- legacy artifact 的 reason_code 与 direct overlap 矛盾时，应明确标注旧分类不成立；当前 runtime 的 lock/Binder/RT-sync 结论必须分别由 numeric direct evidence 支撑。
 
 如果深钻结果已给出更具体的根因，不要在最终报告继续把原始 `reason_code` 当作根因名称。典型例子：
-- `lock_binder_wait` 但 `binder_overlap_ms=0`，且 `render_slices_json` 出现 `cache_miss: makePipeline` / shader 编译 / Vulkan finish frame / `postAndWait`，最终根因应写成 **shader_compile + sync_wait** 或等价机制，并说明 `lock_binder_wait` 是批量分类误判。
+- `render_sync_wait` 且 `render_slices_json` 出现 `cache_miss: makePipeline` / shader 编译 / Vulkan finish frame，应写成 **具体 RT 工作 + UI→RT sync wait**；不要把 Q4b 睡眠改写成锁或 Binder。
+- `render_sync_wait` 只在主线程 Q4b>30%、去重后的同步等待同时达到帧预算 20% 与帧耗时 25% 的较大者，并且同窗有 RT active 或 `syncFrameState`/`DrawFrame` 直接证据时成立。更短的 `postAndWait` 只作为依赖放大证据；有 RT-heavy/workload/shader/GPU 等强 trigger 时，主 reason 保持 trigger。
 - `workload_heavy` 但 `main_slices_json` 明确指向应用自定义方法，最终根因应写具体方法名和所处阶段，例如 `CustomScroll_longFrameLoad` 在 ANIMATION 回调同步执行，而不是只写 "workload_heavy"。
 
 `frame_blocking_calls` 是 Phase 1.9 的帧内阻塞证据补充，不占 `jank_frame_detail` 的 2 帧上限。遇到 Binder/IO/futex/锁相关根因时，优先用它确认阻塞调用是否真的与掉帧帧重叠。
 
 
-**Phase 3 — 综合结论（基于全量帧数据）：**
+**Phase 3 — 综合结论（全量掉帧类型统计 + 明示覆盖率的根因分析）：**
 
-**输出结构必须遵循。以下三个小节标题必须显式出现在最终报告中：`### 全帧根因分布`、`### 代表帧分析`、`### 峰值/口径指标`。**
+**输出结构必须遵循。以下三个小节标题必须显式出现在最终报告中：`### 掉帧与根因分布`、`### 代表帧分析`、`### 峰值/口径指标`。**
 
 1. **概览**（必须包含以下数据）：
+   - 先检查 `fps_source` 和 `coverage_status`。如果是 `buffer_tx_rising_edge_fallback + no_frame_timeline_coverage`，本节只交付 BufferTX 帧数/FPS/effective span/证据轨道，下述掉帧、峰值、责任与评级要求改为显式“当前 trace 证据不可用”，不能从 NULL 填 0。如果是 `partial_frame_timeline_coverage`，同样不能输出全量掉帧/峰值/评级；可以附上 sparse root rows，但必须以 coverage ratio 标记为部分样本。
    - 总帧数、**总真实掉帧数 = SUM(所有 jank_type 行的 real_jank_count)**
    - 分类明细：App 侧掉帧 N 帧 + 隐形掉帧 N 帧 + 假阳性 N 帧
    - **峰值体验指标**（仅看掉帧率会掩盖极端长帧对用户感知的影响）：
@@ -650,8 +656,10 @@ Phase 1 的 `batch_frame_root_cause` 已包含每帧的**完整统计数据**（
    - CPU 频率：prime 均频 XXMHz / big 均频 XXMHz / little 均频 XXMHz
    - 关键线程大小核分布：MainThread prime XX%+big XX% / RenderThread prime XX%+big XX%
 
-3. **全帧根因分布**（基于 batch_frame_root_cause，覆盖所有掉帧帧）：
-   按 reason_code 聚合，附带四象限分布和频率特征：
+3. **掉帧与根因分布**：
+   - 先用 `jank_type_stats` 给出全量 jank_type / 责任方帧数与占比。
+   - 再用 `batch_frame_root_cause` 按 reason_code 聚合已分析帧，附带四象限和频率特征；必须写 `root_cause_analyzed_frame_count / root_cause_eligible_frame_count`、`root_cause_coverage_ratio`、`root_cause_analysis_scope`。
+   - 当 scope=`capped_frame_sample` 时，表头和正文都标记“已分析严重帧样本”；截断时禁止外推样本百分比到全部 eligible jank，也不能按样本占比排序全局优化优先级。
    ```
    | 根因类型 | 帧数 | 占比 | 四象限特征 | 频率特征 |
    |---------|------|------|-----------|---------|
@@ -689,8 +697,8 @@ Phase 1 的 `batch_frame_root_cause` 已包含每帧的**完整统计数据**（
 - 真实卡顿证据是 **VSYNC-sf 计数器轨道**上的呈现间隔异常（> 1.5x VSync 周期）
 - 可参考帧列表中的"呈现间隔"列确认
 
-⚠️ **结论必须覆盖所有掉帧帧的根因分布**，不能只报告少数几帧。
-   batch_frame_root_cause 提供了全量分类和详细指标，结论中的"全帧根因分布"和"代表帧分析"都应基于它。
+⚠️ **结论必须覆盖全量掉帧类型/责任，并诚实披露根因分析覆盖率。**
+   `jank_type_stats` 提供全量类型/责任统计；`batch_frame_root_cause` 提供已分析帧的详细机制分类和代表帧。只有 `root_cause_analysis_scope=full_frame_set` 时才能称为全量 reason_code 分布。
 
 ---
 
@@ -714,43 +722,65 @@ WITH vsync_intervals AS (
 ),
 vsync_cfg AS (
   SELECT COALESCE(
-    (SELECT CAST(PERCENTILE(interval_ns, 0.5) AS INTEGER)
+    (SELECT CAST(PERCENTILE(interval_ns, 50) AS INTEGER)
      FROM vsync_intervals
      WHERE interval_ns BETWEEN 4000000 AND 50000000),
     16666667
   ) as period_ns
 ),
 frames AS (
-  SELECT a.ts, a.dur, a.jank_type,
+  SELECT a.ts, a.dur, a.jank_type, COALESCE(a.present_type, 'Unknown Present') as present_type,
     a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END as present_ts,
     LAG(a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END)
-      OVER (PARTITION BY a.layer_name ORDER BY a.ts) as prev_present_ts
+      OVER (PARTITION BY a.layer_name ORDER BY a.ts) as prev_present_ts,
+    CASE
+      WHEN a.jank_type GLOB '*Self Jank*'
+        OR a.jank_type GLOB '*App Deadline Missed*'
+        OR a.jank_type GLOB '*App Resynced Jitter*' THEN 'APP'
+      WHEN a.jank_type GLOB '*SurfaceFlinger*' THEN 'SF'
+      WHEN a.jank_type GLOB '*Buffer Stuffing*' THEN 'BUFFER_STUFFING'
+      WHEN a.jank_type GLOB '*Prediction Error*'
+        OR a.jank_type GLOB '*Display HAL*' THEN 'SF'
+      WHEN a.jank_type = 'None' OR a.jank_type IS NULL THEN 'HIDDEN'
+      ELSE 'UNKNOWN'
+    END as responsibility
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '{process_name}*' OR '{process_name}' = '')
+  WHERE (
+    '{process_name}' = ''
+    OR p.name = '{process_name}'
+    OR p.name GLOB '{process_name}:*'
+  )
     AND p.name NOT LIKE '/system/%'
 )
 SELECT printf('%d', ts) AS start_ts, printf('%d', ts + dur) AS end_ts,
   ROUND(dur/1e6, 2) AS dur_ms, jank_type,
   CASE WHEN jank_type = 'None' OR jank_type IS NULL THEN '隐形掉帧' ELSE jank_type END as display_type,
-  CASE
-    WHEN jank_type = 'None' OR jank_type IS NULL THEN 'HIDDEN'
-    WHEN jank_type GLOB '*SurfaceFlinger*' THEN 'SF'
-    ELSE 'APP'
-  END as responsibility,
+  responsibility,
   MAX(CAST(ROUND((present_ts - prev_present_ts) * 1.0 / (SELECT period_ns FROM vsync_cfg) - 1, 0) AS INTEGER), 0) as vsync_missed
 FROM frames
 WHERE prev_present_ts IS NOT NULL
   AND (present_ts - prev_present_ts) <= (SELECT period_ns FROM vsync_cfg) * 6
-  AND (present_ts - prev_present_ts) > (SELECT period_ns FROM vsync_cfg) * 1.5
+  AND (
+    (present_type IN ('Late Present', 'Dropped Frame')
+      AND (responsibility != 'BUFFER_STUFFING'
+        OR jank_type GLOB '*App Deadline Missed*'
+        OR jank_type GLOB '*App Resynced Jitter*'
+        OR jank_type GLOB '*SurfaceFlinger*'
+        OR jank_type GLOB '*Prediction Error*'
+        OR jank_type GLOB '*Display HAL*'))
+    OR (responsibility = 'BUFFER_STUFFING'
+      AND (present_ts - prev_present_ts) > (SELECT period_ns FROM vsync_cfg) * 1.5)
+  )
 ORDER BY vsync_missed DESC, dur DESC
 LIMIT 20
 ```
 
 ⚠️ 注意：此 SQL 同时返回框架标记的掉帧和隐形掉帧。`display_type='隐形掉帧'` 的帧是框架未标记但消费端检测到的真实掉帧。
 
-**回退 Step 2 — 对 top 5 卡顿帧调用 jank_frame_detail（必须执行）：**
-- 混合选取 APP 和 HIDDEN 帧
-
-**不执行逐帧分析就直接出结论是不允许的。**
+**回退 Step 2 — 只在有信息增益时选择代表帧深钻：**
+- `prediction_error` / `Display HAL` 直接按 SF scheduler / HAL 呈现边界解释，不调用 App 帧内工具。Prediction Error 只允许带范围限定地说明“孤立错误通常不代表用户可感知 App 卡顿”；密集/连续样本、present gap 和 Dropped Frame 仍需分别报告，不能称为统计噪声。
+- `frame_timeline_unattributed` 直接报告 FrameTimeline 的 Unknown Jank 与当前证据边界；不能写成噪声、假帧或不可感知，也不因占比高自动追加逐帧工具。
+- `APP` / `HIDDEN` / `UNKNOWN` 只有在用户要求底层原因、trace 具备相应线程证据且当前 SQL 未能解释时，才选 1 个最严重代表帧调用：
+- 没有可补齐证据时直接说明边界，不得固定跑 top 5，也不得为了完成流程调用工具。
 <!-- /strategy-detail -->

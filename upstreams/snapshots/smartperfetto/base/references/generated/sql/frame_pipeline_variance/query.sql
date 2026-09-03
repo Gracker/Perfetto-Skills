@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/frame_pipeline_variance.skill.yaml
--- Source SHA-256: 950462b8e2b44ec13d3e9173fa31326ad38fd20335c64190a8a35c9111e9af9c
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 371a11a05e1735c9a5ef91771956d7304d2f0613e653c48c830946646dcf6b6f
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH frames AS (
   SELECT
@@ -9,7 +9,7 @@ WITH frames AS (
     a.dur / 1e6 as frame_ms
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND p.name NOT LIKE '/system/%'
     AND COALESCE(a.display_frame_token, a.surface_frame_token) IS NOT NULL
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})

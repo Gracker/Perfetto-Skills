@@ -56,7 +56,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${package}*",
+    "${package}",
+    "${package}:*",
     "${process_name}*",
     "heap_graph_bitmaps"
   ],

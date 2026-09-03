@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/present_fence_timing.skill.yaml
--- Source SHA-256: 13da4eb5934736e0b60cb39f01f7e306b873de90f9f210090bb4dcd3a0a62c7d
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 9e5adfaae742b5ab37687acc966a57565c867df82c5a3c63c794d89bf486b258
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 time_bounds AS (
@@ -13,7 +13,7 @@ time_bounds AS (
 -- 动态检测 VSync 周期（VSYNC-sf 中位数优先，expected_frame 回退）
 vsync_config AS (
   SELECT CAST(COALESCE(
-    (SELECT PERCENTILE(interval_ns, 0.5)
+    (SELECT PERCENTILE(interval_ns, 50)
      FROM (
        SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) AS interval_ns
        FROM counter c
@@ -22,7 +22,7 @@ vsync_config AS (
          AND c.ts >= (SELECT start_ts FROM time_bounds)
          AND c.ts <= (SELECT end_ts FROM time_bounds)
      ) WHERE interval_ns > 5500000 AND interval_ns < 50000000),
-    (SELECT CAST(PERCENTILE(dur, 0.5) AS INTEGER)
+    (SELECT CAST(PERCENTILE(dur, 50) AS INTEGER)
      FROM expected_frame_timeline_slice
      WHERE dur > 5000000 AND dur < 50000000
        AND ts >= (SELECT start_ts FROM time_bounds)

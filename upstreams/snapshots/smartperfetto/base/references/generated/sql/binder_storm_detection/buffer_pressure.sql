@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_storm_detection.skill.yaml
--- Source SHA-256: 85ad602601d09ed445ea984992373707cec45dc7255c375b7e7af6b610abe463
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: e9cfcc559910f308c54210ff966b733355adba117b92af97efceeca138104e48
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH process_stats AS (
   SELECT
@@ -12,7 +12,7 @@ WITH process_stats AS (
     ROUND(SUM(bt.client_dur) / 1e6, 2) as total_client_ms,
     ROUND(MAX(bt.client_dur) / 1e6, 2) as max_dur_ms
   FROM android_binder_txns bt
-  WHERE (bt.client_process GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR bt.client_process = '${package}' OR bt.client_process GLOB '${package}:*') OR '${package}' = '')
     AND (${start_ts} IS NULL OR bt.client_ts >= ${start_ts})
     AND (${end_ts} IS NULL OR bt.client_ts <= ${end_ts})
   GROUP BY bt.client_process
@@ -32,7 +32,7 @@ concurrent_estimate AS (
       AND bt2.client_ts < bt1.client_ts + bt1.client_dur
       AND bt2.client_ts + bt2.client_dur > bt1.client_ts
     )
-    WHERE (bt1.client_process GLOB '${package}*' OR '${package}' = '')
+    WHERE (('${package}' = '' OR bt1.client_process = '${package}' OR bt1.client_process GLOB '${package}:*') OR '${package}' = '')
       AND (${start_ts} IS NULL OR bt1.client_ts >= ${start_ts})
       AND (${end_ts} IS NULL OR bt1.client_ts <= ${end_ts})
     GROUP BY bt1.client_process, bt1.client_ts

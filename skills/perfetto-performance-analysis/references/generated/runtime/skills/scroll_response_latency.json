@@ -25,7 +25,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "scroll_response_latency",
@@ -62,9 +63,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/scroll_response_latency.skill.yaml",
-    "sha256": "d89dec74765b5e8b1f68f450ec1579c149e0d6b3db6adb5e0ffe9c04b2799859"
+    "sha256": "da35bbd788db3f909aaf7b95ab17b841c7e57a3d6e1bfc17ed9b974541569485"
   },
   "steps": [],
   "type": "atomic",

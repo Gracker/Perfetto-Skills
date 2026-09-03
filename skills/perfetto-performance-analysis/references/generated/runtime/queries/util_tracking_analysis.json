@@ -52,17 +52,18 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/util_tracking_analysis/query.sql",
-      "sha256": "c1763f054acac006abdf8911b557ac4ca9442754efe2b8e9db8bb81763b84cf8",
+      "sha256": "08a9095ed577fa3b9c0ea20a15bf8f654a4884453f4f0a0ae495e97f6dc4e1f0",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "cpu*freq*"
       ],
       "skill_id": "util_tracking_analysis",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/util_tracking_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "05f535c2fcad4c73b0f5d2dbe56e94502556a6b720d7c85bf8dcd54146c732b2"
+        "sha256": "f43141f7af054b22d9f434f439e6b550daf56200f0ea5b3ba014c7055dd975b0"
       },
       "sql_dependencies": {
         "creates": [],

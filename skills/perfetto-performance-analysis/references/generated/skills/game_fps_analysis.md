@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/game_fps_analysis.skill.yaml
-Source SHA-256: 149fad0ed589259b19b7d70e8969cf12c77fc86255551b55aeea19b9705ed7fe
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: b1c2c2f4499e3075a69a03b7dbde88b4145a3b8dea465d645cd175f697d90442
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # 游戏帧率分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

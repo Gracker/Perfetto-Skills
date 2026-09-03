@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_sched_latency_in_range.skill.yaml
--- Source SHA-256: de053b0fa4190314df852b3a55b169077626cae09d319365cdaff98c5ec3ad1e
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: ec7378f70acb64450db21e4b4e2b3a58143cd67cb78c6cdb61a5bd1f67b4b3ef
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH main_thread AS (
   SELECT t.utid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND t.tid = p.pid
 )
 SELECT

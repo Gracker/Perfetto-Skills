@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "*DrawFrame*",
       "*Fence*signal*",
       "*Flush*",
@@ -58,9 +59,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/gpu_render_in_range.skill.yaml",
-    "sha256": "8bb5be71c0b5a94ecc3eb2ce24af291332227634bafef0a5423144dfcd48dab6"
+    "sha256": "06ea425f109301061fa4939fe042767b99a582ebba749c63c654a294e82d882b"
   },
   "steps": [],
   "type": "atomic",

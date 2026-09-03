@@ -54,18 +54,19 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thread_affinity_violation/query.sql",
-      "sha256": "d52fbcd39d11c5232d499ac7955049e73e9dc432c6a3827b8909822157d756a8",
+      "sha256": "5320fd089f53e06d16f12357c83057b8ab9c8593289f4dded1a004a143b38058",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "*Hwui*",
         "RenderThread"
       ],
       "skill_id": "thread_affinity_violation",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/thread_affinity_violation.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8b1f713a09cd8c1f1725b590ab20764687be3783a8ff9004606bbd80927bfecb"
+        "sha256": "d66b29385d8481d5950b064fbc5c7fa8f18e83ee05c5ff08e5c5e9fa535469fb"
       },
       "sql_dependencies": {
         "creates": [],

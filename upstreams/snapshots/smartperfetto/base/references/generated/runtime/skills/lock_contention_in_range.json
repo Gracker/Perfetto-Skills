@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "*monitor*",
       "*mutex*",
       "Lock contention*(owner tid: *)*"
@@ -50,9 +51,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/lock_contention_in_range.skill.yaml",
-    "sha256": "5ab49bd436eb79f8d1bdc21b06e2b662481cb3335728c1776c55c8b0fab0f99b"
+    "sha256": "660f675d614aec2af8885125bcb62d2a5410b5318a01e545990ff3642f53a566"
   },
   "steps": [
     {

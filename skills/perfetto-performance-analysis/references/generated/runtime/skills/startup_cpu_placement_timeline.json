@@ -14,7 +14,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "startup_cpu_placement_timeline",
@@ -51,9 +52,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/startup_cpu_placement_timeline.skill.yaml",
-    "sha256": "2697e8f8785a219d21dc73847d18ecba03b50728a78f3eab6721dfebee25ff4b"
+    "sha256": "3fed5fa06ac7c9d8b6d9382413c9eeb9dcecee347a95c9d3035d0766fa69dbba"
   },
   "steps": [],
   "type": "atomic",

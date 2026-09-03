@@ -54,9 +54,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/app_lifecycle_in_range/query.sql",
-      "sha256": "c3e4e7541807248619d0ddaa5668b0bb2036abbe45c362127866c9bffa3247b1",
+      "sha256": "151a88915c92f3cb59d07416e3036c002ec8e4a17317deb413f80ceea042bf21",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "*Fragment*",
         "*activityPause*",
         "*activityResume*",
@@ -75,10 +76,10 @@
       ],
       "skill_id": "app_lifecycle_in_range",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/app_lifecycle_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "46a213c077050ea2c95c604806c96bb5c113ed136f248dffca36700952df16f2"
+        "sha256": "00f172c6cf862218c700769dff4c0db75388cdd620d01c7d700a6bfd65ff0cb7"
       },
       "sql_dependencies": {
         "creates": [],

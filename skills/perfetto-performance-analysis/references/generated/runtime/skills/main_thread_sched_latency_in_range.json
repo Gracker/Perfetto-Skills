@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "main_thread_sched_latency_in_range",
@@ -44,9 +45,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/main_thread_sched_latency_in_range.skill.yaml",
-    "sha256": "de053b0fa4190314df852b3a55b169077626cae09d319365cdaff98c5ec3ad1e"
+    "sha256": "ec7378f70acb64450db21e4b4e2b3a58143cd67cb78c6cdb61a5bd1f67b4b3ef"
   },
   "steps": [],
   "type": "atomic",

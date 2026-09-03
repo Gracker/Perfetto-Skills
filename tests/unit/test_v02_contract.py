@@ -107,7 +107,7 @@ class V02ContractTest(unittest.TestCase):
         runtime = GENERATED / "runtime"
         fragments = sorted((runtime / "fragments").glob("*.sql"))
         overrides = sorted((runtime / "vendor-overrides").glob("*.json"))
-        self.assertEqual(len(fragments), 3)
+        self.assertEqual(len(fragments), 6)
         self.assertEqual(len(overrides), 8)
         self.assertTrue(all("advisory_only" in path.read_text() for path in overrides))
 

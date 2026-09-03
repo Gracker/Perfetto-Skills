@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_jit_analysis.skill.yaml
--- Source SHA-256: 3b238fd00ac7450afc57b24ada44cbcb0b1c9f11a83cba1a91e1af48addd169a
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: ceeb85896261dfa2e0996f9b4e23ff635538913ec2cd0de9c5bb0b820fcc48f0
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH jit_threads AS (
   SELECT t.utid, t.name as thread_name
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${package}*'
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND (t.name GLOB 'Jit thread pool*'
          OR t.name GLOB 'Profile Saver*')
 ),
@@ -15,7 +15,7 @@ main_thread AS (
   SELECT t.utid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${package}*' AND t.tid = p.pid
+  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') AND t.tid = p.pid
   LIMIT 1
 ),
 -- JIT 线程的 CPU 时间和核类型

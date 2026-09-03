@@ -52,9 +52,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/pipeline_key_slices_overlay/pipeline_key_slices_overlay.sql",
-      "sha256": "42d06a59bc6bcf06de4cf3837fa5f64fa5e55dd532511c64c3010351c0271725",
+      "sha256": "6b234153610c1a127a661fbdd45cfdf9ab8cdf4df373420d16edcbb904e25d36",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "%HWC%",
         "%surfaceflinger%",
         "RenderThread",
@@ -62,10 +63,10 @@
       ],
       "skill_id": "pipeline_key_slices_overlay",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/pipeline_key_slices_overlay.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "34b2abe52c508a34d1fb3f9794fbac79210dc3ee9fb9e3d4305b68a4c3699b97"
+        "sha256": "254612bd358826352dc175fa3530bb7f926ca3dd77c3d6a5965e2891f5f9e262"
       },
       "sql_dependencies": {
         "creates": [],

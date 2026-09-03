@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/webview_drawfunctor_jank_chain.skill.yaml
-Source SHA-256: 5414ac092b565b60483182fabbe05529be7a13e2f9bb9cdeab5442441de634bb
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: d05238269f1a158708349ce433365a6f65a5c0446ef30ae94f9138daae0f5cd3
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 # WebView GL Functor 卡顿链路
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

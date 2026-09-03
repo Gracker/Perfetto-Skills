@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/app_lifecycle_in_range.skill.yaml
--- Source SHA-256: 46a213c077050ea2c95c604806c96bb5c113ed136f248dffca36700952df16f2
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 00f172c6cf862218c700769dff4c0db75388cdd620d01c7d700a6bfd65ff0cb7
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH lifecycle_events AS (
   SELECT
@@ -34,7 +34,7 @@ WITH lifecycle_events AS (
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})
     AND (t.is_main_thread = 1 OR t.name = p.name)

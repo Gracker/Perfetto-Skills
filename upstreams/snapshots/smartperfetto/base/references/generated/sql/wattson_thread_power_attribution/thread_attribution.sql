@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/wattson_thread_power_attribution.skill.yaml
--- Source SHA-256: e22c251fa6dd0676e46b46628c57cd64a4c406774957749e51f5e1cd3233f1e5
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 870e236f5b23da815f89f8d2d3ed6d5ca592a73f300afe43a5a1e077c7723685
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   process_name,
@@ -18,7 +18,7 @@ FROM wattson_threads_aggregation!((
 ))
 WHERE (
   ('${process_name}' != '' AND process_name GLOB '${process_name}*')
-  OR ('${package}' != '' AND process_name GLOB '${package}*')
+  OR ('${package}' != '' AND ('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*'))
   OR ('${process_name}' = '' AND '${package}' = '')
 )
 GROUP BY process_name, thread_name

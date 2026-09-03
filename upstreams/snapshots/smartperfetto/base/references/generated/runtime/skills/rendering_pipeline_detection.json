@@ -22,7 +22,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*",
+      "${package}",
+      "${package}:*",
       "*BLASTBufferQueue*",
       "*Choreographer#doFrame*",
       "*Chrome*",
@@ -83,9 +84,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
-    "sha256": "89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457"
+    "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
   },
   "steps": [
     {

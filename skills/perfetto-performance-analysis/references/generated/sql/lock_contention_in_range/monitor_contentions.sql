@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/lock_contention_in_range.skill.yaml
--- Source SHA-256: 5ab49bd436eb79f8d1bdc21b06e2b662481cb3335728c1776c55c8b0fab0f99b
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 660f675d614aec2af8885125bcb62d2a5410b5318a01e545990ff3642f53a566
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 SELECT
   short_blocking_method as blocking_method,
@@ -15,6 +15,6 @@ SELECT
 FROM android_monitor_contention
 WHERE ts >= ${start_ts}
   AND ts < ${end_ts}
-  AND (process_name GLOB '${package}*' OR '${package}' = '')
+  AND (('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*') OR '${package}' = '')
   AND dur >= 1000000
 ORDER BY dur DESC

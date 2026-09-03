@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/touch-tracking.strategy.md
-Source SHA-256: eb33bfb6a954bc4afa2034814ec4b04363df3302b6af0c9a54e61b6204fbf479
-Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+Source SHA-256: 0cb21fce3519a16777efa24384c49716b42637164254911521f4feac4b35bc05
+Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 # Touch Tracking Strategy
 
@@ -114,7 +114,7 @@ WITH input_events AS (
     p.name as process_name
   FROM android_input_event_dispatch ied
   LEFT JOIN process p ON p.upid = ied.upid
-  WHERE (p.name GLOB '{process_name}*' OR '{process_name}' = '')
+  WHERE ('{process_name}' = '' OR p.name = '{process_name}' OR p.name GLOB '{process_name}:*')
     AND (ied.event_action = 'ACTION_MOVE' OR ied.event_action = '2')
 ),
 frame_match AS (

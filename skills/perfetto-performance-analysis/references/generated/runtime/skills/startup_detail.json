@@ -23,7 +23,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "startup_detail",
@@ -118,9 +119,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
     "path": "backend/skills/composite/startup_detail.skill.yaml",
-    "sha256": "27c99e2bb5d9588e4ca6909bfd0a637f393af0211b692cc814005a00e99154c6"
+    "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
   },
   "steps": [
     {

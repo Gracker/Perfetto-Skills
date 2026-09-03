@@ -55,7 +55,10 @@
     "target_range_row_coverage",
     "api_hint"
   ],
-  "signal_patterns": [],
+  "signal_patterns": [
+    "${package}",
+    "*[a-z]*"
+  ],
   "skill_id": "code_pinpoint",
   "steps": {
     "hot_slices": {
@@ -103,7 +106,7 @@
       },
       "query_id": "code_pinpoint/hot_slices"
     },
-    "native_modules": {
+    "native_symbols": {
       "api": {
         "28": {
           "reason": "No exact API semantic fixture; runtime capability proof required",
@@ -146,7 +149,7 @@
           "status": "capability_gated"
         }
       },
-      "query_id": "code_pinpoint/native_modules"
+      "query_id": "code_pinpoint/native_symbols"
     }
   }
 }

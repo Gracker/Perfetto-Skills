@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/app_frame_production.skill.yaml
--- Source SHA-256: c8e21c57ef149119c22d8a07d0dd4abed6c9b41b2a7542f8ed748adadb10621b
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 9075a3b0edb9b8303d56b8b1ba7d6555fdaec9d878ffaad7d9f798fbec6bf616
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 time_bounds AS (
@@ -25,7 +25,7 @@ app_frames AS (
     ON e.display_frame_token = a.display_frame_token
     AND e.upid = a.upid
   JOIN process p ON e.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND e.ts >= (SELECT start_ts FROM time_bounds)
     AND e.ts <= (SELECT end_ts FROM time_bounds)
 ),

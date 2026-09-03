@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/screen_off_background_cpu_attribution.skill.yaml
--- Source SHA-256: 30326a1331437f9fc5fba924c3b897a885ae7407962cab6d49007e66e9ffbb62
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 384a9847b81354d15158318fc507b131439718fcd179fa034bc68c02cc354197
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH bounds AS (
   SELECT
@@ -37,7 +37,7 @@ runtime AS (
   LEFT JOIN process p USING (upid)
   WHERE o.dur > 0
     AND NOT th.is_idle
-    AND (COALESCE(p.name, '') GLOB '${package}*' OR '${package}' = '')
+    AND (('${package}' = '' OR COALESCE(p.name, '') = '${package}' OR COALESCE(p.name, '') GLOB '${package}:*') OR '${package}' = '')
   GROUP BY process_name, thread_name
 ),
 cpu_count AS (

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/vsync_phase_alignment.skill.yaml
--- Source SHA-256: f1629db2e1ddf7711964f2b32f51d60012885ff3c966af974128cb5ed150e700
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH vsync_events AS (
   SELECT c.ts as vsync_ts
@@ -16,7 +16,7 @@ intervals AS (
 )
 SELECT
   (SELECT COUNT(*) FROM vsync_events) as vsync_count,
-  ROUND(PERCENTILE(interval_ns, 0.5) / 1e6, 2) as period_ms,
-  ROUND(1e9 / PERCENTILE(interval_ns, 0.5), 1) as refresh_hz
+  ROUND(PERCENTILE(interval_ns, 50) / 1e6, 2) as period_ms,
+  ROUND(1e9 / PERCENTILE(interval_ns, 50), 1) as refresh_hz
 FROM intervals
 WHERE interval_ns BETWEEN 5500000 AND 50000000

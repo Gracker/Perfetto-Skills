@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/page_fault_in_range.skill.yaml
--- Source SHA-256: 70c0fb8c89dddfe8a92611deb19c60d9126c1ed8c1e5c43e8d5639ce5f451a37
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 8f9945a4764e7aa65e2fa83e6d547437865157eef7897a6ab6643c199d4018f2
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH target_threads AS (
   SELECT t.utid, t.name as thread_name
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND (t.tid = p.pid OR t.name = 'RenderThread' OR t.name LIKE '%Binder%')
 ),
 memory_events AS (

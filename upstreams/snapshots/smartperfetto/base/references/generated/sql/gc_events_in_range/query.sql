@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gc_events_in_range.skill.yaml
--- Source SHA-256: 1b3a5a7f2e13ed61dddef00d1d78f2fb1032e35ed9bcccb6559913ea8ca73d11
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 91fc6c615999ab34fd4c1098ff858d19be4f2ec4cd50099f4679fbe57bd85c11
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 -- Use Perfetto stdlib android_garbage_collection_events (precise gc_type classification,
 -- heap metrics, and CPU state breakdown). Note: returns 0 rows on older traces that
@@ -25,7 +25,7 @@ SELECT
   gc_runnable_dur,
   gc_unint_io_dur
 FROM android_garbage_collection_events
-WHERE process_name GLOB '${package}*'
+WHERE ('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*')
   AND (${start_ts} IS NULL OR gc_ts >= ${start_ts})
   AND (${end_ts} IS NULL OR gc_ts < ${end_ts})
 ORDER BY gc_ts

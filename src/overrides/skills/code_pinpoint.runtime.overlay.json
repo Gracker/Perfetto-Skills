@@ -2,10 +2,10 @@
   "schema_version": 1,
   "target": "runtime/skills/code_pinpoint.json",
   "kind": "skill",
-  "expected_base_sha256": "db7266fc39ca97f3573c1977d248f654231da6d50202612c319f60223d4f03ad",
+  "expected_base_sha256": "f3e648ace079d1fc3363d682f8480580b08f4e57afd816b40d852c798c32096e",
   "replacement": "code_pinpoint.runtime.json",
-  "replacement_sha256": "5d964cab9202b0634f099f6a96c1f8fb7e4ec0295e35a65045b761c46e380525",
-  "reason": "Expose deterministic trace-derived slice anchors and process/window-scoped sampled symbols without depending on SmartPerfetto runtime services.",
+  "replacement_sha256": "d18b774cfb79654b0ec887c1abc5e785165fb9d5fc5659cfdfa28585dc673085",
+  "reason": "Keep the public projection portable: English anchor wording and no SmartPerfetto ${package} signal patterns. The deterministic native-symbol query itself was upstreamed and is now taken from the base.",
   "regression_ids": [
     "startup-heavy-code-pinpoint-anchor-kind",
     "callstack-code-pinpoint-function"
@@ -13,21 +13,21 @@
   "dependent_replacements": [
     {
       "target": "runtime/android/code_pinpoint.json",
-      "expected_base_sha256": "a666514d292005aaa978aee20f41d1894e356ef9b84f862cf2313d7c6b207b73",
+      "expected_base_sha256": "1d1ffc3b093ed1d9a494509aea83fbdde45c5364315211da73c94d32bf6ebb7c",
       "replacement": "code_pinpoint.android.json",
-      "replacement_sha256": "aef51cd202281dec76224685e1039245ffdd55dfe8562a8a4bc494be1fbc7bc1"
+      "replacement_sha256": "19f195be05b69d1d92d955623984a77496c01588435ec409863555f42f9efeb0"
     },
     {
       "target": "runtime/queries/code_pinpoint.json",
-      "expected_base_sha256": "8c90c6e3a2e8c5167ca015e13fdcf83222212b072a770b690f74bfb6d42fc610",
+      "expected_base_sha256": "3a992d9c1c6f3493da2c60314e31749086a21f87015a96b4c87167f0928e09f1",
       "replacement": "code_pinpoint.queries.json",
-      "replacement_sha256": "bacb85945b9cf8e8d9303184c52d9b9b16bce074305aa2a40a41e523e843ac05"
+      "replacement_sha256": "6fa0f4c0357d92f39cb6c404d6be0d699582b5dac93c606ca77562c2d585b209"
     },
     {
       "target": "skills/code_pinpoint.md",
-      "expected_base_sha256": "6bb50b8f29ddff3adda0636a980c997e493061a539284939fd4c33470f0511fb",
+      "expected_base_sha256": "46b2887c56fa2fdffaabf5d9a230c0d9cf894c19cdb967496293b96f5a553474",
       "replacement": "code_pinpoint.md",
-      "replacement_sha256": "310cc76748bdf9b2a5db8692d9b97a311bcb42287757f61c85fd3587ae22ebe9"
+      "replacement_sha256": "cc45723dbf730ae2b0eace2234ebfc402910eb732818a55bd34641f872bdcfa7"
     }
   ],
   "upstream_candidate": "propose"

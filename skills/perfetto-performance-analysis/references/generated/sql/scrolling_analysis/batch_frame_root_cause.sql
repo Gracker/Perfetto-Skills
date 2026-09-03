@@ -1,30 +1,78 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
--- 批量帧根因分类：对所有消费端真实掉帧执行简化版根因决策树
+-- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 使用相同优先级 CASE 树
--- 区别：jank_frame_detail 是单帧深钻，此步骤是全帧一次性分类
+-- 区别：jank_frame_detail 是单帧深钻，此步骤是带覆盖率的批量分类
 WITH
--- ========== 1. VSync 配置 ==========
-vsync_intervals AS (
-  SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
+-- Fragment: vsync_config
+-- Estimates VSync period using scoped then trace-wide VSYNC/FrameTimeline evidence.
+-- The explicit 16.67ms default is used only when the trace has no usable timing evidence.
+-- Snaps to nearest standard refresh rate (30/60/90/120/144/165 Hz) to avoid
+-- half-period toggle contamination and jitter-induced miscalculation.
+-- Params: ${start_ts}, ${end_ts}
+vsync_ticks AS (
+  SELECT c.ts, c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
   FROM counter c
   JOIN counter_track t ON c.track_id = t.id
   WHERE t.name = 'VSYNC-sf'
-    AND (${start_ts} IS NULL OR c.ts >= ${start_ts})
-    AND (${end_ts} IS NULL OR c.ts < ${end_ts})
+    AND (${start_ts} IS NULL OR c.ts >= ${start_ts} - 100000000)
+    AND (${end_ts} IS NULL OR c.ts < ${end_ts} + 100000000)
 ),
-timing_config AS (
+trace_vsync_ticks AS (
+  SELECT c.ts, c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
+  FROM counter c
+  JOIN counter_track t ON c.track_id = t.id
+  WHERE t.name = 'VSYNC-sf'
+),
+expected_frame_vsync AS (
+  SELECT CAST(PERCENTILE(dur, 50) AS INTEGER) as period_ns
+  FROM expected_frame_timeline_slice
+  WHERE dur > 5000000 AND dur < 50000000
+    AND (${start_ts} IS NULL OR ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR ts < ${end_ts})
+),
+trace_expected_frame_vsync AS (
+  SELECT CAST(PERCENTILE(dur, 50) AS INTEGER) as period_ns
+  FROM expected_frame_timeline_slice
+  WHERE dur > 5000000 AND dur < 50000000
+),
+raw_vsync_config AS (
   SELECT
-    vsync_period_ns,
-    ROUND(vsync_period_ns / 1e6, 2) as frame_budget_ms,
-    ROUND(vsync_period_ns / 1e6 * 0.50, 2) as slice_critical_ms,
-    ROUND(MAX(vsync_period_ns / 1e6 * 0.35, 2.0), 2) as freq_ramp_critical_ms,
-    ROUND(MAX(vsync_period_ns / 1e6 * 0.18, 1.5), 2) as binder_overlap_critical_ms
-  FROM (
-    SELECT CASE
+    CAST(COALESCE(
+      (SELECT PERCENTILE(interval_ns, 50)
+       FROM vsync_ticks
+       WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      (SELECT period_ns FROM expected_frame_vsync WHERE period_ns > 0),
+      (SELECT PERCENTILE(interval_ns, 50)
+       FROM trace_vsync_ticks
+       WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      (SELECT period_ns FROM trace_expected_frame_vsync WHERE period_ns > 0),
+      16666667
+    ) AS INTEGER) as raw_ns,
+    CASE
+      WHEN (SELECT COUNT(*) FROM vsync_ticks WHERE interval_ns > 5500000 AND interval_ns < 50000000) > 0
+        THEN CASE
+          WHEN ${start_ts} IS NULL OR ${end_ts} IS NULL THEN 'trace_wide_vsync_counter'
+          ELSE 'scoped_vsync_counter'
+        END
+      WHEN (SELECT period_ns FROM expected_frame_vsync WHERE period_ns > 0) IS NOT NULL
+        THEN CASE
+          WHEN ${start_ts} IS NULL OR ${end_ts} IS NULL THEN 'trace_wide_expected_frame'
+          ELSE 'scoped_expected_frame'
+        END
+      WHEN (SELECT COUNT(*) FROM trace_vsync_ticks WHERE interval_ns > 5500000 AND interval_ns < 50000000) > 0
+        THEN 'trace_wide_vsync_counter'
+      WHEN (SELECT period_ns FROM trace_expected_frame_vsync WHERE period_ns > 0) IS NOT NULL
+        THEN 'trace_wide_expected_frame'
+      ELSE 'default_60hz_no_trace_timing'
+    END as vsync_source
+),
+vsync_config AS (
+  SELECT
+    CASE
       WHEN raw_ns BETWEEN 5500000 AND 6500000 THEN 6060606
       WHEN raw_ns BETWEEN 6500001 AND 7500000 THEN 6944444
       WHEN raw_ns BETWEEN 7500001 AND 9500000 THEN 8333333
@@ -32,16 +80,37 @@ timing_config AS (
       WHEN raw_ns BETWEEN 12500001 AND 20000000 THEN 16666667
       WHEN raw_ns BETWEEN 20000001 AND 35000000 THEN 33333333
       ELSE raw_ns
-    END AS vsync_period_ns
-    FROM (
-      SELECT CAST(COALESCE(
-        (SELECT PERCENTILE(interval_ns, 0.5)
-         FROM vsync_intervals
-         WHERE interval_ns > 5500000 AND interval_ns < 50000000),
-        16666667
-      ) AS INTEGER) AS raw_ns
-    )
-  )
+    END AS vsync_period_ns,
+    vsync_source
+  FROM raw_vsync_config
+)
+,
+-- Fragment: root_cause_sample_cap
+-- Single source of truth for the per-session root-cause frame sample cap.
+-- Both get_app_jank_frames (which truncates the frame list) and
+-- batch_frame_root_cause (which reports eligible/analyzed coverage) must use
+-- the same effective cap, otherwise reported coverage would not describe the
+-- rows that were actually analyzed.
+-- Unset, zero, and negative caps all normalize to the 200-frame default.
+-- Params: ${max_frames_per_session}
+root_cause_sample_config AS (
+  SELECT CASE
+    WHEN ${max_frames_per_session} IS NULL THEN 200
+    WHEN CAST(${max_frames_per_session} AS INTEGER) <= 0 THEN 200
+    ELSE CAST(${max_frames_per_session} AS INTEGER)
+  END as root_cause_sample_limit_per_session
+)
+,
+-- ========== 1. VSync 配置 ==========
+timing_config AS (
+  SELECT
+    vsync_period_ns,
+    vsync_source,
+    ROUND(vsync_period_ns / 1e6, 2) as frame_budget_ms,
+    ROUND(vsync_period_ns / 1e6 * 0.50, 2) as slice_critical_ms,
+    ROUND(MAX(vsync_period_ns / 1e6 * 0.35, 2.0), 2) as freq_ramp_critical_ms,
+    ROUND(MAX(vsync_period_ns / 1e6 * 0.18, 1.5), 2) as binder_overlap_critical_ms
+  FROM vsync_config
 ),
 -- ========== 1b. 设备峰值频率（全 trace 大核最高频率，用于温控/限频检测）==========
 -- 不加 start_ts/end_ts 过滤 — 求设备硬件频率上限
@@ -57,6 +126,13 @@ device_peak_freq AS (
 -- ========== 2. Per-layer 帧序列 + 双信号混合掉帧检测（与 get_app_jank_frames 一致）==========
 layer_frames AS (
   SELECT
+    CASE
+      WHEN a.display_frame_token IS NOT NULL
+        THEN 'display:' || CAST(a.display_frame_token AS TEXT)
+      WHEN a.surface_frame_token IS NOT NULL
+        THEN 'surface:' || COALESCE(a.layer_name, '') || ':' || CAST(a.surface_frame_token AS TEXT)
+      ELSE NULL
+    END as frame_key,
     COALESCE(a.display_frame_token, a.surface_frame_token) as display_frame_token,
     a.surface_frame_token as surface_frame_token,
     CASE WHEN a.name GLOB '[0-9]*' THEN CAST(a.name AS INTEGER) ELSE NULL END as timeline_frame_id,
@@ -67,6 +143,17 @@ layer_frames AS (
     COALESCE(a.present_type, 'Unknown Present') as present_type,
     a.upid,
     a.layer_name,
+    -- JANK_RESPONSIBILITY_CASE_BEGIN
+    CASE
+      WHEN a.jank_type GLOB '*Self Jank*' OR android_is_app_jank_type(a.jank_type) THEN 'APP'
+      WHEN a.jank_type GLOB '*SurfaceFlinger*' THEN 'SF'
+      WHEN a.jank_type GLOB '*Buffer Stuffing*' THEN 'BUFFER_STUFFING'
+      WHEN android_is_sf_jank_type(a.jank_type) THEN 'SF'
+      WHEN a.jank_type = 'None' OR a.jank_type IS NULL THEN 'HIDDEN'
+      ELSE 'UNKNOWN'
+    END
+    -- JANK_RESPONSIBILITY_CASE_END
+    as jank_responsibility,
     COALESCE(a.display_frame_token, a.surface_frame_token) - LAG(COALESCE(a.display_frame_token, a.surface_frame_token))
       OVER (PARTITION BY a.layer_name ORDER BY COALESCE(a.display_frame_token, a.surface_frame_token)) AS token_gap,
     a.ts - LAG(a.ts + a.dur)
@@ -76,7 +163,11 @@ layer_frames AS (
       OVER (PARTITION BY a.layer_name ORDER BY a.ts) AS prev_present_ts
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
@@ -95,6 +186,7 @@ sessions_map AS (
 -- 掉帧检测：双信号混合策略（与 jank_frames 保持一致）
 all_jank_frames AS (
   SELECT
+    sm.frame_key,
     sm.display_frame_token,
     sm.surface_frame_token,
     sm.timeline_frame_id,
@@ -106,14 +198,9 @@ all_jank_frames AS (
     sm.session_id,
     p.pid,
     p.name as process_name,
+    sm.layer_name,
     ROUND(sm.frame_dur / 1e6, 2) as dur_ms,
-    CASE
-      WHEN sm.jank_type IN ('Self Jank', 'App Deadline Missed', 'App Resynced Jitter') THEN 'APP'
-      WHEN sm.jank_type GLOB '*SurfaceFlinger*' THEN 'SF'
-      WHEN sm.jank_type = 'Buffer Stuffing' THEN 'BUFFER_STUFFING'
-      WHEN sm.jank_type = 'None' OR sm.jank_type IS NULL THEN 'HIDDEN'
-      ELSE 'UNKNOWN'
-    END as jank_responsibility,
+    sm.jank_responsibility,
     CASE
       WHEN sm.prev_present_ts IS NOT NULL AND sm.present_ts - sm.prev_present_ts > tc.vsync_period_ns * 1.5
         THEN MAX(CAST(ROUND((sm.present_ts - sm.prev_present_ts) * 1.0 / tc.vsync_period_ns - 1, 0) AS INTEGER), 0)
@@ -129,10 +216,11 @@ all_jank_frames AS (
   JOIN process p ON sm.upid = p.upid
   WHERE (
     -- 非 BS：present_type 为权威信号
-    (sm.present_type IN ('Late Present', 'Dropped Frame') AND (sm.jank_type IS NULL OR sm.jank_type != 'Buffer Stuffing'))
+    (sm.present_type IN ('Late Present', 'Dropped Frame')
+      AND (sm.jank_responsibility != 'BUFFER_STUFFING' OR android_is_missed_frame_type(sm.jank_type)))
     OR
     -- BS + 异常间隔：真实掉帧被 BS 掩盖
-    (sm.jank_type = 'Buffer Stuffing'
+    (sm.jank_responsibility = 'BUFFER_STUFFING'
      AND sm.prev_present_ts IS NOT NULL
      AND (sm.present_ts - sm.prev_present_ts) > tc.vsync_period_ns * 1.5
      AND (sm.present_ts - sm.prev_present_ts) <= tc.vsync_period_ns * 6)
@@ -140,24 +228,72 @@ all_jank_frames AS (
   -- 排除会话间断帧
   AND (sm.time_gap_ns IS NULL OR sm.time_gap_ns <= tc.vsync_period_ns * 6)
 ),
+-- BATCH_DISPLAY_DEDUP_CTE_BEGIN
+deduped_jank_frames AS (
+  SELECT
+    *,
+    ROW_NUMBER() OVER (
+      PARTITION BY frame_key
+      ORDER BY
+        CASE jank_responsibility
+          WHEN 'APP' THEN 1
+          WHEN 'SF' THEN 2
+          WHEN 'BUFFER_STUFFING' THEN 3
+          WHEN 'HIDDEN' THEN 4
+          ELSE 5
+        END,
+        vsync_missed DESC,
+        frame_dur DESC,
+        layer_name ASC
+    ) as display_frame_rank
+  FROM all_jank_frames
+),
+-- BATCH_DISPLAY_DEDUP_CTE_END
 -- 按严重度排序（与 get_app_jank_frames 完全一致的 rank_in_session 逻辑）
 ranked_jank_frames AS (
   SELECT *,
     ROW_NUMBER() OVER (PARTITION BY session_id ORDER BY vsync_missed DESC, frame_dur DESC) as rank_in_session
-  FROM all_jank_frames
+  FROM deduped_jank_frames
+  WHERE display_frame_rank = 1
 ),
+-- BATCH_ROOT_CAUSE_SCOPE_CTES_BEGIN
+-- root_cause_sample_config comes from fragments/root_cause_sample_cap.sql
+root_cause_population AS (
+  SELECT
+    COUNT(*) as root_cause_eligible_frame_count,
+    COALESCE(SUM(CASE
+      WHEN rank_in_session <= (SELECT root_cause_sample_limit_per_session FROM root_cause_sample_config)
+      THEN 1 ELSE 0 END
+    ), 0) as root_cause_analyzed_frame_count,
+    CASE
+      WHEN COUNT(*) = 0 THEN 1.0
+      ELSE ROUND(1.0 * COALESCE(SUM(CASE
+        WHEN rank_in_session <= (SELECT root_cause_sample_limit_per_session FROM root_cause_sample_config)
+        THEN 1 ELSE 0 END
+      ), 0) / COUNT(*), 4)
+    END as root_cause_coverage_ratio,
+    (SELECT root_cause_sample_limit_per_session FROM root_cause_sample_config) as root_cause_sample_limit_per_session,
+    CASE
+      WHEN COALESCE(SUM(CASE
+        WHEN rank_in_session <= (SELECT root_cause_sample_limit_per_session FROM root_cause_sample_config)
+        THEN 1 ELSE 0 END
+      ), 0) < COUNT(*) THEN 'capped_frame_sample'
+      ELSE 'full_frame_set'
+    END as root_cause_analysis_scope
+  FROM ranked_jank_frames
+),
+-- BATCH_ROOT_CAUSE_SCOPE_CTES_END
 -- 截断后重新编号（与 get_app_jank_frames 的 frame_index 完全对齐）
 jank_frame_list AS (
   SELECT
-    display_frame_token, surface_frame_token, timeline_frame_id, frame_start, frame_end, frame_dur, jank_type, upid, session_id,
-    pid, process_name, dur_ms, jank_responsibility, vsync_missed, present_interval_ms,
+    frame_key, display_frame_token, surface_frame_token, timeline_frame_id, frame_start, frame_end, frame_dur, jank_type, upid, session_id,
+    pid, process_name, layer_name, dur_ms, jank_responsibility, vsync_missed, present_interval_ms,
     ROW_NUMBER() OVER (ORDER BY session_id, frame_start) as frame_index
   FROM ranked_jank_frames
-  WHERE rank_in_session <= CASE
-    WHEN ${max_frames_per_session} IS NULL THEN 200
-    WHEN CAST(${max_frames_per_session} AS INTEGER) <= 0 THEN 200
-    ELSE CAST(${max_frames_per_session} AS INTEGER)
-  END
+  WHERE rank_in_session <= (
+    SELECT root_cause_sample_limit_per_session
+    FROM root_cause_sample_config
+  )
 ),
 -- ========== 3. Explicit role-based thread identification ==========
 -- Main thread:   t.tid = p.pid (standard Android) OR t.name GLOB '*.ui' (Flutter)
@@ -165,6 +301,7 @@ jank_frame_list AS (
 -- Aligned with the jank_frame_detail.skill.yaml proven approach.
 per_frame_thread_roles AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     t.utid,
     t.tid,
@@ -188,15 +325,16 @@ per_frame_thread_roles AS (
 -- frame-timeline resynchronization; exclude it from workload ranking.
 frame_slices AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     s.name as slice_name,
     s.ts as slice_ts,
     s.dur as slice_dur_ns,
     ROUND(s.dur / 1e6, 2) as slice_dur_ms,
     ROUND((s.ts - fl.frame_start) / 1e6, 2) as slice_offset_ms,
-    ROW_NUMBER() OVER (PARTITION BY fl.frame_start ORDER BY s.dur DESC) as rn
+    ROW_NUMBER() OVER (PARTITION BY fl.frame_key ORDER BY s.dur DESC) as rn
   FROM jank_frame_list fl
-  JOIN per_frame_thread_roles ptr ON ptr.frame_start = fl.frame_start AND ptr.role = 'main'
+  JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'main'
   JOIN thread_track tt ON tt.utid = ptr.utid
   JOIN slice s ON s.track_id = tt.id
     AND s.ts >= fl.frame_start - 5000000
@@ -210,12 +348,13 @@ top_slices AS (
 -- ========== 5. Per-frame top slice: 核心类型 + 调度分析 ==========
 top_slice_states AS (
   SELECT
+    ts_top.frame_key,
     ts_top.frame_start,
     tst.state,
     COALESCE(ct.core_type, 'unknown') as core_type,
     (MIN(tst.ts + tst.dur, ts_top.slice_ts + ts_top.slice_dur_ns) - MAX(tst.ts, ts_top.slice_ts)) as overlap_ns
   FROM top_slices ts_top
-  JOIN per_frame_thread_roles ptr ON ptr.frame_start = ts_top.frame_start AND ptr.role = 'main'
+  JOIN per_frame_thread_roles ptr ON ptr.frame_key = ts_top.frame_key AND ptr.role = 'main'
   JOIN thread_state tst ON tst.utid = ptr.utid
     AND tst.ts < ts_top.slice_ts + ts_top.slice_dur_ns
     AND tst.ts + tst.dur > ts_top.slice_ts
@@ -223,6 +362,7 @@ top_slice_states AS (
 ),
 per_frame_cpu_mix AS (
   SELECT
+    frame_key,
     frame_start,
     ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('medium', 'little') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as little_run_pct,
@@ -231,17 +371,18 @@ per_frame_cpu_mix AS (
     ROUND(100.0 * SUM(CASE WHEN state = 'R' AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as runnable_pct
   FROM top_slice_states
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 -- ========== 6. Per-frame: 主线程四象限 ==========
 frame_thread_states AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     tst.state,
     COALESCE(ct.core_type, 'unknown') as core_type,
     (MIN(tst.ts + tst.dur, fl.frame_end) - MAX(tst.ts, fl.frame_start)) as overlap_ns
   FROM jank_frame_list fl
-  JOIN per_frame_thread_roles ptr ON ptr.frame_start = fl.frame_start AND ptr.role = 'main'
+  JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'main'
   JOIN thread_state tst ON tst.utid = ptr.utid
     AND tst.ts < fl.frame_end
     AND tst.ts + tst.dur > fl.frame_start
@@ -249,6 +390,7 @@ frame_thread_states AS (
 ),
 per_frame_quadrants AS (
   SELECT
+    frame_key,
     frame_start,
     ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as q1_pct,
@@ -261,17 +403,18 @@ per_frame_quadrants AS (
     ROUND(100.0 * SUM(CASE WHEN state IN ('S', 'I') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as q4b_pct
   FROM frame_thread_states
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 -- ========== 6b. Per-frame: 渲染线程四象限 ==========
 render_thread_states AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     tst.state,
     COALESCE(ct.core_type, 'unknown') as core_type,
     (MIN(tst.ts + tst.dur, fl.frame_end) - MAX(tst.ts, fl.frame_start)) as overlap_ns
   FROM jank_frame_list fl
-  JOIN per_frame_thread_roles ptr ON ptr.frame_start = fl.frame_start AND ptr.role = 'render'
+  JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'render'
   JOIN thread_state tst ON tst.utid = ptr.utid
     AND tst.ts < fl.frame_end
     AND tst.ts + tst.dur > fl.frame_start
@@ -279,6 +422,7 @@ render_thread_states AS (
 ),
 render_thread_quadrants AS (
   SELECT
+    frame_key,
     frame_start,
     ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as render_q1_pct,
@@ -291,11 +435,13 @@ render_thread_quadrants AS (
     ROUND(100.0 * SUM(CASE WHEN state IN ('S', 'I') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as render_q4b_pct
   FROM render_thread_states
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 -- ========== 7. Per-frame: 大核频率 ==========
+-- BATCH_FRAME_IDENTITY_FREQ_CTE_BEGIN
 per_frame_freq AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     ROUND(AVG(c.value) / 1000, 0) as big_avg_freq_mhz,
     ROUND(MAX(c.value) / 1000, 0) as big_max_freq_mhz
@@ -304,20 +450,22 @@ per_frame_freq AS (
   JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
   LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
   WHERE ct.core_type IN ('prime', 'big')
-  GROUP BY fl.frame_start
+  GROUP BY fl.frame_key, fl.frame_start
 ),
+-- BATCH_FRAME_IDENTITY_FREQ_CTE_END
 -- ========== 8. Per-frame: 频率爬升延迟 ==========
 frame_peak_freq AS (
-  SELECT fl.frame_start, MAX(c.value) as peak_khz
+  SELECT fl.frame_key, fl.frame_start, MAX(c.value) as peak_khz
   FROM jank_frame_list fl
   JOIN counter c ON c.ts >= fl.frame_start AND c.ts < fl.frame_end
   JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
   LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
   WHERE ct.core_type IN ('prime', 'big')
-  GROUP BY fl.frame_start
+  GROUP BY fl.frame_key, fl.frame_start
 ),
 per_frame_ramp AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     ROUND(
       (COALESCE(
@@ -326,16 +474,17 @@ per_frame_ramp AS (
       ) - fl.frame_start) / 1e6, 2
     ) as ramp_to_high_ms
   FROM jank_frame_list fl
-  JOIN frame_peak_freq fpf ON fpf.frame_start = fl.frame_start
+  JOIN frame_peak_freq fpf ON fpf.frame_key = fl.frame_key
   JOIN counter c ON c.ts >= fl.frame_start AND c.ts < fl.frame_end
   JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
   LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
   WHERE ct.core_type IN ('prime', 'big')
-  GROUP BY fl.frame_start
+  GROUP BY fl.frame_key, fl.frame_start
 ),
 -- ========== 9. Per-frame: Binder 同步与 top slice 重叠 ==========
 per_frame_binder AS (
   SELECT
+    ts_top.frame_key,
     ts_top.frame_start,
     ROUND(COALESCE(SUM(
       CASE
@@ -349,16 +498,17 @@ per_frame_binder AS (
       END
     ), 0) / 1e6, 2) as binder_overlap_ms
   FROM top_slices ts_top
-  JOIN per_frame_thread_roles ptr ON ptr.frame_start = ts_top.frame_start AND ptr.role = 'main'
+  JOIN per_frame_thread_roles ptr ON ptr.frame_key = ts_top.frame_key AND ptr.role = 'main'
   LEFT JOIN android_binder_txns bt ON bt.client_tid = ptr.tid
     AND bt.is_sync = 1
     AND bt.client_ts < ts_top.slice_ts + ts_top.slice_dur_ns
     AND bt.client_ts + bt.client_dur > ts_top.slice_ts
-  GROUP BY ts_top.frame_start
+  GROUP BY ts_top.frame_key, ts_top.frame_start
 ),
 -- ========== 9.5. Per-frame: GPU fence 等待检测 ==========
 gpu_fence_per_frame AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     MAX(CASE WHEN s.name GLOB '*Fence*' OR s.name GLOB '*fence*' OR s.name GLOB '*eglSwapBuffers*' OR s.name GLOB '*dequeueBuffer*'
          THEN s.dur ELSE 0 END) as max_fence_dur_ns,
@@ -369,11 +519,12 @@ gpu_fence_per_frame AS (
   JOIN thread_track tk ON s.track_id = tk.id
   JOIN thread t ON tk.utid = t.utid
   WHERE t.upid = fl.upid  -- same process only (no thread name filter needed)
-  GROUP BY fl.frame_start
+  GROUP BY fl.frame_key, fl.frame_start
 ),
 -- ========== 9.6. Per-frame: Shader compilation 检测 ==========
 shader_per_frame AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     COUNT(*) as shader_count,
     SUM(s.dur) as total_shader_dur_ns
@@ -383,11 +534,12 @@ shader_per_frame AS (
   JOIN thread t ON tk.utid = t.utid
   WHERE t.upid = fl.upid  -- same process only (no thread name filter needed)
     AND (s.name GLOB '*shader*' OR s.name GLOB '*Shader*' OR s.name GLOB '*compile*' OR s.name GLOB '*Compile*')
-  GROUP BY fl.frame_start
+  GROUP BY fl.frame_key, fl.frame_start
 ),
 -- ========== 9.7. Per-frame: GC 事件与帧窗口重叠 ==========
 per_frame_gc AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     ROUND(COALESCE(SUM(
       MIN(gc.gc_ts + gc.gc_dur, fl.frame_end) - MAX(gc.gc_ts, fl.frame_start)
@@ -399,14 +551,18 @@ per_frame_gc AS (
     FROM android_garbage_collection_events gc
     JOIN thread t ON gc.tid = t.tid
     JOIN process p ON t.upid = p.upid
-    WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+    WHERE (
+      '${package}' = ''
+      OR p.name = '${package}'
+      OR p.name GLOB '${package}:*'
+    )
   ) gc ON gc.gc_ts < fl.frame_end AND gc.gc_ts + gc.gc_dur > fl.frame_start
-  GROUP BY fl.frame_start
+  GROUP BY fl.frame_key, fl.frame_start
 ),
 -- ========== 10. 批量详情 JSON 列（覆盖全部掉帧，避免 N+1 查询） ==========
 -- 10a. 全簇 CPU 频率 (prime/big/little)
 per_frame_cpu_clusters AS (
-  SELECT frame_start,
+  SELECT frame_key, frame_start,
     json_group_array(json_object(
       'core_type', core_type,
       'avg_mhz', avg_mhz,
@@ -415,6 +571,7 @@ per_frame_cpu_clusters AS (
     )) as cpu_freq_clusters_json
   FROM (
     SELECT
+      fl.frame_key,
       fl.frame_start,
       COALESCE(ct.core_type, 'unknown') as core_type,
       CAST(ROUND(AVG(c.value) / 1000, 0) AS INTEGER) as avg_mhz,
@@ -424,13 +581,13 @@ per_frame_cpu_clusters AS (
     JOIN counter c ON c.ts >= fl.frame_start AND c.ts < fl.frame_end
     JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
     LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
-    GROUP BY fl.frame_start, COALESCE(ct.core_type, 'unknown')
+    GROUP BY fl.frame_key, fl.frame_start, COALESCE(ct.core_type, 'unknown')
   )
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 -- 10b. 各 CPU 频率变化时间线（频率单位 GHz）
 per_frame_freq_changes AS (
-  SELECT frame_start,
+  SELECT frame_key, frame_start,
     json_group_array(json_object(
       'relative_ms', relative_ms,
       'cpu', cpu,
@@ -440,19 +597,20 @@ per_frame_freq_changes AS (
     )) as freq_timeline_json
   FROM (
     SELECT *,
-      ROW_NUMBER() OVER (PARTITION BY frame_start ORDER BY relative_ms, cpu) as rn
+      ROW_NUMBER() OVER (PARTITION BY frame_key ORDER BY relative_ms, cpu) as rn
     FROM (
       SELECT
+        fl.frame_key,
         fl.frame_start,
         ROUND((c.ts - fl.frame_start) / 1e6, 2) as relative_ms,
         cct.cpu,
         COALESCE(ct.core_type, 'unknown') as core_type,
         ROUND(c.value / 1e6, 2) as freq_ghz,
         c.value as freq_khz,
-        LAG(c.value) OVER (PARTITION BY fl.frame_start, cct.cpu ORDER BY c.ts) as prev_freq_khz,
+        LAG(c.value) OVER (PARTITION BY fl.frame_key, cct.cpu ORDER BY c.ts) as prev_freq_khz,
         CASE
-          WHEN c.value > COALESCE(LAG(c.value) OVER (PARTITION BY fl.frame_start, cct.cpu ORDER BY c.ts), c.value) THEN 'up'
-          WHEN c.value < COALESCE(LAG(c.value) OVER (PARTITION BY fl.frame_start, cct.cpu ORDER BY c.ts), c.value) THEN 'down'
+          WHEN c.value > COALESCE(LAG(c.value) OVER (PARTITION BY fl.frame_key, cct.cpu ORDER BY c.ts), c.value) THEN 'up'
+          WHEN c.value < COALESCE(LAG(c.value) OVER (PARTITION BY fl.frame_key, cct.cpu ORDER BY c.ts), c.value) THEN 'down'
           ELSE 'stable'
         END as change_dir
       FROM jank_frame_list fl
@@ -463,12 +621,12 @@ per_frame_freq_changes AS (
     WHERE freq_khz != COALESCE(prev_freq_khz, 0)
   )
   WHERE rn <= 30
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 -- 10c. 主线程 Top 8 耗时 Slice
 -- Keep resync markers out of generic main-thread workload slices.
 per_frame_main_top_slices AS (
-  SELECT frame_start,
+  SELECT frame_key, frame_start,
     json_group_array(json_object(
       'name', slice_name,
       'total_ms', dur_ms,
@@ -478,30 +636,31 @@ per_frame_main_top_slices AS (
     )) as main_slices_json
   FROM (
     SELECT
+      fl.frame_key,
       fl.frame_start,
       s.name as slice_name,
       ROUND(SUM(s.dur) / 1e6, 2) as dur_ms,
       COUNT(*) as cnt,
       ROUND(MAX(s.dur) / 1e6, 2) as max_ms,
       printf('%d', MIN(s.ts)) as ts_str,
-      ROW_NUMBER() OVER (PARTITION BY fl.frame_start ORDER BY SUM(s.dur) DESC) as rn
+      ROW_NUMBER() OVER (PARTITION BY fl.frame_key ORDER BY SUM(s.dur) DESC) as rn
     FROM jank_frame_list fl
-    JOIN per_frame_thread_roles ptr ON ptr.frame_start = fl.frame_start AND ptr.role = 'main'
+    JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'main'
     JOIN thread_track tt ON tt.utid = ptr.utid
     JOIN slice s ON s.track_id = tt.id
       AND s.ts >= fl.frame_start - 5000000
       AND s.ts < fl.frame_end
       AND s.dur >= 500000
       AND s.name NOT GLOB '*resynced*'
-    GROUP BY fl.frame_start, s.name
+    GROUP BY fl.frame_key, fl.frame_start, s.name
     HAVING dur_ms > 0.5
   )
   WHERE rn <= 8
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 -- 10d. RenderThread Top 8 耗时 Slice
 per_frame_render_top_slices AS (
-  SELECT frame_start,
+  SELECT frame_key, frame_start,
     json_group_array(json_object(
       'name', slice_name,
       'total_ms', dur_ms,
@@ -511,29 +670,30 @@ per_frame_render_top_slices AS (
     )) as render_slices_json
   FROM (
     SELECT
+      fl.frame_key,
       fl.frame_start,
       s.name as slice_name,
       ROUND(SUM(s.dur) / 1e6, 2) as dur_ms,
       COUNT(*) as cnt,
       ROUND(MAX(s.dur) / 1e6, 2) as max_ms,
       printf('%d', MIN(s.ts)) as ts_str,
-      ROW_NUMBER() OVER (PARTITION BY fl.frame_start ORDER BY SUM(s.dur) DESC) as rn
+      ROW_NUMBER() OVER (PARTITION BY fl.frame_key ORDER BY SUM(s.dur) DESC) as rn
     FROM jank_frame_list fl
-    JOIN per_frame_thread_roles ptr ON ptr.frame_start = fl.frame_start AND ptr.role = 'render'
+    JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'render'
     JOIN thread_track tt ON tt.utid = ptr.utid
     JOIN slice s ON s.track_id = tt.id
       AND s.ts >= fl.frame_start - 5000000
       AND s.ts < fl.frame_end
       AND s.dur >= 500000
-    GROUP BY fl.frame_start, s.name
+    GROUP BY fl.frame_key, fl.frame_start, s.name
     HAVING dur_ms > 0.5
   )
   WHERE rn <= 8
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 -- 10e. Binder 调用详情（按 server_process 聚合，Top 5）
 per_frame_binder_detail AS (
-  SELECT frame_start,
+  SELECT frame_key, frame_start,
     json_group_array(json_object(
       'server', server_process,
       'count', cnt,
@@ -542,27 +702,28 @@ per_frame_binder_detail AS (
     )) as binder_calls_json
   FROM (
     SELECT
+      fl.frame_key,
       fl.frame_start,
       bt.server_process,
       COUNT(*) as cnt,
       ROUND(SUM(bt.client_dur) / 1e6, 2) as dur_ms,
       ROUND(MAX(bt.client_dur) / 1e6, 2) as max_ms,
-      ROW_NUMBER() OVER (PARTITION BY fl.frame_start ORDER BY SUM(bt.client_dur) DESC) as rn
+      ROW_NUMBER() OVER (PARTITION BY fl.frame_key ORDER BY SUM(bt.client_dur) DESC) as rn
     FROM jank_frame_list fl
-    JOIN per_frame_thread_roles ptr ON ptr.frame_start = fl.frame_start AND ptr.role = 'main'
+    JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'main'
     LEFT JOIN android_binder_txns bt ON bt.client_tid = ptr.tid
       AND bt.client_ts >= fl.frame_start
       AND bt.client_ts < fl.frame_end
     WHERE bt.server_process IS NOT NULL
-    GROUP BY fl.frame_start, bt.server_process
+    GROUP BY fl.frame_key, fl.frame_start, bt.server_process
     HAVING dur_ms > 0.1
   )
   WHERE rn <= 5
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 -- 10f. GC 事件详情（按类型聚合）
 per_frame_gc_detail AS (
-  SELECT frame_start,
+  SELECT frame_key, frame_start,
     json_group_array(json_object(
       'gc_type', gc_type,
       'count', cnt,
@@ -571,6 +732,7 @@ per_frame_gc_detail AS (
     )) as gc_events_json
   FROM (
     SELECT
+      fl.frame_key,
       fl.frame_start,
       COALESCE(gc.gc_type, 'unknown') as gc_type,
       COUNT(*) as cnt,
@@ -584,47 +746,162 @@ per_frame_gc_detail AS (
       FROM android_garbage_collection_events gc
       JOIN thread t ON gc.tid = t.tid
       JOIN process p ON t.upid = p.upid
-      WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+      WHERE (
+        '${package}' = ''
+        OR p.name = '${package}'
+        OR p.name GLOB '${package}:*'
+      )
     ) gc ON gc.gc_ts < fl.frame_end AND gc.gc_ts + gc.gc_dur > fl.frame_start
     WHERE gc.gc_ts IS NOT NULL
-    GROUP BY fl.frame_start, COALESCE(gc.gc_type, 'unknown')
+    GROUP BY fl.frame_key, fl.frame_start, COALESCE(gc.gc_type, 'unknown')
     HAVING overlap_ms > 0
   )
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
--- 10g. 锁竞争详情（Top 5，需要 android_monitor_contention 表）
+-- 10g. 锁竞争：全量 overlap 参与 numeric 归因，Top 5 仅限制展示 JSON。
+per_frame_lock_overlap AS (
+  SELECT
+    fl.frame_key,
+    fl.frame_start,
+    amc.short_blocking_method as blocking_method,
+    amc.blocking_thread_name,
+    amc.dur as raw_dur_ns,
+    ROUND(MAX(
+      MIN(amc.ts + amc.dur, fl.frame_end) - MAX(amc.ts, fl.frame_start),
+      0
+    ) / 1e6, 2) as wait_ms,
+    CASE WHEN amc.is_blocked_thread_main THEN 1 ELSE 0 END as main_blocked
+  FROM jank_frame_list fl
+  JOIN android_monitor_contention amc
+    ON amc.ts < fl.frame_end
+    AND amc.ts + amc.dur > fl.frame_start
+    AND (
+      '${package}' = ''
+      OR amc.process_name = '${package}'
+      OR amc.process_name GLOB '${package}:*'
+    )
+    AND amc.dur >= 200000
+),
 per_frame_lock_detail AS (
-  SELECT frame_start,
-    json_group_array(json_object(
-      'method', blocking_method,
-      'blocker', blocking_thread_name,
-      'wait_ms', wait_ms,
-      'main_blocked', main_blocked
-    )) as lock_contention_json
-  FROM (
-    SELECT
-      fl.frame_start,
-      amc.short_blocking_method as blocking_method,
-      amc.blocking_thread_name,
-      ROUND(amc.dur / 1e6, 2) as wait_ms,
-      CASE WHEN amc.is_blocked_thread_main THEN 1 ELSE 0 END as main_blocked,
-      ROW_NUMBER() OVER (PARTITION BY fl.frame_start ORDER BY amc.dur DESC) as rn
-    FROM jank_frame_list fl
-    JOIN android_monitor_contention amc ON amc.ts >= fl.frame_start AND amc.ts < fl.frame_end
-      AND (amc.process_name GLOB '${package}*' OR '${package}' = '')
-      AND amc.dur >= 200000
-  )
-  WHERE rn <= 5
-  GROUP BY frame_start
+  SELECT
+    overlap.frame_key,
+    overlap.frame_start,
+    ROUND(SUM(
+      CASE WHEN overlap.main_blocked = 1 THEN overlap.wait_ms ELSE 0 END
+    ), 2) as lock_contention_ms,
+    COALESCE((
+      SELECT json_group_array(json_object(
+        'method', display.blocking_method,
+        'blocker', display.blocking_thread_name,
+        'wait_ms', display.wait_ms,
+        'main_blocked', display.main_blocked
+      ))
+      FROM (
+        SELECT blocking_method, blocking_thread_name, wait_ms, main_blocked
+        FROM per_frame_lock_overlap ranked
+        WHERE ranked.frame_key = overlap.frame_key
+        ORDER BY ranked.raw_dur_ns DESC
+        LIMIT 5
+      ) display
+    ), '[]') as lock_contention_json
+  FROM per_frame_lock_overlap overlap
+  GROUP BY overlap.frame_key, overlap.frame_start
+),
+-- 10g.5. 主线程等待 RenderThread 的直接同步边界。
+-- Q4b(S/I) 只是可中断睡眠观察值；同步 slice 先裁剪到帧窗口并做区间并集，
+-- 避免 syncAndDrawFrame/postAndWait 等父子 slice 被重复计时。
+-- BATCH_RENDER_SYNC_CTES_BEGIN
+per_frame_render_sync_intervals AS (
+  SELECT
+    fl.frame_key,
+    fl.frame_start,
+    MAX(s.ts, fl.frame_start) as sync_start,
+    MIN(s.ts + s.dur, fl.frame_end) as sync_end
+  FROM jank_frame_list fl
+  JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'main'
+  JOIN thread_track tt ON tt.utid = ptr.utid
+  JOIN slice s ON s.track_id = tt.id
+    AND s.ts < fl.frame_end
+    AND s.ts + s.dur > fl.frame_start
+    AND (
+      s.name GLOB '*postAndWait*'
+      OR s.name GLOB '*syncAndDrawFrame*'
+      OR s.name GLOB '*syncFrameState*'
+    )
+),
+per_frame_render_sync_ordered AS (
+  SELECT
+    *,
+    MAX(sync_end) OVER (
+      PARTITION BY frame_key
+      ORDER BY sync_start, sync_end
+      ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+    ) as previous_max_end
+  FROM per_frame_render_sync_intervals
+  WHERE sync_end > sync_start
+),
+per_frame_render_sync_labeled AS (
+  SELECT
+    *,
+    SUM(
+      CASE
+        WHEN previous_max_end IS NULL OR sync_start > previous_max_end THEN 1
+        ELSE 0
+      END
+    ) OVER (
+      PARTITION BY frame_key
+      ORDER BY sync_start, sync_end
+      ROWS UNBOUNDED PRECEDING
+    ) as interval_group
+  FROM per_frame_render_sync_ordered
+),
+per_frame_render_sync_union AS (
+  SELECT
+    frame_key,
+    frame_start,
+    interval_group,
+    MIN(sync_start) as sync_start,
+    MAX(sync_end) as sync_end
+  FROM per_frame_render_sync_labeled
+  GROUP BY frame_key, frame_start, interval_group
+),
+per_frame_render_sync_wait AS (
+  SELECT
+    frame_key,
+    frame_start,
+    ROUND(SUM(sync_end - sync_start) / 1e6, 2) as render_sync_wait_ms
+  FROM per_frame_render_sync_union
+  GROUP BY frame_key, frame_start
+),
+-- BATCH_RENDER_SYNC_CTES_END
+per_frame_render_sync_work AS (
+  SELECT
+    fl.frame_key,
+    fl.frame_start,
+    ROUND(COALESCE(MAX(
+      MAX(MIN(s.ts + s.dur, fl.frame_end) - MAX(s.ts, fl.frame_start), 0)
+    ), 0) / 1e6, 2) as render_sync_rt_work_ms
+  FROM jank_frame_list fl
+  JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'render'
+  JOIN thread_track tt ON tt.utid = ptr.utid
+  JOIN slice s ON s.track_id = tt.id
+    AND s.ts < fl.frame_end
+    AND s.ts + s.dur > fl.frame_start
+    AND (
+      s.name GLOB '*syncFrameState*'
+      OR s.name GLOB '*DrawFrame*'
+    )
+  GROUP BY fl.frame_key, fl.frame_start
 ),
 -- 10h. 主线程文件 IO 检测（SharedPreferences/sqlite/fsync 等 IO slice 与帧窗口重叠）
+-- BATCH_FRAME_IDENTITY_FILE_IO_CTE_BEGIN
 per_frame_file_io AS (
-  SELECT fl.frame_start,
+  SELECT fl.frame_key, fl.frame_start,
     ROUND(SUM(
       MAX(MIN(s.ts + s.dur, fl.frame_end) - MAX(s.ts, fl.frame_start), 0)
     ) / 1e6, 2) as file_io_overlap_ms
   FROM jank_frame_list fl
-  JOIN per_frame_thread_roles ptr ON ptr.frame_start = fl.frame_start AND ptr.role = 'main'
+  JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'main'
   JOIN thread_track tt ON tt.utid = ptr.utid
   JOIN slice s ON s.track_id = tt.id
     AND s.ts < fl.frame_end AND s.ts + s.dur > fl.frame_start
@@ -638,13 +915,15 @@ per_frame_file_io AS (
     OR s.name GLOB '*SQLiteDatabase*'
     OR s.name GLOB '*openFile*'
     OR s.name GLOB '*fsync*'
-  GROUP BY fl.frame_start
+  GROUP BY fl.frame_key, fl.frame_start
 ),
+-- BATCH_FRAME_IDENTITY_FILE_IO_CTE_END
 -- 10i. Input event 与帧关联（android.input stdlib，按 FrameTimeline name/frame_id 对齐）。
 -- input_data_fallback_view 会在 stdlib 缺失时创建同 schema 空视图，因此本查询
 -- 既能使用真实 input 事件，也不会破坏基础帧根因分析。
 per_frame_input_events AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     COUNT(*) as input_event_count,
     SUM(CASE WHEN ie.event_action = 'MOVE' THEN 1 ELSE 0 END) as input_move_count,
@@ -659,11 +938,12 @@ per_frame_input_events AS (
   JOIN android_input_events ie ON ie.upid = fl.upid
     AND fl.timeline_frame_id IS NOT NULL
     AND ie.frame_id = fl.timeline_frame_id
-  GROUP BY fl.frame_start
+  GROUP BY fl.frame_key, fl.frame_start
 ),
 -- 10j. Atrace-backed input stage slices overlapping the janky frame.
 per_frame_input_stage_totals AS (
   SELECT
+    fl.frame_key,
     fl.frame_start,
     CASE
       WHEN s.name GLOB '*deliverInputEvent*' THEN 'deliverInputEvent'
@@ -681,7 +961,7 @@ per_frame_input_stage_totals AS (
     COUNT(*) as input_slice_count,
     ROUND(MAX(s.dur) / 1e6, 2) as input_slice_max_ms
   FROM jank_frame_list fl
-  JOIN per_frame_thread_roles ptr ON ptr.frame_start = fl.frame_start AND ptr.role = 'main'
+  JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'main'
   JOIN thread_track tt ON tt.utid = ptr.utid
   JOIN slice s ON s.track_id = tt.id
     AND s.ts < fl.frame_end
@@ -695,10 +975,11 @@ per_frame_input_stage_totals AS (
     OR s.name GLOB '*InputConsumer*'
     OR s.name GLOB '*RV Prefetch*'
     OR s.name GLOB '*RecyclerView*Prefetch*'
-  GROUP BY fl.frame_start, input_stage
+  GROUP BY fl.frame_key, fl.frame_start, input_stage
 ),
 per_frame_input_slices AS (
   SELECT
+    frame_key,
     frame_start,
     input_stage,
     input_slice_ms,
@@ -706,13 +987,13 @@ per_frame_input_slices AS (
     input_slice_max_ms
   FROM (
     SELECT *,
-      ROW_NUMBER() OVER (PARTITION BY frame_start ORDER BY input_slice_ms DESC) as rn
+      ROW_NUMBER() OVER (PARTITION BY frame_key ORDER BY input_slice_ms DESC) as rn
     FROM per_frame_input_stage_totals
   )
   WHERE rn = 1
 ),
 per_frame_input_detail AS (
-  SELECT frame_start,
+  SELECT frame_key, frame_start,
     json_group_array(json_object(
       'action', event_action,
       'channel', normalized_event_channel,
@@ -726,6 +1007,7 @@ per_frame_input_detail AS (
     )) as input_events_json
   FROM (
     SELECT
+      fl.frame_key,
       fl.frame_start,
       ie.event_action,
       ie.normalized_event_channel,
@@ -736,17 +1018,17 @@ per_frame_input_detail AS (
       ROUND(ie.end_to_end_latency_dur / 1e6, 2) as e2e_ms,
       CASE WHEN ie.is_speculative_frame = 1 THEN 1 ELSE 0 END as speculative,
       printf('%d', ie.dispatch_ts) as input_ts,
-      ROW_NUMBER() OVER (PARTITION BY fl.frame_start ORDER BY ie.handling_latency_dur DESC) as rn
+      ROW_NUMBER() OVER (PARTITION BY fl.frame_key ORDER BY ie.handling_latency_dur DESC) as rn
     FROM jank_frame_list fl
     JOIN android_input_events ie ON ie.upid = fl.upid
       AND fl.timeline_frame_id IS NOT NULL
       AND ie.frame_id = fl.timeline_frame_id
   )
   WHERE rn <= 5
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 per_frame_input_slice_detail AS (
-  SELECT frame_start,
+  SELECT frame_key, frame_start,
     json_group_array(json_object(
       'stage', input_stage,
       'overlap_ms', input_slice_ms,
@@ -754,12 +1036,15 @@ per_frame_input_slice_detail AS (
       'max_ms', input_slice_max_ms
     )) as input_slices_json
   FROM per_frame_input_stage_totals
-  GROUP BY frame_start
+  GROUP BY frame_key, frame_start
 ),
 -- ========== 11. 综合分析 ==========
 analysis AS (
   SELECT
+    fl.frame_key,
     fl.display_frame_token,
+    fl.surface_frame_token,
+    fl.layer_name,
     fl.frame_start,
     fl.frame_end,
     fl.dur_ms,
@@ -798,6 +1083,7 @@ analysis AS (
     COALESCE(sp.shader_count, 0) as shader_count,
     COALESCE(sp.total_shader_dur_ns, 0) as total_shader_dur_ns,
     tc.vsync_period_ns,
+    tc.vsync_source,
     tc.frame_budget_ms,
     tc.slice_critical_ms,
     tc.freq_ramp_critical_ms,
@@ -809,6 +1095,9 @@ analysis AS (
     COALESCE(pfbd.binder_calls_json, '[]') as binder_calls_json,
     COALESCE(pfgd.gc_events_json, '[]') as gc_events_json,
     COALESCE(pfld.lock_contention_json, '[]') as lock_contention_json,
+    COALESCE(pfld.lock_contention_ms, 0) as lock_contention_ms,
+    COALESCE(pfrsw.render_sync_wait_ms, 0) as render_sync_wait_ms,
+    COALESCE(pfrswk.render_sync_rt_work_ms, 0) as render_sync_rt_work_ms,
     COALESCE(pfio.file_io_overlap_ms, 0) as file_io_overlap_ms,
     COALESCE(pfie.input_event_count, 0) as input_event_count,
     COALESCE(pfie.input_move_count, 0) as input_move_count,
@@ -829,28 +1118,30 @@ analysis AS (
   FROM jank_frame_list fl
   CROSS JOIN timing_config tc
   CROSS JOIN device_peak_freq dpf
-  LEFT JOIN top_slices ts ON ts.frame_start = fl.frame_start
-  LEFT JOIN per_frame_cpu_mix pcm ON pcm.frame_start = fl.frame_start
-  LEFT JOIN per_frame_quadrants pfq ON pfq.frame_start = fl.frame_start
-  LEFT JOIN render_thread_quadrants rtq ON rtq.frame_start = fl.frame_start
-  LEFT JOIN per_frame_freq pff ON pff.frame_start = fl.frame_start
-  LEFT JOIN per_frame_ramp pfr ON pfr.frame_start = fl.frame_start
-  LEFT JOIN per_frame_binder pfb ON pfb.frame_start = fl.frame_start
-  LEFT JOIN per_frame_gc pfgc ON pfgc.frame_start = fl.frame_start
-  LEFT JOIN gpu_fence_per_frame gf ON gf.frame_start = fl.frame_start
-  LEFT JOIN shader_per_frame sp ON sp.frame_start = fl.frame_start
-  LEFT JOIN per_frame_cpu_clusters pfcc ON pfcc.frame_start = fl.frame_start
-  LEFT JOIN per_frame_freq_changes pffc ON pffc.frame_start = fl.frame_start
-  LEFT JOIN per_frame_main_top_slices pfmts ON pfmts.frame_start = fl.frame_start
-  LEFT JOIN per_frame_render_top_slices pfrts ON pfrts.frame_start = fl.frame_start
-  LEFT JOIN per_frame_binder_detail pfbd ON pfbd.frame_start = fl.frame_start
-  LEFT JOIN per_frame_gc_detail pfgd ON pfgd.frame_start = fl.frame_start
-  LEFT JOIN per_frame_lock_detail pfld ON pfld.frame_start = fl.frame_start
-  LEFT JOIN per_frame_file_io pfio ON pfio.frame_start = fl.frame_start
-  LEFT JOIN per_frame_input_events pfie ON pfie.frame_start = fl.frame_start
-  LEFT JOIN per_frame_input_slices pfis ON pfis.frame_start = fl.frame_start
-  LEFT JOIN per_frame_input_detail pfid ON pfid.frame_start = fl.frame_start
-  LEFT JOIN per_frame_input_slice_detail pfisd ON pfisd.frame_start = fl.frame_start
+  LEFT JOIN top_slices ts ON ts.frame_key = fl.frame_key
+  LEFT JOIN per_frame_cpu_mix pcm ON pcm.frame_key = fl.frame_key
+  LEFT JOIN per_frame_quadrants pfq ON pfq.frame_key = fl.frame_key
+  LEFT JOIN render_thread_quadrants rtq ON rtq.frame_key = fl.frame_key
+  LEFT JOIN per_frame_freq pff ON pff.frame_key = fl.frame_key
+  LEFT JOIN per_frame_ramp pfr ON pfr.frame_key = fl.frame_key
+  LEFT JOIN per_frame_binder pfb ON pfb.frame_key = fl.frame_key
+  LEFT JOIN per_frame_gc pfgc ON pfgc.frame_key = fl.frame_key
+  LEFT JOIN gpu_fence_per_frame gf ON gf.frame_key = fl.frame_key
+  LEFT JOIN shader_per_frame sp ON sp.frame_key = fl.frame_key
+  LEFT JOIN per_frame_cpu_clusters pfcc ON pfcc.frame_key = fl.frame_key
+  LEFT JOIN per_frame_freq_changes pffc ON pffc.frame_key = fl.frame_key
+  LEFT JOIN per_frame_main_top_slices pfmts ON pfmts.frame_key = fl.frame_key
+  LEFT JOIN per_frame_render_top_slices pfrts ON pfrts.frame_key = fl.frame_key
+  LEFT JOIN per_frame_binder_detail pfbd ON pfbd.frame_key = fl.frame_key
+  LEFT JOIN per_frame_gc_detail pfgd ON pfgd.frame_key = fl.frame_key
+  LEFT JOIN per_frame_lock_detail pfld ON pfld.frame_key = fl.frame_key
+  LEFT JOIN per_frame_render_sync_wait pfrsw ON pfrsw.frame_key = fl.frame_key
+  LEFT JOIN per_frame_render_sync_work pfrswk ON pfrswk.frame_key = fl.frame_key
+  LEFT JOIN per_frame_file_io pfio ON pfio.frame_key = fl.frame_key
+  LEFT JOIN per_frame_input_events pfie ON pfie.frame_key = fl.frame_key
+  LEFT JOIN per_frame_input_slices pfis ON pfis.frame_key = fl.frame_key
+  LEFT JOIN per_frame_input_detail pfid ON pfid.frame_key = fl.frame_key
+  LEFT JOIN per_frame_input_slice_detail pfisd ON pfisd.frame_key = fl.frame_key
 ),
 -- ========== 11. 根因分类（与 jank_frame_detail 相同优先级 CASE 树） ==========
 classified AS (
@@ -861,13 +1152,21 @@ classified AS (
       -- 主线程 S 状态来自 syncFrameState 等待，非锁/Binder 问题
       WHEN jank_responsibility = 'BUFFER_STUFFING'
         THEN 'buffer_stuffing'
-      -- P0.5: SF 合成超时 — 短路：jank_responsibility 指向 SF，跳过 App 侧分析
-      -- Perfetto FrameTimeline 判定 SurfaceFlinger 为掉帧责任方
+      -- P0.5: SF 责任按 Perfetto FrameTimeline 的直接类型细分。
+      WHEN jank_responsibility = 'SF' AND jank_type GLOB '*SurfaceFlinger*'
+        THEN 'sf_composition_slow'
+      WHEN jank_responsibility = 'SF' AND jank_type GLOB '*Display HAL*'
+        THEN 'display_hal'
+      WHEN jank_responsibility = 'SF' AND jank_type GLOB '*Prediction Error*'
+        THEN 'prediction_error'
       WHEN jank_responsibility = 'SF'
         THEN 'sf_composition_slow'
       -- P1: Binder 同步阻塞（top slice 内有大量同步 Binder 重叠）
       WHEN top_slice_ms > slice_critical_ms AND binder_overlap_ms >= binder_overlap_critical_ms
         THEN 'binder_sync_blocking'
+      -- P1.25: 主线程 monitor contention 与当前帧有直接重叠。
+      WHEN lock_contention_ms > 0.2
+        THEN 'lock_contention'
       -- P1.5: GC 暂停（帧窗口内 GC 重叠 > 1ms）
       WHEN gc_overlap_ms > 1.0
         THEN 'gc_jank'
@@ -944,9 +1243,15 @@ classified AS (
       -- P9: Binder 超时 — 帧窗口内 Binder 累计 >500ms
       WHEN binder_overlap_ms > 500
         THEN 'binder_timeout'
-      -- P9.5: 锁/Binder 等待（S/I 状态）
+      -- P9.5: 只有 material HWUI 同步等待且 RenderThread 同窗活跃时，
+      -- 才把同步依赖提升为主 reason；很短的 postAndWait 只保留为放大证据。
       WHEN main_q4b_pct > 30
-        THEN 'lock_binder_wait'
+        AND render_sync_wait_ms >= MAX(frame_budget_ms * 0.20, dur_ms * 0.25)
+        AND (
+          (render_q1_pct + render_q2_pct) >= 30
+          OR render_sync_rt_work_ms > 0
+        )
+        THEN 'render_sync_wait'
       -- P10: 小核调度（按四象限判断）
       WHEN main_q2_pct > 50
         THEN 'small_core_placement'
@@ -954,12 +1259,24 @@ classified AS (
       -- P11: 工作负载超时兜底（top_slice > critical 但无特定供给侧/四象限因素）
       WHEN top_slice_ms > slice_critical_ms
         THEN 'workload_heavy'
+      -- FrameTimeline 已确认 App 责任，但当前帧没有足够直接证据继续命名底层原因。
+      WHEN jank_responsibility = 'APP'
+        THEN 'app_jank_unattributed'
+      -- FrameTimeline 自身只给出 Unknown Jank，且上述直接机制探针均未命中。
+      -- 这是保留用户可见异常、但明确停止猜测根因的证据边界。
+      WHEN jank_responsibility = 'UNKNOWN' AND jank_type GLOB '*Unknown Jank*'
+        THEN 'frame_timeline_unattributed'
       ELSE 'unknown'
     END as reason_code
   FROM analysis
 )
 SELECT
   CAST(display_frame_token AS TEXT) as frame_id,
+  CASE
+    WHEN frame_key GLOB 'display:*' THEN CAST(display_frame_token AS TEXT)
+    ELSE frame_key
+  END as frame_identity_key,
+  layer_name,
   frame_index,
   printf('%d', frame_start) as start_ts,
   printf('%d', frame_end - frame_start) as dur,
@@ -971,11 +1288,31 @@ SELECT
   pid,
   process_name,
   reason_code,
+  '${buffer_tx_coverage.data[0].coverage_status}' as frame_timeline_coverage_status,
+  ${buffer_tx_coverage.data[0].frame_timeline_to_buffer_tx_ratio} as frame_timeline_to_buffer_tx_ratio,
+  CASE
+    WHEN '${buffer_tx_coverage.data[0].coverage_status}' = 'partial_frame_timeline_coverage'
+      THEN 'partial_sample'
+    WHEN '${buffer_tx_coverage.data[0].coverage_status}' = 'no_buffer_tx_candidate'
+      THEN 'frame_timeline_only_unbenchmarked'
+    ELSE 'full_frame_timeline'
+  END as evidence_scope,
+  scope.root_cause_eligible_frame_count,
+  scope.root_cause_analyzed_frame_count,
+  scope.root_cause_coverage_ratio,
+  scope.root_cause_sample_limit_per_session,
+  scope.root_cause_analysis_scope,
   CASE
     WHEN reason_code = 'buffer_stuffing' THEN 'Buffer Stuffing: 管线背压，帧耗时 ' || dur_ms || 'ms，BufferQueue 积压导致跳帧（非 App 问题）'
     WHEN reason_code = 'sf_composition_slow' THEN 'SF合成超时: SurfaceFlinger 侧导致掉帧（非 App 问题），帧耗时 ' || dur_ms || 'ms'
+    WHEN reason_code = 'display_hal' THEN 'Display HAL 延迟: SurfaceFlinger 已按时下发，但该帧未在目标 VSync 呈现（非 App 根因）'
+    WHEN reason_code = 'prediction_error' THEN 'FrameTimeline 预测误差: SurfaceFlinger scheduler 的预测呈现时间发生漂移；孤立事件通常不代表用户可感知 App 卡顿'
+    WHEN reason_code = 'app_jank_unattributed' THEN 'App Deadline Missed 已确认，但当前帧缺少 Binder/GC/锁/Input/调度等直接证据，底层原因保持未归因'
+    WHEN reason_code = 'frame_timeline_unattributed' THEN 'FrameTimeline 标记为 Unknown Jank；当前 trace 没有 App、SF 或帧内直接机制证据，异常保留但根因未归因'
     WHEN reason_code = 'thermal_throttling' THEN '温控降频: 大核最高 ' || big_max_freq_mhz || 'MHz (设备峰值 ' || device_peak_freq_mhz || 'MHz, 仅 ' || ROUND(100.0 * big_max_freq_mhz / NULLIF(device_peak_freq_mhz, 0), 0) || '%)'
     WHEN reason_code = 'binder_sync_blocking' THEN '同步Binder阻塞: "' || top_slice_name || '" 中 Binder 重叠 ' || binder_overlap_ms || 'ms'
+    WHEN reason_code = 'lock_contention' THEN 'Monitor锁竞争: 主线程在帧窗口内直接等待 ' || lock_contention_ms || 'ms'
+    WHEN reason_code = 'render_sync_wait' THEN 'UI→RenderThread同步等待: 主线程 postAndWait/syncFrameState 重叠 ' || render_sync_wait_ms || 'ms'
     WHEN reason_code = 'gc_jank' THEN 'GC暂停: 帧窗口内 GC 重叠 ' || gc_overlap_ms || 'ms (' || gc_count || ' 次)'
     WHEN reason_code = 'gc_pressure_cascade' THEN 'GC压力级联: 帧窗口内 ' || gc_count || ' 次 GC，总重叠 ' || gc_overlap_ms || 'ms（内存压力高）'
     WHEN reason_code = 'input_handling_slow' THEN '输入处理阻塞: ' || COALESCE(NULLIF(input_stage, ''), 'input') || ' 与帧窗口重叠 ' || input_slice_ms || 'ms，最长相关 slice ' || input_handling_ms || 'ms（预算 ' || frame_budget_ms || 'ms）'
@@ -992,13 +1329,16 @@ SELECT
     WHEN reason_code = 'cpu_saturation' THEN 'CPU全核饱和: 主线程 Q3=' || main_q3_pct || '%, RT Q3=' || render_q3_pct || '%（双线程同时调度等待）'
     WHEN reason_code = 'uninterruptible_wait' THEN '不可中断等待: Q4a(D/DK)=' || main_q4a_pct || '%；IO 归因需 io_wait/blocked_function'
     WHEN reason_code = 'main_thread_file_io' THEN '主线程文件IO: 帧内 IO overlap ' || file_io_overlap_ms || 'ms (SharedPreferences/SQLite/fsync)'
-    WHEN reason_code = 'lock_binder_wait' THEN '锁/Binder等待: Q4b(S/I)=' || main_q4b_pct || '%'
     WHEN reason_code = 'binder_timeout' THEN 'Binder超时: 帧内 Binder 累计 ' || binder_overlap_ms || 'ms (>500ms)'
     ELSE '未分类 (帧耗时 ' || dur_ms || 'ms)'
   END as primary_cause,
   CASE
     WHEN reason_code = 'buffer_stuffing' THEN '高'
     WHEN reason_code = 'sf_composition_slow' THEN '高'
+    WHEN reason_code = 'display_hal' THEN '高'
+    WHEN reason_code = 'prediction_error' THEN '高'
+    WHEN reason_code = 'app_jank_unattributed' THEN '中'
+    WHEN reason_code = 'frame_timeline_unattributed' THEN '低'
     WHEN reason_code = 'thermal_throttling' THEN '高'
     WHEN reason_code = 'gc_pressure_cascade' THEN '高'
     WHEN reason_code = 'input_handling_slow' THEN '高'
@@ -1007,11 +1347,13 @@ SELECT
     WHEN reason_code = 'cpu_saturation' THEN '中'
     WHEN reason_code = 'main_thread_file_io' THEN '高'
     WHEN reason_code = 'binder_timeout' THEN '高'
+    WHEN reason_code = 'lock_contention' THEN '高'
+    WHEN reason_code = 'render_sync_wait' THEN '中'
     WHEN top_slice_ms > slice_critical_ms THEN '高'
     WHEN shader_count > 0 THEN '高'
     WHEN max_fence_dur_ns > vsync_period_ns * 0.5 THEN '中'
     WHEN gc_overlap_ms > 1.0 THEN '高'
-    WHEN main_q3_pct > 20 OR main_q4a_pct > 20 OR main_q4b_pct > 30 THEN '中'
+    WHEN main_q3_pct > 20 OR main_q4a_pct > 20 THEN '中'
     ELSE '低'
   END as confidence,
   top_slice_name,
@@ -1042,11 +1384,15 @@ SELECT
   shader_count,
   ROUND(total_shader_dur_ns / 1e6, 2) as shader_ms,
   -- Binder/GC
-  binder_overlap_ms,
-  gc_overlap_ms,
+binder_overlap_ms,
+lock_contention_ms,
+render_sync_wait_ms,
+render_sync_rt_work_ms,
+gc_overlap_ms,
   gc_count,
   -- 帧预算参考
   frame_budget_ms,
+  vsync_source,
   -- 设备峰值频率（温控/限频参考）
   device_peak_freq_mhz,
   -- 文件 IO 重叠
@@ -1072,4 +1418,5 @@ SELECT
   input_events_json,
   input_slices_json
 FROM classified
+CROSS JOIN root_cause_population scope
 ORDER BY session_id, frame_start

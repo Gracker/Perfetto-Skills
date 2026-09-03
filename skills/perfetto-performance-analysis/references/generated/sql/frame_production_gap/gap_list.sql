@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/frame_production_gap.skill.yaml
--- Source SHA-256: f533dbd058eb314ef6dc1c8e1517275fb7432c17d5f0c2e136536a0c9a26acf2
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 3c2acc9ac336d6298038424ccd0591a13b9b569accff00c49d1b5fe05ab4c7a6
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 vsync_intervals AS (
@@ -14,7 +14,7 @@ vsync_intervals AS (
 ),
 vsync_config AS (
   SELECT COALESCE(
-    (SELECT CAST(PERCENTILE(interval_ns, 0.5) AS INTEGER)
+    (SELECT CAST(PERCENTILE(interval_ns, 50) AS INTEGER)
      FROM vsync_intervals
      WHERE interval_ns BETWEEN 4000000 AND 50000000),
     16666667

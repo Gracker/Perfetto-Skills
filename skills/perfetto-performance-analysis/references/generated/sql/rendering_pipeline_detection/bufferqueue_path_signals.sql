@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rendering_pipeline_detection.skill.yaml
--- Source SHA-256: 89f9bbab94bb6089b6a022e187c43002cbddfee4b0cb0c728c50f2d79ace3457
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
       dominant_process AS (
@@ -40,14 +40,14 @@ WITH
       app_filter_upids AS (
         SELECT p.upid
         FROM process p
-        WHERE '${package}' <> '' AND p.name GLOB '${package}*'
+        WHERE '${package}' <> '' AND (p.name = '${package}' OR p.name GLOB '${package}:*')
         UNION
         SELECT p.upid
         FROM process p
         JOIN dominant_pkg dp
         WHERE '${package}' = ''
           AND dp.pkg IS NOT NULL
-          AND p.name GLOB dp.pkg || '*'
+          AND (p.name = dp.pkg OR p.name GLOB dp.pkg || ':*')
           AND p.name NOT LIKE 'com.android.systemui%'
           AND p.name NOT LIKE 'system_server%'
           AND p.name NOT LIKE '/system/%'

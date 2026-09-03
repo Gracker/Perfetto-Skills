@@ -54,9 +54,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_render_in_range/query.sql",
-      "sha256": "55777736bf5f8c3c35a1e5ae49ba46ec2bd20e080827ccb2e79cc62f7d43411f",
+      "sha256": "b3a4271dddf253dc8c68dfab3bee762a34c5f8cb94e9a4d2a9ed1498c77b082d",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "*DrawFrame*",
         "*Fence*signal*",
         "*Flush*",
@@ -74,10 +75,10 @@
       ],
       "skill_id": "gpu_render_in_range",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/gpu_render_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8bb5be71c0b5a94ecc3eb2ce24af291332227634bafef0a5423144dfcd48dab6"
+        "sha256": "06ea425f109301061fa4939fe042767b99a582ebba749c63c654a294e82d882b"
       },
       "sql_dependencies": {
         "creates": [],

@@ -1,9 +1,25 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: db12ba810a107ad991b5f42de2764e08b2d6f86b5f11d57cfb0c50b62773a126
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
+-- Fragment: root_cause_sample_cap
+-- Single source of truth for the per-session root-cause frame sample cap.
+-- Both get_app_jank_frames (which truncates the frame list) and
+-- batch_frame_root_cause (which reports eligible/analyzed coverage) must use
+-- the same effective cap, otherwise reported coverage would not describe the
+-- rows that were actually analyzed.
+-- Unset, zero, and negative caps all normalize to the 200-frame default.
+-- Params: ${max_frames_per_session}
+root_cause_sample_config AS (
+  SELECT CASE
+    WHEN ${max_frames_per_session} IS NULL THEN 200
+    WHEN CAST(${max_frames_per_session} AS INTEGER) <= 0 THEN 200
+    ELSE CAST(${max_frames_per_session} AS INTEGER)
+  END as root_cause_sample_limit_per_session
+)
+,
 -- VSync 周期（限定在分析区间内，避免 VRR 省电时段干扰）
 vsync_intervals AS (
   SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
@@ -25,7 +41,7 @@ timing_config AS (
   END AS vsync_period_ns
   FROM (
     SELECT CAST(COALESCE(
-      (SELECT PERCENTILE(interval_ns, 0.5)
+      (SELECT PERCENTILE(interval_ns, 50)
        FROM vsync_intervals
        WHERE interval_ns > 5500000 AND interval_ns < 50000000),
       16666667
@@ -35,6 +51,13 @@ timing_config AS (
 -- Per-layer 帧序列：按 layer_name 分组，计算 token gap + 时间 gap
 layer_frames AS (
   SELECT
+    CASE
+      WHEN a.display_frame_token IS NOT NULL
+        THEN 'display:' || CAST(a.display_frame_token AS TEXT)
+      WHEN a.surface_frame_token IS NOT NULL
+        THEN 'surface:' || COALESCE(a.layer_name, '') || ':' || CAST(a.surface_frame_token AS TEXT)
+      ELSE NULL
+    END as frame_key,
     a.display_frame_token,
     COALESCE(a.display_frame_token, a.surface_frame_token) as frame_token,
     a.ts,
@@ -44,6 +67,14 @@ layer_frames AS (
     a.jank_type,
     a.jank_severity_type,
     COALESCE(a.present_type, 'Unknown Present') as present_type,
+    CASE
+      WHEN a.jank_type GLOB '*Self Jank*' OR android_is_app_jank_type(a.jank_type) THEN 'APP'
+      WHEN a.jank_type GLOB '*SurfaceFlinger*' THEN 'SF'
+      WHEN a.jank_type GLOB '*Buffer Stuffing*' THEN 'BUFFER_STUFFING'
+      WHEN android_is_sf_jank_type(a.jank_type) THEN 'SF'
+      WHEN a.jank_type = 'None' OR a.jank_type IS NULL THEN 'HIDDEN'
+      ELSE 'UNKNOWN'
+    END as jank_responsibility,
     -- Per-layer token gap：SF 跳过了多少个 DisplayFrame 没有消费该 layer 的 buffer
     a.display_frame_token - LAG(a.display_frame_token)
       OVER (PARTITION BY a.layer_name ORDER BY a.display_frame_token) AS token_gap,
@@ -56,7 +87,11 @@ layer_frames AS (
       OVER (PARTITION BY a.layer_name ORDER BY a.ts) AS prev_present_ts
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
@@ -79,6 +114,7 @@ sessions_map AS (
 -- BS 帧：间隔 > 1.5x vsync = 真实掉帧（被 BS 掩盖的卡顿）
 jank_frames AS (
   SELECT
+    sm.frame_key,
     sm.frame_token as frame_id,
     sm.display_frame_token,
     sm.upid,
@@ -97,14 +133,7 @@ jank_frames AS (
         THEN MAX(CAST(ROUND((sm.present_ts - sm.prev_present_ts) * 1.0 / tc.vsync_period_ns - 1, 0) AS INTEGER), 0)
       ELSE 1  -- at least 1 vsync missed if present_type is Late/Dropped
     END as vsync_missed,
-    -- 责任归属
-    CASE
-      WHEN sm.jank_type IN ('Self Jank', 'App Deadline Missed', 'App Resynced Jitter') THEN 'APP'
-      WHEN sm.jank_type GLOB '*SurfaceFlinger*' THEN 'SF'
-      WHEN sm.jank_type = 'Buffer Stuffing' THEN 'BUFFER_STUFFING'
-      WHEN sm.jank_type = 'None' OR sm.jank_type IS NULL THEN 'HIDDEN'
-      ELSE 'UNKNOWN'
-    END as jank_responsibility,
+    sm.jank_responsibility,
     -- 消费端呈现间隔（毫秒）— 报告展示用
     ROUND((sm.present_ts - COALESCE(sm.prev_present_ts, sm.present_ts)) / 1e6, 2) as present_interval_ms,
     -- 隐形掉帧标记
@@ -113,10 +142,11 @@ jank_frames AS (
   CROSS JOIN timing_config tc
   WHERE (
     -- 非 BS：present_type 为权威信号
-    (sm.present_type IN ('Late Present', 'Dropped Frame') AND sm.jank_type != 'Buffer Stuffing')
+    (sm.present_type IN ('Late Present', 'Dropped Frame')
+      AND (sm.jank_responsibility != 'BUFFER_STUFFING' OR android_is_missed_frame_type(sm.jank_type)))
     OR
     -- BS + 异常间隔：真实掉帧被 BS 掩盖
-    (sm.jank_type = 'Buffer Stuffing'
+    (sm.jank_responsibility = 'BUFFER_STUFFING'
      AND sm.prev_present_ts IS NOT NULL
      AND (sm.present_ts - sm.prev_present_ts) > tc.vsync_period_ns * 1.5
      AND (sm.present_ts - sm.prev_present_ts) <= tc.vsync_period_ns * 6)
@@ -163,6 +193,7 @@ guilty_frames AS (
 ),
 frame_thread_info AS (
   SELECT
+    jf.frame_key,
     jf.frame_id,
     jf.upid,
     jf.actual_start,
@@ -224,46 +255,78 @@ frame_thread_info AS (
     ) as render_end_ts
   FROM jank_frames jf
   LEFT JOIN guilty_frames gf ON gf.starvation_frame_id = jf.frame_id
-)
-,
-ranked_frames AS (
+),
+-- GET_APP_DISPLAY_DEDUP_CTE_BEGIN
+deduped_frames AS (
   SELECT
-    fti.frame_id,
-    fti.actual_start,
-    fti.actual_end,
-    fti.main_start_ts,
-    fti.main_end_ts,
-    fti.render_start_ts,
-    fti.render_end_ts,
-    fti.actual_dur,
-    fti.jank_type,
-    fti.jank_severity_type,
-    fti.layer_name,
-    fti.session_id,
-    fti.token_gap,
-    fti.vsync_missed,
-    fti.jank_responsibility,
-    fti.present_interval_ms,
+    fti.*,
     p.name as process_name,
     p.pid,
-    p.upid,
-    fti.is_hidden_jank,
-    -- Guilty frame 信息
-    fti.guilty_frame_id,
-    fti.guilty_dur,
-    fti.over_budget_ms,
-    -- 前序帧信息（用于掉帧原因诊断）
-    LAG(fti.actual_dur) OVER (PARTITION BY fti.session_id ORDER BY fti.actual_start) as prev_frame_dur,
-    LAG(fti.jank_type) OVER (PARTITION BY fti.session_id ORDER BY fti.actual_start) as prev_frame_jank_type,
-    -- 按 vsync_missed 排序（最严重的掉帧优先）
-    ROW_NUMBER() OVER (PARTITION BY fti.session_id ORDER BY fti.vsync_missed DESC, fti.actual_dur DESC) as rank_in_session
+    ROW_NUMBER() OVER (
+      PARTITION BY fti.frame_key
+      ORDER BY
+        CASE fti.jank_responsibility
+          WHEN 'APP' THEN 1
+          WHEN 'SF' THEN 2
+          WHEN 'BUFFER_STUFFING' THEN 3
+          WHEN 'HIDDEN' THEN 4
+          ELSE 5
+        END,
+        fti.vsync_missed DESC,
+        fti.actual_dur DESC,
+        fti.layer_name ASC
+    ) as display_frame_rank
   FROM frame_thread_info fti
   JOIN process p ON fti.upid = p.upid
-  WHERE (p.name GLOB '${package}*' OR '${package}' = '')
+  WHERE (
+    '${package}' = ''
+    OR p.name = '${package}'
+    OR p.name GLOB '${package}:*'
+  )
     AND p.name NOT LIKE '/system/%'
+),
+-- GET_APP_DISPLAY_DEDUP_CTE_END
+ranked_frames AS (
+  SELECT
+    df.frame_key,
+    df.frame_id,
+    df.actual_start,
+    df.actual_end,
+    df.main_start_ts,
+    df.main_end_ts,
+    df.render_start_ts,
+    df.render_end_ts,
+    df.actual_dur,
+    df.jank_type,
+    df.jank_severity_type,
+    df.layer_name,
+    df.session_id,
+    df.token_gap,
+    df.vsync_missed,
+    df.jank_responsibility,
+    df.present_interval_ms,
+    df.process_name,
+    df.pid,
+    df.upid,
+    df.is_hidden_jank,
+    -- Guilty frame 信息
+    df.guilty_frame_id,
+    df.guilty_dur,
+    df.over_budget_ms,
+    -- 前序帧信息（用于掉帧原因诊断）
+    LAG(df.actual_dur) OVER (PARTITION BY df.session_id ORDER BY df.actual_start) as prev_frame_dur,
+    LAG(df.jank_type) OVER (PARTITION BY df.session_id ORDER BY df.actual_start) as prev_frame_jank_type,
+    -- 按 vsync_missed 排序（最严重的掉帧优先）
+    ROW_NUMBER() OVER (PARTITION BY df.session_id ORDER BY df.vsync_missed DESC, df.actual_dur DESC) as rank_in_session
+  FROM deduped_frames df
+  WHERE df.display_frame_rank = 1
 )
 SELECT
   printf('%d', frame_id) as frame_id,
+  CASE
+    WHEN frame_key GLOB 'display:*' THEN printf('%d', frame_id)
+    ELSE frame_key
+  END as frame_identity_key,
   printf('%d', actual_start) as start_ts,
   printf('%d', actual_end) as end_ts,
   printf('%d', COALESCE(main_start_ts, actual_start)) as main_start_ts,
@@ -291,6 +354,7 @@ SELECT
   CASE WHEN guilty_dur IS NOT NULL THEN ROUND(guilty_dur / 1e6, 2) END as guilty_dur_ms,
   over_budget_ms,
   -- 掉帧原因说明
+  -- JANK_CAUSE_CASE_BEGIN
   CASE
     -- 管线耗尽：guilty frame 导致缓冲区枯竭
     WHEN guilty_frame_id IS NOT NULL THEN
@@ -301,30 +365,29 @@ SELECT
     WHEN jank_responsibility = 'HIDDEN' THEN
       '缓冲区枯竭 — 框架未标记（Perfetto 时间线帧颜色为绿色），'
       || '但该 Layer 跳过 ' || vsync_missed || ' 个 DisplayFrame 无新 buffer'
-    -- App Self Jank
-    WHEN jank_type = 'Self Jank' THEN
+    -- App responsibility outranks lower-priority mixed SF prediction labels.
+    WHEN jank_responsibility = 'APP' AND jank_type GLOB '*Self Jank*' THEN
       'App 自身处理超时（' || ROUND(actual_dur / 1e6, 2) || 'ms），跳过 ' || vsync_missed || ' 帧'
-    -- App Deadline Missed
-    WHEN jank_type = 'App Deadline Missed' THEN
+    WHEN jank_responsibility = 'APP' AND jank_type GLOB '*App Deadline Missed*' THEN
       'App 未在 VSync deadline 前完成渲染（' || ROUND(actual_dur / 1e6, 2) || 'ms），跳过 ' || vsync_missed || ' 帧'
+    WHEN jank_responsibility = 'APP' THEN
+      'FrameTimeline 确认 App 侧帧时序异常（' || COALESCE(jank_type, '未知') || '），底层原因需结合直接证据判断'
+    WHEN jank_responsibility = 'BUFFER_STUFFING' THEN
+      '帧耗时 ' || ROUND(actual_dur / 1e6, 2) || 'ms，BufferQueue 阻塞（Buffer Stuffing），延迟 ' || vsync_missed || ' 个 VSync'
+    WHEN jank_responsibility = 'SF' AND jank_type GLOB '*Prediction Error*' THEN
+      'SurfaceFlinger 调度器预测时间漂移；应看聚合占比，孤立事件通常不代表用户可感知 App 卡顿'
+    WHEN jank_responsibility = 'SF' AND jank_type GLOB '*Display HAL*' THEN
+      'SurfaceFlinger 已按时提交，但显示 HAL 未在目标 VSync 呈现'
     -- SurfaceFlinger 问题
     WHEN jank_responsibility = 'SF' THEN
       'SurfaceFlinger 合成延迟（' || jank_type || '），App 已按时交付 buffer'
-    -- Buffer Stuffing
-    WHEN jank_responsibility = 'BUFFER_STUFFING' THEN
-      '帧耗时 ' || ROUND(actual_dur / 1e6, 2) || 'ms，BufferQueue 阻塞（Buffer Stuffing），延迟 ' || vsync_missed || ' 个 VSync'
-    -- App side
-    WHEN jank_responsibility = 'APP' THEN
-      'App 超时（' || ROUND(actual_dur / 1e6, 2) || 'ms），跳过 ' || vsync_missed || ' 帧'
     ELSE
       COALESCE(jank_type, '未知') || '，跳过 ' || vsync_missed || ' 帧'
-  END as jank_cause,
+  END
+  -- JANK_CAUSE_CASE_END
+  as jank_cause,
   is_hidden_jank,
   ROW_NUMBER() OVER (ORDER BY session_id, actual_start) as frame_index
 FROM ranked_frames
-WHERE rank_in_session <= CASE
-  WHEN ${max_frames_per_session} IS NULL THEN 200
-  WHEN CAST(${max_frames_per_session} AS INTEGER) <= 0 THEN 200
-  ELSE CAST(${max_frames_per_session} AS INTEGER)
-END
+WHERE rank_in_session <= (SELECT root_cause_sample_limit_per_session FROM root_cause_sample_config)
 ORDER BY session_id, actual_start

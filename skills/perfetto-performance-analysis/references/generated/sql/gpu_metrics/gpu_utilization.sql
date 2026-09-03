@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_metrics.skill.yaml
--- Source SHA-256: 7ec44d892abb05141d0c58bfb05944911a22d8a6d4252fc95aa9b12c5f4f800a
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 9456c4556e1e976ba2c42d7261839a9deac5ebd010487a69b95b965f094a68b2
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 time_bounds AS (
@@ -25,7 +25,7 @@ SELECT
   ROUND(AVG(utilization), 1) as avg_utilization_pct,
   ROUND(MAX(utilization), 1) as max_utilization_pct,
   ROUND(MIN(utilization), 1) as min_utilization_pct,
-  ROUND(PERCENTILE(utilization, 0.95), 1) as p95_utilization_pct,
+  ROUND(PERCENTILE(utilization, 95), 1) as p95_utilization_pct,
   COUNT(*) as sample_count,
   (SELECT GROUP_CONCAT(DISTINCT counter_name) FROM gpu_util) as util_counters
 FROM gpu_util

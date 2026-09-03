@@ -52,9 +52,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_thread_blocking_graph/query.sql",
-      "sha256": "85efe8235053eb288284b42d54a2e14bb9cdcc5f87aca0a0447be2ea16389ac1",
+      "sha256": "f139127bfd016fbb30da759a06cd7583ada4993c6f1144fb3e5786859ab20d23",
       "signal_patterns": [
-        "${package}*",
+        "${package}",
+        "${package}:*",
         "*FinalizerDaemon*",
         "*HeapTaskDaemon*",
         "Binder:*",
@@ -63,10 +64,10 @@
       ],
       "skill_id": "startup_thread_blocking_graph",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/atomic/startup_thread_blocking_graph.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "efc99dd7288f62ffa136feb19c852594d545620e9a17523b1070b71f14041d67"
+        "sha256": "4842ac687887d681fcf0035d3094b2e943929e86cdca2a836edcc8b7517897dc"
       },
       "sql_dependencies": {
         "creates": [],

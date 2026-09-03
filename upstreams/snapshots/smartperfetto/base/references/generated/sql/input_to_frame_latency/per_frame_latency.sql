@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/input_to_frame_latency.skill.yaml
--- Source SHA-256: 3f8a18a4750d12e34a5556236cf069b5e09eaf1c3c3cf2cc5af513f635809c46
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: 1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH vsync_intervals AS (
   SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) AS interval_ns
@@ -11,7 +11,7 @@ WITH vsync_intervals AS (
 ),
 vsync_cfg AS (
   SELECT COALESCE(
-    CAST(PERCENTILE(interval_ns, 0.5) AS INTEGER),
+    CAST(PERCENTILE(interval_ns, 50) AS INTEGER),
     16666667
   ) as period_ns
   FROM vsync_intervals
@@ -35,7 +35,7 @@ input_with_frame AS (
   LEFT JOIN actual_frame_timeline_slice f
     ON ie.frame_id = f.surface_frame_token
     AND ie.upid = f.upid
-  WHERE (ie.process_name GLOB '${package}*' OR '${package}' = '')
+  WHERE (('${package}' = '' OR ie.process_name = '${package}' OR ie.process_name GLOB '${package}:*') OR '${package}' = '')
     AND (ie.event_action = 'MOVE'
          OR ('${event_action_filter}' != '' AND ie.event_action = '${event_action_filter}'))
     AND (${start_ts} IS NULL OR ie.dispatch_ts >= ${start_ts})

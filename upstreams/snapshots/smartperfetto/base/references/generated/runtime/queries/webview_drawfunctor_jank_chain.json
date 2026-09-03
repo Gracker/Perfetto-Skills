@@ -55,7 +55,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/webview_drawfunctor_jank_chain/drawfunctor_signal_summary.sql",
-      "sha256": "ea3884e98f7097daa021b7de9c6cd03623e5dda6855986ca27ff5c06fd72c35b",
+      "sha256": "eef2ab36c15500b50071cf7f4825e0245323a2ad97873e8358ef91c0136b50b7",
       "signal_patterns": [
         "*AwDrawFn*",
         "*Blink*",
@@ -69,14 +69,15 @@
         "*V8*",
         "*sandboxed_process*",
         "*v8*",
-        "*webview*"
+        "*webview*",
+        "VizCompositorThread*"
       ],
       "skill_id": "webview_drawfunctor_jank_chain",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/webview_drawfunctor_jank_chain.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "5414ac092b565b60483182fabbe05529be7a13e2f9bb9cdeab5442441de634bb"
+        "sha256": "d05238269f1a158708349ce433365a6f65a5c0446ef30ae94f9138daae0f5cd3"
       },
       "sql_dependencies": {
         "creates": [],
@@ -170,7 +171,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/webview_drawfunctor_jank_chain/drawfunctor_frame_overlap.sql",
-      "sha256": "472e2662475899bb88446470931bf23642e75496d6e3c9d5e86d82f1c89d9269",
+      "sha256": "bbe934a492fcd37a0de24240a5b00a8647cdb5e7c89d5b3dd2129d1679a217b2",
       "signal_patterns": [
         "*AwDrawFn*",
         "*Blink*",
@@ -184,14 +185,15 @@
         "*V8*",
         "*sandboxed_process*",
         "*v8*",
-        "*webview*"
+        "*webview*",
+        "VizCompositorThread*"
       ],
       "skill_id": "webview_drawfunctor_jank_chain",
       "source": {
-        "commit": "908d0897b0ae6b329d598f6d033a17543a62632a",
+        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
         "path": "backend/skills/composite/webview_drawfunctor_jank_chain.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "5414ac092b565b60483182fabbe05529be7a13e2f9bb9cdeab5442441de634bb"
+        "sha256": "d05238269f1a158708349ce433365a6f65a5c0446ef30ae94f9138daae0f5cd3"
       },
       "sql_dependencies": {
         "creates": [],

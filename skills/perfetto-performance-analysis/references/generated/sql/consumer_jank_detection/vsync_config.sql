@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/consumer_jank_detection.skill.yaml
--- Source SHA-256: 55465b17c1e74abda8e2e04bb70d0c079459a9f4095de2b56b420ac9721ee0c0
--- Source commit: 908d0897b0ae6b329d598f6d033a17543a62632a
+-- Source SHA-256: bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa
+-- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
 
 WITH
 sf_vsync_intervals AS (
@@ -25,10 +25,10 @@ vsync_median AS (
   END AS vsync_period_ns
   FROM (
     SELECT CAST(COALESCE(
-      (SELECT PERCENTILE(interval_ns, 0.5)
+      (SELECT PERCENTILE(interval_ns, 50)
        FROM sf_vsync_intervals
        WHERE interval_ns > 5500000 AND interval_ns < 50000000),
-      (SELECT CAST(PERCENTILE(dur, 0.5) AS INTEGER)
+      (SELECT CAST(PERCENTILE(dur, 50) AS INTEGER)
        FROM expected_frame_timeline_slice
        WHERE dur > 5000000 AND dur < 50000000
          AND (${start_ts} IS NULL OR ts >= ${start_ts})
