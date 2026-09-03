@@ -13,6 +13,44 @@ CATALOG = ROOT / "catalog" / "smartperfetto-export.json"
 MIGRATION_DOC = ROOT / "docs" / "migration-coverage.md"
 
 
+class ExpandSqlFragmentsTest(unittest.TestCase):
+    """A fragment may end with a `-- MARKER_END` comment.
+
+    Joining fragments with a trailing "," puts the CTE separator inside that
+    comment, so SQLite ignores it and the next CTE is left syntactically
+    unseparated. Keep every separator on its own line.
+    """
+
+    def _write(self, root: Path, name: str, body: str) -> None:
+        target = root / "backend" / "skills" / "fragments" / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(body, encoding="utf-8")
+
+    def test_separator_survives_a_fragment_ending_in_a_comment(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            self._write(
+                root,
+                "marker.sql",
+                "first_cte AS (\n  SELECT 1 AS a\n)\n-- MARKER_END",
+            )
+            expanded, _ = exporter.expand_sql_fragments(
+                "WITH\nsecond_cte AS (\n  SELECT 2 AS b\n)\nSELECT * FROM second_cte",
+                ["fragments/marker.sql"],
+                root,
+            )
+
+        self.assertNotIn("-- MARKER_END,", expanded)
+        for line in expanded.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("--"):
+                self.assertFalse(
+                    stripped.endswith(","),
+                    f"CTE separator swallowed by a comment: {line!r}",
+                )
+        self.assertIn("second_cte AS (", expanded)
+
+
 class ExporterTest(unittest.TestCase):
     def setUp(self) -> None:
         self.assertTrue(EXPORTER.is_file(), "tools/export_from_smartperfetto.py")

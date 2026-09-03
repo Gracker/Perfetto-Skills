@@ -1075,13 +1075,16 @@ def expand_sql_fragments(
         )
     if not fragments:
         return sql.strip(), metadata
-    block = ",\n".join(fragments)
+    # Keep every CTE separator on its own line. A fragment may end with a
+    # `-- MARKER_END` comment; appending the comma to that line makes SQLite
+    # ignore it and leaves the next CTE syntactically unseparated.
+    block = "\n,\n".join(fragments)
     trimmed = sql.lstrip()
     no_comments = re.sub(r"^(?:--[^\n]*\n\s*)*", "", trimmed)
     match = re.match(r"^WITH\s+", no_comments, flags=re.I)
     if match:
         prefix = trimmed[: len(trimmed) - len(no_comments)]
-        return f"{prefix}WITH\n{block},\n{no_comments[match.end():]}", metadata
+        return f"{prefix}WITH\n{block}\n,\n{no_comments[match.end():]}", metadata
     return f"WITH\n{block}\n{trimmed}", metadata
 
 
