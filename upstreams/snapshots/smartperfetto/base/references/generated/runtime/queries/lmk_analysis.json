@@ -47,19 +47,22 @@
         "probe_capabilities": []
       },
       "id": "lmk_analysis/data_check",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_analysis/data_check.sql",
-      "sha256": "873b508a266f31a7ff66d6bb9a7365fb221e2cee8acc88850125c6ac35cc7daf",
+      "sha256": "78671e8a56a23c63e49238762febccfe426507eab26cc2b56a82001b68d1d242",
       "signal_patterns": [
         "*${package}*",
         "mem.free"
       ],
       "skill_id": "lmk_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/lmk_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0"
@@ -80,12 +83,14 @@
       "step_id": "data_check",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -143,18 +148,21 @@
         "probe_capabilities": []
       },
       "id": "lmk_analysis/lmk_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_analysis/lmk_overview.sql",
-      "sha256": "29c7cb60d0bf6db6cc7295ed79a68e87290d974e4a311daedd6e4e0784f00742",
+      "sha256": "b24d61048feea1089c2e205cd0cbd529a3e32b2bdc3f0f12f431993abefd6247",
       "signal_patterns": [
         "*${package}*"
       ],
       "skill_id": "lmk_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/lmk_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0"
@@ -175,12 +183,14 @@
       "step_id": "lmk_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -238,18 +248,21 @@
         "probe_capabilities": []
       },
       "id": "lmk_analysis/lmk_timeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_analysis/lmk_timeline.sql",
-      "sha256": "c86a3f627fbde8249271c8c0c4106b225e20df341b36c97bbd40c2efcdedfb36",
+      "sha256": "64e5e28de9ef4379cd48dd852a73a9b8ed6dea00aa25963f802daa11b887db24",
       "signal_patterns": [
         "*${package}*"
       ],
       "skill_id": "lmk_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/lmk_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0"
@@ -270,13 +283,15 @@
       "step_id": "lmk_timeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "oom_adj_threshold",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -334,16 +349,19 @@
         "probe_capabilities": []
       },
       "id": "lmk_analysis/high_priority_kills",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_analysis/high_priority_kills.sql",
-      "sha256": "a0edf60e0b2988f4575f6c0d1f651d0bfc295c640a992f869cdb2a0a42bd8bfd",
+      "sha256": "1da72258069a1d1005c608f319b49471675f4ebc47f1fdcf00f2a5a9f69c90a8",
       "signal_patterns": [],
       "skill_id": "lmk_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/lmk_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0"
@@ -364,11 +382,13 @@
       "step_id": "high_priority_kills",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -426,12 +446,15 @@
         "probe_capabilities": []
       },
       "id": "lmk_analysis/lmk_memory_context",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_analysis/lmk_memory_context.sql",
-      "sha256": "00620ff668b386b849a55e2c4d85ea1ba4f331618a0a9d189af059c7f45f71c5",
+      "sha256": "98ef9aae223db47fccc21911248087b690412daf90483ea17604b65c2878879f",
       "signal_patterns": [
         "*${package}*",
         "mem.available",
@@ -439,7 +462,7 @@
       ],
       "skill_id": "lmk_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/lmk_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0"
@@ -460,12 +483,14 @@
       "step_id": "lmk_memory_context",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -523,18 +548,21 @@
         "probe_capabilities": []
       },
       "id": "lmk_analysis/lmk_frequency",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_analysis/lmk_frequency.sql",
-      "sha256": "ecb30a70bbd39e327dbe698cd4bf33a2bfe93b57c9934bf45fc99c152a17a440",
+      "sha256": "1d09bd665d2de1d1792bb613c9d44d502ab783b31f0561af8130f7536315e553",
       "signal_patterns": [
         "*${package}*"
       ],
       "skill_id": "lmk_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/lmk_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0"
@@ -555,12 +583,14 @@
       "step_id": "lmk_frequency",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -618,18 +648,21 @@
         "probe_capabilities": []
       },
       "id": "lmk_analysis/process_restart_after_lmk",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_analysis/process_restart_after_lmk.sql",
-      "sha256": "a51b46f588f327ed947fefae0b65f0f55f0554a70e4389051ba0e161d017e1fb",
+      "sha256": "6750b390c4ad5d2bb8c158afb4f02d25363bb98382b5f695209fb621c46d261f",
       "signal_patterns": [
         "*${package}*"
       ],
       "skill_id": "lmk_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/lmk_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0"
@@ -650,12 +683,14 @@
       "step_id": "process_restart_after_lmk",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -713,18 +748,21 @@
         "probe_capabilities": []
       },
       "id": "lmk_analysis/root_cause_classification",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_analysis/root_cause_classification.sql",
-      "sha256": "a3b3a781887c77ab25bb403eab0f6e2c1037dcde7a72a39e7918eb367abf62e5",
+      "sha256": "7414575ff961e68a3d254cdb824a267c8c36697696c57a6fcbcd428d0f1d4ad6",
       "signal_patterns": [
         "*${package}*"
       ],
       "skill_id": "lmk_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/lmk_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0"
@@ -745,12 +783,14 @@
       "step_id": "root_cause_classification",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "cpu_idle_state_residency/idle_residency",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_idle_state_residency/idle_residency.sql",
-      "sha256": "d3cad4c0d046586bbfa367c3ef0a9afc79638bef26c88a8e96844baa5c223ecc",
+      "sha256": "7ba042ff9e062ad7a9b67d4c65a87f30a8a1cacfbffdcb1e1aebdbc0b50ee9ad",
       "signal_patterns": [],
       "skill_id": "cpu_idle_state_residency",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_idle_state_residency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "7ca1a5633d514d72c2e841694bf0c3eb19be753350fdd1168e412761c8337eec"
@@ -74,11 +77,13 @@
       "step_id": "idle_residency",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

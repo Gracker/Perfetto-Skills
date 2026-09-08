@@ -49,12 +49,15 @@
         ]
       },
       "id": "power_module/wakelock_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/power_module/wakelock_overview.sql",
-      "sha256": "0fe7976e10745adf47cc38fbe4b458be5326ffda2ad09f74959fbcb72060da4c",
+      "sha256": "dbadfc3387cdde4174f9ac9c5898d31d0c24e87f2b71600bb8f32912e82d23eb",
       "signal_patterns": [
         "*PowerManager*",
         "*WAKE_LOCK*",
@@ -64,7 +67,7 @@
       ],
       "skill_id": "power_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/hardware/power_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c78783057846e5a5481c15de86a5cfb018687fc79c03c89f11364a34bf005634"
@@ -83,8 +86,10 @@
       "step_id": "wakelock_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -144,12 +149,15 @@
         ]
       },
       "id": "power_module/long_wakelocks",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/power_module/long_wakelocks.sql",
-      "sha256": "7f0016c3dc396aa1c6a25b4751ad05c0bae376b2a7a490b16406380f8c48979c",
+      "sha256": "f26e88c04cabec747aac0f48391786daf1049c1b17744d471ce46d138cd955f2",
       "signal_patterns": [
         "*WAKE_LOCK*",
         "*Wakelock*",
@@ -157,7 +165,7 @@
       ],
       "skill_id": "power_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/hardware/power_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c78783057846e5a5481c15de86a5cfb018687fc79c03c89f11364a34bf005634"
@@ -176,8 +184,10 @@
       "step_id": "long_wakelocks",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -237,12 +247,15 @@
         ]
       },
       "id": "power_module/cpu_idle_states",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/power_module/cpu_idle_states.sql",
-      "sha256": "593994b7bbfab955a6ab8f4f096efc3951f3d298c8bf484a8f90b68a09f0c9ae",
+      "sha256": "54912ce1d3bff1a5c81c517775233ac74e1966d5896daee959a4fc495ef4cd7c",
       "signal_patterns": [
         "*C-state*",
         "*Idle*",
@@ -251,7 +264,7 @@
       ],
       "skill_id": "power_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/hardware/power_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c78783057846e5a5481c15de86a5cfb018687fc79c03c89f11364a34bf005634"
@@ -270,8 +283,10 @@
       "step_id": "cpu_idle_states",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -331,12 +346,15 @@
         ]
       },
       "id": "power_module/suspend_resume",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/power_module/suspend_resume.sql",
-      "sha256": "54eba7a9fdf31b78d86e6fcdf7fbb097f1bbf4d26da0ca5f149fe63fcf281ad4",
+      "sha256": "175c68d43ab7f7fa358fe76dfb504c8ac7e3e8a1fd4d162000b05a4876c9da12",
       "signal_patterns": [
         "*RESUME*",
         "*Resume*",
@@ -349,7 +367,7 @@
       ],
       "skill_id": "power_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/hardware/power_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c78783057846e5a5481c15de86a5cfb018687fc79c03c89f11364a34bf005634"
@@ -368,8 +386,10 @@
       "step_id": "suspend_resume",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -429,12 +449,15 @@
         ]
       },
       "id": "power_module/power_counters",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/power_module/power_counters.sql",
-      "sha256": "bf51548744d5b12111c7fe62ba288158a9d65e32578b5d930ca20d051ed41ad2",
+      "sha256": "9a9225823399a3781622b3a43841f5b7d5724eefe26ce78f24dc9a0ee778f07a",
       "signal_patterns": [
         "*Battery*",
         "*Power*",
@@ -446,7 +469,7 @@
       ],
       "skill_id": "power_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/hardware/power_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c78783057846e5a5481c15de86a5cfb018687fc79c03c89f11364a34bf005634"
@@ -465,8 +488,10 @@
       "step_id": "power_counters",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -526,12 +551,15 @@
         ]
       },
       "id": "power_module/power_mode_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/power_module/power_mode_events.sql",
-      "sha256": "fb8d256f79c3781042f85b69056c51fb8bff33859d98a982211499947b763cda",
+      "sha256": "40871a7e97e05191ad1e9ced4f848d22fd0664aca8f391175cfecea9556fe9f0",
       "signal_patterns": [
         "*Doze*",
         "*battery*saver*",
@@ -542,7 +570,7 @@
       ],
       "skill_id": "power_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/hardware/power_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c78783057846e5a5481c15de86a5cfb018687fc79c03c89f11364a34bf005634"
@@ -561,8 +589,10 @@
       "step_id": "power_mode_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -622,12 +652,15 @@
         ]
       },
       "id": "power_module/wakeup_sources",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/power_module/wakeup_sources.sql",
-      "sha256": "3341d2d965e00fe278a2a51c1fc0a65420fee78d7bfb0a1259e0906296f379fc",
+      "sha256": "f8e6efadceffcb3d3a0afc579cebc640857495441858b4aba0dd2632fd3e5e1a",
       "signal_patterns": [
         "*alarm*",
         "*irq*wake*",
@@ -636,7 +669,7 @@
       ],
       "skill_id": "power_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/hardware/power_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c78783057846e5a5481c15de86a5cfb018687fc79c03c89f11364a34bf005634"
@@ -655,8 +688,10 @@
       "step_id": "wakeup_sources",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

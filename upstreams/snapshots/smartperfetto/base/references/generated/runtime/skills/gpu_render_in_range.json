@@ -29,7 +29,11 @@
   },
   "id": "gpu_render_in_range",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package"
+    ],
+    "policy": "verify_if_present",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -55,13 +59,19 @@
     "modules": [],
     "required_tables": []
   },
+  "process_scope": {
+    "limitations": [
+      "Operation aggregates combine application and SurfaceFlinger slices; they are not application-only measurements."
+    ],
+    "role": "global_context"
+  },
   "query_id": "gpu_render_in_range/root",
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/atomic/gpu_render_in_range.skill.yaml",
-    "sha256": "06ea425f109301061fa4939fe042767b99a582ebba749c63c654a294e82d882b"
+    "sha256": "1c142b8dbc84b47518922a8a37b43c85c1e3e887ad5bfc61179c1710dce9c286"
   },
   "steps": [],
   "type": "atomic",

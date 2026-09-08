@@ -294,5 +294,190 @@ class ExporterTest(unittest.TestCase):
             self.assertIn(str(count), expected)
 
 
+class ProcessScopeExportTest(unittest.TestCase):
+    """Export native declarations from a tiny source tree, never the live pin."""
+
+    def setUp(self) -> None:
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        root = Path(self.temporary.name).resolve()
+        self.source = root / "SmartPerfetto"
+        self.generated = root / "output"
+        self.skill_root = root / "public-skill"
+        self.commit = "a" * 40
+        symbols = self.source / "backend/data/perfettoStdlibSymbols.json"
+        symbols.parent.mkdir(parents=True)
+        symbols.write_text("{}", encoding="utf-8")
+        self.fragment = self.source / "backend/skills/fragments/effective_target_processes.sql"
+        self.fragment.parent.mkdir(parents=True)
+        self.fragment.write_text(
+            "effective_target_processes AS (SELECT * FROM process "
+            "WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid})",
+            encoding="utf-8",
+        )
+        self.identity = {
+            "policy": "verify_if_present", "scope": "process",
+            "aliases": ["package", "process_name"],
+        }
+        self.scope = {"role": "target", "binding": "effective_target_processes"}
+        self.catalog = {
+            "source": {"commit": self.commit}, "skills": [],
+            "strategies": [], "sql_fragments": [], "vendor_overrides": [],
+        }
+
+    def add_skill(self, name, body):
+        relative = f"backend/skills/{name}.skill.yaml"
+        path = self.source / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        # JSON is YAML; this fixture needs no string templating of source SQL.
+        path.write_text(json.dumps({
+            "name": name, "version": "1.0", "type": "atomic",
+            "identity": self.identity,
+            "inputs": [{"name": "package", "type": "string", "required": False}],
+            **body,
+        }), encoding="utf-8")
+        self.catalog["skills"].append({
+            "name": name, "source_path": relative,
+            "source_sha256": exporter.sha256_file(path), "disposition": "exported",
+        })
+
+    def export(self):
+        source_lock = {"runtime": {
+            "revision": "b" * 40, "reported_version": "fixture",
+            "stdlib_tree": "c" * 40,
+        }}
+        # Pin/fixture discovery is outside this test. Actual normalization,
+        # fragment expansion, setup detection, hashes and manifests are real.
+        with mock.patch.object(exporter, "load_fixture_manifest", return_value=({"fixtures": []}, {})), mock.patch.object(
+            exporter, "build_perfetto_source_lock", return_value=source_lock,
+        ), mock.patch.object(exporter, "git_output", return_value=""):
+            exporter.build_runtime_assets(
+                self.source, self.catalog, self.generated, skill_root=self.skill_root,
+            )
+
+    def queries(self, skill_id):
+        shard = self.generated / f"runtime/queries/{skill_id}.json"
+        return {entry["id"]: entry for entry in json.loads(shard.read_text())["queries"]}
+
+    def assert_scope_query(self, entry):
+        self.assertEqual(entry["template"].get("runtime_bindings"), ["__process_scope.upid"])
+        self.assertEqual(entry["template"].get("name_parameters"), ["package"])
+        self.assertEqual(entry["template"]["parameters"], ["package"])
+        self.assertEqual(entry["template"]["result_dependencies"], [])
+        self.assertEqual(entry.get("process_scope"), self.scope)
+        self.assertEqual(entry.get("identity"), self.identity)
+        self.assertEqual(entry["template"]["fragments"], [{
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": exporter.sha256_file(self.fragment),
+        }])
+        sql_path = self.generated / entry["path"]
+        sql = sql_path.read_text(encoding="utf-8")
+        self.assertIn("effective_target_processes AS (", sql)
+        self.assertIn("${__process_scope.upid}", sql)
+        self.assertEqual(entry["sha256"], exporter.sha256_file(sql_path))
+        self.assertEqual(entry["source"]["commit"], self.commit)
+        self.assertFalse(entry["validation"]["execution_verified"])
+        self.assertFalse(entry["validation"]["semantic_verified"])
+
+    def test_root_fragment_and_scope_declaration_survive_atomic_export(self) -> None:
+        self.add_skill("scoped", {
+            "process_scope": self.scope,
+            "sql_fragments": ["fragments/effective_target_processes.sql"],
+            "sql": "SELECT * FROM effective_target_processes WHERE name = '${package}'",
+            "exact_sql": {
+                "sql": "SELECT 'EXACT_BRANCH_MUST_NOT_REPLACE_BASE' AS value",
+                "process_scope": self.scope,
+                "sql_fragments": ["fragments/effective_target_processes.sql"],
+            },
+        })
+        self.export()
+        query = self.queries("scoped")["scoped/root"]
+        self.assert_scope_query(query)
+        self.assertEqual(query["path"], "sql/scoped/query.sql")
+        skill = json.loads((self.generated / "runtime/skills/scoped.json").read_text())
+        self.assertEqual(skill.get("process_scope"), self.scope)
+        self.assertEqual(skill["identity"], self.identity)
+        self.assertEqual(query["compatibility"].get("exact_scope", {}).get("status"), "unsupported")
+        self.assertNotIn(
+            "EXACT_BRANCH_MUST_NOT_REPLACE_BASE",
+            (self.generated / query["path"]).read_text(encoding="utf-8"),
+        )
+
+    def test_composite_fragments_and_setup_dependencies_keep_runtime_binding_metadata(self) -> None:
+        self.add_skill("composite", {
+            "type": "composite",
+            "steps": [
+                {"id": "setup", "type": "atomic", "sql": "CREATE VIEW prepared AS SELECT 1 AS value;"},
+                {
+                    "id": "scoped", "type": "atomic", "process_scope": self.scope,
+                    "sql_fragments": ["fragments/effective_target_processes.sql"],
+                    "sql": "SELECT p.* FROM effective_target_processes p JOIN prepared "
+                    "WHERE p.name = '${package}'",
+                },
+            ],
+        })
+        self.export()
+        queries = self.queries("composite")
+        query = queries["composite/scoped"]
+        self.assert_scope_query(query)
+        self.assertEqual(query["sql_dependencies"]["setup_queries"], ["composite/setup"])
+        self.assertEqual(query["sql_dependencies"]["requires"], ["prepared"])
+        self.assertEqual(queries["composite/setup"]["template"].get("runtime_bindings"), [])
+        manifest = json.loads((self.generated / "runtime/skills/composite.json").read_text())
+        self.assertEqual(manifest["steps"][1].get("process_scope"), self.scope)
+
+    def test_identity_metadata_fallback_exports_its_actual_role_and_exact_unavailable(self) -> None:
+        declaration = {
+            "role": "identity_metadata",
+            "exact_unavailable": "No FrameTimeline evidence is available for this UPID; BufferTX names cannot establish exact frame rate or jank.",
+        }
+        self.add_skill("fallback", {
+            "type": "composite", "steps": [
+                {"id": "coverage", "type": "atomic", "save_as": "coverage",
+                 "sql": "SELECT 'not_found' AS target_process_status"},
+                {"id": "fallback_no_frame_timeline", "type": "atomic", "process_scope": declaration,
+                 "sql": "SELECT CASE WHEN ${__process_scope.upid} IS NOT NULL "
+                 "THEN 'unavailable_exact_upid' ELSE '${coverage.data[0].target_process_status}' END AS status, "
+                 "'${package}' AS requested_package"},
+            ],
+        })
+        self.export()
+        query = self.queries("fallback")["fallback/fallback_no_frame_timeline"]
+        self.assertEqual(query.get("process_scope"), declaration)
+        self.assertNotIn("binding", query["process_scope"])
+        self.assertEqual(query["template"]["runtime_bindings"], ["__process_scope.upid"])
+        self.assertEqual(query["template"]["result_dependencies"], ["coverage"])
+        self.assertEqual(query["template"]["parameters"], ["package"])
+        self.assertFalse(query["validation"]["semantic_verified"])
+        manifest = json.loads((self.generated / "runtime/skills/fallback.json").read_text())
+        self.assertEqual(manifest["steps"][1].get("process_scope"), declaration)
+
+    def test_context_declarations_without_reserved_tokens_are_validated_too(self) -> None:
+        for declaration in (
+            {"role": "unknown_role"},
+            {"role": "global_context", "binding": "native_upid"},
+            {"role": "identity_metadata", "exact_unavailable": ""},
+            {"role": "peer_context", "context_fields": {"target": ["value"]}},
+        ):
+            with self.subTest(declaration=declaration):
+                self.catalog["skills"].clear()
+                self.add_skill("invalid", {"process_scope": declaration, "sql": "SELECT 1 AS value"})
+                with self.assertRaises(exporter.ExportError):
+                    self.export()
+
+    def test_reserved_token_defaults_are_not_exportable_even_with_a_valid_target_declaration(self) -> None:
+        for default in ("99", "null", ""):
+            with self.subTest(default=default):
+                self.catalog["skills"].clear()
+                self.add_skill("invalid", {
+                    "process_scope": self.scope, "sql_fragments": ["fragments/effective_target_processes.sql"],
+                    "sql": "SELECT ${__process_scope.upid|" + default + "} AS invalid_upid "
+                    "FROM effective_target_processes WHERE name = '${package}'",
+                })
+                with self.assertRaises(exporter.ExportError):
+                    self.export()
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -45,6 +45,10 @@ if str(SKILL_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SKILL_SCRIPTS))
 
 from runtime.expressions import validate as validate_expression  # noqa: E402
+from _common import (  # noqa: E402
+    is_process_scope_name, reject_process_scope_names, runtime_sql_bindings,
+    sql_template_names, validate_process_scope_declaration,
+)
 SUPPORTED_STEP_TYPES = {
     "atomic",
     "skill",
@@ -1296,6 +1300,8 @@ def query_parameters(sql: str, input_names: set[str], result_names: set[str]) ->
     parameters: set[str] = set()
     results: set[str] = set()
     for expression in _PLACEHOLDER.findall(sql):
+        if is_process_scope_name(expression):
+            continue
         root = re.split(r"[.|\[]", expression.partition("|")[0], maxsplit=1)[0]
         if root in result_names:
             results.add(root)
@@ -1384,6 +1390,7 @@ def normalize_step(
     setup_queries: list[str],
     fixture_assertions: dict[str, list[dict[str, Any]]],
     object_producers: dict[str, str],
+    identity: dict[str, Any] | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any] | None]:
     step_id = safe_component(step.get("id"), f"{skill_id} step")
     step_type = infer_step_type(step, skill_id)
@@ -1395,7 +1402,7 @@ def normalize_step(
             "id", "name", "description", "optional", "on_empty", "condition",
             "save_as", "skill", "params", "source", "item_skill", "item_params",
             "max_items", "filter", "inputs", "rules", "ai_assist", "fallback",
-            "prompt", "for_each",
+            "prompt", "for_each", "process_scope",
         }
     }
     kept["type"] = step_type
@@ -1422,6 +1429,16 @@ def normalize_step(
     )
     dependency_setups = [object_producers[name] for name in required_objects]
     parameters, results = query_parameters(expanded, input_names, result_names)
+    scope = step.get("process_scope")
+    try:
+        runtime_bindings = runtime_sql_bindings(expanded)
+        if "process_scope" in step:
+            validate_process_scope_declaration(scope)
+        elif runtime_bindings:
+            raise ValueError("process scope declaration is required")
+    except ValueError as error:
+        raise ExportError(f"Invalid process scope in {query_id}: {error}") from error
+    identity = identity if identity is not None else {"policy": "none"}
     kept["result_dependencies"] = results
     query = {
         "id": query_id,
@@ -1439,7 +1456,10 @@ def normalize_step(
             "parameters": parameters,
             "result_dependencies": results,
             "fragments": fragment_metadata,
+            "runtime_bindings": runtime_bindings,
+            "name_parameters": sorted(sql_template_names(expanded) & set(identity.get("aliases", []))),
         },
+        "identity": identity,
         "sql_dependencies": {
             "declared_modules": modules,
             "required_tables": [],
@@ -1456,6 +1476,21 @@ def normalize_step(
         "validation": query_validation(query_id, fixture_assertions),
         "license": {"origin": "smartperfetto", "spdx": "AGPL-3.0-or-later"},
     }
+    if scope is not None:
+        query["process_scope"] = scope
+    if "exact_sql" in step:
+        exact = step["exact_sql"]
+        if not isinstance(exact, dict) or not isinstance(exact.get("sql"), str) or not isinstance(exact.get("process_scope"), dict):
+            raise ExportError(f"Invalid exact_sql declaration in {query_id}")
+        try:
+            validate_process_scope_declaration(exact["process_scope"])
+        except ValueError as error:
+            raise ExportError(f"Invalid exact_sql declaration in {query_id}: {error}") from error
+    if "exact_sql" in step or isinstance(scope, dict) and "exact_unavailable" in scope:
+        query["compatibility"]["exact_scope"] = {
+            "status": "unsupported",
+            "reason": "Portable runtime does not issue exact process identity bindings",
+        }
     if created:
         setup_queries.append(query_id)
     return kept, query
@@ -1552,6 +1587,7 @@ def build_runtime_assets(
             for value in input_list
             if isinstance(value, dict) and isinstance(value.get("name"), str)
         }
+        reject_process_scope_names({name: None for name in input_names})
         raw_steps = raw.get("steps", []) or []
         if not isinstance(raw_steps, list):
             raise ExportError(f"Steps must be an array in {skill_id}")
@@ -1564,17 +1600,22 @@ def build_runtime_assets(
             for step in raw_steps
             if isinstance(step, dict) and step.get("save_as")
         }
+        reject_process_scope_names({name: None for name in result_names})
+        identity = raw.get("identity", {"policy": "none"})
         queries: list[dict[str, Any]] = []
         normalized_steps: list[dict[str, Any]] = []
         setup_queries: list[str] = []
         root_query_id: str | None = None
         root_sql = raw.get("sql")
         if isinstance(root_sql, str) and root_sql.strip():
-            root_step = {"id": "root", "type": "atomic", "sql": root_sql}
+            root_step = {
+                "id": "root", "type": "atomic", "sql": root_sql,
+                **{key: raw[key] for key in ("sql_fragments", "process_scope", "exact_sql") if key in raw},
+            }
             normalized_root, query = normalize_step(
                 root_step, skill_id, source, generated_root, entry, commit, modules,
                 input_names, result_names, setup_queries, fixture_assertions,
-                object_producers,
+                object_producers, identity,
             )
             root_query_id = normalized_root["query_id"]
             assert query is not None
@@ -1591,7 +1632,7 @@ def build_runtime_assets(
             normalized, query = normalize_step(
                 raw_step, skill_id, source, generated_root, entry, commit, modules,
                 input_names, result_names, setup_queries, fixture_assertions,
-                object_producers,
+                object_producers, identity,
             )
             normalized_steps.append(normalized)
             if query:
@@ -1649,6 +1690,8 @@ def build_runtime_assets(
                 "signal_patterns": sorted(set(_SIGNAL_PATTERN.findall(sql_text))),
             },
         }
+        if "process_scope" in raw:
+            skill_manifest["process_scope"] = raw["process_scope"]
         skill_relative = f"skills/{safe_component(skill_id, 'Skill')}.json"
         write_json(runtime_root / skill_relative, skill_manifest)
         skills_index[skill_id] = skill_relative

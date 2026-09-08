@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
-Source SHA-256: d38fac137bb6b82c262a19a8090b6648c5b8adede66969c4485a020a268540ac
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 659cdfaf3cf500669e78419fe67b852ef7a84d689f1835dc432529c447e443e1
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Memory Strategy
 
@@ -21,6 +21,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: memory
+classification_description: Memory usage, allocation, garbage collection, pressure, leaks and memory-related process termination.
 priority: 4
 effort: medium
 required_capabilities:
@@ -123,9 +124,9 @@ final_report_contract:
   - id: memory_diagnostic_api_boundary
     label: 内存诊断 API/剖析产物边界
     description: 当用户主动提到 ApplicationExitInfo、ProfilingManager、ProfilingTrigger、heap dump/profile、KOOM 或 APM 时，区分当前 trace 内存证据、退出记录、剖析产物、外部聚合和缺失证据。
-    trigger_patterns:
-    - ApplicationExitInfo|getHistoricalProcessExitReasons|REASON_LOW_MEMORY|REASON_FREEZER|REASON_EXCESSIVE_RESOURCE_USAGE
-    - ProfilingManager|ProfilingTrigger|heap dump|heap profile|Java heap dump|KOOM|APM
+    condition:
+      kind: semantic
+      description: 当问题要求使用进程退出记录、堆转储或剖析结果、内存监控平台等外部诊断材料解释内存现象时适用。
     pattern_groups:
     - - 内存诊断 API/剖析产物边界
       - memory diagnostic API

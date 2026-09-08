@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "callstack_analysis/check_samples",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/callstack_analysis/check_samples.sql",
-      "sha256": "d7f9b73bb1340dd0f571f68f3888abac8ca20a8f414dc44f67b43bec26cfce51",
+      "sha256": "4d0da30ac609adf537f443c5ae68f68cd7827037f481b1447162ad807b71f615",
       "signal_patterns": [],
       "skill_id": "callstack_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/deep/callstack_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc08d54c591a45a1488f7d1064504f08f7d3d2fa95b42eec2a1c6da725ec5f08"
@@ -72,8 +75,10 @@
       "step_id": "check_samples",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "verified",
@@ -133,16 +138,19 @@
         "probe_capabilities": []
       },
       "id": "callstack_analysis/hot_functions",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/callstack_analysis/hot_functions.sql",
-      "sha256": "24f9138b19251983b06095b1d8659b5480c472ccd804b60b336ab008207c2b17",
+      "sha256": "3940bcb098f5c344b5344c676db88270dc6d9fac5f508b87f4ebbadbe07bf9c0",
       "signal_patterns": [],
       "skill_id": "callstack_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/deep/callstack_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc08d54c591a45a1488f7d1064504f08f7d3d2fa95b42eec2a1c6da725ec5f08"
@@ -158,12 +166,14 @@
       "step_id": "hot_functions",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "min_samples"
         ],
         "result_dependencies": [
           "sample_stats"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -221,12 +231,15 @@
         "probe_capabilities": []
       },
       "id": "callstack_analysis/module_distribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/callstack_analysis/module_distribution.sql",
-      "sha256": "5d2a29217eaea3928db4a6707c6c2399c5d07e59c375a58578a860ad16d5cc98",
+      "sha256": "88d94821d0ba8460bad75d0b53cfdd189f9841f4e9d66505178f72ef8975ef74",
       "signal_patterns": [
         "%.apk",
         "%.dex",
@@ -236,7 +249,7 @@
       ],
       "skill_id": "callstack_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/deep/callstack_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc08d54c591a45a1488f7d1064504f08f7d3d2fa95b42eec2a1c6da725ec5f08"
@@ -252,8 +265,10 @@
       "step_id": "module_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -311,19 +326,22 @@
         "probe_capabilities": []
       },
       "id": "callstack_analysis/thread_hotspots",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/callstack_analysis/thread_hotspots.sql",
-      "sha256": "6e4df8eeefede76be55f498c73399033f8b2ad5f3951350eee83ab072beed082",
+      "sha256": "4ea7aa0c4ab6527c27340c5d9e54ce5986f3c6f9ee2c805f409939f73122274a",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "callstack_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/deep/callstack_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc08d54c591a45a1488f7d1064504f08f7d3d2fa95b42eec2a1c6da725ec5f08"
@@ -339,10 +357,12 @@
       "step_id": "thread_hotspots",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -400,16 +420,19 @@
         "probe_capabilities": []
       },
       "id": "callstack_analysis/caller_analysis",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/callstack_analysis/caller_analysis.sql",
-      "sha256": "8c091faa55964ea2a625ffef01171a16dac2755bb75c05bab25f1e9373d03876",
+      "sha256": "7abb9bd00c9e2e15d5a9ad4ef55b12555c91a13091b3bdf2b9a8eea6a9330036",
       "signal_patterns": [],
       "skill_id": "callstack_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/deep/callstack_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc08d54c591a45a1488f7d1064504f08f7d3d2fa95b42eec2a1c6da725ec5f08"
@@ -425,10 +448,12 @@
       "step_id": "caller_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
         "result_dependencies": [
           "hot_functions"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -486,16 +511,19 @@
         "probe_capabilities": []
       },
       "id": "callstack_analysis/analysis_conclusion",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/callstack_analysis/analysis_conclusion.sql",
-      "sha256": "adebe365d0391de63d9e63a3e915d5b5c70c44c072aab7ddf9ec5f2d7a0c5bc7",
+      "sha256": "f693aad69dfd94a54f2f02d4f4159c25f4ced7446fc1f45b13bb97bb85be4417",
       "signal_patterns": [],
       "skill_id": "callstack_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/deep/callstack_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc08d54c591a45a1488f7d1064504f08f7d3d2fa95b42eec2a1c6da725ec5f08"
@@ -511,12 +539,14 @@
       "step_id": "analysis_conclusion",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
         "result_dependencies": [
           "hot_functions",
           "module_distribution",
           "sample_stats"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

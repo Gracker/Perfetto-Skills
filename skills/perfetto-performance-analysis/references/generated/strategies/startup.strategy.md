@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/startup.strategy.md
-Source SHA-256: 8d2ca3e24f6304a5f371b93da0cbeedad3a1eb22d5dfc289ca34e85055ef04e2
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 1292a71aea8432add97d945c7b40f74e9acda10baa0bf4da94d4148c9a4e92d3
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Startup Strategy
 
@@ -21,6 +21,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: startup
+classification_description: Application launch behavior and performance, including launch type and time to initial or full
+  display.
 priority: 2
 effort: medium
 required_capabilities:
@@ -125,9 +127,9 @@ final_report_contract:
   - id: startup_diagnostic_api_boundary
     label: 启动诊断 API/外部指标边界
     description: 当用户主动提到 ApplicationStartInfo、App Performance Score、Vitals、APM 或 A/B 时，区分当前 trace、诊断 API 记录、外部聚合/实验数据、版本/时钟边界和缺失证据。
-    trigger_patterns:
-    - ApplicationStartInfo|getHistoricalProcessStartReasons|STARTUP_STATE|START_TIMESTAMP|START_REASON|START_COMPONENT
-    - App Performance Score|Android Vitals|Play Vitals|Macrobenchmark|online APM|\bAPM\b|A/B|experiment
+    condition:
+      kind: semantic
+      description: 当问题要求解释启动诊断记录、外部性能指标、基准测试或实验结果，或将它们与当前 trace 对照时适用。
     pattern_groups:
     - - 启动诊断 API/外部指标边界
       - startup diagnostic API

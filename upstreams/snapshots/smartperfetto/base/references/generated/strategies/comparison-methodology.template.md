@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/comparison-methodology.template.md
 Source SHA-256: d2234499ab776a677fed95f4b8ee774f89dbf7a3c88a88ddf68b501be39f1657
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Comparison Methodology Template
 

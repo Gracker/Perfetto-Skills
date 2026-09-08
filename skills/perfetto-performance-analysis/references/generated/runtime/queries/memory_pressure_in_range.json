@@ -47,12 +47,15 @@
         "probe_capabilities": []
       },
       "id": "memory_pressure_in_range/memory_pressure_analysis",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_pressure_in_range/memory_pressure_analysis.sql",
-      "sha256": "bd8e0e6705d608c71f7a33aa58af02bffe144521a10a66f52fbf484a88c512bd",
+      "sha256": "40bf9f7b0fdca2ca67d98eebe314aef40d7d76f7cf31b4dcc8372b6029791495",
       "signal_patterns": [
         "%alloc_pages%",
         "%compact%",
@@ -70,7 +73,7 @@
       ],
       "skill_id": "memory_pressure_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/memory_pressure_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "64e35396d604190f06c52c86371844406e7049fc72ae0392d479dd05a6aa417b"
@@ -86,12 +89,14 @@
       "step_id": "memory_pressure_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

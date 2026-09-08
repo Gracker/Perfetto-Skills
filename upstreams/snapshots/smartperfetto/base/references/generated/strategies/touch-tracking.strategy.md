@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/touch-tracking.strategy.md
-Source SHA-256: 0cb21fce3519a16777efa24384c49716b42637164254911521f4feac4b35bc05
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 1d3d35569d7184b4a68b4e1788ba114b46df47d1a142f574164d9ecd052d5931
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Touch Tracking Strategy
 
@@ -21,6 +21,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: touch_tracking
+classification_description: Continuous input-to-display tracking during a gesture, including how closely visual motion follows
+  touch input.
 priority: 3
 effort: medium
 required_capabilities:

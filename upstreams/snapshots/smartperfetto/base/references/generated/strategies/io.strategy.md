@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/io.strategy.md
-Source SHA-256: caa9981eaec7ac91adbedcaacbe12d693bfc4d5694f8c3ede42483b74c3ecc6e
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: bf356da4f3428ba6eb82ab6fabc4db6b9f9d6c19d7fb987c130bdf4c129aef04
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Io Strategy
 
@@ -21,6 +21,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: io
+classification_description: Storage and filesystem activity, disk latency, synchronization and page-fault-related waits.
 priority: 5
 effort: medium
 required_capabilities: []

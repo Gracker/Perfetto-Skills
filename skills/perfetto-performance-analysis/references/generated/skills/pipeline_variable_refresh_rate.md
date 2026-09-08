@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/variable_refresh_rate.skill.yaml
 Source SHA-256: edd77a4cea13be86568ffc8a2e5ef058b0b41ed2341850531c2c9cb8a23b2a23
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 # 可变刷新率 (VRR)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

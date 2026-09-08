@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/dmabuf_analysis.skill.yaml
 -- Source SHA-256: 82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 SELECT
   process_name,

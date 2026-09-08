@@ -47,19 +47,28 @@
         "probe_capabilities": []
       },
       "id": "render_pipeline_latency/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/render_pipeline_latency/query.sql",
-      "sha256": "df13a1c4deafaf45a1e02779f418e52a581e88227102de795aa3c17310b084f5",
+      "process_scope": {
+        "limitations": [
+          "Stage durations are derived from caller-supplied window boundaries, not independently measured thread slices."
+        ],
+        "role": "identity_metadata"
+      },
+      "sha256": "5d6afa3dd8de0dc014291f69bad05a5ec0583b3b34d9b29208d8ec444e581ba2",
       "signal_patterns": [],
       "skill_id": "render_pipeline_latency",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/render_pipeline_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "485299ac47ece0112e0d06665583b421d13314d59be5ff19a7286223dab81d4b"
+        "sha256": "083dd8e100c7544a385b5a41805a1f5b771860f75816ed12b02f7f14768c0231"
       },
       "sql_dependencies": {
         "creates": [],
@@ -74,6 +83,7 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "main_end_ts",
@@ -82,7 +92,8 @@
           "render_start_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

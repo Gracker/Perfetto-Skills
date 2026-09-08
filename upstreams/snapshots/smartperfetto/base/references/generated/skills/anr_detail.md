@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/anr_detail.skill.yaml
-Source SHA-256: e48c73408b2775bed099612d32832cde9f70ca33cd1cc462e0275b1454588359
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 283e74c341c76d3959624287f046bcc7f85e2b7b1cbe1edfab07c544a01660af
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 # ANR 详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -57,7 +57,8 @@ modules:
   description: 进程名
 - name: pid
   type: integer
-  required: true
+  required: false
+  default: 0
   description: 进程 ID
 - name: upid
   type: integer
@@ -94,6 +95,15 @@ modules:
   description: Perfetto 跳转结束时间
 ```
 
+## Identity requirements
+
+```yaml
+policy: verify_if_present
+scope: process
+aliases:
+- process_name
+```
+
 ## Ordered execution
 
 ### 初始化 CPU 拓扑
@@ -118,6 +128,8 @@ optional: true
 ```yaml
 id: anr_info
 type: atomic
+process_scope:
+  role: identity_metadata
 display:
   level: key
   layer: deep
@@ -172,6 +184,11 @@ save_as: anr_basic
 ```yaml
 id: main_thread_quadrant
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
 optional: true
 display:
   level: key
@@ -226,8 +243,6 @@ display:
 params:
   start_ts: ${anr_ts - timeout_ns}
   end_ts: ${anr_ts}
-  upid: ${upid}
-  pid: ${pid}
   package: ${process_name}
   top_k: 10
 save_as: blocking
@@ -241,6 +256,11 @@ save_as: blocking
 ```yaml
 id: render_thread_analysis
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
 display:
   level: key
   layer: deep
@@ -332,6 +352,16 @@ optional: true
 ```yaml
 id: lock_contention
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+  context_fields:
+    peer_context:
+    - blocking_method
+    - blocking_thread_name
+    - waiter_count
+sql_fragments:
+- fragments/effective_target_processes.sql
 display:
   level: key
   layer: deep
@@ -378,6 +408,11 @@ optional: true
 ```yaml
 id: app_freeze_check
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
 optional: true
 display:
   level: detail
@@ -413,6 +448,15 @@ save_as: app_freeze_check
 ```yaml
 id: wakeup_chain
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+  context_fields:
+    peer_context:
+    - waker_thread
+    - waker_process
+sql_fragments:
+- fragments/effective_target_processes.sql
 display:
   level: detail
   layer: deep
@@ -462,8 +506,6 @@ display:
 params:
   start_ts: ${anr_ts - timeout_ns}
   end_ts: ${anr_ts}
-  upid: ${upid}
-  pid: ${pid}
   package: ${process_name}
   min_dur_ns: 1000000
   top_k: 15
@@ -479,6 +521,8 @@ optional: true
 ```yaml
 id: thread_evidence_availability
 type: atomic
+process_scope:
+  role: global_context
 optional: true
 display:
   level: hidden
@@ -493,6 +537,8 @@ save_as: thread_evidence_availability
 ```yaml
 id: direct_blocker_evidence_gap
 type: atomic
+process_scope:
+  role: identity_metadata
 optional: true
 display:
   level: key
@@ -535,6 +581,11 @@ save_as: direct_blocker_gap
 ```yaml
 id: direct_blocker_classification
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
 optional: true
 display:
   level: key
@@ -577,6 +628,8 @@ save_as: direct_blocker_candidates
 ```yaml
 id: direct_blocker_slice_evidence_gap
 type: atomic
+process_scope:
+  role: identity_metadata
 optional: true
 display:
   level: detail
@@ -620,6 +673,11 @@ save_as: direct_blocker_slice_gap
 ```yaml
 id: direct_blocker_slice_classification
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
 optional: true
 condition: thread_evidence_availability.data[0]?.has_thread_track === 1 && thread_evidence_availability.data[0]?.has_slice
   === 1
@@ -663,6 +721,8 @@ save_as: direct_blocker_slice_candidates
 ```yaml
 id: logcat_availability
 type: atomic
+process_scope:
+  role: global_context
 display:
   level: hidden
 save_as: logcat_availability
@@ -677,6 +737,8 @@ optional: true
 ```yaml
 id: anr_logcat_evidence_gap
 type: atomic
+process_scope:
+  role: identity_metadata
 optional: true
 condition: logcat_availability.data[0]?.has_android_logs !== 1
 display:
@@ -710,6 +772,10 @@ save_as: logcat_context_gap
 ```yaml
 id: anr_logcat_context
 type: atomic
+process_scope:
+  role: global_context
+  limitations:
+  - Logcat rows are correlated by event identifiers or message text and do not establish an exact process instance.
 optional: true
 condition: logcat_availability.data[0]?.has_android_logs === 1
 display:

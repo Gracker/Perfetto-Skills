@@ -174,9 +174,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-    "sha256": "898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431"
+    "sha256": "6ebd984e1b34cb456d5fa410b4e2308e350c5854086ec1e06ff58b4c80c5ef4f"
   },
   "steps": [
     {
@@ -189,6 +189,9 @@
     {
       "id": "frame_timeline_check",
       "name": "FrameTimeline 数据源检测",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "scrolling_analysis/frame_timeline_check",
       "result_dependencies": [],
       "save_as": "frame_timeline",
@@ -198,6 +201,18 @@
       "condition": "frame_timeline.data[0]?.has_frame_timeline === 1",
       "id": "vsync_config",
       "name": "Vsync 配置",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "global_context": [
+            "vsync_period_ns",
+            "refresh_rate_hz",
+            "vsync_period_ms",
+            "vsync_source"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/vsync_config",
       "result_dependencies": [],
       "save_as": "environment",
@@ -208,6 +223,10 @@
       "id": "buffer_tx_coverage_probe",
       "name": "BufferTX / FrameTimeline 覆盖探针",
       "optional": true,
+      "process_scope": {
+        "exact_unavailable": "BufferTX track names do not identify a unique UPID; exact process evidence uses FrameTimeline only.",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/buffer_tx_coverage_probe",
       "result_dependencies": [],
       "save_as": "buffer_tx_coverage",
@@ -217,6 +236,17 @@
       "condition": "frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1 && buffer_tx_coverage.data[0]?.coverage_status !== 'target_process_not_found' && buffer_tx_coverage.data[0]?.should_fallback !== 1",
       "id": "performance_summary",
       "name": "帧性能汇总",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "global_context": [
+            "refresh_rate",
+            "vsync_period_ms",
+            "vsync_source"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/performance_summary",
       "result_dependencies": [],
       "save_as": "perf_summary",
@@ -226,6 +256,10 @@
       "condition": "frame_timeline.data[0]?.has_frame_timeline === 1 && buffer_tx_coverage.data[0]?.should_fallback === 1",
       "id": "buffer_tx_performance_fallback",
       "name": "BufferTX 帧率回退",
+      "process_scope": {
+        "exact_unavailable": "BufferTX track names do not identify a unique UPID; exact process evidence uses FrameTimeline only.",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/buffer_tx_performance_fallback",
       "result_dependencies": [],
       "save_as": "perf_summary",
@@ -236,6 +270,9 @@
       "id": "input_data_fallback_view",
       "name": "Input 数据源回退视图",
       "optional": true,
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "scrolling_analysis/input_data_fallback_view",
       "result_dependencies": [],
       "type": "atomic"
@@ -245,6 +282,10 @@
       "id": "input_data_check",
       "name": "Input 数据源检测",
       "optional": true,
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/input_data_check",
       "result_dependencies": [],
       "save_as": "input_data",
@@ -255,6 +296,15 @@
       "id": "input_latency_summary",
       "name": "Input 延迟概览",
       "optional": true,
+      "process_scope": {
+        "binding": "native_upid",
+        "context_fields": {
+          "global_context": [
+            "frame_budget_ms"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/input_latency_summary",
       "result_dependencies": [],
       "save_as": "input_latency",
@@ -265,6 +315,10 @@
       "id": "expert_analysis_window",
       "name": "专家分析窗口",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/expert_analysis_window",
       "result_dependencies": [],
       "save_as": "expert_window",
@@ -289,6 +343,10 @@
       "condition": "frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1",
       "id": "jank_type_stats",
       "name": "掉帧类型统计",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/jank_type_stats",
       "result_dependencies": [
         "buffer_tx_coverage"
@@ -300,6 +358,10 @@
       "condition": "frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1",
       "id": "scroll_sessions",
       "name": "滑动区间列表",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/scroll_sessions",
       "result_dependencies": [],
       "save_as": "sessions",
@@ -310,6 +372,15 @@
       "id": "session_stats_batch",
       "name": "滑动区间统计（批量）",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "global_context": [
+            "cpu_freq_json"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/session_stats_batch",
       "result_dependencies": [],
       "save_as": "session_stats",
@@ -320,6 +391,10 @@
       "id": "session_jank",
       "name": "区间掉帧统计",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/session_jank",
       "result_dependencies": [],
       "save_as": "session_jank_data",
@@ -329,6 +404,10 @@
       "condition": "frame_timeline.data[0]?.has_frame_timeline === 1 && environment?.data?.[0]?.has_data === 1 && ((perf_summary?.data?.[0]?.janky_frames || 0) > 0 || (jank_stats?.data?.[0]?.real_jank_count || 0) > 0)",
       "id": "get_app_jank_frames",
       "name": "获取真正掉帧帧",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/get_app_jank_frames",
       "result_dependencies": [],
       "save_as": "app_jank_frames",
@@ -339,6 +418,25 @@
       "id": "batch_frame_root_cause",
       "name": "掉帧列表（含根因分类）",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "global_context": [
+            "big_avg_freq_mhz",
+            "big_max_freq_mhz",
+            "ramp_ms",
+            "frame_budget_ms",
+            "vsync_source",
+            "device_peak_freq_mhz",
+            "cpu_freq_clusters_json",
+            "freq_timeline_json"
+          ],
+          "peer_context": [
+            "binder_calls_json"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/batch_frame_root_cause",
       "result_dependencies": [
         "buffer_tx_coverage"
@@ -350,6 +448,23 @@
       "id": "global_context_flags",
       "name": "全局上下文标志",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "global_context": [
+            "video_during_scroll",
+            "video_slice_count",
+            "trace_peak_freq_mhz",
+            "tail_min_freq_mhz",
+            "thermal_trending"
+          ],
+          "peer_context": [
+            "non_app_big_core_pct",
+            "background_cpu_heavy"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/global_context_flags",
       "result_dependencies": [],
       "save_as": "global_context",
@@ -360,6 +475,10 @@
       "id": "session_quadrant_summary",
       "name": "滑动过程四象限分布",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/session_quadrant_summary",
       "result_dependencies": [],
       "save_as": "session_quadrant",
@@ -370,6 +489,9 @@
       "id": "session_cpu_freq",
       "name": "滑动过程 CPU 频率",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "scrolling_analysis/session_cpu_freq",
       "result_dependencies": [],
       "save_as": "session_freq",
@@ -380,6 +502,10 @@
       "id": "session_thread_core_affinity",
       "name": "关键线程大小核分布",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/session_thread_core_affinity",
       "result_dependencies": [],
       "save_as": "session_core_affinity",
@@ -390,6 +516,10 @@
       "id": "root_cause_classification",
       "name": "根因分类",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scrolling_analysis/root_cause_classification",
       "result_dependencies": [],
       "save_as": "conclusion",
@@ -399,6 +529,10 @@
       "condition": "frame_timeline.data[0]?.has_frame_timeline === 0 || (environment?.data?.[0]?.has_data !== 1 && (perf_summary?.data?.[0]?.total_frames || 0) === 0)",
       "id": "fallback_no_frame_timeline",
       "name": "数据源不可用提示",
+      "process_scope": {
+        "exact_unavailable": "No FrameTimeline evidence is available for this UPID; BufferTX names cannot establish exact frame rate or jank.",
+        "role": "identity_metadata"
+      },
       "query_id": "scrolling_analysis/fallback_no_frame_timeline",
       "result_dependencies": [
         "buffer_tx_coverage"

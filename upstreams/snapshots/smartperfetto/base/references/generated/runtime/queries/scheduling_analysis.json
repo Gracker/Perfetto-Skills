@@ -47,19 +47,22 @@
         "probe_capabilities": []
       },
       "id": "scheduling_analysis/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scheduling_analysis/query.sql",
-      "sha256": "264c554f7851a90cfdb2e5c9c5fbe2a864085f3937f38c79d18d08dd41f240a1",
+      "sha256": "dc49dc1ef0b7ad9b6aacd50cdde6854d1848613bd342e56d4303afd40ee95040",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "scheduling_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/scheduling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8e315933d2728d1e6f812ae3c548dd938ad3442d70ffbbfca1e05a9fcc39e853"
@@ -77,12 +80,14 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

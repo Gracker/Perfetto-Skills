@@ -47,16 +47,25 @@
         "probe_capabilities": []
       },
       "id": "code_pinpoint/hot_slices",
+      "identity": {
+        "aliases": [
+          "package",
+          "process_name"
+        ],
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/code_pinpoint/hot_slices.sql",
-      "sha256": "f98b43bf9d10772340ba5f3833208f62d47db38e3fbceb07ea0a7a2714a2456a",
+      "sha256": "14af88a8e7bbdd0ee57435c5ae9beb63ce16aeda4987bb92655cee8f59aae803",
       "signal_patterns": [],
       "skill_id": "code_pinpoint",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/code_pinpoint.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c2560c8a63a870cc090ef0176632c2c572fd52bb4301adaa16342cbb651204ce"
@@ -75,12 +84,16 @@
       "step_id": "hot_slices",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -138,16 +151,25 @@
         "probe_capabilities": []
       },
       "id": "code_pinpoint/native_symbols",
+      "identity": {
+        "aliases": [
+          "package",
+          "process_name"
+        ],
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/code_pinpoint/native_symbols.sql",
-      "sha256": "c7c2de42c6290a2c1b7187f1ecf9008fb2db3564630af1b39621bc90dc2cb17b",
+      "sha256": "bd530b6a5e17f88fd23944f98ae1e3896ee74a298b40add83ab67d65bd53db3f",
       "signal_patterns": [],
       "skill_id": "code_pinpoint",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/code_pinpoint.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c2560c8a63a870cc090ef0176632c2c572fd52bb4301adaa16342cbb651204ce"
@@ -166,12 +188,16 @@
       "step_id": "native_symbols",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

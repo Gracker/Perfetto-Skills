@@ -1,9 +1,20 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 6ebd984e1b34cb456d5fa410b4e2308e350c5854086ec1e06ff58b4c80c5ef4f
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 -- Fragment: vsync_config
 -- Estimates VSync period using scoped then trace-wide VSYNC/FrameTimeline evidence.
 -- The explicit 16.67ms default is used only when the trace has no usable timing evidence.
@@ -85,9 +96,9 @@ vsync_config AS (
 frame_count AS (
   SELECT COUNT(*) as total_frames
   FROM actual_frame_timeline_slice a
-  LEFT JOIN process p ON a.upid = p.upid
+  JOIN effective_target_processes p ON a.upid = p.upid
   WHERE (
-      '${package}' = ''
+      ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
       OR p.name = '${package}'
       OR p.name GLOB '${package}:*'
     )

@@ -50,12 +50,15 @@
         ]
       },
       "id": "frame_production_gap/gap_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/frame_production_gap/gap_summary.sql",
-      "sha256": "476b48427e5aa8cbac8cba84e43ef6842640c9923479eefd61d894352fa98eaa",
+      "sha256": "f4ae362e376424fcb48293ba67ace1c4118adddaeba32994851c6f85d1a9c5e5",
       "signal_patterns": [
         "${process_name}*",
         "Choreographer#doFrame%",
@@ -66,7 +69,7 @@
       ],
       "skill_id": "frame_production_gap",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/frame_production_gap.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "3c2acc9ac336d6298038424ccd0591a13b9b569accff00c49d1b5fe05ab4c7a6"
@@ -87,13 +90,15 @@
       "step_id": "gap_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "min_gap_vsync",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -154,12 +159,15 @@
         ]
       },
       "id": "frame_production_gap/gap_list",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/frame_production_gap/gap_list.sql",
-      "sha256": "3bd27f5521c56851711cc0e8e569b39c3680be8fba9ed48265b86974fd8633f1",
+      "sha256": "1a157d1202b4715dbdee09779248e421fcb32570083c29d8c0ece2a0a48536c8",
       "signal_patterns": [
         "${process_name}*",
         "Choreographer#doFrame%",
@@ -170,7 +178,7 @@
       ],
       "skill_id": "frame_production_gap",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/frame_production_gap.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "3c2acc9ac336d6298038424ccd0591a13b9b569accff00c49d1b5fe05ab4c7a6"
@@ -191,13 +199,15 @@
       "step_id": "gap_list",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "min_gap_vsync",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

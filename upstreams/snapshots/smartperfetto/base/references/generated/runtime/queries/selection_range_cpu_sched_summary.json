@@ -49,16 +49,19 @@
         ]
       },
       "id": "selection_range_cpu_sched_summary/running_thread_quadrants",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/selection_range_cpu_sched_summary/running_thread_quadrants.sql",
-      "sha256": "67660c7cf23fb69322f7cc3899a724e3189920d14904feee494c2565be86d90e",
+      "sha256": "00a8ae0c4b81ee535c770d1063bb79dfdf501a084c1e403454d6308ceef1ba66",
       "signal_patterns": [],
       "skill_id": "selection_range_cpu_sched_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "31127ebb648421f06248c4ceb054d614d12df318c63b0a652a41f341b556310e"
@@ -84,6 +87,7 @@
       "step_id": "running_thread_quadrants",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
@@ -91,7 +95,8 @@
           "thread_name",
           "top_k"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -151,16 +156,19 @@
         ]
       },
       "id": "selection_range_cpu_sched_summary/running_process_ranking",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/selection_range_cpu_sched_summary/running_process_ranking.sql",
-      "sha256": "5c07dd96b24b6cd5fb34709a39b06053922bc94f82d9237df443d357d36841ec",
+      "sha256": "d2ff20520e6e281e9c658408c0094bb17326539424b71fc5c0e78ccbbe19ea95",
       "signal_patterns": [],
       "skill_id": "selection_range_cpu_sched_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "31127ebb648421f06248c4ceb054d614d12df318c63b0a652a41f341b556310e"
@@ -182,6 +190,7 @@
       "step_id": "running_process_ranking",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
@@ -189,7 +198,8 @@
           "thread_name",
           "top_k"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -249,18 +259,21 @@
         ]
       },
       "id": "selection_range_cpu_sched_summary/cpu_freq_by_core",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/selection_range_cpu_sched_summary/cpu_freq_by_core.sql",
-      "sha256": "4b52b639bb9b4027487510387dc7288391365602fe24363031362cad1ebf84cc",
+      "sha256": "f23b86195cf5960b918ca64fa3c0fad17c63d77abe350dae79f259dad17d367c",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "selection_range_cpu_sched_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "31127ebb648421f06248c4ceb054d614d12df318c63b0a652a41f341b556310e"
@@ -286,11 +299,13 @@
       "step_id": "cpu_freq_by_core",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -350,18 +365,21 @@
         ]
       },
       "id": "selection_range_cpu_sched_summary/cpu_freq_distribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/selection_range_cpu_sched_summary/cpu_freq_distribution.sql",
-      "sha256": "2f910e13b08b76c15075c990e73589c22a67cf8ea03a46647498375a842dff79",
+      "sha256": "77d05272bd5e972a168d2411a05c0a2c1f8523ca23431c06957e8a34488852b7",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "selection_range_cpu_sched_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "31127ebb648421f06248c4ceb054d614d12df318c63b0a652a41f341b556310e"
@@ -387,12 +405,14 @@
       "step_id": "cpu_freq_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "freq_bucket_mhz",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

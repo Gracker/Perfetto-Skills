@@ -1,3 +1,4 @@
+import hashlib
 import json
 from pathlib import Path
 import unittest
@@ -107,7 +108,43 @@ class V02ContractTest(unittest.TestCase):
         runtime = GENERATED / "runtime"
         fragments = sorted((runtime / "fragments").glob("*.sql"))
         overrides = sorted((runtime / "vendor-overrides").glob("*.json"))
-        self.assertEqual(len(fragments), 6)
+        catalog = json.loads(
+            (ROOT / "catalog/smartperfetto-export.json").read_text(encoding="utf-8")
+        )
+        exported_fragments = [
+            entry for entry in catalog["sql_fragments"]
+            if entry["disposition"] == "exported"
+        ]
+        destinations = [entry["destination"] for entry in exported_fragments]
+        self.assertEqual(len(destinations), len(set(destinations)))
+        self.assertEqual(
+            set(destinations),
+            {path.relative_to(SKILL).as_posix() for path in fragments},
+        )
+        self.assertTrue(
+            {
+                "effective_target_processes.sql",
+                "target_threads.sql",
+                "thread_states_quadrant.sql",
+                "vsync_config.sql",
+            }.issubset({path.name for path in fragments})
+        )
+        lock = json.loads(
+            (ROOT / "upstreams/smartperfetto.lock.json").read_text(encoding="utf-8")
+        )
+        manifest = json.loads(
+            (ROOT / "upstreams" / lock["generated_base_manifest"]).read_text(
+                encoding="utf-8"
+            )
+        )
+        for entry in exported_fragments:
+            self.assertRegex(entry["source_sha256"], r"^[0-9a-f]{64}$")
+        for fragment in fragments:
+            with self.subTest(fragment=fragment.name):
+                self.assertEqual(
+                    hashlib.sha256(fragment.read_bytes()).hexdigest(),
+                    manifest["files"][fragment.relative_to(GENERATED).as_posix()]["sha256"],
+                )
         self.assertEqual(len(overrides), 8)
         self.assertTrue(all("advisory_only" in path.read_text() for path in overrides))
 

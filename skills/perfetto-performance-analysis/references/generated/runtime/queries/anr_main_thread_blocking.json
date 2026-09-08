@@ -49,18 +49,21 @@
         ]
       },
       "id": "anr_main_thread_blocking/main_thread_state",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/main_thread_state.sql",
-      "sha256": "274355d5cbb82e4c2e8c1ba73001c11b3a09b69b29eab0d45aff6f6215c48bc9",
+      "sha256": "99e7ae2d5087fd2e914d6884e522f5c211f8f8288af2eb315c6c5b6393114164",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
@@ -83,13 +86,15 @@
       "step_id": "main_thread_state",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "anr_ts",
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -149,18 +154,21 @@
         ]
       },
       "id": "anr_main_thread_blocking/blocked_functions",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/blocked_functions.sql",
-      "sha256": "6f74269e9584973290575ad26905c8fb74f0fe927bf943203b0af966a8fa5b10",
+      "sha256": "a7e033f840978125d6f3815685bd1c424f0d591fff7a2c50d6d6bf2de8ad94b2",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
@@ -183,13 +191,15 @@
       "step_id": "blocked_functions",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "anr_ts",
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -249,18 +259,21 @@
         ]
       },
       "id": "anr_main_thread_blocking/wakeup_chain",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/wakeup_chain.sql",
-      "sha256": "0a01ec18a4fdde2d689c985e2fb291cde42551b377ecf2efaff4511f53f64e74",
+      "sha256": "7323b28b698a3086ef2e8f9f7a7ff8e03e41aab6ceaf844883c1d8d787aafc10",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
@@ -283,13 +296,15 @@
       "step_id": "wakeup_chain",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "anr_ts",
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -349,18 +364,21 @@
         ]
       },
       "id": "anr_main_thread_blocking/binder_blocking",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/binder_blocking.sql",
-      "sha256": "944550986bd987344b276e9be2694c0cb6aa06467a3548d260a5c46bbfe639ed",
+      "sha256": "f2ba304f164f1db2698bd8fa5a96af3b3f97da7842b7754f01980889410b71ef",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
@@ -383,13 +401,15 @@
       "step_id": "binder_blocking",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "anr_ts",
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -449,19 +469,22 @@
         ]
       },
       "id": "anr_main_thread_blocking/lock_contention",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/lock_contention.sql",
-      "sha256": "cc5ec9932635f8767797df3ae4aecaca6d1e076fe45fab57d01e18cfa9cd9634",
+      "sha256": "57d94b4acd3a5753bbd1735724793068ad8c72a89f991244cff0dfc06548cbd5",
       "signal_patterns": [
         "${process_name}*",
         "*futex*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
@@ -484,13 +507,15 @@
       "step_id": "lock_contention",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "anr_ts",
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

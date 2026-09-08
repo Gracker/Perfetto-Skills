@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "cpu_cluster_mapping_view/cluster_mapping",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_cluster_mapping_view/cluster_mapping.sql",
-      "sha256": "39bd3778cdcbc16b73c9e205570c45a2cc8220c3337c098e211a3b4617d46cda",
+      "sha256": "dd0258999697a34df84ab00482ffccc73533e587542d9dbe2daa7e81c206f00c",
       "signal_patterns": [],
       "skill_id": "cpu_cluster_mapping_view",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_cluster_mapping_view.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c5d603b71661230ea7d4c4b626a8e6e9d6ecb6844f83d8d215feb9429bf19fb1"
@@ -74,8 +77,10 @@
       "step_id": "cluster_mapping",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

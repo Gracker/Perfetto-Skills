@@ -55,12 +55,15 @@
         "probe_capabilities": []
       },
       "id": "startup_slow_reasons/startup_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_slow_reasons/startup_overview.sql",
-      "sha256": "c131d1b544396cea01c0f5597006c5ea336949c8c184636ce713427f7911de1b",
+      "sha256": "5c7a5670562e850f356269da3b7a34bce8f5971ab874689f2d7c036f327f3153",
       "signal_patterns": [
         "bindApplication",
         "handleRelaunchActivity*",
@@ -69,7 +72,7 @@
       ],
       "skill_id": "startup_slow_reasons",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58"
@@ -88,8 +91,10 @@
       "step_id": "startup_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "verified",
@@ -153,12 +158,15 @@
         "probe_capabilities": []
       },
       "id": "startup_slow_reasons/slow_reason_checks",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_slow_reasons/slow_reason_checks.sql",
-      "sha256": "cb2cedf34b1a3e98144c156ab58baacb68879b2e55d28faa9d26e5857dd28a1b",
+      "sha256": "e02f743970b058d9b9d70acd55fd3d9400fdb014025ad2b2805983777e55d010",
       "signal_patterns": [
         "*GC*",
         "*Lock contention*",
@@ -186,7 +194,7 @@
       ],
       "skill_id": "startup_slow_reasons",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58"
@@ -205,10 +213,12 @@
       "step_id": "slow_reason_checks",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
         "result_dependencies": [
           "startup_overview"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

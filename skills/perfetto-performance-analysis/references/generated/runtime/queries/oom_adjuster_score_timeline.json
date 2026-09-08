@@ -47,18 +47,21 @@
         "probe_capabilities": []
       },
       "id": "oom_adjuster_score_timeline/oom_intervals",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/oom_adjuster_score_timeline/oom_intervals.sql",
-      "sha256": "ef53ee162a0d5906aae1b2aac2eb94353b44dd21e8c4f6e77ab93e73e01c8d1a",
+      "sha256": "641dcebf388900895de340d44cdc874fc8f7aa280f3ea4e3ca9f1713c57339a9",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "oom_adjuster_score_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/oom_adjuster_score_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c955d048f6d17e0c4063656ab3f1b2468226e04ce68b76ef596f479b158bb973"
@@ -76,12 +79,14 @@
       "step_id": "oom_intervals",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

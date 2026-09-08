@@ -47,18 +47,21 @@
         "probe_capabilities": []
       },
       "id": "vsync_phase_alignment/vsync_timeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_phase_alignment/vsync_timeline.sql",
-      "sha256": "4d5424dd9d41dd166c35621fcfc54f5654b73bc728814b9ba526a61881a38fcb",
+      "sha256": "02437c4b9941b2d2986254b6ea14475fe9c6dad67e96665d126374aecad53d51",
       "signal_patterns": [
         "VSYNC-app"
       ],
       "skill_id": "vsync_phase_alignment",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c"
@@ -76,8 +79,10 @@
       "step_id": "vsync_timeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -135,12 +140,15 @@
         "probe_capabilities": []
       },
       "id": "vsync_phase_alignment/phase_analysis",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_phase_alignment/phase_analysis.sql",
-      "sha256": "9ec8005b4b01c1836f7853a888b9d4ddb5ce7a5669f5b6ea2601955eb531ad44",
+      "sha256": "6b6cfd8f7ef443c69da89412a0ed7e1de9c1391bfd1e592c5ae02d394ee4b6c2",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -148,7 +156,7 @@
       ],
       "skill_id": "vsync_phase_alignment",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c"
@@ -170,12 +178,14 @@
       "step_id": "phase_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -233,12 +243,15 @@
         "probe_capabilities": []
       },
       "id": "vsync_phase_alignment/phase_distribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_phase_alignment/phase_distribution.sql",
-      "sha256": "8778cca77d4b745fcd92e43c2cfbf7709521fbf64523026df97f07325b09d03f",
+      "sha256": "eaa7c98912234b8174a26697857d807a45f99147d3f3f797bf6faf5887534e6b",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -246,7 +259,7 @@
       ],
       "skill_id": "vsync_phase_alignment",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c"
@@ -268,12 +281,14 @@
       "step_id": "phase_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

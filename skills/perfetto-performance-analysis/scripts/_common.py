@@ -15,7 +15,9 @@ import shutil
 import subprocess
 import tempfile
 import time
+import weakref
 from collections.abc import Callable, Mapping
+from typing import Any
 
 
 DEFAULT_PERFETTO_VERSION = "v57.2"
@@ -32,6 +34,232 @@ class QueryResult:
     stderr: str
     returncode: int
     command: tuple[str, ...]
+
+
+@dataclass(frozen=True, eq=False)
+class RuntimeProcessScope:
+    """An in-process binding; serialized fields cannot reissue its authority."""
+
+    kind: str
+    trace_sha256: str
+    trace_side: str
+    target: str | None
+    selectors: tuple[tuple[str, object], ...]
+    name_parameters: tuple[str, ...]
+    roles: tuple[str, ...]
+
+
+_issued_process_scopes: weakref.WeakSet[RuntimeProcessScope] = weakref.WeakSet()
+PROCESS_SCOPE_ROLES = frozenset({"target", "global_context", "peer_context", "identity_metadata"})
+
+
+def validate_process_scope_declaration(declaration: object) -> str:
+    if not isinstance(declaration, Mapping) or set(declaration) - {
+        "role", "binding", "context_fields", "exact_unavailable", "limitations",
+    }:
+        raise ValueError("invalid process scope declaration")
+    role = declaration.get("role")
+    if not isinstance(role, str) or role not in PROCESS_SCOPE_ROLES:
+        raise ValueError("unknown process scope role")
+    if "exact_unavailable" in declaration and (
+        not isinstance(declaration["exact_unavailable"], str) or not declaration["exact_unavailable"].strip()
+    ):
+        raise ValueError("exact_unavailable requires an authored reason")
+    if role == "target":
+        if "binding" in declaration and (
+            not isinstance(declaration["binding"], str)
+            or declaration["binding"] not in {"native_upid", "effective_target_processes"}
+        ):
+            raise ValueError("unsupported target binding")
+        if "binding" not in declaration and "exact_unavailable" not in declaration:
+            raise ValueError("target scope requires binding or explicit unavailability")
+    elif "binding" in declaration:
+        raise ValueError("context scope cannot claim a target binding")
+    fields = declaration.get("context_fields", {})
+    if not isinstance(fields, Mapping) or any(
+        name not in PROCESS_SCOPE_ROLES - {"target"}
+        or not isinstance(values, list)
+        or any(not isinstance(value, str) or not value.strip() for value in values)
+        for name, values in fields.items()
+    ):
+        raise ValueError("invalid context fields")
+    limitations = declaration.get("limitations", [])
+    if not isinstance(limitations, list) or any(not isinstance(value, str) or not value.strip() for value in limitations):
+        raise ValueError("invalid scope limitations")
+    return role
+
+
+def is_process_scope_name(name: object) -> bool:
+    return isinstance(name, str) and name.split(".", 1)[0].split("[", 1)[0] == "__process_scope"
+
+
+def reject_process_scope_names(values: Mapping[str, object]) -> None:
+    if any(is_process_scope_name(name) for name in values):
+        raise ValueError("reserved runtime process scope cannot be supplied as data")
+
+
+def sql_template_expressions(template: str) -> set[str]:
+    """Read complete placeholders, including quoted values but excluding comments."""
+    expressions: set[str] = set()
+    for match in re.finditer(r"--[^\n]*|/\*.*?\*/|'(?:''|[^'])*'|\$\{[^}]*\}", template, re.DOTALL):
+        token = match.group(0)
+        if token.startswith(("--", "/*")):
+            continue
+        expressions.update(re.findall(r"\$\{([^}]*)\}", token))
+    return expressions
+
+
+def sql_template_names(template: str) -> set[str]:
+    return {expression.partition("|")[0] for expression in sql_template_expressions(template)}
+
+
+def runtime_sql_bindings(template: str) -> list[str]:
+    bindings: set[str] = set()
+    for expression in sql_template_expressions(template):
+        name, separator, _default = expression.partition("|")
+        if is_process_scope_name(name):
+            if name != "__process_scope.upid" or separator:
+                raise ValueError("unsupported runtime process scope placeholder")
+            bindings.add(name)
+    return sorted(bindings)
+
+
+def bind_runtime_process_scope(
+    identity_result: Mapping[str, object],
+    *,
+    identity_policy: Mapping[str, object],
+    parameters: Mapping[str, object],
+    supplied_parameters: Mapping[str, object],
+    name_parameters: list[str],
+    trace_sha256: str,
+    trace_side: str,
+    scope_roles: tuple[str, ...] = ("target",),
+) -> RuntimeProcessScope:
+    reject_process_scope_names(parameters)
+    reject_process_scope_names(supplied_parameters)
+    if not scope_roles or any(not isinstance(role, str) or role not in PROCESS_SCOPE_ROLES for role in scope_roles):
+        raise ValueError("invalid process scope roles")
+    if not re.fullmatch(r"[0-9a-f]{64}", trace_sha256) or not trace_side:
+        raise ValueError("runtime process scope requires current trace identity")
+    for selector in ("upid", "pid"):
+        if selector in supplied_parameters:
+            raise ValueError("explicit process selectors are unsupported by the portable scope binding")
+        if parameters.get(selector) not in (None, 0):
+            raise ValueError("exact process scope is unsupported")
+    policy = identity_policy.get("policy")
+    aliases = identity_policy.get("aliases", [])
+    if not isinstance(aliases, list) or not all(isinstance(name, str) for name in aliases):
+        raise ValueError("invalid identity aliases")
+    selector_names = sorted(set(aliases) | set(name_parameters) | {"upid", "pid"})
+    names = set(aliases) | set(name_parameters)
+    values = {name: parameters.get(name) for name in names if parameters.get(name) not in (None, "")}
+    status = identity_result.get("status")
+    target = identity_result.get("target")
+    if status == "resolved":
+        if policy not in {"required", "verify_if_present"} or not isinstance(target, str) or not target:
+            raise ValueError("named process scope requires resolved identity")
+        if "target" in scope_roles and not any(parameters.get(name) == target for name in name_parameters):
+            raise ValueError("named process scope requires a consumed target name")
+        if any(value != target for value in values.values()):
+            raise ValueError("conflicting process names")
+        kind = "named"
+    elif (
+        status == "not_requested" and policy == "verify_if_present"
+        or status == "exempt" and policy in {"none", "exempt"}
+    ) and not values:
+        kind, target = "unscoped", None
+    else:
+        raise ValueError("process scope identity is unavailable")
+    scope = RuntimeProcessScope(
+        kind, trace_sha256, trace_side, target,
+        tuple((name, parameters.get(name)) for name in selector_names),
+        tuple(name_parameters),
+        tuple(scope_roles),
+    )
+    _issued_process_scopes.add(scope)
+    return scope
+
+
+def _process_scope_value(
+    scope: RuntimeProcessScope | None,
+    parameters: Mapping[str, object],
+    results: Mapping[str, object],
+    template_names: set[str],
+    trace_sha256: str | None,
+    trace_side: str | None,
+) -> None:
+    if not isinstance(scope, RuntimeProcessScope) or scope not in _issued_process_scopes:
+        raise ValueError("runtime-issued process scope is required")
+    if scope.trace_sha256 != trace_sha256 or scope.trace_side != trace_side:
+        raise ValueError("process scope trace or side mismatch")
+    if any(parameters.get(name) != value for name, value in scope.selectors):
+        raise ValueError("process scope selectors changed after binding")
+    if any(name in results for name, _value in scope.selectors):
+        raise ValueError("saved results cannot shadow process scope selectors")
+    if scope.kind == "named" and "target" in scope.roles and not any(
+        name in template_names and parameters.get(name) == scope.target
+        for name in scope.name_parameters
+    ):
+        raise ValueError("named process scope requires its SQL name parameter")
+    # Only target measurements require a name predicate. Context declarations
+    # retain their role; resolved run identity does not make their rows targets.
+    return None
+
+
+def resolve_identity(
+    skill: Mapping[str, Any],
+    params: Mapping[str, Any],
+    *,
+    trace: Path,
+    trace_processor: str | None,
+    timeout: float,
+    max_output_bytes: int,
+) -> dict[str, Any]:
+    config = skill.get("identity", {}) or {"policy": "none"}
+    policy = str(config.get("policy", "none"))
+    if policy in {"none", "exempt"}:
+        return {"status": "exempt", "policy": policy}
+    aliases = [str(value) for value in config.get("aliases", [])]
+    target_name = next(
+        (str(params[name]) for name in aliases if params.get(name) not in (None, "")),
+        None,
+    )
+    if target_name is None:
+        return {"status": "not_requested", "policy": policy, "aliases": aliases}
+    query = f"""
+SELECT upid, pid, name, start_ts, end_ts
+FROM process
+WHERE name = {sql_literal(target_name)} OR name GLOB {sql_literal(target_name + ':*')}
+ORDER BY CASE WHEN name = {sql_literal(target_name)} THEN 0 ELSE 1 END, start_ts;
+""".strip()
+    rows = parse_csv_output(
+        run_query(
+            trace,
+            sql=query,
+            trace_processor=trace_processor,
+            timeout=timeout,
+            max_output_bytes=max_output_bytes,
+        ).stdout
+    )
+    exact = [row for row in rows if row.get("name") == target_name]
+    candidates = exact or rows
+    if len(candidates) == 1:
+        candidate = candidates[0]
+        return {
+            "status": "resolved",
+            "policy": policy,
+            "target": target_name,
+            "upid": candidate.get("upid"),
+            "pid": candidate.get("pid"),
+            "process_name": candidate.get("name"),
+            "lifetime": {"start_ns": candidate.get("start_ts"), "end_ns": candidate.get("end_ts")},
+        }
+    return {
+        "status": "not_found" if not candidates else "ambiguous",
+        "policy": policy,
+        "target": target_name,
+        "candidates": candidates,
+    }
 
 
 def runtime_platform_key(
@@ -364,8 +592,15 @@ def render_sql_template(
     template: str,
     parameters: Mapping[str, object],
     results: Mapping[str, object],
+    *,
+    process_scope: RuntimeProcessScope | None = None,
+    trace_sha256: str | None = None,
+    trace_side: str | None = None,
 ) -> str:
+    reject_process_scope_names(parameters)
+    reject_process_scope_names(results)
     output: list[str] = []
+    template_names: set[str] | None = None
     index = 0
     state = "normal"
     while index < len(template):
@@ -402,6 +637,16 @@ def render_sql_template(
             name, separator, raw_default = expression.partition("|")
             if not name:
                 raise ValueError("empty SQL template placeholder")
+            if is_process_scope_name(name):
+                if name != "__process_scope.upid" or separator or state == "string":
+                    raise ValueError("unsupported runtime process scope placeholder")
+                if template_names is None:
+                    template_names = sql_template_names(template)
+                output.append(sql_literal(_process_scope_value(
+                    process_scope, parameters, results, template_names, trace_sha256, trace_side,
+                )))
+                index = end + 1
+                continue
             matched_result, is_relation, result_value = resolve_result_expression(
                 name, results
             )

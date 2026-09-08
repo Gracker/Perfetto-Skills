@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "linux_process_rss_swap_timeline/rss_swap_peaks",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/linux_process_rss_swap_timeline/rss_swap_peaks.sql",
-      "sha256": "98823cf6eb84c788e4b997053f9b366f23ef3f7310712fe3adc936b49cb536a6",
+      "sha256": "9737b4e517822d661b47996a1beb081c5ed7216d76067f92530133253d734036",
       "signal_patterns": [],
       "skill_id": "linux_process_rss_swap_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/linux_process_rss_swap_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4e9734f2e05a2e53ac4713dd8f51e7c0c93911207208fa847a936c48930a2b27"
@@ -74,13 +77,15 @@
       "step_id": "rss_swap_peaks",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

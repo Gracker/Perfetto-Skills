@@ -28,7 +28,20 @@ class UpstreamLockTest(unittest.TestCase):
         android = load_and_validate_android_skills_lock(
             ROOT / "upstreams/android-skills.lock.json"
         )
-        self.assertEqual(smart["commit"], "5ef82a7c8d215414a569c1f857d6a693fa51612f")
+        self.assertRegex(smart["commit"], r"^[0-9a-f]{40}$")
+        catalog = json.loads(
+            (ROOT / "catalog/smartperfetto-export.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(catalog["source"]["commit"], smart["commit"])
+        self.assertEqual(catalog["source"]["repository"], smart["repository"])
+        self.assertEqual(catalog["source"]["policy_sha256"], smart["policy_sha256"])
+        self.assertIs(catalog["source"]["dirty"], False)
+        base_catalog = json.loads(
+            (ROOT / "upstreams" / smart["generated_base_root"] / "catalog.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(base_catalog["source_commit"], smart["commit"])
         self.assertEqual(google["schema_version"], 2)
         self.assertEqual(google["official_reference"]["tag"], "v58.2")
         self.assertEqual(

@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/trace_time_range",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/trace_time_range.sql",
-      "sha256": "937aca3b946ad4bda95c56f37518fadac2233fc83f11f8bba53093ccbd7e906a",
+      "sha256": "f45a51244ecd66435b91dfdf3bfe772b845bd15169b54fa7c71c5fd36a0a6eb6",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -80,8 +83,10 @@
       "step_id": "trace_time_range",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -139,16 +144,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/table_availability",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/table_availability.sql",
-      "sha256": "6976f6fe6377acd6aadb19f9e006406e894c069fc154a833145c7d1be7febe6c",
+      "sha256": "c15eb4aa5d07fbac0f6cbcd0631b531313bd76a8aeafc137fba562e3633fb721",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -176,8 +184,10 @@
       "step_id": "table_availability",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -235,16 +245,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/screen_state_changes",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/screen_state_changes.sql",
-      "sha256": "87fc3ce4da7f08c37543ed35db33e82fcbc43774659168b074df606916526c0e",
+      "sha256": "dc36197c8cde74ec97a673efaeab959206088691bd185d797a74617c0519fd22",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -268,8 +281,10 @@
       "step_id": "screen_state_changes",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -327,18 +342,21 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/top_app_changes",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/top_app_changes.sql",
-      "sha256": "5b4be0addd341fa9db494ca2ffcbf5a73a59e3c6b98e857585aad4820d2174ea",
+      "sha256": "e964d8eac92b759bd2fe9f6cbbd8435a9f3f8b01912aa9c18b07a6b165f2c84d",
       "signal_patterns": [
         "battery_stats.top"
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -362,8 +380,10 @@
       "step_id": "top_app_changes",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -421,12 +441,15 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/activity_lifecycle",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/activity_lifecycle.sql",
-      "sha256": "ff0940ca35f1be5d7eec54b7c52faf02215b0b68ff43be18be21e47d632f17f3",
+      "sha256": "5f8e39211b3ea2cbcb9972b30eadbf2bb9cecbaa7b5eb78f41bb403f214bcf0f",
       "signal_patterns": [
         "%:%",
         "*activityDestroy*",
@@ -443,7 +466,7 @@
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -467,8 +490,10 @@
       "step_id": "activity_lifecycle",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -526,16 +551,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/user_gestures",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/user_gestures.sql",
-      "sha256": "6937b45ffa3bb077bcac76da1150c796daaf96f42e22c707b33f7d8cd745518d",
+      "sha256": "ed419b267edc1572d7f2905e6fd46ccc8c4a0b03ca4007240206c801c159b244",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -563,8 +591,10 @@
       "step_id": "user_gestures",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -622,16 +652,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/scroll_initiation",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/scroll_initiation.sql",
-      "sha256": "45232f0f7280b6d0e6239d8f7e0ff1586b2fbc3a1ff009ea53b9ab7c741cfdaf",
+      "sha256": "1616a89d3510e79f82aad809bc8323b9e7c86a47bc85627dd5ebfe2d5e451e94",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -659,8 +692,10 @@
       "step_id": "scroll_initiation",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -718,16 +753,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/navigation_keys",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/navigation_keys.sql",
-      "sha256": "e54ff295f819242229300f1a9097f92feda24c7aa322930a47766721ad0e28b9",
+      "sha256": "2690fa5acdd526db229ddeb6cb8a61206efd504f8248766bb52073bbd231b4df",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -751,8 +789,10 @@
       "step_id": "navigation_keys",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -810,12 +850,15 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/gesture_navigation",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/gesture_navigation.sql",
-      "sha256": "56c52795662292717baa50b51b4b4f46d509e9efdf53321cae3299965cc0ebb9",
+      "sha256": "e9bb9734045418f7106e17f0ada291a8419f472800c77e406cc61e1abf15468a",
       "signal_patterns": [
         "*BackGesture*",
         "*BackPanel*",
@@ -830,7 +873,7 @@
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -854,8 +897,10 @@
       "step_id": "gesture_navigation",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -913,12 +958,15 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/window_transitions",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/window_transitions.sql",
-      "sha256": "720a559cf11d1919734c2c529834b6622d6dcd0152a6779b26fa56ec0c6fb316",
+      "sha256": "ba6b2642b2737d8b7de08c38bec6934d5d23c8fd9b1a4096a497bee7da9d1acf",
       "signal_patterns": [
         "*AppTransition*",
         "*AppTransitionReady*",
@@ -931,7 +979,7 @@
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -955,8 +1003,10 @@
       "step_id": "window_transitions",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1014,16 +1064,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/anr_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/anr_events.sql",
-      "sha256": "ae036240427f7362b8702489c202143cab4b1e2fbdc6345321f4e08be5643efc",
+      "sha256": "af1fd18418ccabc68cdf7825b7cd8bff64a4ec559055bcc8e2a65ff0f2158d74",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1047,8 +1100,10 @@
       "step_id": "anr_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1106,12 +1161,15 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/ime_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/ime_events.sql",
-      "sha256": "10fd0fde1c497d766b3aa88be44c32d234ee5eb85e8eebffc25cd69f63609df1",
+      "sha256": "1d2cede4e5d8f92fb6c98bf1596dd54fb6f578bb18b9b582d56cb2bd597dced2",
       "signal_patterns": [
         "*InputMethodManager*hide*",
         "*InputMethodManager*show*",
@@ -1123,7 +1181,7 @@
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1147,8 +1205,10 @@
       "step_id": "ime_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1206,16 +1266,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/inertial_scrolls",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/inertial_scrolls.sql",
-      "sha256": "49a3038e74f5a8340efaa5430ed6bc0f3f99747910ece42b330af4768688b24b",
+      "sha256": "b009165205fc1b3516d680fb1b9df7f8cc4709154494b5f1bba888964d9e7edd",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1243,8 +1306,10 @@
       "step_id": "inertial_scrolls",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1302,16 +1367,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/idle_periods",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/idle_periods.sql",
-      "sha256": "ec458201dd02959d66fa0149f7f55b0780863d732d4361750ce8a2122c631257",
+      "sha256": "9649bba0637c9737f52ee4eca866d67dd9de3f7987a539bbc4fb7250c9a7716f",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1339,8 +1407,10 @@
       "step_id": "idle_periods",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1398,18 +1468,21 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/app_launches",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/app_launches.sql",
-      "sha256": "bafdb616a62e24e557e769af80f804ffcb91771ffda116cab53abc3484d5e03d",
+      "sha256": "0689898adb49710eee787f0ec42c91a9b17740f17c35d67570a844c38d25cb8c",
       "signal_patterns": [
         "bindApplication"
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1433,8 +1506,10 @@
       "step_id": "app_launches",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1492,16 +1567,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/system_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/system_events.sql",
-      "sha256": "56029e2f54b3ecda4cc5366ea60e369e0eb1c650a7c5af2f4c3182422683204a",
+      "sha256": "6ecc80ae05bfd98371e463bd848b98526a817a831b60671300d4f58e6265ba7a",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1525,8 +1603,10 @@
       "step_id": "system_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1584,12 +1664,15 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/broadcast_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/broadcast_events.sql",
-      "sha256": "7db941922fd6543b155ee0d402279fe676a72566b5577f829dd3223b8754d34b",
+      "sha256": "a5a57641f00e4ab433468e854c029de6c6a71d9684d6be35c70660fd59497458",
       "signal_patterns": [
         "% %",
         "%:%",
@@ -1599,7 +1682,7 @@
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1623,8 +1706,10 @@
       "step_id": "broadcast_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1682,16 +1767,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/cross_process_interactions",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/cross_process_interactions.sql",
-      "sha256": "bd377ffe0d2f0163384bb051501c427fed00c6341ffe407f771006c7fc67096d",
+      "sha256": "4f153d06196c428b42607414e21dd9dc29a39df898f6c0d5a0c5a54c05dec59c",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1715,8 +1803,10 @@
       "step_id": "cross_process_interactions",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1774,16 +1864,19 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/jank_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/jank_events.sql",
-      "sha256": "941a9784037fdb1add70fee47f7ea85296b60be42303cf50772ae461024b2d6f",
+      "sha256": "a35d1962fe038009c43d06e993925fe90108c8c0a5c59d5e74a87f6439853846",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1807,8 +1900,10 @@
       "step_id": "jank_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1866,12 +1961,15 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/device_state",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/device_state.sql",
-      "sha256": "f417abd3663bce50f82b829ea76f44f695719ca68e4129e25d0dd833a44ba193",
+      "sha256": "34f4f5351f26df5cf9a78c042a0178961f5d63623e616fe9a48ed389d5b4160b",
       "signal_patterns": [
         "%MemFree%",
         "%SwapFree%",
@@ -1889,7 +1987,7 @@
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -1913,8 +2011,10 @@
       "step_id": "device_state",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1972,19 +2072,22 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/app_state_tracking",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/app_state_tracking.sql",
-      "sha256": "9a4c87ba11347868d5aa944f9285350660dc38de01cee4a235ad6d7796327c9d",
+      "sha256": "ad6ccb7b8febc0a5176d34307a568ad719158c6a7f68f0e4d1a7053e4c2462ad",
       "signal_patterns": [
         "*.*",
         "oom_score_adj"
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -2008,8 +2111,10 @@
       "step_id": "app_state_tracking",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -2067,12 +2172,15 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/operation_chain",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/operation_chain.sql",
-      "sha256": "6406aa06b139119026624a0fce292d8dc981f0b8dd614d2e8d39e52361528dbc",
+      "sha256": "e008886dda8731492954440c0071590a9dfa460c82f9b8d2ca89fda6e9af46c1",
       "signal_patterns": [
         "*.*",
         "battery_stats.top",
@@ -2081,7 +2189,7 @@
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -2109,8 +2217,10 @@
       "step_id": "operation_chain",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -2168,12 +2278,15 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/clean_timeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/clean_timeline.sql",
-      "sha256": "bc6286fc782017a9abb4b757e0f9d62655dec2e75abcc241e0fd104d983820e2",
+      "sha256": "73dbd995c837924ca4d1e413e19b866609895bb3fbee9a40b0d8c1493605127a",
       "signal_patterns": [
         "*AppTransition*",
         "*BackGesture*",
@@ -2204,7 +2317,7 @@
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -2232,8 +2345,10 @@
       "step_id": "clean_timeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -2291,18 +2406,21 @@
         "probe_capabilities": []
       },
       "id": "scene_reconstruction/merged_timeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/merged_timeline.sql",
-      "sha256": "19df2bf9e3f7ae2b51bdd02e5575208ddf159940299c5b5d4ddb6114b580ebc9",
+      "sha256": "7c480aa8b48378a9bfa6c2f85ff5301363f2bb63fd5ac09221a6f1bf5e2f6fd4",
       "signal_patterns": [
         "battery_stats.top"
       ],
       "skill_id": "scene_reconstruction",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978"
@@ -2330,8 +2448,10 @@
       "step_id": "merged_timeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

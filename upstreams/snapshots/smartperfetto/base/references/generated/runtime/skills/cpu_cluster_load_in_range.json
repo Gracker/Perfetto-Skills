@@ -36,9 +36,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml",
-    "sha256": "531fd3145d1a67a1ae02e1e028280f2e0e627b4bde1f7c832a985911391fd433"
+    "sha256": "eb8ce5835904a74d489339331c73cea778d49024dc1654b842d6111f3269d382"
   },
   "steps": [
     {
@@ -52,6 +52,9 @@
       "id": "cluster_load",
       "name": "CPU 簇负载计算",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_cluster_load_in_range/cluster_load",
       "result_dependencies": [],
       "save_as": "cluster_load",

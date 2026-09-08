@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "wattson_app_startup_power/startup_power",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/wattson_app_startup_power/startup_power.sql",
-      "sha256": "c1013594467e11901ad8a52357971311ef6b4b31d041708bc2ded505e1503da4",
+      "sha256": "8f6523c37af7dab75dc700905c3f8b78f421aed26310b530d0eedac0e4f2abd2",
       "signal_patterns": [],
       "skill_id": "wattson_app_startup_power",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/wattson_app_startup_power.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "24ebfcd8723a851df141ead1b24968cdf4a24cfba83d676f80853c803f812452"
@@ -75,10 +78,12 @@
       "step_id": "startup_power",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

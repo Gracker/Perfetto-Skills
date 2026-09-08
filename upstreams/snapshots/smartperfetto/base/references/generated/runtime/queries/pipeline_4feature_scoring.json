@@ -49,12 +49,15 @@
         ]
       },
       "id": "pipeline_4feature_scoring/producer_thread_signature",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/pipeline_4feature_scoring/producer_thread_signature.sql",
-      "sha256": "ee82d884f259d2e34d0b47fe2e0ee3ff27e4f8c51af049ffaa60732e2025e2f7",
+      "sha256": "38a920365e7ee53aca7c3c62c5e35f702251a55a15a756445a94102165c91456",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*Vulkan*",
@@ -82,7 +85,7 @@
       ],
       "skill_id": "pipeline_4feature_scoring",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/pipeline_4feature_scoring.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2188f6c3732115b4eac2d4d5250a23f8ff912ecab084d6aabc732df5c69ccef3"
@@ -106,8 +109,10 @@
       "step_id": "producer_thread_signature",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -167,19 +172,22 @@
         ]
       },
       "id": "pipeline_4feature_scoring/layer_signature",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/pipeline_4feature_scoring/layer_signature.sql",
-      "sha256": "f7d3bbb1c51c12d0a5c39b5297f421b5978d16755460fb572e179ea975225bb1",
+      "sha256": "3af7c0e3a49d5f7535305634b05a3eae16faa9e80cd4236be34952156704a000",
       "signal_patterns": [
         "DrawFrame*",
         "RenderThread"
       ],
       "skill_id": "pipeline_4feature_scoring",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/pipeline_4feature_scoring.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2188f6c3732115b4eac2d4d5250a23f8ff912ecab084d6aabc732df5c69ccef3"
@@ -203,10 +211,12 @@
       "step_id": "layer_signature",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -266,12 +276,15 @@
         ]
       },
       "id": "pipeline_4feature_scoring/bufferqueue_path",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/pipeline_4feature_scoring/bufferqueue_path.sql",
-      "sha256": "53d3684d48d58d6331bd923c7a43d7782c1f5676e177b379a6f473b5ee4d3b15",
+      "sha256": "aa46647163d8f2bd55332f468d9229eb6be9809090f7d37a34e67df8fc4333b3",
       "signal_patterns": [
         "*ASurfaceTransaction*",
         "*BLASTBufferQueue*",
@@ -283,7 +296,7 @@
       ],
       "skill_id": "pipeline_4feature_scoring",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/pipeline_4feature_scoring.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2188f6c3732115b4eac2d4d5250a23f8ff912ecab084d6aabc732df5c69ccef3"
@@ -307,8 +320,10 @@
       "step_id": "bufferqueue_path",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -368,12 +383,15 @@
         ]
       },
       "id": "pipeline_4feature_scoring/extra_rhythm",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/pipeline_4feature_scoring/extra_rhythm.sql",
-      "sha256": "3c1803834f26a9e3328b5ea33e0cd58d863af2e32bcc559baa4d14db5662fcaf",
+      "sha256": "35c8788d7aa6dd8a0d3e941ed8cfeac9c622e60b053355e24ffa37a713fdf427",
       "signal_patterns": [
         "*AChoreographer*",
         "*FEngineLoop*",
@@ -389,7 +407,7 @@
       ],
       "skill_id": "pipeline_4feature_scoring",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/pipeline_4feature_scoring.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2188f6c3732115b4eac2d4d5250a23f8ff912ecab084d6aabc732df5c69ccef3"
@@ -413,8 +431,10 @@
       "step_id": "extra_rhythm",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

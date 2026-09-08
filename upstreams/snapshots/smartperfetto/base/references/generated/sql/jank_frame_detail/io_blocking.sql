@@ -1,13 +1,25 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: cc19de68a5c179e17af405bf32f9ca75f56af0c5a4ccf970ede72790c558942b
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
-WITH target_threads AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+target_threads AS (
   SELECT t.utid, t.tid, t.name as thread_name, p.pid
   FROM thread t
-  JOIN process p ON t.upid = p.upid
-  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+  JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND (t.tid = p.pid OR t.name = 'RenderThread' OR t.name GLOB '[0-9]*.raster' OR t.name GLOB '[0-9]*.ui')
 ),
 io_states AS (

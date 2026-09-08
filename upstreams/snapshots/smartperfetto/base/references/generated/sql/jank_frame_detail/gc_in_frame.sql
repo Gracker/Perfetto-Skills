@@ -1,9 +1,21 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: cc19de68a5c179e17af405bf32f9ca75f56af0c5a4ccf970ede72790c558942b
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
-WITH gc_events AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+gc_events AS (
   SELECT
     gc.tid,
     gc.gc_type,
@@ -13,9 +25,8 @@ WITH gc_events AS (
     MAX(gc.gc_ts, ${start_ts}) as overlap_start,
     MIN(gc.gc_ts + gc.gc_dur, ${end_ts}) as overlap_end
   FROM android_garbage_collection_events gc
-  JOIN thread t ON gc.tid = t.tid
-  JOIN process p ON t.upid = p.upid
-  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+  JOIN effective_target_processes p ON gc.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND gc.gc_ts < ${end_ts}
     AND gc.gc_ts + gc.gc_dur > ${start_ts}
 )

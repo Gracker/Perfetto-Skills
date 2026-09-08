@@ -49,12 +49,15 @@
         ]
       },
       "id": "gpu_v57_ai_diagnostics/data_check",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/data_check.sql",
-      "sha256": "df86f7d840b1bcc6df3b46c05064c6ee5f459bc73e5ba73db2c790cc9e833da7",
+      "sha256": "d20668dd0c6437ea4ec8c1fd83e1d93a07b94993c984e730124d8f65c1c04fb5",
       "signal_patterns": [
         "architecture",
         "dimension_arg_set_id",
@@ -64,7 +67,7 @@
       ],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
@@ -84,8 +87,10 @@
       "step_id": "data_check",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -145,16 +150,19 @@
         ]
       },
       "id": "gpu_v57_ai_diagnostics/gpu_inventory",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/gpu_inventory.sql",
-      "sha256": "1b20990f4c80ffcce85d785d4d1b94711dfc3b65a8d53d02396e4bfeee1acb9e",
+      "sha256": "a90168e675b5826e9b577e97e5db9cbd848d20535c91ac3d1b13b28d53d92c20",
       "signal_patterns": [],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
@@ -174,10 +182,12 @@
       "step_id": "gpu_inventory",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "ugpu"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -237,16 +247,19 @@
         ]
       },
       "id": "gpu_v57_ai_diagnostics/timeline_occupancy",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/timeline_occupancy.sql",
-      "sha256": "7b5f13be0b8156897c9b46ec93d8bc531f577d043cc8d374de5c9088b5413603",
+      "sha256": "e7d6778269cb33e8a1c8323fbc1ce621cb71d0b5ed4d7e32f181d4ae09978416",
       "signal_patterns": [],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
@@ -275,12 +288,14 @@
       "step_id": "timeline_occupancy",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
           "ugpu"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -340,16 +355,19 @@
         ]
       },
       "id": "gpu_v57_ai_diagnostics/idle_gaps",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/idle_gaps.sql",
-      "sha256": "021c7bb4e4d4b585072d5383d7497a9147c83eaff322402430b1d69db3e9dade",
+      "sha256": "e030ddd5aea481074eaf0820679d8fe46e236e5d299846275a0ea4a4ad5fd4d9",
       "signal_patterns": [],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
@@ -373,10 +391,12 @@
       "step_id": "idle_gaps",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "max_rows"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -436,18 +456,21 @@
         ]
       },
       "id": "gpu_v57_ai_diagnostics/frequency_residency",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/frequency_residency.sql",
-      "sha256": "f863543eca7986e7c71736e7b1f37bac9e2a158540ed8d812d051e61d9355a39",
+      "sha256": "1b39689c29cb7506edf77a80c5f68565bea7b7925ec842ee584844000145c1a9",
       "signal_patterns": [
         "gpufreq"
       ],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
@@ -484,12 +507,14 @@
       "step_id": "frequency_residency",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
           "ugpu"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -549,16 +574,19 @@
         ]
       },
       "id": "gpu_v57_ai_diagnostics/dvfs_ramp_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/dvfs_ramp_events.sql",
-      "sha256": "30c195a1663f393e38ad39537b351cd4f26fcaa7b8132d83af7ed9377928c949",
+      "sha256": "4b27426466f25a7caff47cc6b8f93dff635c9963dfad69f5372cae11fec4771f",
       "signal_patterns": [],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
@@ -597,11 +625,13 @@
       "step_id": "dvfs_ramp_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "max_rows",
           "target_freq_ratio"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -661,19 +691,22 @@
         ]
       },
       "id": "gpu_v57_ai_diagnostics/sustained_throttle_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/sustained_throttle_events.sql",
-      "sha256": "5985c85adbea49d8a19c70982567b81724ccf2d90f9d954542260399ae164d08",
+      "sha256": "61cf2ac0170d530e9db7f0c0e71b6b823527bc9e2c66789d0adb2dd6a469d187",
       "signal_patterns": [
         "Power",
         "Temperature"
       ],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
@@ -710,12 +743,14 @@
       "step_id": "sustained_throttle_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "max_rows",
           "min_throttle_ns",
           "target_freq_ratio"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -775,16 +810,19 @@
         ]
       },
       "id": "gpu_v57_ai_diagnostics/no_data_contract",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/no_data_contract.sql",
-      "sha256": "c8f15027f5200b12edc1a7c2060356d63732c5677d34ab4d4b3eee41358c2b57",
+      "sha256": "844660ca47c7253fdac4efc56dc24624ca7e1f25bbb8c0a3f11e88102ed4d5dd",
       "signal_patterns": [],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
@@ -809,10 +847,12 @@
       "step_id": "no_data_contract",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
         "result_dependencies": [
           "data_check"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -47,19 +47,22 @@
         "probe_capabilities": []
       },
       "id": "gc_events_in_range/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gc_events_in_range/query.sql",
-      "sha256": "e48f57fb4c550f5a3c545d6de23cf7ec42bb589ed20da3b37ec5742970113343",
+      "sha256": "e747078526d2c7eb3b00abcf3ad71f3975c3399f72c9b1efc72cb31c82c89965",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "gc_events_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/gc_events_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "91fc6c615999ab34fd4c1098ff858d19be4f2ec4cd50099f4679fbe57bd85c11"
@@ -77,12 +80,14 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

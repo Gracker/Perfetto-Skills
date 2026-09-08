@@ -50,12 +50,15 @@
         ]
       },
       "id": "rn_fabric_render_jank/fabric_frame_overlap",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rn_fabric_render_jank/fabric_frame_overlap.sql",
-      "sha256": "2cf1ec45bafabb87fd8d57440a4b6598573a2cebc3cef1d77c4308b83f7f3dc2",
+      "sha256": "bba5ca92f5d88d20a5dd827968ee427d40c54d9fcb2a7b659ab07e91a37a8863",
       "signal_patterns": [
         "*Fabric*",
         "*JSI*",
@@ -69,7 +72,7 @@
       ],
       "skill_id": "rn_fabric_render_jank",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/rn_fabric_render_jank.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8a15553a9c2c082197a2e71d1a5134684efba677cbc45dab9a717b2084ddaabe"
@@ -94,13 +97,15 @@
       "step_id": "fabric_frame_overlap",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

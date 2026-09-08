@@ -12,7 +12,11 @@
   },
   "id": "binder_in_range",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package"
+    ],
+    "policy": "verify_if_present",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -41,13 +45,22 @@
       "slice"
     ]
   },
+  "process_scope": {
+    "binding": "effective_target_processes",
+    "context_fields": {
+      "peer_context": [
+        "server_process"
+      ]
+    },
+    "role": "target"
+  },
   "query_id": "binder_in_range/root",
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/atomic/binder_in_range.skill.yaml",
-    "sha256": "1f3c07eaa19d4249b09850bb9425b7394450088bee25f08b416e472519f725e0"
+    "sha256": "88af485b52bd4fc3a754df61300a43d34daf1c875e9870312a031e7e3595670b"
   },
   "steps": [],
   "type": "atomic",

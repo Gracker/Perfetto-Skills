@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 6ebd984e1b34cb456d5fa410b4e2308e350c5854086ec1e06ff58b4c80c5ef4f
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
 vsync_intervals AS (
@@ -34,8 +34,9 @@ timing_config AS (
 scoped_events AS (
   SELECT *
   FROM android_input_events
-  WHERE (
-    '${package}' = ''
+  WHERE (${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid})
+    AND (
+    ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
     OR process_name = '${package}'
     OR process_name GLOB '${package}:*'
   )
@@ -44,21 +45,21 @@ scoped_events AS (
 ),
 ranked_processes AS (
   SELECT
-    process_name,
+    upid, process_name,
     COUNT(*) as event_count,
     ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC, MAX(total_latency_dur) DESC) as rn
   FROM scoped_events
-  GROUP BY process_name
+  GROUP BY upid, process_name
 ),
 target AS (
-  SELECT process_name
+  SELECT upid, process_name
   FROM ranked_processes
   WHERE rn = 1
 ),
 target_events AS (
   SELECT e.*
   FROM scoped_events e
-  JOIN target t ON e.process_name = t.process_name
+  JOIN target t ON e.upid = t.upid
 ),
 frame_backlog AS (
   SELECT frame_id, COUNT(*) as event_count

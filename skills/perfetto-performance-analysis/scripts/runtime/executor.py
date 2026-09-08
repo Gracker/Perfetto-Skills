@@ -4,6 +4,7 @@ from collections.abc import Callable, Mapping
 import hashlib
 import json
 from typing import Any
+from _common import reject_process_scope_names
 
 from .expressions import evaluate, interpolate
 
@@ -32,6 +33,7 @@ class SkillRunner:
         max_depth: int = 12,
         identity_resolver: Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]] | None = None,
         prerequisite_checker: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None,
+        process_scope_enabled: bool = False,
     ):
         raw_skills = manifest.get("skills", {})
         self.skills = (
@@ -43,6 +45,7 @@ class SkillRunner:
         self.max_depth = max_depth
         self.identity_resolver = identity_resolver
         self.prerequisite_checker = prerequisite_checker
+        self.process_scope_enabled = process_scope_enabled
 
     def _inputs(self, skill: Mapping[str, Any], supplied: Mapping[str, Any]) -> dict[str, Any]:
         result = dict(supplied)
@@ -112,6 +115,10 @@ class SkillRunner:
         runtime_status = skill.get("runtime_status", "executable")
         if runtime_status != "executable":
             return {"skill_id": skill_id, "success": False, "status": runtime_status, "steps": [], "evidence": []}
+        reject_process_scope_names(params or {})
+        reject_process_scope_names(_inherited or {})
+        for step in skill.get("steps", []) or []:
+            reject_process_scope_names({name: None for name in (step.get("id"), step.get("save_as")) if name is not None})
         inputs = self._inputs(skill, params or {})
         prerequisite = (
             dict(self.prerequisite_checker(skill))
@@ -181,11 +188,17 @@ class SkillRunner:
                     )
                     continue
                 try:
+                    scope_context = (
+                        {"identity_result": identity, "supplied_parameters": dict(params or {})}
+                        if self.process_scope_enabled or skill.get("process_scope") or step.get("process_scope")
+                        else {}
+                    )
                     query_output = self.query_executor(
                         query_id,
                         params=inputs,
                         results=variables,
                         prelude=step.get("setup_queries", []),
+                        **scope_context,
                     )
                     metadata: dict[str, Any] = {}
                     if isinstance(query_output, Mapping) and isinstance(query_output.get("rows"), list):

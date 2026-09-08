@@ -49,18 +49,21 @@
         ]
       },
       "id": "thermal_predictor/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_predictor/query.sql",
-      "sha256": "828593b3e4a3ac7dbe6befd99bfa06b6cc0a2e018fa2d3e6912a7f2ca45baa0e",
+      "sha256": "1c3ac7e9db0b447d762fbb6e73c5ac87be2c3b115fcc290bf87436788bcbe830",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "thermal_predictor",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/thermal_predictor.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "16bb6ec7bc5e0769d25f1b2b46ed3a8d7d71648c6c6ae67e745ef86966aaa7ef"
@@ -79,6 +82,7 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "core_drop_threshold_pct",
           "end_ts",
@@ -88,7 +92,8 @@
           "medium_drop_threshold_pct",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

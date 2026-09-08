@@ -47,19 +47,22 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_module/frame_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_module/frame_overview.sql",
-      "sha256": "9eaf8fede9478497197ee99d42bd19b661b71395e4a58345d18cf33b814029f4",
+      "sha256": "5bde83d6d0ec2bb604f3ab38e8152f24a701620b3f5bc407db5730ff00d3544b",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "surfaceflinger_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/surfaceflinger_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a56ccb9b89cffa35d9a98573a6b43fbcaf3fba59658a7a74b91d4676d6947e05"
@@ -78,10 +81,12 @@
       "step_id": "frame_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -139,19 +144,22 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_module/jank_breakdown",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_module/jank_breakdown.sql",
-      "sha256": "5a577b3f93e68005acf23182e6fd1aa8b231424aadccc4042dfde5a2dca06f68",
+      "sha256": "ed24f855a1e23b0706cbd3c449c0338ea21726409526b2af30a22045f41147ca",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "surfaceflinger_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/surfaceflinger_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a56ccb9b89cffa35d9a98573a6b43fbcaf3fba59658a7a74b91d4676d6947e05"
@@ -170,10 +178,12 @@
       "step_id": "jank_breakdown",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -231,19 +241,22 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_module/thread_timing",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_module/thread_timing.sql",
-      "sha256": "d73acd1d714768100dd09435de387b6a7bdb8609c7d0c6d20c5e51a5859470fd",
+      "sha256": "464eb367e9a55410bf1f176b2975393e3f0e8ecf296d07e1a0e11f2ed33952c1",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "surfaceflinger_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/surfaceflinger_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a56ccb9b89cffa35d9a98573a6b43fbcaf3fba59658a7a74b91d4676d6947e05"
@@ -262,10 +275,12 @@
       "step_id": "thread_timing",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -323,19 +338,22 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_module/worst_frames",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_module/worst_frames.sql",
-      "sha256": "5486b16c56bf52914c439e805a8305b29fa79111e8874749bfe03b32d6d4fae2",
+      "sha256": "2c201cabf7069a574cc5e88e6b4adebba3a328332c28a666571e3751833b72a4",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "surfaceflinger_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/surfaceflinger_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a56ccb9b89cffa35d9a98573a6b43fbcaf3fba59658a7a74b91d4676d6947e05"
@@ -354,10 +372,12 @@
       "step_id": "worst_frames",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

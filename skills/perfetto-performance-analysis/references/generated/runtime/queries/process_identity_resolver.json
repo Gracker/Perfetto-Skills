@@ -47,12 +47,19 @@
         "probe_capabilities": []
       },
       "id": "process_identity_resolver/root",
+      "identity": {
+        "policy": "exempt",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/process_identity_resolver/query.sql",
-      "sha256": "f1f98f2d52018da73ff27b3c41ac32901813ce46f4b4c436296b9fe2054d2edd",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
+      "sha256": "7c72c2cb56a05d7e2a7c266ef5970ab91decd6df4bd7f50cf23b5df3a787d028",
       "signal_patterns": [
         "/apex/*",
         "/odm/bin/*",
@@ -76,10 +83,10 @@
       ],
       "skill_id": "process_identity_resolver",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/process_identity_resolver.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "0825f2ccd3b390e08777718e3eab70f65d0c162625007baded0f9cc0093a8500"
+        "sha256": "0149a805cefadf5d817b41ad853e5b52f83767e14665019cbf29e1dfd5d9d526"
       },
       "sql_dependencies": {
         "creates": [],
@@ -97,6 +104,7 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "max_rows",
@@ -107,7 +115,8 @@
           "thread_name",
           "upid"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

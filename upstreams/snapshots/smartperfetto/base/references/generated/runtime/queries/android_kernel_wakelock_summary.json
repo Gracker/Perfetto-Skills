@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "android_kernel_wakelock_summary/wakelock_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_kernel_wakelock_summary/wakelock_summary.sql",
-      "sha256": "60e7b3959ed7179cd33e1e48e420e0ad6dd8345b0ff1780efa095abe399420cc",
+      "sha256": "096e0131f2db5571953dcfc110078a4888a889d4f3b7652d75f1dd15c03983f9",
       "signal_patterns": [],
       "skill_id": "android_kernel_wakelock_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_kernel_wakelock_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b87beb54fd7e610df76952ec79d79249a37e510e08dd650fae66893a20e4af63"
@@ -74,11 +77,13 @@
       "step_id": "wakelock_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/teaching.strategy.md
-Source SHA-256: 291745c845a2e6e58feb3a7a689adc8e0952eb79cddd4e930c6449b6bc66a757
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 051126d441976ee8406e27e7d645561d7793bf43a1d9e6a97e1f6dd4b426ac14
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Teaching Strategy
 
@@ -21,6 +21,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: teaching
+classification_description: Explaining a trace concept, component role or mechanism using available context.
 priority: 3
 effort: medium
 required_capabilities: []

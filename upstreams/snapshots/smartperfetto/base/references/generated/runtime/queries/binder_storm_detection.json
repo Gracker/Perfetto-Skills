@@ -49,16 +49,19 @@
         ]
       },
       "id": "binder_storm_detection/binder_density",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_storm_detection/binder_density.sql",
-      "sha256": "0f93ae0eaef01da10c3600cbe69e9f83a1c58c3fb1cb2ba4978ae012acfa57d8",
+      "sha256": "5277f5491cdec6d5db107704c8e00321d3d5dcdd1a6257031ee13f7f773540b2",
       "signal_patterns": [],
       "skill_id": "binder_storm_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/binder_storm_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e9cfcc559910f308c54210ff966b733355adba117b92af97efceeca138104e48"
@@ -78,13 +81,15 @@
       "step_id": "binder_density",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts",
           "threshold"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -144,16 +149,19 @@
         ]
       },
       "id": "binder_storm_detection/burst_detection",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_storm_detection/burst_detection.sql",
-      "sha256": "67045b562553a104e082ffad4685d611cd7864e447d89bc7761a6ce99b5144fe",
+      "sha256": "57f2e8c81f6c4dbed00b91c418b1039b560320df2a86e1d8ca25db6cc63bb993",
       "signal_patterns": [],
       "skill_id": "binder_storm_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/binder_storm_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e9cfcc559910f308c54210ff966b733355adba117b92af97efceeca138104e48"
@@ -173,13 +181,15 @@
       "step_id": "burst_detection",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts",
           "threshold"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -239,16 +249,19 @@
         ]
       },
       "id": "binder_storm_detection/callback_loops",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_storm_detection/callback_loops.sql",
-      "sha256": "c407c81e87ec9fc6a173bf20807d208ea452373019c09f5fe8252efd587d0dc2",
+      "sha256": "724b1d914bc0251e05c1e3ee26725237c6009c054c5a92b16fa1bf73ae508a24",
       "signal_patterns": [],
       "skill_id": "binder_storm_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/binder_storm_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e9cfcc559910f308c54210ff966b733355adba117b92af97efceeca138104e48"
@@ -268,12 +281,14 @@
       "step_id": "callback_loops",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -333,16 +348,19 @@
         ]
       },
       "id": "binder_storm_detection/buffer_pressure",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_storm_detection/buffer_pressure.sql",
-      "sha256": "a978755ea62215ba70eb4f3c01abe6dbb24b847bcdd2bdf61681424683a7dd17",
+      "sha256": "df9a3cbfe08516496cf02f56c11dd63e96ab10d967969ccfee0ef6b95ae3293d",
       "signal_patterns": [],
       "skill_id": "binder_storm_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/binder_storm_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e9cfcc559910f308c54210ff966b733355adba117b92af97efceeca138104e48"
@@ -362,12 +380,14 @@
       "step_id": "buffer_pressure",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

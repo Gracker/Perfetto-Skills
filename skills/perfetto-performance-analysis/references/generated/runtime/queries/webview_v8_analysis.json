@@ -49,12 +49,15 @@
         ]
       },
       "id": "webview_v8_analysis/v8_gc_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/webview_v8_analysis/v8_gc_events.sql",
-      "sha256": "c1847d87984b1b8b9b23cabc97d1fe835b2a3b4f05e8cd104b18a5c42907a16c",
+      "sha256": "2c4ee576a083280e3d3b8cee036ace49180fb1028cc5d67ede8354cf9d62daf7",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -67,7 +70,7 @@
       ],
       "skill_id": "webview_v8_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/webview_v8_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a542665b367b80c7ecf200ccc5ab2abe452baed0039e724d59ab30515c30b284"
@@ -87,12 +90,14 @@
       "step_id": "v8_gc_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -152,12 +157,15 @@
         ]
       },
       "id": "webview_v8_analysis/v8_script_execution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/webview_v8_analysis/v8_script_execution.sql",
-      "sha256": "d355963bd481215fc2a1fdc9699ce096983d5a68d735f54ef5b1085031bc0130",
+      "sha256": "2a2885f66226dd795885d91450f7d7ad5bb3fe3445d991adffc724ee0ed7bc6f",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -165,7 +173,7 @@
       ],
       "skill_id": "webview_v8_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/webview_v8_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a542665b367b80c7ecf200ccc5ab2abe452baed0039e724d59ab30515c30b284"
@@ -185,12 +193,14 @@
       "step_id": "v8_script_execution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -250,12 +260,15 @@
         ]
       },
       "id": "webview_v8_analysis/v8_compilation",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/webview_v8_analysis/v8_compilation.sql",
-      "sha256": "9f4d47aebb654e28796952256e7076bf996435e2cf429193dd4bc5efa63041b4",
+      "sha256": "271ac0939baf7fb42f5e6364fac1bad3c2639b57afcaa496f5b889f3d6c60ffb",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -263,7 +276,7 @@
       ],
       "skill_id": "webview_v8_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/webview_v8_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a542665b367b80c7ecf200ccc5ab2abe452baed0039e724d59ab30515c30b284"
@@ -283,12 +296,14 @@
       "step_id": "v8_compilation",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -348,12 +363,15 @@
         ]
       },
       "id": "webview_v8_analysis/v8_frame_impact",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/webview_v8_analysis/v8_frame_impact.sql",
-      "sha256": "fb08f8fbb61315fb51fe6c66f030256aa971294aa91fcbe52cd4db862b848531",
+      "sha256": "a4bc98cbc40535db71f71fa4781a9ecb7af22782760133a20ae3ef422556fcbd",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -366,7 +384,7 @@
       ],
       "skill_id": "webview_v8_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/webview_v8_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a542665b367b80c7ecf200ccc5ab2abe452baed0039e724d59ab30515c30b284"
@@ -386,12 +404,14 @@
       "step_id": "v8_frame_impact",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

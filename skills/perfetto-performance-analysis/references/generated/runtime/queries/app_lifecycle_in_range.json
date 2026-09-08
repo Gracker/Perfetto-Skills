@@ -49,12 +49,15 @@
         ]
       },
       "id": "app_lifecycle_in_range/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/app_lifecycle_in_range/query.sql",
-      "sha256": "151a88915c92f3cb59d07416e3036c002ec8e4a17317deb413f80ceea042bf21",
+      "sha256": "d49dfa10121d3a6935d1af5b9367c029d6a232fb8c6513ef58e4741d5676bad8",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -76,7 +79,7 @@
       ],
       "skill_id": "app_lifecycle_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/app_lifecycle_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "00f172c6cf862218c700769dff4c0db75388cdd620d01c7d700a6bfd65ff0cb7"
@@ -94,12 +97,14 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

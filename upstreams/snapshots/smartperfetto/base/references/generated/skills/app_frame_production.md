@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/app_frame_production.skill.yaml
-Source SHA-256: 9075a3b0edb9b8303d56b8b1ba7d6555fdaec9d878ffaad7d9f798fbec6bf616
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: f7c24d6aa56cc29422e948867cc203415f06ff4182964dd3fc594aa23a3be29a
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 # 应用帧生产分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -78,6 +78,16 @@ modules:
   required: false
 ```
 
+## Identity requirements
+
+```yaml
+policy: verify_if_present
+scope: process
+aliases:
+- package
+- process_name
+```
+
 ## Ordered execution
 
 ### 应用帧生产统计
@@ -126,5 +136,10 @@ display:
     label: 最大帧耗时
     type: duration
     format: duration_ms
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
 save_as: app_production
 ```

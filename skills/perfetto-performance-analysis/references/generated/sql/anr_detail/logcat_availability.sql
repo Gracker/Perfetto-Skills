@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
--- Source SHA-256: e48c73408b2775bed099612d32832cde9f70ca33cd1cc462e0275b1454588359
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 283e74c341c76d3959624287f046bcc7f85e2b7b1cbe1edfab07c544a01660af
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 SELECT
   CASE WHEN EXISTS (

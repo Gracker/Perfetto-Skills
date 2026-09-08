@@ -1,9 +1,21 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_render_in_range.skill.yaml
--- Source SHA-256: 06ea425f109301061fa4939fe042767b99a582ebba749c63c654a294e82d882b
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 1c142b8dbc84b47518922a8a37b43c85c1e3e887ad5bfc61179c1710dce9c286
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
-WITH gpu_slices AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+gpu_slices AS (
   SELECT
     s.name,
     s.dur,
@@ -24,7 +36,13 @@ WITH gpu_slices AS (
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
   WHERE (${start_ts} IS NULL OR s.ts >= ${start_ts}) AND (${end_ts} IS NULL OR s.ts < ${end_ts})
-    AND (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '' OR p.name = 'surfaceflinger')
+    AND (
+      (
+        p.upid IN (SELECT upid FROM effective_target_processes)
+        AND (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+      )
+      OR p.name = 'surfaceflinger'
+    )
     AND s.dur > 10000  -- > 10us
 )
 SELECT

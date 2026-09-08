@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "startup_main_thread_binder_blocking_in_range/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_main_thread_binder_blocking_in_range/query.sql",
-      "sha256": "d673ccbf3f2c059f9dfe3077193d0eeb768311be51719a64410fad8b212d90cc",
+      "sha256": "59bd9b0a89bcf524723bc57bb3603591a596b2656d0fcabd4e9a5656e88fc97b",
       "signal_patterns": [],
       "skill_id": "startup_main_thread_binder_blocking_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/startup_main_thread_binder_blocking_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fa1c46b5cd242ec0ea44c94e5a2bb4126e4a8da0d846bd67e74402d88452d20c"
@@ -75,6 +78,7 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "min_dur_ns",
@@ -83,7 +87,8 @@
           "startup_id",
           "top_k"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

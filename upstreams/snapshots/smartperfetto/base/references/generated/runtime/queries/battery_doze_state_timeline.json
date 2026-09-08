@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "battery_doze_state_timeline/deep_idle_intervals",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/battery_doze_state_timeline/deep_idle_intervals.sql",
-      "sha256": "f85d82bbcb32fd2320d84ee33fb00c1d19f628ce81393f204c6c09757dd0ee0b",
+      "sha256": "1a1baf8f42f2f0719169c6e301238116f7a06f88bce74624bbd64962d867fd29",
       "signal_patterns": [],
       "skill_id": "battery_doze_state_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/battery_doze_state_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "76538da9dab1b6f5e68441be298de8fa40633dbe1e8b0cf79d547d49c1f1e4a1"
@@ -74,11 +77,13 @@
       "step_id": "deep_idle_intervals",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -136,16 +141,19 @@
         "probe_capabilities": []
       },
       "id": "battery_doze_state_timeline/light_idle_intervals",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/battery_doze_state_timeline/light_idle_intervals.sql",
-      "sha256": "392da96eabf1a20ac6b56dc17fcd4611d4ac8416efc6aea3d63dc9293b735bcd",
+      "sha256": "fd3fdd7c8854e91dd69236467f1fd0d6acc6a0fd49736bb9b8af6bb18751e28f",
       "signal_patterns": [],
       "skill_id": "battery_doze_state_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/battery_doze_state_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "76538da9dab1b6f5e68441be298de8fa40633dbe1e8b0cf79d547d49c1f1e4a1"
@@ -163,11 +171,13 @@
       "step_id": "light_idle_intervals",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

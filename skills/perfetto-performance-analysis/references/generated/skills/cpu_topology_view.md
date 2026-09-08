@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_topology_view.skill.yaml
-Source SHA-256: 792f8e08be59730e2b62f9f21359ea7677b02b8ab7aa5224e5caaa9587779f76
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 71bcdc2a2f2b3c8688412e9a48c716ff4e008e01da9728347161d071b302c67a
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 # CPU 拓扑关系初始化
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -56,6 +56,8 @@ id: inspect_existing_topology_object
 type: atomic
 display:
   level: hidden
+process_scope:
+  role: global_context
 save_as: existing_topology_object
 ```
 ### 清理旧 CPU 拓扑视图
@@ -70,6 +72,8 @@ type: atomic
 display:
   level: hidden
 condition: existing_topology_object.data?.[0]?.type === 'view'
+process_scope:
+  role: global_context
 ```
 ### 清理旧 CPU 拓扑表
 
@@ -83,6 +87,8 @@ type: atomic
 display:
   level: hidden
 condition: existing_topology_object.data?.[0]?.type === 'table'
+process_scope:
+  role: global_context
 ```
 ### 创建 CPU 拓扑关系
 
@@ -96,6 +102,8 @@ type: atomic
 optional: true
 display:
   level: hidden
+process_scope:
+  role: global_context
 ```
 ### 读取 CPU 拓扑
 
@@ -138,6 +146,8 @@ display:
   - name: cluster_count
     label: 簇数量
     type: number
+process_scope:
+  role: global_context
 save_as: cpu_topology
 optional: true
 ```

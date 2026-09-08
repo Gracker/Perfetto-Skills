@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
--- Source SHA-256: dfaad621766ab875e89c14795a27c2956c029bc84893cbabb175a44827fb001e
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 0a859a43248b1f22f4883740217d1a87512628179bae6f459c4ec6c1295f8c39
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
 -- 频率采样（带拓扑分类）

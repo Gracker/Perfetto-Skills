@@ -47,12 +47,15 @@
         "probe_capabilities": []
       },
       "id": "fpsgo_analysis/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/fpsgo_analysis/query.sql",
-      "sha256": "5f7ddff2dfedd9d53d97024a9ef017964af2a2d3e4c2fa8d85008a2f58376d36",
+      "sha256": "1ba24f29bcdc9fba899ebffde6884bc578ac716f3c7ad5ab7f8f5329fc36c354",
       "signal_patterns": [
         "*FBT*",
         "*FSTB*",
@@ -70,7 +73,7 @@
       ],
       "skill_id": "fpsgo_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/fpsgo_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6ee6815848f62092599d709a15c857835fb298f96733192f8fc113c03acb42c3"
@@ -86,11 +89,13 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

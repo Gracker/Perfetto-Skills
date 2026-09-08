@@ -36,6 +36,10 @@ SEMANTIC_PREPARE_ERRORS = (
 sys.path.insert(0, str(SCRIPTS))
 try:
     from perfetto_sql_guardrails import analyze_sql
+    from _common import (
+        is_process_scope_name, runtime_sql_bindings, sql_template_names,
+        validate_process_scope_declaration,
+    )
 finally:
     sys.path.remove(str(SCRIPTS))
 
@@ -182,7 +186,38 @@ def validate_query(
     if not isinstance(parameters, list) or not all(isinstance(item, str) for item in parameters):
         errors.append("template parameters must be strings")
     result_dependencies = template.get("result_dependencies", [])
-    expected_parameters = set(PARAMETER.findall(sql)) - set(result_dependencies)
+    names = sql_template_names(sql)
+    try:
+        expected_bindings = set(runtime_sql_bindings(sql))
+    except ValueError:
+        expected_bindings = set()
+        errors.append("unsupported runtime binding placeholder")
+    if "process_scope" in query:
+        try:
+            validate_process_scope_declaration(query["process_scope"])
+        except ValueError:
+            errors.append("invalid process scope declaration")
+    bindings = template.get("runtime_bindings", [])
+    if (
+        not isinstance(bindings, list)
+        or not all(isinstance(name, str) for name in bindings)
+        or set(bindings) != expected_bindings
+    ):
+        errors.append("runtime bindings do not match SQL placeholders")
+    if expected_bindings:
+        if "process_scope" not in query:
+            errors.append("runtime binding requires process scope declaration")
+        identity = query.get("identity")
+        aliases = identity.get("aliases", []) if isinstance(identity, dict) else None
+        if not isinstance(aliases, list) or not all(isinstance(name, str) for name in aliases):
+            errors.append("runtime binding requires identity metadata")
+        elif template.get("name_parameters") != sorted(set(aliases) & names):
+            errors.append("runtime binding name parameters do not match SQL")
+    expected_parameters = {
+        name for name in PARAMETER.findall(sql) if not is_process_scope_name(name)
+    } - set(result_dependencies)
+    if any(is_process_scope_name(name) for name in result_dependencies):
+        errors.append("saved results cannot supply runtime bindings")
     if isinstance(parameters, list) and set(parameters) != expected_parameters:
         errors.append("template parameters do not match SQL placeholders")
     fragments = template.get("fragments", [])

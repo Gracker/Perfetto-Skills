@@ -49,12 +49,25 @@
         ]
       },
       "id": "gpu_render_in_range/root",
+      "identity": {
+        "aliases": [
+          "package"
+        ],
+        "policy": "verify_if_present",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_render_in_range/query.sql",
-      "sha256": "b3a4271dddf253dc8c68dfab3bee762a34c5f8cb94e9a4d2a9ed1498c77b082d",
+      "process_scope": {
+        "limitations": [
+          "Operation aggregates combine application and SurfaceFlinger slices; they are not application-only measurements."
+        ],
+        "role": "global_context"
+      },
+      "sha256": "0054e8aadb895478d86fdf12dd73f5c16175f24816643874b87009c3bb728a5a",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -75,10 +88,10 @@
       ],
       "skill_id": "gpu_render_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/gpu_render_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "06ea425f109301061fa4939fe042767b99a582ebba749c63c654a294e82d882b"
+        "sha256": "1c142b8dbc84b47518922a8a37b43c85c1e3e887ad5bfc61179c1710dce9c286"
       },
       "sql_dependencies": {
         "creates": [],
@@ -90,13 +103,25 @@
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "74ffadce1e9431003d2fad5fa33f52c4b51e71a4202401a277e43715ec650e23"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

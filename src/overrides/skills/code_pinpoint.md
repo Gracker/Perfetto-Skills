@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/code_pinpoint.skill.yaml
 Source SHA-256: c2560c8a63a870cc090ef0176632c2c572fd52bb4301adaa16342cbb651204ce
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 Perfetto-Skills native overlay: deterministic trace-to-source anchors with owned fixture regressions.
 # Deterministic code pinpoint anchors
 
@@ -106,7 +106,7 @@ function, file, package, or query term from context.
 
 - ID: `native_symbols`
 - Type: `atomic`
-- SQL: [`../sql/code_pinpoint/native_modules.sql`](../sql/code_pinpoint/native_modules.sql)
+- SQL: [`../sql/code_pinpoint/native_symbols.sql`](../sql/code_pinpoint/native_symbols.sql)
 
 ```yaml
 display:

@@ -17,7 +17,11 @@
   },
   "id": "sched_latency_in_range",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package"
+    ],
+    "policy": "verify_if_present",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -43,13 +47,17 @@
     "modules": [],
     "required_tables": []
   },
+  "process_scope": {
+    "binding": "effective_target_processes",
+    "role": "target"
+  },
   "query_id": "sched_latency_in_range/root",
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/atomic/sched_latency_in_range.skill.yaml",
-    "sha256": "27015e72f5b20d3dc85010dd507c2510afcc4b6a9c12515bea3fb478e09e446d"
+    "sha256": "1c7cccd8cec4d46d8e0268e09dc0dd68c019b0783e5c575a13de4b01254924d0"
   },
   "steps": [],
   "type": "atomic",

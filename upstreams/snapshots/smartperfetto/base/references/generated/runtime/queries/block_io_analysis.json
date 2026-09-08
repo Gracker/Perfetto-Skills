@@ -49,16 +49,19 @@
         ]
       },
       "id": "block_io_analysis/data_check",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/block_io_analysis/data_check.sql",
-      "sha256": "8f2386b80c6d9d49970e2e5041a969abd7bd09b35eea95a0ad1776f304f389eb",
+      "sha256": "daf6e22f5e785196492dd7affe4524ce42738724f205ef1d1a0fa23464c37830",
       "signal_patterns": [],
       "skill_id": "block_io_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/block_io_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985"
@@ -78,11 +81,13 @@
       "step_id": "data_check",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -142,16 +147,19 @@
         ]
       },
       "id": "block_io_analysis/io_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/block_io_analysis/io_overview.sql",
-      "sha256": "0731913be751f823310c80ca6f952438973277e8100d22e8362c3ae532f4652f",
+      "sha256": "fc334c53c82458028836e56ba0d7d8bd912a8d32f7ea6cae736d612a958f422a",
       "signal_patterns": [],
       "skill_id": "block_io_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/block_io_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985"
@@ -171,11 +179,13 @@
       "step_id": "io_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -235,16 +245,19 @@
         ]
       },
       "id": "block_io_analysis/device_io_stats",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/block_io_analysis/device_io_stats.sql",
-      "sha256": "78d2c053c0f05651311784f43cba2ce27cfd26c696ec39dd85fc52b63b6947c6",
+      "sha256": "20807d559ce300005f41556d396b217a7f40d7cf01bdfedb0548367109e83020",
       "signal_patterns": [],
       "skill_id": "block_io_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/block_io_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985"
@@ -264,12 +277,14 @@
       "step_id": "device_io_stats",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "device",
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -329,16 +344,19 @@
         ]
       },
       "id": "block_io_analysis/io_queue_depth",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/block_io_analysis/io_queue_depth.sql",
-      "sha256": "360a5e921c224b4c27c544096aa6b5ebda61134d7b54806b6031f318a32f4781",
+      "sha256": "e91535a3db764aca37d6b77d5380a5fde5d14e937c4b5aaec4f08558ca844c07",
       "signal_patterns": [],
       "skill_id": "block_io_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/block_io_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985"
@@ -358,12 +376,14 @@
       "step_id": "io_queue_depth",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "device",
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -423,16 +443,19 @@
         ]
       },
       "id": "block_io_analysis/high_queue_periods",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/block_io_analysis/high_queue_periods.sql",
-      "sha256": "c051cf17f004ca4eb9342e86ff1f52852d8f6565d7286738334198b57fc6a198",
+      "sha256": "b658331aba0713d2531672639975fdbd9af04d53bcbf195c36d3cda719d397e3",
       "signal_patterns": [],
       "skill_id": "block_io_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/block_io_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985"
@@ -452,13 +475,15 @@
       "step_id": "high_queue_periods",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "device",
           "end_ts",
           "min_queue_depth",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -518,16 +543,19 @@
         ]
       },
       "id": "block_io_analysis/long_io_operations",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/block_io_analysis/long_io_operations.sql",
-      "sha256": "1c127c5e21c2f105a3c0a4f12520b07ec4deee2433c4f58a4c79b7125a66877a",
+      "sha256": "12af77bb2d8706fae04b5dec6da8fba53612af8a1bca55e7e89faab9e2c79509",
       "signal_patterns": [],
       "skill_id": "block_io_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/block_io_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985"
@@ -547,12 +575,14 @@
       "step_id": "long_io_operations",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "device",
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -612,16 +642,19 @@
         ]
       },
       "id": "block_io_analysis/io_thread_blocking",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/block_io_analysis/io_thread_blocking.sql",
-      "sha256": "93af20281195ea20c7e70685235db3007396537be22f6c083f617a4906747457",
+      "sha256": "56e2435d41865eded501a1210281a0d45affcbbf7741c94815e66bb2a228780e",
       "signal_patterns": [],
       "skill_id": "block_io_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/block_io_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985"
@@ -641,11 +674,13 @@
       "step_id": "io_thread_blocking",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -705,16 +740,19 @@
         ]
       },
       "id": "block_io_analysis/root_cause_classification",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/block_io_analysis/root_cause_classification.sql",
-      "sha256": "cfb77a79233d726007ed00aec7f2beacc8d8214a1d529e65dfe738577f674460",
+      "sha256": "4891ee7408e569a7094ccf6154dc3cf2b002a4614fed487b6639759b3eca6ec1",
       "signal_patterns": [],
       "skill_id": "block_io_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/block_io_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985"
@@ -734,11 +772,13 @@
       "step_id": "root_cause_classification",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

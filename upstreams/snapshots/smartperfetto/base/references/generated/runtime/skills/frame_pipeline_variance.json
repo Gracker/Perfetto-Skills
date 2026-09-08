@@ -24,7 +24,12 @@
   },
   "id": "frame_pipeline_variance",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package",
+      "process_name"
+    ],
+    "policy": "verify_if_present",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -61,13 +66,17 @@
       "actual_frame_timeline_slice"
     ]
   },
+  "process_scope": {
+    "binding": "effective_target_processes",
+    "role": "target"
+  },
   "query_id": "frame_pipeline_variance/root",
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/atomic/frame_pipeline_variance.skill.yaml",
-    "sha256": "371a11a05e1735c9a5ef91771956d7304d2f0613e653c48c830946646dcf6b6f"
+    "sha256": "758727e5e7fe862de5324469e2a8006fa72f121bba6818661575c1f97dfbd823"
   },
   "steps": [],
   "type": "atomic",

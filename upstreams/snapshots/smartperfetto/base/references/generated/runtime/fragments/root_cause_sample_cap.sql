@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/root_cause_sample_cap.sql
 -- Source SHA-256: bc4dc74673c18b1c9eb9d993c81cc82bf02119db6c6715a7244d976a1f5a0146
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 -- Fragment: root_cause_sample_cap
 -- Single source of truth for the per-session root-cause frame sample cap.

@@ -47,18 +47,21 @@
         "probe_capabilities": []
       },
       "id": "cpu_idle_analysis/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_idle_analysis/query.sql",
-      "sha256": "93d754162e761549aa3e7617f21893c622c512116da4e449b9df7bb37e4d6421",
+      "sha256": "01ac528b108458be9cf33386f6700799cf2af10c682745f62551c4b0c6773bb9",
       "signal_patterns": [
         "cpuidle"
       ],
       "skill_id": "cpu_idle_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_idle_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "231e8ce685c178ba67e1e32c7f5fcdb25ba5b5b0b0773af5145ca0572d6b4861"
@@ -74,12 +77,14 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "cpu_ids",
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

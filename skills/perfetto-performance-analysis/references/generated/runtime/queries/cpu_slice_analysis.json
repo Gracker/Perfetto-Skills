@@ -47,19 +47,22 @@
         "probe_capabilities": []
       },
       "id": "cpu_slice_analysis/cpu_time_by_core",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_slice_analysis/cpu_time_by_core.sql",
-      "sha256": "63a25d356ab7eb743510d4ffa02d7119509687bd86b8de526f8dab3d9cbb2005",
+      "sha256": "a5fd1ccb1323ae3df3fe8c65506ad7f7b41d5ee229ebe436869bbc0d0856a6eb",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "cpu_slice_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_slice_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "1bd7040a3223370ecf29a5a3df06150037eae83b5c3497e0b64cd983f2117cb2"
@@ -81,12 +84,14 @@
       "step_id": "cpu_time_by_core",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

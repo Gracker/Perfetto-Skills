@@ -44,14 +44,17 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/atomic/cpu_topology_view.skill.yaml",
-    "sha256": "792f8e08be59730e2b62f9f21359ea7677b02b8ab7aa5224e5caaa9587779f76"
+    "sha256": "71bcdc2a2f2b3c8688412e9a48c716ff4e008e01da9728347161d071b302c67a"
   },
   "steps": [
     {
       "id": "inspect_existing_topology_object",
       "name": "检查旧 CPU 拓扑对象",
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_topology_view/inspect_existing_topology_object",
       "result_dependencies": [],
       "save_as": "existing_topology_object",
@@ -61,6 +64,9 @@
       "condition": "existing_topology_object.data?.[0]?.type === 'view'",
       "id": "drop_existing_topology_view",
       "name": "清理旧 CPU 拓扑视图",
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_topology_view/drop_existing_topology_view",
       "result_dependencies": [],
       "type": "atomic"
@@ -69,6 +75,9 @@
       "condition": "existing_topology_object.data?.[0]?.type === 'table'",
       "id": "drop_existing_topology_table",
       "name": "清理旧 CPU 拓扑表",
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_topology_view/drop_existing_topology_table",
       "result_dependencies": [],
       "type": "atomic"
@@ -77,6 +86,9 @@
       "id": "create_topology_view",
       "name": "创建 CPU 拓扑关系",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_topology_view/create_topology_view",
       "result_dependencies": [],
       "type": "atomic"
@@ -85,6 +97,9 @@
       "id": "read_topology",
       "name": "读取 CPU 拓扑",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_topology_view/read_topology",
       "result_dependencies": [],
       "save_as": "cpu_topology",

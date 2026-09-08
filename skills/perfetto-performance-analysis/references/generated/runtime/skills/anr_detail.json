@@ -30,7 +30,11 @@
   },
   "id": "anr_detail",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "process_name"
+    ],
+    "policy": "verify_if_present",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -52,9 +56,10 @@
       "type": "string"
     },
     {
+      "default": 0,
       "description": "进程 ID",
       "name": "pid",
-      "required": true,
+      "required": false,
       "type": "integer"
     },
     {
@@ -122,9 +127,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/composite/anr_detail.skill.yaml",
-    "sha256": "e48c73408b2775bed099612d32832cde9f70ca33cd1cc462e0275b1454588359"
+    "sha256": "283e74c341c76d3959624287f046bcc7f85e2b7b1cbe1edfab07c544a01660af"
   },
   "steps": [
     {
@@ -137,6 +142,9 @@
     {
       "id": "anr_info",
       "name": "ANR 基本信息",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "anr_detail/anr_info",
       "result_dependencies": [],
       "save_as": "anr_basic",
@@ -146,6 +154,10 @@
       "id": "main_thread_quadrant",
       "name": "主线程四象限分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "anr_detail/main_thread_quadrant",
       "result_dependencies": [],
       "save_as": "quadrant",
@@ -157,10 +169,8 @@
       "params": {
         "end_ts": "${anr_ts}",
         "package": "${process_name}",
-        "pid": "${pid}",
         "start_ts": "${anr_ts - timeout_ns}",
-        "top_k": 10,
-        "upid": "${upid}"
+        "top_k": 10
       },
       "save_as": "blocking",
       "skill": "main_thread_states_in_range",
@@ -170,6 +180,10 @@
       "id": "render_thread_analysis",
       "name": "RenderThread 分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "anr_detail/render_thread_analysis",
       "result_dependencies": [],
       "save_as": "render_thread",
@@ -218,6 +232,17 @@
       "id": "lock_contention",
       "name": "锁竞争检测",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "peer_context": [
+            "blocking_method",
+            "blocking_thread_name",
+            "waiter_count"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "anr_detail/lock_contention",
       "result_dependencies": [],
       "save_as": "lock_contention",
@@ -227,6 +252,10 @@
       "id": "app_freeze_check",
       "name": "应用冻结检测",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "anr_detail/app_freeze_check",
       "result_dependencies": [],
       "save_as": "app_freeze_check",
@@ -236,6 +265,16 @@
       "id": "wakeup_chain",
       "name": "唤醒链分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "peer_context": [
+            "waker_thread",
+            "waker_process"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "anr_detail/wakeup_chain",
       "result_dependencies": [],
       "save_as": "wakeup",
@@ -249,10 +288,8 @@
         "end_ts": "${anr_ts}",
         "min_dur_ns": 1000000,
         "package": "${process_name}",
-        "pid": "${pid}",
         "start_ts": "${anr_ts - timeout_ns}",
-        "top_k": 15,
-        "upid": "${upid}"
+        "top_k": 15
       },
       "save_as": "main_slices",
       "skill": "main_thread_slices_in_range",
@@ -262,6 +299,9 @@
       "id": "thread_evidence_availability",
       "name": "线程证据可用性",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "anr_detail/thread_evidence_availability",
       "result_dependencies": [],
       "save_as": "thread_evidence_availability",
@@ -272,6 +312,9 @@
       "id": "direct_blocker_evidence_gap",
       "name": "直接阻塞点证据缺口",
       "optional": true,
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "anr_detail/direct_blocker_evidence_gap",
       "result_dependencies": [],
       "save_as": "direct_blocker_gap",
@@ -282,6 +325,10 @@
       "id": "direct_blocker_classification",
       "name": "直接阻塞点候选",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "anr_detail/direct_blocker_classification",
       "result_dependencies": [],
       "save_as": "direct_blocker_candidates",
@@ -292,6 +339,9 @@
       "id": "direct_blocker_slice_evidence_gap",
       "name": "Slice 直接阻塞点证据缺口",
       "optional": true,
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "anr_detail/direct_blocker_slice_evidence_gap",
       "result_dependencies": [],
       "save_as": "direct_blocker_slice_gap",
@@ -302,6 +352,10 @@
       "id": "direct_blocker_slice_classification",
       "name": "Slice 直接阻塞点候选",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "anr_detail/direct_blocker_slice_classification",
       "result_dependencies": [],
       "save_as": "direct_blocker_slice_candidates",
@@ -311,6 +365,9 @@
       "id": "logcat_availability",
       "name": "Logcat 表可用性",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "anr_detail/logcat_availability",
       "result_dependencies": [],
       "save_as": "logcat_availability",
@@ -321,6 +378,9 @@
       "id": "anr_logcat_evidence_gap",
       "name": "当前 ANR 日志证据缺口",
       "optional": true,
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "anr_detail/anr_logcat_evidence_gap",
       "result_dependencies": [],
       "save_as": "logcat_context_gap",
@@ -331,6 +391,12 @@
       "id": "anr_logcat_context",
       "name": "当前 ANR 日志上下文",
       "optional": true,
+      "process_scope": {
+        "limitations": [
+          "Logcat rows are correlated by event identifiers or message text and do not establish an exact process instance."
+        ],
+        "role": "global_context"
+      },
       "query_id": "anr_detail/anr_logcat_context",
       "result_dependencies": [],
       "save_as": "logcat_event_context",

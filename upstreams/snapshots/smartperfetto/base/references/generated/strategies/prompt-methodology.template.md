@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/prompt-methodology.template.md
-Source SHA-256: 76814bba1c72912a82d30267f2dc2132d829ef74d2e78f19eab2dd69b028c0f7
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: fa2b6234b243ac130cc2d01c619d7f3a2bc0e0a76a7e83e46432a0a32208392f
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Prompt Methodology Template
 
@@ -20,9 +20,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
 
-<!-- Template variables:
-  {{sceneStrategy}} - Always-injected scene core from *.strategy.md
--->
+<!-- Variable "sceneStrategy" = scene core; no braces here, the split would land in this comment. -->
 ## 分析方法论
 
 ### Evidence Contract

@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "power_rails_energy_breakdown/rail_energy",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/power_rails_energy_breakdown/rail_energy.sql",
-      "sha256": "22222c6e6122ee747e8a045fc25eb50e0bf663b950f7f3f2e9110a21307faccd",
+      "sha256": "fab1e1a6021da520280469ad71897d67ae3d2d56bcc05f1ee2239dad07d7ebf0",
       "signal_patterns": [],
       "skill_id": "power_rails_energy_breakdown",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/power_rails_energy_breakdown.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "6aaff1c3c000fd17b55820ae6849ffcf6d24beb72dd5a902f08144738181563f"
@@ -74,12 +77,14 @@
       "step_id": "rail_energy",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
           "top_n"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

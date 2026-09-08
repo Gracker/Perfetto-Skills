@@ -47,12 +47,15 @@
         "probe_capabilities": []
       },
       "id": "android_bitmap_memory_per_process/bitmap_memory",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_bitmap_memory_per_process/bitmap_memory.sql",
-      "sha256": "4a2d76b0715b03f1df4dacd78fd0b60d513235e7920ed37642dd92af01a52336",
+      "sha256": "212bbc890dd91fd4fea0e7694df442fa6eef2d075affcd3f9ecd77520974a023",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -60,7 +63,7 @@
       ],
       "skill_id": "android_bitmap_memory_per_process",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fcb998f355d4b59effa774ad1bbdf5e5f786de7a6b686385a57f6cfea779555f"
@@ -79,11 +82,13 @@
       "step_id": "bitmap_memory",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -141,18 +146,21 @@
         "probe_capabilities": []
       },
       "id": "android_bitmap_memory_per_process/heap_bitmap_availability",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_bitmap_memory_per_process/heap_bitmap_availability.sql",
-      "sha256": "a3a851f53cb9f1402ac8f2862f8d7b6e482d2a46091d1fd8a92cc850a7be09d4",
+      "sha256": "4cefa17200f3adfc2c72cf53b8e93a07ddc326442a700f9c0c1245e49c73c96c",
       "signal_patterns": [
         "heap_graph_bitmaps"
       ],
       "skill_id": "android_bitmap_memory_per_process",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fcb998f355d4b59effa774ad1bbdf5e5f786de7a6b686385a57f6cfea779555f"
@@ -171,8 +179,10 @@
       "step_id": "heap_bitmap_availability",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -230,12 +240,15 @@
         "probe_capabilities": []
       },
       "id": "android_bitmap_memory_per_process/heap_bitmap_metadata",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_bitmap_memory_per_process/heap_bitmap_metadata.sql",
-      "sha256": "ac6302d641b6106a1cbe0163a1ce2fe2c224b511946bebf394c26d654614b7b9",
+      "sha256": "4f0413ec2d6eeccdc0de223c455341c5d203d615170b1043dcc7e0414f1e12f7",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -243,7 +256,7 @@
       ],
       "skill_id": "android_bitmap_memory_per_process",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fcb998f355d4b59effa774ad1bbdf5e5f786de7a6b686385a57f6cfea779555f"
@@ -262,11 +275,13 @@
       "step_id": "heap_bitmap_metadata",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -324,12 +339,15 @@
         "probe_capabilities": []
       },
       "id": "android_bitmap_memory_per_process/heap_bitmap_sender_attribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_bitmap_memory_per_process/heap_bitmap_sender_attribution.sql",
-      "sha256": "8e13912d50c14a37f0582e16ab479d9595929eb591e2cafbbf0806d292ac33d6",
+      "sha256": "4f012ca5ecd36983756668b1c942ffa684165ff23d3fb17dce88a3e7c08e2880",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -337,7 +355,7 @@
       ],
       "skill_id": "android_bitmap_memory_per_process",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fcb998f355d4b59effa774ad1bbdf5e5f786de7a6b686385a57f6cfea779555f"
@@ -356,11 +374,13 @@
       "step_id": "heap_bitmap_sender_attribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

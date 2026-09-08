@@ -49,16 +49,19 @@
         ]
       },
       "id": "gpu_power_state_analysis/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_power_state_analysis/query.sql",
-      "sha256": "cfdb3ffd989516348685c1ec8b941d712ed12435c08faf2ab84d07fd6d01a1a3",
+      "sha256": "65f2afb925c93c05c29874288186bfeee9d7e016917f1c8ba7eaf9d69b431a21",
       "signal_patterns": [],
       "skill_id": "gpu_power_state_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/gpu_power_state_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "0a4ae145d64ac7d9eddb15b2f73f8f209e360d4d06e87e8bb500751ee7162f6d"
@@ -76,12 +79,14 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
           "transition_threshold_pct"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

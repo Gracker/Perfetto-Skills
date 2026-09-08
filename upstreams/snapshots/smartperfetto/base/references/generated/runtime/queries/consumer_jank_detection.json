@@ -49,18 +49,21 @@
         ]
       },
       "id": "consumer_jank_detection/vsync_config",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/consumer_jank_detection/vsync_config.sql",
-      "sha256": "57cbef7585aa98dcb004fefbce060f1049e55d62ccf492241af067c3dd2419ec",
+      "sha256": "05375a2521c3b6bbd7141a8dc561409f0f8f47e5a1b6ae23bd2f46496644e369",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "consumer_jank_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
@@ -81,11 +84,13 @@
       "step_id": "vsync_config",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -145,18 +150,21 @@
         ]
       },
       "id": "consumer_jank_detection/consumer_jank_frames",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/consumer_jank_detection/consumer_jank_frames.sql",
-      "sha256": "e19ce741768603d1eeba413c37966fa94adcfb88c5374cef478268c523d2b105",
+      "sha256": "4682cb235975a4127f0db564f2fcefaf98663701f754501a7f55913e5b8d0ac7",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "consumer_jank_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
@@ -177,13 +185,15 @@
       "step_id": "consumer_jank_frames",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "layer_name",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -243,18 +253,21 @@
         ]
       },
       "id": "consumer_jank_detection/consumer_jank_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/consumer_jank_detection/consumer_jank_summary.sql",
-      "sha256": "3e3ac9021e65c1b6caf010e4085746d8a2459a966425539570a4b08f87bd90e1",
+      "sha256": "c7989a83f1b3416fe49bc9817585eb91eebe5e34945a96140f87f9e7b56aef4d",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "consumer_jank_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
@@ -275,13 +288,15 @@
       "step_id": "consumer_jank_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "layer_name",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -341,18 +356,21 @@
         ]
       },
       "id": "consumer_jank_detection/jank_severity_distribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/consumer_jank_detection/jank_severity_distribution.sql",
-      "sha256": "7690babcbecdb7d7cd0fdba2ca0367f9635d02ab83ecc1a9143c4b7e50d71ade",
+      "sha256": "3632880f7974423e399f7d56f0ad027e1f84f66f3eccd3eafa8e050998240d77",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "consumer_jank_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
@@ -373,13 +391,15 @@
       "step_id": "jank_severity_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "layer_name",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

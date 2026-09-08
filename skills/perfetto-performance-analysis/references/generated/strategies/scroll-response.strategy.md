@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scroll-response.strategy.md
-Source SHA-256: 979cb4f67a0da1bba7f120f8f4adcbc65b20e061b9bc52e1ead8844e3e1a7899
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 63f55a12ad7e9c56222356856abad8b0521e196282feaee2d693c4e7124f4a8a
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Scroll Response Strategy
 
@@ -21,6 +21,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: scroll_response
+classification_description: The initial response to starting a scroll gesture, including time to the first visual update.
 priority: 3
 effort: medium
 required_capabilities:

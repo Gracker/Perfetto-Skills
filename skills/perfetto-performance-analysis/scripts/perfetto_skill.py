@@ -12,13 +12,15 @@ from _common import (
     DEFAULT_MAX_OUTPUT_BYTES,
     parse_csv_output,
     render_sql_template,
+    resolve_identity,
     run_query,
     sha256_file,
-    sql_literal,
     write_text_atomic,
 )
 from perfetto_query import (
+    bind_manifest_process_scope,
     load_query_entry,
+    manifest_process_scope_receipt,
     parse_parameters,
     prepare_manifest_query,
     verify_manifest_schema,
@@ -64,61 +66,6 @@ class ManifestCatalog:
                     pending.append(child)
         return result
 
-
-def resolve_identity(
-    skill: Mapping[str, Any],
-    params: Mapping[str, Any],
-    *,
-    trace: Path,
-    trace_processor: str | None,
-    timeout: float,
-    max_output_bytes: int,
-) -> dict[str, Any]:
-    config = skill.get("identity", {}) or {"policy": "none"}
-    policy = str(config.get("policy", "none"))
-    if policy in {"none", "exempt"}:
-        return {"status": "exempt", "policy": policy}
-    aliases = [str(value) for value in config.get("aliases", [])]
-    target_name = next(
-        (str(params[name]) for name in aliases if params.get(name) not in (None, "")),
-        None,
-    )
-    if target_name is None:
-        return {"status": "not_requested", "policy": policy, "aliases": aliases}
-    query = f"""
-SELECT upid, pid, name, start_ts, end_ts
-FROM process
-WHERE name = {sql_literal(target_name)} OR name GLOB {sql_literal(target_name + ':*')}
-ORDER BY CASE WHEN name = {sql_literal(target_name)} THEN 0 ELSE 1 END, start_ts;
-""".strip()
-    rows = parse_csv_output(
-        run_query(
-            trace,
-            sql=query,
-            trace_processor=trace_processor,
-            timeout=timeout,
-            max_output_bytes=max_output_bytes,
-        ).stdout
-    )
-    exact = [row for row in rows if row.get("name") == target_name]
-    candidates = exact or rows
-    if len(candidates) == 1:
-        candidate = candidates[0]
-        return {
-            "status": "resolved",
-            "policy": policy,
-            "target": target_name,
-            "upid": candidate.get("upid"),
-            "pid": candidate.get("pid"),
-            "process_name": candidate.get("name"),
-            "lifetime": {"start_ns": candidate.get("start_ts"), "end_ns": candidate.get("end_ts")},
-        }
-    return {
-        "status": "not_found" if not candidates else "ambiguous",
-        "policy": policy,
-        "target": target_name,
-        "candidates": candidates,
-    }
 
 
 def build_runtime_runner(
@@ -180,6 +127,8 @@ def build_runtime_runner(
         params: Mapping[str, Any],
         results: Mapping[str, Any],
         prelude: list[str],
+        identity_result: Mapping[str, Any] | None = None,
+        supplied_parameters: Mapping[str, Any] | None = None,
     ) -> Mapping[str, Any]:
         del prelude
         entry = load_query_entry(query_id, SKILL_ROOT)
@@ -196,12 +145,22 @@ def build_runtime_runner(
                 max_output_bytes=max_output_bytes,
             ),
         )
-        template = prepare_manifest_query(entry, SKILL_ROOT)
+        binding_entries: list[tuple[dict[str, Any], str]] = []
+        template = prepare_manifest_query(entry, SKILL_ROOT, binding_entries=binding_entries)
         normalized_results = {
             name: value.get("data", value) if isinstance(value, Mapping) else value
             for name, value in results.items()
         }
-        sql = render_sql_template(template, params, normalized_results)
+        scope, _identity = bind_manifest_process_scope(
+            binding_entries, params, supplied_parameters if supplied_parameters is not None else params,
+            identity_result=identity_result, trace=resolved_trace,
+            trace_sha256=trace_sha256, trace_side=trace_side,
+            trace_processor=trace_processor, timeout=timeout, max_output_bytes=max_output_bytes,
+        )
+        sql = render_sql_template(
+            template, params, normalized_results,
+            process_scope=scope, trace_sha256=trace_sha256, trace_side=trace_side,
+        )
         output = run_query(
             trace,
             sql=sql,
@@ -219,6 +178,7 @@ def build_runtime_runner(
                 "validation": entry["validation"],
                 "compatibility": entry["compatibility"],
                 "capability_gate": gate,
+                **manifest_process_scope_receipt(binding_entries),
             },
         }
 
@@ -227,6 +187,7 @@ def build_runtime_runner(
         query_executor,
         identity_resolver=identity_resolver,
         prerequisite_checker=prerequisite_checker,
+        process_scope_enabled=True,
     )
 
 

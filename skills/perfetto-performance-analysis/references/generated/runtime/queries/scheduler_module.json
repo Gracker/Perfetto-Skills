@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "scheduler_module/runnable_analysis",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scheduler_module/runnable_analysis.sql",
-      "sha256": "39760fab42d98d4b055a3569daf3a0169e7143f27ca9af83a41298d7d523a217",
+      "sha256": "04c3079578b035bb2e7393cfc7e5c3e3f3105f97f37465f28c0b0c5f0a3662a8",
       "signal_patterns": [],
       "skill_id": "scheduler_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452"
@@ -74,8 +77,10 @@
       "step_id": "runnable_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -133,18 +138,21 @@
         "probe_capabilities": []
       },
       "id": "scheduler_module/cpu_frequency",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scheduler_module/cpu_frequency.sql",
-      "sha256": "cfb34b7b36e816377003d2b12bc440562f5fdc184a714255fc2029c59d716c7f",
+      "sha256": "342dc3df024616d4e599b428fe07935ac5fb599a1776f7cdec79a638a2938f2c",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "scheduler_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452"
@@ -166,8 +174,10 @@
       "step_id": "cpu_frequency",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -225,18 +235,21 @@
         "probe_capabilities": []
       },
       "id": "scheduler_module/core_distribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scheduler_module/core_distribution.sql",
-      "sha256": "d7bdd5ce986f24beb422f3ec7447c92cfb0f3250d249b704c3e307e9892f38ff",
+      "sha256": "9c32f2f7606afb1cc68640979a47273384335d37c8c63a5570da2bd715a7da33",
       "signal_patterns": [
         "%${package}%"
       ],
       "skill_id": "scheduler_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452"
@@ -258,10 +271,12 @@
       "step_id": "core_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

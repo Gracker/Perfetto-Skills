@@ -49,18 +49,21 @@
         ]
       },
       "id": "compose_recomposition_hotspot/frame_timeline_check",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/compose_recomposition_hotspot/frame_timeline_check.sql",
-      "sha256": "d90a0732a6e7f20759e90f69e7609d60c2ac779fd9005b1564bbf06bfcb4f5a5",
+      "sha256": "b7b4b321898f328340da65e3f1e431777cfdd54919f1e1de4a459ffac019c90f",
       "signal_patterns": [
         "actual_frame_timeline_slice"
       ],
       "skill_id": "compose_recomposition_hotspot",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/compose_recomposition_hotspot.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "7f426a90804f6efc3d8ec7d94af37a4b4879abfa2ff4c95cf6360b70d16ca06a"
@@ -84,8 +87,10 @@
       "step_id": "frame_timeline_check",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -145,12 +150,15 @@
         ]
       },
       "id": "compose_recomposition_hotspot/recomposition_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/compose_recomposition_hotspot/recomposition_overview.sql",
-      "sha256": "b2dc1dd7876f7f65fad718998881eae9b1368746085d98bd562e5f2d1858d72d",
+      "sha256": "86ce0885af5e0b86272181895a0196b1fe9f3cf66eec2effa842d835a26b2448",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -160,7 +168,7 @@
       ],
       "skill_id": "compose_recomposition_hotspot",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/compose_recomposition_hotspot.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "7f426a90804f6efc3d8ec7d94af37a4b4879abfa2ff4c95cf6360b70d16ca06a"
@@ -184,12 +192,14 @@
       "step_id": "recomposition_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -249,12 +259,15 @@
         ]
       },
       "id": "compose_recomposition_hotspot/slow_recompositions",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/compose_recomposition_hotspot/slow_recompositions.sql",
-      "sha256": "fad1f3154edb7ac53588835d713b0597212209c18ef1f271088c8161e39267db",
+      "sha256": "9e9d50f1ae68dc55d7e27dfdf3d6bdbf84d493c4cc3b59099f8ed9982ab26d20",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -264,7 +277,7 @@
       ],
       "skill_id": "compose_recomposition_hotspot",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/compose_recomposition_hotspot.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "7f426a90804f6efc3d8ec7d94af37a4b4879abfa2ff4c95cf6360b70d16ca06a"
@@ -288,12 +301,14 @@
       "step_id": "slow_recompositions",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -353,12 +368,15 @@
         ]
       },
       "id": "compose_recomposition_hotspot/composition_frequency",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/compose_recomposition_hotspot/composition_frequency.sql",
-      "sha256": "3dee4b7ff03d6298343caf5ba7cc2122866082a2cad932b8ab72dc7522818eaf",
+      "sha256": "50c75fd8a5f96eb21ac092cf5b479680276ec5f16f1a926904da82bb3d4ed633",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -368,7 +386,7 @@
       ],
       "skill_id": "compose_recomposition_hotspot",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/compose_recomposition_hotspot.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "7f426a90804f6efc3d8ec7d94af37a4b4879abfa2ff4c95cf6360b70d16ca06a"
@@ -392,12 +410,14 @@
       "step_id": "composition_frequency",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -457,12 +477,15 @@
         ]
       },
       "id": "compose_recomposition_hotspot/recomposition_frame_overlap",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/compose_recomposition_hotspot/recomposition_frame_overlap.sql",
-      "sha256": "734bf09685d9c564cb9568651a8f19a54f548d079cbedaeaecd3d2075061e6d5",
+      "sha256": "f55268e8fd6a8bfa788e22bb6da07cfd9074cbf33cd0e46592b9608a579e66e5",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -472,7 +495,7 @@
       ],
       "skill_id": "compose_recomposition_hotspot",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/compose_recomposition_hotspot.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "7f426a90804f6efc3d8ec7d94af37a4b4879abfa2ff4c95cf6360b70d16ca06a"
@@ -496,12 +519,14 @@
       "step_id": "recomposition_frame_overlap",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

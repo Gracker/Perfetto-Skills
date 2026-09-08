@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "frame_ui_time_breakdown/ui_time",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/frame_ui_time_breakdown/ui_time.sql",
-      "sha256": "e49dc2e04bee130c65a32d365ce150afdba65d2c77774cc358c10071239a1cef",
+      "sha256": "18b9f2df7c2b3f091b6d7e887198e3fad340031015747552f8c9f0dfd5d671de",
       "signal_patterns": [],
       "skill_id": "frame_ui_time_breakdown",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/frame_ui_time_breakdown.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e954401abb0cdd3049a98ff540b0dcb21f44e7008292d852ac5fdc4426d59fcd"
@@ -74,8 +77,10 @@
       "step_id": "ui_time",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

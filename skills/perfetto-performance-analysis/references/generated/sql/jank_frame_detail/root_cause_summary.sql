@@ -1,11 +1,22 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: cc19de68a5c179e17af405bf32f9ca75f56af0c5a4ccf970ede72790c558942b
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 -- 根因分析: 综合四象限、CPU频率、耗时操作等数据，输出明确的根因结论
 -- CTEs vsync_ticks, vsync_config, target_threads, thread_states injected via sql_fragments
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 -- Fragment: vsync_config
 -- Estimates VSync period using scoped then trace-wide VSYNC/FrameTimeline evidence.
 -- The explicit 16.67ms default is used only when the trace has no usable timing evidence.
@@ -114,8 +125,10 @@ target_threads AS (
     END as thread_end_ts
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (
-      '${package}' = ''
+  WHERE (${__process_scope.upid} IS NULL OR p.upid = ${__process_scope.upid})
+    AND (
+      ${__process_scope.upid} IS NOT NULL
+      OR '${package}' = ''
       OR p.name = '${package}'
       OR p.name GLOB '${package}:*'
     )
@@ -184,13 +197,9 @@ render_summary AS (
 -- 4. 获取最耗时的主线程操作
 main_thread_utid AS (
   SELECT t.utid
-  FROM thread t JOIN process p ON t.upid = p.upid
-  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') AND (t.tid = p.pid OR t.name GLOB '[0-9]*.ui')
-),
-main_thread_tid AS (
-  SELECT t.tid
-  FROM thread t JOIN process p ON t.upid = p.upid
-  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') AND (t.tid = p.pid OR t.name GLOB '[0-9]*.ui')
+  FROM thread t JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+    AND (t.tid = p.pid OR t.name GLOB '[0-9]*.ui')
 ),
 top_slice AS (
   SELECT
@@ -226,8 +235,10 @@ monitor_lock_overlap AS (
   WHERE amc.ts < ${end_ts}
     AND amc.ts + amc.dur > ${start_ts}
     AND amc.is_blocked_thread_main = 1
+    AND (${__process_scope.upid} IS NULL OR amc.upid = ${__process_scope.upid})
     AND (
-      '${package}' = ''
+      ${__process_scope.upid} IS NOT NULL
+      OR '${package}' = ''
       OR amc.process_name = '${package}'
       OR amc.process_name GLOB '${package}:*'
     )
@@ -464,8 +475,8 @@ gpu_fence AS (
   FROM slice s
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
-  JOIN process p ON t.upid = p.upid
-  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+  JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND (t.name = 'RenderThread' OR t.name GLOB '[0-9]*.raster')
     AND s.ts >= ${start_ts} AND s.ts < ${end_ts}
     AND (s.name GLOB '*Fence*' OR s.name GLOB '*fence*'
@@ -480,8 +491,8 @@ shader_compile AS (
   FROM slice s
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
-  JOIN process p ON t.upid = p.upid
-  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+  JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND (t.name = 'RenderThread' OR t.name GLOB '[0-9]*.raster')
     AND s.ts >= ${start_ts} AND s.ts < ${end_ts}
     AND (s.name GLOB '*shader*' OR s.name GLOB '*Shader*'
@@ -529,9 +540,8 @@ gc_frame_overlap AS (
     ) / 1e6, 2), 0) as gc_overlap_ms,
     COUNT(*) as gc_count
   FROM android_garbage_collection_events gc
-  JOIN thread t ON gc.tid = t.tid
-  JOIN process p ON t.upid = p.upid
-  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+  JOIN effective_target_processes p ON gc.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND gc.gc_ts < ${end_ts}
     AND gc.gc_ts + gc.gc_dur > ${start_ts}
 ),
@@ -542,7 +552,7 @@ binder_sync_main AS (
     bt.client_dur,
     bt.server_process
   FROM android_binder_txns bt
-  WHERE bt.client_tid IN (SELECT tid FROM main_thread_tid)
+  WHERE bt.client_utid IN (SELECT utid FROM main_thread_utid)
     AND bt.is_sync = 1
     AND bt.client_ts < ${end_ts}
     AND bt.client_ts + bt.client_dur > ${start_ts}

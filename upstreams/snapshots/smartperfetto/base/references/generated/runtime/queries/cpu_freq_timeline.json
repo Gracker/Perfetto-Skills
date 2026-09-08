@@ -49,18 +49,21 @@
         ]
       },
       "id": "cpu_freq_timeline/cpu_freq_changes",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_freq_timeline/cpu_freq_changes.sql",
-      "sha256": "3d81e6cae9962a8c9db16cbdf87e539dab213a444c7da789f0916217a86fabe6",
+      "sha256": "b14b19ed6c4bdfc7cef71cb6a2b0c172eac3d32e8601fc3fd4ee1c9e410546ef",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "cpu_freq_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_freq_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "1e522ca6fb183f6510f044547c8d5f97b82b8de7b181ceeae96795b0b1e8fe84"
@@ -83,11 +86,13 @@
       "step_id": "cpu_freq_changes",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -147,18 +152,21 @@
         ]
       },
       "id": "cpu_freq_timeline/cpu_freq_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_freq_timeline/cpu_freq_summary.sql",
-      "sha256": "350eebf03d928af13a23763bf39ac1c311b7e373dfa27dc5ef0a32bb70561cb8",
+      "sha256": "5e0b18ac4c0f85d7598050c4fdab4bec1e62c7b9cab3e95f447f35a32646fb23",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "cpu_freq_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_freq_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "1e522ca6fb183f6510f044547c8d5f97b82b8de7b181ceeae96795b0b1e8fe84"
@@ -181,11 +189,13 @@
       "step_id": "cpu_freq_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

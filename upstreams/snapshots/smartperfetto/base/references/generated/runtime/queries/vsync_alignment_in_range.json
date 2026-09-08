@@ -49,12 +49,18 @@
         ]
       },
       "id": "vsync_alignment_in_range/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_alignment_in_range/query.sql",
-      "sha256": "28d8c19ef4f4b30bbae9f8635f8ffc37c3947d8525203c2519d7af1d46d60a9a",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "b0cd94457917207680599e5cdfa75ba75e22c0401f1a9c81ea413969dc59f6f2",
       "signal_patterns": [
         "%VSYNC-app%",
         "%VSYNC-sf%",
@@ -62,10 +68,10 @@
       ],
       "skill_id": "vsync_alignment_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/vsync_alignment_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a2b69b59ec5a9385f3c650a2504f801f4dcbba67d2016b4461eb313ae5a2083c"
+        "sha256": "39143e628c5b370c0ea897c41246b2e976efcb4d956045b99e99a0151af04443"
       },
       "sql_dependencies": {
         "creates": [],
@@ -81,11 +87,13 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

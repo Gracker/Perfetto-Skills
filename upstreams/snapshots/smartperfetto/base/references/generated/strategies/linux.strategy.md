@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/linux.strategy.md
-Source SHA-256: 7ebec582b4f341fc6da19db3162aa28477be10a29a0720610361f1323508c8f5
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: f7a01c92cb9174473fd3b16f94c41ee4fed0cb391283c1522e98f37d9fc39ece
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Linux Strategy
 
@@ -21,6 +21,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: linux
+classification_description: Linux system behavior, scheduling and workload performance in traces outside an Android-specific
+  workflow.
 priority: 7
 effort: medium
 required_capabilities:

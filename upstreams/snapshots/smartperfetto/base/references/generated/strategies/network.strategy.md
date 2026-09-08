@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/network.strategy.md
-Source SHA-256: a493c2db8bbd3fa503b4fc5381c9dc6f50f796a81b8794b342a29e4de6eab6b2
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 3323599a9344843ba2c7578dd7415baac57f3014fd8b5aca25c1ae4f11c9c68e
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Network Strategy
 
@@ -21,6 +21,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: network
+classification_description: Network traffic, packet activity, connectivity and communication performance.
 priority: 6
 effort: medium
 required_capabilities: []
@@ -68,10 +69,9 @@ final_report_contract:
     label: 请求阶段证据边界
     description: 当问题涉及 DNS/connect/TLS/TTFB/body/decode/HTTPDNS/OkHttp/Cronet/APM/接入层日志时，区分 packet trace、request telemetry、日志/APM、时间窗/request_id
       对齐和缺失证据。
-    trigger_patterns:
-    - (网络|network).*(慢|延迟|latency|slow|请求慢|request.*slow)|(请求|request).*(慢|耗时|延迟|latency|slow)
-    - DNS|TTFB|HTTPDNS|OkHttp|Cronet|HttpEngine|EventListener|request[- ]stage|首包|首字节|secureConnect|responseHeadersStart
-    - TLS|handshake|\bconnect(?:Start|End)?\b|request body|response body|body transfer|decode|server log|access[- ]layer|APM
+    condition:
+      kind: semantic
+      description: 当问题要求定位网络请求耗时、失败或具体阶段瓶颈，或把包级 trace 与请求事件、客户端或服务端日志、APM 对照时适用。
     pattern_groups:
     - - 请求阶段证据边界
       - request[- ]stage evidence
@@ -118,10 +118,9 @@ final_report_contract:
     label: 网络栈/版本策略边界
     description: 当问题涉及 Cronet/HttpEngine/HTTP3/QUIC/ECH/CT/NetworkCallback/local-network permission/validated/metered/satellite/constrained
       network 时，区分网络栈、API/targetSdk/Extension、设备/服务端支持、配置/权限和 trace packet 证据。
-    trigger_patterns:
-    - Cronet|HttpEngine|HTTP/3|HTTP3|QUIC|0[- ]RTT|ECH|Encrypted Client Hello|Certificate Transparency|\bCT\b
-    - NetworkCallback|NetworkCapabilities|validated internet|metered|estimated bandwidth|bandwidth estimate|local network
-      permission|ACCESS_LOCAL_NETWORK|satellite|constrained network
+    condition:
+      kind: semantic
+      description: 当问题要求解释网络协议栈、连接状态、网络权限或平台策略的行为及版本差异时适用。
     pattern_groups:
     - - 网络栈/版本策略边界
       - stack policy boundary

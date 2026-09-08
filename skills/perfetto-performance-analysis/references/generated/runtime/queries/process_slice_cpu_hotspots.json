@@ -50,12 +50,25 @@
         ]
       },
       "id": "process_slice_cpu_hotspots/root",
+      "identity": {
+        "aliases": [
+          "package",
+          "process_name"
+        ],
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/process_slice_cpu_hotspots/query.sql",
-      "sha256": "c97cea3fed99e77753756ca18b4b087f75627fcb32e6fbd34ae23fe169baf0ea",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "92697a9a5f207b1e3b1218d74faff376e158f96a5295c4758425cc4d888036b5",
       "signal_patterns": [
         "%",
         "GPU completion",
@@ -65,10 +78,10 @@
       ],
       "skill_id": "process_slice_cpu_hotspots",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/process_slice_cpu_hotspots.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "fd6bc72d2cee67b783f9795e253586db60f2b7a3c3e786495b6d998e69403a8a"
+        "sha256": "fea05288f19596170a55ed5350e9ae1fe2f1a6a3eda249948f57db8b1c894236"
       },
       "sql_dependencies": {
         "creates": [],
@@ -87,6 +100,10 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "min_cpu_ns",
@@ -98,7 +115,10 @@
           "top_k",
           "upid"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

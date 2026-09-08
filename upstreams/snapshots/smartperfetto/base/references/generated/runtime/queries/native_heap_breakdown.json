@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "native_heap_breakdown/native_heap_hotspots",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/native_heap_breakdown/native_heap_hotspots.sql",
-      "sha256": "d19f5eeb572579e6888de7f92687c75dd7e0fb9e24c5ec7a3507b794f487ecfa",
+      "sha256": "2cc97fc723c5fd5f7c7d908119aa6917c2d1b7e524d62b979c84496d19c61ba2",
       "signal_patterns": [],
       "skill_id": "native_heap_breakdown",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9de17b88dbea86451c2107ac4494967a6a6bb290b473eefe52f7650cc9e00550"
@@ -74,12 +77,14 @@
       "step_id": "native_heap_hotspots",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "max_rows",
           "min_alloc_mb",
           "min_size_mb"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

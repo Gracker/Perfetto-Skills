@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/vsync_alignment_in_range.skill.yaml
--- Source SHA-256: a2b69b59ec5a9385f3c650a2504f801f4dcbba67d2016b4461eb313ae5a2083c
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 39143e628c5b370c0ea897c41246b2e976efcb4d956045b99e99a0151af04443
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH vsync_ticks AS (
   SELECT c.ts, c.value,

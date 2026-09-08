@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/check_suspend_data",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/check_suspend_data.sql",
-      "sha256": "e2e891bd0b01d4eb904339c0cb0f93f9a9e497a25ce0589f04946a4bcf7e320f",
+      "sha256": "d8d753106a5d3dbc19bae9f8f9596ecefdf9db043724051b8c7852a521f29df2",
       "signal_patterns": [],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -77,11 +80,13 @@
       "step_id": "check_suspend_data",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -139,16 +144,19 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/check_wakeup_data",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/check_wakeup_data.sql",
-      "sha256": "2a040b152bfc610f32ffe89989ee3adc93924847c71afff4311703252f5d99f5",
+      "sha256": "a979f182de3dabdd8dce1e5643b82cef38b201da6656457a5fce58d537b68de3",
       "signal_patterns": [],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -169,12 +177,14 @@
       "step_id": "check_wakeup_data",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
           "wakeup_source"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -232,12 +242,15 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/check_suspend_slices",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/check_suspend_slices.sql",
-      "sha256": "36b22a76136d088ea0aa4eee77cf74afcb125c354243bda0c00b30dccd486b31",
+      "sha256": "6e584da03c918cbb5aa45f8a6bb462ce4ff72a33077a1505a92cde1b61beb9cc",
       "signal_patterns": [
         "*Suspend*",
         "*WakeLock*",
@@ -249,7 +262,7 @@
       ],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -270,11 +283,13 @@
       "step_id": "check_suspend_slices",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -332,16 +347,19 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/suspend_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/suspend_overview.sql",
-      "sha256": "ba12bfb95d6bcab15943e296da62df40a77f20538380bad65b5f694ef70e0137",
+      "sha256": "2080d66fd1e1030f19e006fe852b01803b737142d086be21a88c5e9d4e55edcd",
       "signal_patterns": [],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -362,11 +380,13 @@
       "step_id": "suspend_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -424,16 +444,19 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/suspend_quality_assessment",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/suspend_quality_assessment.sql",
-      "sha256": "e91330b200e6ac2d591b888d68c09a877a621dc408b5d41fe58ad62fb4591eee",
+      "sha256": "31e35e1c267436e7d71ebf445ff0279568a344fe1d8c44c4678847a8c362e951",
       "signal_patterns": [],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -454,11 +477,13 @@
       "step_id": "suspend_quality_assessment",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -516,16 +541,19 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/wakeup_type_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/wakeup_type_overview.sql",
-      "sha256": "bdc925a3cf99c07bb942a0dbb4add566625a82e10598e27ba40050b394083ef1",
+      "sha256": "4736d098bc8bdc7e52734756bc050c0af32455a59ac3f6e1c21a2e4883a5c6bb",
       "signal_patterns": [],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -546,11 +574,13 @@
       "step_id": "wakeup_type_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -608,16 +638,19 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/wakeup_source_ranking",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/wakeup_source_ranking.sql",
-      "sha256": "0f6a05744a1ed86ca93909ea45390c3154d2546c0018791001538a90380618d1",
+      "sha256": "30fed6e786769480d35ee161fcf4ba95367b0e036534f6842ae1bfff3d92c121",
       "signal_patterns": [],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -638,12 +671,14 @@
       "step_id": "wakeup_source_ranking",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
           "wakeup_source"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -701,16 +736,19 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/suspend_backoff",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/suspend_backoff.sql",
-      "sha256": "19a7678b8ea7f073757d852dd6f6330d033f4e322bcb6383af5d256f8b41df6b",
+      "sha256": "cf654357e916debfac7753318444778e0487d56ff9ca997599bfa1e1c04e1d71",
       "signal_patterns": [],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -731,11 +769,13 @@
       "step_id": "suspend_backoff",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -793,16 +833,19 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/wakeup_timeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/wakeup_timeline.sql",
-      "sha256": "2d4ead594a0332503898558956a979c7060e5c36b2f0dec31c9cc1820f58d4c4",
+      "sha256": "6abfd23939cfe66af7b254081ce90d3a51582327fc8f99f927b0b8e440eeab77",
       "signal_patterns": [],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -823,12 +866,14 @@
       "step_id": "wakeup_timeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
           "wakeup_source"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -886,16 +931,19 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/long_suspend_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/long_suspend_events.sql",
-      "sha256": "c671b84e05b1966c63550db455760c36cc5f4d50544f70cafbdfd2653d3abb41",
+      "sha256": "780586fa733dff3906be9bfae01515b77358a776947f78a982148f90094868b3",
       "signal_patterns": [],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -916,11 +964,13 @@
       "step_id": "long_suspend_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -978,12 +1028,15 @@
         "probe_capabilities": []
       },
       "id": "suspend_wakeup_analysis/suspend_slice_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/suspend_wakeup_analysis/suspend_slice_overview.sql",
-      "sha256": "816a83a453b7b4031afaa554b9b1514c92e0ab429c4ca6a3e16f0a8635e7fa69",
+      "sha256": "b66eeb82fe20a490e5ebc93b171a7cf49e2f999f354f267fa10d36a75d9f5165",
       "signal_patterns": [
         "*Suspend*",
         "*WakeLock*",
@@ -995,7 +1048,7 @@
       ],
       "skill_id": "suspend_wakeup_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
@@ -1016,11 +1069,13 @@
       "step_id": "suspend_slice_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

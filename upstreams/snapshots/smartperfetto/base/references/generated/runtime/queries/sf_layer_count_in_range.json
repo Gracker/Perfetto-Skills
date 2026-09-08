@@ -49,16 +49,19 @@
         ]
       },
       "id": "sf_layer_count_in_range/layer_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/sf_layer_count_in_range/layer_summary.sql",
-      "sha256": "2e3f8f74d139fcdb841af52eef6bf6502210557d07423648c9b6ea8de2cb6be0",
+      "sha256": "41b2e7966af702b71156d44562bae9d1b637adde481c3f0a4608b674826c19d2",
       "signal_patterns": [],
       "skill_id": "sf_layer_count_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/sf_layer_count_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "32c86a668275bbbc02ac545c67d1fef7366d86414bac478468751d7dde71027a"
@@ -76,12 +79,14 @@
       "step_id": "layer_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -141,16 +146,19 @@
         ]
       },
       "id": "sf_layer_count_in_range/layer_list",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/sf_layer_count_in_range/layer_list.sql",
-      "sha256": "2d71b21bb47fe798099132e07e7aa799a367611249085cd9c465a9208f84d6d0",
+      "sha256": "43d8eb44eb0737de31c3538ff02a1f2fe5830f9abacaad3b24f59d05717fbbb7",
       "signal_patterns": [],
       "skill_id": "sf_layer_count_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/sf_layer_count_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "32c86a668275bbbc02ac545c67d1fef7366d86414bac478468751d7dde71027a"
@@ -168,12 +176,14 @@
       "step_id": "layer_list",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/pipeline.strategy.md
-Source SHA-256: 018e91d7c0c1f2c6f81f828e015e8a94ddd7569ecab51f04fdb666c80fa5afd1
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: a39a0031498b62d96b04588773e2da4631edd6149e1c266a6ef719ae0a8c82d7
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Pipeline Strategy
 
@@ -21,6 +21,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: pipeline
+classification_description: Identifying the application rendering architecture and the path from frame production to composition
+  and presentation.
 priority: 4
 effort: medium
 required_capabilities:
@@ -97,9 +99,9 @@ final_report_contract:
     label: BufferQueue/Fence 边界
     description: 区分 producer queue/dequeue、SF acquire/latch、BLAST transaction、acquire/present/release fence，避免把 queueBuffer
       等同上屏。
-    trigger_patterns:
-    - BufferQueue|BLAST|queueBuffer|dequeueBuffer
-    - acquire\s+fence|present\s+fence|release\s+fence|\bfence\b|背压|槽位
+    condition:
+      kind: semantic
+      description: 当问题要求分析图形缓冲区的生产、交接、消费、背压或同步 fence，或判断缓冲区提交与实际显示的关系时适用。
     pattern_groups:
     - - BufferQueue/Fence
       - BufferQueue
@@ -126,11 +128,9 @@ final_report_contract:
   - id: graphics_memory_policy_boundary
     label: 图形内存/刷新策略边界
     description: 当问题涉及 GraphicBuffer/dma-buf、图形内存、refresh-rate/ARR/VRR 或 HWC/SF policy 时，说明证据来源、缺口和版本/设备边界。
-    trigger_patterns:
-    - GraphicBuffer|dma[-_ ]?buf|graphics\s+memory|图形内存|GPU memory
-    - refresh[-\s]?rate|刷新率|ARR|VRR|setFrameRate|View\.setRequestedFrameRate
-    - (?:SurfaceFlinger|SF|HWC).*(?:policy|策略|refresh|刷新率|overlay|composition|composite|合成)
-    - (?:overlay|composition|composite|合成).*(?:SurfaceFlinger|SF|HWC)
+    condition:
+      kind: semantic
+      description: 当问题涉及图形缓冲区或 GPU 内存、刷新率选择、自适应刷新，或系统显示合成策略及其设备差异时适用。
     pattern_groups:
     - - GraphicBuffer
       - dma[-_ ]?buf

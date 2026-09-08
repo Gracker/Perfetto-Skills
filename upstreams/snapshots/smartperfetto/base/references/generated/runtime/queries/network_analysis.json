@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/check_network_data",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/check_network_data.sql",
-      "sha256": "eebe35be055e5673c046e474bbc072d21854b9cb592e1d08bfc5dc1e2609944c",
+      "sha256": "d041442f12ceecd1199b8d734bff364c360c7629d23cb5cea73d54454849da94",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -74,13 +77,15 @@
       "step_id": "check_network_data",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "interface",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -138,12 +143,15 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/check_network_slices",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/check_network_slices.sql",
-      "sha256": "ca09d8f98e5b96ac139366dcac7ece15c8f34776697f1657efd7a478d9ce26db",
+      "sha256": "865699f6c9fed4be2005d9dc28d1e6ca10f3f1c32f8469adbbdda7e04afcd9e2",
       "signal_patterns": [
         "*Connect*",
         "*DNS*",
@@ -158,7 +166,7 @@
       ],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -176,11 +184,13 @@
       "step_id": "check_network_slices",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -238,16 +248,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/evidence_scope",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/evidence_scope.sql",
-      "sha256": "345309a58794c0089990f43a194275af27463c27c1ba82dc9c28a28398816549",
+      "sha256": "3e623910278ec5270180ed74f8dce1958be40702ab16b0e9e81eb7ea965fcde6",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -265,8 +278,10 @@
       "step_id": "evidence_scope",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -324,16 +339,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/network_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/network_overview.sql",
-      "sha256": "3e00799ddf1caf08d2d5a32d2821ed006412eced6cad6f8d6b1f66daa559da99",
+      "sha256": "2cbe3265c9c05fa167226c18ad440e9df7bd94265add1b7ab80c695590b89b55",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -351,13 +369,15 @@
       "step_id": "network_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "interface",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -415,16 +435,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/traffic_by_interface",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/traffic_by_interface.sql",
-      "sha256": "3be6f0b4c38950723862d091711e2f871f5cd8586b0ef8304fddf28d49378538",
+      "sha256": "c3c917a8633accc4e735dc997f594fd92a4a26ed942f0a783420a1e47ba024da",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -442,13 +465,15 @@
       "step_id": "traffic_by_interface",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "interface",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -506,16 +531,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/app_traffic_ranking",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/app_traffic_ranking.sql",
-      "sha256": "467ba06d042d284232ce0decff28d8d5ade3ae70f11ee922e1a234b374328661",
+      "sha256": "983617626c3050594e2cbbdb063f58a354347083d968ceb239ccbe70deb21e6b",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -533,13 +561,15 @@
       "step_id": "app_traffic_ranking",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "interface",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -597,16 +627,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/transport_distribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/transport_distribution.sql",
-      "sha256": "fd5fc8b9e559c6b57c02ab7904519567079787998eaeb4d0045fd3c92d5bb590",
+      "sha256": "319e4d25fed4c6be39ae5fb05c53306052d148b202e62209259cdbb5b49a3738",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -624,13 +657,15 @@
       "step_id": "transport_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "interface",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -688,16 +723,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/port_analysis",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/port_analysis.sql",
-      "sha256": "c95874300b00eb8ad4c47d399b60c4a679df01b087971f76ed778bf8ca78df29",
+      "sha256": "95c98b628135565d7e3b7d8d3f131b10a0aeb62bef19535b5d3435edd8986bd6",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -715,13 +753,15 @@
       "step_id": "port_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "interface",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -779,16 +819,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/traffic_timeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/traffic_timeline.sql",
-      "sha256": "cad37d0a121a083829f51e7944746e3d16cca965be7c64177261d169175369de",
+      "sha256": "724f3a1cd6c4996737d3b19d0f1582e742549003d243e6e183e286007aeb25d8",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -806,13 +849,15 @@
       "step_id": "traffic_timeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "interface",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -870,16 +915,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/large_transfers",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/large_transfers.sql",
-      "sha256": "63a13e3b8a0ffa3fe3a7c3894b3ea52eda7321ad69b1d515407aec9630ee7acd",
+      "sha256": "c3e4fe096b20b43da2075afa5ddcbd1496a0a1b8860cf5f3acaa0094bca7b403",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -897,13 +945,15 @@
       "step_id": "large_transfers",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "interface",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -961,16 +1011,19 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/network_power_cost",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/network_power_cost.sql",
-      "sha256": "98d2d360ccaad401302902b5348fb622622cfe97cb9eb0c27272611f99a0bb29",
+      "sha256": "dd6e9c605f49a988922ccb1d7ce073a2802777f12e1b9ed585371301f574ee5c",
       "signal_patterns": [],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -988,13 +1041,15 @@
       "step_id": "network_power_cost",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "interface",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1052,12 +1107,15 @@
         "probe_capabilities": []
       },
       "id": "network_analysis/network_slice_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/network_analysis/network_slice_overview.sql",
-      "sha256": "94f398325f6e711a2ade152552704a0a83908667416895a8d438fa8479209caf",
+      "sha256": "d376d9921a706031a16c97a641ff4a00d17d01c7a9b883c239e2c36f5a737456",
       "signal_patterns": [
         "*Connect*",
         "*DNS*",
@@ -1072,7 +1130,7 @@
       ],
       "skill_id": "network_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/network_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e"
@@ -1090,11 +1148,13 @@
       "step_id": "network_slice_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

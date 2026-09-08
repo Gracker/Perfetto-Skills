@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/target_threads.sql
--- Source SHA-256: d3a8aefdd7158365b03b2e57996fc3eaf541e8053b47c98719e40d6d536aeb5d
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 9ac867ea21f7e28e03b1d606f8598ecc222479a870a220a87e94eecbed7566fe
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 -- Fragment: target_threads
 -- Resolves MainThread + RenderThread for the target package.
@@ -33,8 +33,10 @@ target_threads AS (
     END as thread_end_ts
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (
-      '${package}' = ''
+  WHERE (${__process_scope.upid} IS NULL OR p.upid = ${__process_scope.upid})
+    AND (
+      ${__process_scope.upid} IS NOT NULL
+      OR '${package}' = ''
       OR p.name = '${package}'
       OR p.name GLOB '${package}:*'
     )

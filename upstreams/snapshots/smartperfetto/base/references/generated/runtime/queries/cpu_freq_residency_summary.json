@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "cpu_freq_residency_summary/freq_residency",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_freq_residency_summary/freq_residency.sql",
-      "sha256": "f05dd2ca725f9c16d18f9ce7c8ad33c466db882c2ed03bc9665d7b2a4a0268f2",
+      "sha256": "efd0bdf305d196648476fa19e17bbec28f9131d1770af580294961f926883b04",
       "signal_patterns": [],
       "skill_id": "cpu_freq_residency_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_freq_residency_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "574b201a6ed4593061204a5cda42d112cb63665150c965bf038ba6a7a075daca"
@@ -75,11 +78,13 @@
       "step_id": "freq_residency",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

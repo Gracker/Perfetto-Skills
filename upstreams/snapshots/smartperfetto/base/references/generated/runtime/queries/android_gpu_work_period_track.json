@@ -49,16 +49,19 @@
         ]
       },
       "id": "android_gpu_work_period_track/gpu_work",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_gpu_work_period_track/gpu_work.sql",
-      "sha256": "311b19711037465d75553bbf255a152a402f9cd73c7046f039d9d8f71e700691",
+      "sha256": "b76b47b7eda8f52fc7f2d828a78cb94b1e5cdfe5d83c5ad318ccb93d0c2a3d59",
       "signal_patterns": [],
       "skill_id": "android_gpu_work_period_track",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_gpu_work_period_track.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "dad0f300552c8a78618be018d8930c345109988d414c37fcef819ee4752758f5"
@@ -76,12 +79,14 @@
       "step_id": "gpu_work",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "battery_drain_rate_summary/drain_rate",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/battery_drain_rate_summary/drain_rate.sql",
-      "sha256": "18a77f205edbb6c411519a4175cbe837759e90ef7d4465b90affdc6ddda75ef0",
+      "sha256": "7361f3cd27be17d8fd3d5c0c191c0ce1900a18dea3fcab4a6014140560720a56",
       "signal_patterns": [],
       "skill_id": "battery_drain_rate_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/battery_drain_rate_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f5a1df9c8222d32c6942df42bb1bbde8dc81f44d1b7cd23ea41aed8897bda582"
@@ -74,11 +77,13 @@
       "step_id": "drain_rate",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

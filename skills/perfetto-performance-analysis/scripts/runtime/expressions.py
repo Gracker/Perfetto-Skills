@@ -21,6 +21,85 @@ _IDENTIFIER = re.compile(r"[A-Za-z_$][A-Za-z0-9_$]*")
 _NUMBER = re.compile(r"(?:\d+\.\d*|\.\d+|\d+)(?:[eE][+-]?\d+)?")
 
 
+def _default_end(source: str, start: int) -> int:
+    """JSON defaults can contain braces; other defaults retain their raw text."""
+    value_start = start
+    while value_start < len(source) and source[value_start].isspace():
+        value_start += 1
+    try:
+        _, end = json.JSONDecoder().raw_decode(source, value_start)
+        while end < len(source) and source[end].isspace():
+            end += 1
+        if end < len(source) and source[end] == "}":
+            return end
+    except json.JSONDecodeError:
+        pass
+    end = source.find("}", start)
+    if end < 0:
+        raise ValueError("unterminated ${...} placeholder")
+    return end
+
+
+def _read_placeholder(source: str, start: int) -> tuple[str, int]:
+    """Find the closing delimiter without treating quoted template text as code."""
+    index = start + 2
+    quote: str | None = None
+    depth = 0
+    while index < len(source):
+        char = source[index]
+        if quote is not None:
+            if char == "\\":
+                index += 2
+                continue
+            if char == quote:
+                quote = None
+        elif char in "'\"":
+            quote = char
+        elif source.startswith("${", index):
+            raise ValueError("nested placeholders are not allowed")
+        elif char in "([":
+            depth += 1
+        elif char in ")]":
+            depth -= 1
+        elif source.startswith("||", index):
+            index += 2
+            continue
+        elif char == "|" and depth == 0:
+            end = _default_end(source, index + 1)
+            return source[start + 2 : end], end + 1
+        elif char == "}":
+            return source[start + 2 : index], index + 1
+        index += 1
+    raise ValueError("unterminated ${...} placeholder")
+
+
+def _split_placeholder_default(raw: str) -> tuple[str, str | None]:
+    quote: str | None = None
+    depth = 0
+    index = 0
+    while index < len(raw):
+        char = raw[index]
+        if quote is not None:
+            if char == "\\":
+                index += 2
+                continue
+            if char == quote:
+                quote = None
+        elif char in "'\"":
+            quote = char
+        elif char in "([":
+            depth += 1
+        elif char in ")]":
+            depth -= 1
+        elif raw.startswith("||", index):
+            index += 2
+            continue
+        elif char == "|" and depth == 0:
+            return raw[:index], raw[index + 1 :]
+        index += 1
+    return raw, None
+
+
 def _tokenize(source: str) -> list[Token]:
     tokens: list[Token] = []
     index = 0
@@ -30,11 +109,8 @@ def _tokenize(source: str) -> list[Token]:
             index += 1
             continue
         if source.startswith("${", index):
-            end = source.find("}", index + 2)
-            if end < 0:
-                raise ValueError("unterminated ${...} placeholder")
-            tokens.append(Token("placeholder", source[index + 2 : end]))
-            index = end + 1
+            body, index = _read_placeholder(source, index)
+            tokens.append(Token("placeholder", body))
             continue
         if char in "'\"":
             quote = char
@@ -289,13 +365,9 @@ def _get(value: Any, key: Any) -> Any:
 
 
 def _placeholder(raw: str, context: Mapping[str, Any]) -> Any:
-    path, separator, default = raw.partition("|")
-    value: Any = context
-    for component in re.findall(r"[A-Za-z_$][A-Za-z0-9_$]*|\d+", path):
-        value = _get(value, int(component) if component.isdigit() else component)
-        if value is None:
-            break
-    if value is not None or not separator:
+    body, default = _split_placeholder_default(raw)
+    value = _evaluate(compile_expression(body), context, strict_arithmetic=True)
+    if value is not None or default is None:
         return value
     try:
         return json.loads(default)
@@ -306,31 +378,49 @@ def _placeholder(raw: str, context: Mapping[str, Any]) -> Any:
 _ALLOWED_METHODS = {"includes", "startsWith", "find", "filter", "some", "reduce"}
 
 
-def _evaluate(node: tuple[Any, ...], context: Mapping[str, Any]) -> Any:
+def _finite_number(value: Any) -> int | float:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or (isinstance(value, float) and not math.isfinite(value))
+    ):
+        raise ValueError("placeholder arithmetic requires finite numbers")
+    return value
+
+
+def _evaluate(node: tuple[Any, ...], context: Mapping[str, Any], *, strict_arithmetic: bool = False) -> Any:
+    def run(child: tuple[Any, ...], values: Mapping[str, Any] = context) -> Any:
+        return _evaluate(child, values, strict_arithmetic=strict_arithmetic)
+
     kind = node[0]
     if kind == "literal":
         return node[1]
     if kind == "var":
         return context.get(node[1])
     if kind == "placeholder":
+        if strict_arithmetic:
+            raise ValueError("nested placeholders are not allowed")
         return _placeholder(node[1], context)
     if kind == "array":
-        return [_evaluate(item, context) for item in node[1]]
+        return [run(item) for item in node[1]]
     if kind == "get":
-        return _get(_evaluate(node[1], context), _evaluate(node[2], context))
+        return _get(run(node[1]), run(node[2]))
     if kind == "unary":
-        value = _evaluate(node[2], context)
+        value = run(node[2])
+        if strict_arithmetic and node[1] in {"+", "-"}:
+            value = _finite_number(value)
+            return _finite_number(+value if node[1] == "+" else -value)
         return {"!": lambda: not _truthy(value), "+": lambda: +(value or 0), "-": lambda: -(value or 0)}[node[1]]()
     if kind == "binary":
         operator = node[1]
-        left = _evaluate(node[2], context)
+        left = run(node[2])
         if operator == "&&":
-            return _evaluate(node[3], context) if _truthy(left) else left
+            return run(node[3]) if _truthy(left) else left
         if operator == "||":
-            return left if _truthy(left) else _evaluate(node[3], context)
+            return left if _truthy(left) else run(node[3])
         if operator == "??":
-            return _evaluate(node[3], context) if left is None else left
-        right = _evaluate(node[3], context)
+            return run(node[3]) if left is None else left
+        right = run(node[3])
         if operator in {"===", "=="}:
             return left == right
         if operator in {"!==", "!="}:
@@ -339,30 +429,40 @@ def _evaluate(node: tuple[Any, ...], context: Mapping[str, Any]) -> Any:
             if left is None or right is None:
                 return False
             return {">": left > right, ">=": left >= right, "<": left < right, "<=": left <= right}[operator]
-        if operator == "+":
-            return (left or 0) + (right or 0)
-        if operator == "-":
-            return (left or 0) - (right or 0)
-        if operator == "*":
-            return (left or 0) * (right or 0)
-        if operator == "/":
-            return (left or 0) / right
-        if operator == "%":
-            return (left or 0) % right
+        if operator in {"+", "-", "*", "/", "%"}:
+            if strict_arithmetic:
+                left, right = _finite_number(left), _finite_number(right)
+            else:
+                left = left or 0
+                if operator in {"+", "-", "*"}:
+                    right = right or 0
+            try:
+                result = {
+                    "+": lambda: left + right,
+                    "-": lambda: left - right,
+                    "*": lambda: left * right,
+                    "/": lambda: left / right,
+                    "%": lambda: left % right,
+                }[operator]()
+            except (ZeroDivisionError, OverflowError) as error:
+                if strict_arithmetic:
+                    raise ValueError("invalid placeholder arithmetic result") from error
+                raise
+            return _finite_number(result) if strict_arithmetic else result
         raise ValueError(f"unsupported binary operator: {operator}")
     if kind == "lambda":
         return node
     if kind == "call":
-        receiver = _evaluate(node[1], context)
+        receiver = run(node[1])
         method = node[2]
         if method not in _ALLOWED_METHODS:
             raise ValueError(f"unsupported expression method: {method}")
         arguments = node[3]
         if method == "includes":
-            needle = _evaluate(arguments[0], context)
+            needle = run(arguments[0])
             return False if receiver is None else needle in receiver
         if method == "startsWith":
-            prefix = _evaluate(arguments[0], context)
+            prefix = run(arguments[0])
             return isinstance(receiver, str) and receiver.startswith(str(prefix))
         if not isinstance(receiver, (list, tuple)) or not arguments or arguments[0][0] != "lambda":
             return None if method in {"find", "reduce"} else [] if method == "filter" else False
@@ -371,7 +471,7 @@ def _evaluate(node: tuple[Any, ...], context: Mapping[str, Any]) -> Any:
         def invoke(*values: Any) -> Any:
             nested = dict(context)
             nested.update(zip(lambda_node[1], values))
-            return _evaluate(lambda_node[2], nested)
+            return run(lambda_node[2], nested)
 
         if method == "find":
             return next((item for item in receiver if _truthy(invoke(item))), None)
@@ -380,7 +480,7 @@ def _evaluate(node: tuple[Any, ...], context: Mapping[str, Any]) -> Any:
         if method == "some":
             return any(_truthy(invoke(item)) for item in receiver)
         if method == "reduce":
-            accumulator = _evaluate(arguments[1], context) if len(arguments) > 1 else None
+            accumulator = run(arguments[1]) if len(arguments) > 1 else None
             items = list(receiver)
             if accumulator is None and items:
                 accumulator = items.pop(0)
@@ -390,7 +490,7 @@ def _evaluate(node: tuple[Any, ...], context: Mapping[str, Any]) -> Any:
     if kind == "function_call":
         if node[1] != "Boolean" or len(node[2]) != 1:
             raise ValueError("unsupported expression function")
-        return _truthy(_evaluate(node[2][0], context))
+        return _truthy(run(node[2][0]))
     raise ValueError(f"unsupported expression node: {kind}")
 
 
@@ -407,8 +507,12 @@ def evaluate(source: str, context: Mapping[str, Any]) -> Any:
 
 
 def interpolate(source: str, context: Mapping[str, Any]) -> str:
-    return re.sub(
-        r"\$\{([^}]+)\}",
-        lambda match: "" if (value := _placeholder(match.group(1), context)) is None else str(value),
-        source,
-    )
+    output: list[str] = []
+    cursor = 0
+    while (start := source.find("${", cursor)) >= 0:
+        output.append(source[cursor:start])
+        body, cursor = _read_placeholder(source, start)
+        value = _placeholder(body, context)
+        output.append("" if value is None else str(value))
+    output.append(source[cursor:])
+    return "".join(output)

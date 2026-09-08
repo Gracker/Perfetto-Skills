@@ -1,9 +1,20 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 6ebd984e1b34cb456d5fa410b4e2308e350c5854086ec1e06ff58b4c80c5ef4f
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 vsync_intervals AS (
   SELECT
     c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
@@ -57,15 +68,23 @@ app_frames AS (
     a.layer_name,
     a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END as present_ts,
     LAG(a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END)
-      OVER (PARTITION BY a.layer_name ORDER BY a.ts) as prev_present_ts
+      OVER (PARTITION BY a.upid, a.layer_name ORDER BY a.ts) as prev_present_ts
   FROM actual_frame_timeline_slice a
-  LEFT JOIN process p ON a.upid = p.upid
+  JOIN effective_target_processes p ON a.upid = p.upid
   WHERE (
-    '${package}' = ''
+    ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
     OR p.name = '${package}'
     OR p.name GLOB '${package}:*'
   )
     AND p.name NOT LIKE '/system/%'
+    -- With no target package the clause above accepts any process, and
+    -- the system UI is the one most likely to be drawing while the target
+    -- app draws nothing. Its frames are punctual, so they read back as
+    -- flawless scrolling for an app that produced no frames at all: one
+    -- device reported 31fps SystemUI frames as "优秀", another rated a
+    -- 5-frame notification-shade window. Anyone analysing the system UI
+    -- deliberately names it and keeps these rows.
+    AND ('${package}' != '' OR p.name NOT LIKE 'com.android.systemui%')
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
     AND COALESCE(a.display_frame_token, a.surface_frame_token) IS NOT NULL

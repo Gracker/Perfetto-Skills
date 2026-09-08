@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "cpu_load_in_range/cpu_utilization",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_load_in_range/cpu_utilization.sql",
-      "sha256": "0b4d7a6c0c8974d3d34426675ce04c20c74f581d2d0d501ede03055dff756d96",
+      "sha256": "89cbaa595c3a52406cc91c572578bbc5944d7a7c2189500a380b6b72d6d65f20",
       "signal_patterns": [],
       "skill_id": "cpu_load_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_load_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "71e2b4436e6f0eb4a11f04bf71bfc3a9703ee7c738fb37d8ddf20f67ec7bc955"
@@ -78,11 +81,13 @@
       "step_id": "cpu_utilization",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -140,18 +145,21 @@
         "probe_capabilities": []
       },
       "id": "cpu_load_in_range/runqueue_depth",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_load_in_range/runqueue_depth.sql",
-      "sha256": "943ace9c41f4624dadda1ffe4c3fbb512f174e486be2aa457d4c29cb299056c2",
+      "sha256": "33acf32c606c7e373a333a7ee5f862f4aaf83bfbc3f9b11dd13b3813c31c814b",
       "signal_patterns": [
         "runqueue_length"
       ],
       "skill_id": "cpu_load_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_load_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "71e2b4436e6f0eb4a11f04bf71bfc3a9703ee7c738fb37d8ddf20f67ec7bc955"
@@ -173,11 +181,13 @@
       "step_id": "runqueue_depth",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -235,16 +245,19 @@
         "probe_capabilities": []
       },
       "id": "cpu_load_in_range/thread_migrations",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_load_in_range/thread_migrations.sql",
-      "sha256": "4cdfbfe7312cffa91558232479cab2de3ea9ecccfb5a316f26a08235f6e91d6b",
+      "sha256": "b24cde402ac7f7a5257935beaa95c42ae41b898c9cc6078a09019875122a2016",
       "signal_patterns": [],
       "skill_id": "cpu_load_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_load_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "71e2b4436e6f0eb4a11f04bf71bfc3a9703ee7c738fb37d8ddf20f67ec7bc955"
@@ -266,11 +279,13 @@
       "step_id": "thread_migrations",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

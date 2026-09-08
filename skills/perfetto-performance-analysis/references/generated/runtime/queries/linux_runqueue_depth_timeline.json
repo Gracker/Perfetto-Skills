@@ -49,16 +49,19 @@
         ]
       },
       "id": "linux_runqueue_depth_timeline/runqueue_pressure_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/linux_runqueue_depth_timeline/runqueue_pressure_summary.sql",
-      "sha256": "bcf10fd6f5091a3fb6e97a036963487f1904fc0f8ee7c4e116545582d79c4ba5",
+      "sha256": "cf3fdc374b0279ac67907858fa622efb6704dddd5747a012458c584ee72c81e5",
       "signal_patterns": [],
       "skill_id": "linux_runqueue_depth_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/linux_runqueue_depth_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "df8e54081665caab0f1d374c13f7ceb343c0f20209e1e1b699da6ee24688ba35"
@@ -78,12 +81,14 @@
       "step_id": "runqueue_pressure_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "pressure_threshold",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -143,16 +148,19 @@
         ]
       },
       "id": "linux_runqueue_depth_timeline/runqueue_pressure_windows",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/linux_runqueue_depth_timeline/runqueue_pressure_windows.sql",
-      "sha256": "52d285cbfb08a0eb7dae7790ae4dab1214c06f42c12e151a74e5bb6966f613ad",
+      "sha256": "ea692135223cafa6f79c3e866b7ecb49c01356f583df44eb680e0fcbc55391aa",
       "signal_patterns": [],
       "skill_id": "linux_runqueue_depth_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/linux_runqueue_depth_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "df8e54081665caab0f1d374c13f7ceb343c0f20209e1e1b699da6ee24688ba35"
@@ -172,12 +180,14 @@
       "step_id": "runqueue_pressure_windows",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "pressure_threshold",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

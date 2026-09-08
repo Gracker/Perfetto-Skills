@@ -47,19 +47,22 @@
         "probe_capabilities": []
       },
       "id": "touch_to_display_latency/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/touch_to_display_latency/query.sql",
-      "sha256": "b5b7a1e6129ed1963807b63c1414c623483b78b79018b3006af9f05dbb35650f",
+      "sha256": "a46362093c6654fd0a20983a69ab903fef4f651f6a913fe0ee0ae8f7c23a2e03",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "touch_to_display_latency",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/touch_to_display_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e8e103d0fc42354515cf44afdb33a1507e394a29f4c0d29142e35bc52917df15"
@@ -81,13 +84,15 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "event_type",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

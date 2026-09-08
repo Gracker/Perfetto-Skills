@@ -1,12 +1,12 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
--- Source SHA-256: e48c73408b2775bed099612d32832cde9f70ca33cd1cc462e0275b1454588359
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 283e74c341c76d3959624287f046bcc7f85e2b7b1cbe1edfab07c544a01660af
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 SELECT
-  '${process_name}' as process_name,
-  ${pid} as pid,
-  ${upid} as upid,
+  COALESCE((SELECT name FROM process WHERE upid = ${__process_scope.upid}), '${process_name}') as process_name,
+  (SELECT pid FROM process WHERE upid = ${__process_scope.upid}) as pid,
+  ${__process_scope.upid} as upid,
   '${anr_type}' as anr_type,
   '${error_id}' as error_id,
   ROUND(COALESCE(${anr_dur_ms}, 0), 2) as anr_dur_ms,

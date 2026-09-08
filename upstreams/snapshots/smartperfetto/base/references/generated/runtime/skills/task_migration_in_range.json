@@ -16,7 +16,11 @@
   },
   "id": "task_migration_in_range",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package"
+    ],
+    "policy": "verify_if_present",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -46,9 +50,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/atomic/task_migration_in_range.skill.yaml",
-    "sha256": "7b947c3b5e2f9a4e3c945f4b914eeb74e2b5bbe7d7f208a7d90c1913177aaf3f"
+    "sha256": "6b439d1de33342825c0e07b756b2e0b4ee97eb56287f7df8d9312a9a14ce14f2"
   },
   "steps": [
     {
@@ -62,6 +66,10 @@
       "id": "migration_analysis",
       "name": "大小核迁移分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "task_migration_in_range/migration_analysis",
       "result_dependencies": [],
       "save_as": "migration_data",

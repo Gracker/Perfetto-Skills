@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: cc19de68a5c179e17af405bf32f9ca75f56af0c5a4ccf970ede72790c558942b
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 SELECT
   short_blocking_method as blocking_method,
@@ -14,8 +14,10 @@ SELECT
 FROM android_monitor_contention
 WHERE ts >= ${start_ts}
   AND ts < ${end_ts}
+  AND (${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid})
   AND (
-    '${package}' = ''
+    ${__process_scope.upid} IS NOT NULL
+    OR '${package}' = ''
     OR process_name = '${package}'
     OR process_name GLOB '${package}:*'
   )

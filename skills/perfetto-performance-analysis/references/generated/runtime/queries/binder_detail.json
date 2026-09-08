@@ -49,16 +49,25 @@
         ]
       },
       "id": "binder_detail/binder_info",
+      "identity": {
+        "aliases": [
+          "process_name",
+          "package"
+        ],
+        "policy": "required",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_detail/binder_info.sql",
-      "sha256": "4a6dc9c313916d8541311209afbe4215a8841bdea1082367ecf89aed6651a699",
+      "sha256": "79c0593ee73ea291f7cdb6504db31236a52aa74edffef5359f794f4f95488aff",
       "signal_patterns": [],
       "skill_id": "binder_detail",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/binder_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b21af48bb190aa382256c422c77267cce8f041f42257cbbd3a6f669e691f5bf9"
@@ -76,6 +85,9 @@
       "step_id": "binder_info",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "aidl_name",
           "binder_end_ts",
@@ -86,7 +98,8 @@
           "process_name",
           "server_process"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -146,18 +159,27 @@
         ]
       },
       "id": "binder_detail/cpu_core_analysis",
+      "identity": {
+        "aliases": [
+          "process_name",
+          "package"
+        ],
+        "policy": "required",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_detail/cpu_core_analysis.sql",
-      "sha256": "a28cd686a96f09e550d88d686d6f09ef3648d9de50ff6438028bb29de46ca068",
+      "sha256": "1e24421157d59731861a292b9e44df167e11dafb870f67ffdcd389f6c82fae57",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "binder_detail",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/binder_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b21af48bb190aa382256c422c77267cce8f041f42257cbbd3a6f669e691f5bf9"
@@ -179,13 +201,17 @@
       "step_id": "cpu_core_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "binder_end_ts",
           "binder_ts",
           "dur_ms",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -245,18 +271,27 @@
         ]
       },
       "id": "binder_detail/quadrant_analysis",
+      "identity": {
+        "aliases": [
+          "process_name",
+          "package"
+        ],
+        "policy": "required",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_detail/quadrant_analysis.sql",
-      "sha256": "435cb1fdd5b5d724d8c26de8fc4f8780305f5de849cd15a6d70770c11bb6f55c",
+      "sha256": "0f4c7b7621d9183d71df1574d7ad3efd906a02183b3fd48a59f0d1620c8015b3",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "binder_detail",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/binder_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b21af48bb190aa382256c422c77267cce8f041f42257cbbd3a6f669e691f5bf9"
@@ -278,12 +313,16 @@
       "step_id": "quadrant_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "binder_end_ts",
           "binder_ts",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -343,18 +382,27 @@
         ]
       },
       "id": "binder_detail/blocking_analysis",
+      "identity": {
+        "aliases": [
+          "process_name",
+          "package"
+        ],
+        "policy": "required",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_detail/blocking_analysis.sql",
-      "sha256": "8823f51f00617e793ca23e978b4073f70538b4804a311f011c1a41400cd2dcd6",
+      "sha256": "a889d76b7a58c74992e4e8f0a38caf7ad354e7ef99eac1eadd0259865fd414a5",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "binder_detail",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/binder_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b21af48bb190aa382256c422c77267cce8f041f42257cbbd3a6f669e691f5bf9"
@@ -372,12 +420,16 @@
       "step_id": "blocking_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "binder_end_ts",
           "binder_ts",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -47,12 +47,23 @@
         "probe_capabilities": []
       },
       "id": "sched_latency_in_range/root",
+      "identity": {
+        "aliases": [
+          "package"
+        ],
+        "policy": "verify_if_present",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/sched_latency_in_range/query.sql",
-      "sha256": "cfd5740fce12a173e4e82086f1ba0125ea592d658e6e167d4eac0a86c8d7922e",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "43e0058edbf9092c126ccf430a242bbf63c0e74fdb76c1028c0b6da06ce3aa18",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -61,10 +72,10 @@
       ],
       "skill_id": "sched_latency_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/sched_latency_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "27015e72f5b20d3dc85010dd507c2510afcc4b6a9c12515bea3fb478e09e446d"
+        "sha256": "1c7cccd8cec4d46d8e0268e09dc0dd68c019b0783e5c575a13de4b01254924d0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -76,13 +87,25 @@
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

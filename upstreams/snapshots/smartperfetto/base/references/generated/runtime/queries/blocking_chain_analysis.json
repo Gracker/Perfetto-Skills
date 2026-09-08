@@ -49,18 +49,27 @@
         ]
       },
       "id": "blocking_chain_analysis/thread_state_distribution",
+      "identity": {
+        "aliases": [
+          "process_name",
+          "package"
+        ],
+        "policy": "required",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/thread_state_distribution.sql",
-      "sha256": "e5ec0e7c1d742f1d3c1f05aa13acdf95fe3736f7dbaa6c2205b64e0f35ffc38f",
+      "sha256": "74530494c70bc6e82f828e5fe2281619c4a29a0f9aebe8f4520de988e1a86f26",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "d2c7a63dade5310e92b508c129b78b4e3a420c57d613ac75107d93e89f7418cf"
@@ -80,12 +89,16 @@
       "step_id": "thread_state_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -145,18 +158,27 @@
         ]
       },
       "id": "blocking_chain_analysis/waker_chain",
+      "identity": {
+        "aliases": [
+          "process_name",
+          "package"
+        ],
+        "policy": "required",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/waker_chain.sql",
-      "sha256": "ec385995e6d0f1ac7d7c83ac81867a24d3bbb5d1d0d88a3d7f1104b5ef589e7f",
+      "sha256": "00cdcc9c40f8a2abc75f6ad965a62d1661ba86d4064e987b93ef1b8375873d52",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "d2c7a63dade5310e92b508c129b78b4e3a420c57d613ac75107d93e89f7418cf"
@@ -176,12 +198,16 @@
       "step_id": "waker_chain",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -241,18 +267,27 @@
         ]
       },
       "id": "blocking_chain_analysis/blocked_function_summary",
+      "identity": {
+        "aliases": [
+          "process_name",
+          "package"
+        ],
+        "policy": "required",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/blocked_function_summary.sql",
-      "sha256": "230a0caf2836d16e38a689290c43f59ad6e6f03f43f339d8be75716a7b52cb4a",
+      "sha256": "b3711fc17ab525032c450b3624643898566391043577c8ff8ad1863753b2cb13",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "d2c7a63dade5310e92b508c129b78b4e3a420c57d613ac75107d93e89f7418cf"
@@ -272,12 +307,16 @@
       "step_id": "blocked_function_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

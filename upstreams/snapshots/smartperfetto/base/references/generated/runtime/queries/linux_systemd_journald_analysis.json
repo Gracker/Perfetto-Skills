@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "linux_systemd_journald_analysis/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/linux_systemd_journald_analysis/query.sql",
-      "sha256": "344a200d9617f9072540b080d4a3384ff9969bacb2e1029e3b1d4660d14f4542",
+      "sha256": "6d02ceca92246d965ba77454da2526949f0af516ccb94c9131b25d42c1c268cd",
       "signal_patterns": [],
       "skill_id": "linux_systemd_journald_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/linux_systemd_journald_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cd2cf0fd458e13893bab21974f26f9653bd1d4fe8b5fc6c41687bed42288a561"
@@ -74,6 +77,7 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "max_prio",
@@ -82,7 +86,8 @@
           "tag",
           "unit"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

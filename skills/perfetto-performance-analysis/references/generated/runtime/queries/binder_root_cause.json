@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "binder_root_cause/slow_binder_breakdown",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_root_cause/slow_binder_breakdown.sql",
-      "sha256": "1a8c3bfd7d06eb732e9f006d9bc8e2a075cc86e8826ecaed1b793df150754b67",
+      "sha256": "dc66a56e3acffbdcf74c7ac717e988576f2bf836bc2ca3d5f15c9cd731c6184b",
       "signal_patterns": [],
       "skill_id": "binder_root_cause",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/binder_root_cause.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9fb3e26f37f2a7dead03e0b85dda71300e9c3c216b4676072b9ef31385ea33ec"
@@ -75,13 +78,15 @@
       "step_id": "slow_binder_breakdown",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "min_dur_ms",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -139,16 +144,19 @@
         "probe_capabilities": []
       },
       "id": "binder_root_cause/blame_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_root_cause/blame_summary.sql",
-      "sha256": "15b26fb9246d9aa69f0ff87c6ebf67b8ef19677c0ff038b708589a74a1f5170f",
+      "sha256": "2c54c2f7a2ac8c10a5fcb4847886b48bbccda58176bc111c6ade2d8f096dbbfe",
       "signal_patterns": [],
       "skill_id": "binder_root_cause",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/binder_root_cause.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9fb3e26f37f2a7dead03e0b85dda71300e9c3c216b4676072b9ef31385ea33ec"
@@ -167,13 +175,15 @@
       "step_id": "blame_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "min_dur_ms",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: 7789a0289bed4a0b46c99ddcd9705bdf77585f0f349359d83f1bc1f84cbcc719
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: c8d73d35562b9ec271aea7e00e13dc776737f15c18ff690716bb12d438afb6c2
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Anr Strategy
 
@@ -21,6 +21,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: anr
+classification_description: Application unresponsiveness, ANR triggers, deadlocks and timeout-related blocking.
 priority: 1
 effort: medium
 required_capabilities:
@@ -55,10 +56,9 @@ final_report_contract:
     label: ANR 诊断 API/外部聚合边界
     description: 当用户主动提到 ApplicationExitInfo、ProfilingTrigger、Play/Android Vitals 或客户端 watchdog 时，区分系统确认 ANR、客户端预警、Profiling
       artifact、Play 聚合和当前 trace 根因证据。
-    trigger_patterns:
-    - ApplicationExitInfo|getHistoricalProcessExitReasons|getAnrInfo|REASON_ANR
-    - ProfilingManager|ProfilingTrigger|TRIGGER_TYPE_ANR
-    - Play Vitals|Android Vitals|user-perceived ANR|client watchdog|SDK watchdog
+    condition:
+      kind: semantic
+      description: 当问题要求解释、比较或使用系统 ANR 诊断记录、剖析产物、外部聚合指标或客户端 watchdog 告警时适用。
     pattern_groups:
     - - ANR 诊断 API/外部聚合边界
       - ANR diagnostic API

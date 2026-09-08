@@ -47,22 +47,33 @@
         "probe_capabilities": []
       },
       "id": "main_thread_sched_latency_in_range/root",
+      "identity": {
+        "aliases": [
+          "package"
+        ],
+        "policy": "verify_if_present",
+        "scope": "process"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/main_thread_sched_latency_in_range/query.sql",
-      "sha256": "69837baed02c112a8852ac4e02aec38deb23b1353624f70f412ec2467530d7c8",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "c4a5f51051c81a55c750f0aeda0fb656196bdfa6803c57952fea0508f344caea",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "main_thread_sched_latency_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/main_thread_sched_latency_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ec7378f70acb64450db21e4b4e2b3a58143cd67cb78c6cdb61a5bd1f67b4b3ef"
+        "sha256": "c0a7c90db402980de38c10ae00ada63133dd05269323e952bc13f4279c9b1fdd"
       },
       "sql_dependencies": {
         "creates": [],
@@ -74,13 +85,25 @@
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

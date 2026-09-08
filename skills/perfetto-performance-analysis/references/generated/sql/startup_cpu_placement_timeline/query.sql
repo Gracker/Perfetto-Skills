@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_cpu_placement_timeline.skill.yaml
 -- Source SHA-256: 3fed5fa06ac7c9d8b6d9382413c9eeb9dcecee347a95c9d3035d0766fa69dbba
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH main_thread AS (
   SELECT t.utid

@@ -1,15 +1,27 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/frame_pipeline_variance.skill.yaml
--- Source SHA-256: 371a11a05e1735c9a5ef91771956d7304d2f0613e653c48c830946646dcf6b6f
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 758727e5e7fe862de5324469e2a8006fa72f121bba6818661575c1f97dfbd823
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
-WITH frames AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+frames AS (
   SELECT
     a.ts,
     a.dur / 1e6 as frame_ms
   FROM actual_frame_timeline_slice a
-  LEFT JOIN process p ON a.upid = p.upid
-  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
+  JOIN effective_target_processes p ON a.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
     AND p.name NOT LIKE '/system/%'
     AND COALESCE(a.display_frame_token, a.surface_frame_token) IS NOT NULL
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})

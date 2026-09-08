@@ -49,12 +49,15 @@
         ]
       },
       "id": "textureview_producer_frame_timing/textureview_signal_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/textureview_producer_frame_timing/textureview_signal_summary.sql",
-      "sha256": "551c81cf4de500e3568a023438787fa8868c8cbdd3d99c9bb25b22f17a9ad67c",
+      "sha256": "4211dc64a440364edf1f728a53e2c145da3e623b64c9ab356869a732467ddb53",
       "signal_patterns": [
         "*DeferredLayerUpdater*",
         "*SurfaceTexture*",
@@ -67,7 +70,7 @@
       ],
       "skill_id": "textureview_producer_frame_timing",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/textureview_producer_frame_timing.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a2c34451c741e02fc6d13ed92dc82fdb910606ab79c16c5996ce90becc55c588"
@@ -91,13 +94,15 @@
       "step_id": "textureview_signal_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -157,12 +162,15 @@
         ]
       },
       "id": "textureview_producer_frame_timing/textureview_producer_intervals",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/textureview_producer_frame_timing/textureview_producer_intervals.sql",
-      "sha256": "da255036626201eab4cf3139b437cc0d91dbacf3fe314e64065b6431d569fa9d",
+      "sha256": "887012fb232a1cf33ef2839a7a7a96edd9c597ed2119a42aa6b5f576176075a3",
       "signal_patterns": [
         "*DeferredLayerUpdater*",
         "*SurfaceTexture*",
@@ -175,7 +183,7 @@
       ],
       "skill_id": "textureview_producer_frame_timing",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/textureview_producer_frame_timing.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a2c34451c741e02fc6d13ed92dc82fdb910606ab79c16c5996ce90becc55c588"
@@ -205,6 +213,7 @@
             "source_sha256": "96a6e07816d67db7ac8db23c91406a6abca0b42c314c66a06843dbbf57d0faa5"
           }
         ],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
@@ -212,7 +221,8 @@
           "start_ts",
           "target_frame_ms"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

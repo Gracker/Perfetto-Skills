@@ -49,16 +49,19 @@
         ]
       },
       "id": "linux_sched_latency_distribution/sched_latency_distribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/linux_sched_latency_distribution/sched_latency_distribution.sql",
-      "sha256": "10239689609f54955aab8fb247ec41acaa041e9b671d337456c13fa14ca93c90",
+      "sha256": "9854f694f7b8defb5cf9ae489758233072caada6c669a093c0ef68b60d4f6aa6",
       "signal_patterns": [],
       "skill_id": "linux_sched_latency_distribution",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/linux_sched_latency_distribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c8f9e7708b0a70437c81fbaec17831e3c0285e840a77f485d5f6fdcdfbb0cbba"
@@ -80,13 +83,15 @@
       "step_id": "sched_latency_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

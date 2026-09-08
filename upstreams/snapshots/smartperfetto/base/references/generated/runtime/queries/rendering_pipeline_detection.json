@@ -49,12 +49,15 @@
         ]
       },
       "id": "rendering_pipeline_detection/score_pipelines",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/score_pipelines.sql",
-      "sha256": "87867f53bad15f37828f0a7fa15b721dfa80a1794fefeebbd977cdd45936ff9a",
+      "sha256": "d5a5a1dbbd270c3827d1d3c4d9ff373cf4d14855c80621f56e288bcc46ee0135",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -71,7 +74,7 @@
       ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
@@ -95,10 +98,12 @@
       "step_id": "score_pipelines",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -158,16 +163,19 @@
         ]
       },
       "id": "rendering_pipeline_detection/determine_pipeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/determine_pipeline.sql",
-      "sha256": "32ac2c49496ebb99b7c6226fba11bd5c061ee87b600ddfd9ead4d2fb7ca39e75",
+      "sha256": "6d14329d37093d438a69d265a958c313aa7f5cc41493b2cc11a7422ad830334a",
       "signal_patterns": [],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
@@ -191,10 +199,12 @@
       "step_id": "determine_pipeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
         "result_dependencies": [
           "pipeline_scores"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -254,12 +264,15 @@
         ]
       },
       "id": "rendering_pipeline_detection/subvariants",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/subvariants.sql",
-      "sha256": "ca0f8a05ef328dabfae43d7394c38c3b1b1bf4445295177a5b249d8836abd320",
+      "sha256": "4985277a1dcf512c39c36c06311c8b31b7d25be8c9696f31aff0adfe51ec6d05",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -286,7 +299,7 @@
       ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
@@ -310,10 +323,12 @@
       "step_id": "subvariants",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -373,12 +388,15 @@
         ]
       },
       "id": "rendering_pipeline_detection/trace_requirements",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/trace_requirements.sql",
-      "sha256": "4ba32ebc740ea3ddff5161fbed0f6d731c12fa29df9419cc87ad22139229e46f",
+      "sha256": "6fda1532b2ef4c63779f4ea64dbd34016c3f5b5ee7966aef87668c363b142314",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -400,7 +418,7 @@
       ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
@@ -424,10 +442,12 @@
       "step_id": "trace_requirements",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -489,12 +509,15 @@
         ]
       },
       "id": "rendering_pipeline_detection/active_rendering_processes",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/active_rendering_processes.sql",
-      "sha256": "877f4771d254d9482995f09b530037bc171b09c7ba4dd8a82a89d6c0ec054501",
+      "sha256": "c46e4526ee05f0f99a1f8c9f43a04ca758cdfe9331cad19f6adb41d62024e737",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -516,7 +539,7 @@
       ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
@@ -540,10 +563,12 @@
       "step_id": "active_rendering_processes",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "verified",
@@ -605,12 +630,15 @@
         ]
       },
       "id": "rendering_pipeline_detection/layer_signals",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/layer_signals.sql",
-      "sha256": "a8e84f85e7e6f5e2590e8c461c5e5cb4397fa86852d20b4466c46c13e3a43c68",
+      "sha256": "ad2de42afc89ca98e4c5b51fad4c7963d77251cd73bf7f46c4eb46b1c0d72b61",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*FrameTimeline*",
@@ -621,7 +649,7 @@
       ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
@@ -645,10 +673,12 @@
       "step_id": "layer_signals",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -708,12 +738,15 @@
         ]
       },
       "id": "rendering_pipeline_detection/extra_rhythm_signals",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/extra_rhythm_signals.sql",
-      "sha256": "74ac0b8e7492ee0495185936e6e79431f9ab39aebf81cc11f83f9a9979db2d62",
+      "sha256": "78b3b058b87c3cb8dfac3fccb83818ad215d72423e4339c176c1222907d98cc0",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -725,7 +758,7 @@
       ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
@@ -749,10 +782,12 @@
       "step_id": "extra_rhythm_signals",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -814,12 +849,15 @@
         ]
       },
       "id": "rendering_pipeline_detection/bufferqueue_path_signals",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/bufferqueue_path_signals.sql",
-      "sha256": "7adb80327309019904c8bccddd6fc856b3c5008a51de9466a3f78b9edc077652",
+      "sha256": "23acb45bad87d791cdbbac9885fead5f32d67fd27214ab053c87063d8e2b6052",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -831,7 +869,7 @@
       ],
       "skill_id": "rendering_pipeline_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
@@ -855,10 +893,12 @@
       "step_id": "bufferqueue_path_signals",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "verified",

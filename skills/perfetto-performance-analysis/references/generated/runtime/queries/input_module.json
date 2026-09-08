@@ -47,19 +47,22 @@
         "probe_capabilities": []
       },
       "id": "input_module/click_response_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_module/click_response_overview.sql",
-      "sha256": "428fcca417760d046216e031558bde9845a0c193d699c129b7ab592291f67793",
+      "sha256": "534567b08096a73e88a028081a4544d8e21526b223ce5d139b9d1b1248409628",
       "signal_patterns": [
         "%deliverInputEvent%",
         "%dispatchTouchEvent%"
       ],
       "skill_id": "input_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/input_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "77e992fb9b0d483e4e6c1956dd1023052e4c345a03137e372448ad8c22892918"
@@ -77,8 +80,10 @@
       "step_id": "click_response_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -136,19 +141,22 @@
         "probe_capabilities": []
       },
       "id": "input_module/slow_input_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_module/slow_input_events.sql",
-      "sha256": "c58b3b505b8321fb62ddbd8c0e5d980d243610a5901a0606c5d256d00a559db2",
+      "sha256": "c919f65795dd3e5a019e640a52c3c9152799239cd289120d967114b71a4471f1",
       "signal_patterns": [
         "%deliverInputEvent%",
         "%dispatchTouchEvent%"
       ],
       "skill_id": "input_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/input_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "77e992fb9b0d483e4e6c1956dd1023052e4c345a03137e372448ad8c22892918"
@@ -166,8 +174,10 @@
       "step_id": "slow_input_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -225,12 +235,15 @@
         "probe_capabilities": []
       },
       "id": "input_module/input_dispatch_timing",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_module/input_dispatch_timing.sql",
-      "sha256": "a3fbf3b5d051cf3b4e5081e9d108ddda729fda3eb09243000034ff4ab6c816da",
+      "sha256": "ece106ce444b16f483da94682e17c5f083a6f30482fa0645a9fe03d3f0596b93",
       "signal_patterns": [
         "%InputDispatcher%",
         "%InputReader%",
@@ -238,7 +251,7 @@
       ],
       "skill_id": "input_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/input_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "77e992fb9b0d483e4e6c1956dd1023052e4c345a03137e372448ad8c22892918"
@@ -256,8 +269,10 @@
       "step_id": "input_dispatch_timing",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

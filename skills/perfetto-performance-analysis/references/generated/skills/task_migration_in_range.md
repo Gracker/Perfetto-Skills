@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/task_migration_in_range.skill.yaml
-Source SHA-256: 7b947c3b5e2f9a4e3c945f4b914eeb74e2b5bbe7d7f208a7d90c1913177aaf3f
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 6b439d1de33342825c0e07b756b2e0b4ee97eb56287f7df8d9312a9a14ce14f2
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 # 任务迁移分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -46,6 +46,15 @@ tags:
   description: 目标进程名（支持 GLOB 匹配）
 ```
 
+## Identity requirements
+
+```yaml
+policy: verify_if_present
+scope: process
+aliases:
+- package
+```
+
 ## Ordered execution
 
 ### 初始化 CPU 拓扑
@@ -70,6 +79,11 @@ optional: true
 ```yaml
 id: migration_analysis
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
 optional: true
 display:
   level: detail

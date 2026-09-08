@@ -47,18 +47,21 @@
         "probe_capabilities": []
       },
       "id": "vsync_period_detection/detect_vsync_period",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_period_detection/detect_vsync_period.sql",
-      "sha256": "f5ec6e90c8bf5ed78e6bbd5a4772a41071f4bf59d9c158a80eef183c4dae229b",
+      "sha256": "da94aad685fb4d767abce0920ffd836295ea9e0077e64e1487dea1e4971e2b59",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "vsync_period_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/vsync_period_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "3e6fef81b5490d36eb957296b47334e49b8c55adb5509d01ad7dae8765c6bec1"
@@ -76,11 +79,13 @@
       "step_id": "detect_vsync_period",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

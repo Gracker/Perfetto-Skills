@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "frame_overrun_summary/overrun_frames",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/frame_overrun_summary/overrun_frames.sql",
-      "sha256": "f23f9128b26e32ba8ebd0d6ece0e86d4f9c77aee18ce9bf8fff21b6bd5f89856",
+      "sha256": "5f31cd1945776822c7a8e989682f9332dfa3ec7002c72893a3d5e1be0e4bcacf",
       "signal_patterns": [],
       "skill_id": "frame_overrun_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/frame_overrun_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8d3f12c4ef5cd70e43445492df11219fc663818ce30eee71c44713c49ddec600"
@@ -74,8 +77,10 @@
       "step_id": "overrun_frames",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

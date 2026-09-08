@@ -49,12 +49,15 @@
         ]
       },
       "id": "systemui_module/systemui_process",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/systemui_process.sql",
-      "sha256": "2cb0981bddb3fbadcfe0ef92553321c09a657c9678a6bc83af672eb2f155e9ea",
+      "sha256": "4cbee6132ecac04ae41d7634ded082543d01c66e0e4114b87922c301213c06ec",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -62,7 +65,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -82,8 +85,10 @@
       "step_id": "systemui_process",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -143,12 +148,15 @@
         ]
       },
       "id": "systemui_module/systemui_main_thread",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/systemui_main_thread.sql",
-      "sha256": "015a67bbaa5226810762a85879573f4bba291a64ce28c73425786d6bbe97fd17",
+      "sha256": "6f1d3aec1f73301e2ae83950a012fb2bb3773d3f2fb2382de7ae2a631f0f8bc4",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -156,7 +164,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -176,8 +184,10 @@
       "step_id": "systemui_main_thread",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -237,12 +247,15 @@
         ]
       },
       "id": "systemui_module/systemui_frames",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/systemui_frames.sql",
-      "sha256": "18e13a8aba0cad8477fe9145657fb56267872abf1ee2b4de80dec00b6aa583db",
+      "sha256": "436d764d265bfb6dd7555ffc94bb2392fe67ce32bafb8cc20016103f206165bf",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -253,7 +266,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -273,8 +286,10 @@
       "step_id": "systemui_frames",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -334,12 +349,15 @@
         ]
       },
       "id": "systemui_module/statusbar_activities",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/statusbar_activities.sql",
-      "sha256": "5fcfe1e76f89eba7c5e15ac6dc45083f639ec710cd996dea9e28b202f470e2ba",
+      "sha256": "ecd4dbfd72b05036e70f1e65026141b02963a54cf0007cbb40ada25cd3553248",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -351,7 +369,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -371,8 +389,10 @@
       "step_id": "statusbar_activities",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -432,12 +452,15 @@
         ]
       },
       "id": "systemui_module/notification_shade",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/notification_shade.sql",
-      "sha256": "ad46a9bf39b572dc4beaf3e1388a271a7cdeaeedaf4722d6c98e4933f062c7f9",
+      "sha256": "e18eaf62db9c6bdf86cd1abbc9be2e3b9bce72f91862536ee40f9a4528c6aecc",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -451,7 +474,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -471,8 +494,10 @@
       "step_id": "notification_shade",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -532,12 +557,15 @@
         ]
       },
       "id": "systemui_module/quick_settings",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/quick_settings.sql",
-      "sha256": "8f2468ae5ddb1fcfe1757b467d1221b197c391fb6a6ceac5104f8cabeabac830",
+      "sha256": "c191f83e188477c918a025925e8632c8c310b4a34852eeeb170a34155fa294e4",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -549,7 +577,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -569,8 +597,10 @@
       "step_id": "quick_settings",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -630,12 +660,15 @@
         ]
       },
       "id": "systemui_module/navigation_activities",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/navigation_activities.sql",
-      "sha256": "9f1eb3b9e08e8ccbb01e7ea055ae450867503a8fcf3f04221c3ff9c85735882a",
+      "sha256": "fc2b479ce284dd3541374f0fdc88aa73bf35cab663787835bda4d23c32cee86b",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -651,7 +684,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -671,8 +704,10 @@
       "step_id": "navigation_activities",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -732,12 +767,15 @@
         ]
       },
       "id": "systemui_module/lockscreen_activities",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/lockscreen_activities.sql",
-      "sha256": "414aa112bf782fbe33f662b6915ccd9f0af99ff68feaadc82f92c146148c2b58",
+      "sha256": "b1e30468b79dab07a5139961fab75f42ebeddf0787608469c1676af8ca4c0964",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -752,7 +790,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -772,8 +810,10 @@
       "step_id": "lockscreen_activities",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -833,12 +873,15 @@
         ]
       },
       "id": "systemui_module/systemui_binder",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/systemui_binder.sql",
-      "sha256": "f3f1576086f2bc3ebecbe4751fb1c33de9cf6baa425c29bc16f346237c3eb5a3",
+      "sha256": "12164e2b03f51d4b05d0f021d27baa9eabf289c969fd317250ed805c456e3555",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -850,7 +893,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -870,8 +913,10 @@
       "step_id": "systemui_binder",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -931,12 +976,15 @@
         ]
       },
       "id": "systemui_module/volume_dialog",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/systemui_module/volume_dialog.sql",
-      "sha256": "161df62476acb0d0e1357cd2ec14774cf1d04c61d54fae30748933a53bc9c040",
+      "sha256": "5c0162a8540206b06edcb3e81faa22d184a99ee9ab1e3842c78a3a0d402b9387",
       "signal_patterns": [
         "%SystemUI%",
         "%systemui%",
@@ -947,7 +995,7 @@
       ],
       "skill_id": "systemui_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/app/systemui_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566"
@@ -967,8 +1015,10 @@
       "step_id": "volume_dialog",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

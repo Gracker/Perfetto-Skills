@@ -47,18 +47,21 @@
         "probe_capabilities": []
       },
       "id": "input_to_frame_latency/vsync_period",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/vsync_period.sql",
-      "sha256": "9d395e261f60ed2f9476359ef06b0dc1774f703da1cd4f8121b578eda32f0bb9",
+      "sha256": "72b22bc724d30b6da55e61bede6acab6ff6cc52762794915e28e5f8b2455692e",
       "signal_patterns": [
         "VSYNC-app"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa"
@@ -76,8 +79,10 @@
       "step_id": "vsync_period",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -135,19 +140,22 @@
         "probe_capabilities": []
       },
       "id": "input_to_frame_latency/input_sampling_rate",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/input_sampling_rate.sql",
-      "sha256": "c3318390f4a665325197077db72a00e3680c89d9e53ba76488c1105a3d7cb90d",
+      "sha256": "45484dcec6a1c3edbccb2a97e51aec5147ff922efb9bfe8b49c86df5ef998d89",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa"
@@ -169,12 +177,14 @@
       "step_id": "input_sampling_rate",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -232,12 +242,15 @@
         "probe_capabilities": []
       },
       "id": "input_to_frame_latency/per_frame_latency",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/per_frame_latency.sql",
-      "sha256": "10e3c4371527260fec841bcce92252600b28cd440a207c60f52abebd4b126f55",
+      "sha256": "62418a6bdf4e79257a2598382fe8f3aae70d1908da27010d467b2c71ebd64a0e",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -245,7 +258,7 @@
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa"
@@ -267,13 +280,15 @@
       "step_id": "per_frame_latency",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "event_action_filter",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -331,12 +346,15 @@
         "probe_capabilities": []
       },
       "id": "input_to_frame_latency/latency_statistics",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/latency_statistics.sql",
-      "sha256": "fc0efe3e3376106a3702c1ebcffb0a41729d16d88d0c8712305129f6b12958a4",
+      "sha256": "212a147eaec47a99588139460a613031d29181f9ed96f7d9ba0eec002bd7e844",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -344,7 +362,7 @@
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa"
@@ -366,12 +384,14 @@
       "step_id": "latency_statistics",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -429,19 +449,22 @@
         "probe_capabilities": []
       },
       "id": "input_to_frame_latency/latency_spikes",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/latency_spikes.sql",
-      "sha256": "47c767d1272a9920295e8746343aad12651b31c37b437ff37bd6087b4e78e774",
+      "sha256": "4f7ecd12625254817488c2dabfa3708785f2af59143733adb821eb17df00510c",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa"
@@ -463,12 +486,14 @@
       "step_id": "latency_spikes",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

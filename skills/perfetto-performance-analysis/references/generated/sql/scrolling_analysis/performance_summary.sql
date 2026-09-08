@@ -1,9 +1,20 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 6ebd984e1b34cb456d5fa410b4e2308e350c5854086ec1e06ff58b4c80c5ef4f
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 -- 获取 VSync 周期（从 VSYNC-sf 信号计算，限定在分析区间内）
 vsync_intervals AS (
   SELECT
@@ -45,13 +56,21 @@ app_frame_rows AS (
       ELSE NULL
     END as frame_key
   FROM actual_frame_timeline_slice a
-  LEFT JOIN process p ON a.upid = p.upid
+  JOIN effective_target_processes p ON a.upid = p.upid
   WHERE (
-    '${package}' = ''
+    ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
     OR p.name = '${package}'
     OR p.name GLOB '${package}:*'
   )
     AND p.name NOT LIKE '/system/%'
+    -- With no target package the clause above accepts any process, and
+    -- the system UI is the one most likely to be drawing while the target
+    -- app draws nothing. Its frames are punctual, so they read back as
+    -- flawless scrolling for an app that produced no frames at all: one
+    -- device reported 31fps SystemUI frames as "优秀", another rated a
+    -- 5-frame notification-shade window. Anyone analysing the system UI
+    -- deliberately names it and keeps these rows.
+    AND ('${package}' != '' OR p.name NOT LIKE 'com.android.systemui%')
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
     AND (a.display_frame_token IS NOT NULL OR a.surface_frame_token IS NOT NULL)
@@ -175,7 +194,7 @@ consumer_layer_frames AS (
     COALESCE(a.display_frame_token, a.surface_frame_token) as display_frame_token,
     a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END as present_ts,
     LAG(a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END)
-      OVER (PARTITION BY a.layer_name ORDER BY a.ts) as prev_present_ts,
+      OVER (PARTITION BY a.upid, a.layer_name ORDER BY a.ts) as prev_present_ts,
     COALESCE(a.jank_type, 'None') as jank_type,
     COALESCE(a.present_type, 'Unknown Present') as present_type,
     CASE
@@ -296,8 +315,19 @@ SELECT
     CAST(ROUND(1e9 / (SELECT vsync_period_ns FROM timing_config)) AS INTEGER)
   ) as actual_fps,
   CAST(ROUND(1e9 / (SELECT vsync_period_ns FROM timing_config)) AS INTEGER) as refresh_rate,
-  -- 评级基于感知掉帧率（排除 Buffer Stuffing）
+  -- 评级基于感知掉帧率（排除 Buffer Stuffing），但先过两道门。
   CASE
+    -- ① 样本量门槛。5 帧（一次 65ms 通知栏窗口）曾被评成「较差」——
+    -- 那不是评价，是把噪声打扮成结论。20 帧在 120Hz 下不到 0.2s、
+    -- 60Hz 下不到 0.4s，真实的短手势仍然评得出来。
+    WHEN (SELECT total FROM app_stats) < 20 THEN '样本不足'
+    -- ② 帧率达成率门槛。只看掉帧率时，120Hz 屏上 31fps 因为「每一帧都准时」
+    -- 被评成「优秀」。准时地少给一半以上的帧不是优秀。
+    WHEN MIN(
+           ROUND(1e9 * (SELECT total FROM app_stats) / NULLIF((SELECT duration_ns FROM time_range), 0), 1),
+           CAST(ROUND(1e9 / (SELECT vsync_period_ns FROM timing_config)) AS INTEGER)
+         ) < CAST(ROUND(1e9 / (SELECT vsync_period_ns FROM timing_config)) AS INTEGER) * 0.5
+      THEN '一般'
     WHEN (SELECT perceived_jank_frames FROM resolved_jank) = 0 THEN '优秀'
     WHEN 100.0 * (SELECT perceived_jank_frames FROM resolved_jank) / NULLIF((SELECT total FROM app_stats), 0) < 1 THEN '优秀'
     WHEN 100.0 * (SELECT perceived_jank_frames FROM resolved_jank) / NULLIF((SELECT total FROM app_stats), 0) < 5 THEN '良好'

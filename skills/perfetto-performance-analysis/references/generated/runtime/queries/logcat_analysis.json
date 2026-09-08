@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "logcat_analysis/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/logcat_analysis/query.sql",
-      "sha256": "8f7a17b9b92f060b07e5d7e29d47a37f1b017d243211f7b2d7839cf28ff49f63",
+      "sha256": "c1ccdb8f246816b0fe4f53103bc5999730aba81800dfd94897043f9db0ae7e72",
       "signal_patterns": [],
       "skill_id": "logcat_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/logcat_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8c0018e6416eba29e18bcde7319b929fcc73db350ceff3d87b86e2e2b66e0f60"
@@ -74,12 +77,14 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -49,12 +49,15 @@
         ]
       },
       "id": "game_main_loop_jank/engine_loop_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/game_main_loop_jank/engine_loop_summary.sql",
-      "sha256": "3ef563e6f045f7415266d3ffda48f10808ccea8423e565c710add658bea79e1a",
+      "sha256": "e59e90de09924a6aa7d71e80797f3716875c482a87ca9e801d5adb806210baf4",
       "signal_patterns": [
         "*Camera.Render*",
         "*Cocos*",
@@ -79,7 +82,7 @@
       ],
       "skill_id": "game_main_loop_jank",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/game_main_loop_jank.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "af3cf3d17241144bf6c76fedf398ba64afce96ad2290b098e3e7c9e628aa7d17"
@@ -102,6 +105,7 @@
       "step_id": "engine_loop_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
@@ -109,7 +113,8 @@
           "start_ts",
           "target_frame_ms"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -169,12 +174,15 @@
         ]
       },
       "id": "game_main_loop_jank/slow_engine_slices",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/game_main_loop_jank/slow_engine_slices.sql",
-      "sha256": "574e4f98b7a775facddcf8e066c12bf59dbd0f4e09134bb14178a1c498937cf9",
+      "sha256": "2d7842c9e49030391ea4f7d90255fc1c525b72138d3e40d879cecfb0383a1f1a",
       "signal_patterns": [
         "*Camera.Render*",
         "*Cocos*",
@@ -199,7 +207,7 @@
       ],
       "skill_id": "game_main_loop_jank",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/game_main_loop_jank.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "af3cf3d17241144bf6c76fedf398ba64afce96ad2290b098e3e7c9e628aa7d17"
@@ -222,6 +230,7 @@
       "step_id": "slow_engine_slices",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
@@ -229,7 +238,8 @@
           "start_ts",
           "target_frame_ms"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

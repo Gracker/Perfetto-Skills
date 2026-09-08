@@ -49,12 +49,15 @@
         ]
       },
       "id": "render_thread_slices/render_slices",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/render_thread_slices/render_slices.sql",
-      "sha256": "7b6bedb90b29d0a96380f7a4429452bd9928f78002bd93ca079392b2920abc91",
+      "sha256": "dae2daaa7928e835d7586c42b38357d5451d082fc2f313ce7834c8a703026950",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -62,7 +65,7 @@
       ],
       "skill_id": "render_thread_slices",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/render_thread_slices.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8ddac0e2dc4a11ec52133865f9c7be4c33cae1f207852349f0757d5049168649"
@@ -85,12 +88,14 @@
       "step_id": "render_slices",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

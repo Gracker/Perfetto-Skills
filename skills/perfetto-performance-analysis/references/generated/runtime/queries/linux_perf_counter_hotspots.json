@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "linux_perf_counter_hotspots/perf_counter_hotspots",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/linux_perf_counter_hotspots/perf_counter_hotspots.sql",
-      "sha256": "92381daf08afe97053b1bf905b25e6ffa1f47e717226a9e28899f4558ac9e64f",
+      "sha256": "3684c4e6ef318cd8a3857785502650515d9facaa043991818826abba5894e2f2",
       "signal_patterns": [],
       "skill_id": "linux_perf_counter_hotspots",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/linux_perf_counter_hotspots.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e626f52d15d809aef38cbdcc4ba3e597ff08de9f37353328d71d16426405dfcc"
@@ -74,13 +77,15 @@
       "step_id": "perf_counter_hotspots",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -49,19 +49,22 @@
         ]
       },
       "id": "vrr_detection/vsync_interval_distribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vrr_detection/vsync_interval_distribution.sql",
-      "sha256": "7a12d7fd158e38233e2f8acbc48e358c769a5787fb7612f34145d9726066781a",
+      "sha256": "af083b3a9b8e947c2ddc82b486217215ff1cd7c369d682273d7e389a3d1edc46",
       "signal_patterns": [
         "*VSYNC-sf*",
         "VSYNC"
       ],
       "skill_id": "vrr_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/vrr_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "dbd96fdb066f3be0defa9135a69e115de91d28e52f9f9585a9fad0f12fd2cd06"
@@ -82,11 +85,13 @@
       "step_id": "vsync_interval_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -146,18 +151,21 @@
         ]
       },
       "id": "vrr_detection/vrr_mode_detection",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vrr_detection/vrr_mode_detection.sql",
-      "sha256": "883f33c7a04879d3cc481df779a2be84c6f925a293eb1e91f20a460bed89560b",
+      "sha256": "2e01aa58aa19763027cef4969500ef41f49f0f3fcad21ba9ae0236e2ee8cc41f",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "vrr_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/vrr_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "dbd96fdb066f3be0defa9135a69e115de91d28e52f9f9585a9fad0f12fd2cd06"
@@ -178,8 +186,10 @@
       "step_id": "vrr_mode_detection",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -239,18 +249,21 @@
         ]
       },
       "id": "vrr_detection/refresh_rate_switches",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vrr_detection/refresh_rate_switches.sql",
-      "sha256": "addb97f321fbd65f2b6fa2e32ac0193ac7d07216632e825a5a234ad33b83834a",
+      "sha256": "2afde26363d2041a39373aab1f42a4372f6affeb3b7cd285c8186a237194e8e4",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "vrr_detection",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/vrr_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "dbd96fdb066f3be0defa9135a69e115de91d28e52f9f9585a9fad0f12fd2cd06"
@@ -271,8 +284,10 @@
       "step_id": "refresh_rate_switches",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -1,9 +1,20 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
--- Source SHA-256: e48c73408b2775bed099612d32832cde9f70ca33cd1cc462e0275b1454588359
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 283e74c341c76d3959624287f046bcc7f85e2b7b1cbe1edfab07c544a01660af
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 anr_window AS (
   SELECT
     ${anr_ts} - ${timeout_ns} AS start_ts,
@@ -13,9 +24,10 @@ anr_window AS (
 main_thread AS (
   SELECT t.utid
   FROM thread t
-  JOIN process p ON t.upid = p.upid
+  JOIN effective_target_processes p ON t.upid = p.upid
   WHERE (
-      (${upid} > 0 AND p.upid = ${upid})
+      ${__process_scope.upid} IS NOT NULL
+      OR (${upid} > 0 AND p.upid = ${upid})
       OR (${upid} <= 0 AND ${pid} > 0 AND p.pid = ${pid}
           AND ('${process_name}' = '' OR p.name = '${process_name}' OR p.name GLOB '${process_name}:*'))
       OR (${upid} <= 0 AND ${pid} <= 0

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/interaction.strategy.md
-Source SHA-256: c3eb61bf5806cf14412a5e75372d408bba284d73b7a970718e9b2a0032cd7cde
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: c60f2d8de5060d86e404ac2a302cee203bfc9ef1a9634a25f7adc3fdd1839081
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Interaction Strategy
 
@@ -21,6 +21,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: interaction
+classification_description: Discrete input or tap response, from input dispatch through application handling to presentation.
 priority: 4
 effort: medium
 required_capabilities:

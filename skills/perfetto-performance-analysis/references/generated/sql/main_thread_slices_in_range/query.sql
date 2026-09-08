@@ -1,17 +1,17 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_slices_in_range.skill.yaml
--- Source SHA-256: 92c26f5fe09128479cfc14d876cfbcd7f894ba46ddf9121de2565125973321c0
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 12e21a9345bfc67e7283f666038ad610196398f3d2adaed39a15a5d0c6681fa7
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH main_thread AS (
   SELECT t.utid
   FROM thread t
   JOIN process p ON t.upid = p.upid
   WHERE (
-      (${upid|0} > 0 AND p.upid = ${upid|0})
-      OR (${upid|0} <= 0 AND ${pid|0} > 0 AND p.pid = ${pid|0}
+      (COALESCE(${__process_scope.upid}, ${upid|0}) > 0 AND p.upid = COALESCE(${__process_scope.upid}, ${upid|0}))
+      OR (COALESCE(${__process_scope.upid}, ${upid|0}) <= 0 AND ${pid|0} > 0 AND p.pid = ${pid|0}
           AND ('${package|}' = '' OR p.name = '${package|}' OR p.name GLOB '${package|}:*'))
-      OR (${upid|0} <= 0 AND ${pid|0} <= 0
+      OR (COALESCE(${__process_scope.upid}, ${upid|0}) <= 0 AND ${pid|0} <= 0
           AND ('${package|}' = '' OR p.name = '${package|}' OR p.name GLOB '${package|}:*'))
     )
     AND t.tid = p.pid

@@ -49,12 +49,15 @@
         ]
       },
       "id": "android_heap_graph_leak_candidates/leak_candidates",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_leak_candidates/leak_candidates.sql",
-      "sha256": "cb7a80c94cb5826d4ac6004f153d2acda845d9ac77a179042328d435ed67aa3e",
+      "sha256": "73a2025b9ae17b7d26db94c24bb7dbe98c1ba4de3ea29a473c66a7f515fae1c3",
       "signal_patterns": [
         "*",
         "*onCreate*",
@@ -67,7 +70,7 @@
       ],
       "skill_id": "android_heap_graph_leak_candidates",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4"
@@ -89,6 +92,7 @@
       "step_id": "leak_candidates",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "class_name_glob",
           "graph_sample_ts",
@@ -97,7 +101,8 @@
           "package",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -157,12 +162,15 @@
         ]
       },
       "id": "android_heap_graph_leak_candidates/reference_holders",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_leak_candidates/reference_holders.sql",
-      "sha256": "3dc09f3e6d4bca7d3de935ee0891b5d4bfb13ef07d7d4ee0a529d61c4cbb05dd",
+      "sha256": "ed0764e81c3e39fa15da73b1febca9cb50d9100247550e4a68fec61cd658700f",
       "signal_patterns": [
         "*",
         "*onCreate*",
@@ -175,7 +183,7 @@
       ],
       "skill_id": "android_heap_graph_leak_candidates",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4"
@@ -197,6 +205,7 @@
       "step_id": "reference_holders",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "class_name_glob",
           "graph_sample_ts",
@@ -206,7 +215,8 @@
           "package",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

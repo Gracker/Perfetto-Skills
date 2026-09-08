@@ -50,7 +50,7 @@
       "package",
       "process_name"
     ],
-    "policy": "required",
+    "policy": "verify_if_present",
     "rewriteTo": "recommended_process_name_param",
     "scope": "process"
   },
@@ -191,9 +191,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-    "sha256": "cc19de68a5c179e17af405bf32f9ca75f56af0c5a4ccf970ede72790c558942b"
+    "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
   },
   "steps": [
     {
@@ -206,6 +206,9 @@
     {
       "id": "monitor_contention_check",
       "name": "Monitor Contention 数据源检测",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "jank_frame_detail/monitor_contention_check",
       "result_dependencies": [],
       "save_as": "monitor_contention",
@@ -215,6 +218,9 @@
       "id": "gc_table_check",
       "name": "GC 数据源检测",
       "optional": true,
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "jank_frame_detail/gc_table_check",
       "result_dependencies": [],
       "save_as": "gc_availability",
@@ -224,6 +230,9 @@
       "id": "gpu_table_check",
       "name": "GPU 数据源检测",
       "optional": true,
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "jank_frame_detail/gpu_table_check",
       "result_dependencies": [],
       "save_as": "gpu_availability",
@@ -233,6 +242,9 @@
       "id": "binder_table_check",
       "name": "Binder 数据源检测",
       "optional": true,
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "jank_frame_detail/binder_table_check",
       "result_dependencies": [],
       "save_as": "binder_availability",
@@ -242,6 +254,10 @@
       "id": "quadrant_analysis",
       "name": "四象限分析",
       "optional": true,
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
       "query_id": "jank_frame_detail/quadrant_analysis",
       "result_dependencies": [],
       "save_as": "quadrant_data",
@@ -251,6 +267,15 @@
       "id": "binder_calls",
       "name": "Binder 调用",
       "optional": true,
+      "process_scope": {
+        "binding": "native_upid",
+        "context_fields": {
+          "peer_context": [
+            "interface"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "jank_frame_detail/binder_calls",
       "result_dependencies": [],
       "save_as": "binder_data",
@@ -260,6 +285,9 @@
       "id": "cpu_freq_analysis",
       "name": "CPU频率",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "jank_frame_detail/cpu_freq_analysis",
       "result_dependencies": [],
       "save_as": "freq_data",
@@ -269,6 +297,10 @@
       "id": "main_thread_slices",
       "name": "主线程耗时操作",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "jank_frame_detail/main_thread_slices",
       "result_dependencies": [],
       "save_as": "main_slices",
@@ -278,6 +310,10 @@
       "id": "choreographer_resync_markers",
       "name": "Choreographer resync 标记",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "jank_frame_detail/choreographer_resync_markers",
       "result_dependencies": [],
       "save_as": "resync_markers",
@@ -287,6 +323,10 @@
       "id": "render_thread_slices",
       "name": "RenderThread 耗时操作",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "jank_frame_detail/render_thread_slices",
       "result_dependencies": [],
       "save_as": "render_slices",
@@ -296,6 +336,9 @@
       "id": "cpu_freq_timeline",
       "name": "CPU 频率变化时间线",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "jank_frame_detail/cpu_freq_timeline",
       "result_dependencies": [],
       "save_as": "freq_timeline",
@@ -306,6 +349,17 @@
       "id": "lock_contention",
       "name": "锁竞争分析",
       "optional": true,
+      "process_scope": {
+        "binding": "native_upid",
+        "context_fields": {
+          "peer_context": [
+            "blocking_method",
+            "blocking_thread_name",
+            "waiter_count"
+          ]
+        },
+        "role": "target"
+      },
       "query_id": "jank_frame_detail/lock_contention",
       "result_dependencies": [],
       "save_as": "lock_data",
@@ -316,6 +370,10 @@
       "id": "gc_in_frame",
       "name": "GC 影响分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "jank_frame_detail/gc_in_frame",
       "result_dependencies": [],
       "save_as": "gc_data",
@@ -325,6 +383,10 @@
       "id": "io_blocking",
       "name": "IO/page-cache 等待候选分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "jank_frame_detail/io_blocking",
       "result_dependencies": [],
       "save_as": "io_data",
@@ -467,6 +529,23 @@
       "id": "root_cause_summary",
       "name": "根因分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "global_context": [
+            "frame_budget_ms",
+            "primary_cause",
+            "secondary_info"
+          ],
+          "peer_context": [
+            "deep_reason"
+          ]
+        },
+        "limitations": [
+          "根因分类结合目标线程、全局 CPU/VSync 资源及对端信息；混合解释文本不是目标进程的独立实测指标。"
+        ],
+        "role": "target"
+      },
       "query_id": "jank_frame_detail/root_cause_summary",
       "result_dependencies": [],
       "save_as": "root_cause",

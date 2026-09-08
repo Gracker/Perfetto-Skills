@@ -1,13 +1,25 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/sched_latency_in_range.skill.yaml
--- Source SHA-256: 27015e72f5b20d3dc85010dd507c2510afcc4b6a9c12515bea3fb478e09e446d
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 1c7cccd8cec4d46d8e0268e09dc0dd68c019b0783e5c575a13de4b01254924d0
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
-WITH target_threads AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+target_threads AS (
   SELECT t.utid, t.name as thread_name, p.pid
   FROM thread t
-  JOIN process p ON t.upid = p.upid
-  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
+  JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND (t.tid = p.pid OR t.name = 'RenderThread' OR t.name LIKE '%UI%')
 ),
 runnable_states AS (

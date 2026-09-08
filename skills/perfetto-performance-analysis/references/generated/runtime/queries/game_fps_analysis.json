@@ -49,19 +49,22 @@
         ]
       },
       "id": "game_fps_analysis/detect_target_fps",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/game_fps_analysis/detect_target_fps.sql",
-      "sha256": "bd3415d765a8aab0fa103d1b9bce6aee308bf2d780987b5ea3cf33aa8c306faa",
+      "sha256": "f67ddba40132c4a2de3102af8591a9c34c0e05fedb166b8d8101bcdd159e30ec",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "game_fps_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/game_fps_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b1c2c2f4499e3075a69a03b7dbde88b4145a3b8dea465d645cd175f697d90442"
@@ -82,12 +85,14 @@
       "step_id": "detect_target_fps",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -147,19 +152,22 @@
         ]
       },
       "id": "game_fps_analysis/frame_interval_stats",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/game_fps_analysis/frame_interval_stats.sql",
-      "sha256": "1e3d66d70df32dac6227141f916fbe9a9150036c3a9b14e58b253c84914712e2",
+      "sha256": "f23f0c8b27d8c68123c320d12e2aada88671b15eebb0b7018d5ec30627559aa6",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "game_fps_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/game_fps_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b1c2c2f4499e3075a69a03b7dbde88b4145a3b8dea465d645cd175f697d90442"
@@ -180,12 +188,14 @@
       "step_id": "frame_interval_stats",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -245,19 +255,22 @@
         ]
       },
       "id": "game_fps_analysis/jank_detection",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/game_fps_analysis/jank_detection.sql",
-      "sha256": "1639d66724e9c2e910c7b670dc5bcea1d5bf6d1c5b7697c3237e2fd939ffdd82",
+      "sha256": "abfb546ff35cd3057850887c01a0ba56d415981aff4bacaacb8dfda8bd93603c",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "game_fps_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/game_fps_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b1c2c2f4499e3075a69a03b7dbde88b4145a3b8dea465d645cd175f697d90442"
@@ -278,13 +291,15 @@
       "step_id": "jank_detection",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts",
           "target_fps"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

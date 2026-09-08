@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/general.strategy.md
-Source SHA-256: 55e68c199e703ddf8070d9fecdbdb4019605b393811b5b2db6c9427ab54c9fd8
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: f045b9cb88e816d13a08dda66e6be29f63ad20e20f0cee6e5b369f150cd07c40
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # General Strategy
 
@@ -21,6 +21,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: general
+classification_description: A specific question, trace fact, acknowledgement or analysis request without a more relevant specialized
+  scene.
 priority: 99
 effort: high
 required_capabilities:

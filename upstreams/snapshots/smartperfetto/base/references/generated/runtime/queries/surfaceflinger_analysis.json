@@ -47,12 +47,15 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_analysis/data_check",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/data_check.sql",
-      "sha256": "e11bd0357ca72909555d23230daf3a67ce85a1df7d3150f28c31b92d04dd6db7",
+      "sha256": "2558f5b86876e193bca01a0fe987227fc17c5ad22dc6092f5146ed4038ea1412",
       "signal_patterns": [
         "*Composite*",
         "*composite*",
@@ -63,7 +66,7 @@
       ],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -81,8 +84,10 @@
       "step_id": "data_check",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -140,18 +145,21 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_analysis/vsync_config",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/vsync_config.sql",
-      "sha256": "91bc4c3978faa5868d512bc89d337244f4cc8c74f146d643647a2a6d0b441804",
+      "sha256": "e42b5bdabfe244dffd05ae0231a121637056667fa3d0c1e0e5e777acff8d199a",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -169,11 +177,13 @@
       "step_id": "vsync_config",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -231,12 +241,15 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_analysis/composition_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/composition_overview.sql",
-      "sha256": "13699a8dd8d3512965f217d98f4c893a1a8b11bf44b38373f7f8c96215c8d420",
+      "sha256": "b581b41a5fce244472de2a507dd7c1a642fee539d90a577c942151e4e9a6cf17",
       "signal_patterns": [
         "*Composite*",
         "*composite*",
@@ -247,7 +260,7 @@
       ],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -265,6 +278,7 @@
       "step_id": "composition_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "composition_rating_fair_ms",
           "composition_rating_good_ms",
@@ -275,7 +289,8 @@
         ],
         "result_dependencies": [
           "vsync_env"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -335,12 +350,15 @@
         ]
       },
       "id": "surfaceflinger_analysis/gpu_hwc_stats",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/gpu_hwc_stats.sql",
-      "sha256": "4d63ac301c4229825900d330faa07256b3db10bb1cac8165a15339a73041fd0c",
+      "sha256": "276b188c259f696be5c9c49c87342eec558de5f36d950a278d7f98420a17ad38",
       "signal_patterns": [
         "*Client*",
         "*Composite*",
@@ -355,7 +373,7 @@
       ],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -373,11 +391,13 @@
       "step_id": "gpu_hwc_stats",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -435,12 +455,15 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_analysis/slow_compositions",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/slow_compositions.sql",
-      "sha256": "f55dfde3bcd7964695469d6cc1b2e7c66fbc2c31725b083cc7ae91302108e49a",
+      "sha256": "dc10d1bef27447113584fadb506b16e07ab01058fc599cb0613b1278bfec6227",
       "signal_patterns": [
         "*Composite*",
         "*composite*",
@@ -451,7 +474,7 @@
       ],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -469,6 +492,7 @@
       "step_id": "slow_compositions",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "slow_composition_multiplier",
@@ -476,7 +500,8 @@
         ],
         "result_dependencies": [
           "vsync_env"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -534,12 +559,15 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_analysis/fence_analysis",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/fence_analysis.sql",
-      "sha256": "f393ceb206441a5a895ebf73fb40a42078c309de4bcdef162ace2185de7fc4c6",
+      "sha256": "148a97929253f3c8c1388e5b0257479fcad4a1d94db9ba84d85fe5629c59c710",
       "signal_patterns": [
         "*Fence*",
         "*GPU completion*",
@@ -550,7 +578,7 @@
       ],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -568,13 +596,15 @@
       "step_id": "fence_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "fence_critical_ms",
           "fence_warning_ms",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -632,12 +662,15 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_analysis/composition_phases",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/composition_phases.sql",
-      "sha256": "38650a504d094ee1c3c353008d0d3e9c6cd51583b555564e9f4ec87b8ace7519",
+      "sha256": "ad89dc0f034ae63bcd6c7b66bf6d588ef6d0c7b26bee6c8a279e678a60f1c3cd",
       "signal_patterns": [
         "*Commit*",
         "*Composite*",
@@ -656,7 +689,7 @@
       ],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -674,11 +707,13 @@
       "step_id": "composition_phases",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -736,12 +771,15 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_analysis/layer_stats",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/layer_stats.sql",
-      "sha256": "9721dfe1bafb801c49ca4850d3c6ff9f5ccd129529693d817cfad5f0a4a7b9e8",
+      "sha256": "cf958d5ad1fd9df202b1598493d38001101d9c2ba510a474cea7aea8a1716971",
       "signal_patterns": [
         "*Layer*",
         "/system/bin/surfaceflinger",
@@ -749,7 +787,7 @@
       ],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -767,11 +805,13 @@
       "step_id": "layer_stats",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -829,12 +869,15 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_analysis/root_cause_classification",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/root_cause_classification.sql",
-      "sha256": "b47c7bea28cb6fb211b2842495c542c00a14822f38b2f047f896d700846af51e",
+      "sha256": "f0342037cbc5a0fb1a17c9d84e2048a222825759be1cb5625f49fe673771cd71",
       "signal_patterns": [
         "*Composite*",
         "*Fence*",
@@ -850,7 +893,7 @@
       ],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -868,6 +911,7 @@
       "step_id": "root_cause_classification",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "composition_rating_fair_ms",
           "composition_rating_poor_ms",
@@ -881,7 +925,8 @@
         ],
         "result_dependencies": [
           "vsync_env"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -939,16 +984,19 @@
         "probe_capabilities": []
       },
       "id": "surfaceflinger_analysis/fallback_no_sf_data",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/surfaceflinger_analysis/fallback_no_sf_data.sql",
-      "sha256": "75126eea2114f5b8339f1a23d694f381c82d7ff95e73fb9382fe8eb8924a9c28",
+      "sha256": "9340e13b8494c0f0a4339e1e2aca564903b234ad371036d190971419c514ebb7",
       "signal_patterns": [],
       "skill_id": "surfaceflinger_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
@@ -966,8 +1014,10 @@
       "step_id": "fallback_no_sf_data",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

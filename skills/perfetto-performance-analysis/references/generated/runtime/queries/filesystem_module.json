@@ -50,12 +50,15 @@
         ]
       },
       "id": "filesystem_module/io_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/io_overview.sql",
-      "sha256": "a550d44aa26053a3321ae1f58c8abd9590cd317118249a98395816a214607e1d",
+      "sha256": "59f8560529704c4f9b5581d78e2226f8d76fa72c7f94ccd4b6a04f99bfaa0572",
       "signal_patterns": [
         "%${package}%",
         "*File*",
@@ -76,7 +79,7 @@
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
@@ -97,10 +100,12 @@
       "step_id": "io_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -161,12 +166,15 @@
         ]
       },
       "id": "filesystem_module/main_thread_io",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/main_thread_io.sql",
-      "sha256": "653a08c5963ec03750190e2a761d6f8e5898dab18ae713b83dd7dc4286abeb05",
+      "sha256": "05efddb0cfbed0fce08bdd18c6784287b7a3d014f7ab69f6b1266e140e6d6421",
       "signal_patterns": [
         "%${package}%",
         "*File*",
@@ -182,7 +190,7 @@
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
@@ -203,10 +211,12 @@
       "step_id": "main_thread_io",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -267,18 +277,21 @@
         ]
       },
       "id": "filesystem_module/database_operations",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/database_operations.sql",
-      "sha256": "068381a536053102bd7557dd601879d8ea428c9db25599dd5dc8019e78a4ff68",
+      "sha256": "11cde8c00711b4611191960924d120b017d16edd7d2a28bf2c42b26c0b3e7355",
       "signal_patterns": [
         "%${package}%"
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
@@ -299,10 +312,12 @@
       "step_id": "database_operations",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -363,18 +378,21 @@
         ]
       },
       "id": "filesystem_module/shared_prefs_operations",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/shared_prefs_operations.sql",
-      "sha256": "80d5913a54f10788753ce56c40e87dd197f8faa0a95b8fa8213376dfe4889892",
+      "sha256": "9c9cf4b3c578146b9ab4493ecf863b8a3f6a08a4d9f60ac1612a44bf2c660342",
       "signal_patterns": [
         "%${package}%"
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
@@ -395,10 +413,12 @@
       "step_id": "shared_prefs_operations",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -459,18 +479,21 @@
         ]
       },
       "id": "filesystem_module/io_wait_state",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/io_wait_state.sql",
-      "sha256": "bd0d29619c05ed6f36caa3bab83818e7b0dbd3f84ca081fb806ad4e0f9873689",
+      "sha256": "bb0a1f98658ea952fe7781dd3ea7eb5d0d25a0a4e5771cd1cde527d1fae8b03d",
       "signal_patterns": [
         "%${package}%"
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
@@ -491,10 +514,12 @@
       "step_id": "io_wait_state",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -555,12 +580,15 @@
         ]
       },
       "id": "filesystem_module/slow_io_operations",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/slow_io_operations.sql",
-      "sha256": "85c1b587faa940e50f16abda1870ef9ea82c35bac5d37bc003e31417b16652cb",
+      "sha256": "b302db5f3df19fe2fed877ca66ecd957195e0ce8d1272498b7f8a7de2029dcb5",
       "signal_patterns": [
         "%${package}%",
         "*File*",
@@ -572,7 +600,7 @@
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
@@ -593,10 +621,12 @@
       "step_id": "slow_io_operations",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

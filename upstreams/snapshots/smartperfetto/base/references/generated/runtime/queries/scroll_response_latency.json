@@ -47,19 +47,22 @@
         "probe_capabilities": []
       },
       "id": "scroll_response_latency/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_response_latency/query.sql",
-      "sha256": "6ca50f36151977d3c49d6c79d1a8faa46bb2c52b8fe1ddbc070bb42f75198cab",
+      "sha256": "b6c7ce9cce388d442221c0dd8ade45ee280fbcc932ca7c261ff43a0f7c8abdca",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "scroll_response_latency",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/scroll_response_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "da35bbd788db3f909aaf7b95ab17b841c7e57a3d6e1bfc17ed9b974541569485"
@@ -81,12 +84,14 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

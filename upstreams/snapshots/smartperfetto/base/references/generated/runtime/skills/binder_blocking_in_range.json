@@ -15,7 +15,11 @@
   },
   "id": "binder_blocking_in_range",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package"
+    ],
+    "policy": "verify_if_present",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -43,13 +47,24 @@
     ],
     "required_tables": []
   },
+  "process_scope": {
+    "binding": "effective_target_processes",
+    "context_fields": {
+      "peer_context": [
+        "server_process",
+        "interface",
+        "server_exec_ms"
+      ]
+    },
+    "role": "target"
+  },
   "query_id": "binder_blocking_in_range/root",
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
     "path": "backend/skills/atomic/binder_blocking_in_range.skill.yaml",
-    "sha256": "ecb23e83b369cbe9a5cc799acee101ebc72c1bad057f3bced12d29bd10d1b4e3"
+    "sha256": "5c7bb147c3adc2ccd2e734f970b9b8ddc51d65f05e9f84c85be092b0130a0a9d"
   },
   "steps": [],
   "type": "atomic",

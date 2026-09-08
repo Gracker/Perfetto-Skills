@@ -47,12 +47,15 @@
         "probe_capabilities": []
       },
       "id": "wattson_thread_power_attribution/thread_attribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/wattson_thread_power_attribution/thread_attribution.sql",
-      "sha256": "73153467bfeb9dd1b324d6906fc3cc32a3592ead5281a210a6261a8600b7f7f2",
+      "sha256": "1fcd1850264dc0027e4e4670f14e87a90c1da4990d9283cd458b668a37db3f99",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -60,7 +63,7 @@
       ],
       "skill_id": "wattson_thread_power_attribution",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/wattson_thread_power_attribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "870e236f5b23da815f89f8d2d3ed6d5ca592a73f300afe43a5a1e077c7723685"
@@ -78,6 +81,7 @@
       "step_id": "thread_attribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
@@ -85,7 +89,8 @@
           "start_ts",
           "top_n"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

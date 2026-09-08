@@ -49,16 +49,19 @@
         ]
       },
       "id": "irq_analysis/data_check",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/data_check.sql",
-      "sha256": "67914b6b2847c8e85ce708e054bb0ca4fafa5d82dbc03ead47d075bc5eede0dc",
+      "sha256": "4b8f4788b6874cdf075b56625d8771054093a9e1ee6ac13f194be212f5017836",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
@@ -78,8 +81,10 @@
       "step_id": "data_check",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -139,16 +144,19 @@
         ]
       },
       "id": "irq_analysis/irq_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/irq_overview.sql",
-      "sha256": "93cdd1708254e93bd260a70f19f4dc25fe7bea4d03e5aba23229415a0834172c",
+      "sha256": "b5cece024726a4e4308f689201eef3e6bbb315f8bed9c27741458f5441361439",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
@@ -168,11 +176,13 @@
       "step_id": "irq_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -232,16 +242,19 @@
         ]
       },
       "id": "irq_analysis/top_irq_sources",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/top_irq_sources.sql",
-      "sha256": "06a23ea59876c50315f6398e195ded28d33172771df3b8cc657120cd1e422cca",
+      "sha256": "c23f2eb709569e0ff2b20ba115f0a817f5b76407ee6d2e0c6865612e6d54bf60",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
@@ -261,11 +274,13 @@
       "step_id": "top_irq_sources",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -325,16 +340,19 @@
         ]
       },
       "id": "irq_analysis/hard_irq_detail",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/hard_irq_detail.sql",
-      "sha256": "f34ffe8f22a3ba8801985015827be426f64268b2d7c0a8146140aa9bd8eee945",
+      "sha256": "95aec3dc86af5eeef059d35696bcb9f30c49d6b41f2d7ce30a5689162b45463e",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
@@ -354,12 +372,14 @@
       "step_id": "hard_irq_detail",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "hard_irq_long_threshold_us",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -419,16 +439,19 @@
         ]
       },
       "id": "irq_analysis/soft_irq_detail",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/soft_irq_detail.sql",
-      "sha256": "c636f97d6415486863983abd681aaa3af5542635100f15c718fb9d25236049b3",
+      "sha256": "bdde67a1c165944fd2478e97b932f94636c193a5c7346c71a2c8408f80935e5f",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
@@ -448,12 +471,14 @@
       "step_id": "soft_irq_detail",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "soft_irq_long_threshold_us",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -513,16 +538,19 @@
         ]
       },
       "id": "irq_analysis/long_irq_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/long_irq_events.sql",
-      "sha256": "96321cfff1ac34e1148eafaae9b581b0e74f8a1de858378b5606c39c644a9985",
+      "sha256": "e8233037c81a65c05695dd8d5a8720b65cebdeb80920469c31e0fe944b5c8232",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
@@ -542,13 +570,15 @@
       "step_id": "long_irq_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "hard_irq_long_threshold_us",
           "soft_irq_long_threshold_us",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -608,16 +638,19 @@
         ]
       },
       "id": "irq_analysis/irq_timeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/irq_timeline.sql",
-      "sha256": "01656d3452b43fdeaa52e527ca82a8bd4af45c7d9dae969770e67f28da195caa",
+      "sha256": "3da7d64c4250362709a65dfdd32183d028a2f9971a9ec85fa91d7c7bea55d83b",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
@@ -637,11 +670,13 @@
       "step_id": "irq_timeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -701,16 +736,19 @@
         ]
       },
       "id": "irq_analysis/root_cause_classification",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/root_cause_classification.sql",
-      "sha256": "78ef1eeb5eed2bca164d2bd1e3f3fed4a303d0c5516b327d619cc54c886e489b",
+      "sha256": "2d1512e2eaa5e1c9e3c399444dfb9101d69765c9363391276d07e715714310a9",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
@@ -730,6 +768,7 @@
       "step_id": "root_cause_classification",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "hard_irq_long_threshold_us",
@@ -738,7 +777,8 @@
           "soft_irq_long_threshold_us",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -798,16 +838,19 @@
         ]
       },
       "id": "irq_analysis/no_data_fallback",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/irq_analysis/no_data_fallback.sql",
-      "sha256": "43c7e36a32bb787da8240155203e4db979981387b8b64e3dbcfb6e713ba5c5f2",
+      "sha256": "e7065da1dbf88b0f9c2bea1bf28ca96f2fa7b00fbf2ad80a1e9082221043a991",
       "signal_patterns": [],
       "skill_id": "irq_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/irq_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d"
@@ -827,8 +870,10 @@
       "step_id": "no_data_fallback",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

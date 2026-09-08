@@ -1,9 +1,20 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 6ebd984e1b34cb456d5fa410b4e2308e350c5854086ec1e06ff58b4c80c5ef4f
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 -- Fragment: root_cause_sample_cap
 -- Single source of truth for the per-session root-cause frame sample cap.
 -- Both get_app_jank_frames (which truncates the frame list) and
@@ -77,22 +88,30 @@ layer_frames AS (
     END as jank_responsibility,
     -- Per-layer token gap：SF 跳过了多少个 DisplayFrame 没有消费该 layer 的 buffer
     a.display_frame_token - LAG(a.display_frame_token)
-      OVER (PARTITION BY a.layer_name ORDER BY a.display_frame_token) AS token_gap,
+      OVER (PARTITION BY a.upid, a.layer_name ORDER BY a.display_frame_token) AS token_gap,
     -- 时间 gap（会话切分用）
     a.ts - LAG(a.ts + a.dur)
-      OVER (PARTITION BY a.layer_name ORDER BY a.ts) AS time_gap_ns,
+      OVER (PARTITION BY a.upid, a.layer_name ORDER BY a.ts) AS time_gap_ns,
     -- present_ts（vsync_missed 严重度估算 + 报告展示用）
     a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END AS present_ts,
     LAG(a.ts + CASE WHEN a.dur > 0 THEN a.dur ELSE 0 END)
-      OVER (PARTITION BY a.layer_name ORDER BY a.ts) AS prev_present_ts
+      OVER (PARTITION BY a.upid, a.layer_name ORDER BY a.ts) AS prev_present_ts
   FROM actual_frame_timeline_slice a
-  LEFT JOIN process p ON a.upid = p.upid
+  JOIN effective_target_processes p ON a.upid = p.upid
   WHERE (
-    '${package}' = ''
+    ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
     OR p.name = '${package}'
     OR p.name GLOB '${package}:*'
   )
     AND p.name NOT LIKE '/system/%'
+    -- With no target package the clause above accepts any process, and
+    -- the system UI is the one most likely to be drawing while the target
+    -- app draws nothing. Its frames are punctual, so they read back as
+    -- flawless scrolling for an app that produced no frames at all: one
+    -- device reported 31fps SystemUI frames as "优秀", another rated a
+    -- 5-frame notification-shade window. Anyone analysing the system UI
+    -- deliberately names it and keeps these rows.
+    AND ('${package}' != '' OR p.name NOT LIKE 'com.android.systemui%')
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
     AND COALESCE(a.display_frame_token, a.surface_frame_token) IS NOT NULL
@@ -235,7 +254,7 @@ frame_thread_info AS (
     (SELECT MIN(s.ts) FROM slice s
      JOIN thread_track tt ON s.track_id = tt.id
      JOIN thread t ON tt.utid = t.utid
-     JOIN process p ON t.upid = p.upid
+     JOIN effective_target_processes p ON t.upid = p.upid
      WHERE t.upid = jf.upid
        AND t.tid != p.pid
        AND t.name NOT LIKE 'Binder:%'
@@ -246,7 +265,7 @@ frame_thread_info AS (
     (SELECT MAX(s.ts + s.dur) FROM slice s
      JOIN thread_track tt ON s.track_id = tt.id
      JOIN thread t ON tt.utid = t.utid
-     JOIN process p ON t.upid = p.upid
+     JOIN effective_target_processes p ON t.upid = p.upid
      WHERE t.upid = jf.upid
        AND t.tid != p.pid
        AND t.name NOT LIKE 'Binder:%'
@@ -277,13 +296,21 @@ deduped_frames AS (
         fti.layer_name ASC
     ) as display_frame_rank
   FROM frame_thread_info fti
-  JOIN process p ON fti.upid = p.upid
+  JOIN effective_target_processes p ON fti.upid = p.upid
   WHERE (
-    '${package}' = ''
+    ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
     OR p.name = '${package}'
     OR p.name GLOB '${package}:*'
   )
     AND p.name NOT LIKE '/system/%'
+    -- With no target package the clause above accepts any process, and
+    -- the system UI is the one most likely to be drawing while the target
+    -- app draws nothing. Its frames are punctual, so they read back as
+    -- flawless scrolling for an app that produced no frames at all: one
+    -- device reported 31fps SystemUI frames as "优秀", another rated a
+    -- 5-frame notification-shade window. Anyone analysing the system UI
+    -- deliberately names it and keeps these rows.
+    AND ('${package}' != '' OR p.name NOT LIKE 'com.android.systemui%')
 ),
 -- GET_APP_DISPLAY_DEDUP_CTE_END
 ranked_frames AS (

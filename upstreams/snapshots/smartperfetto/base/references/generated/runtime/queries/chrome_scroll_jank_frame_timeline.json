@@ -47,18 +47,21 @@
         "probe_capabilities": []
       },
       "id": "chrome_scroll_jank_frame_timeline/chrome_trace_availability",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/chrome_scroll_jank_frame_timeline/chrome_trace_availability.sql",
-      "sha256": "42da3d7b4c0ee6a5ef730440d722aa7491c688d5caceb0ec9e8b6c0a71163570",
+      "sha256": "990a00be4fa3382e6e35ab431230a6e8cb099391b9bf1997593e7ec57fef4f6e",
       "signal_patterns": [
         "Extend_VSync"
       ],
       "skill_id": "chrome_scroll_jank_frame_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/chrome_scroll_jank_frame_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2aa88e4f3cc40101c7a97eefeb3cfa517026c5c827e22d0cd8894af2a57da2a4"
@@ -80,11 +83,13 @@
       "step_id": "chrome_trace_availability",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -142,16 +147,19 @@
         "probe_capabilities": []
       },
       "id": "chrome_scroll_jank_frame_timeline/chrome_scroll_v3_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/chrome_scroll_jank_frame_timeline/chrome_scroll_v3_summary.sql",
-      "sha256": "9b1b2b2016ed6fe811c951e357f3e17b241d421e4af4121f8448db1679f18e72",
+      "sha256": "7ca0abaf17fc6d0d7e6b13cbdc61c294522e7206eb0af0168a52fbbbca3ecef4",
       "signal_patterns": [],
       "skill_id": "chrome_scroll_jank_frame_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/chrome_scroll_jank_frame_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2aa88e4f3cc40101c7a97eefeb3cfa517026c5c827e22d0cd8894af2a57da2a4"
@@ -173,12 +181,14 @@
       "step_id": "chrome_scroll_v3_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "min_janky_frames",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -236,16 +246,19 @@
         "probe_capabilities": []
       },
       "id": "chrome_scroll_jank_frame_timeline/chrome_scroll_v4_janky_frames",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/chrome_scroll_jank_frame_timeline/chrome_scroll_v4_janky_frames.sql",
-      "sha256": "463dc78b0801b866cf79d54e97369a44c53eb0622f0f4d84326429349b15a5fc",
+      "sha256": "0543b6b2db4bba4b482c7866761540f7ede2adba435a7053d3a1be811ce49abe",
       "signal_patterns": [],
       "skill_id": "chrome_scroll_jank_frame_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/chrome_scroll_jank_frame_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2aa88e4f3cc40101c7a97eefeb3cfa517026c5c827e22d0cd8894af2a57da2a4"
@@ -267,11 +280,13 @@
       "step_id": "chrome_scroll_v4_janky_frames",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -329,18 +344,21 @@
         "probe_capabilities": []
       },
       "id": "chrome_scroll_jank_frame_timeline/chrome_preferred_frame_timeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/chrome_scroll_jank_frame_timeline/chrome_preferred_frame_timeline.sql",
-      "sha256": "349b975d7d2ef230012a1e177e1e1d232fc4d51d2e0582a85f099aa0d20d474f",
+      "sha256": "23f02b624fd6fe5b024fda13e846ecf81cd68c13e7a4ca1b89d1120c2a526846",
       "signal_patterns": [
         "Extend_VSync"
       ],
       "skill_id": "chrome_scroll_jank_frame_timeline",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/chrome_scroll_jank_frame_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2aa88e4f3cc40101c7a97eefeb3cfa517026c5c827e22d0cd8894af2a57da2a4"
@@ -362,11 +380,13 @@
       "step_id": "chrome_preferred_frame_timeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

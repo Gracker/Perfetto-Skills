@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/game.strategy.md
-Source SHA-256: 565700969ffb3250d91821b346d89a012a8b10edd90f5759d27a6fa573ae38b8
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: f8e4ab2ea2ed79524830e68430df2a68a1c4faee50561e3e8937101452bcbd8e
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Game Strategy
 
@@ -21,6 +21,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: game
+classification_description: Game workload frame pacing, CPU/GPU performance and sustained rendering behavior.
 priority: 4
 effort: medium
 required_capabilities:

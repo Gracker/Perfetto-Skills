@@ -47,19 +47,22 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/check_input_data",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/check_input_data.sql",
-      "sha256": "dc9ff8232413f3bfc5145f6af5d817614e7f2d5cc8024837ed54b0b4ce4dc23e",
+      "sha256": "5356bd56c28b46406f0ef04c16f485e106189349197ef06492df95a687cef841",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -83,12 +86,14 @@
       "step_id": "check_input_data",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -146,19 +151,22 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/get_process",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/get_process.sql",
-      "sha256": "913306e4f13dd9ee224401af4594c6621bf5ead29d1f6e5e4fa8d89a049e4c78",
+      "sha256": "de7ae1547738b6188bb6dfb49df6312f413fabfa8f959fe4720fef167ca2934f",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -182,12 +190,14 @@
       "step_id": "get_process",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -245,18 +255,21 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/input_latency_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_latency_overview.sql",
-      "sha256": "e951793ea0d37ff940d17dc0f215f666175cd3651a0075660c3af82ad06ec251",
+      "sha256": "7062e823ff3a79d906b0f4c09d96766eefac5efac3274179617c692101b88533",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -280,6 +293,7 @@
       "step_id": "input_latency_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "critical_event_threshold_ms",
           "end_ts",
@@ -288,7 +302,8 @@
         ],
         "result_dependencies": [
           "target_process"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -346,18 +361,21 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/latency_by_event_type",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/latency_by_event_type.sql",
-      "sha256": "f9249d184ab1056dbac5851ad03c915da19f1ecc46bcc86a79ca68e3f5351278",
+      "sha256": "cd05c4aa6e2046135afc4aab7aaf05a0d7486963eb1835c892ebf269e703dee3",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -381,6 +399,7 @@
       "step_id": "latency_by_event_type",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "slow_event_threshold_ms",
@@ -388,7 +407,8 @@
         ],
         "result_dependencies": [
           "target_process"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -446,18 +466,21 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/latency_by_window",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/latency_by_window.sql",
-      "sha256": "3f9bedf1e69f357157437eb40d2e3cb659a71b7d8875124b8f37416105745c78",
+      "sha256": "0674977268cdec44517b56890a0f45f3b01cf8f83428d8d696255384c28ac111",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -481,6 +504,7 @@
       "step_id": "latency_by_window",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "slow_event_threshold_ms",
@@ -488,7 +512,8 @@
         ],
         "result_dependencies": [
           "target_process"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -546,18 +571,21 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/slow_input_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/slow_input_events.sql",
-      "sha256": "07451a3f8a64e1ca44faddc6610bc58d4a48c1d85fc2bf93048115227c463227",
+      "sha256": "c486db65ded04ad6aaaf81ba667e7d2f2c9185362d40e015c4c419df2be4e2f8",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -581,6 +609,7 @@
       "step_id": "slow_input_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "critical_event_threshold_ms",
           "end_ts",
@@ -589,7 +618,8 @@
         ],
         "result_dependencies": [
           "target_process"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -647,18 +677,21 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/input_thread_state",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_thread_state.sql",
-      "sha256": "3775055e24bebd51bf7c87b91fc132dee726353a694107002ccf55085552eacb",
+      "sha256": "4237740f450e882f337e2199d1155d3bed9719abf57d09b40bf6a7a9b9ae9f55",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -682,6 +715,7 @@
       "step_id": "input_thread_state",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
@@ -689,7 +723,8 @@
         ],
         "result_dependencies": [
           "target_process"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -747,18 +782,21 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/input_binder_calls",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_binder_calls.sql",
-      "sha256": "2376b4bc70403ba1f4f257728ab9a8b91da8400a293472d95ef0a7e1fb27b991",
+      "sha256": "3b4b1a94992d5fbc45529079d8e98b43f22a843f37a216e6cb082e77facd3d4c",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -782,6 +820,7 @@
       "step_id": "input_binder_calls",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
@@ -789,7 +828,8 @@
         ],
         "result_dependencies": [
           "target_process"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -847,18 +887,21 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/input_to_frame",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_to_frame.sql",
-      "sha256": "103327788714881515af54b25af74c78dec98ce896873a9af9046290a4d35ffe",
+      "sha256": "de97d362f9fe41bd4336e30f3b26a8b6cc4e595437a37d68554a6950d480d220",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -882,6 +925,7 @@
       "step_id": "input_to_frame",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "critical_event_threshold_ms",
           "end_ts",
@@ -891,7 +935,8 @@
         ],
         "result_dependencies": [
           "target_process"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -949,18 +994,21 @@
         "probe_capabilities": []
       },
       "id": "click_response_analysis/latency_distribution",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/latency_distribution.sql",
-      "sha256": "2bec077a1e31a827ec8a5baf988a54666bc36012594427cb6d478dd19424e2d6",
+      "sha256": "1612e7289040b2e82c5655717dddc41c9645e952089b9bf8bc74047ea35a663c",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f"
@@ -984,13 +1032,15 @@
       "step_id": "latency_distribution",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
         "result_dependencies": [
           "target_process"
-        ]
+        ],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -47,21 +47,27 @@
         "probe_capabilities": []
       },
       "id": "cpu_topology_view/inspect_existing_topology_object",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_topology_view/inspect_existing_topology_object.sql",
-      "sha256": "12a712b93f556970ee5bc50bebf1c1e8933114560ff82d1e935787f82bb312bd",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "2e8fb49b6f7fc226aa8496f05969e26417cad16d10206bb1ae1ba82d3947e6c4",
       "signal_patterns": [
         "_cpu_topology"
       ],
       "skill_id": "cpu_topology_view",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_topology_view.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "792f8e08be59730e2b62f9f21359ea7677b02b8ab7aa5224e5caaa9587779f76"
+        "sha256": "71bcdc2a2f2b3c8688412e9a48c716ff4e008e01da9728347161d071b302c67a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -78,8 +84,10 @@
       "step_id": "inspect_existing_topology_object",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -137,19 +145,25 @@
         "probe_capabilities": []
       },
       "id": "cpu_topology_view/drop_existing_topology_view",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_topology_view/drop_existing_topology_view.sql",
-      "sha256": "b89e38741105bc305badc621a24d857aa2898b26187c09014f76b34502c9277a",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "bbd0456a2be5301cca1a05a6fc97f41186997c1ad338440a45cba1e33f090e1f",
       "signal_patterns": [],
       "skill_id": "cpu_topology_view",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_topology_view.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "792f8e08be59730e2b62f9f21359ea7677b02b8ab7aa5224e5caaa9587779f76"
+        "sha256": "71bcdc2a2f2b3c8688412e9a48c716ff4e008e01da9728347161d071b302c67a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -171,8 +185,10 @@
       "step_id": "drop_existing_topology_view",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -230,19 +246,25 @@
         "probe_capabilities": []
       },
       "id": "cpu_topology_view/drop_existing_topology_table",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_topology_view/drop_existing_topology_table.sql",
-      "sha256": "4fdbfdc090a0aff83bb94dc7330ae4bd07bcc1fa1ff05dadaa1cc2619216dd83",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "16cde014d9128c1a9994b5d4408c87e5c5043de9dc3f390752df7b15c1907da8",
       "signal_patterns": [],
       "skill_id": "cpu_topology_view",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_topology_view.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "792f8e08be59730e2b62f9f21359ea7677b02b8ab7aa5224e5caaa9587779f76"
+        "sha256": "71bcdc2a2f2b3c8688412e9a48c716ff4e008e01da9728347161d071b302c67a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -264,8 +286,10 @@
       "step_id": "drop_existing_topology_table",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -323,21 +347,27 @@
         "probe_capabilities": []
       },
       "id": "cpu_topology_view/create_topology_view",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_topology_view/create_topology_view.sql",
-      "sha256": "d0f81bc33b83e7aad95e0cd426e1bead890c2f1f7ccf29e840b4ab5d47238d7d",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "1075afb1878091c6c0224777ddd9d6373ba1996998e8a455b740a554618cca3d",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "cpu_topology_view",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_topology_view.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "792f8e08be59730e2b62f9f21359ea7677b02b8ab7aa5224e5caaa9587779f76"
+        "sha256": "71bcdc2a2f2b3c8688412e9a48c716ff4e008e01da9728347161d071b302c67a"
       },
       "sql_dependencies": {
         "creates": [
@@ -355,8 +385,10 @@
       "step_id": "create_topology_view",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -414,19 +446,25 @@
         "probe_capabilities": []
       },
       "id": "cpu_topology_view/read_topology",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_topology_view/read_topology.sql",
-      "sha256": "a5fe723bb2a3ba3099e22580541e53b1d9c5c3de68efedd767b00c2ca9050098",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "4f0b27b911d2137f937d24c7144226acc05ddef6ffc49c7dd6a0b2fe44f62540",
       "signal_patterns": [],
       "skill_id": "cpu_topology_view",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_topology_view.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "792f8e08be59730e2b62f9f21359ea7677b02b8ab7aa5224e5caaa9587779f76"
+        "sha256": "71bcdc2a2f2b3c8688412e9a48c716ff4e008e01da9728347161d071b302c67a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -443,8 +481,10 @@
       "step_id": "read_topology",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

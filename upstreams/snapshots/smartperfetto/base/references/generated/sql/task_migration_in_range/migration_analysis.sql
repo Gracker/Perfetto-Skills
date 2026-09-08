@@ -1,14 +1,25 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/task_migration_in_range.skill.yaml
--- Source SHA-256: 7b947c3b5e2f9a4e3c945f4b914eeb74e2b5bbe7d7f208a7d90c1913177aaf3f
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 6b439d1de33342825c0e07b756b2e0b4ee97eb56287f7df8d9312a9a14ce14f2
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 target_threads AS (
   SELECT t.utid, t.name as thread_name
   FROM thread t
-  JOIN process p ON t.upid = p.upid
-  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
+  JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND (t.tid = p.pid OR t.name = 'RenderThread')
 ),
 cpu_switches AS (

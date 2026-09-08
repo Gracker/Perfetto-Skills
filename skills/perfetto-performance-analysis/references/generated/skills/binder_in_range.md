@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/binder_in_range.skill.yaml
-Source SHA-256: 1f3c07eaa19d4249b09850bb9425b7394450088bee25f08b416e472519f725e0
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 88af485b52bd4fc3a754df61300a43d34daf1c875e9870312a031e7e3595670b
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 # Binder 事务分析 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -52,6 +52,15 @@ modules:
 - name: package
   type: string
   required: false
+```
+
+## Identity requirements
+
+```yaml
+policy: verify_if_present
+scope: process
+aliases:
+- package
 ```
 
 ## Query

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/multi-trace-result-comparison.strategy.md
-Source SHA-256: 361979e0bd5f57353028a1ff2d5e9003f9ef20ad310b114545246d357f2b4687
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 4590f9c584a3424d34aab3b87835799ea74a02290e15388bd4b58a03f177cb61
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Multi Trace Result Comparison Strategy
 
@@ -21,6 +21,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: multi_trace_result_comparison
+classification_description: Comparing previously saved analysis results or snapshots, including scope and metric differences
+  between results.
 priority: 0
 effort: medium
 required_capabilities: []

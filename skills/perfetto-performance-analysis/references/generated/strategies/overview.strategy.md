@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/overview.strategy.md
-Source SHA-256: d1f0a9709bfbbd2b23c454880808291924601ff32775333643fcb29d1c298168
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 37e96cbad2762191b93d0bf658f98c2ba6f0896cf0f61951fbf3cb6b87e65b30
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Overview Strategy
 
@@ -21,6 +21,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: overview
+classification_description: Reconstructing what happened across a trace and identifying which broad performance issues warrant
+  investigation.
 priority: 5
 effort: high
 required_capabilities:

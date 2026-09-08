@@ -47,12 +47,15 @@
         "probe_capabilities": []
       },
       "id": "startup_critical_tasks/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_critical_tasks/query.sql",
-      "sha256": "1f8c0e4fbaf6f9b31aec5a845628aa59f4938f29dee158dd713a5f2d3d0a25a2",
+      "sha256": "7c82b4fc745b53fa5b16c01d83104dd42efba3bea8862e0e9a8d440ba2fab422",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -78,7 +81,7 @@
       ],
       "skill_id": "startup_critical_tasks",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f460c66ed18a0b8aef8f2b45c8295ba56c2a3ef06324f87d5d22f2a01e03c877"
@@ -100,13 +103,15 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts",
           "top_k"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

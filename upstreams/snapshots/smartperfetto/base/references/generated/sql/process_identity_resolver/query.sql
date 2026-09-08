@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/process_identity_resolver.skill.yaml
--- Source SHA-256: 0825f2ccd3b390e08777718e3eab70f65d0c162625007baded0f9cc0093a8500
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 0149a805cefadf5d817b41ad853e5b52f83767e14665019cbf29e1dfd5d9d526
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 INCLUDE PERFETTO MODULE android.process_metadata;
 INCLUDE PERFETTO MODULE android.frames.timeline;
@@ -391,7 +391,8 @@ ranked AS (
     ) AS rank,
     *
   FROM scored
-  WHERE is_kernel_task IS NULL OR is_kernel_task = 0
+  WHERE (is_kernel_task IS NULL OR is_kernel_task = 0)
+    AND (target_upid IS NULL OR upid = target_upid)
 )
 SELECT
   rank,

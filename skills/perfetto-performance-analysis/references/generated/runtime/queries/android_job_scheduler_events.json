@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "android_job_scheduler_events/job_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_job_scheduler_events/job_events.sql",
-      "sha256": "1d635f1d5f4e8964e871081f85d0ad11eeaaf86b5d8518999c3966398a3af651",
+      "sha256": "930e499da56bc1772117ad03353a6a75fe52bbea30a962e9d909657b58ff4dc0",
       "signal_patterns": [],
       "skill_id": "android_job_scheduler_events",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_job_scheduler_events.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "5ecc6d28e06d4f53bcf3bb646cda71bd7bd338db652a20a9638073fdade4c19b"
@@ -74,12 +77,14 @@
       "step_id": "job_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

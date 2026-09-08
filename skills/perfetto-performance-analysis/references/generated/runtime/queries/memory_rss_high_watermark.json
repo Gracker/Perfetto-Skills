@@ -47,18 +47,21 @@
         "probe_capabilities": []
       },
       "id": "memory_rss_high_watermark/rss_peaks",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_rss_high_watermark/rss_peaks.sql",
-      "sha256": "7aeaa7fec32a3ee33ff637a3c4e39c5c11c082d0288a27ad0df04e41ef2ff135",
+      "sha256": "46eaff0f07a46f84672515084f3c82186a17e859c9e5e1ceb377cde348e7f1ba",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "memory_rss_high_watermark",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/memory_rss_high_watermark.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4cf80939e6b952de97407a954e1b420e4a2e52e02330c003a6cd1fa148a49cd7"
@@ -76,11 +79,13 @@
       "step_id": "rss_peaks",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "process_name",
           "top_n"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -49,16 +49,19 @@
         ]
       },
       "id": "gpu_compute_kernel_analysis/data_check",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_compute_kernel_analysis/data_check.sql",
-      "sha256": "0cff7cbb18d9ae7a345f591a2873c7bfc456b23b93bd7596dd2ee0f0c1bccbfb",
+      "sha256": "573c29363e72a39d4c27822975a99ed007545dfcb23b7273d75cbf50e2c1030a",
       "signal_patterns": [],
       "skill_id": "gpu_compute_kernel_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "04ce0fdb105d89c591b8d24656540615492754eb847da9f8bec211de2a39e9df"
@@ -79,12 +82,14 @@
       "step_id": "data_check",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts",
           "ugpu"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -144,16 +149,19 @@
         ]
       },
       "id": "gpu_compute_kernel_analysis/kernel_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_compute_kernel_analysis/kernel_summary.sql",
-      "sha256": "ae6e6e43ef2033f37bd117332df3acb8055e75a7fd4fa2985d5b58c623b8981b",
+      "sha256": "f62534bc4085ea7fc0bcbfeeb4a431d8938e41d6b58959628aa88ecd5929eff2",
       "signal_patterns": [],
       "skill_id": "gpu_compute_kernel_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "04ce0fdb105d89c591b8d24656540615492754eb847da9f8bec211de2a39e9df"
@@ -174,13 +182,15 @@
       "step_id": "kernel_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "max_rows",
           "start_ts",
           "ugpu"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -240,16 +250,19 @@
         ]
       },
       "id": "gpu_compute_kernel_analysis/launch_configuration",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_compute_kernel_analysis/launch_configuration.sql",
-      "sha256": "1ce9b39292ae6b76936338d48506bd66fd3eff5994cc595ce553d69816201e13",
+      "sha256": "54c2bb6beca22a3d41b253e2b8362d17ac20a58686e419e37a418d09d5c086eb",
       "signal_patterns": [],
       "skill_id": "gpu_compute_kernel_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "04ce0fdb105d89c591b8d24656540615492754eb847da9f8bec211de2a39e9df"
@@ -270,13 +283,15 @@
       "step_id": "launch_configuration",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "max_rows",
           "start_ts",
           "ugpu"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -336,16 +351,19 @@
         ]
       },
       "id": "gpu_compute_kernel_analysis/no_compute_contract",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_compute_kernel_analysis/no_compute_contract.sql",
-      "sha256": "3963c6b6ace04b875ce4016b9019c3ae44e22631edfa73dad5a893445ee7b8b6",
+      "sha256": "b4991720a886cb4dc410e65f8dfaeb181619931724e056d11e93ecec360ef6ec",
       "signal_patterns": [],
       "skill_id": "gpu_compute_kernel_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "04ce0fdb105d89c591b8d24656540615492754eb847da9f8bec211de2a39e9df"
@@ -366,8 +384,10 @@
       "step_id": "no_compute_contract",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -427,16 +447,19 @@
         ]
       },
       "id": "gpu_compute_kernel_analysis/missing_launch_args_contract",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_compute_kernel_analysis/missing_launch_args_contract.sql",
-      "sha256": "aeac3aaa06800c4211f287cfa30c906ad01c54b515c3e3548bdbfcd30731a6bd",
+      "sha256": "71db72df826793e7a13520923886b71e5687eb32e2dc3f0b284a4d64b253fb29",
       "signal_patterns": [],
       "skill_id": "gpu_compute_kernel_analysis",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "04ce0fdb105d89c591b8d24656540615492754eb847da9f8bec211de2a39e9df"
@@ -457,8 +480,10 @@
       "step_id": "missing_launch_args_contract",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

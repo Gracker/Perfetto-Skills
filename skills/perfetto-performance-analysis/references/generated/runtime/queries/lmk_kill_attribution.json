@@ -47,18 +47,21 @@
         "probe_capabilities": []
       },
       "id": "lmk_kill_attribution/lmk_events",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_kill_attribution/lmk_events.sql",
-      "sha256": "31e0bd7a4aefb6cd206a255de41c8dbe560b38b5e56cedbb4694afc0f61f2bcd",
+      "sha256": "6827c14aafe65a78b5efd4ac51c14ea81d70b3fc1e6029ff5304e01e05f31d01",
       "signal_patterns": [
         "${process_name}*"
       ],
       "skill_id": "lmk_kill_attribution",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/lmk_kill_attribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4c299b78e625d37ee05fb8288a3b072ab6151ce29c5f98780a038913d06664ae"
@@ -76,12 +79,14 @@
       "step_id": "lmk_events",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

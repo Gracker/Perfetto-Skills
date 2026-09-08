@@ -1,9 +1,21 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
--- Source SHA-256: e48c73408b2775bed099612d32832cde9f70ca33cd1cc462e0275b1454588359
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 283e74c341c76d3959624287f046bcc7f85e2b7b1cbe1edfab07c544a01660af
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
-WITH anr_window AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+anr_window AS (
   SELECT
     ${anr_ts} - ${timeout_ns} as start_ts,
     ${anr_ts} as end_ts
@@ -19,11 +31,12 @@ clipped_contention AS (
     waiter_count,
     MIN(CASE WHEN dur < 0 THEN aw.end_ts ELSE ts + dur END, aw.end_ts)
       - MAX(ts, aw.start_ts) AS clipped_ns
-  FROM android_monitor_contention
+  FROM android_monitor_contention amc
+  JOIN effective_target_processes target ON amc.upid = target.upid
   CROSS JOIN anr_window aw
   WHERE ts < aw.end_ts
     AND (CASE WHEN dur < 0 THEN aw.end_ts ELSE ts + dur END) > aw.start_ts
-    AND ('${process_name}' = '' OR process_name = '${process_name}')
+    AND (${__process_scope.upid} IS NOT NULL OR '${process_name}' = '' OR process_name = '${process_name}')
     AND is_blocked_thread_main = 1
     AND (
       MIN(CASE WHEN dur < 0 THEN aw.end_ts ELSE ts + dur END, aw.end_ts)

@@ -50,16 +50,19 @@
         ]
       },
       "id": "global_trace_sanity_check/trace_window",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/trace_window.sql",
-      "sha256": "4617bd210c34fdbffaf53314337a610674d5a21506cc6038e5fff41a36fefe4d",
+      "sha256": "f10f0cbba148bb80664019fa2f056d1d64dd7dd4e735a25fe893c04633778f63",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
@@ -81,12 +84,14 @@
       "step_id": "trace_window",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "max_rows",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -147,16 +152,19 @@
         ]
       },
       "id": "global_trace_sanity_check/trace_diagnostics",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/trace_diagnostics.sql",
-      "sha256": "8e5470f9b304978d5b507ed194a868c8c3e20d159f5b8f002039b3e0b374ab6e",
+      "sha256": "dee22dafda3849ec6329ab11bc5976d54ad01072435b5c4d01882488f1ea49c9",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
@@ -178,10 +186,12 @@
       "step_id": "trace_diagnostics",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "max_rows"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -242,16 +252,19 @@
         ]
       },
       "id": "global_trace_sanity_check/top_d_state_threads",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/top_d_state_threads.sql",
-      "sha256": "72b74a2e3730a6fecf2ca61395d05922dd8f6f7d00d6dac19bea6b24fab2a464",
+      "sha256": "0fee5b1dce16ae1b67da496b80c54cd17972529aa134df2a9fa8bb6e450a57ed",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
@@ -273,12 +286,14 @@
       "step_id": "top_d_state_threads",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "max_rows",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -339,16 +354,19 @@
         ]
       },
       "id": "global_trace_sanity_check/top_runnable_waits",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/top_runnable_waits.sql",
-      "sha256": "9353f9d7c78881041181f653b5217c43c12043fd6855b1fa602c6437f86abe1d",
+      "sha256": "3c4dd094fb65fd54ebb91522d313b7b52a2910038b8a479b20538a26c33428a0",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
@@ -370,12 +388,14 @@
       "step_id": "top_runnable_waits",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "max_rows",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -436,16 +456,19 @@
         ]
       },
       "id": "global_trace_sanity_check/runqueue_pressure",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/runqueue_pressure.sql",
-      "sha256": "35ac60e179938cecb0c9adc4f8e2267f63fed6b7b84b0518c160ebe20bed3cc6",
+      "sha256": "7b996736344ca70ff675229791a70f7f38488c52c409539fbd51348326927e67",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
@@ -467,11 +490,13 @@
       "step_id": "runqueue_pressure",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -532,16 +557,19 @@
         ]
       },
       "id": "global_trace_sanity_check/top_cpu_processes",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/top_cpu_processes.sql",
-      "sha256": "8636e6fac8b80a8caa208fc92388dfa4e486ddd8fc8709a096322ce4d040398c",
+      "sha256": "f99651d1baeb67ccbbf4bb8a65f30c7ad4b54ac74ba558bc6aa409075e4ea9b1",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
@@ -563,12 +591,14 @@
       "step_id": "top_cpu_processes",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "max_rows",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

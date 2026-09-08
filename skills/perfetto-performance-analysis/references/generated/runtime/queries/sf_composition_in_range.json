@@ -47,12 +47,18 @@
         "probe_capabilities": []
       },
       "id": "sf_composition_in_range/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/sf_composition_in_range/query.sql",
-      "sha256": "f09da203162ccfbdd94a1743694a64862567a40974492179008aba01180e3cb0",
+      "process_scope": {
+        "role": "peer_context"
+      },
+      "sha256": "8a5c31f7c14eec37552556c5d344edfa90ae26ecb26803db04960fc40cc39194",
       "signal_patterns": [
         "*Commit*",
         "*Composite*",
@@ -71,10 +77,10 @@
       ],
       "skill_id": "sf_composition_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/sf_composition_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d3a3ab37e6a618fdebe97162b06b53a9f787a43fbeccbf22790bc04e73d8306d"
+        "sha256": "5dc13944bfe44aee46c4837d9878849d127dfb191206259dadec031bc26bbeb6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -87,11 +93,13 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

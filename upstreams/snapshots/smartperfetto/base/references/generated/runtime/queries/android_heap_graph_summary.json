@@ -49,18 +49,21 @@
         ]
       },
       "id": "android_heap_graph_summary/heap_graph_availability",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_summary/heap_graph_availability.sql",
-      "sha256": "ca4c1a985f6a135f4e5e141d9b40149258e5e0a92827b33d86d6f87bdd9b7676",
+      "sha256": "507dcf22c53011bfcfefb5898aa95804e7bfb12871167308ec32c8c04ea87255",
       "signal_patterns": [
         "*${process_name}*"
       ],
       "skill_id": "android_heap_graph_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_heap_graph_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e4b8220ce04f7c700df3feb487e732421353aeda901ecc144e00008b8cc3b2d6"
@@ -79,11 +82,13 @@
       "step_id": "heap_graph_availability",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "graph_sample_ts",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -143,18 +148,21 @@
         ]
       },
       "id": "android_heap_graph_summary/heap_graph_samples",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_summary/heap_graph_samples.sql",
-      "sha256": "1b26dfdbaae83f8370cd9eed8be2325fb7518f2f037970fc580ce0ea96750cb4",
+      "sha256": "b9b9f5c2bdba2ff5ac37475eaf23a889b2af626f86795142ea5142c9cf7e0256",
       "signal_patterns": [
         "*${process_name}*"
       ],
       "skill_id": "android_heap_graph_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_heap_graph_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e4b8220ce04f7c700df3feb487e732421353aeda901ecc144e00008b8cc3b2d6"
@@ -173,11 +181,13 @@
       "step_id": "heap_graph_samples",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "graph_sample_ts",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -237,12 +247,15 @@
         ]
       },
       "id": "android_heap_graph_summary/top_retained_classes",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_summary/top_retained_classes.sql",
-      "sha256": "a52cf9bd45be4eb20c4c8f1a54d3bd805560a2475024a25eb2aa45db19c63372",
+      "sha256": "8fb80df87c4ed1821224ebdbbeedd528f22df9adfc87f7723e5184ff73c4b521",
       "signal_patterns": [
         "*${process_name}*",
         "*Activity*",
@@ -250,7 +263,7 @@
       ],
       "skill_id": "android_heap_graph_summary",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/android_heap_graph_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e4b8220ce04f7c700df3feb487e732421353aeda901ecc144e00008b8cc3b2d6"
@@ -269,12 +282,14 @@
       "step_id": "top_retained_classes",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "graph_sample_ts",
           "max_rows",
           "process_name"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 898b631aafbdad1f8c7fabc5e2a741fa750cf701ec82b9810adfd3e687b94431
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 6ebd984e1b34cb456d5fa410b4e2308e350c5854086ec1e06ff58b4c80c5ef4f
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -164,6 +164,8 @@ optional: true
 id: frame_timeline_check
 type: atomic
 display: false
+process_scope:
+  role: identity_metadata
 save_as: frame_timeline
 ```
 ### Vsync 配置
@@ -176,6 +178,7 @@ save_as: frame_timeline
 id: vsync_config
 type: atomic
 sql_fragments:
+- fragments/effective_target_processes.sql
 - fragments/vsync_config.sql
 display:
   level: summary
@@ -198,6 +201,15 @@ display:
     label: 总帧数
     type: number
     format: compact
+process_scope:
+  role: target
+  binding: effective_target_processes
+  context_fields:
+    global_context:
+    - vsync_period_ns
+    - refresh_rate_hz
+    - vsync_period_ms
+    - vsync_source
 save_as: environment
 condition: frame_timeline.data[0]?.has_frame_timeline === 1
 ```
@@ -215,6 +227,27 @@ display: false
 sql_fragments:
 - fragments/vsync_config.sql
 - fragments/buffer_tx_frame_production.sql
+process_scope:
+  role: target
+  exact_unavailable: BufferTX track names do not identify a unique UPID; exact process evidence uses FrameTimeline only.
+exact_sql:
+  process_scope:
+    role: target
+    binding: effective_target_processes
+    limitations:
+    - BufferTX track names do not identify a unique UPID; exact process evidence uses FrameTimeline only.
+  sql_fragments:
+  - fragments/effective_target_processes.sql
+  sql: "WITH target_presence AS (\n  SELECT COUNT(*) AS target_process_count FROM effective_target_processes\n), frame_coverage\
+    \ AS (\n  SELECT COUNT(DISTINCT COALESCE(CAST(a.display_frame_token AS TEXT),\n    'surface:' || COALESCE(a.layer_name,\
+    \ '') || ':' || CAST(a.surface_frame_token AS TEXT))) AS frame_timeline_frames\n  FROM actual_frame_timeline_slice a\n\
+    \  JOIN effective_target_processes p ON a.upid = p.upid\n  WHERE (${start_ts} IS NULL OR a.ts >= ${start_ts})\n    AND\
+    \ (${end_ts} IS NULL OR a.ts < ${end_ts})\n)\nSELECT target_process_count,\n  CASE WHEN target_process_count > 0 THEN\
+    \ 'found' ELSE 'not_found' END AS target_process_status,\n  frame_timeline_frames,\n  NULL AS buffer_tx_frames, NULL AS\
+    \ frame_timeline_to_buffer_tx_ratio,\n  NULL AS buffer_tx_track_id, NULL AS frame_source_track,\n  NULL AS buffer_tx_effective_span_ns,\n\
+    \  CASE WHEN target_process_count = 0 THEN 'target_process_not_found'\n    WHEN frame_timeline_frames = 0 THEN 'no_frame_timeline_coverage'\n\
+    \    ELSE 'frame_timeline_only_exact_upid' END AS coverage_status,\n  0 AS should_fallback,\n  'unavailable_exact_upid'\
+    \ AS buffer_tx_status\nFROM target_presence CROSS JOIN frame_coverage\n"
 save_as: buffer_tx_coverage
 condition: frame_timeline.data[0]?.has_frame_timeline === 1
 ```
@@ -304,6 +337,16 @@ display:
   - name: rating
     label: 评级
     type: string
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
+  context_fields:
+    global_context:
+    - refresh_rate
+    - vsync_period_ms
+    - vsync_source
 save_as: perf_summary
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1 && buffer_tx_coverage.data[0]?.coverage_status
   !== 'target_process_not_found' && buffer_tx_coverage.data[0]?.should_fallback !== 1
@@ -380,6 +423,9 @@ display:
   - name: rating
     label: 证据边界
     type: string
+process_scope:
+  role: target
+  exact_unavailable: BufferTX track names do not identify a unique UPID; exact process evidence uses FrameTimeline only.
 save_as: perf_summary
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && buffer_tx_coverage.data[0]?.should_fallback === 1
 ```
@@ -394,6 +440,8 @@ id: input_data_fallback_view
 type: atomic
 optional: true
 display: false
+process_scope:
+  role: identity_metadata
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1
 ```
 ### Input 数据源检测
@@ -430,6 +478,9 @@ display:
     label: 进程数
     type: number
     format: compact
+process_scope:
+  role: target
+  binding: native_upid
 save_as: input_data
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1
 ```
@@ -516,6 +567,12 @@ display:
   - name: input_latency_rating
     label: 评级
     type: string
+process_scope:
+  role: target
+  binding: native_upid
+  context_fields:
+    global_context:
+    - frame_budget_ms
 save_as: input_latency
 condition: input_data.data[0]?.total_input_events > 0
 ```
@@ -529,6 +586,11 @@ condition: input_data.data[0]?.total_input_events > 0
 id: expert_analysis_window
 type: atomic
 display: false
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 save_as: expert_window
 condition: ${enable_expert_probes|true} == true && frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data
   === 1
@@ -635,6 +697,11 @@ display:
     label: 根因证据范围
     type: string
     hidden: true
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 save_as: jank_stats
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1
 ```
@@ -697,6 +764,11 @@ display:
   - name: session_fps
     label: FPS
     type: number
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 save_as: sessions
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1
 ```
@@ -713,6 +785,14 @@ optional: true
 display: false
 save_as: session_stats
 condition: scroll_sessions.data?.length > 0
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
+  context_fields:
+    global_context:
+    - cpu_freq_json
 ```
 ### 区间掉帧统计
 
@@ -758,6 +838,11 @@ display:
     label: 掉帧类型
     type: string
     format: truncate
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 save_as: session_jank_data
 optional: true
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1
@@ -772,6 +857,7 @@ condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[
 id: get_app_jank_frames
 type: atomic
 sql_fragments:
+- fragments/effective_target_processes.sql
 - fragments/root_cause_sample_cap.sql
 synthesize:
   role: list
@@ -781,6 +867,9 @@ synthesize:
   - field: jank_type
     title: 掉帧类型分布
 display: false
+process_scope:
+  role: target
+  binding: effective_target_processes
 save_as: app_jank_frames
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment?.data?.[0]?.has_data === 1 && ((perf_summary?.data?.[0]?.janky_frames
   || 0) > 0 || (jank_stats?.data?.[0]?.real_jank_count || 0) > 0)
@@ -796,6 +885,7 @@ id: batch_frame_root_cause
 type: atomic
 optional: true
 sql_fragments:
+- fragments/effective_target_processes.sql
 - fragments/vsync_config.sql
 - fragments/root_cause_sample_cap.sql
 synthesize:
@@ -1141,6 +1231,21 @@ display:
     label: Input阶段Slice
     type: string
     hidden: true
+process_scope:
+  role: target
+  binding: effective_target_processes
+  context_fields:
+    global_context:
+    - big_avg_freq_mhz
+    - big_max_freq_mhz
+    - ramp_ms
+    - frame_budget_ms
+    - vsync_source
+    - device_peak_freq_mhz
+    - cpu_freq_clusters_json
+    - freq_timeline_json
+    peer_context:
+    - binder_calls_json
 save_as: batch_root_cause
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment?.data?.[0]?.has_data === 1 && ((perf_summary?.data?.[0]?.janky_frames
   || 0) > 0 || (jank_stats?.data?.[0]?.real_jank_count || 0) > 0)
@@ -1157,6 +1262,21 @@ type: atomic
 optional: true
 display:
   level: hidden
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
+  context_fields:
+    global_context:
+    - video_during_scroll
+    - video_slice_count
+    - trace_peak_freq_mhz
+    - tail_min_freq_mhz
+    - thermal_trending
+    peer_context:
+    - non_app_big_core_pct
+    - background_cpu_heavy
 save_as: global_context
 ```
 ### 滑动过程四象限分布
@@ -1170,6 +1290,11 @@ id: session_quadrant_summary
 type: atomic
 optional: true
 display: false
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 save_as: session_quadrant
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && (perf_summary?.data?.[0]?.total_frames || 0) > 0
 ```
@@ -1184,6 +1309,8 @@ id: session_cpu_freq
 type: atomic
 optional: true
 display: false
+process_scope:
+  role: global_context
 save_as: session_freq
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && (perf_summary?.data?.[0]?.total_frames || 0) > 0
 ```
@@ -1198,6 +1325,11 @@ id: session_thread_core_affinity
 type: atomic
 optional: true
 display: false
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 save_as: session_core_affinity
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && (perf_summary?.data?.[0]?.total_frames || 0) > 0
 ```
@@ -1244,6 +1376,11 @@ display:
   - name: suggestion
     label: 优化建议
     type: string
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 save_as: conclusion
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && (perf_summary?.data?.[0]?.total_frames || 0) > 0 && enable_frame_details
   === true
@@ -1273,6 +1410,10 @@ display:
   - name: suggestion
     label: 建议
     type: string
+process_scope:
+  role: identity_metadata
+  exact_unavailable: No FrameTimeline evidence is available for this UPID; BufferTX names cannot establish exact frame rate
+    or jank.
 save_as: fallback_info
 ```
 ## Output and evidence contract

@@ -49,12 +49,15 @@
         ]
       },
       "id": "choreographer_module/doframe_overview",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/doframe_overview.sql",
-      "sha256": "02cc42677b7cca97ba4c6673bab7b87917684b616d8301392222eb538374f71a",
+      "sha256": "d01d90315c5c6a377548c3a73439a5a16f60b608110085cc4df8255ad26adcae",
       "signal_patterns": [
         "%${package}%",
         "*Choreographer#doFrame*",
@@ -63,7 +66,7 @@
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
@@ -83,11 +86,13 @@
       "step_id": "doframe_overview",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package",
           "vsync_period_ns"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -147,12 +152,15 @@
         ]
       },
       "id": "choreographer_module/doframe_timeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/doframe_timeline.sql",
-      "sha256": "07934ea3f0f10ef3b0aa4f99cf974eafed5a42ca053f0ff8817842ae6faaeb8a",
+      "sha256": "d45e42baf7a6ed9102994dae36bd7f7375cf3a5587b899fc039c7f1d3ff1c422",
       "signal_patterns": [
         "%${package}%",
         "*Choreographer#doFrame*",
@@ -160,7 +168,7 @@
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
@@ -180,11 +188,13 @@
       "step_id": "doframe_timeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package",
           "vsync_period_ns"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -244,12 +254,15 @@
         ]
       },
       "id": "choreographer_module/callback_breakdown",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/callback_breakdown.sql",
-      "sha256": "4f4a664dfcb9a294980108660a44476082afbe46ac80fa9f91899052b9e9d41e",
+      "sha256": "66892359548fc1d2dfb7b8bdc37afc820c89329bb84be4184d9b29841f19c09b",
       "signal_patterns": [
         "%${package}%",
         "*Animation*",
@@ -264,7 +277,7 @@
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
@@ -284,10 +297,12 @@
       "step_id": "callback_breakdown",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -347,12 +362,15 @@
         ]
       },
       "id": "choreographer_module/long_frames",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/long_frames.sql",
-      "sha256": "af53910471d39a897a4d2898e255c30cdfffdcfcc12f483da9593e339a7bab30",
+      "sha256": "c1528c42d76aa409bcf34462be3dbbdb14b4b0e9021042fe1a577d14fc690994",
       "signal_patterns": [
         "%${package}%",
         "*Choreographer#doFrame*",
@@ -360,7 +378,7 @@
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
@@ -380,11 +398,13 @@
       "step_id": "long_frames",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package",
           "vsync_period_ns"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -444,12 +464,15 @@
         ]
       },
       "id": "choreographer_module/view_traversal",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/view_traversal.sql",
-      "sha256": "e37995dff764974babe2f50a19f078d5905b0a2052898c2b4bab061d661823fa",
+      "sha256": "36262565a093630407553b8ac7dff6e707069118a679af5e7c58d3587c7fb6d1",
       "signal_patterns": [
         "%${package}%",
         "*Draw*",
@@ -461,7 +484,7 @@
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
@@ -481,10 +504,12 @@
       "step_id": "view_traversal",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -544,12 +569,15 @@
         ]
       },
       "id": "choreographer_module/frame_pipeline",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/frame_pipeline.sql",
-      "sha256": "56b3e40ed61abf840275a6dd124fbd1c5c8ea24e7e6f10e139b9bd41efa1198f",
+      "sha256": "770a0db443c5536d3600b05c8a39f1072f5b09159f2571e237a066d17bceebd4",
       "signal_patterns": [
         "%${package}%",
         "*DrawFrame*",
@@ -561,7 +589,7 @@
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
@@ -581,10 +609,12 @@
       "step_id": "frame_pipeline",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

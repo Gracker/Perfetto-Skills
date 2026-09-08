@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: cc19de68a5c179e17af405bf32f9ca75f56af0c5a4ccf970ede72790c558942b
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -143,7 +143,7 @@ modules:
 ## Identity requirements
 
 ```yaml
-policy: required
+policy: verify_if_present
 scope: process
 aliases:
 - package
@@ -175,6 +175,8 @@ optional: true
 ```yaml
 id: monitor_contention_check
 type: atomic
+process_scope:
+  role: identity_metadata
 display: false
 save_as: monitor_contention
 ```
@@ -187,6 +189,8 @@ save_as: monitor_contention
 ```yaml
 id: gc_table_check
 type: atomic
+process_scope:
+  role: identity_metadata
 display: false
 save_as: gc_availability
 optional: true
@@ -200,6 +204,8 @@ optional: true
 ```yaml
 id: gpu_table_check
 type: atomic
+process_scope:
+  role: identity_metadata
 display: false
 save_as: gpu_availability
 optional: true
@@ -213,6 +219,8 @@ optional: true
 ```yaml
 id: binder_table_check
 type: atomic
+process_scope:
+  role: identity_metadata
 display: false
 save_as: binder_availability
 optional: true
@@ -226,6 +234,9 @@ optional: true
 ```yaml
 id: quadrant_analysis
 type: atomic
+process_scope:
+  role: target
+  binding: native_upid
 optional: true
 sql_fragments:
 - fragments/target_threads.sql
@@ -274,6 +285,12 @@ output_schema:
 ```yaml
 id: binder_calls
 type: atomic
+process_scope:
+  role: target
+  binding: native_upid
+  context_fields:
+    peer_context:
+    - interface
 display:
   level: detail
   layer: deep
@@ -327,6 +344,8 @@ output_schema:
 ```yaml
 id: cpu_freq_analysis
 type: atomic
+process_scope:
+  role: global_context
 display:
   level: detail
   layer: deep
@@ -371,6 +390,11 @@ output_schema:
 ```yaml
 id: main_thread_slices
 type: atomic
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 display:
   level: key
   layer: deep
@@ -425,6 +449,11 @@ output_schema:
 ```yaml
 id: choreographer_resync_markers
 type: atomic
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 display:
   level: detail
   layer: deep
@@ -477,6 +506,11 @@ output_schema:
 ```yaml
 id: render_thread_slices
 type: atomic
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 display:
   level: key
   layer: deep
@@ -538,6 +572,8 @@ output_schema:
 ```yaml
 id: cpu_freq_timeline
 type: atomic
+process_scope:
+  role: global_context
 display:
   level: detail
   layer: deep
@@ -575,6 +611,14 @@ optional: true
 ```yaml
 id: lock_contention
 type: atomic
+process_scope:
+  role: target
+  binding: native_upid
+  context_fields:
+    peer_context:
+    - blocking_method
+    - blocking_thread_name
+    - waiter_count
 display:
   level: detail
   layer: deep
@@ -617,6 +661,11 @@ condition: monitor_contention.data[0]?.has_monitor_contention === 1
 ```yaml
 id: gc_in_frame
 type: atomic
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 display:
   level: detail
   layer: deep
@@ -653,6 +702,11 @@ condition: gc_availability?.data?.[0]?.has_gc_table === 1
 ```yaml
 id: io_blocking
 type: atomic
+sql_fragments:
+- fragments/effective_target_processes.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
 display:
   level: detail
   layer: deep
@@ -859,7 +913,20 @@ optional: true
 ```yaml
 id: root_cause_summary
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+  context_fields:
+    global_context:
+    - frame_budget_ms
+    - primary_cause
+    - secondary_info
+    peer_context:
+    - deep_reason
+  limitations:
+  - 根因分类结合目标线程、全局 CPU/VSync 资源及对端信息；混合解释文本不是目标进程的独立实测指标。
 sql_fragments:
+- fragments/effective_target_processes.sql
 - fragments/vsync_config.sql
 - fragments/target_threads.sql
 - fragments/thread_states_quadrant.sql

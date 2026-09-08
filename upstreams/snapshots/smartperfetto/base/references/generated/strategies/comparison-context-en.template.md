@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/comparison-context-en.template.md
 Source SHA-256: f25baa74f86327cb52dbf6c39778a3f1d001a0c5390c24f33df6d696df65151a
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Comparison Context En Template
 

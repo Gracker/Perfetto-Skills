@@ -1,4 +1,5 @@
 import hashlib
+import copy
 from pathlib import Path
 import tempfile
 import unittest
@@ -7,6 +8,79 @@ from tools.validate_all_queries import validate_query, validate_sql_syntax
 
 
 class AllQueryValidationTest(unittest.TestCase):
+    def test_runtime_bindings_are_separate_from_parameters_and_require_matching_declarations(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / "query.sql"
+            path.write_text(
+                "SELECT * FROM process WHERE "
+                "(${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}) "
+                "AND name = '${package}';", encoding="utf-8",
+            )
+            query = {
+                "id": "skill/step", "path": "query.sql",
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "sql_dependencies": {"declared_modules": [], "required_tables": []},
+                "template": {
+                    "parameters": ["package"], "result_dependencies": [], "fragments": [],
+                    "runtime_bindings": ["__process_scope.upid"], "name_parameters": ["package"],
+                },
+                "process_scope": {"role": "target", "binding": "effective_target_processes"},
+                "identity": {"policy": "verify_if_present", "aliases": ["package"]},
+                "compatibility": {"android": {
+                    str(api): {"status": "capability_gated"} for api in range(28, 38)
+                }},
+                "validation": {},
+            }
+
+            def validate(candidate):
+                return validate_query(
+                    candidate, root, stdlib_modules=set(), fixtures=set(), semantic_queries=set(),
+                )
+
+            result = validate(query)
+            self.assertTrue(result["static_valid"], result)
+            self.assertFalse(result["execution_verified"])
+            self.assertFalse(result["semantic_verified"])
+            for mutation in ("user_parameter", "missing_binding", "wrong_binding", "missing_scope", "missing_name"):
+                with self.subTest(mutation=mutation):
+                    candidate = copy.deepcopy(query)
+                    if mutation == "user_parameter":
+                        candidate["template"]["parameters"].append("__process_scope")
+                    elif mutation == "missing_binding":
+                        candidate["template"].pop("runtime_bindings")
+                    elif mutation == "wrong_binding":
+                        candidate["template"]["runtime_bindings"] = ["__process_scope.pid"]
+                    elif mutation == "missing_scope":
+                        candidate.pop("process_scope")
+                    else:
+                        candidate["template"]["name_parameters"] = []
+                    self.assertFalse(validate(candidate)["static_valid"])
+
+            for role in ("global_context", "peer_context", "identity_metadata"):
+                with self.subTest(role=role):
+                    candidate = copy.deepcopy(query)
+                    candidate["process_scope"] = {"role": role, "exact_unavailable": "No exact target evidence is available."}
+                    self.assertTrue(validate(candidate)["static_valid"])
+                    candidate["process_scope"]["binding"] = "native_upid"
+                    self.assertFalse(validate(candidate)["static_valid"])
+            original_sql = path.read_text(encoding="utf-8")
+            for default in ("99", "null", ""):
+                with self.subTest(default=default):
+                    path.write_text(original_sql.replace("${__process_scope.upid}", "${__process_scope.upid|" + default + "}"), encoding="utf-8")
+                    candidate = copy.deepcopy(query)
+                    candidate["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+                    self.assertFalse(validate(candidate)["static_valid"])
+
+            path.write_text("SELECT 1;", encoding="utf-8")
+            candidate = copy.deepcopy(query)
+            candidate["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+            candidate["template"] = {"parameters": [], "fragments": [], "result_dependencies": []}
+            for declaration in ({"role": "unknown_role"}, {"role": "global_context", "binding": "native_upid"}):
+                with self.subTest(declaration=declaration):
+                    candidate["process_scope"] = declaration
+                    self.assertFalse(validate(candidate)["static_valid"])
+
     def test_syntax_probe_rejects_invalid_sql_but_allows_missing_trace_schema(self) -> None:
         self.assertTrue(validate_sql_syntax("SELEKT definitely broken;"))
         self.assertEqual(validate_sql_syntax("SELECT * FROM trace_only_table;"), [])

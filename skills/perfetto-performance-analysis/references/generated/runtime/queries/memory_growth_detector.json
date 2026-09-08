@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "memory_growth_detector/memory_growth",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_growth_detector/memory_growth.sql",
-      "sha256": "59b83515436480d48990cc8f09d490f7223214f4896878cd133dace97d350f21",
+      "sha256": "3278fc7a108db1d47f8ebc071c79205fdfc054e7479076dd70f8549f4e5265a0",
       "signal_patterns": [],
       "skill_id": "memory_growth_detector",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/memory_growth_detector.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2b08097c2ecf0e91bbf533df7818050073340606df64e9e4587fc5b6ddafa7bd"
@@ -74,6 +77,7 @@
       "step_id": "memory_growth",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "growth_critical_pct",
@@ -86,7 +90,8 @@
           "process_name",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

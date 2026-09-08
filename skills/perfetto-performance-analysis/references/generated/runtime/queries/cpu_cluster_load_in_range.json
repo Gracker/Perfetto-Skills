@@ -47,19 +47,25 @@
         "probe_capabilities": []
       },
       "id": "cpu_cluster_load_in_range/cluster_load",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_cluster_load_in_range/cluster_load.sql",
-      "sha256": "b95dac8329b94694782298f317172c522c7f791164badcccc365ba84ec8639d5",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "119daeab4cbfca380eaf03cb41f78b8d030802a43c7cadd5b93cbb0b416a435d",
       "signal_patterns": [],
       "skill_id": "cpu_cluster_load_in_range",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "531fd3145d1a67a1ae02e1e028280f2e0e627b4bde1f7c832a985911391fd433"
+        "sha256": "eb8ce5835904a74d489339331c73cea778d49024dc1654b842d6111f3269d382"
       },
       "sql_dependencies": {
         "creates": [],
@@ -76,11 +82,13 @@
       "step_id": "cluster_load",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -7,13 +7,22 @@ from pathlib import Path
 import re
 import sys
 import hashlib
+import copy
+from collections.abc import Mapping
 
 from _common import (
     DEFAULT_MAX_OUTPUT_BYTES,
+    RuntimeProcessScope,
+    bind_runtime_process_scope,
     parse_csv_output,
     render_sql_template,
+    reject_process_scope_names,
+    resolve_identity,
+    runtime_sql_bindings,
     run_query,
     sha256_file,
+    sql_template_names,
+    validate_process_scope_declaration,
     write_text_atomic,
 )
 from perfetto_doctor import resolve_verified_processor
@@ -138,7 +147,11 @@ def load_query_entry(query_id: str, skill_root: Path) -> dict[str, object]:
     raise ValueError(f"unknown manifest query: {query_id}")
 
 
-def prepare_manifest_query(entry: dict[str, object], skill_root: Path) -> str:
+def prepare_manifest_query(
+    entry: dict[str, object], skill_root: Path,
+    *, binding_entries: list[tuple[dict[str, object], str]] | None = None,
+) -> str:
+    """Assemble SQL and optionally collect the exact descriptors in its closure."""
     generated = skill_root / "references" / "generated"
     setup_sql: list[str] = []
     visited: set[str] = set()
@@ -151,16 +164,115 @@ def prepare_manifest_query(entry: dict[str, object], skill_root: Path) -> str:
         for dependency in setup["sql_dependencies"].get("setup_queries", []):
             append_setup(str(dependency))
         text = (generated / str(setup["path"])).read_text(encoding="utf-8").rstrip()
+        if binding_entries is not None:
+            binding_entries.append((setup, text))
         setup_sql.append(text if text.endswith(";") else text + ";")
 
     for query_id in entry["sql_dependencies"].get("setup_queries", []):
         append_setup(str(query_id))
     sql = (generated / str(entry["path"])).read_text(encoding="utf-8")
+    if binding_entries is not None:
+        binding_entries.append((entry, sql))
     modules = entry["sql_dependencies"].get("declared_modules", [])
     includes = "\n".join(
         f"INCLUDE PERFETTO MODULE {module};" for module in modules
     )
     return "\n".join(value for value in (includes, *setup_sql, sql) if value)
+
+
+def bind_manifest_process_scope(
+    entries: list[tuple[dict[str, object], str]],
+    parameters: Mapping[str, object],
+    supplied_parameters: Mapping[str, object],
+    *, identity_result: Mapping[str, object] | None,
+    trace: Path, trace_sha256: str, trace_side: str,
+    trace_processor: str | None, timeout: float, max_output_bytes: int,
+) -> tuple[RuntimeProcessScope | None, Mapping[str, object] | None]:
+    reject_process_scope_names(parameters)
+    reject_process_scope_names(supplied_parameters)
+    requirements: list[tuple[Mapping[str, object], list[str], str]] = []
+    for entry, sql in entries:
+        declaration = entry.get("process_scope")
+        role = validate_process_scope_declaration(declaration) if "process_scope" in entry else None
+        compatibility = entry.get("compatibility", {})
+        exact = compatibility.get("exact_scope", {}) if isinstance(compatibility, Mapping) else {}
+        if isinstance(exact, Mapping) and exact.get("status") == "unsupported" and any(
+            selector in supplied_parameters for selector in ("upid", "pid")
+        ):
+            raise ValueError("exact process scope is unsupported for this query")
+        template = entry.get("template", {})
+        if not isinstance(template, Mapping):
+            raise ValueError("invalid SQL template declaration")
+        names = sql_template_names(sql)
+        reserved = set(runtime_sql_bindings(sql))
+        declared = template.get("runtime_bindings", [])
+        if not isinstance(declared, list) or not all(isinstance(name, str) for name in declared):
+            raise ValueError("invalid runtime binding declaration")
+        if set(declared) != reserved:
+            raise ValueError("runtime binding declaration does not match SQL")
+        if not reserved:
+            continue
+        identity = entry.get("identity")
+        if role is None:
+            raise ValueError("process scope declaration is required")
+        if not isinstance(identity, Mapping):
+            raise ValueError("process scope identity policy is required")
+        aliases = identity.get("aliases", [])
+        if not isinstance(aliases, list) or not all(isinstance(name, str) for name in aliases):
+            raise ValueError("invalid identity aliases")
+        consumed_names = sorted(set(aliases) & names)
+        if template.get("name_parameters") != consumed_names:
+            raise ValueError("identity name parameters do not match SQL")
+        requirements.append((identity, consumed_names, role))
+    if not requirements:
+        return None, identity_result
+    identity = identity_result
+    if identity is None:
+        identity = resolve_identity(
+            {"identity": requirements[0][0]}, parameters, trace=trace,
+            trace_processor=trace_processor, timeout=timeout, max_output_bytes=max_output_bytes,
+        )
+    # Every target query must retain its own name predicate. A context query's
+    # names cannot supply a missing target predicate elsewhere in the closure.
+    all_names: set[str] = set()
+    all_aliases: set[str] = set()
+    all_roles: set[str] = set()
+    for policy, names, role in requirements:
+        bind_runtime_process_scope(
+            identity, identity_policy=policy, parameters=parameters,
+            supplied_parameters=supplied_parameters, name_parameters=names,
+            trace_sha256=trace_sha256, trace_side=trace_side,
+            scope_roles=(role,),
+        )
+        if role == "target":
+            all_names.update(names)
+        all_aliases.update(policy.get("aliases", []))
+        all_roles.add(role)
+    policy = {**requirements[0][0], "aliases": sorted(all_aliases)}
+    scope = bind_runtime_process_scope(
+        identity, identity_policy=policy, parameters=parameters,
+        supplied_parameters=supplied_parameters, name_parameters=sorted(all_names),
+        trace_sha256=trace_sha256, trace_side=trace_side,
+        scope_roles=tuple(sorted(all_roles)),
+    )
+    return scope, identity
+
+
+def manifest_process_scope_receipt(entries: list[tuple[dict[str, object], str]]) -> dict[str, object]:
+    """Preserve authored roles; these declarations do not certify target rows."""
+    receipt: dict[str, object] = {}
+    if not entries:
+        return receipt
+    leaf = entries[-1][0]
+    if "process_scope" in leaf:
+        receipt["process_scope"] = copy.deepcopy(leaf["process_scope"])
+    setups = [
+        {"query_id": entry["id"], "process_scope": copy.deepcopy(entry["process_scope"])}
+        for entry, _sql in entries[:-1] if "process_scope" in entry
+    ]
+    if setups:
+        receipt["setup_process_scopes"] = setups
+    return receipt
 
 
 def verify_manifest_schema(
@@ -204,6 +316,13 @@ def main(argv: list[str] | None = None) -> int:
             raise ValueError("--module names may contain only letters, digits, dots, and underscores")
         skill_root = Path(__file__).resolve().parents[1]
         manifest_entry = None
+        identity = None
+        scope = None
+        trace_sha256 = None
+        params = parse_parameters(args.param)
+        results = load_results(args.result)
+        reject_process_scope_names(params)
+        reject_process_scope_names(results)
         processor_identity = None
         trace_processor = args.trace_processor
         if args.query_id:
@@ -235,7 +354,13 @@ def main(argv: list[str] | None = None) -> int:
                     max_output_bytes=args.max_output_bytes,
                 ),
             )
-            template = prepare_manifest_query(manifest_entry, skill_root)
+            binding_entries: list[tuple[dict[str, object], str]] = []
+            template = prepare_manifest_query(manifest_entry, skill_root, binding_entries=binding_entries)
+            scope, identity = bind_manifest_process_scope(
+                binding_entries, params, params, identity_result=None,
+                trace=resolved_trace, trace_sha256=trace_sha256, trace_side=args.trace_side,
+                trace_processor=trace_processor, timeout=args.timeout, max_output_bytes=args.max_output_bytes,
+            )
         else:
             template = (
                 args.sql_file.read_text(encoding="utf-8")
@@ -245,8 +370,9 @@ def main(argv: list[str] | None = None) -> int:
         assert template is not None
         sql = render_sql_template(
             template,
-            parse_parameters(args.param),
-            load_results(args.result),
+            params,
+            results,
+            process_scope=scope, trace_sha256=trace_sha256, trace_side=args.trace_side,
         )
         if args.module:
             includes = "\n".join(
@@ -311,7 +437,8 @@ def main(argv: list[str] | None = None) -> int:
                 "validation": manifest_entry["validation"],
                 "capability_gate": capability_gate,
                 "processor": processor_identity,
-                "identity": {"status": "not_checked", "policy": "none"},
+                "identity": identity if identity is not None else {"status": "not_checked", "policy": "none"},
+                **manifest_process_scope_receipt(binding_entries),
                 "status": "observed" if rows else "empty",
                 "row_count": len(rows),
                 "rows": rows,

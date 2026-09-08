@@ -1,14 +1,14 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/process_slice_cpu_hotspots.skill.yaml
--- Source SHA-256: fd6bc72d2cee67b783f9795e253586db60f2b7a3c3e786495b6d998e69403a8a
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: fea05288f19596170a55ed5350e9ae1fe2f1a6a3eda249948f57db8b1c894236
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
 raw_input AS (
   SELECT
     COALESCE(${start_ts}, trace_start()) AS raw_start_ts,
     COALESCE(${end_ts}, trace_end()) AS raw_end_ts,
-    ${upid} AS target_upid,
+    COALESCE(${__process_scope.upid}, ${upid}) AS target_upid,
     NULLIF(COALESCE(NULLIF('${process_name|}', ''), NULLIF('${package|}', '')), '') AS target_process,
     NULLIF('${slice_name|}', '') AS target_slice,
     CASE

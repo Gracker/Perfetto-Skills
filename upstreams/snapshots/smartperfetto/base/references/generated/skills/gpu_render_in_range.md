@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gpu_render_in_range.skill.yaml
-Source SHA-256: 06ea425f109301061fa4939fe042767b99a582ebba749c63c654a294e82d882b
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 1c142b8dbc84b47518922a8a37b43c85c1e3e887ad5bfc61179c1710dce9c286
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 # GPU 渲染分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -50,6 +50,15 @@ pipeline_aware_note: 'GPU 工作来源不同：标准 RenderThread；Flutter ras
   type: string
   required: false
   description: 目标进程名（支持 GLOB 匹配）
+```
+
+## Identity requirements
+
+```yaml
+policy: verify_if_present
+scope: process
+aliases:
+- package
 ```
 
 ## Query

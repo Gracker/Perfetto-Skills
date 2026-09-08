@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "binder_module/binder_summary",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_module/binder_summary.sql",
-      "sha256": "352e03a93c80926db18ff0606433577272ed47441484d0d0235ed27a9612b37b",
+      "sha256": "29e2605171a970c593a8bd3d12cd5de26ac58ce33ce62f023fc979743a9c7ac6",
       "signal_patterns": [],
       "skill_id": "binder_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/binder_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac801a61aa0de9d819d8b84e2ccfcfb07d76ca816e88e5fde8c63d1832343e4a"
@@ -74,10 +77,12 @@
       "step_id": "binder_summary",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -135,16 +140,19 @@
         "probe_capabilities": []
       },
       "id": "binder_module/long_sync_calls",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_module/long_sync_calls.sql",
-      "sha256": "1a0b09c0864a955f52a727af211569acd78c04099a2e79e5c8337e280a767a27",
+      "sha256": "c05c993aeb478db3bf7a790a8a78b9cad871c778894987bd4b768d3561874059",
       "signal_patterns": [],
       "skill_id": "binder_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/binder_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac801a61aa0de9d819d8b84e2ccfcfb07d76ca816e88e5fde8c63d1832343e4a"
@@ -162,10 +170,12 @@
       "step_id": "long_sync_calls",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -223,16 +233,19 @@
         "probe_capabilities": []
       },
       "id": "binder_module/blocking_analysis",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/binder_module/blocking_analysis.sql",
-      "sha256": "220183bc7129d5591b25bbfbbb5633eea0b6fd9587794f37af766f63f2945034",
+      "sha256": "97553b9bd504f228297c2537ef840e59dd3078aebc551f103781190590d64562",
       "signal_patterns": [],
       "skill_id": "binder_module",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/modules/kernel/binder_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ac801a61aa0de9d819d8b84e2ccfcfb07d76ca816e88e5fde8c63d1832343e4a"
@@ -250,10 +263,12 @@
       "step_id": "blocking_analysis",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "package"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

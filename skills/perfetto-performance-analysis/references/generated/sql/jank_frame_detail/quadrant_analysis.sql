@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: cc19de68a5c179e17af405bf32f9ca75f56af0c5a4ccf970ede72790c558942b
--- Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+-- Source SHA-256: 89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90
+-- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 WITH
 -- Fragment: target_threads
@@ -34,8 +34,10 @@ target_threads AS (
     END as thread_end_ts
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (
-      '${package}' = ''
+  WHERE (${__process_scope.upid} IS NULL OR p.upid = ${__process_scope.upid})
+    AND (
+      ${__process_scope.upid} IS NOT NULL
+      OR '${package}' = ''
       OR p.name = '${package}'
       OR p.name GLOB '${package}:*'
     )

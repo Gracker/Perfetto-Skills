@@ -49,16 +49,19 @@
         ]
       },
       "id": "mali_gpu_power_state/mali_state",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/mali_gpu_power_state/mali_state.sql",
-      "sha256": "2bb0b17dcefeb7abebfc02a07fe436157ef95ff0f75bb93ed717b7b0fda4f517",
+      "sha256": "450d44d7c9928c54cfb771180cb9c48383867d61f2fa4389856c1334e8598da9",
       "signal_patterns": [],
       "skill_id": "mali_gpu_power_state",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/mali_gpu_power_state.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "2846582cac7aa964a047a495575cb21b1517b7d63bf7d6bc261baf43847ed6db"
@@ -76,8 +79,10 @@
       "step_id": "mali_state",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",

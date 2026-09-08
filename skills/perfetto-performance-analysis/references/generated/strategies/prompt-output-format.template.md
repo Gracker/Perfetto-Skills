@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/prompt-output-format.template.md
-Source SHA-256: c8379ddd0be62c25186cf36e22889065c8c4dc054981280e7ef75a39729b8290
-Source commit: 5ef82a7c8d215414a569c1f857d6a693fa51612f
+Source SHA-256: 94c02d5049437ff277f3c08421ba0b191c5b51350a59d9ba470e8775bb1c3400
+Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
 
 # Prompt Output Format Template
 
@@ -27,8 +27,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - 用 `self_ms` / exclusive time 归因和估收益；wall time 可说明体感，父子 slice 不并列相加。
 - 测试/基准/mock/synthetic/非生产 trace 要在概览标注并调整建议口径。
 - CPU 频率只做定性/区间判断；thermal/policy 需额外证据，不承诺精确收益。
-- 关键结论标明证据类型、置信度、版本/采集边界；缺数据时写最高信息增益的下一步采集。
-- 证据来源、置信度与版本边界必须显式写出；blocked reason 相关结论要标注 `thread-state-blocked-reason` 能力边界。
+- 关键结论必须写出证据来源、置信度与版本边界（含证据类型与采集边界）；缺数据时写最高信息增益的下一步采集；blocked reason 结论标注 `thread-state-blocked-reason` 能力边界。
 
 ### 发现格式
 每个发现使用：
@@ -36,7 +35,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 **[SEVERITY] 标题**
 描述：现象和影响。
 根因：WHY 链，至少“症状 → 机制”，CRITICAL/HIGH 尽量追到源头。
-证据：时间戳、耗时、比例、线程/进程、artifact/SQL/Skill 来源。
+证据：时间戳、耗时、比例、线程/进程、Skill 名与指标名。内部 ID（`art-N`、工具调用 id、evidence_ref_id）只写进结构化引用段。
 证据类型/置信度：trace_direct / derived_metric / diagnostic_api / external_aggregate / missing_evidence。
 边界：FrameTimeline、monitor_contention、input、power、diagnostic API 等版本/能力边界。
 建议：按 [App 层] / [系统/ROM 层] 分层，先给 App 可执行动作。
@@ -67,6 +66,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 ```
 
 规则：
+- 根因句必须自成一条 claim（含"导致/因为/根因"），下挂**两条以上** `evidence_ref_id`（因/果各一，省略 `value`）；只引用测量值会让根因留在正文里无法核验。
 - 同类指标合并引用，避免重复堆同一张表。
 - 找不到精确行列值时不要伪造；限制中说明缺口，只引用能确认的字段。
 - 外部指标、诊断 API、日志/快照必须标注来源类型和时间/版本/窗口边界。

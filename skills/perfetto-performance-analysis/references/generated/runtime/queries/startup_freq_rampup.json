@@ -47,16 +47,19 @@
         "probe_capabilities": []
       },
       "id": "startup_freq_rampup/root",
+      "identity": {
+        "policy": "none"
+      },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_freq_rampup/query.sql",
-      "sha256": "a2d7bbd3778f149f467a4f60f3ab24807f4eb9be774cbae3ceba5a5cb51b1e64",
+      "sha256": "5dbcbb060da5bbe2596d25be2ebbf82cf8399397b282634228781ae0b7adeab8",
       "signal_patterns": [],
       "skill_id": "startup_freq_rampup",
       "source": {
-        "commit": "5ef82a7c8d215414a569c1f857d6a693fa51612f",
+        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
         "path": "backend/skills/atomic/startup_freq_rampup.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "5fdc44a881eba8aac3be4fc8cc7f6175bd41bc13c9a6fc164f19ec3b4bda8f28"
@@ -78,11 +81,13 @@
       "step_id": "root",
       "template": {
         "fragments": [],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "start_ts"
         ],
-        "result_dependencies": []
+        "result_dependencies": [],
+        "runtime_bindings": []
       },
       "validation": {
         "default_execution": "capability_gate_required",
