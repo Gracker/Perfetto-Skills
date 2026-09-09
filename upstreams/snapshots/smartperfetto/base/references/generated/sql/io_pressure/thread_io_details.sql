@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/io_pressure.skill.yaml
 -- Source SHA-256: 446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd
--- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+-- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 SELECT
   t.name as thread_name,

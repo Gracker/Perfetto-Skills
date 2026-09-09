@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/io.strategy.md
 Source SHA-256: bf356da4f3428ba6eb82ab6fabc4db6b9f9d6c19d7fb987c130bdf4c129aef04
-Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 # Io Strategy
 

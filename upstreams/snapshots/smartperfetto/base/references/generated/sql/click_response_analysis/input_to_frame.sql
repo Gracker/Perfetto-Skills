@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
 -- Source SHA-256: c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f
--- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+-- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 SELECT
   ie.event_type,

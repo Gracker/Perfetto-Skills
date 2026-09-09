@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/power.strategy.md
 Source SHA-256: cfc9e2f5eddf348bacb775ec612028619c03dfc8f699481078618685a7b31cb9
-Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 # Power Strategy
 

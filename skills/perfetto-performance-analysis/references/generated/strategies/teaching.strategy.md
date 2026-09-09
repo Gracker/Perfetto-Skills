@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/teaching.strategy.md
 Source SHA-256: 051126d441976ee8406e27e7d645561d7793bf43a1d9e6a97e1f6dd4b426ac14
-Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 # Teaching Strategy
 

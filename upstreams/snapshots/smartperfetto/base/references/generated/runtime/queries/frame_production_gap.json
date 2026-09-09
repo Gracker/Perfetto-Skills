@@ -51,16 +51,27 @@
       },
       "id": "frame_production_gap/gap_summary",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "process_name",
+          "package"
+        ],
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/frame_production_gap/gap_summary.sql",
-      "sha256": "f4ae362e376424fcb48293ba67ace1c4118adddaeba32994851c6f85d1a9c5e5",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "99dc1d6f5c7a50107ccb6ff069ae724beb8d547e8f7ab9fbe239742f4dcd8965",
       "signal_patterns": [
-        "${process_name}*",
+        "${process_name}",
+        "${process_name}:*",
         "Choreographer#doFrame%",
         "DrawFrame%",
         "RenderThread",
@@ -69,10 +80,10 @@
       ],
       "skill_id": "frame_production_gap",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/atomic/frame_production_gap.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "3c2acc9ac336d6298038424ccd0591a13b9b569accff00c49d1b5fe05ab4c7a6"
+        "sha256": "221c153dbac8c5a1a4efd28a5c917e2ab50b05b1f9d7f87eab25292fd01ddff0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -90,7 +101,9 @@
       "step_id": "gap_summary",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "min_gap_vsync",
@@ -98,7 +111,9 @@
           "start_ts"
         ],
         "result_dependencies": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -160,16 +175,27 @@
       },
       "id": "frame_production_gap/gap_list",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "process_name",
+          "package"
+        ],
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/frame_production_gap/gap_list.sql",
-      "sha256": "1a157d1202b4715dbdee09779248e421fcb32570083c29d8c0ece2a0a48536c8",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "e0c31a000e90f37dca705489eaed4a4c5800e2c45debd25bdb2a6ed9fc0ad061",
       "signal_patterns": [
-        "${process_name}*",
+        "${process_name}",
+        "${process_name}:*",
         "Choreographer#doFrame%",
         "DrawFrame%",
         "RenderThread",
@@ -178,10 +204,10 @@
       ],
       "skill_id": "frame_production_gap",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/atomic/frame_production_gap.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "3c2acc9ac336d6298038424ccd0591a13b9b569accff00c49d1b5fe05ab4c7a6"
+        "sha256": "221c153dbac8c5a1a4efd28a5c917e2ab50b05b1f9d7f87eab25292fd01ddff0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -199,7 +225,9 @@
       "step_id": "gap_list",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "min_gap_vsync",
@@ -207,7 +235,9 @@
           "start_ts"
         ],
         "result_dependencies": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

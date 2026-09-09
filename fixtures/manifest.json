@@ -131,6 +131,157 @@
             "start_ts": 564167376544116,
             "end_ts": 564167555386251
           }
+        },
+        {
+          "id": "startup-heavy-mtw-summary-process",
+          "query_id": "main_thread_frame_work/main_thread_work_summary",
+          "kind": "field_equals",
+          "field": "process_name",
+          "value": "com.example.launch.aosp.heavy",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-summary-phase",
+          "query_id": "main_thread_frame_work/main_thread_work_summary",
+          "kind": "field_equals",
+          "field": "phase",
+          "value": "window",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-summary-start",
+          "query_id": "main_thread_frame_work/main_thread_work_summary",
+          "kind": "field_equals",
+          "field": "window_start_ts",
+          "value": 564166761908543,
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-summary-end",
+          "query_id": "main_thread_frame_work/main_thread_work_summary",
+          "kind": "field_equals",
+          "field": "window_end_ts",
+          "value": 564166773418230,
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-summary-wall",
+          "query_id": "main_thread_frame_work/main_thread_work_summary",
+          "kind": "field_positive",
+          "field": "wall_ms",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-summary-known-state",
+          "query_id": "main_thread_frame_work/main_thread_work_summary",
+          "kind": "field_positive",
+          "field": "known_state_ms",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-tasks-start",
+          "query_id": "main_thread_frame_work/main_thread_work_tasks",
+          "kind": "field_equals",
+          "field": "start_ts",
+          "value": 564166761908543,
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-tasks-end",
+          "query_id": "main_thread_frame_work/main_thread_work_tasks",
+          "kind": "field_equals",
+          "field": "end_ts",
+          "value": 564166773418230,
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-tasks-wall",
+          "query_id": "main_thread_frame_work/main_thread_work_tasks",
+          "kind": "field_positive",
+          "field": "wall_ms",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-sources-hotspot",
+          "query_id": "main_thread_frame_work/main_thread_work_sources",
+          "kind": "field_equals",
+          "field": "source_kind",
+          "value": "hotspot",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-sources-duration",
+          "query_id": "main_thread_frame_work/main_thread_work_sources",
+          "kind": "field_positive",
+          "field": "dur",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166761908543,
+            "end_ts": 564166773418230,
+            "main_thread_top_k": 1
+          }
+        },
+        {
+          "id": "startup-heavy-mtw-cadence-interval",
+          "query_id": "main_thread_frame_work/main_thread_work_cadence",
+          "kind": "field_positive",
+          "field": "observed_start_interval_ms",
+          "params": {
+            "package": "com.example.launch.aosp.heavy",
+            "start_ts": 564166760908543,
+            "end_ts": 564168760908543,
+            "main_thread_top_k": 1
+          }
         }
       ]
     },

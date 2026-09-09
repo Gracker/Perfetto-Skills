@@ -46,12 +46,15 @@ add its native tests, then regenerate the public projection if appropriate.
    `upstreams/smartperfetto.lock.json`.
 2. Run `uv run python tools/sync_smartperfetto.py --source PATH --report-dir
    test-output/sync`. This imports into a temporary directory and reports
-   added, removed, changed, and overlay-conflicting files without mutation.
+   added, removed, and changed imported files plus catalog and policy drift
+   without mutation. Overlay conflicts are checked by the compiler after import.
 3. Inspect the report and update SmartPerfetto export policy at its source when
    a product-owned Skill, Strategy, rendering-pipeline document, or SQL query is
    missing.
 4. Apply an approved import with the same command plus `--apply`, then compile
-   local overlays with `uv run python tools/compile_skill.py --apply`.
+   local overlays with `uv run python tools/compile_skill.py --apply`. If a base
+   hash changed, review and rebase the affected overlay and its dependencies
+   before compiling; do not discard local changes to clear the conflict.
 5. Run the complete independent gate and the explicit pinned upstream gate.
    Record the cross-repository impact decision and paired commit when required.
 

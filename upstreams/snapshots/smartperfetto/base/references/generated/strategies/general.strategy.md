@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/general.strategy.md
-Source SHA-256: f045b9cb88e816d13a08dda66e6be29f63ad20e20f0cee6e5b369f150cd07c40
-Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+Source SHA-256: 5aaaec39ad616bb5cf272e54254024bd871802b8bc791d89ceeb09c291ce679d
+Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 # General Strategy
 
@@ -25,6 +25,16 @@ classification_description: A specific question, trace fact, acknowledgement or 
   scene.
 priority: 99
 effort: high
+investigation_requirements:
+- When the question concerns animation or main-thread jank, inspect same-scope continuous main-thread tasks and scheduling
+  states, including work outside doFrame; FrameTimeline is an outcome reference. Reuse existing evidence, or use main_thread_frame_work/equivalent
+  SQL only when new evidence is allowed. Keep other questions within their requested scope.
+- For those investigations, retain task slice/state IDs, exact times and source uncertainty. Running is CPU execution; R/R+
+  waits for CPU scheduling, not a lock/Binder. S does not prove an idle queue; unqualified D does not prove IO. Task-before-doFrame
+  execution order alone does not prove delayed callbacks or missed frames; keep interference a hypothesis until causal evidence
+  supports it. Do not assume a refresh rate or use an unrelated global VSYNC as the target budget. Names and nested slices
+  are instrumentation clues, not verified callers, implementation or thread safety. Confirm dependencies before recommending
+  independent worker execution, and keep UI inflation/binding on the main thread.
 required_capabilities:
 - cpu_scheduling
 optional_capabilities: []

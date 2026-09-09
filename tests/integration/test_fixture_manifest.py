@@ -71,7 +71,13 @@ class FixtureManifestTest(unittest.TestCase):
                         rows = json.loads(output.read_text(encoding="utf-8"))
                         assert_semantic_assertion(self, rows, assertion)
                         executed += 1
-        expected = 1 if os.environ.get("PERFETTO_FIXTURE_TIER") == "offline" else 21
+        offline = os.environ.get("PERFETTO_FIXTURE_TIER") == "offline"
+        expected = sum(
+            len(fixture.get("assertions", []))
+            for fixture in manifest["fixtures"]
+            if not offline or fixture["id"] == "startup-api32-warm-smoke"
+        )
+        self.assertGreater(expected, 0)
         self.assertEqual(executed, expected)
 
 

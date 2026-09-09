@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/frame_production_gap.skill.yaml
-Source SHA-256: 3c2acc9ac336d6298038424ccd0591a13b9b569accff00c49d1b5fe05ab4c7a6
-Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+Source SHA-256: 221c153dbac8c5a1a4efd28a5c917e2ab50b05b1f9d7f87eab25292fd01ddff0
+Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 # 帧生产 Gap 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: frame_production_gap
-version: '1.0'
+version: '1.1'
 type: composite
 category: diagnostics
 tier: A
@@ -20,7 +20,7 @@ tier: A
 
 ```yaml
 display_name: 帧生产 Gap 分析
-description: 检测帧间隙（缺帧）并分析 UI Thread/RenderThread 在 gap 期间的活动状态
+description: 检测 FrameTimeline 区间间隙与 doFrame/DrawFrame 观测覆盖；不据此推断主线程空闲或 SF 背压
 icon: broken_image
 tags:
 - frame
@@ -77,6 +77,17 @@ required_tables:
   description: 最小 gap 阈值（VSync 倍数，默认 1.5）
 ```
 
+## Identity requirements
+
+```yaml
+policy: verify_if_present
+scope: process
+aliases:
+- process_name
+- package
+rewriteTo: recommended_process_name_param
+```
+
 ## Ordered execution
 
 ### 帧 Gap 概览
@@ -100,18 +111,21 @@ display:
     label: Gap 数
     type: number
   - name: ui_no_frame_count
-    label: UI无帧
+    label: 未观测到 doFrame
     type: number
   - name: rt_no_drawframe_count
-    label: RT无DrawFrame
+    label: 未观测到 DrawFrame
     type: number
-  - name: sf_backpressure_count
-    label: SF背压
+  - name: drawframe_observed_count
+    label: DrawFrame 已观测（不代表背压）
     type: number
   - name: max_gap_ms
     label: 最长Gap
     type: duration
     format: duration_ms
+process_scope:
+  role: target
+  binding: native_upid
 save_as: gap_overview
 ```
 ### 帧 Gap 列表
@@ -155,11 +169,23 @@ display:
   - name: drawframe_count
     label: DrawFrame 数
     type: number
+  - name: upid
+    label: 进程 UPID
+    type: number
+  - name: layer_name
+    label: Layer
+    type: string
+  - name: evidence_scope
+    label: 证据边界
+    type: string
   - name: before_frame_id
     label: 前帧 ID
     type: string
   - name: after_frame_id
     label: 后帧 ID
     type: string
+process_scope:
+  role: target
+  binding: native_upid
 save_as: gap_list
 ```

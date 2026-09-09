@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/comparison-conclusion.template.md
 Source SHA-256: 10ee3b7133bcb7f8903af771be4dd3ee41748b117e995cfa052889e5da1b2e7e
-Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 # Comparison Conclusion Template
 

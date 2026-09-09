@@ -18,7 +18,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${process_name}*",
+      "${process_name}",
+      "${process_name}:*",
       "Choreographer#doFrame%",
       "DrawFrame%",
       "RenderThread",
@@ -28,7 +29,13 @@
   },
   "id": "frame_production_gap",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "process_name",
+      "package"
+    ],
+    "policy": "verify_if_present",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -75,14 +82,18 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
     "path": "backend/skills/atomic/frame_production_gap.skill.yaml",
-    "sha256": "3c2acc9ac336d6298038424ccd0591a13b9b569accff00c49d1b5fe05ab4c7a6"
+    "sha256": "221c153dbac8c5a1a4efd28a5c917e2ab50b05b1f9d7f87eab25292fd01ddff0"
   },
   "steps": [
     {
       "id": "gap_summary",
       "name": "帧 Gap 概览",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
       "query_id": "frame_production_gap/gap_summary",
       "result_dependencies": [],
       "save_as": "gap_overview",
@@ -91,6 +102,10 @@
     {
       "id": "gap_list",
       "name": "帧 Gap 列表",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
       "query_id": "frame_production_gap/gap_list",
       "result_dependencies": [],
       "save_as": "gap_list",
@@ -98,6 +113,6 @@
     }
   ],
   "type": "composite",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "scrolling"
 }

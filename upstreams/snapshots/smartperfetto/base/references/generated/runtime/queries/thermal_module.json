@@ -57,7 +57,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_module/temperature_overview.sql",
-      "sha256": "aa8a65643854d0b0c4dd2f9b67821dafc016b39531460609598fc0d3b6fa2b19",
+      "sha256": "1bfbb0dedd207f5c29000d63e5f9845afcf6b895f1b76c27d4fc5696f1b25c0e",
       "signal_patterns": [
         "*Temp*",
         "*temp*",
@@ -67,7 +67,7 @@
       ],
       "skill_id": "thermal_module",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708"
@@ -157,7 +157,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_module/temperature_timeline.sql",
-      "sha256": "90e803cdb5c58e625150070f43ef66e991f8b0423b3f6ad6d7e9a761e830af5f",
+      "sha256": "1dbf06af9ad204a3fe111c85febc748b304e25e691e93c1a5f209100e15c8bec",
       "signal_patterns": [
         "*temp*",
         "*temperature*",
@@ -165,7 +165,7 @@
       ],
       "skill_id": "thermal_module",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708"
@@ -255,14 +255,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_module/high_temp_periods.sql",
-      "sha256": "68919791e59b2c14a003ec6099e98180d9ded85c62f9487fb18c4ea4c485c996",
+      "sha256": "1c8bd07b26a0056e98814b2080069048f28b186c5106bf7b0d100b0805b07518",
       "signal_patterns": [
         "*temp*",
         "*thermal*"
       ],
       "skill_id": "thermal_module",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708"
@@ -352,13 +352,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_module/throttling_events.sql",
-      "sha256": "4a7eb5b10f8a3b7b6b36b2bf097eb0f012a3bf11c719810855087ba13fcb54f8",
+      "sha256": "a91cc607af14eb9cdae9cb77c9eed630396c82025a91f47190346418e9786885",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "thermal_module",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708"
@@ -448,7 +448,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_module/cooling_activity.sql",
-      "sha256": "5aa7575a4035c3faaba1294dea090aa4f5359c59f6c0db4fe10f88892045c0cf",
+      "sha256": "131a477455b6b423e1da6bef9d30a8f3ab8ece981ac97760794ae9249a09e723",
       "signal_patterns": [
         "*cdev*",
         "*cooling*",
@@ -456,7 +456,7 @@
       ],
       "skill_id": "thermal_module",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708"
@@ -546,7 +546,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_module/thermal_cpu_correlation.sql",
-      "sha256": "1f51524769c6df37e611093fbe55ff243e92d3a508ef66c244cf85627608466a",
+      "sha256": "c8579a3f18f85ace13b4cf43c61f3ff32e125856d6a5f22339270c4d8225ba8d",
       "signal_patterns": [
         "*temp*",
         "*thermal*",
@@ -554,7 +554,7 @@
       ],
       "skill_id": "thermal_module",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708"

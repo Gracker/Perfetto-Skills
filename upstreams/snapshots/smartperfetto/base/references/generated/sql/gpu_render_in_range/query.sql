@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_render_in_range.skill.yaml
 -- Source SHA-256: 1c142b8dbc84b47518922a8a37b43c85c1e3e887ad5bfc61179c1710dce9c286
--- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+-- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

@@ -94,6 +94,13 @@
   },
   "inputs": [
     {
+      "default": 20,
+      "description": "主线程根任务/观测间隔输出上限，1～100；不截断完整窗口统计",
+      "name": "main_thread_top_k",
+      "required": false,
+      "type": "number"
+    },
+    {
       "description": "应用包名（可选，不填则分析所有应用）",
       "name": "package",
       "required": false,
@@ -174,11 +181,59 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
     "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-    "sha256": "6ebd984e1b34cb456d5fa410b4e2308e350c5854086ec1e06ff58b4c80c5ef4f"
+    "sha256": "2dcba698d9cc63e045e9346afc44cab60148cf55a58161bf0378383d624af4ff"
   },
   "steps": [
+    {
+      "id": "main_thread_work_summary",
+      "name": "主线程全窗口与帧内外状态",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "scrolling_analysis/main_thread_work_summary",
+      "result_dependencies": [],
+      "save_as": "main_thread_work_summary",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_work_tasks",
+      "name": "主线程任务与来源定位",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "scrolling_analysis/main_thread_work_tasks",
+      "result_dependencies": [],
+      "save_as": "main_thread_work_tasks",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_work_sources",
+      "name": "主线程任务的热点与等待来源",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "scrolling_analysis/main_thread_work_sources",
+      "result_dependencies": [],
+      "save_as": "main_thread_work_sources",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_work_cadence",
+      "name": "doFrame观测起点间隔",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "scrolling_analysis/main_thread_work_cadence",
+      "result_dependencies": [],
+      "save_as": "main_thread_work_cadence",
+      "type": "atomic"
+    },
     {
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
@@ -542,6 +597,6 @@
     }
   ],
   "type": "composite",
-  "version": "2.1",
+  "version": "2.2",
   "workflow": "scrolling"
 }

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scroll_session_analysis.skill.yaml
 -- Source SHA-256: 558740edcb969a313b6fb4d5b43906769938fc5a5b395abba44967eaffe084ce
--- Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+-- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 WITH frames AS (
   SELECT

@@ -67,7 +67,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${process_name}*",
+    "${process_name}",
+    "${process_name}:*",
     "Choreographer#doFrame%",
     "DrawFrame%",
     "RenderThread",

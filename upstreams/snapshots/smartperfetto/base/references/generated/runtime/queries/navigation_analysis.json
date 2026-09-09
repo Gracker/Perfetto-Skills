@@ -55,7 +55,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/check_lifecycle_data.sql",
-      "sha256": "c96433acafa17c7aa80868a187e77edbc201d91ea255aa54108eda7ff3ed4e1f",
+      "sha256": "ef34e3385e9aba0843bd528240dde9bc56003929afedca09e714a8eb88e97d6f",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -70,7 +70,7 @@
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -161,7 +161,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/get_process.sql",
-      "sha256": "c79527fea3b80f6bf2b0926808bf0e3ffffb6c9b606834dbb2f5faf808669e54",
+      "sha256": "d183af6195f3b4d9e423c9fd24357ca70186a1819be58b7f10e89c7affddeb93",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -173,7 +173,7 @@
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -264,7 +264,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/navigation_overview.sql",
-      "sha256": "6c373fe186e2f11947a224ed597f6bbba0b7a5c9a69e97b3dce5f95a8ffdbef0",
+      "sha256": "3851e4e77d492a734a7642b9e5d153e6dbb57a093b23793c67912c536439d6b9",
       "signal_patterns": [
         "${target_process.data[0].process_name}",
         "*activityResume*",
@@ -278,7 +278,7 @@
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -373,7 +373,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/lifecycle_phase_breakdown.sql",
-      "sha256": "85d6a904b5e3b16d283e8eef066dd9e5f2d35ac82aa9262b5fa26b6ebd2d8639",
+      "sha256": "b6cf5f1a258c75b545287f2d2a14b2d14520c29db90d518f0fdfb8cf2dbbdb3c",
       "signal_patterns": [
         "${target_process.data[0].process_name}",
         "*activityResume*",
@@ -387,7 +387,7 @@
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -480,7 +480,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/lifecycle_event_detail.sql",
-      "sha256": "c79a4d431c5534a576e17c10cc8b201642dbea7a02a94141bde5fbe774d22040",
+      "sha256": "ca5148f2e7d0e85e4542d789f424e7495967fc5adf76d1296c03904b088f37b9",
       "signal_patterns": [
         "${target_process.data[0].process_name}",
         "*activityResume*",
@@ -494,7 +494,7 @@
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -588,7 +588,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/navigation_blocking_ops.sql",
-      "sha256": "29cfbe466ee4ece1f632904495db44564418ebca7857462fb1174c751ea46aa9",
+      "sha256": "8a237503fe5019dc3c07d8d3811eccfb8dcdbd55a104138cd56e411ba63a8c68",
       "signal_patterns": [
         "${target_process.data[0].process_name}",
         "*Binder*",
@@ -613,7 +613,7 @@
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -707,7 +707,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/layout_inflation.sql",
-      "sha256": "55bb330ee607a6e360e92255016d51a24737cbababdfd652b7b2648d07451f14",
+      "sha256": "43ead55c3d9c1453e7bb2fcb245cb2ac5607cedf323366858f14e7e31932e6bf",
       "signal_patterns": [
         "${target_process.data[0].process_name}",
         "*LayoutInflater*",
@@ -716,7 +716,7 @@
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -808,7 +808,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/fragment_transactions.sql",
-      "sha256": "90c6101cafb1e6b4565fe90f0bfde31c14c236dc3eddfa7bc22245d743981156",
+      "sha256": "92d95ef192abf67cb535b363a4a33eee82fc9a0bc6e3b7f4f1b075f3f541909f",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -821,7 +821,7 @@
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -914,7 +914,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/transition_animations.sql",
-      "sha256": "7e34ebbd13d0436ad8f74e915e9a9487421bee4d40eb0d4ca5636c90b58e4a80",
+      "sha256": "44c13f64ef2fd29e7db1cecbdb9e1c2fd48492bb1a7c412d7b7a399c01ba1130",
       "signal_patterns": [
         "${target_process.data[0].process_name}",
         "*ActivityTransition*",
@@ -924,7 +924,7 @@
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -1016,11 +1016,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/navigation_binder_calls.sql",
-      "sha256": "2637bc02375e73f003e77761bcfc988c2b8933301dba1fcaf908827830b8e841",
+      "sha256": "6ee22fd01e4328acb254e6881ac5ae5588d1283aee220f70f265ad20fcfb4874",
       "signal_patterns": [],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -1112,14 +1112,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/first_frame_render.sql",
-      "sha256": "acbaba19e43c7310db6dd6731c9aabb46e5a4a3feb759c4e403aa487183945ee",
+      "sha256": "1c39cf730a5ffa2743b197e09a38a30004de1102928a86d594354062927c6557",
       "signal_patterns": [
         "${target_process.data[0].process_name}",
         "*Choreographer#doFrame*"
       ],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"
@@ -1211,11 +1211,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/navigation_analysis/no_data_fallback.sql",
-      "sha256": "f89d2fdcf58e9039a0e5144b89179a021c83b7a05491438f0e25575e63a53a48",
+      "sha256": "c1ac5f6eea38cd27f91a70672897803a835dbb9a68b05fee431c563c8099b99e",
       "signal_patterns": [],
       "skill_id": "navigation_analysis",
       "source": {
-        "commit": "67a2eec9888ed577e66284c709f4987a617bd286",
+        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
         "path": "backend/skills/composite/navigation_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9"

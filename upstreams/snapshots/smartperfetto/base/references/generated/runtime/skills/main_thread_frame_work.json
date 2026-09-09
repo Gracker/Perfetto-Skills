@@ -1,0 +1,122 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "main_thread_frame_work",
+  "identity": {
+    "aliases": [
+      "package",
+      "process_name"
+    ],
+    "policy": "verify_if_present",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
+  },
+  "inputs": [
+    {
+      "description": "应用包名；经身份解析可绑定精确 UPID",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "整个动画/交互窗口起点(ns)，缺省使用 trace 起点",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "整个动画/交互窗口终点(ns)，缺省使用 trace 终点",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 20,
+      "description": "任务与观测间隔输出上限，1～100；不截断窗口合计",
+      "name": "main_thread_top_k",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "thread_track",
+      "thread_state",
+      "thread",
+      "process",
+      "trace_bounds"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "path": "backend/skills/composite/main_thread_frame_work.skill.yaml",
+    "sha256": "5b782c252c80af2d4d445da11db4f32db6b09a78f4e8c5ef19dd24fbbf7f201b"
+  },
+  "steps": [
+    {
+      "id": "main_thread_work_summary",
+      "name": "主线程全窗口与帧内外状态",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "main_thread_frame_work/main_thread_work_summary",
+      "result_dependencies": [],
+      "save_as": "main_thread_work_summary",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_work_tasks",
+      "name": "主线程任务与来源定位",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "main_thread_frame_work/main_thread_work_tasks",
+      "result_dependencies": [],
+      "save_as": "main_thread_work_tasks",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_work_sources",
+      "name": "主线程任务的热点与等待来源",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "main_thread_frame_work/main_thread_work_sources",
+      "result_dependencies": [],
+      "save_as": "main_thread_work_sources",
+      "type": "atomic"
+    },
+    {
+      "id": "main_thread_work_cadence",
+      "name": "doFrame观测起点间隔",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "main_thread_frame_work/main_thread_work_cadence",
+      "result_dependencies": [],
+      "save_as": "main_thread_work_cadence",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "scrolling"
+}

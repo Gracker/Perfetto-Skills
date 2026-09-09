@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 6ebd984e1b34cb456d5fa410b4e2308e350c5854086ec1e06ff58b4c80c5ef4f
-Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+Source SHA-256: 2dcba698d9cc63e045e9346afc44cab60148cf55a58161bf0378383d624af4ff
+Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: scrolling_analysis
-version: '2.1'
+version: '2.2'
 type: composite
 tier: S
 ```
@@ -19,7 +19,7 @@ tier: S
 
 ```yaml
 display_name: 滑动性能分析
-description: 基于 Perfetto FrameTimeline 与 android.input 的滑动分析，分层展示：概览 → 区间 → 帧详情
+description: 沿实际主线程连续执行追查动画/滑动任务与等待，再用 FrameTimeline 和 android.input 核对出帧结果
 icon: swipe
 tags:
 - scrolling
@@ -81,6 +81,11 @@ modules:
 ## Inputs
 
 ```yaml
+- name: main_thread_top_k
+  type: number
+  required: false
+  default: 20
+  description: 主线程根任务/观测间隔输出上限，1～100；不截断完整窗口统计
 - name: package
   type: string
   required: false
@@ -141,6 +146,590 @@ rewriteTo: recommended_process_name_param
 
 ## Ordered execution
 
+### 主线程全窗口与帧内外状态
+
+- ID: `main_thread_work_summary`
+- Type: `atomic`
+- SQL: [`../sql/scrolling_analysis/main_thread_work_summary.sql`](../sql/scrolling_analysis/main_thread_work_summary.sql)
+
+```yaml
+id: main_thread_work_summary
+type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/main_thread_work.sql
+save_as: main_thread_work_summary
+synthesize:
+  role: overview
+  fields:
+  - key: annotated_wall_ms
+    label: 主线程有标注区间(ms)
+  - key: unannotated_running_ms
+    label: 主线程无slice标注的Running(ms)
+  - key: unknown_state_ms
+    label: 主线程调度状态未知(ms)
+  insights:
+  - template: 主线程连续窗口：UPID={{upid}} UTID={{utid}}，{{eligible_task_count}}个观测根任务、{{observed_doframe_count}}个doFrame；状态未知{{unknown_state_ms}}ms。未观测到doFrame不代表没有渲染请求。
+display:
+  level: summary
+  layer: overview
+  title: 主线程连续窗口（wall time与调度状态）
+  columns:
+  - name: phase
+    label: 区间
+    type: string
+  - name: wall_ms
+    label: 区间时长
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: annotated_wall_ms
+    label: 有slice标注
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: running_ms
+    label: Running
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: runnable_ms
+    label: Runnable
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: runnable_preempted_ms
+    label: 抢占后Runnable
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: sleep_ms
+    label: S等待
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: idle_state_ms
+    label: I状态
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: uninterruptible_ms
+    label: D等待
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: uninterruptible_wakekill_ms
+    label: DK等待
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: io_wait_ms
+    label: 已标记IO等待
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: unknown_state_ms
+    label: 未知状态
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: unannotated_running_ms
+    label: 无标注Running
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: ambiguous_annotation_wall_ms
+    label: 根标注重叠
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: incomplete_slice_count
+    label: 未结束slice
+    type: number
+  - name: upid
+    label: UPID
+    type: number
+  - name: utid
+    label: UTID
+    type: number
+  - name: window_start_ts
+    label: 窗口起点
+    type: timestamp
+    unit: ns
+  - name: window_end_ts
+    label: 窗口终点
+    type: timestamp
+    unit: ns
+  - name: unannotated_wall_ms
+    label: 无标注时长
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: known_state_ms
+    label: 已知调度状态
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: conflicting_state_ms
+    label: 冲突调度状态
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: other_state_ms
+    label: 其他调度状态
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: unknown_io_wait_ms
+    label: D或DK的IO属性未知
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: eligible_task_count
+    label: 全部根任务
+    type: number
+  - name: observed_doframe_count
+    label: 观测doFrame数
+    type: number
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+```
+### 主线程任务与来源定位
+
+- ID: `main_thread_work_tasks`
+- Type: `atomic`
+- SQL: [`../sql/scrolling_analysis/main_thread_work_tasks.sql`](../sql/scrolling_analysis/main_thread_work_tasks.sql)
+
+```yaml
+id: main_thread_work_tasks
+type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/main_thread_work.sql
+- fragments/main_thread_work_tasks.sql
+save_as: main_thread_work_tasks
+synthesize:
+  role: list
+  fields:
+  - key: task_name
+    label: 主线程任务
+  - key: outside_doframe_ms
+    label: doFrame外耗时(ms)
+  - key: slice_id
+    label: 定位slice
+  groupBy:
+  - field: task_name
+    title: 主线程观测任务
+  insights:
+  - template: 主线程任务{{task_name}}：{{phase}}，doFrame外{{outside_doframe_ms}}ms，Running={{running_ms}}ms Runnable={{runnable_ms}}ms，状态未知{{unknown_state_ms}}ms（null表示未知），slice={{slice_id}}
+      UPID={{upid}} UTID={{utid}} ts={{start_ts}}；热点{{hotspot_name}}，slice={{hotspot_slice_id}} arg_set={{hotspot_arg_set_id}}，exclusive
+      wall={{hotspot_exclusive_wall_ms}}ms。已返回{{returned_task_count}}/{{eligible_task_count}}个根任务；main_thread_work_sources保留前三热点/等待定位，需结合请求证据判断因果。
+display:
+  level: summary
+  layer: list
+  title: 主线程任务（含帧间任务与来源）
+  columns:
+  - name: task_name
+    label: 任务标注
+    type: string
+  - name: phase
+    label: 与doFrame的关系
+    type: string
+  - name: outside_doframe_ms
+    label: doFrame外
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: wall_ms
+    label: 观测时长
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: running_ms
+    label: Running
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: hotspot_name
+    label: 子热点标注
+    type: string
+  - name: hotspot_exclusive_wall_ms
+    label: 子热点exclusive wall
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: start_ts
+    label: 起点
+    type: timestamp
+    unit: ns
+    clickAction: navigate_range
+    durationColumn: dur
+  - name: dur
+    label: 时长(ns)
+    type: duration
+    unit: ns
+    hidden: true
+  - name: slice_id
+    label: 任务slice
+    type: number
+  - name: hotspot_slice_id
+    label: 子热点slice
+    type: number
+  - name: arg_set_id
+    label: 参数集
+    type: number
+  - name: ancestor_path
+    label: 标注调用路径
+    type: string
+  - name: attribution
+    label: 归属范围
+    type: string
+  - name: is_incomplete
+    label: 未结束标注
+    type: number
+  - name: eligible_task_count
+    label: 全部根任务
+    type: number
+  - name: returned_task_count
+    label: 已返回根任务
+    type: number
+  - name: upid
+    label: UPID
+    type: number
+  - name: utid
+    label: UTID
+    type: number
+  - name: track_id
+    label: 轨道
+    type: number
+  - name: parent_id
+    label: 父slice
+    type: number
+  - name: end_ts
+    label: 终点
+    type: timestamp
+    unit: ns
+  - name: raw_ts
+    label: 原始起点
+    type: timestamp
+    unit: ns
+  - name: raw_dur
+    label: 原始时长
+    type: duration
+    unit: ns
+  - name: runnable_ms
+    label: Runnable
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: runnable_preempted_ms
+    label: 抢占后Runnable
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: sleep_ms
+    label: S等待
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: idle_state_ms
+    label: I状态
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: uninterruptible_ms
+    label: D或DK等待
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: io_wait_ms
+    label: 已标记IO等待
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: unknown_io_wait_ms
+    label: IO属性未知
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: unknown_state_ms
+    label: 未知调度状态
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: inside_doframe_ms
+    label: doFrame内
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: between_doframes_ms
+    label: doFrame之间
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: before_first_doframe_ms
+    label: 首次doFrame前
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: after_last_doframe_ms
+    label: 最后doFrame后
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: no_doframe_ms
+    label: 无doFrame观测
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: ambiguous_annotation_wall_ms
+    label: 重叠根标注
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: hotspot_arg_set_id
+    label: 热点参数集
+    type: number
+  - name: hotspot_parent_id
+    label: 热点父slice
+    type: number
+  - name: hotspot_exclusive_outside_doframe_ms
+    label: 热点帧外exclusive wall
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: top_wait_state_id
+    label: 等待state ID
+    type: number
+  - name: top_wait_state
+    label: 最长等待原状态
+    type: string
+  - name: top_wait_blocked_function
+    label: 最长等待阻塞函数
+    type: string
+  - name: top_wait_io_wait
+    label: 等待IO标记
+    type: number
+  - name: top_wait_start_ts
+    label: 等待起点
+    type: timestamp
+    unit: ns
+  - name: top_wait_end_ts
+    label: 等待终点
+    type: timestamp
+    unit: ns
+  - name: top_wait_overlap_ms
+    label: 等待观测时长
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: selection_scope
+    label: 采样范围
+    type: string
+```
+### 主线程任务的热点与等待来源
+
+- ID: `main_thread_work_sources`
+- Type: `atomic`
+- SQL: [`../sql/scrolling_analysis/main_thread_work_sources.sql`](../sql/scrolling_analysis/main_thread_work_sources.sql)
+
+```yaml
+id: main_thread_work_sources
+type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/main_thread_work.sql
+- fragments/main_thread_work_tasks.sql
+save_as: main_thread_work_sources
+display:
+  level: detail
+  layer: list
+  title: 任务来源（每个采样任务前三热点/等待，不可相加）
+  columns:
+  - name: source_kind
+    label: 证据类型
+    type: string
+  - name: root_slice_id
+    label: 所属任务slice
+    type: number
+  - name: source_name
+    label: 来源标注
+    type: string
+  - name: source_slice_id
+    label: 来源slice
+    type: number
+  - name: thread_state_id
+    label: 调度state ID
+    type: number
+  - name: state
+    label: 原调度状态
+    type: string
+  - name: blocked_function
+    label: 阻塞函数
+    type: string
+  - name: io_wait
+    label: 原IO标记
+    type: number
+  - name: start_ts
+    label: 观测起点
+    type: timestamp
+    unit: ns
+    clickAction: navigate_range
+    durationColumn: dur
+  - name: end_ts
+    label: 观测终点
+    type: timestamp
+    unit: ns
+  - name: dur
+    label: 观测时长(ns)
+    type: duration
+    unit: ns
+    hidden: true
+  - name: exclusive_wall_ms
+    label: 热点exclusive wall
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: exclusive_outside_doframe_ms
+    label: 热点帧外exclusive wall
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: wait_overlap_ms
+    label: 等待重叠时长
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: parent_id
+    label: 来源父slice
+    type: number
+  - name: arg_set_id
+    label: 来源参数集
+    type: number
+  - name: upid
+    label: UPID
+    type: number
+  - name: utid
+    label: UTID
+    type: number
+  - name: track_id
+    label: 来源轨道
+    type: number
+  - name: root_track_id
+    label: 任务轨道
+    type: number
+  - name: in_doframe_tree
+    label: 属于doFrame调用树
+    type: number
+  - name: is_incomplete
+    label: 未结束标注
+    type: number
+  - name: source_rank
+    label: 来源排名
+    type: number
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+```
+### doFrame观测起点间隔
+
+- ID: `main_thread_work_cadence`
+- Type: `atomic`
+- SQL: [`../sql/scrolling_analysis/main_thread_work_cadence.sql`](../sql/scrolling_analysis/main_thread_work_cadence.sql)
+
+```yaml
+id: main_thread_work_cadence
+type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/main_thread_work.sql
+- fragments/main_thread_work_cadence.sql
+save_as: main_thread_work_cadence
+display:
+  level: detail
+  layer: list
+  title: doFrame起点间隔（非deadline或呈现间隔）
+  columns:
+  - name: observed_start_interval_ms
+    label: 观测起点间隔
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: between_execution_ms
+    label: 前次结束至本次开始
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: observation
+    label: 观测范围
+    type: string
+  - name: start_ts
+    label: 前次起点
+    type: timestamp
+    unit: ns
+    clickAction: navigate_range
+    durationColumn: dur
+  - name: dur
+    label: 间隔(ns)
+    type: duration
+    unit: ns
+    hidden: true
+  - name: previous_slice_id
+    label: 前次slice
+    type: number
+  - name: slice_id
+    label: 本次slice
+    type: number
+  - name: eligible_interval_count
+    label: 全部观测间隔
+    type: number
+  - name: returned_interval_count
+    label: 已返回间隔
+    type: number
+  - name: upid
+    label: UPID
+    type: number
+  - name: utid
+    label: UTID
+    type: number
+  - name: next_start_ts
+    label: 本次起点
+    type: timestamp
+    unit: ns
+  - name: marker_count
+    label: 本次同起点标记数
+    type: number
+  - name: previous_marker_count
+    label: 前次同起点标记数
+    type: number
+  - name: is_incomplete
+    label: 本次标记未结束
+    type: number
+  - name: previous_is_incomplete
+    label: 前次标记未结束
+    type: number
+  - name: execution_overlap_ms
+    label: 观测执行重叠
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+```
 ### 初始化 CPU 拓扑
 
 - ID: `init_cpu_topology`

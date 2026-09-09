@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-startup-root-causes.template.md
 Source SHA-256: 3399dc218908dc7201cf028dacb6bb3d1146e85b2d7eef5616e23a5aa4303be1
-Source commit: 67a2eec9888ed577e66284c709f4987a617bd286
+Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
 
 # Knowledge Startup Root Causes Template
 
