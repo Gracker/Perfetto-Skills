@@ -2005,15 +2005,165 @@ def portable_strategy_content(
     return body.strip() + "\n", transformations, sanitize_strategy_metadata(metadata)
 
 
+def investigation_mapping(value: Any, fields: set[str], label: str) -> dict[str, Any]:
+    if not isinstance(value, dict) or set(value) - fields:
+        raise ExportError(f"Invalid investigation {label}: unknown fields or non-mapping")
+    return value
+
+
+def investigation_text(value: Any, label: str, *, identifier: bool = False) -> str:
+    if not isinstance(value, str) or not value.strip() or contains_product_runtime(value):
+        raise ExportError(f"Invalid investigation {label}: expected portable text")
+    if identifier and not re.fullmatch(r"[a-z][a-z0-9_]*", value):
+        raise ExportError(f"Invalid investigation {label}: expected identifier")
+    return value.strip()
+
+
+def investigation_version(value: Any) -> int:
+    if type(value) not in (int, float) or not 1 <= value <= 2 ** 53 - 1 or value != int(value):
+        raise ExportError("Invalid investigation version")
+    return int(value)
+
+
+def parse_investigation_requirements(value: Any) -> list[dict[str, Any]]:
+    if not isinstance(value, list):
+        raise ExportError("Invalid investigation requirements: expected list")
+    requirements: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for raw in value:
+        requirement = investigation_mapping(raw, {
+            "id", "domain", "description", "required", "condition", "evidence_metrics",
+        }, "requirement")
+        identity = investigation_text(requirement.get("id"), "requirement ID", identifier=True)
+        if identity in seen:
+            raise ExportError(f"Duplicate investigation requirement: {identity}")
+        seen.add(identity)
+        domain = investigation_text(requirement.get("domain"), "domain")
+        description = investigation_text(requirement.get("description"), "description")
+        if "required" in requirement and type(requirement["required"]) is not bool:
+            raise ExportError("Invalid investigation required flag")
+        normalized = {"id": identity, "domain": domain, "description": description,
+                      "required": requirement.get("required", True)}
+        # Retain bindings for semantic conflict detection, never for public display.
+        if "evidence_metrics" in requirement:
+            metrics = requirement["evidence_metrics"]
+            if not isinstance(metrics, list) or not metrics:
+                raise ExportError("Invalid investigation evidence metrics")
+            normalized["evidence_metrics"] = [investigation_text(metric, "metric") for metric in metrics]
+            if len(set(normalized["evidence_metrics"])) != len(metrics):
+                raise ExportError("Duplicate investigation evidence metric")
+        if "condition" in requirement:
+            condition = investigation_mapping(requirement["condition"], {"kind", "description"}, "condition")
+            if condition.get("kind") != "semantic":
+                raise ExportError("Invalid investigation condition kind")
+            normalized["condition"] = {"kind": "semantic", "description": investigation_text(condition.get("description"), "condition")}
+        requirements.append(normalized)
+    return requirements
+
+
+def render_investigation_requirements(requirements: list[dict[str, Any]]) -> str:
+    rendered: list[str] = []
+    for requirement in requirements:
+        rendered.append(f"### {requirement['id']} ({requirement['domain']})\n\n{requirement['description']}\n")
+        if not requirement["required"]:
+            rendered.append("Optional when applicable.\n")
+        if "condition" in requirement:
+            rendered.append("Apply when: " + requirement["condition"]["description"] + "\n")
+    return "\n".join(rendered)
+
+
+def render_investigation_profiles(value: Any) -> str:
+    document = investigation_mapping(value, {"schema_version", "profiles"}, "profiles document")
+    if type(document.get("schema_version")) not in (int, float) or document["schema_version"] != 1:
+        raise ExportError("Unsupported investigation profiles schema")
+    profiles = document.get("profiles")
+    if not isinstance(profiles, dict):
+        raise ExportError("Invalid investigation profiles")
+    rendered: list[str] = []
+    for identity, raw in profiles.items():
+        investigation_text(identity, "profile ID", identifier=True)
+        profile = investigation_mapping(raw, {"version", "requirements"}, "profile")
+        version = investigation_version(profile.get("version"))
+        requirements = parse_investigation_requirements(profile.get("requirements"))
+        if not requirements:
+            raise ExportError("Empty investigation profile requirements")
+        rendered.append(f"## {identity} (version {version})\n\n" + render_investigation_requirements(requirements))
+    return "\n".join(rendered)
+
+
+def render_investigation_contract(value: Any, source: Path) -> str:
+    contract = investigation_mapping(value, {
+        "schema_version", "profiles", "requirements", "not_applicable_reason",
+    }, "scene contract")
+    if type(contract.get("schema_version")) not in (int, float) or contract["schema_version"] != 1:
+        raise ExportError("Unsupported investigation scene schema")
+    rendered = ["## Investigation methodology\n"]
+    if "not_applicable_reason" in contract:
+        if "profiles" in contract or "requirements" in contract:
+            raise ExportError("Invalid investigation exemption with requirements or profiles")
+        rendered.append(investigation_text(contract["not_applicable_reason"], "applicability") + "\n")
+        return "\n".join(rendered)
+    refs = contract.get("profiles", [])
+    if not isinstance(refs, list):
+        raise ExportError("Invalid investigation profile references")
+    profiles: dict[str, Any] = {}
+    if refs:
+        profile_path = source.parent / "investigation-profiles.yaml"
+        if not profile_path.is_file():
+            raise ExportError("Missing shared investigation profiles")
+        document = load_yaml(profile_path)
+        render_investigation_profiles(document)
+        profiles = document["profiles"]
+    seen: set[str] = set()
+    merged: dict[str, dict[str, Any]] = {}
+
+    def append(requirement: dict[str, Any]) -> bool:
+        identity = requirement["id"]
+        if identity in merged:
+            if merged[identity] != requirement:
+                raise ExportError(f"Conflicting investigation requirement: {identity}")
+            return False
+        merged[identity] = requirement
+        return True
+
+    for raw in refs:
+        reference = investigation_mapping(raw, {"id", "version"}, "profile reference")
+        identity = investigation_text(reference.get("id"), "profile ID", identifier=True)
+        version = investigation_version(reference.get("version"))
+        if identity not in profiles or profiles[identity]["version"] != version:
+            raise ExportError(f"Unresolved investigation profile: {identity} version {version}")
+        if identity in seen:
+            raise ExportError(f"Duplicate investigation profile reference: {identity}")
+        seen.add(identity)
+        for requirement in parse_investigation_requirements(profiles[identity]["requirements"]):
+            append(requirement)
+        rendered.append(f"Apply `{identity}` version {version} from [shared investigation methods](investigation-profiles.yaml.md).\n")
+    local = parse_investigation_requirements(contract.get("requirements", []))
+    rendered.append(render_investigation_requirements([requirement for requirement in local if append(requirement)]))
+    if not merged:
+        raise ExportError("Empty investigation contract")
+    return "\n".join(rendered)
+
+
 def render_strategy_reference(
     source: Path,
     entry: dict[str, Any],
     commit: str,
 ) -> tuple[str, list[dict[str, Any]]]:
     content = source.read_text(encoding="utf-8")
+    raw_metadata, _ = strategy_frontmatter(content)
     portable, transformations, metadata = portable_strategy_content(content)
+    if raw_metadata and "investigation_contract" in raw_metadata:
+        # Validate the original contract before generic sanitization can drop fields.
+        portable = render_investigation_contract(raw_metadata["investigation_contract"], source) + "\n" + portable
+        if metadata:
+            metadata.pop("investigation_contract", None)
+        transformations.append({"reason": "investigation contract projected to portable methodology", "removed_lines": 0})
     title = source.name.removesuffix(".md").replace(".", " ").replace("-", " ").title()
-    if source.suffix in {".yaml", ".yml"}:
+    if source.name == "investigation-profiles.yaml":
+        portable = render_investigation_profiles(load_yaml(source))
+        transformations = [{"reason": "investigation profiles projected without native evidence bindings", "removed_lines": 0}]
+    elif source.suffix in {".yaml", ".yml"}:
         portable = f"```yaml\n{portable.rstrip()}\n```\n"
     metadata_block = yaml_block(metadata) if metadata else ""
     rendered = (

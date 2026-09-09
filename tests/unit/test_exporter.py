@@ -294,6 +294,158 @@ class ExporterTest(unittest.TestCase):
             self.assertIn(str(count), expected)
 
 
+class InvestigationMethodologyExportTest(unittest.TestCase):
+    def render(self, name, content, profiles=None):
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / name
+            if name != "investigation-profiles.yaml":
+                (source.parent / "investigation-profiles.yaml").write_text(json.dumps(profiles if profiles is not None else self.profile()), encoding="utf-8")
+            source.write_text(content, encoding="utf-8")
+            return exporter.render_strategy_reference(source, {
+                "source_path": f"backend/strategies/{name}",
+                "source_sha256": exporter.sha256_file(source),
+            }, "a" * 40)[0]
+
+    def profile(self):
+        return {"schema_version": 1, "profiles": {"system_execution": {
+            "version": 1, "requirements": [{
+                "id": "thread_state", "domain": "thread_state",
+                "description": "Explain R/R+ delay; missing coverage is unknown.",
+                "evidence_metrics": ["system.thread.state.duration"],
+                "condition": {"kind": "semantic", "description": "When tasks wait."},
+            }],
+        }}}
+
+    def test_profiles_export_methods_and_conditions_without_runtime_metric_bindings(self):
+        rendered = self.render("investigation-profiles.yaml", json.dumps(self.profile()))
+        self.assertIn("Explain R/R+ delay; missing coverage is unknown.", rendered)
+        self.assertIn("When tasks wait.", rendered)
+        self.assertIn("## system_execution (version 1)", rendered)
+        self.assertNotIn("evidence_metrics", rendered)
+        self.assertNotIn("system.thread.state.duration", rendered)
+        self.assertNotIn("```yaml", rendered)
+
+    def test_unknown_schema_fields_and_duplicate_requirements_fail_closed(self):
+        invalid = []
+        value = self.profile()
+        value["provider"] = "private runtime"
+        invalid.append(value)
+        value = self.profile()
+        value["schema_version"] = 2
+        invalid.append(value)
+        value = self.profile()
+        value["profiles"]["system_execution"]["requirements"] *= 2
+        invalid.append(value)
+        value = self.profile()
+        value["profiles"]["system_execution"]["requirements"][0]["condition"]["kind"] = "runtime"
+        invalid.append(value)
+        value = self.profile()
+        value["profiles"]["system_execution"]["requirements"][0]["description"] = "fetch_artifact private"
+        invalid.append(value)
+        for value in invalid:
+            with self.subTest(value=value), self.assertRaises(exporter.ExportError):
+                self.render("investigation-profiles.yaml", json.dumps(value))
+
+    def test_scene_contract_becomes_methods_with_a_shared_reference(self):
+        contract = {"schema_version": 1, "profiles": [{"id": "system_execution", "version": 1}],
+                    "requirements": [{"id": "critical_path", "domain": "critical_path",
+                                      "description": "Bind task identity and the selected interval."}]}
+        content = "---\n" + exporter.yaml.safe_dump({"scene": "startup", "investigation_contract": contract}) + "---\nScene body.\n"
+        rendered = self.render("startup.strategy.md", content)
+        self.assertIn("Bind task identity and the selected interval.", rendered)
+        self.assertIn("investigation-profiles.yaml.md", rendered)
+        self.assertIn("system_execution", rendered)
+        self.assertNotIn("investigation_contract:", rendered)
+        self.assertIn("Scene body.", rendered)
+
+    def test_scene_rejects_unresolved_or_version_mismatched_shared_profiles(self):
+        for reference in ({"id": "missing", "version": 1}, {"id": "system_execution", "version": 2}):
+            content = "---\n" + exporter.yaml.safe_dump({"investigation_contract": {
+                "schema_version": 1, "profiles": [reference],
+            }}) + "---\nBody.\n"
+            with self.subTest(reference=reference), self.assertRaises(exporter.ExportError):
+                self.render("startup.strategy.md", content)
+
+    def render_contract(self, contract, profiles=None):
+        content = "---\n" + exporter.yaml.safe_dump({"investigation_contract": contract}) + "---\nBody.\n"
+        return self.render("startup.strategy.md", content, profiles)
+
+    def test_empty_and_mixed_exemption_contracts_are_rejected(self):
+        for contract in (
+            {"schema_version": 1},
+            {"schema_version": 1, "profiles": [], "requirements": []},
+            {"schema_version": 1, "not_applicable_reason": "Exempt", "profiles": []},
+            {"schema_version": 1, "not_applicable_reason": "Exempt", "requirements": []},
+        ):
+            with self.subTest(contract=contract), self.assertRaises(exporter.ExportError):
+                self.render_contract(contract)
+        self.assertIn("Exempt", self.render_contract({"schema_version": 1, "not_applicable_reason": "Exempt"}))
+        profile = self.profile()
+        profile["profiles"]["system_execution"]["requirements"] = []
+        with self.assertRaises(exporter.ExportError):
+            self.render("investigation-profiles.yaml", json.dumps(profile))
+
+    def test_identical_shared_local_and_cross_profile_requirements_are_merged(self):
+        profiles = self.profile()
+        repeated = json.loads(json.dumps(profiles["profiles"]["system_execution"]))
+        repeated["requirements"][0]["required"] = True
+        repeated["requirements"][0]["description"] += "  "
+        repeated["requirements"][0]["domain"] += "  "
+        repeated["requirements"][0]["evidence_metrics"][0] += "  "
+        profiles["profiles"]["secondary"] = repeated
+        contract = {"schema_version": 1,
+                    "profiles": [{"id": "system_execution", "version": 1}, {"id": "secondary", "version": 1}],
+                    "requirements": repeated["requirements"]}
+        rendered = self.render_contract(contract, profiles)
+        self.assertIn("system_execution", rendered)
+        self.assertIn("secondary", rendered)
+        self.assertNotIn("### thread_state", rendered)
+        self.assertNotIn("evidence_metrics", rendered)
+
+    def test_shared_local_and_cross_profile_semantic_conflicts_are_rejected(self):
+        changes = {"description": "Different meaning", "required": False, "domain": "different",
+                   "condition": {"kind": "semantic", "description": "Different condition"},
+                   "evidence_metrics": ["different.metric"]}
+        for field, value in changes.items():
+            for location in ("local", "profile"):
+                profiles = self.profile()
+                conflicting = json.loads(json.dumps(profiles["profiles"]["system_execution"]))
+                conflicting["requirements"][0][field] = value
+                contract = {"schema_version": 1, "profiles": [{"id": "system_execution", "version": 1}]}
+                if location == "local":
+                    contract["requirements"] = conflicting["requirements"]
+                else:
+                    profiles["profiles"]["secondary"] = conflicting
+                    contract["profiles"].append({"id": "secondary", "version": 1})
+                with self.subTest(field=field, location=location), self.assertRaises(exporter.ExportError):
+                    self.render_contract(contract, profiles)
+
+    def test_identifier_metric_and_safe_integer_version_match_source_schema(self):
+        for bad_id in ("bad-id", "bad.id", " upper", "Upper"):
+            for target in ("profile", "requirement"):
+                profile = self.profile()
+                if target == "profile":
+                    profile["profiles"][bad_id] = profile["profiles"].pop("system_execution")
+                else:
+                    profile["profiles"]["system_execution"]["requirements"][0]["id"] = bad_id
+                with self.subTest(bad_id=bad_id, target=target), self.assertRaises(exporter.ExportError):
+                    self.render("investigation-profiles.yaml", json.dumps(profile))
+        for version in (True, 0, -1, 1.5, 2 ** 53):
+            profile = self.profile()
+            profile["profiles"]["system_execution"]["version"] = version
+            with self.subTest(version=version), self.assertRaises(exporter.ExportError):
+                self.render("investigation-profiles.yaml", json.dumps(profile))
+        profile = self.profile()
+        requirement = profile["profiles"]["system_execution"]["requirements"][0]
+        requirement["evidence_metrics"] = ["metric", " metric "]
+        with self.assertRaises(exporter.ExportError):
+            self.render("investigation-profiles.yaml", json.dumps(profile))
+        requirement["evidence_metrics"] = ["metric with spaces"]
+        requirement["domain"] = " domain with spaces "
+        profile["profiles"]["system_execution"]["version"] = 1.0
+        self.assertIn("domain with spaces", self.render("investigation-profiles.yaml", json.dumps(profile)))
+
+
 class ProcessScopeExportTest(unittest.TestCase):
     """Export native declarations from a tiny source tree, never the live pin."""
 

@@ -63,6 +63,21 @@ compiler output. The portable runtime under `scripts/` is native
 Perfetto-Skills source. Modify generated assets through the exporter, imported
 base, or an explicit local overlay; never hand-edit a generated file.
 
+Shared investigation profiles are imported as portable methodology. The exporter
+validates their versioned YAML schema and renders each requirement's description
+and applicability condition. It omits native producer metric bindings. Scene
+contracts refer to that shared document and contribute their own methodology;
+they do not install a product evidence ledger, assurance gate, or provider
+configuration. Unknown profile fields or unsupported schema versions fail the
+import and require an explicit exporter review. Product session history and turn
+completion prompts remain excluded by the source export policy.
+Scene imports also enforce the source schema's nonempty investigation and
+exclusive exemption rules. Normalize shared and local requirements before
+merging IDs: identical reuse is allowed, while differences in description,
+condition, domain, required status or native metric bindings fail the import.
+Metric bindings participate in this compatibility check but remain absent from
+the public methodology text.
+
 ## Synchronize the Google official Perfetto Skill
 
 The official Skill is a gap-check-only upstream. It is not a base package or a
