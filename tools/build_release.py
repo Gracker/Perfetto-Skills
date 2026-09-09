@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import re
 import tarfile
+import tomllib
 import zipfile
 
 
@@ -24,29 +25,21 @@ def sha256_bytes(content: bytes) -> str:
     return hashlib.sha256(content).hexdigest()
 
 
-def skill_metadata_version(path: Path = SKILL_ROOT / "SKILL.md") -> str:
-    lines = path.read_text(encoding="utf-8").splitlines()
-    in_metadata = False
-    for line in lines:
-        if line == "metadata:":
-            in_metadata = True
-            continue
-        if in_metadata and line and not line.startswith((" ", "\t")):
-            break
-        if in_metadata:
-            match = re.match(r"\s+version:\s*[\"']?([^\"'\s]+)", line)
-            if match:
-                return match.group(1)
-    raise ValueError(f"Skill metadata version is missing: {path}")
+def project_version(path: Path = ROOT / "pyproject.toml") -> str:
+    with path.open("rb") as source:
+        version = tomllib.load(source)["project"]["version"]
+    if not isinstance(version, str) or not VERSION_PATTERN.fullmatch(version):
+        raise ValueError(f"invalid project version: {version!r}")
+    return version
 
 
 def release_entries(version: str) -> list[tuple[str, bytes, int]]:
     if not VERSION_PATTERN.fullmatch(version):
         raise ValueError(f"invalid release version: {version!r}")
-    declared_version = skill_metadata_version(SKILL_ROOT / "SKILL.md")
+    declared_version = project_version()
     if version != declared_version:
         raise ValueError(
-            f"release version {version} does not match Skill metadata version {declared_version}"
+            f"release version {version} does not match project version {declared_version}"
         )
     catalog_path = ROOT / "catalog" / "smartperfetto-export.json"
     catalog = json.loads(catalog_path.read_text(encoding="utf-8"))

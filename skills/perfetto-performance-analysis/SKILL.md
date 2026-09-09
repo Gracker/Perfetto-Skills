@@ -1,18 +1,21 @@
 ---
 name: perfetto-performance-analysis
 description: Analyze Android, Linux, and Chromium Perfetto traces with local trace_processor_shell evidence. Use for startup, scrolling or jank, input latency, ANR, CPU scheduling, memory or GC, Binder or IO, GPU or SurfaceFlinger, power or thermal, rendering-pipeline identification, trace capture guidance, scene reconstruction, and single- or multi-trace performance comparison.
-license: AGPL-3.0-or-later
-compatibility: Requires Python 3.11+, local filesystem and terminal access, and a checksum-verified Perfetto trace_processor_shell. Works without SmartPerfetto or an upstream Perfetto checkout after installation.
-metadata:
-  version: "0.2.0"
-  source: "https://github.com/Gracker/Perfetto-Skills"
 ---
 
 # Perfetto Performance Analysis
 
+License: AGPL-3.0-or-later. Source: [Perfetto Skills](https://github.com/Gracker/Perfetto-Skills).
+
 Analyze traces from evidence instead of guessing from symptom names. Use the
 bundled scripts for deterministic queries and load only the references needed
 for the selected workflow.
+
+## Requirements
+
+Use Python 3.11+, local filesystem and terminal access, and a checksum-verified
+Perfetto `trace_processor_shell`. Run independently after installation; neither
+SmartPerfetto nor an upstream Perfetto checkout is required.
 
 ## Operating contract
 

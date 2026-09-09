@@ -20,11 +20,16 @@ class SkillContractTest(unittest.TestCase):
         self.assertEqual(frontmatter["name"], SKILL.name)
         self.assertIn("Use for", frontmatter["description"])
         self.assertLessEqual(len(frontmatter["description"]), 1024)
+        # Keep only the required fields for clients with strict frontmatter.
         self.assertEqual(
             set(frontmatter),
-            {"name", "description", "license", "compatibility", "metadata"},
+            {"name", "description"},
         )
-        self.assertIn("Python 3.11", frontmatter["compatibility"])
+        body = text.split("---", 2)[2]
+        self.assertIn("AGPL-3.0-or-later", body)
+        self.assertIn("https://github.com/Gracker/Perfetto-Skills", body)
+        self.assertIn("Python 3.11", body)
+        self.assertIn("checksum-verified", body)
 
     def test_all_workflow_files_exist_and_are_directly_linked(self) -> None:
         index_path = SKILL / "references" / "workflow-index.json"

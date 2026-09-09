@@ -73,10 +73,20 @@ class ReleaseTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 build_release.build_release(Path(temporary), "../escape")
 
-    def test_release_version_must_match_skill_metadata(self) -> None:
+    def test_release_version_must_match_project_version(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            with self.assertRaisesRegex(ValueError, "Skill metadata version"):
+            with self.assertRaisesRegex(ValueError, "project version"):
                 build_release.build_release(Path(temporary), "1.0.0")
+
+    def test_release_version_reads_project_toml(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "pyproject.toml"
+            path.write_text('[project]\nversion = "2.3.4"\n', encoding="utf-8")
+            self.assertEqual(build_release.project_version(path), "2.3.4")
+            for value in ('"../escape"', '42'):
+                path.write_text(f'[project]\nversion = {value}\n', encoding="utf-8")
+                with self.assertRaises(ValueError):
+                    build_release.project_version(path)
 
     def test_release_rejects_symlinks_inside_skill_tree(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -84,7 +94,7 @@ class ReleaseTest(unittest.TestCase):
             skill = root / "skill"
             skill.mkdir()
             (skill / "SKILL.md").write_text(
-                "---\nmetadata:\n  version: \"0.1.0\"\n---\n",
+                "---\nname: perfetto-performance-analysis\ndescription: Analyze traces.\n---\n",
                 encoding="utf-8",
             )
             outside = root / "secret"
@@ -92,7 +102,7 @@ class ReleaseTest(unittest.TestCase):
             (skill / "leak").symlink_to(outside)
             with mock.patch.object(build_release, "SKILL_ROOT", skill):
                 with self.assertRaisesRegex(ValueError, "symbolic link"):
-                    build_release.release_entries("0.1.0")
+                    build_release.release_entries("0.2.0")
 
     def test_workflows_are_valid_and_pin_actions_by_commit(self) -> None:
         root = Path(__file__).resolve().parents[2]
