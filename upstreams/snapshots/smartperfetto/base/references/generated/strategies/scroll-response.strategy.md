@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scroll-response.strategy.md
-Source SHA-256: 63f55a12ad7e9c56222356856abad8b0521e196282feaee2d693c4e7124f4a8a
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 3abcc4405b2948ace1048ff17603a8fcae276e2015774f95ce0ac091afbfc9e6
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Scroll Response Strategy
 
@@ -214,6 +214,20 @@ plan_template:
     - skill_id: click_response_detail
     - skill_id: input_events_in_range
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### scroll_response_critical_path (critical_path)
+
+Bind the first relevant MOVE to the first corresponding visible update, keeping event and frame identities. Follow input/Main/render/SF tasks and scheduling on that first-response path.
+
+### scroll_response_dependencies (dependency_chain)
+
+Without actual present evidence report a candidate response bound, not confirmed display latency. Do not impose a fixed frame budget or infer response from FPS.
 
 #### scroll_response Core Strategy
 

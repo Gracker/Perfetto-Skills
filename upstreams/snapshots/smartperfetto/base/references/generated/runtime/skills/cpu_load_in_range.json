@@ -43,21 +43,17 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/atomic/cpu_load_in_range.skill.yaml",
-    "sha256": "71e2b4436e6f0eb4a11f04bf71bfc3a9703ee7c738fb37d8ddf20f67ec7bc955"
+    "sha256": "b24f5a2e47a5f0d7ae34fcfc86c1a7f58e53b09f13f6b5e6e36b5a998da2053c"
   },
   "steps": [
     {
-      "id": "init_cpu_topology",
-      "name": "初始化 CPU 拓扑",
-      "optional": true,
-      "skill": "cpu_topology_view",
-      "type": "skill"
-    },
-    {
       "id": "cpu_utilization",
       "name": "CPU 利用率",
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_load_in_range/cpu_utilization",
       "result_dependencies": [],
       "save_as": "utilization",
@@ -67,6 +63,9 @@
       "id": "runqueue_depth",
       "name": "运行队列深度",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_load_in_range/runqueue_depth",
       "result_dependencies": [],
       "save_as": "runqueue",
@@ -75,6 +74,9 @@
     {
       "id": "thread_migrations",
       "name": "线程迁移",
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_load_in_range/thread_migrations",
       "result_dependencies": [],
       "save_as": "migrations",

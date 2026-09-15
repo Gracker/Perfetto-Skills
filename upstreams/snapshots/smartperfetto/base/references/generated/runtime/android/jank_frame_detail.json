@@ -48,6 +48,7 @@
     }
   },
   "required_modules": [
+    "linux.cpu.frequency",
     "android.binder",
     "android.slices",
     "android.monitor_contention",
@@ -90,8 +91,7 @@
     "android_binder_txns",
     "android_garbage_collection_events",
     "android_gpu_frequency",
-    "android_monitor_contention",
-    "cpufreq"
+    "android_monitor_contention"
   ],
   "skill_id": "jank_frame_detail",
   "steps": {

@@ -46,6 +46,101 @@
         },
         "probe_capabilities": []
       },
+      "id": "scroll_session_analysis/system_context_window",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scroll_session_analysis/system_context_window.sql",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
+      "sha256": "139bf40a0daf301f1115cd441b8c57652db634d34abc03a0a72e12aa2b0f98c9",
+      "signal_patterns": [],
+      "skill_id": "scroll_session_analysis",
+      "source": {
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
+        "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "system_context_window",
+      "template": {
+        "fragments": [],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
       "id": "scroll_session_analysis/full_session_stats",
       "identity": {
         "policy": "none"
@@ -55,17 +150,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_session_analysis/full_session_stats.sql",
-      "sha256": "513b08b9dd0f888268f276665b239cc9ececf409f971d0c512bf8728b18f66d9",
+      "sha256": "69d736cf633e0968307ca889e214aa6fc3b4cdf42fe274f876c02bd327cf3584",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*doFrame*"
       ],
       "skill_id": "scroll_session_analysis",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "558740edcb969a313b6fb4d5b43906769938fc5a5b395abba44967eaffe084ce"
+        "sha256": "ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -152,17 +247,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_session_analysis/touch_phase_stats.sql",
-      "sha256": "3d59c19213ed8098b76f34602ef37badee9877ea558ff25f323439a37a69b977",
+      "sha256": "482eb3c8b02ccff51629bfc12268e44f672840430cc3b4c6325653bbc317af19",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*doFrame*"
       ],
       "skill_id": "scroll_session_analysis",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "558740edcb969a313b6fb4d5b43906769938fc5a5b395abba44967eaffe084ce"
+        "sha256": "ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -248,17 +343,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_session_analysis/fling_phase_stats.sql",
-      "sha256": "f4f60160a8bc22cf5b852156e7c236e4865dcc3fb02ef6fc7d0a55dae1a0abc5",
+      "sha256": "cb3fb9cfe16db378673054f10001ca73259552c2798b49c651ab1477005b518b",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*doFrame*"
       ],
       "skill_id": "scroll_session_analysis",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "558740edcb969a313b6fb4d5b43906769938fc5a5b395abba44967eaffe084ce"
+        "sha256": "ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -344,7 +439,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scroll_session_analysis/identify_janky_frames.sql",
-      "sha256": "9410820b77bc81523c8baf3dc5b7d3eca9cf1fa9b50090fb47792d36286b1261",
+      "sha256": "718cdb513430ba6313d5d1af4c1635fdadd6dfd00fbe637bb9f4a7e29c1f9a54",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*DrawFrame*",
@@ -352,10 +447,10 @@
       ],
       "skill_id": "scroll_session_analysis",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "558740edcb969a313b6fb4d5b43906769938fc5a5b395abba44967eaffe084ce"
+        "sha256": "ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0"
       },
       "sql_dependencies": {
         "creates": [],

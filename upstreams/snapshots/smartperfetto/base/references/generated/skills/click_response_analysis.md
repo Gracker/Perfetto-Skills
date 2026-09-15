@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_analysis.skill.yaml
-Source SHA-256: c36d5e8f865c21530d0538a9a549cc6cacafc1b68da63ba7f2d6e83052d6a08f
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: a4b934d0ea9e3be026e38cff778d34fc9482780ab04a5fd0a4d3f6542323e245
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 点击响应分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -488,12 +488,38 @@ condition: input_check.data[0]?.status === 'available' && target_process.data.le
 ```yaml
 id: input_thread_state
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_thread_state_spans.sql
 optional: true
 display:
   level: detail
   layer: list
   title: 输入处理期间主线程状态
   columns:
+  - name: window_id
+    label: window_id
+    type: number
+    hidden: true
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    hidden: true
   - name: event_type
     label: 事件类型
     type: string

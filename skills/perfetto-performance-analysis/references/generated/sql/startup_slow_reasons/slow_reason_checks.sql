@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_slow_reasons.skill.yaml
--- Source SHA-256: 9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: 7a8bee2b91eed7037b062e3f1c0fafd599488485f01bb4b2a90c1beb997cc573
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH startup_info AS (
   SELECT
@@ -278,59 +278,61 @@ FROM (
 
 -- SR11: 主线程显式 sleep/delay (根因 A17)
 UNION ALL
-SELECT 'SR11', '主线程存在显式 sleep/delay',
+SELECT 'SR11', '主线程观测到 nanosleep 路径等待，调用 API 尚未确认',
   CASE WHEN sleep_ms > 100 THEN 'critical'
        WHEN sleep_ms > 10 THEN 'warning' ELSE 'info' END,
   '主线程 nanosleep 总耗时 ' || sleep_ms || ' ms (' || sleep_count || ' 次)',
-  '删除 Thread.sleep(); 替换为事件驱动等待'
+  '关联同区间调用栈/事件确认具体 sleep API 和关键路径影响；源码概率与时长吻合不能证明本次等待来源'
 FROM (
   SELECT
     COUNT(*) as sleep_count,
-    ROUND(SUM(ts_inner.dur) / 1e6, 1) as sleep_ms
+    ROUND(SUM(MIN(CASE WHEN ts_inner.dur = -1 THEN trace_end() ELSE ts_inner.ts + ts_inner.dur END, si.ts + si.dur) - MAX(ts_inner.ts, si.ts)) / 1e6, 1) as sleep_ms
   FROM thread_state ts_inner
   JOIN main_thread mt ON ts_inner.utid = mt.utid
   JOIN startup_info si
   WHERE ts_inner.state = 'S'
     AND ts_inner.blocked_function GLOB '*nanosleep*'
-    AND ts_inner.ts >= si.ts AND ts_inner.ts < si.ts + si.dur
+    AND (ts_inner.dur > 0 OR ts_inner.dur = -1)
+    AND ts_inner.ts < si.ts + si.dur
+    AND (CASE WHEN ts_inner.dur = -1 THEN trace_end() ELSE ts_inner.ts + ts_inner.dur END) > si.ts
 ) WHERE sleep_ms > 1
 
--- SR12: 三方 SDK 初始化开销 (根因 A11, 仅冷启动)
--- 只统计 bindApplication 的直接子 slice（depth+1），避免嵌套重叠双算
+-- SR12: observed non-framework direct-child work, clipped to the selected launch.
 UNION ALL
-SELECT 'SR12', 'bindApplication 阶段非框架 slice 占比高（疑似三方 SDK 初始化过重）',
+SELECT 'SR12', 'bindApplication 阶段观测到较多非框架初始化工作，尚未识别 SDK 或业务身份',
   CASE WHEN non_fw_percent > 60 THEN 'critical'
        WHEN non_fw_percent > 30 THEN 'warning' ELSE 'info' END,
-  '非框架 slice 占 bindApplication ' || non_fw_percent || '%, 总耗时 ' || non_fw_ms || ' ms',
-  '延迟非关键 SDK 初始化至首帧后; 使用 App Startup 库管理初始化顺序'
+  '窗口内大于5ms的直接子切片中，非框架工作占 bindApplication ' || non_fw_percent || '%, 耗时 ' || non_fw_ms || ' ms',
+  '读取对应实现区分业务、SDK 与模拟负载；确认首屏必要性后再考虑延迟初始化'
 FROM (
-  SELECT
-    ROUND(SUM(CASE WHEN s.name NOT GLOB 'bindApplication*'
-                   AND s.name NOT GLOB 'contentProviderCreate*'
-                   AND s.name NOT GLOB 'Application.onCreate*'
-                   AND s.name NOT GLOB 'OpenDexFilesFromOat*'
-                   AND s.name NOT GLOB 'VerifyClass*'
-                   AND s.name NOT GLOB 'JIT compiling*'
-              THEN s.dur ELSE 0 END) / 1e6, 1) as non_fw_ms,
-    ROUND(100.0 * SUM(CASE WHEN s.name NOT GLOB 'bindApplication*'
-                   AND s.name NOT GLOB 'contentProviderCreate*'
-                   AND s.name NOT GLOB 'Application.onCreate*'
-                   AND s.name NOT GLOB 'OpenDexFilesFromOat*'
-                   AND s.name NOT GLOB 'VerifyClass*'
-                   AND s.name NOT GLOB 'JIT compiling*'
-              THEN s.dur ELSE 0 END)
-      / MAX(1, ba.dur), 1) as non_fw_percent
-  FROM slice ba
-  JOIN thread_track tt_ba ON ba.track_id = tt_ba.id
-  JOIN main_thread mt_ba ON tt_ba.utid = mt_ba.utid
-  JOIN startup_info si ON ba.ts + ba.dur > si.ts AND ba.ts < si.ts + si.dur
-  JOIN slice s ON s.track_id = ba.track_id
-    AND s.ts >= ba.ts AND s.ts < ba.ts + ba.dur
-    AND s.dur > 5000000  -- > 5ms
-    AND s.depth = ba.depth + 1  -- 仅直接子 slice，避免嵌套双算
-  JOIN thread_track tt ON s.track_id = tt.id
-  JOIN main_thread mt ON tt.utid = mt.utid
-  WHERE ba.name = 'bindApplication'
+  SELECT ROUND(SUM(non_fw_ns) / 1e6, 1) AS non_fw_ms,
+    ROUND(100.0 * SUM(non_fw_ns) / NULLIF(SUM(parent_ns), 0), 1) AS non_fw_percent
+  FROM (
+    SELECT ba.id,
+      MAX(MIN(CASE WHEN ba.dur = -1 THEN trace_end() ELSE ba.ts + ba.dur END, si.ts + si.dur)
+        - MAX(ba.ts, si.ts)) AS parent_ns,
+      SUM(CASE WHEN s.name NOT GLOB 'bindApplication*'
+                 AND s.name NOT GLOB 'contentProviderCreate*'
+                 AND s.name NOT GLOB 'Application.onCreate*'
+                 AND s.name NOT GLOB 'OpenDexFilesFromOat*'
+                 AND s.name NOT GLOB 'VerifyClass*'
+                 AND s.name NOT GLOB 'JIT compiling*'
+        THEN MAX(0, MIN(CASE WHEN s.dur = -1 THEN trace_end() ELSE s.ts + s.dur END,
+          CASE WHEN ba.dur = -1 THEN trace_end() ELSE ba.ts + ba.dur END, si.ts + si.dur)
+          - MAX(s.ts, ba.ts, si.ts)) ELSE 0 END) AS non_fw_ns
+    FROM slice ba
+    JOIN thread_track tt ON ba.track_id = tt.id
+    JOIN main_thread mt ON tt.utid = mt.utid
+    JOIN startup_info si ON ba.ts < si.ts + si.dur
+      AND (CASE WHEN ba.dur = -1 THEN trace_end() ELSE ba.ts + ba.dur END) > si.ts
+    JOIN slice s ON s.track_id = ba.track_id AND s.depth = ba.depth + 1
+      AND s.ts >= ba.ts AND s.ts < (CASE WHEN ba.dur = -1 THEN trace_end() ELSE ba.ts + ba.dur END)
+      AND (s.dur > 5000000 OR s.dur = -1)
+      AND s.ts < si.ts + si.dur
+      AND (CASE WHEN s.dur = -1 THEN trace_end() ELSE s.ts + s.dur END) > si.ts
+    WHERE ba.name = 'bindApplication' AND (ba.dur > 0 OR ba.dur = -1)
+    GROUP BY ba.id
+  )
 ) WHERE non_fw_percent > 30
 
 -- SR13: Native 库加载开销 (根因 A14)
@@ -525,7 +527,8 @@ FROM (
 ) WHERE fsync_ms > 5
 
 )
-SELECT reason_id, reason, severity, evidence, suggestion
+SELECT reason_id, reason, severity, evidence, suggestion,
+  'candidate_signal_not_proven_cause_or_exclusion' AS claim_boundary
 FROM detected_reasons
 ORDER BY
   CASE severity WHEN 'critical' THEN 0 WHEN 'warning' THEN 1 ELSE 2 END,

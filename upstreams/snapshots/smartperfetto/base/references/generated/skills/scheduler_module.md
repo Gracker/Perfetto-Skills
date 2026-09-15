@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/scheduler_module.skill.yaml
-Source SHA-256: 170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 8a8766ab483cb11df87f4263431bba840d057a3ef4a846e42cbf605a76e2062c
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 内核调度分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -97,7 +97,7 @@ findingsSchema:
 - id: high_runnable_time
   severity: warning
   titleTemplate: 'Thread scheduling delay: {delay_ms}ms in runnable state'
-  descriptionTemplate: Thread {tid} waited {delay_ms}ms in runnable state due to CPU contention
+  descriptionTemplate: Thread {tid} waited {delay_ms}ms in runnable state with cause requiring direct contention evidence
   evidenceFields:
   - tid
   - delay_ms
@@ -105,15 +105,15 @@ findingsSchema:
   - waker_thread
 - id: cpu_throttling
   severity: critical
-  titleTemplate: 'CPU frequency throttled: avg {avg_freq_mhz}MHz'
-  descriptionTemplate: CPU running at {avg_freq_mhz}MHz, below expected frequency
+  titleTemplate: 'Observed CPU frequency: avg {avg_freq_mhz}MHz'
+  descriptionTemplate: Time-weighted CPU frequency is {avg_freq_mhz}MHz; thermal or policy limitation requires direct evidence
   evidenceFields:
   - avg_freq_mhz
   - max_freq_mhz
   - throttle_reason
 - id: small_core_bound
   severity: warning
-  titleTemplate: Critical thread bound to small cores
+  titleTemplate: Observed small-core residency
   descriptionTemplate: Thread {tid} running on small cores ({small_core_pct}%)
   evidenceFields:
   - tid
@@ -161,6 +161,12 @@ optional: true
 ```yaml
 id: runnable_analysis
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_thread_state_spans.sql
 display:
   level: detail
   layer: overview
@@ -177,6 +183,11 @@ synthesize: true
 ```yaml
 id: cpu_frequency
 type: atomic
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_frequency_spans.sql
 display:
   level: detail
   layer: overview
@@ -193,6 +204,12 @@ synthesize: true
 ```yaml
 id: core_distribution
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_sched_spans.sql
 display:
   level: detail
   layer: list
@@ -214,16 +231,16 @@ inputs:
 - core_data
 rules:
 - condition: runnable_data.data[0]?.runnable_ms > 50
-  diagnosis: 线程 ${runnable_data.data[0]?.thread_name} Runnable 等待时间过长 (${runnable_data.data[0]?.runnable_ms}ms)，存在 CPU 竞争
+  diagnosis: 线程 ${runnable_data.data[0]?.thread_name} Runnable 等待时间过长 (${runnable_data.data[0]?.runnable_ms}ms)；需结合交接任务与唤醒证据确定原因
   confidence: high
   suggestions:
   - 检查是否有后台线程占用 CPU
-  - 考虑提升关键线程优先级
+  - 核对已采集的调度策略、优先级与对端任务
   evidence_fields:
   - runnable_data.data[0].thread_name
   - runnable_data.data[0].runnable_ms
 - condition: freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz < 1500
-  diagnosis: 大核 CPU 频率较低 (${freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz}MHz)，可能存在热节流或功耗限制
+  diagnosis: 观测大核窗口均频 ${freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz}MHz；需结合覆盖、容量和直接温控/策略证据解释
   confidence: medium
   suggestions:
   - 检查设备温度
@@ -232,11 +249,11 @@ rules:
   - freq_data.data[0].avg_freq_mhz
   - freq_data.data[0].max_freq_mhz
 - condition: core_data.data[0]?.small_core_pct > 50
-  diagnosis: 主线程大部分时间运行在小核 (${core_data.data[0]?.small_core_pct}%)，性能受限
+  diagnosis: 目标线程大部分时间运行在小核 (${core_data.data[0]?.small_core_pct}%)；单凭驻留比例不能确定性能损失
   confidence: medium
   suggestions:
   - 检查 CPU 亲和性设置
-  - 考虑使用 SCHED_FIFO 提升优先级
+  - 若采集缺少 affinity/cgroup/uclamp，明确证据缺口，不据此修改调度策略
   evidence_fields:
   - core_data.data[0].thread_name
   - core_data.data[0].small_core_pct

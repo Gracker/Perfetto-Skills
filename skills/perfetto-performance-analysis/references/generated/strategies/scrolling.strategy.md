@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: d5737c857a7bd9b63c6bad97c27147620b196c7bd8b991a2c8a5dbf68653b5c2
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 1d9ccd63ee9445762f4fc9d5bb34338da5e3e8d1ae285a5848c006e5750fcf67
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Scrolling Strategy
 
@@ -25,39 +25,6 @@ classification_description: Scroll and window-animation smoothness, frame pacing
   updates, including concurrent content loading.
 priority: 3
 effort: medium
-investigation_requirements:
-- 'A request to analyze scrolling or animation includes main-thread cause investigation even when it also asks for frame statistics.
-  Before concluding, inspect actual main-thread execution across the requested process and full selected window: within doFrame,
-  between doFrames, and at the edges. FrameTimeline is outcome context and must not exclude earlier or inter-frame work. Reuse
-  main_thread_work_summary/tasks/sources/cadence from scrolling_analysis. When new evidence is allowed, collect missing task
-  evidence now using main_thread_frame_work or equivalent scoped SQL; do not stop at frame counters and offer main-thread
-  analysis as a later step. A frame-count-only question does not require this investigation; existing_only permits only available
-  evidence and explicit gaps.'
-- Identify representative tasks with raw names, slice IDs, UPID/UTID, exact time ranges and Running versus Runnable/wait/unknown
-  time. Running is CPU execution; R/R+ is runnable scheduling delay waiting for CPU, not a lock/Binder wait and not evidence
-  of a blocker. A small Runnable total cannot exclude a critical scheduling delay; assess its timing relative to requests
-  and scheduling competition. Unannotated Running is work with unknown instrumentation, not idle; preserve actual state boundaries
-  when building a timeline. Preserve complete totals, sample coverage and nonadditive root/child or overlapping-track boundaries.
-- 'Trace task origins through observed parent/child slices, args, flow, state IDs or authorized source references. Slice names
-  are instrumentation labels: a Handler label does not prove a message dispatch or enqueue site, and parse/inflate/bind labels
-  do not prove implementation, business ownership or thread safety. Parent/child nesting is observed scope, not a verified
-  source call stack. Missing origin evidence stays unknown; provide trace locators rather than invented callers or source
-  files.'
-- Keep observation and causal inference separate throughout the answer, including the opening and recommendations. Task A
-  ending when doFrame B starts proves execution order and occupied time; say that B starts after A, not that A delayed B,
-  unless independent request/deadline or equivalent causal evidence establishes that B was due earlier. Concurrent initialization
-  is a candidate interference mechanism supported by this occupancy. Do not infer missed frames, refresh rate or a frame budget
-  from doFrame cadence or an assumed 60Hz. A global VSYNC counter is only context until its display, window and relevance
-  to the target callback are established; no unverified cadence target belongs in the proposed acceptance criteria.
-- S/I proves a sleeping/idle scheduler state, not an idle message queue, available capacity or absence of a jank cause. Neither
-  S nor the last observed doFrame proves that the animation ended. D/DK without io_wait or a specific blocked function does
-  not prove synchronous file IO. Distinguish observed scheduler states from the cause of a wait; unknown fields cannot be
-  converted to zero or a named blocker.
-- 'Tie recommendations to evidenced tasks and preserve UI-thread requirements. A parse-like name alone cannot establish pure,
-  independent computation: first confirm implementation and dependencies, then conditionally move eligible parsing/computation/IO
-  to a worker. Do not describe such work as already proven independent. Do not move an entire initialization callback containing
-  View inflation/binding or Compose updates off the main thread. Consider splitting, batching or deferring noncritical UI
-  work; measure task occupancy and actual requested/presented cadence again without promising an unverified fix.'
 required_capabilities:
 - frame_rendering
 - cpu_scheduling
@@ -510,6 +477,20 @@ plan_template:
     - skill_id: compose_recomposition_hotspot
     - skill_id: surfaceflinger_analysis
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### scrolling_critical_path (critical_path)
+
+Bind the actual scroll sessions and problematic intervals. Follow continuous main-thread work between frames and framework-specific render/raster tasks; FrameTimeline is a result/reference. Reuse batch window evidence and sample representative critical paths after whole-session totals.
+
+### scrolling_dependencies (dependency_chain)
+
+Connect Main/Render/raster/GPU/SF/present only with matching identities and timing. Explain separate app, system and pipeline evidence; a long frame or sleeping main thread is not itself the cause.
 
 #### Scrolling Core Strategy
 

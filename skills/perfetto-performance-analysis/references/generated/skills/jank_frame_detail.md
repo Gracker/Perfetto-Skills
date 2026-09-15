@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: 89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -51,6 +51,7 @@ patterns:
 
 ```yaml
 modules:
+- linux.cpu.frequency
 - android.binder
 - android.slices
 - android.monitor_contention
@@ -239,12 +240,38 @@ process_scope:
   binding: native_upid
 optional: true
 sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_thread_state_spans.sql
 - fragments/target_threads.sql
 display:
   level: key
   layer: deep
   title: 四大象限
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
+  - name: thread_type
+    label: thread_type
+    type: string
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    hidden: true
+  - name: evidence_scope
+    label: evidence_scope
+    type: string
+    hidden: true
   - name: quadrant
     label: 象限
     type: string
@@ -344,6 +371,9 @@ output_schema:
 ```yaml
 id: cpu_freq_analysis
 type: atomic
+sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_frequency_spans.sql
 process_scope:
   role: global_context
 display:
@@ -351,6 +381,22 @@ display:
   layer: deep
   title: CPU 频率
   columns:
+  - name: window_id
+    label: window_id
+    type: number
+    hidden: true
+  - name: num_cores
+    label: num_cores
+    type: number
+    hidden: true
+  - name: frequency_covered_ns
+    label: frequency_covered_ns
+    type: number
+    hidden: true
+  - name: frequency_coverage_pct
+    label: frequency_coverage_pct
+    type: number
+    hidden: true
   - name: core_type
     label: 核心类型
     type: string
@@ -572,6 +618,9 @@ output_schema:
 ```yaml
 id: cpu_freq_timeline
 type: atomic
+sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_frequency_spans.sql
 process_scope:
   role: global_context
 display:
@@ -579,6 +628,34 @@ display:
   layer: deep
   title: CPU 频率变化
   columns:
+  - name: ucpu
+    label: ucpu
+    type: number
+    hidden: true
+  - name: counter_id
+    label: counter_id
+    type: number
+    hidden: true
+  - name: track_id
+    label: track_id
+    type: number
+    hidden: true
+  - name: topology_source
+    label: topology_source
+    type: string
+    hidden: true
+  - name: prev_freq_mhz
+    label: prev_freq_mhz
+    type: number
+    hidden: true
+  - name: total_change_count
+    label: total_change_count
+    type: number
+    hidden: true
+  - name: evidence_scope
+    label: evidence_scope
+    type: string
+    hidden: true
   - name: ts
     label: 时间戳
     type: timestamp
@@ -703,6 +780,7 @@ condition: gc_availability?.data?.[0]?.has_gc_table === 1
 id: io_blocking
 type: atomic
 sql_fragments:
+- fragments/system_thread_state_spans.sql
 - fragments/effective_target_processes.sql
 process_scope:
   role: target
@@ -712,11 +790,35 @@ display:
   layer: deep
   title: IO/page-cache 等待候选
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
+  - name: unfinished_wait_count
+    label: unfinished_wait_count
+    type: number
+    hidden: true
+  - name: left_censored_wait_count
+    label: left_censored_wait_count
+    type: number
+    hidden: true
+  - name: right_censored_wait_count
+    label: right_censored_wait_count
+    type: number
+    hidden: true
+  - name: raw_max_wait_ms
+    label: raw_max_wait_ms
+    type: number
+    hidden: true
   - name: thread_name
     label: 线程
     type: string
   - name: blocked_count
-    label: 阻塞次数
+    label: 相交等待区间数
     type: number
   - name: total_ms
     label: 总阻塞时间
@@ -926,6 +1028,9 @@ process_scope:
   limitations:
   - 根因分类结合目标线程、全局 CPU/VSync 资源及对端信息；混合解释文本不是目标进程的独立实测指标。
 sql_fragments:
+- fragments/system_thread_state_spans.sql
+- fragments/system_cpu_frequency_spans.sql
+- fragments/system_sched_spans.sql
 - fragments/effective_target_processes.sql
 - fragments/vsync_config.sql
 - fragments/target_threads.sql

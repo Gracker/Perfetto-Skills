@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_render_in_range.skill.yaml
--- Source SHA-256: 1c142b8dbc84b47518922a8a37b43c85c1e3e887ad5bfc61179c1710dce9c286
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: 41c5baba37f722b6109d1a1058f99a23195d9b80ef96f0fade4e979a8ed860b0
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -18,7 +18,11 @@ effective_target_processes AS (
 gpu_slices AS (
   SELECT
     s.name,
-    s.dur,
+    CASE WHEN s.dur >= 0 THEN
+      MIN(s.ts + s.dur, COALESCE(${end_ts}, trace_end())) -
+      MAX(s.ts, COALESCE(${start_ts}, trace_start()))
+    END AS dur,
+    CASE WHEN s.dur < 0 THEN 1 ELSE 0 END AS censored,
     CASE
       WHEN s.name GLOB '*DrawFrame*' OR s.name GLOB '*doFrame*' THEN 'Draw Frame'
       WHEN s.name GLOB '*fence*signal*' OR s.name GLOB '*Fence*signal*' THEN 'Fence Signal'
@@ -35,7 +39,9 @@ gpu_slices AS (
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
-  WHERE (${start_ts} IS NULL OR s.ts >= ${start_ts}) AND (${end_ts} IS NULL OR s.ts < ${end_ts})
+  WHERE s.ts < COALESCE(${end_ts}, trace_end())
+    AND (s.dur < 0 OR s.ts + s.dur > COALESCE(${start_ts}, trace_start()))
+    AND COALESCE(${end_ts}, trace_end()) > COALESCE(${start_ts}, trace_start())
     AND (
       (
         p.upid IN (SELECT upid FROM effective_target_processes)
@@ -43,16 +49,17 @@ gpu_slices AS (
       )
       OR p.name = 'surfaceflinger'
     )
-    AND s.dur > 10000  -- > 10us
+    AND (s.dur > 10000 OR s.dur < 0)  -- Completed > 10us or unknown end.
 )
 SELECT
   operation,
   COUNT(*) as count,
   ROUND(SUM(dur) / 1e6, 2) as total_ms,
   ROUND(MAX(dur) / 1e6, 2) as max_ms,
-  ROUND(AVG(dur) / 1e6, 2) as avg_ms
+  ROUND(AVG(dur) / 1e6, 2) as avg_ms,
+  SUM(censored) AS censored_slice_count,
+  'sum_of_clipped_completed_operation_slices_not_gpu_busy_time;_unknown_ends_excluded' AS duration_basis
 FROM gpu_slices
 WHERE operation IS NOT NULL
 GROUP BY operation
-HAVING total_ms > 0.1
 ORDER BY total_ms DESC

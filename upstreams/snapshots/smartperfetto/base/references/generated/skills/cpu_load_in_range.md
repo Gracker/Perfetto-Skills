@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_load_in_range.skill.yaml
-Source SHA-256: 71e2b4436e6f0eb4a11f04bf71bfc3a9703ee7c738fb37d8ddf20f67ec7bc955
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: b24f5a2e47a5f0d7ae34fcfc86c1a7f58e53b09f13f6b5e6e36b5a998da2053c
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # CPU 负载区间分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -49,19 +49,6 @@ required_tables:
 
 ## Ordered execution
 
-### 初始化 CPU 拓扑
-
-- ID: `init_cpu_topology`
-- Type: `skill`
-
-```yaml
-id: init_cpu_topology
-type: skill
-skill: cpu_topology_view
-display:
-  level: hidden
-optional: true
-```
 ### CPU 利用率
 
 - ID: `cpu_utilization`
@@ -74,6 +61,10 @@ type: atomic
 display:
   level: detail
   title: CPU 利用率
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/system_sched_spans.sql
 save_as: utilization
 ```
 ### 运行队列深度
@@ -88,6 +79,10 @@ type: atomic
 display:
   level: detail
   title: 运行队列
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/system_sched_spans.sql
 save_as: runqueue
 optional: true
 ```
@@ -103,6 +98,10 @@ type: atomic
 display:
   level: summary
   title: 线程迁移
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/system_sched_spans.sql
 save_as: migrations
 ```
 ## Output and evidence contract

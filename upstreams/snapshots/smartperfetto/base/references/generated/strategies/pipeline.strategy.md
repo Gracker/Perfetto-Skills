@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/pipeline.strategy.md
-Source SHA-256: a39a0031498b62d96b04588773e2da4631edd6149e1c266a6ef719ae0a8c82d7
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 19c4e960b33606bb6d1d867f4dd57adb6eedef32b07db36bedd50d04c3f51be7
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Pipeline Strategy
 
@@ -234,6 +234,20 @@ plan_template:
     - skill_id: render_pipeline_latency
     - skill_id: scene_reconstruction
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### pipeline_critical_path (critical_path)
+
+Follow the selected producer, RenderThread, BufferQueue, SF/HWC and presentation stages. Bind task and frame/buffer identities before attributing CPU waits or work to a pipeline delay.
+
+### pipeline_dependencies (dependency_chain)
+
+Distinguish GPU work/fence, transaction, latch, present and visibility. CPU slice totals are not GPU execution time; missing fence/present events limit attribution.
 
 #### pipeline Core Strategy
 

@@ -88,11 +88,60 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
-    "sha256": "558740edcb969a313b6fb4d5b43906769938fc5a5b395abba44967eaffe084ce"
+    "sha256": "ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0"
   },
   "steps": [
+    {
+      "id": "system_context_window",
+      "name": "系统证据窗口",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
+      "query_id": "scroll_session_analysis/system_context_window",
+      "result_dependencies": [],
+      "save_as": "system_context_window",
+      "type": "atomic"
+    },
+    {
+      "id": "system_cpu_context",
+      "name": "窗口 CPU 系统上下文",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_cpu_context",
+      "skill": "cpu_system_context_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "system_task_summary",
+      "name": "目标任务系统状态",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${package}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_task_summary",
+      "skill": "thread_system_summary_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "system_task_handoffs",
+      "name": "目标任务调度交接",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${package}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_task_handoffs",
+      "skill": "thread_preemption_handoffs_in_range",
+      "type": "skill"
+    },
     {
       "id": "full_session_stats",
       "name": "完整区间统计",

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/trace_state_track_summary.skill.yaml
 -- Source SHA-256: 2cdb80f8ba21476ade7c51c601baad2f3af62cfa24ec319d2506c30c043c5699
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH input AS (
   SELECT MIN(MAX(COALESCE(${max_rows|80}, 80), 1), 500) AS max_rows

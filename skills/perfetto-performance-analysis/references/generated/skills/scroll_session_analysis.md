@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scroll_session_analysis.skill.yaml
-Source SHA-256: 558740edcb969a313b6fb4d5b43906769938fc5a5b395abba44967eaffe084ce
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 滑动会话分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -80,6 +80,76 @@ tags:
 
 ## Ordered execution
 
+### 系统证据窗口
+
+- ID: `system_context_window`
+- Type: `atomic`
+- SQL: [`../sql/scroll_session_analysis/system_context_window.sql`](../sql/scroll_session_analysis/system_context_window.sql)
+
+```yaml
+id: system_context_window
+type: atomic
+process_scope:
+  role: identity_metadata
+display: false
+save_as: system_context_window
+```
+### 窗口 CPU 系统上下文
+
+- ID: `system_cpu_context`
+- Type: `skill`
+
+```yaml
+id: system_cpu_context
+type: skill
+skill: cpu_system_context_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+save_as: system_cpu_context
+display:
+  level: detail
+  layer: deep
+```
+### 目标任务系统状态
+
+- ID: `system_task_summary`
+- Type: `skill`
+
+```yaml
+id: system_task_summary
+type: skill
+skill: thread_system_summary_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${package}
+save_as: system_task_summary
+display:
+  level: detail
+  layer: deep
+```
+### 目标任务调度交接
+
+- ID: `system_task_handoffs`
+- Type: `skill`
+
+```yaml
+id: system_task_handoffs
+type: skill
+skill: thread_preemption_handoffs_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${package}
+save_as: system_task_handoffs
+display:
+  level: detail
+  layer: deep
+```
 ### 完整区间统计
 
 - ID: `full_session_stats`

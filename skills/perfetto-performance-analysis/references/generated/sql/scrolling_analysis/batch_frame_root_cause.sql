@@ -1,12 +1,127 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 2dcba698d9cc63e045e9346afc44cab60148cf55a58161bf0378383d624af4ff
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: 8f9a0954db22c1fcbcbb1d90da0bb15de24e08b37ba60f59c45fb99fa915eb4b
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 使用相同优先级 CASE 树
 -- 区别：jank_frame_detail 是单帧深钻，此步骤是带覆盖率的批量分类
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Input: system_windows(window_id, window_start_ts, window_end_ts).
+-- The pinned linux.cpu.frequency relation exposes the native ucpu after a
+-- machine_id + cpu join. Use that identity rather than merging cpu ordinals.
+-- Zero is a recorded counter value, not missing data or proof that hardware
+-- actually executed instructions at zero frequency.
+system_frequency_cpu_mapping AS (
+  SELECT cpu,id AS ucpu,machine_id,1 AS mapping_count FROM cpu
+),
+system_cpu_frequency_spans AS (
+  SELECT w.window_id, w.window_start_ts, w.window_end_ts,
+    f.id AS counter_id,f.track_id,f.cpu,m.ucpu,m.machine_id,f.freq AS freq_khz,
+    f.ts AS raw_start_ts, f.dur AS raw_dur,
+    CASE WHEN f.dur >= 0 THEN f.ts + f.dur END AS raw_end_ts,
+    MAX(f.ts, w.window_start_ts) AS clipped_start_ts,
+    MIN(CASE WHEN f.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE f.ts + f.dur END, w.window_end_ts) AS clipped_end_ts,
+    MIN(CASE WHEN f.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE f.ts + f.dur END, w.window_end_ts) - MAX(f.ts, w.window_start_ts) AS dur_ns,
+    f.dur = -1 AS is_unfinished,
+    'linux.cpu.frequency:cpu_frequency_counters' AS frequency_source
+  FROM system_windows w JOIN cpu_frequency_counters f
+    ON f.ts < w.window_end_ts AND f.dur >= -1 AND f.dur != 0 AND f.freq >= 0
+      AND CASE WHEN f.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+        ELSE f.ts + f.dur END > w.window_start_ts
+  JOIN system_frequency_cpu_mapping m ON m.ucpu=f.ucpu AND m.cpu=f.cpu
+  WHERE w.window_end_ts > w.window_start_ts
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Input: system_windows(window_id, window_start_ts, window_end_ts).
+-- Global CPU spans retain peer identity. Consumers join system_target_threads
+-- explicitly; no global process-table replacement or synthetic switch boundary.
+-- Capacity extrema require a complete machine population. A missing capacity
+-- on any CPU prevents certifying which recorded CPU is fastest or smallest.
+system_cpu_topology AS (
+  SELECT c.id AS ucpu,c.cpu,c.machine_id,c.cluster_id,c.capacity,
+    CASE WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'unknown'
+      WHEN c.min_capacity=c.max_capacity THEN 'unknown'
+      WHEN c.capacity=c.min_capacity THEN 'little'
+      WHEN c.capacity=c.max_capacity THEN 'big'
+      ELSE 'medium' END AS core_type,
+    CASE WHEN c.recorded_capacity_count=0 THEN 'capacity_unavailable'
+      WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'capacity_incomplete'
+      WHEN c.min_capacity=c.max_capacity THEN 'capacity_uniform_no_big_little'
+      ELSE 'recorded_capacity' END AS topology_source
+  FROM (
+    SELECT cpu.*,
+      COUNT(*) OVER (PARTITION BY machine_id) AS machine_cpu_count,
+      COUNT(CASE WHEN capacity>0 THEN 1 END) OVER (PARTITION BY machine_id) AS recorded_capacity_count,
+      MIN(CASE WHEN capacity>0 THEN capacity END) OVER (PARTITION BY machine_id) AS min_capacity,
+      MAX(CASE WHEN capacity>0 THEN capacity END) OVER (PARTITION BY machine_id) AS max_capacity
+    FROM cpu
+  ) c
+),
+system_sched_spans AS (
+  SELECT w.window_id, w.window_start_ts, w.window_end_ts,
+    s.id AS sched_id, s.utid, t.upid, t.is_idle, s.cpu, s.ucpu,
+    s.ts AS raw_start_ts, s.dur AS raw_dur,
+    CASE WHEN s.dur >= 0 THEN s.ts + s.dur END AS raw_end_ts,
+    MAX(s.ts, w.window_start_ts) AS clipped_start_ts,
+    MIN(CASE WHEN s.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE s.ts + s.dur END, w.window_end_ts) AS clipped_end_ts,
+    MIN(CASE WHEN s.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE s.ts + s.dur END, w.window_end_ts) - MAX(s.ts, w.window_start_ts) AS dur_ns,
+    s.dur = -1 AS is_unfinished,
+    s.ts < w.window_start_ts AS left_censored,
+    s.dur = -1 OR s.ts + s.dur > w.window_end_ts AS right_censored,
+    s.end_state, s.priority,
+    ct.machine_id, ct.cluster_id, ct.capacity,
+    COALESCE(ct.core_type, 'unknown') AS core_type,
+    COALESCE(ct.topology_source, 'cpu_identity_unavailable') AS topology_source
+  FROM system_windows w JOIN sched_slice s
+    ON s.ts < w.window_end_ts AND s.dur >= -1 AND s.dur != 0
+      AND CASE WHEN s.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+        ELSE s.ts + s.dur END > w.window_start_ts
+  LEFT JOIN thread t ON t.utid = s.utid
+  LEFT JOIN system_cpu_topology ct ON ct.ucpu = s.ucpu
+  WHERE w.window_end_ts > w.window_start_ts
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Inputs: system_windows(window_id, window_start_ts, window_end_ts),
+-- system_target_threads(window_id, upid, utid, role). Half-open intersections.
+-- Unfinished states are observed only through the trace bound; clipping never
+-- converts that bound into a real switch/wakeup event.
+system_thread_state_spans AS (
+  SELECT w.window_id, w.window_start_ts, w.window_end_ts,
+    tt.upid, tt.utid, tt.role, ts.id AS thread_state_id,
+    ts.ts AS raw_start_ts, ts.dur AS raw_dur,
+    CASE WHEN ts.dur >= 0 THEN ts.ts + ts.dur END AS raw_end_ts,
+    MAX(ts.ts, w.window_start_ts) AS clipped_start_ts,
+    MIN(CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE ts.ts + ts.dur END, w.window_end_ts) AS clipped_end_ts,
+    MIN(CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE ts.ts + ts.dur END, w.window_end_ts) - MAX(ts.ts, w.window_start_ts) AS dur_ns,
+    ts.dur = -1 AS is_unfinished,
+    ts.ts < w.window_start_ts AS left_censored,
+    ts.dur = -1 OR ts.ts + ts.dur > w.window_end_ts AS right_censored,
+    ts.state, ts.cpu, ts.ucpu, ts.io_wait, ts.blocked_function, ts.waker_utid, ts.irq_context
+  FROM system_windows w
+  JOIN system_target_threads tt ON tt.window_id = w.window_id
+  JOIN thread_state ts ON ts.utid = tt.utid
+  WHERE w.window_end_ts > w.window_start_ts AND ts.dur != 0 AND ts.dur >= -1
+    AND ts.ts < w.window_end_ts
+    AND CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE ts.ts + ts.dur END > w.window_start_ts
+)
+,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
 -- This file is part of SmartPerfetto. See LICENSE for details.
@@ -132,7 +247,7 @@ device_peak_freq AS (
   FROM counter c
   JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
   LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
-  WHERE ct.core_type IN ('prime', 'big')
+  WHERE ct.core_type IN ('prime', 'big', 'medium')
 ),
 -- ========== 2. Per-layer 帧序列 + 双信号混合掉帧检测（与 get_app_jank_frames 一致）==========
 layer_frames AS (
@@ -364,58 +479,51 @@ frame_slices AS (
 top_slices AS (
   SELECT * FROM frame_slices WHERE rn = 1
 ),
+system_windows AS (
+  SELECT frame_key AS window_id,frame_start AS window_start_ts,frame_end AS window_end_ts FROM jank_frame_list
+),
+system_target_threads AS (
+  SELECT ptr.frame_key AS window_id,fl.upid,ptr.utid,ptr.role
+  FROM per_frame_thread_roles ptr JOIN jank_frame_list fl ON fl.frame_key=ptr.frame_key
+),
+frame_system_states AS (
+  SELECT s.*,COALESCE(ct.core_type,'unknown') AS core_type
+  FROM system_thread_state_spans s LEFT JOIN system_cpu_topology ct ON ct.ucpu=s.ucpu
+),
 -- ========== 5. Per-frame top slice: 核心类型 + 调度分析 ==========
 top_slice_states AS (
-  SELECT
-    ts_top.frame_key,
-    ts_top.frame_start,
-    tst.state,
-    COALESCE(ct.core_type, 'unknown') as core_type,
-    (MIN(tst.ts + tst.dur, ts_top.slice_ts + ts_top.slice_dur_ns) - MAX(tst.ts, ts_top.slice_ts)) as overlap_ns
-  FROM top_slices ts_top
-  JOIN per_frame_thread_roles ptr ON ptr.frame_key = ts_top.frame_key AND ptr.role = 'main'
-  JOIN thread_state tst ON tst.utid = ptr.utid
-    AND tst.ts < ts_top.slice_ts + ts_top.slice_dur_ns
-    AND tst.ts + tst.dur > ts_top.slice_ts
-  LEFT JOIN _cpu_topology ct ON tst.cpu = ct.cpu_id
+  SELECT s.window_id AS frame_key,s.window_start_ts AS frame_start,s.state,s.core_type,
+    MIN(s.clipped_end_ts,ts_top.slice_ts+ts_top.slice_dur_ns)-MAX(s.clipped_start_ts,ts_top.slice_ts) AS overlap_ns
+  FROM frame_system_states s JOIN top_slices ts_top ON ts_top.frame_key=s.window_id
+  WHERE s.role='main' AND s.clipped_start_ts<ts_top.slice_ts+ts_top.slice_dur_ns AND s.clipped_end_ts>ts_top.slice_ts
 ),
 per_frame_cpu_mix AS (
   SELECT
     frame_key,
     frame_start,
-    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('medium', 'little') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type = 'little' AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as little_run_pct,
-    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big', 'medium') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as big_run_pct,
-    ROUND(100.0 * SUM(CASE WHEN state = 'R' AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+    ROUND(100.0 * SUM(CASE WHEN state IN ('R', 'R+') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as runnable_pct
   FROM top_slice_states
   GROUP BY frame_key, frame_start
 ),
 -- ========== 6. Per-frame: 主线程四象限 ==========
 frame_thread_states AS (
-  SELECT
-    fl.frame_key,
-    fl.frame_start,
-    tst.state,
-    COALESCE(ct.core_type, 'unknown') as core_type,
-    (MIN(tst.ts + tst.dur, fl.frame_end) - MAX(tst.ts, fl.frame_start)) as overlap_ns
-  FROM jank_frame_list fl
-  JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'main'
-  JOIN thread_state tst ON tst.utid = ptr.utid
-    AND tst.ts < fl.frame_end
-    AND tst.ts + tst.dur > fl.frame_start
-  LEFT JOIN _cpu_topology ct ON tst.cpu = ct.cpu_id
+  SELECT window_id AS frame_key,window_start_ts AS frame_start,state,core_type,dur_ns AS overlap_ns
+  FROM frame_system_states WHERE role='main'
 ),
 per_frame_quadrants AS (
   SELECT
     frame_key,
     frame_start,
-    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big', 'medium') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as q1_pct,
-    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('medium', 'little') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type = 'little' AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as q2_pct,
-    ROUND(100.0 * SUM(CASE WHEN state = 'R' AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+    ROUND(100.0 * SUM(CASE WHEN state IN ('R', 'R+') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as q3_pct,
     ROUND(100.0 * SUM(CASE WHEN state IN ('D', 'DK') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as q4a_pct,
@@ -426,28 +534,18 @@ per_frame_quadrants AS (
 ),
 -- ========== 6b. Per-frame: 渲染线程四象限 ==========
 render_thread_states AS (
-  SELECT
-    fl.frame_key,
-    fl.frame_start,
-    tst.state,
-    COALESCE(ct.core_type, 'unknown') as core_type,
-    (MIN(tst.ts + tst.dur, fl.frame_end) - MAX(tst.ts, fl.frame_start)) as overlap_ns
-  FROM jank_frame_list fl
-  JOIN per_frame_thread_roles ptr ON ptr.frame_key = fl.frame_key AND ptr.role = 'render'
-  JOIN thread_state tst ON tst.utid = ptr.utid
-    AND tst.ts < fl.frame_end
-    AND tst.ts + tst.dur > fl.frame_start
-  LEFT JOIN _cpu_topology ct ON tst.cpu = ct.cpu_id
+  SELECT window_id AS frame_key,window_start_ts AS frame_start,state,core_type,dur_ns AS overlap_ns
+  FROM frame_system_states WHERE role='render'
 ),
 render_thread_quadrants AS (
   SELECT
     frame_key,
     frame_start,
-    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big', 'medium') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as render_q1_pct,
-    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('medium', 'little') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+    ROUND(100.0 * SUM(CASE WHEN state = 'Running' AND core_type = 'little' AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as render_q2_pct,
-    ROUND(100.0 * SUM(CASE WHEN state = 'R' AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+    ROUND(100.0 * SUM(CASE WHEN state IN ('R', 'R+') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as render_q3_pct,
     ROUND(100.0 * SUM(CASE WHEN state IN ('D', 'DK') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF(SUM(CASE WHEN overlap_ns > 0 THEN overlap_ns ELSE 0 END), 0), 1) as render_q4a_pct,
@@ -459,46 +557,26 @@ render_thread_quadrants AS (
 -- ========== 7. Per-frame: 大核频率 ==========
 -- BATCH_FRAME_IDENTITY_FREQ_CTE_BEGIN
 per_frame_freq AS (
-  SELECT
-    fl.frame_key,
-    fl.frame_start,
-    ROUND(AVG(c.value) / 1000, 0) as big_avg_freq_mhz,
-    ROUND(MAX(c.value) / 1000, 0) as big_max_freq_mhz
-  FROM jank_frame_list fl
-  JOIN counter c ON c.ts >= fl.frame_start AND c.ts < fl.frame_end
-  JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
-  LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
-  WHERE ct.core_type IN ('prime', 'big')
-  GROUP BY fl.frame_key, fl.frame_start
+  SELECT f.window_id AS frame_key,f.window_start_ts AS frame_start,
+    ROUND(SUM(f.freq_khz*1.0*f.dur_ns)/NULLIF(SUM(f.dur_ns),0)/1000,0) AS big_avg_freq_mhz,
+    ROUND(MAX(f.freq_khz)/1000,0) AS big_max_freq_mhz,
+    SUM(f.dur_ns) AS frequency_covered_ns
+  FROM system_cpu_frequency_spans f JOIN system_cpu_topology ct ON ct.ucpu=f.ucpu
+  WHERE ct.core_type IN ('prime','big','medium') GROUP BY f.window_id,f.window_start_ts
 ),
 -- BATCH_FRAME_IDENTITY_FREQ_CTE_END
 -- ========== 8. Per-frame: 频率爬升延迟 ==========
 frame_peak_freq AS (
-  SELECT fl.frame_key, fl.frame_start, MAX(c.value) as peak_khz
-  FROM jank_frame_list fl
-  JOIN counter c ON c.ts >= fl.frame_start AND c.ts < fl.frame_end
-  JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
-  LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
-  WHERE ct.core_type IN ('prime', 'big')
-  GROUP BY fl.frame_key, fl.frame_start
+  SELECT f.window_id AS frame_key,MAX(f.freq_khz) AS peak_khz
+  FROM system_cpu_frequency_spans f JOIN system_cpu_topology ct ON ct.ucpu=f.ucpu
+  WHERE ct.core_type IN ('prime','big','medium') GROUP BY f.window_id
 ),
 per_frame_ramp AS (
-  SELECT
-    fl.frame_key,
-    fl.frame_start,
-    ROUND(
-      (COALESCE(
-        MIN(CASE WHEN c.value >= CASE WHEN fpf.peak_khz * 0.70 > 1800000 THEN fpf.peak_khz * 0.70 ELSE 1800000 END THEN c.ts END),
-        fl.frame_end
-      ) - fl.frame_start) / 1e6, 2
-    ) as ramp_to_high_ms
-  FROM jank_frame_list fl
-  JOIN frame_peak_freq fpf ON fpf.frame_key = fl.frame_key
-  JOIN counter c ON c.ts >= fl.frame_start AND c.ts < fl.frame_end
-  JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
-  LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
-  WHERE ct.core_type IN ('prime', 'big')
-  GROUP BY fl.frame_key, fl.frame_start
+  SELECT f.window_id AS frame_key,f.window_start_ts AS frame_start,
+    ROUND((MIN(CASE WHEN f.freq_khz>=p.peak_khz*0.7 THEN f.clipped_start_ts END)-f.window_start_ts)/1e6,2) AS ramp_to_high_ms
+  FROM system_cpu_frequency_spans f JOIN system_cpu_topology ct ON ct.ucpu=f.ucpu
+  JOIN frame_peak_freq p ON p.frame_key=f.window_id
+  WHERE ct.core_type IN ('prime','big','medium') GROUP BY f.window_id,f.window_start_ts
 ),
 -- ========== 9. Per-frame: Binder 同步与 top slice 重叠 ==========
 per_frame_binder AS (
@@ -581,66 +659,46 @@ per_frame_gc AS (
 -- ========== 10. 批量详情 JSON 列（覆盖全部掉帧，避免 N+1 查询） ==========
 -- 10a. 全簇 CPU 频率 (prime/big/little)
 per_frame_cpu_clusters AS (
-  SELECT frame_key, frame_start,
-    json_group_array(json_object(
-      'core_type', core_type,
-      'avg_mhz', avg_mhz,
-      'max_mhz', max_mhz,
-      'min_mhz', min_mhz
-    )) as cpu_freq_clusters_json
+  SELECT frame_key,frame_start,json_group_array(json_object(
+    'core_type',core_type,'avg_mhz',avg_mhz,'max_mhz',max_mhz,'min_mhz',min_mhz,
+    'frequency_covered_ns',frequency_covered_ns,'observed_cpu_count',observed_cpu_count
+  )) AS cpu_freq_clusters_json
   FROM (
-    SELECT
-      fl.frame_key,
-      fl.frame_start,
-      COALESCE(ct.core_type, 'unknown') as core_type,
-      CAST(ROUND(AVG(c.value) / 1000, 0) AS INTEGER) as avg_mhz,
-      CAST(ROUND(MAX(c.value) / 1000, 0) AS INTEGER) as max_mhz,
-      CAST(ROUND(MIN(c.value) / 1000, 0) AS INTEGER) as min_mhz
-    FROM jank_frame_list fl
-    JOIN counter c ON c.ts >= fl.frame_start AND c.ts < fl.frame_end
-    JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
-    LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
-    GROUP BY fl.frame_key, fl.frame_start, COALESCE(ct.core_type, 'unknown')
-  )
-  GROUP BY frame_key, frame_start
+    SELECT f.window_id AS frame_key,f.window_start_ts AS frame_start,COALESCE(ct.core_type,'unknown') AS core_type,
+      CAST(ROUND(SUM(f.freq_khz*1.0*f.dur_ns)/NULLIF(SUM(f.dur_ns),0)/1000,0) AS INTEGER) AS avg_mhz,
+      CAST(ROUND(MAX(f.freq_khz)/1000,0) AS INTEGER) AS max_mhz,
+      CAST(ROUND(MIN(f.freq_khz)/1000,0) AS INTEGER) AS min_mhz,
+      SUM(f.dur_ns) AS frequency_covered_ns,COUNT(DISTINCT f.ucpu) AS observed_cpu_count
+    FROM system_cpu_frequency_spans f LEFT JOIN system_cpu_topology ct ON ct.ucpu=f.ucpu
+    GROUP BY f.window_id,f.window_start_ts,ct.core_type
+  ) GROUP BY frame_key,frame_start
 ),
 -- 10b. 各 CPU 频率变化时间线（频率单位 GHz）
+frame_frequency_events AS (
+  SELECT f.*,COALESCE(ct.core_type,'unknown') AS core_type,
+    COALESCE(ct.topology_source,'cpu_identity_unavailable') AS topology_source,
+    LAG(f.freq_khz) OVER (PARTITION BY f.window_id,f.ucpu ORDER BY f.raw_start_ts,f.counter_id) AS prev_freq_khz
+  FROM system_cpu_frequency_spans f LEFT JOIN system_cpu_topology ct ON ct.ucpu=f.ucpu
+),
+ranked_frequency_changes AS (
+  SELECT *,ROW_NUMBER() OVER (PARTITION BY window_id ORDER BY raw_start_ts,ucpu,counter_id) AS rn,
+    COUNT(*) OVER (PARTITION BY window_id) AS total_change_count
+  FROM frame_frequency_events
+  WHERE raw_start_ts>=window_start_ts AND raw_start_ts<window_end_ts
+    AND (prev_freq_khz IS NULL OR freq_khz!=prev_freq_khz)
+),
 per_frame_freq_changes AS (
-  SELECT frame_key, frame_start,
+  SELECT window_id AS frame_key,window_start_ts AS frame_start,
     json_group_array(json_object(
-      'relative_ms', relative_ms,
-      'cpu', cpu,
-      'core_type', core_type,
-      'freq_ghz', freq_ghz,
-      'change', change_dir
-    )) as freq_timeline_json
-  FROM (
-    SELECT *,
-      ROW_NUMBER() OVER (PARTITION BY frame_key ORDER BY relative_ms, cpu) as rn
-    FROM (
-      SELECT
-        fl.frame_key,
-        fl.frame_start,
-        ROUND((c.ts - fl.frame_start) / 1e6, 2) as relative_ms,
-        cct.cpu,
-        COALESCE(ct.core_type, 'unknown') as core_type,
-        ROUND(c.value / 1e6, 2) as freq_ghz,
-        c.value as freq_khz,
-        LAG(c.value) OVER (PARTITION BY fl.frame_key, cct.cpu ORDER BY c.ts) as prev_freq_khz,
-        CASE
-          WHEN c.value > COALESCE(LAG(c.value) OVER (PARTITION BY fl.frame_key, cct.cpu ORDER BY c.ts), c.value) THEN 'up'
-          WHEN c.value < COALESCE(LAG(c.value) OVER (PARTITION BY fl.frame_key, cct.cpu ORDER BY c.ts), c.value) THEN 'down'
-          ELSE 'stable'
-        END as change_dir
-      FROM jank_frame_list fl
-      JOIN counter c ON c.ts >= fl.frame_start AND c.ts < fl.frame_end
-      JOIN cpu_counter_track cct ON c.track_id = cct.id AND cct.name = 'cpufreq'
-      LEFT JOIN _cpu_topology ct ON cct.cpu = ct.cpu_id
-    )
-    WHERE freq_khz != COALESCE(prev_freq_khz, 0)
-  )
-  WHERE rn <= 30
-  GROUP BY frame_key, frame_start
+      'relative_ms',ROUND((raw_start_ts-window_start_ts)/1e6,2),
+      'source_ts',raw_start_ts,'cpu',cpu,'ucpu',ucpu,'counter_id',counter_id,'track_id',track_id,
+      'core_type',core_type,'topology_source',topology_source,'freq_ghz',ROUND(freq_khz/1e6,2),
+      'prev_freq_ghz',ROUND(prev_freq_khz/1e6,2),
+      'change',CASE WHEN prev_freq_khz IS NULL THEN 'unknown'
+        WHEN freq_khz>prev_freq_khz THEN 'up' WHEN freq_khz<prev_freq_khz THEN 'down' ELSE 'stable' END,
+      'total_change_count',total_change_count,'evidence_scope','recorded_counter_events_not_residence_average'
+    )) AS freq_timeline_json
+  FROM ranked_frequency_changes WHERE rn<=30 GROUP BY window_id,window_start_ts
 ),
 -- 10c. 主线程 Top 8 耗时 Slice
 -- Keep resync markers out of generic main-thread workload slices.
@@ -1057,6 +1115,26 @@ per_frame_input_slice_detail AS (
   FROM per_frame_input_stage_totals
   GROUP BY frame_key, frame_start
 ),
+per_frame_system_evidence AS (
+  SELECT frame_key,json_group_array(json_object(
+    'upid',upid,'utid',utid,'role',role,'window_start_ts',window_start_ts,'window_end_ts',window_end_ts,
+    'state_covered_ns',state_covered_ns,'running_ns',running_ns,'runnable_ns',runnable_ns,
+    'unknown_running_ns',unknown_running_ns,'uninterruptible_ns',uninterruptible_ns,
+    'sleeping_ns',sleeping_ns,'other_state_ns',other_state_ns,
+    'state_coverage',CASE WHEN state_covered_ns>window_end_ts-window_start_ts THEN 'invalid_overlap'
+      WHEN state_covered_ns<window_end_ts-window_start_ts THEN 'partial' ELSE 'observed' END
+  )) AS system_evidence_json
+  FROM (
+    SELECT window_id AS frame_key,upid,utid,role,window_start_ts,window_end_ts,SUM(dur_ns) AS state_covered_ns,
+      SUM(CASE WHEN state='Running' THEN dur_ns ELSE 0 END) AS running_ns,
+      SUM(CASE WHEN state IN ('R','R+') THEN dur_ns ELSE 0 END) AS runnable_ns,
+      SUM(CASE WHEN state='Running' AND core_type='unknown' THEN dur_ns ELSE 0 END) AS unknown_running_ns,
+      SUM(CASE WHEN state IN ('D','DK') THEN dur_ns ELSE 0 END) AS uninterruptible_ns,
+      SUM(CASE WHEN state IN ('S','I') THEN dur_ns ELSE 0 END) AS sleeping_ns,
+      SUM(CASE WHEN state NOT IN ('Running','R','R+','D','DK','S','I') THEN dur_ns ELSE 0 END) AS other_state_ns
+    FROM frame_system_states GROUP BY window_id,upid,utid,role,window_start_ts,window_end_ts
+  ) GROUP BY frame_key
+),
 -- ========== 11. 综合分析 ==========
 analysis AS (
   SELECT
@@ -1078,21 +1156,21 @@ analysis AS (
     COALESCE(ts.slice_name, '') as top_slice_name,
     COALESCE(ts.slice_dur_ms, 0) as top_slice_ms,
     COALESCE(ts.slice_offset_ms, 0) as top_slice_offset_ms,
-    COALESCE(pcm.little_run_pct, 0) as little_run_pct,
-    COALESCE(pcm.big_run_pct, 0) as big_run_pct,
-    COALESCE(pcm.runnable_pct, 0) as runnable_pct,
-    COALESCE(pfq.q1_pct, 0) as main_q1_pct,
-    COALESCE(pfq.q2_pct, 0) as main_q2_pct,
-    COALESCE(pfq.q3_pct, 0) as main_q3_pct,
-    COALESCE(pfq.q4a_pct, 0) as main_q4a_pct,
-    COALESCE(pfq.q4b_pct, 0) as main_q4b_pct,
-    COALESCE(rtq.render_q1_pct, 0) as render_q1_pct,
-    COALESCE(rtq.render_q2_pct, 0) as render_q2_pct,
-    COALESCE(rtq.render_q3_pct, 0) as render_q3_pct,
-    COALESCE(rtq.render_q4a_pct, 0) as render_q4a_pct,
-    COALESCE(rtq.render_q4b_pct, 0) as render_q4b_pct,
-    COALESCE(pff.big_avg_freq_mhz, 0) as big_avg_freq_mhz,
-    COALESCE(pff.big_max_freq_mhz, 0) as big_max_freq_mhz,
+    pcm.little_run_pct as little_run_pct,
+    pcm.big_run_pct as big_run_pct,
+    pcm.runnable_pct as runnable_pct,
+    pfq.q1_pct as main_q1_pct,
+    pfq.q2_pct as main_q2_pct,
+    pfq.q3_pct as main_q3_pct,
+    pfq.q4a_pct as main_q4a_pct,
+    pfq.q4b_pct as main_q4b_pct,
+    rtq.render_q1_pct as render_q1_pct,
+    rtq.render_q2_pct as render_q2_pct,
+    rtq.render_q3_pct as render_q3_pct,
+    rtq.render_q4a_pct as render_q4a_pct,
+    rtq.render_q4b_pct as render_q4b_pct,
+    pff.big_avg_freq_mhz as big_avg_freq_mhz,
+    pff.big_max_freq_mhz as big_max_freq_mhz,
     COALESCE(pfr.ramp_to_high_ms, 0) as ramp_to_high_ms,
     COALESCE(pfb.binder_overlap_ms, 0) as binder_overlap_ms,
     COALESCE(pfgc.gc_overlap_ms, 0) as gc_overlap_ms,
@@ -1133,10 +1211,12 @@ analysis AS (
     COALESCE(pfis.input_stage, '') as input_stage,
     COALESCE(pfid.input_events_json, '[]') as input_events_json,
     COALESCE(pfisd.input_slices_json, '[]') as input_slices_json,
+    COALESCE(pfse.system_evidence_json, '[]') AS system_evidence_json,
     dpf.device_peak_freq_mhz
   FROM jank_frame_list fl
   CROSS JOIN timing_config tc
   CROSS JOIN device_peak_freq dpf
+  LEFT JOIN per_frame_system_evidence pfse ON pfse.frame_key=fl.frame_key
   LEFT JOIN top_slices ts ON ts.frame_key = fl.frame_key
   LEFT JOIN per_frame_cpu_mix pcm ON pcm.frame_key = fl.frame_key
   LEFT JOIN per_frame_quadrants pfq ON pfq.frame_key = fl.frame_key
@@ -1435,7 +1515,8 @@ gc_overlap_ms,
   gc_events_json,
   lock_contention_json,
   input_events_json,
-  input_slices_json
+  input_slices_json,
+  system_evidence_json
 FROM classified
 CROSS JOIN root_cause_population scope
 ORDER BY session_id, frame_start

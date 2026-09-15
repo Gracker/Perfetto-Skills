@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
-Source SHA-256: 752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: ce0f0f6648e41098ec6dbbc24717b4d7fdb5047edf34700c9a446c4a49fed625
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # ANR 主线程阻塞链分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -183,8 +183,72 @@ display:
   layer: list
   title: 主线程唤醒链（谁唤醒了主线程）
   columns:
+  - name: upid
+    label: upid
+    type: number
+  - name: utid
+    label: utid
+    type: number
+  - name: thread_state_id
+    label: 等待事件ID
+    type: number
+  - name: raw_start_ts
+    label: 原始等待开始
+    type: timestamp
+    unit: ns
+  - name: raw_end_ts
+    label: 原始等待结束
+    type: timestamp
+    unit: ns
+  - name: start_ts
+    label: 窗口内等待开始
+    type: timestamp
+    unit: ns
+  - name: end_ts
+    label: 窗口内等待结束
+    type: timestamp
+    unit: ns
+  - name: is_unfinished
+    label: 未结束等待
+    type: number
+  - name: left_censored
+    label: 左边界裁剪
+    type: number
+  - name: right_censored
+    label: 右边界裁剪
+    type: number
+  - name: wakeup_state_id
+    label: 后继状态ID
+    type: number
+  - name: waker_utid
+    label: 唤醒线程身份
+    type: number
+  - name: waker_upid
+    label: 唤醒进程身份
+    type: number
+  - name: observed_waker_utid
+    label: 原始唤醒线程字段
+    type: number
+  - name: irq_context
+    label: IRQ上下文
+    type: number
+  - name: wakeup_status
+    label: 唤醒证据状态
+    type: string
+  - name: relation_status
+    label: 关系证据边界
+    type: string
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+  - name: wait_span_count
+    label: 等待区间数
+    type: number
+  - name: blocked_state
+    label: 等待状态
+    type: string
   - name: ts
-    label: 唤醒时间
+    label: 后继 Runnable 事件时间
     type: timestamp
     unit: ns
     clickAction: navigate_timeline
@@ -195,7 +259,7 @@ display:
     label: 唤醒者进程
     type: string
   - name: sleep_dur_ms
-    label: Sleep 时长(ms)
+    label: 窗口内等待时长(ms)
     type: duration
     format: duration_ms
     unit: ms
@@ -203,9 +267,11 @@ display:
     label: 阻塞函数
     type: string
   - name: wakeup_count
-    label: 唤醒次数
+    label: 有唤醒元数据的事件数
     type: number
     format: compact
+sql_fragments:
+- fragments/system_thread_state_spans.sql
 save_as: wakeup_chain
 optional: true
 ```

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/game.strategy.md
-Source SHA-256: f8e4ab2ea2ed79524830e68430df2a68a1c4faee50561e3e8937101452bcbd8e
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 8fa7eec08d59b8a9ceefd8957138bbed44ab1b6efcd2a9c424f37d053ae16c06
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Game Strategy
 
@@ -114,6 +114,20 @@ plan_template:
     required_expected_calls:
     - skill_id: game_main_loop_jank
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### game_critical_path (critical_path)
+
+Identify actual engine/GameThread, render/raster and workload phases with deadline windows. Do not assume tid equals pid identifies the only critical thread; retain foreground, worker and system peer roles.
+
+### game_dependencies (dependency_chain)
+
+Connect CPU execution to GPU work, fences and presentation, with thermal and energy context when observed. Frame pacing, GPU saturation and CPU scheduling are distinct claims.
 
 #### game Core Strategy
 

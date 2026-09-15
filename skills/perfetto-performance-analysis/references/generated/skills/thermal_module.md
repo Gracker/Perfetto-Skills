@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/thermal_module.skill.yaml
-Source SHA-256: fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 95a308c02902be7277bd6109628fc67a93014b6f3cedc063e3df00fff0bb4a3e
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 热管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -160,14 +160,16 @@ synthesize:
   - key: sensor_name
     label: 传感器
   - key: avg_temp
-    label: 平均温度
-    format: '{{value}}°C'
+    label: 样本平均温度
+    format: '{{value}}'
   - key: max_temp
     label: 最高温度
-    format: '{{value}}°C'
+    format: '{{value}}'
+  - key: source_unit
+    label: 原始单位
   - key: status
     label: 状态
-on_empty: 未找到温度数据，请确保 trace 包含 thermal/temperature 计数器
+on_empty: 窗口内未找到温度样本；检查 trace 是否包含 thermal/temperature 计数器。缺少单位时不进行摄氏温度阈值判断。
 ```
 ### 温度时间线
 
@@ -196,10 +198,10 @@ type: atomic
 display:
   level: detail
   layer: list
-  title: 高温时段
+  title: 高温样本跨度
 save_as: high_temp_periods
 ```
-### 热节流事件
+### 频率骤降事件
 
 - ID: `throttling_events`
 - Type: `atomic`
@@ -211,7 +213,7 @@ type: atomic
 display:
   level: detail
   layer: list
-  title: 频率骤降事件 (可能的热节流)
+  title: 频率骤降事件（原因待查）
 save_as: throttling_events
 ```
 ### 散热设备活动
@@ -271,17 +273,17 @@ rules:
   - temp_overview.data[0]?.sensor_name
   - temp_overview.data[0]?.max_temp
 - condition: throttling_events.data.length > 10
-  diagnosis: 检测到 ${throttling_events.data.length} 次频率骤降，热节流显著影响性能
+  diagnosis: 检测到 ${throttling_events.data.length} 次频率骤降；尚不能据此确定热节流或性能影响
   confidence: high
   suggestions:
-  - 工作负载过高导致热积累
+  - 结合直接 thermal throttling/cooling 事件和同窗口工作负载判断降频原因
   - 考虑分散计算任务
   - 优化算法减少 CPU 使用
   evidence_fields:
   - throttling_events.data.length
   - throttling_events.data[0]?.drop_pct
 - condition: high_temp_periods.data[0]?.duration_sec > 30
-  diagnosis: 高温持续 ${high_temp_periods.data[0]?.duration_sec} 秒，散热不足
+  diagnosis: 高温样本首尾跨度 ${high_temp_periods.data[0]?.duration_sec} 秒；不代表连续高温或散热不足
   confidence: high
   suggestions:
   - 持续高温会加速热节流
@@ -291,16 +293,17 @@ rules:
   - high_temp_periods.data[0]?.sensor_name
   - high_temp_periods.data[0]?.duration_sec
   - high_temp_periods.data[0]?.peak_temp
-- condition: thermal_cpu_correlation.data.filter(t => t.status === 'thermal_throttled').length > 5
-  diagnosis: 温度与 CPU 频率呈明显负相关，热节流正在发生
+- condition: thermal_cpu_correlation.data.filter(t => t.status === 'high_temperature_with_low_sampled_frequency').length >
+    5
+  diagnosis: 同一秒内观测到高温和较低的频率样本；这种并存不能证明热节流或负相关
   confidence: high
   suggestions:
-  - 高温直接导致 CPU 降频
-  - 性能受限于散热能力
+  - 查找温控限制、冷却状态或限频事件的直接证据
+  - 结合目标任务窗口和负载变化检验性能影响
   evidence_fields:
-  - thermal_cpu_correlation.data.filter(t => t.status === 'thermal_throttled').length
+  - thermal_cpu_correlation.data.filter(t => t.status === 'high_temperature_with_low_sampled_frequency').length
 - condition: temp_overview.data[0]?.temp_range > 20
-  diagnosis: '温度波动较大: 变化范围 ${temp_overview.data[0]?.temp_range}°C'
+  diagnosis: 温度计数器样本变化范围 ${temp_overview.data[0]?.temp_range}，原始单位 ${temp_overview.data[0]?.source_unit}
   confidence: medium
   suggestions:
   - 工作负载不均匀

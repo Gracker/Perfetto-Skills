@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_analysis.skill.yaml
--- Source SHA-256: bbe145b95ab30fa9dd885a45be7807284558b2acb6ae49984bc6a0c137982397
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: 989cec6fb1956e104659dcc758e1ca76a37d1a8b98930d2c6653997e4317cb30
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 SELECT
   CASE WHEN EXISTS (

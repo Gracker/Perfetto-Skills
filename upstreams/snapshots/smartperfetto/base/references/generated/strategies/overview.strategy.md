@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/overview.strategy.md
-Source SHA-256: 37e96cbad2762191b93d0bf658f98c2ba6f0896cf0f61951fbf3cb6b87e65b30
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: f44e0f3bec1f162f51f3374edaaf6e88b51a918f2932359a9721af6930582c9d
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Overview Strategy
 
@@ -68,6 +68,20 @@ plan_template:
     required_expected_calls:
     - skill_id: scene_reconstruction
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### overview_critical_path (critical_path)
+
+Reconstruct important events/windows and select material segments for local investigation. Separate overall supply/pressure context from target task evidence and clearly distinguish investigated and uninvestigated segments.
+
+### overview_dependencies (dependency_chain)
+
+Use representative local paths to explain material symptoms; do not claim a whole-trace cause from one fragment or require every detector for every segment.
 
 #### overview Core Strategy
 

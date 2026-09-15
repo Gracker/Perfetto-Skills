@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/teaching.strategy.md
-Source SHA-256: 051126d441976ee8406e27e7d645561d7793bf43a1d9e6a97e1f6dd4b426ac14
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: e30cf9bd02a1d5a70b33b79ffa678f25aef3a448cff6dc100e8e0a4a33295df5
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Teaching Strategy
 
@@ -77,6 +77,20 @@ plan_template:
     - skill_id: rendering_pipeline_detection
     - skill_id: scene_reconstruction
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### teaching_critical_path (critical_path)
+
+Distinguish conceptual explanation from a question about why an actual trace task is slow. Concepts need no collection; a concrete trace investigation follows the selected task/window and relevant system evidence.
+
+### teaching_dependencies (dependency_chain)
+
+Keep implementation/source explanations separate from proof that an event occurred in this trace. Do not widen a bounded teaching question or collect evidence forbidden by existing_only.
 
 #### teaching Core Strategy
 

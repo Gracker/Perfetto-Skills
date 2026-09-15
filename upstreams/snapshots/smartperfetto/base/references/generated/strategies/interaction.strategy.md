@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/interaction.strategy.md
-Source SHA-256: c60f2d8de5060d86e404ac2a302cee203bfc9ef1a9634a25f7adc3fdd1839081
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 407538f5e65b714551009d13783059171f0b5aeb5e7b6bad8b271eb040b77e51
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Interaction Strategy
 
@@ -234,6 +234,20 @@ plan_template:
     - skill_id: click_response_detail
     - skill_id: input_events_in_range
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### interaction_critical_path (critical_path)
+
+Bind input event, receiving window, dispatch, app callback, state update and visible result. Select input/Main/render/SF tasks on that response path and distinguish ACK, focus and actual presentation.
+
+### interaction_dependencies (dependency_chain)
+
+Use Binder, lock, queue, input dispatch and display dependencies only where they explain response latency; preserve missing endpoint or causal-link limitations.
 
 #### interaction Core Strategy
 

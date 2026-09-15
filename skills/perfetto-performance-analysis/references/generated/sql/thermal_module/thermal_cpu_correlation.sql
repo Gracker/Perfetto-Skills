@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/thermal_module.skill.yaml
--- Source SHA-256: fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: 95a308c02902be7277bd6109628fc67a93014b6f3cedc063e3df00fff0bb4a3e
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH
 time_range AS (
@@ -13,7 +13,10 @@ thermal_by_sec AS (
     MAX(c.value) as max_temp
   FROM counter c
   JOIN counter_track ct ON c.track_id = ct.id
-  WHERE ct.name GLOB '*thermal*' OR ct.name GLOB '*temp*'
+  WHERE (ct.name GLOB '*thermal*' OR ct.name GLOB '*temp*')
+    AND ct.unit = 'C'
+    AND (${start_ts} IS NULL OR c.ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR c.ts < ${end_ts})
   GROUP BY CAST((c.ts - (SELECT start_ts FROM time_range)) / 1e9 AS INTEGER)
 ),
 freq_by_sec AS (
@@ -23,16 +26,20 @@ freq_by_sec AS (
   FROM counter c
   JOIN cpu_counter_track cct ON c.track_id = cct.id
   WHERE cct.name = 'cpufreq'
+    AND (${start_ts} IS NULL OR c.ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR c.ts < ${end_ts})
   GROUP BY CAST((c.ts - (SELECT start_ts FROM time_range)) / 1e9 AS INTEGER)
 )
 SELECT
   t.second,
   CAST(t.max_temp AS INTEGER) as max_temp,
+  'C' AS source_unit,
   f.avg_freq_mhz,
+  'same_second_sample_aggregation_not_causal_or_time_weighted' AS correlation_basis,
   CASE
-    WHEN t.max_temp > 70 AND f.avg_freq_mhz < 1500 THEN 'thermal_throttled'
-    WHEN t.max_temp > 60 AND f.avg_freq_mhz < 2000 THEN 'possible_throttle'
-    ELSE 'normal'
+    WHEN t.max_temp > 70 AND f.avg_freq_mhz < 1500 THEN 'high_temperature_with_low_sampled_frequency'
+    WHEN t.max_temp > 60 AND f.avg_freq_mhz < 2000 THEN 'elevated_temperature_with_low_sampled_frequency'
+    ELSE 'no_threshold_coincidence'
   END as status
 FROM thermal_by_sec t
 JOIN freq_by_sec f ON t.second = f.second

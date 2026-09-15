@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_critical_tasks.skill.yaml
-Source SHA-256: f460c66ed18a0b8aef8f2b45c8295ba56c2a3ef06324f87d5d22f2a01e03c877
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 1d150607593a0244cfb5f012f525c17145c2fb18304e076afb7d7b460799c0d3
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 启动关键任务发现
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -55,6 +55,15 @@ modules:
   required: false
 ```
 
+## Identity requirements
+
+```yaml
+policy: verify_if_present
+scope: process
+aliases:
+- package
+```
+
 ## Query
 
 Run [`../sql/startup_critical_tasks/query.sql`](../sql/startup_critical_tasks/query.sql) with the declared inputs.
@@ -72,6 +81,26 @@ level: key
 layer: deep
 title: 启动关键任务（全线程四象限）
 columns:
+- name: window_start_ts
+  label: window_start_ts
+  type: timestamp
+  unit: ns
+  hidden: true
+- name: window_end_ts
+  label: window_end_ts
+  type: timestamp
+  unit: ns
+  hidden: true
+- name: total_observed_threads
+  label: total_observed_threads
+  type: number
+  hidden: true
+- name: upid
+  label: UPID
+  type: number
+- name: utid
+  label: UTID
+  type: number
 - name: thread_name
   label: 线程
   type: string
@@ -101,7 +130,17 @@ columns:
   type: duration
   format: duration_ms
   unit: ms
-- name: q4a_io_blocked_ms
+- name: unknown_running_ms
+  label: 未知核类型运行(ms)
+  type: duration
+  format: duration_ms
+  unit: ms
+- name: other_state_ms
+  label: 其他观测状态(ms)
+  type: duration
+  format: duration_ms
+  unit: ms
+- name: q4a_uninterruptible_ms
   label: Q4a 不可中断等待
   type: duration
   format: duration_ms
@@ -124,10 +163,54 @@ columns:
   label: 大核占比
   type: percentage
   format: percentage
+- name: observed_cross_cluster_migrations
+  label: 已确认跨Cluster迁移
+  type: number
+  hidden: true
+- name: unknown_cluster_migrations
+  label: Cluster关系未知迁移
+  type: number
+  hidden: true
+- name: migration_evidence
+  label: 迁移证据范围
+  type: string
+  hidden: true
 - name: migrations
   label: 核迁移次数
   type: number
 - name: cross_cluster_migrations
   label: 跨 cluster 迁移
   type: number
+- name: priority_min
+  label: 最小 kernel priority
+  type: number
+- name: priority_max
+  label: 最大 kernel priority
+  type: number
+- name: priority_value_count
+  label: 观测 priority 值数
+  type: number
+- name: preemption_count
+  label: 窗口内 R+ 切出次数
+  type: number
+- name: runnable_preempted_ms
+  label: R+ 等待(ms)
+  type: duration
+  format: duration_ms
+  unit: ms
+- name: scheduling_policy_evidence
+  label: 调度策略证据
+  type: string
+- name: pid
+  label: PID
+  type: number
+  hidden: true
+- name: process_name
+  label: 进程
+  type: string
+  hidden: true
+- name: priority_evidence
+  label: 优先级证据
+  type: string
+  hidden: true
 ```

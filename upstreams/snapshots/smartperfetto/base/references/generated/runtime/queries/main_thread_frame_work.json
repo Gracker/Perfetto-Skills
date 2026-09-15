@@ -49,6 +49,117 @@
           "thread_states"
         ]
       },
+      "id": "main_thread_frame_work/system_context_window",
+      "identity": {
+        "aliases": [
+          "package",
+          "process_name"
+        ],
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/main_thread_frame_work/system_context_window.sql",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
+      "sha256": "296cc7009575d99419b6488716dfb048ad4091e92c80dd3954442605ec602f89",
+      "signal_patterns": [],
+      "skill_id": "main_thread_frame_work",
+      "source": {
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
+        "path": "backend/skills/composite/main_thread_frame_work.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread_track",
+          "thread_state",
+          "thread",
+          "process",
+          "trace_bounds"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "system_context_window",
+      "template": {
+        "fragments": [],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices",
+          "thread_states"
+        ]
+      },
       "id": "main_thread_frame_work/main_thread_work_summary",
       "identity": {
         "aliases": [
@@ -68,7 +179,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "4c751b651c397710c1c742082012900053aec22ce8d9e6c3ebae2cc8de07eedd",
+      "sha256": "17337bca15543ea6ba2135bb51cc03f32b9ec76f8d0d0175b0b6ef5631381bc7",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -77,10 +188,10 @@
       ],
       "skill_id": "main_thread_frame_work",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/main_thread_frame_work.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "5b782c252c80af2d4d445da11db4f32db6b09a78f4e8c5ef19dd24fbbf7f201b"
+        "sha256": "335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -202,7 +313,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "31519798d4c2457e6ea5665db7372a4860143c9826401bbdc7832416271f78a6",
+      "sha256": "15a6bc7f380b8462c72328cc3c9dc6973393f95ace9077d4d35ba684d59a53b1",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -211,10 +322,10 @@
       ],
       "skill_id": "main_thread_frame_work",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/main_thread_frame_work.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "5b782c252c80af2d4d445da11db4f32db6b09a78f4e8c5ef19dd24fbbf7f201b"
+        "sha256": "335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -341,7 +452,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "05a18f8dee158d6b6ae86966f26480c6a64e908e7ac431b06f9cbc0c9a0ac924",
+      "sha256": "ee4300fa1c28491fcb5c4f9df8f0d3c40d76b9e01dcce8c9abb75cdaebe4ca61",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -350,10 +461,10 @@
       ],
       "skill_id": "main_thread_frame_work",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/main_thread_frame_work.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "5b782c252c80af2d4d445da11db4f32db6b09a78f4e8c5ef19dd24fbbf7f201b"
+        "sha256": "335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -480,7 +591,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "4a0783987b9384b608dc41fec83916118ad03b2feb4607ef6b180d4313dcca38",
+      "sha256": "b3191f1795cbb0c495224bf51a31e7f98add922b63fbac5638b9e9b51e4bee85",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -489,10 +600,10 @@
       ],
       "skill_id": "main_thread_frame_work",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/main_thread_frame_work.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "5b782c252c80af2d4d445da11db4f32db6b09a78f4e8c5ef19dd24fbbf7f201b"
+        "sha256": "335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0"
       },
       "sql_dependencies": {
         "creates": [],

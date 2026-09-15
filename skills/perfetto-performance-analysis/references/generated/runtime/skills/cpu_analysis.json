@@ -116,9 +116,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/composite/cpu_analysis.skill.yaml",
-    "sha256": "bbe145b95ab30fa9dd885a45be7807284558b2acb6ae49984bc6a0c137982397"
+    "sha256": "989cec6fb1956e104659dcc758e1ca76a37d1a8b98930d2c6653997e4317cb30"
   },
   "steps": [
     {
@@ -132,6 +132,10 @@
       "id": "get_process",
       "name": "获取目标进程",
       "on_empty": "未找到目标进程",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "cpu_analysis/get_process",
       "result_dependencies": [],
       "save_as": "target_process",
@@ -141,6 +145,10 @@
       "condition": "target_process.data.length > 0",
       "id": "core_type_stats",
       "name": "核心类型统计",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "cpu_analysis/core_type_stats",
       "result_dependencies": [
         "target_process"
@@ -152,6 +160,10 @@
       "condition": "target_process.data.length > 0",
       "id": "thread_cpu_usage",
       "name": "线程 CPU 使用",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "cpu_analysis/thread_cpu_usage",
       "result_dependencies": [
         "target_process"
@@ -164,6 +176,10 @@
       "id": "main_thread_states",
       "name": "主线程状态分布",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "cpu_analysis/main_thread_states",
       "result_dependencies": [
         "target_process"
@@ -176,6 +192,10 @@
       "id": "runnable_latency",
       "name": "调度延迟分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "cpu_analysis/runnable_latency",
       "result_dependencies": [
         "target_process"
@@ -187,6 +207,10 @@
       "condition": "target_process.data.length > 0",
       "id": "main_thread_cores",
       "name": "主线程核心分布",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "cpu_analysis/main_thread_cores",
       "result_dependencies": [
         "target_process"
@@ -199,6 +223,10 @@
       "id": "blocked_functions",
       "name": "阻塞函数分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "cpu_analysis/blocked_functions",
       "result_dependencies": [
         "target_process"
@@ -211,6 +239,9 @@
       "id": "cpu_frequency_distribution",
       "name": "CPU 频率分布",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_analysis/cpu_frequency_distribution",
       "result_dependencies": [],
       "save_as": "cpu_freq",
@@ -221,6 +252,10 @@
       "id": "wakeup_chain",
       "name": "唤醒链分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "cpu_analysis/wakeup_chain",
       "result_dependencies": [
         "target_process"

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/battery_drain_rate_summary.skill.yaml
 -- Source SHA-256: f5a1df9c8222d32c6942df42bb1bbde8dc81f44d1b7cd23ea41aed8897bda582
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH samples AS (
   SELECT *

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/fence_wait_decomposition.skill.yaml
 -- Source SHA-256: a932c07018ae1cdbedf22f4c468de729ebbda4baf16f1e1d0cf33b29f24196cd
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH
 sf_proc AS (

@@ -1,17 +1,22 @@
 {
-  "generated_files": 1702,
-  "runtime_conditions": 615,
-  "runtime_queries": 662,
-  "runtime_skills": 236,
+  "generated_files": 1733,
+  "runtime_conditions": 614,
+  "runtime_queries": 673,
+  "runtime_skills": 240,
   "schema_version": 2,
-  "source_catalog_sha256": "860555591b62abd4279b5616aa06bd35a48746b144fdc4476ceae0e2b7a5d0ee",
-  "source_commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
-  "sql_files": 662,
+  "source_catalog_sha256": "a4d9f8f4517a0ce5caeabb48a002e3056f46728c43fd96cd4ea71912a1ced585",
+  "source_commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
+  "sql_files": 673,
   "transformations": [
     {
       "reason": "product snapshot comparison replaced by file-based JSON adapter",
       "removed_lines": 0,
       "source_path": "backend/skills/comparison/multi_trace_result_comparison.skill.yaml"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/anr.strategy.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -74,10 +79,20 @@
       "source_path": "backend/strategies/comparison-result-methodology.template.md"
     },
     {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/game.strategy.md"
+    },
+    {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 31,
       "replacements": 0,
       "source_path": "backend/strategies/game.strategy.md"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/general.strategy.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -86,10 +101,25 @@
       "source_path": "backend/strategies/general.strategy.md"
     },
     {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/interaction.strategy.md"
+    },
+    {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 40,
       "replacements": 0,
       "source_path": "backend/strategies/interaction.strategy.md"
+    },
+    {
+      "reason": "investigation profiles projected without native evidence bindings",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/investigation-profiles.yaml"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/io.strategy.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -194,10 +224,20 @@
       "source_path": "backend/strategies/knowledge-thread-state-blocked-reason.template.md"
     },
     {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/linux.strategy.md"
+    },
+    {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 20,
       "replacements": 0,
       "source_path": "backend/strategies/linux.strategy.md"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/media.strategy.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -206,10 +246,20 @@
       "source_path": "backend/strategies/media.strategy.md"
     },
     {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/memory.strategy.md"
+    },
+    {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 47,
       "replacements": 0,
       "source_path": "backend/strategies/memory.strategy.md"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/multi-trace-result-comparison.strategy.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -218,10 +268,20 @@
       "source_path": "backend/strategies/multi-trace-result-comparison.strategy.md"
     },
     {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/network.strategy.md"
+    },
+    {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 27,
       "replacements": 0,
       "source_path": "backend/strategies/network.strategy.md"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/overview.strategy.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -230,10 +290,20 @@
       "source_path": "backend/strategies/overview.strategy.md"
     },
     {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/pipeline.strategy.md"
+    },
+    {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 22,
       "replacements": 0,
       "source_path": "backend/strategies/pipeline.strategy.md"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/power.strategy.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -249,7 +319,7 @@
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
-      "removed_lines": 6,
+      "removed_lines": 0,
       "replacements": 1,
       "source_path": "backend/strategies/prompt-output-format.template.md"
     },
@@ -278,10 +348,20 @@
       "source_path": "backend/strategies/scene-reconstruction-verifier.template.md"
     },
     {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/scroll-response.strategy.md"
+    },
+    {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 23,
       "replacements": 0,
       "source_path": "backend/strategies/scroll-response.strategy.md"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/scrolling.strategy.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -302,10 +382,25 @@
       "source_path": "backend/strategies/selection-slice.template.md"
     },
     {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/smart.strategy.md"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/startup.strategy.md"
+    },
+    {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 87,
       "replacements": 0,
       "source_path": "backend/strategies/startup.strategy.md"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/teaching.strategy.md"
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
@@ -314,10 +409,20 @@
       "source_path": "backend/strategies/teaching.strategy.md"
     },
     {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/touch-tracking.strategy.md"
+    },
+    {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 21,
       "replacements": 0,
       "source_path": "backend/strategies/touch-tracking.strategy.md"
+    },
+    {
+      "reason": "investigation contract projected to portable methodology",
+      "removed_lines": 0,
+      "source_path": "backend/strategies/verifier-misdiagnosis.strategy.md"
     }
   ]
 }

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-network-evidence.template.md
 Source SHA-256: 165b71b545f353f31765a3ca7dee9d7da04f085543bded2ebbb33cc25a171642
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Knowledge Network Evidence Template
 

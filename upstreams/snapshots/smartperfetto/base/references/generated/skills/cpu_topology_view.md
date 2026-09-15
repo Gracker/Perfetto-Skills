@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_topology_view.skill.yaml
-Source SHA-256: 71bcdc2a2f2b3c8688412e9a48c716ff4e008e01da9728347161d071b302c67a
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 0e28eae312bbe09e5c3cc1e661392ed9e5814768117dbea99569f35bd3565dc6
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # CPU 拓扑关系初始化
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -36,11 +36,11 @@ tags:
 - name: start_ts
   type: timestamp
   required: false
-  description: 分析起始时间（可选，用于 cpufreq 回退检测）
+  description: 分析起始时间（可选，保留兼容参数，拓扑使用全 trace 元数据）
 - name: end_ts
   type: timestamp
   required: false
-  description: 分析结束时间（可选，用于 cpufreq 回退检测）
+  description: 分析结束时间（可选，保留兼容参数，拓扑使用全 trace 元数据）
 ```
 
 ## Ordered execution
@@ -129,7 +129,7 @@ display:
     label: CPU 来源
     type: string
   - name: max_freq_mhz
-    label: Max Freq
+    label: Observed Max Freq
     type: number
   - name: scale_bucket
     label: Scale Bucket

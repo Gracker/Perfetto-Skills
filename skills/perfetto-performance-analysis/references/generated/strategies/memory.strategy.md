@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
-Source SHA-256: 659cdfaf3cf500669e78419fe67b852ef7a84d689f1835dc432529c447e443e1
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 9f3bbaf028afcfbf4cea489963e3470ebe33a2bc5e7a08247a0e61930dd0bd26
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Memory Strategy
 
@@ -252,6 +252,20 @@ plan_template:
     required_expected_calls:
     - skill_id: memory_analysis
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### memory_critical_path (critical_path)
+
+Select allocation, GC, reclaim, page-fault or LMK windows and their actual tasks. Relate observed memory pressure and task states; use CPU frequency only where execution slowdown is relevant.
+
+### memory_dependencies (dependency_chain)
+
+Keep memory growth, leakage, OOM/LMK, reclaim and GC evidence distinct. A high allocation count or concurrent pressure alone does not establish a latency or failure cause.
 
 #### memory Core Strategy
 

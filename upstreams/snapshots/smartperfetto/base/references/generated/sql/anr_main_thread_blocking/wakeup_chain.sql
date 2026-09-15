@@ -1,55 +1,86 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
--- Source SHA-256: 752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: ce0f0f6648e41098ec6dbbc24717b4d7fdb5047edf34700c9a446c4a49fed625
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
-WITH analysis_window AS (
-  SELECT
-    COALESCE(${start_ts},
-      CASE WHEN ${anr_ts} IS NOT NULL THEN ${anr_ts} - 5000000000 ELSE NULL END,
-      (SELECT MIN(ts) FROM thread_state)
-    ) as w_start,
-    COALESCE(${end_ts},
-      CASE WHEN ${anr_ts} IS NOT NULL THEN ${anr_ts} + 1000000000 ELSE NULL END,
-      (SELECT MAX(ts + dur) FROM thread_state)
-    ) as w_end
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Inputs: system_windows(window_id, window_start_ts, window_end_ts),
+-- system_target_threads(window_id, upid, utid, role). Half-open intersections.
+-- Unfinished states are observed only through the trace bound; clipping never
+-- converts that bound into a real switch/wakeup event.
+system_thread_state_spans AS (
+  SELECT w.window_id, w.window_start_ts, w.window_end_ts,
+    tt.upid, tt.utid, tt.role, ts.id AS thread_state_id,
+    ts.ts AS raw_start_ts, ts.dur AS raw_dur,
+    CASE WHEN ts.dur >= 0 THEN ts.ts + ts.dur END AS raw_end_ts,
+    MAX(ts.ts, w.window_start_ts) AS clipped_start_ts,
+    MIN(CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE ts.ts + ts.dur END, w.window_end_ts) AS clipped_end_ts,
+    MIN(CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE ts.ts + ts.dur END, w.window_end_ts) - MAX(ts.ts, w.window_start_ts) AS dur_ns,
+    ts.dur = -1 AS is_unfinished,
+    ts.ts < w.window_start_ts AS left_censored,
+    ts.dur = -1 OR ts.ts + ts.dur > w.window_end_ts AS right_censored,
+    ts.state, ts.cpu, ts.ucpu, ts.io_wait, ts.blocked_function, ts.waker_utid, ts.irq_context
+  FROM system_windows w
+  JOIN system_target_threads tt ON tt.window_id = w.window_id
+  JOIN thread_state ts ON ts.utid = tt.utid
+  WHERE w.window_end_ts > w.window_start_ts AND ts.dur != 0 AND ts.dur >= -1
+    AND ts.ts < w.window_end_ts
+    AND CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE ts.ts + ts.dur END > w.window_start_ts
+)
+,
+system_windows AS (
+  SELECT 0 AS window_id,
+    COALESCE(${start_ts},${anr_ts}-5000000000,(SELECT start_ts FROM trace_bounds)) AS window_start_ts,
+    COALESCE(${end_ts},${anr_ts}+1000000000,(SELECT end_ts FROM trace_bounds)) AS window_end_ts
 ),
 main_thread AS (
-  SELECT t.utid
-  FROM thread t
-  JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${process_name}*'
-    AND (t.is_main_thread = 1 OR t.tid = p.pid)
-  LIMIT 1
+  SELECT t.utid,t.upid FROM thread t JOIN process p ON t.upid=p.upid
+  WHERE (p.name='${process_name}' OR p.name GLOB '${process_name}:*') AND t.tid=p.pid
 ),
-wakeups AS (
-  SELECT
-    ts_tbl.ts + ts_tbl.dur as wakeup_ts,
-    ts_tbl.dur as sleep_dur,
-    ts_tbl.blocked_function,
-    ts_tbl.waker_utid,
-    wt.name as waker_thread_name,
-    wp.name as waker_process_name
-  FROM thread_state ts_tbl
-  CROSS JOIN analysis_window aw
-  CROSS JOIN main_thread mt
-  LEFT JOIN thread wt ON ts_tbl.waker_utid = wt.utid
-  LEFT JOIN process wp ON wt.upid = wp.upid
-  WHERE ts_tbl.utid = mt.utid
-    AND ts_tbl.state IN ('S', 'D')
-    AND ts_tbl.waker_utid IS NOT NULL
-    AND ts_tbl.ts + ts_tbl.dur > aw.w_start
-    AND ts_tbl.ts < aw.w_end
+system_target_threads AS (
+  SELECT w.window_id,t.upid,t.utid,'main' AS role FROM system_windows w CROSS JOIN main_thread t
+),
+wakeup_events AS (
+  SELECT e.utid,e.ts,COUNT(*) AS event_rows,
+    CASE WHEN COUNT(*)=1 THEN MAX(e.id) END AS wakeup_state_id,
+    CASE WHEN COUNT(*)=1 THEN MAX(e.waker_utid) END AS observed_waker_utid,
+    CASE WHEN COUNT(*)=1 THEN MAX(e.irq_context) END AS irq_context
+  FROM thread_state e JOIN main_thread t ON t.utid=e.utid CROSS JOIN system_windows w
+  WHERE e.state IN ('R','R+') AND e.ts>=w.window_start_ts AND e.ts<w.window_end_ts
+  GROUP BY e.utid,e.ts
+),
+waits AS (
+  SELECT s.*,e.event_rows,e.wakeup_state_id,e.observed_waker_utid,e.irq_context AS wake_irq_context,
+    CASE WHEN e.event_rows=1 THEN e.ts END AS wakeup_ts,
+    CASE WHEN e.event_rows=1 AND COALESCE(e.irq_context,0)!=1 THEN e.observed_waker_utid END AS resolved_waker_utid,
+    CASE WHEN e.event_rows>1 THEN 'ambiguous_successor'
+      WHEN e.irq_context=1 THEN 'observed_irq'
+      WHEN e.observed_waker_utid IS NOT NULL THEN 'observed_thread'
+      WHEN e.event_rows=1 THEN 'successor_without_wake_metadata'
+      ELSE 'no_in_window_wakeup' END AS wakeup_status
+  FROM system_thread_state_spans s
+  LEFT JOIN wakeup_events e ON e.utid=s.utid AND e.ts=s.raw_end_ts
+  WHERE s.state IN ('S','I','D','DK') AND s.dur_ns>0
 )
-SELECT
-  printf('%d', MIN(wakeup_ts)) as ts,
-  waker_thread_name,
-  waker_process_name,
-  ROUND(MAX(sleep_dur) / 1e6, 2) as sleep_dur_ms,
-  blocked_function,
-  COUNT(*) as wakeup_count
-FROM wakeups
-WHERE waker_thread_name IS NOT NULL
-GROUP BY waker_thread_name, waker_process_name, blocked_function
-ORDER BY MAX(sleep_dur) DESC
-LIMIT 20
+SELECT w.upid,w.utid,w.thread_state_id,w.state AS blocked_state,w.blocked_function,
+  printf('%d',w.raw_start_ts) AS raw_start_ts,
+  CASE WHEN w.raw_end_ts IS NOT NULL THEN printf('%d',w.raw_end_ts) END AS raw_end_ts,
+  printf('%d',w.clipped_start_ts) AS start_ts,printf('%d',w.clipped_end_ts) AS end_ts,
+  w.is_unfinished,w.left_censored,w.right_censored,
+  w.wakeup_state_id,CASE WHEN w.wakeup_ts IS NOT NULL THEN printf('%d',w.wakeup_ts) END AS ts,
+  w.observed_waker_utid,w.wake_irq_context AS irq_context,w.resolved_waker_utid AS waker_utid,wt.upid AS waker_upid,
+  COALESCE(wt.name,'unknown') AS waker_thread_name,COALESCE(wp.name,'unknown') AS waker_process_name,
+  ROUND(w.dur_ns/1e6,2) AS sleep_dur_ms,
+  CASE WHEN w.wakeup_status IN ('observed_irq','observed_thread') THEN 1 ELSE 0 END AS wakeup_count,
+  1 AS wait_span_count,w.wakeup_status,
+  'observed_wakeup_not_proven_blocking_cause' AS relation_status,
+  'one_wait_span_clipped_to_window' AS evidence_scope
+FROM waits w LEFT JOIN thread wt ON wt.utid=w.resolved_waker_utid
+LEFT JOIN process wp ON wp.upid=wt.upid
+ORDER BY w.dur_ns DESC,w.thread_state_id LIMIT 20

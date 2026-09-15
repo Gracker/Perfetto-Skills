@@ -14,8 +14,7 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "%${package}%",
-      "cpufreq"
+      "${package}:*"
     ]
   },
   "id": "scheduler_module",
@@ -58,9 +57,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
-    "sha256": "170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452"
+    "sha256": "8a8766ab483cb11df87f4263431bba840d057a3ef4a846e42cbf605a76e2062c"
   },
   "steps": [
     {
@@ -73,6 +72,10 @@
     {
       "id": "runnable_analysis",
       "name": "Runnable 状态分析",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scheduler_module/runnable_analysis",
       "result_dependencies": [],
       "save_as": "runnable_data",
@@ -81,6 +84,9 @@
     {
       "id": "cpu_frequency",
       "name": "CPU 频率分析",
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "scheduler_module/cpu_frequency",
       "result_dependencies": [],
       "save_as": "freq_data",
@@ -89,6 +95,10 @@
     {
       "id": "core_distribution",
       "name": "大小核分布",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "scheduler_module/core_distribution",
       "result_dependencies": [],
       "save_as": "core_data",
@@ -106,20 +116,20 @@
         {
           "condition": "runnable_data.data[0]?.runnable_ms > 50",
           "confidence": "high",
-          "diagnosis": "线程 ${runnable_data.data[0]?.thread_name} Runnable 等待时间过长 (${runnable_data.data[0]?.runnable_ms}ms)，存在 CPU 竞争",
+          "diagnosis": "线程 ${runnable_data.data[0]?.thread_name} Runnable 等待时间过长 (${runnable_data.data[0]?.runnable_ms}ms)；需结合交接任务与唤醒证据确定原因",
           "evidence_fields": [
             "runnable_data.data[0].thread_name",
             "runnable_data.data[0].runnable_ms"
           ],
           "suggestions": [
             "检查是否有后台线程占用 CPU",
-            "考虑提升关键线程优先级"
+            "核对已采集的调度策略、优先级与对端任务"
           ]
         },
         {
           "condition": "freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz < 1500",
           "confidence": "medium",
-          "diagnosis": "大核 CPU 频率较低 (${freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz}MHz)，可能存在热节流或功耗限制",
+          "diagnosis": "观测大核窗口均频 ${freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz}MHz；需结合覆盖、容量和直接温控/策略证据解释",
           "evidence_fields": [
             "freq_data.data[0].avg_freq_mhz",
             "freq_data.data[0].max_freq_mhz"
@@ -132,14 +142,14 @@
         {
           "condition": "core_data.data[0]?.small_core_pct > 50",
           "confidence": "medium",
-          "diagnosis": "主线程大部分时间运行在小核 (${core_data.data[0]?.small_core_pct}%)，性能受限",
+          "diagnosis": "目标线程大部分时间运行在小核 (${core_data.data[0]?.small_core_pct}%)；单凭驻留比例不能确定性能损失",
           "evidence_fields": [
             "core_data.data[0].thread_name",
             "core_data.data[0].small_core_pct"
           ],
           "suggestions": [
             "检查 CPU 亲和性设置",
-            "考虑使用 SCHED_FIFO 提升优先级"
+            "若采集缺少 affinity/cgroup/uclamp，明确证据缺口，不据此修改调度策略"
           ]
         }
       ],

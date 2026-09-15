@@ -1,50 +1,57 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_freq_rampup.skill.yaml
--- Source SHA-256: 5fdc44a881eba8aac3be4fc8cc7f6175bd41bc13c9a6fc164f19ec3b4bda8f28
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: 6f5c949fb38180d0c6f2fb90172a4357d8a192a449da1c88d7bfe8ebade4a876
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
--- Early phase: first 100ms of startup
-WITH early_freq AS (
-  SELECT
-    COALESCE(ct.core_type, 'unknown') as core_type,
-    ROUND(SUM(c.value * cf.dur) / NULLIF(SUM(cf.dur), 0) / 1000, 0) as avg_freq_mhz,
-    ROUND(MAX(c.value) / 1000, 0) as max_freq_mhz
-  FROM cpu_frequency_counters cf
-  JOIN counter c ON cf.id = c.id
-  LEFT JOIN _cpu_topology ct ON cf.cpu = ct.cpu_id
-  WHERE cf.ts >= ${start_ts}
-    AND cf.ts < ${start_ts} + 100000000  -- first 100ms
-  GROUP BY core_type
-),
--- Steady phase: 100ms to end
-steady_freq AS (
-  SELECT
-    COALESCE(ct.core_type, 'unknown') as core_type,
-    ROUND(SUM(c.value * cf.dur) / NULLIF(SUM(cf.dur), 0) / 1000, 0) as avg_freq_mhz,
-    ROUND(MAX(c.value) / 1000, 0) as max_freq_mhz
-  FROM cpu_frequency_counters cf
-  JOIN counter c ON cf.id = c.id
-  LEFT JOIN _cpu_topology ct ON cf.cpu = ct.cpu_id
-  WHERE cf.ts >= ${start_ts} + 100000000  -- after first 100ms
-    AND cf.ts < ${end_ts}
-  GROUP BY core_type
+-- Observed frequency is not hardware capacity, a governor request or proof of delay.
+WITH phases AS (
+  SELECT 'early' AS phase, ${start_ts} AS start_ts,
+    MIN(${end_ts}, ${start_ts} + 100000000) AS end_ts
+  UNION ALL
+  SELECT 'steady', MIN(${end_ts}, ${start_ts} + 100000000), ${end_ts}
+), spans AS (
+  SELECT ucpu, ts, CASE WHEN dur = -1 THEN trace_end() ELSE ts + dur END AS end_ts, freq
+  FROM cpu_frequency_counters
+  WHERE (dur > 0 OR dur = -1) AND freq IS NOT NULL AND freq >= 0
+), clipped AS (
+  SELECT c.ucpu, c.cpu, c.machine_id, p.phase,
+    p.end_ts - p.start_ts AS window_ns,
+    MAX(f.ts, p.start_ts) AS clipped_start,
+    MIN(f.end_ts, p.end_ts) AS clipped_end,
+    f.freq
+  FROM cpu c CROSS JOIN phases p
+  LEFT JOIN spans f ON f.ucpu = c.ucpu AND f.ts < p.end_ts
+    AND f.end_ts > p.start_ts AND p.end_ts > p.start_ts
+), overlap_check AS (
+  SELECT *, MAX(clipped_end) OVER (PARTITION BY ucpu, phase ORDER BY clipped_start, clipped_end
+    ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) AS prior_end
+  FROM clipped
+), measured AS (
+  SELECT ucpu, cpu, machine_id, phase, window_ns,
+    COALESCE(SUM(clipped_end - clipped_start), 0) AS covered_ns,
+    MAX(CASE WHEN prior_end > clipped_start THEN 1 ELSE 0 END) AS overlap_conflict,
+    SUM(freq * (clipped_end - clipped_start)) /
+      NULLIF(SUM(clipped_end - clipped_start), 0) / 1000.0 AS avg_freq_mhz,
+    MAX(freq) / 1000.0 AS observed_max_mhz
+  FROM overlap_check GROUP BY ucpu, cpu, machine_id, phase, window_ns
+), per_cpu AS (
+  SELECT e.ucpu, e.cpu, e.machine_id,
+    CASE WHEN e.overlap_conflict = 0 THEN e.avg_freq_mhz END AS early_avg_freq_mhz,
+    CASE WHEN s.overlap_conflict = 0 THEN s.avg_freq_mhz END AS steady_avg_freq_mhz,
+    CASE WHEN e.observed_max_mhz IS NULL THEN s.observed_max_mhz
+      WHEN s.observed_max_mhz IS NULL THEN e.observed_max_mhz
+      ELSE MAX(e.observed_max_mhz, s.observed_max_mhz) END AS max_freq_mhz,
+    e.covered_ns AS early_covered_ns, e.window_ns AS early_window_ns,
+    s.covered_ns AS steady_covered_ns, s.window_ns AS steady_window_ns,
+    CASE WHEN e.overlap_conflict > 0 OR s.overlap_conflict > 0 THEN 'overlapping_frequency_spans'
+      WHEN e.window_ns <= 0 OR s.window_ns <= 0 THEN 'no_comparison_window'
+      WHEN e.covered_ns < e.window_ns OR s.covered_ns < s.window_ns THEN 'insufficient_frequency_coverage'
+      WHEN s.avg_freq_mhz > e.avg_freq_mhz THEN 'later_frequency_higher_observed'
+      ELSE 'later_frequency_not_higher_observed' END AS assessment
+  FROM measured e JOIN measured s ON e.ucpu = s.ucpu AND s.phase = 'steady'
+  WHERE e.phase = 'early'
 )
-SELECT
-  COALESCE(ef.core_type, sf.core_type) as core_type,
-  COALESCE(ef.avg_freq_mhz, 0) as early_avg_freq_mhz,
-  COALESCE(sf.avg_freq_mhz, 0) as steady_avg_freq_mhz,
-  COALESCE(sf.max_freq_mhz, ef.max_freq_mhz, 0) as max_freq_mhz,
-  ROUND((COALESCE(sf.avg_freq_mhz, 0) - COALESCE(ef.avg_freq_mhz, 0))
-    / NULLIF(COALESCE(ef.avg_freq_mhz, 1), 0) * 100, 1) as rampup_pct,
-  CASE
-    WHEN COALESCE(ef.avg_freq_mhz, 0) < COALESCE(sf.avg_freq_mhz, 0) * 0.5
-      THEN '⚠️ 启动初期频率显著偏低，升频延迟明显'
-    WHEN COALESCE(ef.avg_freq_mhz, 0) < COALESCE(sf.avg_freq_mhz, 0) * 0.8
-      THEN '启动初期频率偏低，有一定升频延迟'
-    ELSE '频率爬升正常'
-  END as assessment
-FROM early_freq ef
-FULL OUTER JOIN steady_freq sf ON ef.core_type = sf.core_type
-ORDER BY
-  CASE COALESCE(ef.core_type, sf.core_type)
-    WHEN 'prime' THEN 0 WHEN 'big' THEN 1 WHEN 'medium' THEN 2 ELSE 3 END
+SELECT *, CASE WHEN assessment IN ('later_frequency_higher_observed', 'later_frequency_not_higher_observed')
+    THEN (steady_avg_freq_mhz - early_avg_freq_mhz) / NULLIF(early_avg_freq_mhz, 0) * 100.0 END AS rampup_pct,
+  'frequency_comparison_only_not_capacity_throttling_or_governor_delay_proof' AS claim_boundary
+FROM per_cpu ORDER BY ucpu

@@ -63,30 +63,24 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "b7608ed04d780a689121fbd9503654260da1f0b18b350b5282f48c1a3e24b8de",
+      "sha256": "11766dd71663889e6e23de2eb478a2bea5dda9ba0527e7557caf223724ddb35f",
       "signal_patterns": [
-        "${package}",
-        "${package}:*",
-        "RenderThread"
+        "${package}:*"
       ],
       "skill_id": "task_migration_in_range",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/atomic/task_migration_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6b439d1de33342825c0e07b756b2e0b4ee97eb56287f7df8d9312a9a14ce14f2"
+        "sha256": "8b1703cdcf2d63f210900cbb978a2a645b9ca530a25e37a3a8fd946d20df39f0"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "migration_analysis",
       "template": {
@@ -94,7 +88,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "f77b1954337927ed8e4dd0b4569123ce67be7017eae25055bd774131fc2d1b3e"
+            "source_sha256": "714e9dcf10c508e7e35c892cacfb3e92f553285354472d104c854afe0b00bec1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "38801c0ccea35ad9c33b27b1e21f8b887e11ceb500aff3783f3db7c7c9b86248"
           }
         ],
         "name_parameters": [

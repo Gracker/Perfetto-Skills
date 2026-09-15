@@ -23,6 +23,7 @@
     "signal_patterns": [
       "${process_name}",
       "${process_name}*",
+      "${process_name}:*",
       "*InputDispatcher*",
       "*InputEvent*",
       "*InputReader*",
@@ -31,7 +32,6 @@
       "/system/bin/%",
       "UnwantedInteractionBlocker::notifyMotion*",
       "aq:pending:deliver*",
-      "cpufreq",
       "system_server"
     ]
   },
@@ -118,11 +118,60 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/composite/click_response_detail.skill.yaml",
-    "sha256": "051bdc9c5edc28e6120e77e34dfa9036ffbfc5b1c4ea529604ca31a7435714b5"
+    "sha256": "e6caf5c56483f80b2e80c360f82ad97098e9d0865e1914f3c4c3d5c772e6c4ab"
   },
   "steps": [
+    {
+      "id": "system_context_window",
+      "name": "系统证据窗口",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
+      "query_id": "click_response_detail/system_context_window",
+      "result_dependencies": [],
+      "save_as": "system_context_window",
+      "type": "atomic"
+    },
+    {
+      "id": "system_cpu_context",
+      "name": "窗口 CPU 系统上下文",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_cpu_context",
+      "skill": "cpu_system_context_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "system_task_summary",
+      "name": "目标任务系统状态",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${process_name}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_task_summary",
+      "skill": "thread_system_summary_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "system_task_handoffs",
+      "name": "目标任务调度交接",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${process_name}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_task_handoffs",
+      "skill": "thread_preemption_handoffs_in_range",
+      "type": "skill"
+    },
     {
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
@@ -158,6 +207,10 @@
     {
       "id": "cpu_core_analysis",
       "name": "大小核占比分析",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "click_response_detail/cpu_core_analysis",
       "result_dependencies": [],
       "save_as": "cpu_core",
@@ -167,6 +220,10 @@
       "id": "quadrant_analysis",
       "name": "四大象限分析",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "click_response_detail/quadrant_analysis",
       "result_dependencies": [],
       "save_as": "quadrant",
@@ -270,7 +327,7 @@
           ]
         },
         {
-          "condition": "cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms > 20 && quadrant.data[0]?.q3_runnable_ms > 20 && (sched_delay.data[0]?.severe_count || 0) > 0 && !(cpu_core.data[0]?.classify_method || '').includes('cpu_id_fallback')",
+          "condition": "cpu_core.data[0]?.unknown_running_ms === 0 && cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms > 20 && quadrant.data[0]?.q3_runnable_ms > 20 && (sched_delay.data[0]?.severe_count || 0) > 0 && !(cpu_core.data[0]?.classify_method || '').includes('cpu_id_fallback')",
           "confidence": "medium",
           "diagnosis": "主线程大核占比偏低（${cpu_core.data[0].big_core_pct}%）且 Runnable 等待 ${quadrant.data[0].q3_runnable_ms}ms，存在调度供给不足迹象",
           "severity": "warning",

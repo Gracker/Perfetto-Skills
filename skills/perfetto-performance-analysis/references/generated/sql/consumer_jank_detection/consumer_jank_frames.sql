@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/consumer_jank_detection.skill.yaml
 -- Source SHA-256: bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH
 vsync_ticks AS (

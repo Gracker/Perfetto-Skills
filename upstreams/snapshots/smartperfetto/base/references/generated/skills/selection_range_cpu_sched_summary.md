@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml
-Source SHA-256: 31127ebb648421f06248c4ceb054d614d12df318c63b0a652a41f341b556310e
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 95df0f44514ceae080e9a7b042ac2b618628a1b74c44e9fc73fb1daa8fc9ad67
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 选区 CPU 调度与频率摘要
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -134,6 +134,53 @@ display:
   layer: overview
   title: 选区 Running 线程四象限
   columns:
+  - name: window_id
+    label: window_id
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
+  - name: role
+    label: role
+    type: string
+    hidden: true
+  - name: state_covered_ns
+    label: state_covered_ns
+    type: duration
+    unit: ns
+    hidden: true
+  - name: total_observed_threads
+    label: total_observed_threads
+    type: number
+    hidden: true
+  - name: sampling_evidence
+    label: sampling_evidence
+    type: string
+    hidden: true
+  - name: unknown_running_ms
+    label: unknown_running_ms
+    type: number
+    hidden: true
+  - name: other_state_ms
+    label: other_state_ms
+    type: number
+    hidden: true
   - name: thread_name
     label: 线程
     type: string
@@ -163,7 +210,7 @@ display:
     type: duration
     format: duration_ms
     unit: ms
-  - name: q4a_io_blocked_ms
+  - name: q4a_uninterruptible_ms
     label: Q4a 不可中断等待
     type: duration
     format: duration_ms
@@ -189,6 +236,13 @@ display:
   - name: cross_cluster_migrations
     label: 跨簇迁移
     type: number
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_thread_state_spans.sql
+- fragments/system_sched_spans.sql
 save_as: running_thread_quadrants
 ```
 ### Running 进程排名
@@ -206,6 +260,24 @@ display:
   layer: list
   title: 选区 Running 进程排名
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: runnable_ms
+    label: runnable_ms
+    type: number
+    hidden: true
   - name: process_name
     label: 进程
     type: string
@@ -220,6 +292,12 @@ display:
   - name: thread_count
     label: 线程数
     type: number
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_thread_state_spans.sql
 save_as: running_process_ranking
 ```
 ### 各核 duration-weighted 频率
@@ -237,6 +315,28 @@ display:
   layer: list
   title: 选区各核平均频率
   columns:
+  - name: window_id
+    label: window_id
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: ucpu
+    label: ucpu
+    type: number
+    hidden: true
+  - name: topology_source
+    label: topology_source
+    type: string
+    hidden: true
   - name: cpu
     label: CPU
     type: number
@@ -257,6 +357,11 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_frequency_spans.sql
 save_as: cpu_freq_by_core
 ```
 ### 各核频率分布
@@ -274,6 +379,24 @@ display:
   layer: deep
   title: 选区各核频率分布
   columns:
+  - name: window_id
+    label: window_id
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: ucpu
+    label: ucpu
+    type: number
+    hidden: true
   - name: cpu
     label: CPU
     type: number
@@ -292,6 +415,11 @@ display:
     label: 区间占比
     type: percentage
     format: percentage
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_frequency_spans.sql
 save_as: cpu_freq_distribution
 ```
 ## Output and evidence contract

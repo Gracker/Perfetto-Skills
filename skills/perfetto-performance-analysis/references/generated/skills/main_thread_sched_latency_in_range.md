@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/main_thread_sched_latency_in_range.skill.yaml
-Source SHA-256: c0a7c90db402980de38c10ae00ada63133dd05269323e952bc13f4279c9b1fdd
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 63e24db148afece3081efeb7a7cf445aa6822776d4b377c8acb5537057d979e2
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 主线程调度延迟 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -72,6 +72,40 @@ level: detail
 layer: deep
 title: 主线程调度延迟
 columns:
+- name: upid
+  label: upid
+  type: number
+  hidden: true
+- name: utid
+  label: utid
+  type: number
+  hidden: true
+- name: tid
+  label: tid
+  type: number
+  hidden: true
+- name: window_start_ts
+  label: window_start_ts
+  type: timestamp
+  unit: ns
+  hidden: true
+- name: window_end_ts
+  label: window_end_ts
+  type: timestamp
+  unit: ns
+  hidden: true
+- name: runnable_preempted_ms
+  label: runnable_preempted_ms
+  type: number
+  hidden: true
+- name: right_censored_count
+  label: right_censored_count
+  type: number
+  hidden: true
+- name: latency_evidence
+  label: latency_evidence
+  type: string
+  hidden: true
 - name: thread_name
   label: 线程
   type: string

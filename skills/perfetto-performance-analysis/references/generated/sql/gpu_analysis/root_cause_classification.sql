@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gpu_analysis.skill.yaml
 -- Source SHA-256: 36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH
 -- GPU 频率统计

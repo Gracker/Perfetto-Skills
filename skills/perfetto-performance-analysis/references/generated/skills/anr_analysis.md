@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/anr_analysis.skill.yaml
-Source SHA-256: 9a20a24042252892aabc8ff420a5f4777953bd6c041b00285dc3402f3cf6182e
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: b4477788d50246d11d2483cd0837b27f8088afd90565197ab4f32613a52e680d
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # ANR 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -265,11 +265,23 @@ condition: detection.data[0]?.total_anr_count > 0
 ```yaml
 id: system_cpu_health
 type: atomic
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/system_sched_spans.sql
 display:
   level: key
   layer: overview
   title: 首个 ANR 窗口系统 CPU 状况
   columns:
+  - name: sched_covered_ns
+    label: sched_covered_ns
+    type: number
+    hidden: true
+  - name: idle_identity_unknown_ns
+    label: idle_identity_unknown_ns
+    type: number
+    hidden: true
   - name: core_type
     label: 核心类型
     type: string

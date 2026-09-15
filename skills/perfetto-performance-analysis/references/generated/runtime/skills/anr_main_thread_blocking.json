@@ -1,6 +1,11 @@
 {
   "android": {
-    "adapters": [],
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
     "selection_order": [
       "device_capability",
       "trace_config_and_setup_errors",
@@ -10,6 +15,7 @@
     ],
     "signal_patterns": [
       "${process_name}*",
+      "${process_name}:*",
       "*futex*"
     ]
   },
@@ -58,9 +64,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
-    "sha256": "752e67cdf5dd546d65645a1b6da52ba9ab151e46610423c7390997c6e0d4d7a9"
+    "sha256": "ce0f0f6648e41098ec6dbbc24717b4d7fdb5047edf34700c9a446c4a49fed625"
   },
   "steps": [
     {

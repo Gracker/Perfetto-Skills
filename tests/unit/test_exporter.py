@@ -50,6 +50,21 @@ class ExpandSqlFragmentsTest(unittest.TestCase):
                 )
         self.assertIn("second_cte AS (", expanded)
 
+    def test_recursive_keyword_stays_on_the_composed_with_clause(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            self._write(root, "base.sql", "base_cte AS (SELECT 1 AS value)")
+            expanded, _ = exporter.expand_sql_fragments(
+                "WITH RECURSIVE paths(value) AS (\n"
+                "  SELECT 1 UNION ALL SELECT value + 1 FROM paths WHERE value < 2\n"
+                ") SELECT * FROM paths",
+                ["fragments/base.sql"],
+                root,
+            )
+
+        self.assertTrue(expanded.startswith("WITH RECURSIVE\nbase_cte"))
+        self.assertNotIn(",\nRECURSIVE paths", expanded)
+
 
 class ExporterTest(unittest.TestCase):
     def setUp(self) -> None:

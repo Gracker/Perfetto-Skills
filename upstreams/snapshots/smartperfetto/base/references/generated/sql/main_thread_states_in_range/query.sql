@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_states_in_range.skill.yaml
--- Source SHA-256: 43082527dddf9c216ee52103042e8a72c65b99adf6ba8079c7375ba2ca37050a
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: 5e5a3a2c89481901979330ce8412ec570bf8ea3cdf5a757e413553bd076d2769
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH main_thread AS (
   SELECT t.utid
@@ -28,8 +28,8 @@ SELECT
     WHEN 'I' THEN 'Idle (空闲)'
     ELSE ts.state
   END as state_desc,
-  COALESCE(NULLIF(ts.blocked_function, ''), '-') as blocked_function,
-  COALESCE(ts.io_wait, 0) as io_wait,
+  NULLIF(ts.blocked_function, '') as blocked_function,
+  ts.io_wait,
   CASE
     WHEN ts.state IN ('D', 'DK') AND COALESCE(ts.io_wait, 0) = 1 THEN 'direct_io_wait'
     WHEN ts.state IN ('D', 'DK') AND (
@@ -64,6 +64,6 @@ FROM thread_state ts
 JOIN main_thread mt ON ts.utid = mt.utid
 WHERE ts.ts < ${end_ts}
   AND (CASE WHEN ts.dur < 0 THEN ${end_ts} ELSE ts.ts + ts.dur END) > ${start_ts}
-GROUP BY ts.state, COALESCE(ts.io_wait, 0), ts.blocked_function
+GROUP BY ts.state, ts.io_wait, NULLIF(ts.blocked_function, '')
 ORDER BY total_dur_ms DESC
 LIMIT ${top_k|10}

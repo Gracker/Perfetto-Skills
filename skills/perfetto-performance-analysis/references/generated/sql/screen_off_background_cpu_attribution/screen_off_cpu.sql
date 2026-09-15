@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/screen_off_background_cpu_attribution.skill.yaml
 -- Source SHA-256: 384a9847b81354d15158318fc507b131439718fcd179fa034bc68c02cc354197
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH bounds AS (
   SELECT

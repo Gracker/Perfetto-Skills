@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/network.strategy.md
-Source SHA-256: 3323599a9344843ba2c7578dd7415baac57f3014fd8b5aca25c1ae4f11c9c68e
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: d7494457f9eab645121ac5aef92cf5054265a3a1dcd1aeb7d8e06909b5662097
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Network Strategy
 
@@ -252,6 +252,20 @@ plan_template:
     - skill_id: battery_drain_attribution
     - skill_id: power_consumption_overview
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### network_critical_path (critical_path)
+
+Bind the request or packet and application-processing window. Investigate network/callback task scheduling when application latency is involved; packet-only questions do not require unrelated CPU tables.
+
+### network_dependencies (dependency_chain)
+
+Separate packet timing, retransmission, request queueing and app callback service. Packet-only data does not establish DNS/TLS or remote-server duration; disclose missing protocol endpoints.
 
 #### network Core Strategy
 

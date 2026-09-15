@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_gpu_work_period_track.skill.yaml
 -- Source SHA-256: dad0f300552c8a78618be018d8930c345109988d414c37fcef819ee4752758f5
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 SELECT
   s.ts,

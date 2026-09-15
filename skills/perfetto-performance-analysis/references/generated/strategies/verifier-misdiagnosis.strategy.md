@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/verifier-misdiagnosis.strategy.md
-Source SHA-256: 7489962fb5e4c477d39cf811c2f57e201458635d9d3163bcaee144a2bc513761
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 6c0740e5e9a28162c20224c99bb456425b6c18c4e617411b1928e95d6cc49da1
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Verifier Misdiagnosis Strategy
 
@@ -55,6 +55,10 @@ verifier_misdiagnosis_patterns:
   - (?:单帧|single frame|1帧).*(?:异常|critical|严重)
   message: 单帧异常不应标记为 CRITICAL — 需确认是否有模式性重复
 ```
+
+## Investigation methodology
+
+Shared interpretation constraints apply to existing claims; this is not an independently classified investigation scene.
 
 Verifier misdiagnosis guardrail contracts. This file is data-only and is not
 injected into runtime prompts.

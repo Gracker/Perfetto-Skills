@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_main_thread_slices_in_range.skill.yaml
-Source SHA-256: 21db5523aeee82a84c77686daadfba7b7a22178318b9d83514ecf380bd150af0
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 7286527c884bdbc89b1e6acdfbdaa8174d1d43bab1fe793a46d6ae7406e1f779
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 启动主线程切片热点 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -93,18 +93,22 @@ columns:
   label: 总耗时(wall)
   type: duration
   format: duration_ms
+  unit: ms
 - name: self_dur_ms
   label: 自身耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: avg_dur_ms
   label: 平均耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: max_dur_ms
   label: 最大耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: percent_of_startup
   label: 启动占比(wall)
   type: percentage

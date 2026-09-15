@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/io.strategy.md
-Source SHA-256: bf356da4f3428ba6eb82ab6fabc4db6b9f9d6c19d7fb987c130bdf4c129aef04
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 654f26933fe4cf7b4b5d76d6526dd51d1128f0f35341aff2fbef002a9b7f6681
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Io Strategy
 
@@ -238,6 +238,20 @@ plan_template:
     - skill_id: main_thread_file_io_in_range
     - skill_id: blocking_chain_analysis
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### io_critical_path (critical_path)
+
+Bind requesting task and relevant read/write, fsync, fault or block-layer interval. Separate CPU work and Runnable delay from uninterruptible wait, IO queue time, device service and post-completion scheduling.
+
+### io_dependencies (dependency_chain)
+
+Require IO-specific evidence before interpreting D/DK as disk latency. Correlate memory pressure/reclaim and filesystem or device events without equating request duration with device time.
 
 #### io Core Strategy
 

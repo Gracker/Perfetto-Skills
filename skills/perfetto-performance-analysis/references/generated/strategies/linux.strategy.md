@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/linux.strategy.md
-Source SHA-256: f7a01c92cb9174473fd3b16f94c41ee4fed0cb391283c1522e98f37d9fc39ece
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 98b3d52ab5a636190a80f9a57538cba4306f31d8c0beaac2c7ead88b1f9356e9
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Linux Strategy
 
@@ -102,6 +102,20 @@ plan_template:
     - skill_id: linux_sched_latency_distribution
     - skill_id: linux_runqueue_depth_timeline
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### linux_critical_path (critical_path)
+
+Bind the requested workload, process instance and critical threads/windows using available Linux trace identities. Analyze relevant state, runqueue signals, frequency/load and observed priority without Android startup or MainThread assumptions.
+
+### linux_dependencies (dependency_chain)
+
+Preserve homogeneous topology and missing perf/PSI/policy capabilities as explicit boundaries. Distinguish user/kernel work, blocking, IRQ and peer activity using observed evidence.
 
 #### linux Core Strategy
 

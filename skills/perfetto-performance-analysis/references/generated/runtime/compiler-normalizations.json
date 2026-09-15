@@ -1,6 +1,21 @@
 {
   "normalizations": [
     {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "anr_analysis/system_cpu_health",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "anr_detail/main_thread_quadrant",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "anr_detail/main_thread_quadrant",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "anr_detail/main_thread_quadrant",
       "reason": "hash identifies the packaged runtime fragment"
@@ -21,6 +36,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "anr_detail/wakeup_chain",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "anr_detail/wakeup_chain",
       "reason": "hash identifies the packaged runtime fragment"
@@ -36,6 +56,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "anr_main_thread_blocking/wakeup_chain",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "app_frame_production/app_production_stats",
       "reason": "hash identifies the packaged runtime fragment"
@@ -48,6 +73,161 @@
     {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "binder_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "click_response_analysis/input_thread_state",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "click_response_analysis/input_thread_state",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "click_response_detail/cpu_core_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "click_response_detail/cpu_core_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "click_response_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "click_response_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "click_response_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "cpu_analysis/get_process",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/get_process",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "cpu_analysis/core_type_stats",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/core_type_stats",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "cpu_analysis/thread_cpu_usage",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/thread_cpu_usage",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "cpu_analysis/main_thread_states",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/main_thread_states",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "cpu_analysis/runnable_latency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/runnable_latency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "cpu_analysis/main_thread_cores",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/main_thread_cores",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "cpu_analysis/blocked_functions",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/blocked_functions",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "cpu_analysis/cpu_frequency_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/cpu_frequency_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/cpu_frequency_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "cpu_analysis/wakeup_chain",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/wakeup_chain",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_load_in_range/cpu_utilization",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_load_in_range/runqueue_depth",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_load_in_range/thread_migrations",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_system_context_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "cpu_system_context_in_range/root",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -91,8 +271,28 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.target_threads.sql.source_sha256",
       "query_id": "jank_frame_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/cpu_freq_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/cpu_freq_analysis",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -111,13 +311,43 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/cpu_freq_timeline",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/cpu_freq_timeline",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "jank_frame_detail/gc_in_frame",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/io_blocking",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "jank_frame_detail/io_blocking",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/root_cause_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/root_cause_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "jank_frame_detail/root_cause_summary",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -201,6 +431,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "main_thread_sched_latency_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "page_fault_in_range/root",
       "reason": "hash identifies the packaged runtime fragment"
@@ -208,6 +443,51 @@
     {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "sched_latency_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "sched_latency_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "scheduler_module/runnable_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "scheduler_module/runnable_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "scheduler_module/cpu_frequency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "scheduler_module/cpu_frequency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "scheduler_module/core_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "scheduler_module/core_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "scheduling_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "scheduling_analysis/root",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -316,6 +596,21 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/session_stats_batch",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/session_stats_batch",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/session_stats_batch",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "scrolling_analysis/session_stats_batch",
       "reason": "hash identifies the packaged runtime fragment"
@@ -336,6 +631,21 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/batch_frame_root_cause",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/batch_frame_root_cause",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/batch_frame_root_cause",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "scrolling_analysis/batch_frame_root_cause",
       "reason": "hash identifies the packaged runtime fragment"
@@ -351,8 +661,28 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/global_context_flags",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/global_context_flags",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "scrolling_analysis/global_context_flags",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/session_quadrant_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/session_quadrant_summary",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -361,8 +691,38 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/session_cpu_freq",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/session_cpu_freq",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/session_thread_core_affinity",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/session_thread_core_affinity",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "scrolling_analysis/session_thread_core_affinity",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/root_cause_classification",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "scrolling_analysis/root_cause_classification",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -372,12 +732,192 @@
     },
     {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "selection_range_cpu_sched_summary/running_thread_quadrants",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "selection_range_cpu_sched_summary/running_thread_quadrants",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "selection_range_cpu_sched_summary/running_thread_quadrants",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "selection_range_cpu_sched_summary/running_process_ranking",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "selection_range_cpu_sched_summary/running_process_ranking",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "selection_range_cpu_sched_summary/cpu_freq_by_core",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "selection_range_cpu_sched_summary/cpu_freq_by_core",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "selection_range_cpu_sched_summary/cpu_freq_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "selection_range_cpu_sched_summary/cpu_freq_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "startup_cpu_placement_timeline/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "startup_cpu_placement_timeline/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "startup_critical_tasks/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "startup_critical_tasks/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "startup_critical_tasks/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "startup_detail/cpu_core_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "startup_detail/cpu_core_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "startup_detail/cpu_freq_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "startup_detail/cpu_freq_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "startup_detail/cpu_freq_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "startup_detail/per_cpu_system_context",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "startup_detail/per_cpu_system_context",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "startup_detail/per_cpu_system_context",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "startup_detail/preemption",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "startup_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "startup_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "startup_detail/quadrant_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "startup_hot_slice_states/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "startup_thread_blocking_graph/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "task_migration_in_range/migration_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
       "query_id": "task_migration_in_range/migration_analysis",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
       "field": "template.fragments.vsync_config.sql.source_sha256",
       "query_id": "textureview_producer_frame_timing/textureview_producer_intervals",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "thread_cpu_placement_timeline/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "thread_cpu_placement_timeline/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "thread_preemption_handoffs_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "thread_system_summary_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "thread_system_summary_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "thread_system_summary_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "thread_system_summary_in_range/root",
       "reason": "hash identifies the packaged runtime fragment"
     }
   ],

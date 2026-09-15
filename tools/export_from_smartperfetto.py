@@ -1085,10 +1085,11 @@ def expand_sql_fragments(
     block = "\n,\n".join(fragments)
     trimmed = sql.lstrip()
     no_comments = re.sub(r"^(?:--[^\n]*\n\s*)*", "", trimmed)
-    match = re.match(r"^WITH\s+", no_comments, flags=re.I)
+    match = re.match(r"^WITH(?:\s+(RECURSIVE))?\s+", no_comments, flags=re.I)
     if match:
         prefix = trimmed[: len(trimmed) - len(no_comments)]
-        return f"{prefix}WITH\n{block}\n,\n{no_comments[match.end():]}", metadata
+        recursive = " RECURSIVE" if match.group(1) else ""
+        return f"{prefix}WITH{recursive}\n{block}\n,\n{no_comments[match.end():]}", metadata
     return f"WITH\n{block}\n{trimmed}", metadata
 
 

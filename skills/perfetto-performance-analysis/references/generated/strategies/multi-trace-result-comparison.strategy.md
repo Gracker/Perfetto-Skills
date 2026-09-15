@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/multi-trace-result-comparison.strategy.md
-Source SHA-256: 4590f9c584a3424d34aab3b87835799ea74a02290e15388bd4b58a03f177cb61
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 942577d9f2720de874f24ed0620f2adeb5507a40e65aea139ca28816b427b844
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Multi Trace Result Comparison Strategy
 
@@ -98,6 +98,20 @@ plan_template:
     required_expected_calls:
     - skill_id: multi_trace_result_comparison
 ```
+
+## Investigation methodology
+
+Apply `result_comparison` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### multi_trace_result_comparison_critical_path (critical_path)
+
+Retain each saved snapshot identity, original scene, scope and evidence pin. Compare stored app and system findings in their original windows; missing investigation coverage remains unknown.
+
+### multi_trace_result_comparison_dependencies (dependency_chain)
+
+Explain compatible deltas, alternatives and incomparable dimensions using saved artifacts. Do not query original traces, reinterpret missing values as zero, or generalize one side coverage to the pair.
 
 #### multi_trace_result_comparison Core Strategy
 

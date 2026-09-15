@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gpu_render_in_range.skill.yaml
-Source SHA-256: 1c142b8dbc84b47518922a8a37b43c85c1e3e887ad5bfc61179c1710dce9c286
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 41c5baba37f722b6109d1a1058f99a23195d9b80ef96f0fade4e979a8ed860b0
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # GPU 渲染分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -96,4 +96,10 @@ columns:
   label: 平均耗时
   type: duration
   format: duration_ms
+- name: censored_slice_count
+  label: 未闭合切片
+  type: number
+- name: duration_basis
+  label: 耗时口径
+  type: string
 ```

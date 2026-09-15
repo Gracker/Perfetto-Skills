@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/memory_pressure_in_range.skill.yaml
--- Source SHA-256: 64e35396d604190f06c52c86371844406e7049fc72ae0392d479dd05a6aa417b
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: c71a35436516ec7ec94a2e064bcd800cb49435057bd9f80365a7c2742f6b6998
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 -- Memory Pressure Analysis
 --
@@ -19,143 +19,162 @@ WITH params AS (
     '${package}' AS package_filter
 ),
 
--- PSI Memory Pressure (if available in trace)
+-- Closed spans intersect the half-open window. Unknown ends remain NULL;
+-- instantaneous events belong to the window containing their timestamp.
+range_slices AS (
+  SELECT s.*, s.dur AS raw_dur,
+    CASE WHEN s.dur >= 0 THEN
+      MIN(s.ts + s.dur, p.end_ts) - MAX(s.ts, p.start_ts)
+    END AS clipped_dur
+  FROM slice s CROSS JOIN params p
+  WHERE p.end_ts > p.start_ts AND s.ts < p.end_ts
+    AND (s.dur < 0 OR s.ts + s.dur > p.start_ts
+      OR (s.dur = 0 AND s.ts >= p.start_ts))
+),
+
+-- PSI values are source samples, not integrated stall duration.
 psi_memory AS (
   SELECT
     'psi_memory' AS source,
     c.ts,
     c.value,
+    c.track_id,
     t.name AS metric_name
   FROM counter c
   JOIN counter_track t ON c.track_id = t.id
   CROSS JOIN params p
   WHERE (t.name LIKE 'mem.%psi%' OR t.name LIKE '%memory_pressure%')
     AND c.ts >= p.start_ts
-    AND c.ts <= p.end_ts
+    AND c.ts < p.end_ts
 ),
 
 psi_summary AS (
   SELECT
-    MAX(value) AS max_psi_value,
-    AVG(value) AS avg_psi_value,
-    COUNT(*) AS psi_sample_count
+    CASE WHEN COUNT(DISTINCT track_id) = 1 THEN MAX(value) END AS max_psi_value,
+    CASE WHEN COUNT(DISTINCT track_id) = 1 THEN AVG(value) END AS avg_psi_value,
+    COUNT(*) AS psi_sample_count,
+    COUNT(DISTINCT track_id) AS psi_metric_count,
+    GROUP_CONCAT(DISTINCT metric_name) AS psi_metric_names
   FROM psi_memory
 ),
 
 -- kswapd activity (page reclaim daemon)
 kswapd_slices AS (
   SELECT
+    s.id AS slice_id,
     s.ts,
-    s.dur,
+    s.clipped_dur AS dur,
+    s.raw_dur,
     s.name
-  FROM slice s
+  FROM range_slices s
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
-  CROSS JOIN params p
   WHERE t.name LIKE 'kswapd%'
-    AND s.ts >= p.start_ts
-    AND s.ts <= p.end_ts
-    AND s.dur > 0
+    AND (s.raw_dur > 0 OR s.raw_dur < 0)
 ),
 
 kswapd_summary AS (
   SELECT
     COUNT(*) AS kswapd_event_count,
-    COALESCE(SUM(dur), 0) AS kswapd_total_dur_ns,
-    COALESCE(MAX(dur), 0) AS kswapd_max_dur_ns,
-    COALESCE(AVG(dur), 0) AS kswapd_avg_dur_ns
+    CASE WHEN COUNT(*) = 0 THEN 0 ELSE SUM(dur) END AS kswapd_total_dur_ns,
+    CASE WHEN COUNT(*) = 0 THEN 0 ELSE MAX(dur) END AS kswapd_max_dur_ns,
+    CASE WHEN COUNT(*) = 0 THEN 0 ELSE AVG(dur) END AS kswapd_avg_dur_ns
   FROM kswapd_slices
 ),
 
 -- Direct reclaim events (synchronous memory allocation stalls)
 direct_reclaim AS (
   SELECT
+    s.id AS slice_id,
     s.ts,
-    s.dur,
+    s.clipped_dur AS dur,
+    s.raw_dur,
     s.name,
     t.name AS thread_name
-  FROM slice s
+  FROM range_slices s
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
-  CROSS JOIN params p
   WHERE (s.name LIKE '%direct_reclaim%' OR s.name LIKE '%reclaim%alloc%')
-    AND s.ts >= p.start_ts
-    AND s.ts <= p.end_ts
 ),
 
 direct_reclaim_summary AS (
   SELECT
     COUNT(*) AS direct_reclaim_count,
-    COALESCE(SUM(dur), 0) AS direct_reclaim_total_ns,
-    COALESCE(MAX(dur), 0) AS direct_reclaim_max_ns
+    CASE WHEN COUNT(*) = 0 THEN 0 ELSE SUM(dur) END AS direct_reclaim_total_ns,
+    CASE WHEN COUNT(*) = 0 THEN 0 ELSE MAX(dur) END AS direct_reclaim_max_ns
   FROM direct_reclaim
 ),
 
 -- Memory compaction events
 compaction_events AS (
   SELECT
+    s.id AS slice_id,
     s.ts,
-    s.dur,
+    s.clipped_dur AS dur,
+    s.raw_dur,
     s.name
-  FROM slice s
-  CROSS JOIN params p
+  FROM range_slices s
   WHERE s.name LIKE '%compact%'
-    AND s.ts >= p.start_ts
-    AND s.ts <= p.end_ts
 ),
 
 compaction_summary AS (
   SELECT
     COUNT(*) AS compaction_count,
-    COALESCE(SUM(dur), 0) AS compaction_total_ns
+    CASE WHEN COUNT(*) = 0 THEN 0 ELSE SUM(dur) END AS compaction_total_ns
   FROM compaction_events
 ),
 
 -- LMK (Low Memory Killer) events
 lmk_events AS (
   SELECT
-    ts,
-    dur,
-    name
-  FROM slice
-  CROSS JOIN params p
+    s.id AS slice_id,
+    s.ts,
+    s.clipped_dur AS dur,
+    s.raw_dur,
+    s.name
+  FROM range_slices s
   WHERE (name LIKE '%lowmemory%' OR name LIKE '%lmkd%' OR name LIKE '%oom_adj%')
-    AND ts >= p.start_ts
-    AND ts <= p.end_ts
 ),
 
 lmk_summary AS (
   SELECT
     COUNT(*) AS lmk_event_count,
-    COALESCE(SUM(dur), 0) AS lmk_total_ns
+    CASE WHEN COUNT(*) = 0 THEN 0 ELSE SUM(dur) END AS lmk_total_ns
   FROM lmk_events
 ),
 
 -- Memory allocation stalls (blocked allocations)
 alloc_stalls AS (
   SELECT
+    s.id AS slice_id,
     s.ts,
-    s.dur,
+    s.clipped_dur AS dur,
+    s.raw_dur,
     s.name,
     t.name AS thread_name,
     p2.name AS process_name
-  FROM slice s
+  FROM range_slices s
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
   JOIN process p2 ON t.upid = p2.upid
-  CROSS JOIN params p
   WHERE (s.name LIKE '%alloc_pages%' OR s.name LIKE '%page_alloc%')
-    AND s.dur > 1000000  -- > 1ms stall
-    AND s.ts >= p.start_ts
-    AND s.ts <= p.end_ts
+    AND (s.raw_dur > 1000000 OR s.raw_dur < 0)  -- > 1ms original span or unknown end
 ),
 
 alloc_stall_summary AS (
   SELECT
     COUNT(*) AS alloc_stall_count,
-    COALESCE(SUM(dur), 0) AS alloc_stall_total_ns,
-    COALESCE(MAX(dur), 0) AS alloc_stall_max_ns
+    CASE WHEN COUNT(*) = 0 THEN 0 ELSE SUM(dur) END AS alloc_stall_total_ns,
+    CASE WHEN COUNT(*) = 0 THEN 0 ELSE MAX(dur) END AS alloc_stall_max_ns
   FROM alloc_stalls
+),
+
+censored_events AS (
+  SELECT slice_id FROM kswapd_slices WHERE raw_dur < 0
+  UNION SELECT slice_id FROM direct_reclaim WHERE raw_dur < 0
+  UNION SELECT slice_id FROM compaction_events WHERE raw_dur < 0
+  UNION SELECT slice_id FROM lmk_events WHERE raw_dur < 0
+  UNION SELECT slice_id FROM alloc_stalls WHERE raw_dur < 0
 ),
 
 -- Page cache activity (mm_filemap_add_to_page_cache = cache miss → disk read)
@@ -165,7 +184,7 @@ page_cache_adds AS (
   CROSS JOIN params p
   WHERE r.name = 'mm_filemap_add_to_page_cache'
     AND r.ts >= p.start_ts
-    AND r.ts <= p.end_ts
+    AND r.ts < p.end_ts
 ),
 
 -- Page cache evictions (mm_filemap_delete_from_page_cache = page evicted)
@@ -175,7 +194,7 @@ page_cache_deletes AS (
   CROSS JOIN params p
   WHERE r.name = 'mm_filemap_delete_from_page_cache'
     AND r.ts >= p.start_ts
-    AND r.ts <= p.end_ts
+    AND r.ts < p.end_ts
 ),
 
 -- Calculate overall pressure score
@@ -239,6 +258,13 @@ SELECT
   -- PSI metrics (if available)
   (SELECT max_psi_value FROM psi_summary) AS psi_max,
   (SELECT avg_psi_value FROM psi_summary) AS psi_avg,
+  (SELECT psi_sample_count FROM psi_summary) AS psi_sample_count,
+  (SELECT psi_metric_count FROM psi_summary) AS psi_metric_count,
+  (SELECT psi_metric_names FROM psi_summary) AS psi_metric_names,
+  'single_track_sample_mean_not_time_weighted;_multiple_tracks_not_combined' AS psi_aggregation_basis,
+  (SELECT COUNT(*) FROM censored_events) AS censored_event_count,
+  'clipped_completed_slices;_unknown_ends_excluded;_sum_may_overlap' AS duration_basis,
+  'heuristic_event_score_not_proof_of_stall_causality_or_absence' AS pressure_basis,
 
   -- Overall pressure assessment
   (SELECT score FROM pressure_score) AS pressure_score,

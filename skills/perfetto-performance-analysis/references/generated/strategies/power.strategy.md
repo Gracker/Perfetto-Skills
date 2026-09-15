@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/power.strategy.md
-Source SHA-256: cfc9e2f5eddf348bacb775ec612028619c03dfc8f699481078618685a7b31cb9
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 29c926bcd86fa657c32af5402c2d470a0cd11364fbda5cd54d999675baa346fc
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Power Strategy
 
@@ -357,6 +357,20 @@ plan_template:
     - skill_id: wakelock_tracking
     - {}
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### power_critical_path (critical_path)
+
+Align active work, wakeups, CPU idle and frequency residency with the measured energy window. Identify active tasks and coverage; retain integration units and denominators.
+
+### power_dependencies (dependency_chain)
+
+Separate measured rails from model estimates such as Wattson. Correlate thermal, GPU and network only with supporting evidence; frequency/occupancy alone is not measured energy or thermal throttling.
 
 #### power Core Strategy
 

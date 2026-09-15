@@ -52,13 +52,19 @@
     "modules": [],
     "required_tables": []
   },
+  "process_scope": {
+    "limitations": [
+      "Memory pressure events are system context; package does not restrict these aggregates to target-process stalls."
+    ],
+    "role": "global_context"
+  },
   "query_id": null,
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/atomic/memory_pressure_in_range.skill.yaml",
-    "sha256": "64e35396d604190f06c52c86371844406e7049fc72ae0392d479dd05a6aa417b"
+    "sha256": "c71a35436516ec7ec94a2e064bcd800cb49435057bd9f80365a7c2742f6b6998"
   },
   "steps": [
     {

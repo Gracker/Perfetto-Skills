@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_breakdown_in_range.skill.yaml
-Source SHA-256: c7075da9dad26110ee8d4f0985ad4ac49d13f327f46b4050ebc26a43396ebb9f
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 3edbb22c53ce4530862f4cb22587c0713ddf763759f543991288a2f6f8e12ccf
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 启动归因分解 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -87,14 +87,17 @@ columns:
   label: 总耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: avg_dur_ms
   label: 平均耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: max_dur_ms
   label: 最大耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: percent
   label: 占比
   type: percentage

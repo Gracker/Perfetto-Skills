@@ -49,15 +49,15 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
-    "sha256": "fc8a23df5565689fd067df4b8f2fb32e90a8ddc8f1ca0a7df410f8108cedf708"
+    "sha256": "95a308c02902be7277bd6109628fc67a93014b6f3cedc063e3df00fff0bb4a3e"
   },
   "steps": [
     {
       "id": "temperature_overview",
       "name": "温度概览",
-      "on_empty": "未找到温度数据，请确保 trace 包含 thermal/temperature 计数器",
+      "on_empty": "窗口内未找到温度样本；检查 trace 是否包含 thermal/temperature 计数器。缺少单位时不进行摄氏温度阈值判断。",
       "query_id": "thermal_module/temperature_overview",
       "result_dependencies": [],
       "save_as": "temp_overview",
@@ -81,7 +81,7 @@
     },
     {
       "id": "throttling_events",
-      "name": "热节流事件",
+      "name": "频率骤降事件",
       "query_id": "thermal_module/throttling_events",
       "result_dependencies": [],
       "save_as": "throttling_events",
@@ -131,13 +131,13 @@
         {
           "condition": "throttling_events.data.length > 10",
           "confidence": "high",
-          "diagnosis": "检测到 ${throttling_events.data.length} 次频率骤降，热节流显著影响性能",
+          "diagnosis": "检测到 ${throttling_events.data.length} 次频率骤降；尚不能据此确定热节流或性能影响",
           "evidence_fields": [
             "throttling_events.data.length",
             "throttling_events.data[0]?.drop_pct"
           ],
           "suggestions": [
-            "工作负载过高导致热积累",
+            "结合直接 thermal throttling/cooling 事件和同窗口工作负载判断降频原因",
             "考虑分散计算任务",
             "优化算法减少 CPU 使用"
           ]
@@ -145,7 +145,7 @@
         {
           "condition": "high_temp_periods.data[0]?.duration_sec > 30",
           "confidence": "high",
-          "diagnosis": "高温持续 ${high_temp_periods.data[0]?.duration_sec} 秒，散热不足",
+          "diagnosis": "高温样本首尾跨度 ${high_temp_periods.data[0]?.duration_sec} 秒；不代表连续高温或散热不足",
           "evidence_fields": [
             "high_temp_periods.data[0]?.sensor_name",
             "high_temp_periods.data[0]?.duration_sec",
@@ -158,21 +158,21 @@
           ]
         },
         {
-          "condition": "thermal_cpu_correlation.data.filter(t => t.status === 'thermal_throttled').length > 5",
+          "condition": "thermal_cpu_correlation.data.filter(t => t.status === 'high_temperature_with_low_sampled_frequency').length > 5",
           "confidence": "high",
-          "diagnosis": "温度与 CPU 频率呈明显负相关，热节流正在发生",
+          "diagnosis": "同一秒内观测到高温和较低的频率样本；这种并存不能证明热节流或负相关",
           "evidence_fields": [
-            "thermal_cpu_correlation.data.filter(t => t.status === 'thermal_throttled').length"
+            "thermal_cpu_correlation.data.filter(t => t.status === 'high_temperature_with_low_sampled_frequency').length"
           ],
           "suggestions": [
-            "高温直接导致 CPU 降频",
-            "性能受限于散热能力"
+            "查找温控限制、冷却状态或限频事件的直接证据",
+            "结合目标任务窗口和负载变化检验性能影响"
           ]
         },
         {
           "condition": "temp_overview.data[0]?.temp_range > 20",
           "confidence": "medium",
-          "diagnosis": "温度波动较大: 变化范围 ${temp_overview.data[0]?.temp_range}°C",
+          "diagnosis": "温度计数器样本变化范围 ${temp_overview.data[0]?.temp_range}，原始单位 ${temp_overview.data[0]?.source_unit}",
           "evidence_fields": [
             "temp_overview.data[0]?.sensor_name",
             "temp_overview.data[0]?.temp_range"

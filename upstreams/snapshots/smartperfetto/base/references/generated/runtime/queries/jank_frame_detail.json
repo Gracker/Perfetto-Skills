@@ -64,20 +64,21 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "1598711cddf3a488d4515c5fa3b5243634b507c697b5b0be050757ed37bef3e6",
+      "sha256": "bf2319dc7a1f1f220ff41114eaede55c2923118c3b0edfbf0609a388c9f2ddef",
       "signal_patterns": [
         "android_monitor_contention"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -170,20 +171,21 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "758f421b3647096b59a37c44356b2ac242f0f2f3d00168895dadcc9c84754144",
+      "sha256": "ea3561924b796bf58509e713fe1686aa9d41ce74b54342c9974e81056c834f45",
       "signal_patterns": [
         "android_garbage_collection_events"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -278,7 +280,7 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "c4b2a987b05d50c7ae00046f19ab2e3c832620a54f58bd6da44a6cdfac4ce2a8",
+      "sha256": "fb8aa29955d9e76c52ba7f037ea0b9aaddf30e88b88fef9b4f961efd7f9dac3d",
       "signal_patterns": [
         "*Draw*",
         "*Fence*",
@@ -289,14 +291,15 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -389,20 +392,21 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "507945e93d33768481b3d1f6788f9efdb376f4565e22db6f3dfa779ad7d12362",
+      "sha256": "b1c8ad3f990095471cd8137fd026e5ace15fc942c0b584dff94ba437e9e82cfd",
       "signal_patterns": [
         "android_binder_txns"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -496,7 +500,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "6540871f326cb763feadfcb0f4290f224bff276032277004f8b8fd73695bcb8a",
+      "sha256": "f9058ddd907567102d21a3b134c2ba1a8f812278fb4f50b27fa8e88c4d0706ac",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -506,14 +510,15 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -522,18 +527,24 @@
         ],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "quadrant_analysis",
       "template": {
         "fragments": [
           {
             "order": 0,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "78e59040294b58d96a54449102109fd8536434ea1b93435f88eb700c612784d9"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
+            "source_sha256": "9731dae208d19f0f96bd0faaa948d92e4be07936331ccc5eb6de57f46b370a53"
+          },
+          {
+            "order": 2,
             "source_path": "backend/skills/fragments/target_threads.sql",
             "source_sha256": "9ac867ea21f7e28e03b1d606f8598ecc222479a870a220a87e94eecbed7566fe"
           }
@@ -634,18 +645,19 @@
         },
         "role": "target"
       },
-      "sha256": "79f32d1ae23a407931eab44e32aa3cef4526327be65b659d060d91f89621d3a3",
+      "sha256": "e94d9d69e8022b9e33300a8a5e173349f5515c216b5fcb0eaec45875f3feb941",
       "signal_patterns": [],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -746,20 +758,19 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "b657bd09d1e9d7e01610dae76cd96b2f4aa8fe9c089a1ec0bcb246422573aa2e",
-      "signal_patterns": [
-        "cpufreq"
-      ],
+      "sha256": "e26a20a469cf352effbc27c948843f19ec49f5bf5435564c779e3e70d4691489",
+      "signal_patterns": [],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -768,16 +779,23 @@
         ],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "cpu_freq_analysis",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "78e59040294b58d96a54449102109fd8536434ea1b93435f88eb700c612784d9"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
+            "source_sha256": "90cb9ee6db913c6c9dd78fbcf7048a7033489fb884bdbba45175dc697c9e4acc"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
@@ -860,7 +878,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "34ca2a03de425c07472e6e69e783ec0df2b94b506a45058468bfd0085473a949",
+      "sha256": "78e3279e9d4f04776e20c8d34215b2682e589a6408a93cc082b7400bec7e1091",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -868,14 +886,15 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -985,7 +1004,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "38c007cd6cff4705e97354e0cd767067df973c524ada8f2ffcac195dc5b616e8",
+      "sha256": "f58cbacb73111cebfbfc089bd6a4959f2667785b269548c64ef95f192ed97bc9",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -994,14 +1013,15 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -1111,7 +1131,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "f054338719df3c5667587323107f0f41c0eb92c6cc9da95686a1b10a3ea98da1",
+      "sha256": "718fa89894d41924be0f893f113834298713a259163ac8bed6cf6a990fed7bbc",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1120,14 +1140,15 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -1236,20 +1257,19 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "f6f3dd37ed6bd07c38a07542ef21c96ad62d05d8691f2f6bd06fc8caa96d8341",
-      "signal_patterns": [
-        "cpufreq"
-      ],
+      "sha256": "ac1af88da0102a12e8fe1bda6b2cf6a06a0f17fd45584f51ad5761a669238d6b",
+      "signal_patterns": [],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -1258,16 +1278,23 @@
         ],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "cpu_freq_timeline",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "78e59040294b58d96a54449102109fd8536434ea1b93435f88eb700c612784d9"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
+            "source_sha256": "90cb9ee6db913c6c9dd78fbcf7048a7033489fb884bdbba45175dc697c9e4acc"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
@@ -1357,21 +1384,22 @@
         },
         "role": "target"
       },
-      "sha256": "b761d77a9f34142280f9d4e9dae78d50ad3b367e03b1da78a2aa2f7f42203176",
+      "sha256": "a8da151310849f75e123b84b6f2cfe34013575d1da9c9ae2da0d1e1cee6a652b",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -1473,21 +1501,22 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "3edb3db13a6c9928dc3dd4c4e6eced8e39a2e17f26a242277eb6ed7a61657de0",
+      "sha256": "3caca14f96a43f828d581db177bf1cedc69a46bb45d2bdfe8f7a1fb554c50c99",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -1595,7 +1624,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "460a22b9253432fa1345332d72080f23eea34828a7f1ab3b282a8881a09a31f1",
+      "sha256": "d9c192428afb510e627f1d40a36898328eb17f5f9b3b5ec5985fc808b7059d17",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1605,14 +1634,15 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -1629,6 +1659,11 @@
         "fragments": [
           {
             "order": 0,
+            "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
+            "source_sha256": "9731dae208d19f0f96bd0faaa948d92e4be07936331ccc5eb6de57f46b370a53"
+          },
+          {
+            "order": 1,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
             "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
           }
@@ -1733,7 +1768,7 @@
         ],
         "role": "target"
       },
-      "sha256": "b4463da8139baf656921e1c4bfb2112655778e6b15a6d4f14813ba68dba3d151",
+      "sha256": "9482b20c201774731f7d19c910376ee27ecccac605cc097fae054e1498c7082d",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1755,19 +1790,19 @@
         "RenderThread",
         "VSYNC-sf",
         "[0-9]*.raster",
-        "[0-9]*.ui",
-        "cpufreq"
+        "[0-9]*.ui"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+        "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
+          "linux.cpu.frequency",
           "android.binder",
           "android.slices",
           "android.monitor_contention",
@@ -1776,35 +1811,46 @@
         ],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "root_cause_summary",
       "template": {
         "fragments": [
           {
             "order": 0,
+            "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
+            "source_sha256": "9731dae208d19f0f96bd0faaa948d92e4be07936331ccc5eb6de57f46b370a53"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
+            "source_sha256": "90cb9ee6db913c6c9dd78fbcf7048a7033489fb884bdbba45175dc697c9e4acc"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "78e59040294b58d96a54449102109fd8536434ea1b93435f88eb700c612784d9"
+          },
+          {
+            "order": 3,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
             "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
           },
           {
-            "order": 1,
+            "order": 4,
             "source_path": "backend/skills/fragments/vsync_config.sql",
             "source_sha256": "96a6e07816d67db7ac8db23c91406a6abca0b42c314c66a06843dbbf57d0faa5"
           },
           {
-            "order": 2,
+            "order": 5,
             "source_path": "backend/skills/fragments/target_threads.sql",
             "source_sha256": "9ac867ea21f7e28e03b1d606f8598ecc222479a870a220a87e94eecbed7566fe"
           },
           {
-            "order": 3,
+            "order": 6,
             "source_path": "backend/skills/fragments/thread_states_quadrant.sql",
-            "source_sha256": "512212a2b2350517a03e07a45f0711715f13b761db20622ea7cff756de0eb869"
+            "source_sha256": "1f65fbcca966c86979223453dc24fc86479415b3dd6698a494373c93336d2e64"
           }
         ],
         "name_parameters": [

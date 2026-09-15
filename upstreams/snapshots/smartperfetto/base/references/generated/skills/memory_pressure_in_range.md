@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/memory_pressure_in_range.skill.yaml
-Source SHA-256: 64e35396d604190f06c52c86371844406e7049fc72ae0392d479dd05a6aa417b
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: c71a35436516ec7ec94a2e064bcd800cb49435057bd9f80365a7c2742f6b6998
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # Analyze memory pressure indicators during a specific time range.
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -65,12 +65,32 @@ display:
   level: detail
   title: Memory Pressure Analysis
   columns:
+  - name: psi_max
+    type: number
+    description: Maximum sample value from a single PSI track
+  - name: psi_avg
+    type: number
+    description: Arithmetic sample mean from a single PSI track
+  - name: psi_sample_count
+    type: number
+  - name: psi_metric_count
+    type: number
+  - name: psi_metric_names
+    type: string
+  - name: psi_aggregation_basis
+    type: string
+  - name: censored_event_count
+    type: number
+  - name: duration_basis
+    type: string
+  - name: pressure_basis
+    type: string
   - name: pressure_level
     type: string
     description: Overall pressure level (none/low/moderate/high/critical)
   - name: pressure_score
     type: number
-    description: Pressure score (0-100)
+    description: Heuristic weighted event score; not a calibrated probability
   - name: kswapd_events
     type: number
     description: Number of kswapd activities

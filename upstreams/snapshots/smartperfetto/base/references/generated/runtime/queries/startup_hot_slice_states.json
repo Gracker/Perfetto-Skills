@@ -55,17 +55,21 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_hot_slice_states/query.sql",
-      "sha256": "ba0d2806e632ab957d14290fd2474bef0cfef69fb3a0d90c1931254bce6b4bc0",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "f7865589fd9e523f58645fce0300e806e574a268029efa8c29440ca282bc4b41",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_hot_slice_states",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/atomic/startup_hot_slice_states.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "459330b21f16b3e1f5eac9374dde4074253c8f5ac6179813b88ed7c25a503249"
+        "sha256": "6f1cb08c42ead7e7aa287894f77a423902cbe8e0cbe67bea6e8b9699f7fc777c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -77,7 +81,13 @@
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
@@ -86,7 +96,9 @@
           "top_n"
         ],
         "result_dependencies": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

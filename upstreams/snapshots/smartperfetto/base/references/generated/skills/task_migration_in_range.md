@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/task_migration_in_range.skill.yaml
-Source SHA-256: 6b439d1de33342825c0e07b756b2e0b4ee97eb56287f7df8d9312a9a14ce14f2
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 8b1703cdcf2d63f210900cbb978a2a645b9ca530a25e37a3a8fd946d20df39f0
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 任务迁移分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -79,17 +79,42 @@ optional: true
 ```yaml
 id: migration_analysis
 type: atomic
-process_scope:
-  role: target
-  binding: effective_target_processes
-sql_fragments:
-- fragments/effective_target_processes.sql
 optional: true
 display:
   level: detail
   layer: deep
   title: 大小核迁移
   columns:
+  - name: window_id
+    label: window_id
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
+  - name: tid
+    label: tid
+    type: number
+    hidden: true
+  - name: migration_evidence
+    label: migration_evidence
+    type: string
+    hidden: true
   - name: thread_name
     label: 线程
     type: string
@@ -109,6 +134,12 @@ display:
   - name: unique_cpus
     label: 使用核心数
     type: number
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_sched_spans.sql
 save_as: migration_data
 ```
 ## Output and evidence contract

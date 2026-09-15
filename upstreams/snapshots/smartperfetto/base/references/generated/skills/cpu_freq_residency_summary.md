@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_freq_residency_summary.skill.yaml
-Source SHA-256: 574b201a6ed4593061204a5cda42d112cb63665150c965bf038ba6a7a075daca
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 551f4b3dae5db3b84e15a017225eeb4399a0a9824fe59a04fbf47a30395103d5
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # CPU 高频驻留摘要
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -90,9 +90,24 @@ display:
     type: number
     format: compact
   - name: max_freq_mhz
-    label: 最高频率(MHz)
+    label: 窗口观测峰值(MHz)
     type: number
     format: compact
+  - name: machine_id
+    label: Machine
+    type: number
+  - name: frequency_coverage_pct
+    label: 频率覆盖(%)
+    type: percentage
+  - name: frequency_coverage_status
+    label: 频率覆盖状态
+    type: string
+  - name: censored_interval_count
+    label: 未闭合频率区间
+    type: number
+  - name: high_frequency_basis
+    label: 高频判定依据
+    type: string
 ```
 ## Output and evidence contract
 

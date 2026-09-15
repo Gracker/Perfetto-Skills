@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_cpu_placement_timeline.skill.yaml
-Source SHA-256: 3fed5fa06ac7c9d8b6d9382413c9eeb9dcecee347a95c9d3035d0766fa69dbba
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: df62a33d3357a3f835c86fe807b64725bb4ce7129067c81f63799ccfa838aef3
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 启动摆核时序分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -71,6 +71,41 @@ level: detail
 layer: deep
 title: 主线程摆核时序
 columns:
+- name: upid
+  label: upid
+  type: number
+  hidden: true
+- name: utid
+  label: utid
+  type: number
+  hidden: true
+- name: window_start_ts
+  label: window_start_ts
+  type: timestamp
+  unit: ns
+  hidden: true
+- name: window_end_ts
+  label: window_end_ts
+  type: timestamp
+  unit: ns
+  hidden: true
+- name: unknown_core_ms
+  label: unknown_core_ms
+  type: number
+  hidden: true
+- name: used_ucpus
+  label: used_ucpus
+  type: number
+  hidden: true
+- name: sched_covered_ns
+  label: sched_covered_ns
+  type: duration
+  unit: ns
+  hidden: true
+- name: sched_evidence
+  label: sched_evidence
+  type: string
+  hidden: true
 - name: bucket_idx
   label: 时间桶
   type: number

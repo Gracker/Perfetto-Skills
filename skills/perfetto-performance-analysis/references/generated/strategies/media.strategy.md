@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/media.strategy.md
-Source SHA-256: a6dbb6d73702ad0e3f2fd08f54eccd8da42c42f5fcfca63a834f956f2d77a697
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: c40b0db672c5c9f8aae13e1ca149eb6abecf9004a1e760643e960fec945b19ea
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Media Strategy
 
@@ -105,6 +105,20 @@ plan_template:
     - skill_id: android_gpu_work_period_track
     - skill_id: power_consumption_overview
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### media_critical_path (critical_path)
+
+Identify audio, codec, camera, renderer and service tasks and their buffer deadlines. Bind producer/consumer roles across authorized processes; keep each task priority observation separate from actual scheduling policy.
+
+### media_dependencies (dependency_chain)
+
+Follow buffer queue, service/Binder, GPU and display dependencies for underrun or late-frame explanations. Missing scheduler policy is unknown and never proof that RT should be enabled.
 
 #### media Core Strategy
 

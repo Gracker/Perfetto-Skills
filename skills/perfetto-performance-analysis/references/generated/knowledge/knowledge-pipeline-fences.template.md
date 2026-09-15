@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-pipeline-fences.template.md
 Source SHA-256: 671197e51887f96bd62dccd0b635960eabd12ec16ce38c7b264e20987532ceaf
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Knowledge Pipeline Fences Template
 

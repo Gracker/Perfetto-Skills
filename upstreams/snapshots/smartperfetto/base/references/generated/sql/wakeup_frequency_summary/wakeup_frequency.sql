@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/wakeup_frequency_summary.skill.yaml
 -- Source SHA-256: 0284882dd46c3d7d61c0a9efb203c61b2dbff2cc2710d0beb13652f985c9aa5c
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH bounds AS (
   SELECT

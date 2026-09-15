@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_main_thread_states_in_range.skill.yaml
-Source SHA-256: 130cb4fd934fddf849489b85d3486e284fdd374891f322de9c55396d950b2d86
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 7954cdcfca60448ea5660a2a248b81e890cf50e39618e236b96470c56e9d0fca
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 启动主线程状态分布 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -84,6 +84,7 @@ columns:
   label: 总耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: percent
   label: 占比
   type: percentage

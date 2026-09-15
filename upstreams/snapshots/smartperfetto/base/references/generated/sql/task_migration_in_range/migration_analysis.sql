@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/task_migration_in_range.skill.yaml
--- Source SHA-256: 6b439d1de33342825c0e07b756b2e0b4ee97eb56287f7df8d9312a9a14ce14f2
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: 8b1703cdcf2d63f210900cbb978a2a645b9ca530a25e37a3a8fd946d20df39f0
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -15,35 +15,80 @@ effective_target_processes AS (
   WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
 )
 ,
-target_threads AS (
-  SELECT t.utid, t.name as thread_name
-  FROM thread t
-  JOIN effective_target_processes p ON t.upid = p.upid
-  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
-    AND (t.tid = p.pid OR t.name = 'RenderThread')
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Input: system_windows(window_id, window_start_ts, window_end_ts).
+-- Global CPU spans retain peer identity. Consumers join system_target_threads
+-- explicitly; no global process-table replacement or synthetic switch boundary.
+-- Capacity extrema require a complete machine population. A missing capacity
+-- on any CPU prevents certifying which recorded CPU is fastest or smallest.
+system_cpu_topology AS (
+  SELECT c.id AS ucpu,c.cpu,c.machine_id,c.cluster_id,c.capacity,
+    CASE WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'unknown'
+      WHEN c.min_capacity=c.max_capacity THEN 'unknown'
+      WHEN c.capacity=c.min_capacity THEN 'little'
+      WHEN c.capacity=c.max_capacity THEN 'big'
+      ELSE 'medium' END AS core_type,
+    CASE WHEN c.recorded_capacity_count=0 THEN 'capacity_unavailable'
+      WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'capacity_incomplete'
+      WHEN c.min_capacity=c.max_capacity THEN 'capacity_uniform_no_big_little'
+      ELSE 'recorded_capacity' END AS topology_source
+  FROM (
+    SELECT cpu.*,
+      COUNT(*) OVER (PARTITION BY machine_id) AS machine_cpu_count,
+      COUNT(CASE WHEN capacity>0 THEN 1 END) OVER (PARTITION BY machine_id) AS recorded_capacity_count,
+      MIN(CASE WHEN capacity>0 THEN capacity END) OVER (PARTITION BY machine_id) AS min_capacity,
+      MAX(CASE WHEN capacity>0 THEN capacity END) OVER (PARTITION BY machine_id) AS max_capacity
+    FROM cpu
+  ) c
 ),
-cpu_switches AS (
-  SELECT
-    tt.thread_name,
-    ts.cpu,
-    ct.core_type,
-    LAG(ts.cpu) OVER (PARTITION BY tt.utid ORDER BY ts.ts) as prev_cpu,
-    LAG(ct.core_type) OVER (PARTITION BY tt.utid ORDER BY ts.ts) as prev_core_type,
-    ts.dur
-  FROM thread_state ts
-  JOIN target_threads tt ON ts.utid = tt.utid
-  JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
-  WHERE ts.ts >= ${start_ts} AND ts.ts < ${end_ts}
-    AND ts.state = 'Running'
+system_sched_spans AS (
+  SELECT w.window_id, w.window_start_ts, w.window_end_ts,
+    s.id AS sched_id, s.utid, t.upid, t.is_idle, s.cpu, s.ucpu,
+    s.ts AS raw_start_ts, s.dur AS raw_dur,
+    CASE WHEN s.dur >= 0 THEN s.ts + s.dur END AS raw_end_ts,
+    MAX(s.ts, w.window_start_ts) AS clipped_start_ts,
+    MIN(CASE WHEN s.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE s.ts + s.dur END, w.window_end_ts) AS clipped_end_ts,
+    MIN(CASE WHEN s.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE s.ts + s.dur END, w.window_end_ts) - MAX(s.ts, w.window_start_ts) AS dur_ns,
+    s.dur = -1 AS is_unfinished,
+    s.ts < w.window_start_ts AS left_censored,
+    s.dur = -1 OR s.ts + s.dur > w.window_end_ts AS right_censored,
+    s.end_state, s.priority,
+    ct.machine_id, ct.cluster_id, ct.capacity,
+    COALESCE(ct.core_type, 'unknown') AS core_type,
+    COALESCE(ct.topology_source, 'cpu_identity_unavailable') AS topology_source
+  FROM system_windows w JOIN sched_slice s
+    ON s.ts < w.window_end_ts AND s.dur >= -1 AND s.dur != 0
+      AND CASE WHEN s.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+        ELSE s.ts + s.dur END > w.window_start_ts
+  LEFT JOIN thread t ON t.utid = s.utid
+  LEFT JOIN system_cpu_topology ct ON ct.ucpu = s.ucpu
+  WHERE w.window_end_ts > w.window_start_ts
 )
-SELECT
-  thread_name,
-  SUM(CASE WHEN cpu != prev_cpu AND prev_cpu IS NOT NULL THEN 1 ELSE 0 END) as migration_count,
-  SUM(CASE WHEN core_type = 'little' AND prev_core_type = 'big' THEN 1 ELSE 0 END) as big_to_little,
-  SUM(CASE WHEN core_type = 'big' AND prev_core_type = 'little' THEN 1 ELSE 0 END) as little_to_big,
-  ROUND(100.0 * SUM(CASE WHEN core_type = 'big' THEN dur ELSE 0 END) / NULLIF(SUM(dur), 0), 1) as big_core_pct,
-  COUNT(DISTINCT cpu) as unique_cpus
-FROM cpu_switches
-GROUP BY thread_name
-HAVING migration_count > 0
-ORDER BY migration_count DESC
+,
+system_windows AS (SELECT 0 AS window_id,
+  COALESCE(${start_ts},(SELECT start_ts FROM trace_bounds)) AS window_start_ts,
+  COALESCE(${end_ts},(SELECT end_ts FROM trace_bounds)) AS window_end_ts),
+system_target_threads AS (
+  SELECT w.window_id,p.upid,t.utid,CASE WHEN t.tid=p.pid THEN 'main' ELSE 'target' END AS role
+  FROM system_windows w CROSS JOIN effective_target_processes p JOIN thread t ON t.upid=p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}'='' OR p.name='${package}' OR p.name GLOB '${package}:*')
+),
+runs AS (
+ SELECT s.*,t.name AS thread_name,t.tid,
+   LAG(s.ucpu) OVER (PARTITION BY s.window_id,s.utid ORDER BY s.raw_start_ts,s.sched_id) AS prev_ucpu,
+   LAG(s.core_type) OVER (PARTITION BY s.window_id,s.utid ORDER BY s.raw_start_ts,s.sched_id) AS prev_core_type
+ FROM system_sched_spans s JOIN system_target_threads tt ON tt.window_id=s.window_id AND tt.utid=s.utid AND tt.upid=s.upid
+ JOIN thread t ON t.utid=s.utid
+)
+SELECT window_id,window_start_ts,window_end_ts,upid,utid,tid,thread_name,
+ SUM(CASE WHEN prev_ucpu IS NOT NULL AND prev_ucpu!=ucpu THEN 1 ELSE 0 END) AS migration_count,
+ SUM(CASE WHEN prev_core_type IN ('prime','big','medium') AND core_type='little' THEN 1 ELSE 0 END) AS big_to_little,
+ SUM(CASE WHEN prev_core_type='little' AND core_type IN ('prime','big','medium') THEN 1 ELSE 0 END) AS little_to_big,
+ SUM(CASE WHEN core_type IN ('prime','big','medium') THEN dur_ns ELSE 0 END)*100.0/SUM(dur_ns) AS big_core_pct,
+ COUNT(DISTINCT ucpu) AS unique_cpus,
+ 'migration_observation_not_cache_miss_or_affinity_proof' AS migration_evidence
+FROM runs GROUP BY window_id,utid ORDER BY migration_count DESC

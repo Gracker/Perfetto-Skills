@@ -1,5 +1,10 @@
 {
-  "adapters": [],
+  "adapters": [
+    {
+      "id": "kernel_tracepoints",
+      "selection": "available events, trace config/setup errors, schema, then rows"
+    }
+  ],
   "api": {
     "28": {
       "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
@@ -59,7 +64,7 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "cpufreq"
+    "${package|}:*"
   ],
   "skill_id": "selection_range_cpu_sched_summary",
   "steps": {

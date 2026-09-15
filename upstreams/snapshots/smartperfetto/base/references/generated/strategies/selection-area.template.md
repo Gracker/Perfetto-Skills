@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/selection-area.template.md
 Source SHA-256: ce1ecbde75384022d028e1025ca885e1984539d80131f57e7d25dcfedd3d0aee
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Selection Area Template
 

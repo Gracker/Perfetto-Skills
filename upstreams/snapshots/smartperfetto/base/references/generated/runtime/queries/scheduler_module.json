@@ -55,14 +55,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scheduler_module/runnable_analysis.sql",
-      "sha256": "403d35fa271cb838068fffd4bdfb51cc8dcc31c6139b22b1d7f0cbf7f56be246",
-      "signal_patterns": [],
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "f4d680f6376234ec3f42fd949512bb52c464793f779e53805974c8259adc388b",
+      "signal_patterns": [
+        "${package}:*"
+      ],
       "skill_id": "scheduler_module",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452"
+        "sha256": "8a8766ab483cb11df87f4263431bba840d057a3ef4a846e42cbf605a76e2062c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -76,11 +82,29 @@
       },
       "step_id": "runnable_analysis",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
+            "source_sha256": "9731dae208d19f0f96bd0faaa948d92e4be07936331ccc5eb6de57f46b370a53"
+          }
+        ],
         "name_parameters": [],
-        "parameters": [],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts",
+          "tid"
+        ],
         "result_dependencies": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -146,16 +170,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scheduler_module/cpu_frequency.sql",
-      "sha256": "6721f8ba1d3b9f3a6fdc4064da095c375155f002c3ad85087e764c710b9d1b63",
-      "signal_patterns": [
-        "cpufreq"
-      ],
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "65e05528de0b387575ec7307e128036eda76e6f98406dcfaac89db7d263781a8",
+      "signal_patterns": [],
       "skill_id": "scheduler_module",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452"
+        "sha256": "8a8766ab483cb11df87f4263431bba840d057a3ef4a846e42cbf605a76e2062c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -164,18 +189,28 @@
         ],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "cpu_frequency",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "78e59040294b58d96a54449102109fd8536434ea1b93435f88eb700c612784d9"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
+            "source_sha256": "90cb9ee6db913c6c9dd78fbcf7048a7033489fb884bdbba45175dc697c9e4acc"
+          }
+        ],
         "name_parameters": [],
-        "parameters": [],
+        "parameters": [
+          "end_ts",
+          "start_ts"
+        ],
         "result_dependencies": [],
         "runtime_bindings": []
       },
@@ -243,16 +278,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scheduler_module/core_distribution.sql",
-      "sha256": "03261e356d9f4511daa1a70ef3b1338bd5f2506eb6fa94311d0df440d561b4f0",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "f888cd82baef5039d5694cb214529d9de14876530fb67f53f2d8b7f0fbb6ef1c",
       "signal_patterns": [
-        "%${package}%"
+        "${package}:*"
       ],
       "skill_id": "scheduler_module",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "170b97c3038eea5585806c1247f48db789f2b92d188f5c6f46e5b928afe06452"
+        "sha256": "8a8766ab483cb11df87f4263431bba840d057a3ef4a846e42cbf605a76e2062c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -261,22 +300,34 @@
         ],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "core_distribution",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "78e59040294b58d96a54449102109fd8536434ea1b93435f88eb700c612784d9"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
-          "package"
+          "end_ts",
+          "package",
+          "start_ts",
+          "tid"
         ],
         "result_dependencies": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

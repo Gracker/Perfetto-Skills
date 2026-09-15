@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-startup-root-causes.template.md
-Source SHA-256: 3399dc218908dc7201cf028dacb6bb3d1146e85b2d7eef5616e23a5aa4303be1
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: a873bc95644c74aac6277c6914451ddd44d438c2a6d4cca9b5a803ccffc695f3
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Knowledge Startup Root Causes Template
 
@@ -30,7 +30,9 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 1. **不要全部阅读** —— 根据分析中发现的异常指标，查阅对应的根因条目
 2. 每个根因条目包含：**机制（WHY）→ 现象特征 → Perfetto 检测 → 阈值 → 建议**
 3. 关注 **交叉因素（C 节）**：多个根因同时出现时，解释它们的放大/掩盖关系
-4. 结论中使用根因编号（如 A9、B3）以便交叉引用
+4. 结论中使用根因编号（如 A9、B3）以便交叉引用；编号仅用于分类，不自动代表因果已证实。
+5. 下表 Good/Warning/Critical 是调查优先级，不是确认或排除条件。小总量只能描述该口径的观测成本，不能推出“不在关键路径”“系统正常”或排除其他机制。
+6. 源码函数名、调用参数、注释和模拟标记不等于实现行为；先读实际被调用函数定义。Running 占比只证明线程在执行，不能证明指令效率、供给充足或所有实例行为相同。
 
 ---
 
@@ -141,6 +143,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 **典型影响**: 50-500ms
 
 **关联**: 与 A15(大资源加载) 相关——Bitmap decode 在 inflate 阶段发生。与 A18(自定义View) 互为因果。
+
+**解释边界**：只有确认执行了真实 inflate/View 构造路径，才使用上述机制。自定义或模拟切片即使名字含 inflation，也可能只是反射枚举、计算或等待；调用参数不是 View 数量。必须读取该函数定义并关联实际事件，不能根据命名套用布局机制。
 
 **建议 [App层]**: 使用 ViewStub 延迟非首屏 View；减少布局嵌套层级；考虑 AsyncLayoutInflater。
 
@@ -458,7 +462,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ### A16. 主线程重计算
 
-**机制**：JSON 解析、加密/解密、数据结构构建、正则匹配、大量 String 操作等 CPU 密集型工作在主线程执行。主线程 Running 状态占比高但启动时间长，通常指向此问题。
+**机制**：JSON 解析、加密/解密、数据结构构建、正则匹配、大量 String 操作等 CPU 密集型工作在主线程执行。主线程 Running 状态占比高但启动时间长时，这是待调查方向；该状态不区分业务指令、内核执行、内存停顿或低频运行。
 
 **现象特征**：
 - Q1(大核Running) 或 Q2(小核Running) 占比极高
@@ -470,7 +474,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - hot_slice_states: per-slice Running 占绝对主导
 - 需要 app 自定义 tracepoint 定位具体操作
 
-**阈值**: 任何单个操作 >20ms 值得调查（Google 官方建议）
+**初筛参考**：单个操作超过 20ms 可优先调查；这不是 CPU 密集、可优化收益或系统因素已排除的证明。
 
 **典型影响**: 20-500ms
 
@@ -480,25 +484,15 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ---
 
-### A17. Thread.sleep() / 显式延迟
+### A17. Thread.sleep() / 显式延迟候选
 
-**机制**：代码中硬编码的 `Thread.sleep()`、`Handler.postDelayed()`、`CountDownLatch.await()` 等显式等待。通常是历史遗留的 workaround，等待某组件就绪但使用固定延迟而非事件驱动。
+**机制边界**：`Thread.sleep()` 会让调用线程等待；`Handler.postDelayed()` 只是安排稍后回调，不表示调用线程睡眠；`CountDownLatch.await()` 是同步等待，不能与固定睡眠混为一谈。
 
-**现象特征**：
-- 主线程 S 状态 + blocked_function = `hrtimer_nanosleep` 或 `clock_nanosleep`
-- 清晰的固定时长 S 状态片段（如精确 100ms、200ms）
+**Trace 观察**：S 状态中的 nanosleep 阻塞函数支持“该区间处于 nanosleep 路径等待”，不能单独定位 Java、框架或 native API。固定时长 S、源码中存在 sleep 分支、循环概率计算的期望时长均不足以证明本次命中及等待总量。
 
-**Perfetto 检测**：
-- Thread state: S + blocked_function GLOB `*nanosleep*`
-- blocked_function: `hrtimer_nanosleep`（Thread.sleep 内核实现）、`nanosleep`、`clock_nanosleep`
+**因果准入**：关联同一线程/同一时间段的具体调用栈、事件、marker 或明确依赖；缺少这些时结论保持候选，不写“主动 sleep 导致全部 S”。源码只证明实现存在，不能用理论250ms与观测250ms相合来替代事件对应。缺 blocked_function 也不能确定是未采集，需区分窗口、数据源、解析/符号化与能力缺失。
 
-**阈值**: 任何 >0ms 的显式 sleep 都是问题
-
-**典型影响**: 完全取决于 sleep 时长，通常 100-2000ms
-
-**关联**: 最容易修复的问题类型——直接删除或替换为事件驱动机制。
-
-**建议 [App层]**: 删除 Thread.sleep()；替换为 CountDownLatch/CompletableFuture 的事件驱动等待。
+**建议 [App层]**：确认该等待进入关键路径后，检查其真实同步需求；优先异步通知/回调，不能把替换为另一个主线程阻塞等待视为通用修复。耗时影响以实际区间与依赖为准，不给固定收益。
 
 ---
 
@@ -534,57 +528,21 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ### B1. CPU 核心分配 (big.LITTLE / EAS / uclamp)
 
-**机制**：现代 Android SoC 使用 big.LITTLE 架构。EAS (Energy Aware Scheduler) 优先功耗效率，启动初期线程 util 还未升高时倾向选择小核。小核执行速度约为大核的 1/2~1/3。OEM 可通过 Power HAL 在 app launch 时提升频率下限和/或强制大核调度。
+**机制边界**：CPU 容量差异可能影响关键任务的执行成本，但核类型需要可信的 capacity/拓扑以及 machine/ucpu 身份。观测频率、CPU 编号、四核数量或均匀频率不能确定大小核；无容量证据时保持 unknown。相同容量只表示当前观察到的容量一致，不能命名为“全小核”。
 
-**现象特征**：
-- Q2(小核Running) >15%
-- `cpu_placement_timeline` 显示主线程早期在小核
-- `critical_tasks` 中主线程大核占比 <50%
+**取证**：报告同一任务区间的核驻留、未知覆盖、运行与 Runnable、频率、迁移及约束。低大核占比或迁移只是观察，不证明“被困小核”、调度错误或损失时间；串行关键路径、任务需求和调度约束需要分别核实。
 
-**Perfetto 检测**：
-- Table: `sched_slice`（cpu 字段判断大小核）
-- Stdlib: `linux.cpu.utilization.process`
-- Slice(system_server): `setProcessGroup *`（cgroup 切换时机）
-- 结合设备 CPU 拓扑判断大小核划分
-
-**阈值**：
-| 指标 | Good | Warning | Critical |
-|------|------|---------|----------|
-| 大核占比 | >70% | 50-70% | <30% |
-| SP_TOP_APP 获取延迟 | <50ms | 50-200ms | >200ms |
-
-**典型影响**: 50-300ms（小核 vs 大核差 2-3x）
-
-**关联**: 放大所有 CPU 密集型操作(A4,A5,A6,A12,A16)。与 B2(频率)、B4(热节流) 组合效应。
-
-**建议 [系统层]**: 配置 `uclamp.min` 确保启动获得大核调度；Power HAL 的 App Launch Boost；检查 EAS 是否正确识别前台启动。
+**建议 [系统层]**：先验证是否有可量化的放置问题，再检查 affinity/cgroup/uclamp/调度策略。不能按占比直接推荐 RT、固定 uclamp 或 Launch Boost；实际收益需要设备和负载下的验证。
 
 ---
 
-### B2. CPU 频率调度 (Governor Ramp-up Delay)
+### B2. CPU 频率调度候选 (Governor Ramp-up Delay)
 
-**机制**：`schedutil` governor 基于线程利用率调整频率。启动初期 util 从 0 积累，频率逐步提升（不是瞬间跳到最高）。频率上限受 `scaling_max_freq` 限制（可能被热节流降低）。
+**取证**：按实际 ucpu/machine 分别裁剪频率样本到初期与后段窗口，区分目标运行加权和全窗口加权，报告覆盖、缺失及零值。短启动可能没有后段窗口；不能把缺数据记为 0MHz 或“频率正常”。
 
-**现象特征**：
-- `freq_rampup` 数据显示初期频率远低于最高频
-- 大核均频 / 最高频率 <80%
-- 启动前 50-100ms CPU 频率明显偏低
+**解释边界**：初期频率低于后段、均频低于观测峰值仅证明频率差异。观测峰值不是硬件上限，差值不是 governor 延迟或热节流证明。需要 DVFS 请求/响应、硬件/策略限制以及同区间关键任务证据；没有请求/限制证据时只能提出候选，也不能反向排除限频。
 
-**Perfetto 检测**：
-- Counter: `cpufreq`（per CPU）
-- Table: `counter` JOIN `cpu_counter_track` WHERE name='cpufreq'
-
-**阈值**：
-| 指标 | Good | Warning | Critical |
-|------|------|---------|----------|
-| 大核频率/最大频率 | >80% | 50-80% | <50% |
-| 达到最高频率的延迟 | <50ms | 50-200ms | >200ms |
-
-**典型影响**: 20-200ms
-
-**关联**: B4(热节流) 通过降低 `scaling_max_freq` 直接限制。与 B1 组合——小核+低频=最差性能。Power HAL boost 同时解决 B1 和 B2。
-
-**建议 [系统层]**: Power HAL 在 app launch 时提升频率下限（floor frequency）；检查 governor ramp-up 参数。
+**建议 [系统层]**：确认频率供给进入关键路径后再评估策略，不能按观察到的频率比例承诺启动收益。
 
 ---
 
@@ -685,7 +643,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 **现象特征**：
 - SR06 被触发
-- Q4(Sleeping) + blocked_function = `binder_wait_for_work`
+- S 等待若出现 Binder 函数，需要区分线程池空闲接活与客户端同步事务等待
 - `android_binder_txns` 中有长耗时事务
 
 **Perfetto 检测**：
@@ -703,7 +661,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 **典型影响**: 20-500ms
 
-**关联**: Dispatch delay 高 = system_server binder 线程池饱和(B9,B12)。Server 处理慢 = B7(system_server锁)。AIDL 接口名可追踪到具体系统服务。
+**解释边界**：`binder_wait_for_work` / `binder_thread_read` 单独不能证明客户端被事务阻塞，可能是服务线程等待工作。高 dispatch delay 是候选现象，需关联目标 transaction、实际 server 线程、调度与池占用；server_dur 长还可能包含计算、等待或嵌套调用，不能直接命名锁竞争。低总量或短事务只限定已观测的直接耗时，不能反向排除 Binder 依赖或说它不在关键路径。
 
 **建议 [系统层]**: 优化 system_server Binder 线程池大小；减少 server 端锁竞争；检查 dispatch delay 趋势。
 
@@ -765,7 +723,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ### B9. 后台进程干扰
 
-**机制**：启动期间其他进程的活动抢占 CPU/IO 资源：后台 sync adapter、job scheduler 任务、GMS core、后台 GC、后台 IO。主线程表现为 Runnable(R/R+) 状态占比高——想跑但无可用核心。
+**机制**：启动期间其他进程的活动抢占 CPU/IO 资源：后台 sync adapter、job scheduler 任务、GMS core、后台 GC、后台 IO。主线程可能表现为 Runnable(R/R+) 等待；需要结合可运行范围、调度策略和同区间 CPU 交接判断，不能仅凭 R 证明所有可用核心被占满。
 
 **现象特征**：
 - Q3(Runnable) >10%
@@ -775,19 +733,9 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 **Perfetto 检测**：
 - Thread state: R/R+ 占比
 - sched_slice: 检查同一 CPU 上其他进程调度
-- 官方阈值: Runnable >15% = CPU 调度瓶颈
+- Runnable 比例阈值是调查信号，须测量具体等待区间及目标可运行范围；低比例也不能排除短时关键路径干扰
 
-```sql
--- 谁在占用主线程期望的 CPU？
-SELECT p.name AS process_name, SUM(ss.dur) / 1e6 AS cpu_ms
-FROM sched_slice ss
-JOIN thread t ON ss.utid = t.utid
-JOIN process p ON t.upid = p.upid
-WHERE ss.cpu IN (主线程运行过的CPU列表)
-  AND ss.ts >= startup_ts AND ss.ts <= startup_end_ts
-  AND p.name NOT GLOB 'target_package*'
-GROUP BY p.name ORDER BY cpu_ms DESC LIMIT 10
-```
+优先检查已有系统证据中的实际 Runnable 区间、同一 ucpu/machine 的切出与紧接任务、逐核忙碌与目标身份。目标曾运行的 CPU 不等于它在等待时唯一可用的 CPU；全窗口其他进程 CPU 总量不是抢占或启动损失。只有对应时序和调度约束得到证据支持，才描述该片段的干扰。
 
 **阈值**：
 | 指标 | Good | Warning | Critical |
@@ -916,47 +864,49 @@ GROUP BY p.name ORDER BY cpu_ms DESC LIMIT 10
 
 ### D1. 从现象到根因的映射表
 
-| 现象 | 可能根因 | 确认方法 |
-|------|---------|---------|
-| Q4(Sleeping)高 + futex_wait | A7(锁竞争), A9(SP) | `android_monitor_contention` 或间接推断 |
-| Q4(Sleeping)高 + binder_wait | A2→B6(Binder), B7(server锁) | `android_binder_txns` dispatch/server dur |
-| Q4(D-state)高 + io_schedule | A2(磁盘IO), A8(数据库) | file_io 数据 + memory_pressure 排查 |
-| Q4(D-state)高 + filemap_fault | A5(DEX加载), A14(.so加载), B3(内存压力) | `memory_pressure_in_range` + page fault 统计 |
-| Q4(Sleeping)高 + nanosleep | A17(显式sleep) | sleep 精确时长确认 |
-| Q1(Running)高 + inflate 热点 | A4(Layout), A18(自定义View) | hot_slice_states 中 inflate Running 占比 |
-| Q1(Running)高 + 非框架 slice | A16(重计算), A11(SDK init) | 热点 slice 名称分析 |
-| Q2(小核Running)高 | B1(CPU调度) | cpu_placement_timeline |
-| Q3(Runnable)高 | B9(后台干扰), B12(并发启动) | sched_slice 竞争进程分析 |
-| bindApplication 过长 | A1(CP/App init), A11(SDK), A5(DEX) | bindApplication 子 slice 分解 |
-| SR01 触发 | A12(JIT) / A5(无Baseline Profile) | JIT compile count + big core 竞争 |
-| 大核频率 < 标称80% | B4(热节流) | cpufreq max vs device spec |
+| 现象 | 候选方向 | 进一步确认所需证据 |
+|------|---------|------------------|
+| S 高且含 futex 路径 | 同步等待，可能关联 A7/A9 | 同一等待区间的对象/持有者/调用栈；也可能是条件变量或 join |
+| S 高且含 Binder 函数 | B6/B7 或线程池空闲 | 目标客户端 transaction/reply 与服务端处理链，不能只看 wchan |
+| D/DK 且含 io_schedule | A2/A8/B5 候选 | io_wait、文件/块 IO 与目标等待区间关联 |
+| filemap/page fault 活动 | A5/A14/B3 等候选 | 文件页、回收原因、实际读取及目标区间；计数不证明读盘/内存压力 |
+| nanosleep 等待 | A17 候选 | 同一事件调用栈/实现对应，不能直接认定 Java Thread.sleep |
+| Running 高且自定义 inflate 名称 | A4/A18 或其他计算 | 实际函数实现及逐实例状态，模拟名称不能证明 View 创建 |
+| Running 高且非框架 slice | A16 或其他运行成本 | 实现、调用链、运行状态分解；不能由名称证明 SDK/业务身份 |
+| 已可靠分类的小核运行比例高 | B1 候选 | 实际容量、目标任务需求和放置约束；占比不证明错误摆核 |
+| Runnable 高 | B9/B12 等候选 | 目标可运行范围、同区间资源与调度交接；低总量不排除局部影响 |
+| bindApplication 长 | A1/A11/A5 等候选 | 窗口裁剪、子事件、运行/等待分解及实现 |
+| JIT 信号 | A12/A5 候选 | 同区间任务、CPU 和关键路径关联，后台量不等于争抢 |
+| 观测频率低于标称/峰值 | B2/B4 等候选 | 实际请求、硬件/策略/热限制与频率响应；比例不证明热节流 |
 
 ### D2. blocked_function → 根因速查
 
-| blocked_function 模式 | 根因类别 | 说明 |
+| blocked_function 模式 | 候选方向 | 说明与缺口 |
 |----------------------|---------|------|
-| `futex_wait*` | A7(锁)/A9(SP) | Java synchronized / ReentrantLock / SP awaitLoadedLocked |
+| `futex_wait*` | 同步等待候选 | 可能是锁、条件变量或 join；需对象/持有者/调用栈，不能定位 Java API |
 | `__mutex_lock*`, `pthread_mutex_lock*` | A7(锁) | Native mutex |
-| `binder_wait_for_work`, `binder_thread_read` | B6(Binder) | Binder IPC 等待 |
+| `binder_wait_for_work`, `binder_thread_read` | Binder 路径或空闲工作线程 | 需 transaction/reply 及线程角色，不能直接当客户端 IPC 阻塞 |
 | `do_page_fault`, `filemap_fault`, `filemap_read` | A2(IO)/A5(DEX)/A14(.so)/B3(内存压力) | Page fault / page-cache read → 可能等待文件页 |
 | `io_schedule` | A2(IO)/A8(数据库)/B5(IO竞争) | I/O 调度等待候选；命名为数据库/Provider 根因需业务证据 |
-| `wait_on_page_bit` | A2(IO)/B3(内存压力) | 等待 page 读取完成 |
+| `wait_on_page_bit` | 页状态等待 | 等待的页标志和操作类型尚需上下文，不能单独认定读取完成等待 |
 | `ext4_*`, `f2fs_*` | A2(IO)/A8(数据库) | 文件系统操作候选 |
 | `SyS_fsync`, `do_fsync` | A8(数据库)/A9(SP) | fsync 刷盘候选，需 SQLite/SP/Provider 证据补强 |
-| `hrtimer_nanosleep`, `clock_nanosleep` | A17(显式sleep) | Thread.sleep() |
-| `epoll_wait` | 通常非问题 | Looper 空闲等待事件 |
-| `art::gc::*`, `SuspendAll` | A6(GC) | GC 暂停 |
-| `__alloc_pages_slowpath`, `try_to_free_pages`, `shrink_*` | B3(内存压力) | Direct reclaim |
+| `hrtimer_nanosleep`, `clock_nanosleep` | nanosleep 路径 | Java/native 调用来源未知，需对应栈/事件 |
+| `epoll_wait` | 事件等待 | 是否预期空闲需任务/消息与deadline上下文，不能自动排除问题 |
+| `art::gc::*`, `SuspendAll` | A6 等运行时活动候选 | 区分后台回收、暂停及其他挂起原因，并关联目标线程 |
+| `__alloc_pages_slowpath`, `try_to_free_pages`, `shrink_*` | 分配/回收路径候选 | 单帧名称不覆盖完整路径；核实实际回收事件及目标线程 |
 | `dm_*` | B5(IO竞争) | dm-verity / dm-crypt |
 | `inet_*`, `tcp_*` | A3(网络) | 网络调用 |
 
-### D3. 官方阈值参考 (android_startup.sql)
+### D3. 启动诊断阈值参考 (android_startup.sql)
 
-| 指标 | 阈值 | 对应根因 |
+实际阈值以当前工具/解析器版本为准；触发仅确定调查优先级，不代表原因已证实，未触发也不构成排除。
+
+| 指标与初筛阈值 | 观测信号 | 候选类别 |
 |------|------|---------|
-| Runnable state >15% | CPU 调度瓶颈 | B1, B9 |
+| Runnable state >15% | 可运行等待较高，需调度上下文 | B1, B9 |
 | Interruptible sleep (S) >2900ms | 异常等待 | A7, A9, B6 |
-| Blocking I/O (D state) >450ms | I/O 瓶颈 | A2, B3, B5 |
+| D/DK >450ms | 不可中断等待较高，需 IO/回收关联才能归因 | A2, B3, B5 |
 | OpenDexFilesFromOat >20% duration | DEX 加载慢 | A5 |
 | bindApplication >1250ms | 应用绑定慢 | A1, A11 |
 | View inflation >450ms | 布局膨胀慢 | A4 |

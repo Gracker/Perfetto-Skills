@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_slow_reasons.skill.yaml
-Source SHA-256: 9280e9531cabb0d33f372861fc25136e7e273f9b5c0a3e1cb38d346213d38a58
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 7a8bee2b91eed7037b062e3f1c0fafd599488485f01bb4b2a90c1beb997cc573
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 启动慢原因（官方分类）
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -107,7 +107,7 @@ condition: startup_overview.data.length > 0
 display:
   level: key
   layer: list
-  title: 检测到的慢启动原因
+  title: 检测到的启动性能候选信号
   columns:
   - name: reason_id
     label: 原因编号
@@ -123,6 +123,9 @@ display:
     type: string
   - name: suggestion
     label: 建议
+    type: string
+  - name: claim_boundary
+    label: 证据边界
     type: string
 save_as: slow_reasons
 optional: true

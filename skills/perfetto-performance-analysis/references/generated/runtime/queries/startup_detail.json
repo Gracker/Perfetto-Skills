@@ -61,14 +61,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/startup_info.sql",
-      "sha256": "4696885c2bd8adaf4ce54fd247fcf9075e26de60a370dc398f1abd2121643d50",
+      "sha256": "fb57f6e458ee258718b137f5c8b700006eb2aedf39c320060ad5ba5d49418510",
       "signal_patterns": [],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
+        "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
       },
       "sql_dependencies": {
         "creates": [],
@@ -175,17 +175,21 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/cpu_core_analysis.sql",
-      "sha256": "89869b2243970d73f891d4204c3d87cfbc93cd90057c6e0670798f1bf9814f37",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "f7f44e710e826c415a3d2bdfe410535d3f61329d6aaf19c3e2d5c202e71b7b9c",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
+        "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
       },
       "sql_dependencies": {
         "creates": [],
@@ -198,16 +202,23 @@
         "required_tables": [
           "android_startups"
         ],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "cpu_core_analysis",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "714e9dcf10c508e7e35c892cacfb3e92f553285354472d104c854afe0b00bec1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "38801c0ccea35ad9c33b27b1e21f8b887e11ceb500aff3783f3db7c7c9b86248"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
@@ -217,7 +228,9 @@
           "start_ts"
         ],
         "result_dependencies": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -289,17 +302,21 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/cpu_freq_analysis.sql",
-      "sha256": "7ea5c3ba176190e64bfeec7f2367bcca54e2042c3ff4686a3d1f2633dca5fe2a",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "4932b712c1a75f51b2475dfd9724ab054c32e740e90c588887cb45982b01c76d",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
+        "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
       },
       "sql_dependencies": {
         "creates": [],
@@ -312,16 +329,28 @@
         "required_tables": [
           "android_startups"
         ],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "cpu_freq_analysis",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "714e9dcf10c508e7e35c892cacfb3e92f553285354472d104c854afe0b00bec1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "38801c0ccea35ad9c33b27b1e21f8b887e11ceb500aff3783f3db7c7c9b86248"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
+            "source_sha256": "3bd7b6b15a0779c2dea52d290df978e0083ec7287cd7b487abddbeb3e32f0a8b"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
@@ -331,7 +360,299 @@
           "start_ts"
         ],
         "result_dependencies": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "startup_detail/per_cpu_system_context",
+      "identity": {
+        "aliases": [
+          "package",
+          "process_name"
+        ],
+        "policy": "required",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/startup_detail/per_cpu_system_context.sql",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "global_context": [
+            "cpu",
+            "ucpu",
+            "machine_id",
+            "capacity",
+            "cluster_id",
+            "core_type",
+            "topology_source",
+            "avg_freq_mhz",
+            "min_freq_mhz",
+            "max_freq_mhz",
+            "freq_coverage_ms",
+            "freq_coverage_pct",
+            "frequency_evidence",
+            "system_busy_ms",
+            "system_busy_pct",
+            "sched_coverage_ms",
+            "idle_ns",
+            "idle_identity_unknown_ns",
+            "sched_evidence"
+          ]
+        },
+        "role": "target"
+      },
+      "sha256": "33186529d0639361f5da16577ba03abc14c9b57f88cd8177499ab729c430943e",
+      "signal_patterns": [
+        "${package}:*"
+      ],
+      "skill_id": "startup_detail",
+      "source": {
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
+        "path": "backend/skills/composite/startup_detail.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.startup.startups",
+          "android.binder",
+          "linux.cpu.frequency"
+        ],
+        "drops": [],
+        "required_tables": [
+          "android_startups"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "per_cpu_system_context",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "714e9dcf10c508e7e35c892cacfb3e92f553285354472d104c854afe0b00bec1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "38801c0ccea35ad9c33b27b1e21f8b887e11ceb500aff3783f3db7c7c9b86248"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
+            "source_sha256": "3bd7b6b15a0779c2dea52d290df978e0083ec7287cd7b487abddbeb3e32f0a8b"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "startup_detail/preemption",
+      "identity": {
+        "aliases": [
+          "package",
+          "process_name"
+        ],
+        "policy": "required",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/startup_detail/preemption.sql",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "context_fields": {
+          "peer_context": [
+            "next_sched_id",
+            "next_utid",
+            "next_tid",
+            "next_upid",
+            "next_pid",
+            "next_thread_name",
+            "next_process_name",
+            "next_priority",
+            "next_is_idle",
+            "next_role"
+          ]
+        },
+        "role": "target"
+      },
+      "sha256": "fc4c6b42653d9673e7c96e0dda02cce1abc306635c45bf49390c63682ccf9734",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*"
+      ],
+      "skill_id": "startup_detail",
+      "source": {
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
+        "path": "backend/skills/composite/startup_detail.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.startup.startups",
+          "android.binder",
+          "linux.cpu.frequency"
+        ],
+        "drops": [],
+        "required_tables": [
+          "android_startups"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "preemption",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "714e9dcf10c508e7e35c892cacfb3e92f553285354472d104c854afe0b00bec1"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -403,17 +724,21 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/quadrant_analysis.sql",
-      "sha256": "dcc7dd05698501ff755fca373037c476397573039586d8be720355bdbde14cf5",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "182fb23287cb65521097b8b9f9436ac3887b7bb5d28d7bd2abac40417d072cad",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
+        "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
       },
       "sql_dependencies": {
         "creates": [],
@@ -426,16 +751,28 @@
         "required_tables": [
           "android_startups"
         ],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "quadrant_analysis",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "714e9dcf10c508e7e35c892cacfb3e92f553285354472d104c854afe0b00bec1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "38801c0ccea35ad9c33b27b1e21f8b887e11ceb500aff3783f3db7c7c9b86248"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
+            "source_sha256": "e3f4e00acba34ee538323ee813dbae62fd8430cf82dab8c98970689b1a1365a1"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
@@ -445,7 +782,9 @@
           "start_ts"
         ],
         "result_dependencies": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -517,17 +856,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/actionable_main_thread_slices.sql",
-      "sha256": "f0fe62e56f84d4bd3bba5508573f12bc212c5cf2fb798c1f7d03775ddf5e47ce",
+      "sha256": "9c3a3cde7b085b42143da07b2927478bc455232e0dcd3bfbf7d610dfbd539c64",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "658b23722c587abee0359b3f5dab8309cb85bc5a9136213edf874debba758e39"
+        "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
       },
       "sql_dependencies": {
         "creates": [],

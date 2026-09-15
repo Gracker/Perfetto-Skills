@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/longest_process_slices.skill.yaml
 -- Source SHA-256: afd2f8caa3379888693e359840046ddb1c854202cdfe90578fc67ddd9a4916a8
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH
 raw_input AS (

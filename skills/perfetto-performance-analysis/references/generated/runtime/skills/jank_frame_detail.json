@@ -40,8 +40,7 @@
       "android_binder_txns",
       "android_garbage_collection_events",
       "android_gpu_frequency",
-      "android_monitor_contention",
-      "cpufreq"
+      "android_monitor_contention"
     ]
   },
   "id": "jank_frame_detail",
@@ -179,6 +178,7 @@
   ],
   "prerequisites": {
     "modules": [
+      "linux.cpu.frequency",
       "android.binder",
       "android.slices",
       "android.monitor_contention",
@@ -191,9 +191,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-    "sha256": "89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90"
+    "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
   },
   "steps": [
     {

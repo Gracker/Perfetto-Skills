@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_freq_rampup.skill.yaml
-Source SHA-256: 5fdc44a881eba8aac3be4fc8cc7f6175bd41bc13c9a6fc164f19ec3b4bda8f28
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 6f5c949fb38180d0c6f2fb90172a4357d8a192a449da1c88d7bfe8ebade4a876
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 启动 CPU 频率爬升
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: startup_freq_rampup
-version: '1.0'
+version: '1.1'
 type: atomic
 category: app_lifecycle
 tier: B
@@ -20,7 +20,7 @@ tier: B
 
 ```yaml
 display_name: 启动 CPU 频率爬升
-description: 分析冷启动初期 CPU 频率爬升速度，检测升频延迟
+description: 比较启动初期与后段的逐核频率及覆盖率，不据此判定升频延迟
 icon: speed
 tags:
 - startup
@@ -64,25 +64,50 @@ format: structured
 ```yaml
 level: detail
 layer: deep
-title: CPU 频率爬升分析
+title: CPU 频率阶段对比
 columns:
-- name: core_type
-  label: 核类型
-  type: string
+- name: ucpu
+  label: UCPU
+  type: number
+- name: cpu
+  label: CPU
+  type: number
+- name: machine_id
+  label: Machine ID
+  type: number
 - name: early_avg_freq_mhz
   label: 初期均频(MHz)
   type: number
 - name: steady_avg_freq_mhz
-  label: 稳态均频(MHz)
+  label: 后段均频(MHz)
   type: number
 - name: max_freq_mhz
-  label: 最高频率(MHz)
+  label: 观测峰值(MHz)
   type: number
+- name: early_covered_ns
+  label: 初期覆盖时长
+  type: duration
+  unit: ns
+- name: early_window_ns
+  label: 初期窗口时长
+  type: duration
+  unit: ns
+- name: steady_covered_ns
+  label: 后段覆盖时长
+  type: duration
+  unit: ns
+- name: steady_window_ns
+  label: 后段窗口时长
+  type: duration
+  unit: ns
 - name: rampup_pct
-  label: 爬升幅度(%)
+  label: 后段相对变化(%)
   type: percentage
   format: percentage
 - name: assessment
   label: 评估
+  type: string
+- name: claim_boundary
+  label: 证据边界
   type: string
 ```

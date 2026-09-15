@@ -9,7 +9,6 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}",
       "${package}:*"
     ]
   },
@@ -42,13 +41,17 @@
       "sched_slice"
     ]
   },
+  "process_scope": {
+    "binding": "effective_target_processes",
+    "role": "target"
+  },
   "query_id": "scheduling_analysis/root",
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/atomic/scheduling_analysis.skill.yaml",
-    "sha256": "8e315933d2728d1e6f812ae3c548dd938ad3442d70ffbbfca1e05a9fcc39e853"
+    "sha256": "b31cc396cd518f4b46e71db1d3f0fde3f4eec0116380fc97e47ca43bf7c5bc93"
   },
   "steps": [],
   "type": "atomic",

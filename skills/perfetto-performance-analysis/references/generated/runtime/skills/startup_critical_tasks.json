@@ -39,7 +39,11 @@
   },
   "id": "startup_critical_tasks",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package"
+    ],
+    "policy": "verify_if_present",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -69,13 +73,17 @@
     ],
     "required_tables": []
   },
+  "process_scope": {
+    "binding": "effective_target_processes",
+    "role": "target"
+  },
   "query_id": "startup_critical_tasks/root",
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
-    "sha256": "f460c66ed18a0b8aef8f2b45c8295ba56c2a3ef06324f87d5d22f2a01e03c877"
+    "sha256": "1d150607593a0244cfb5f012f525c17145c2fb18304e076afb7d7b460799c0d3"
   },
   "steps": [],
   "type": "atomic",

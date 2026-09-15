@@ -48,14 +48,22 @@
       },
       "id": "startup_critical_tasks/root",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package"
+        ],
+        "policy": "verify_if_present",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_critical_tasks/query.sql",
-      "sha256": "a0aa95e86f160d74dfb340f98b2c3345ef277eb9c7a55ddcc178ad433aed846d",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "55195fccc602f38e447283702771f2bca033e5de9bc1affc6feba7cc25a49a79",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -81,10 +89,10 @@
       ],
       "skill_id": "startup_critical_tasks",
       "source": {
-        "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+        "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
         "path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f460c66ed18a0b8aef8f2b45c8295ba56c2a3ef06324f87d5d22f2a01e03c877"
+        "sha256": "1d150607593a0244cfb5f012f525c17145c2fb18304e076afb7d7b460799c0d3"
       },
       "sql_dependencies": {
         "creates": [],
@@ -93,17 +101,31 @@
         ],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
-        "name_parameters": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "714e9dcf10c508e7e35c892cacfb3e92f553285354472d104c854afe0b00bec1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
+            "source_sha256": "e3f4e00acba34ee538323ee813dbae62fd8430cf82dab8c98970689b1a1365a1"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "38801c0ccea35ad9c33b27b1e21f8b887e11ceb500aff3783f3db7c7c9b86248"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",
@@ -111,7 +133,9 @@
           "top_k"
         ],
         "result_dependencies": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: c8d73d35562b9ec271aea7e00e13dc776737f15c18ff690716bb12d438afb6c2
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 309ffee7a4d6b82e389a373df89406848c2ac9af6fb12d95cd0c7d8ecadb568e
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Anr Strategy
 
@@ -154,6 +154,20 @@ plan_template:
     required_expected_calls:
     - skill_id: anr_analysis
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### anr_critical_path (critical_path)
+
+Confirm ANR type, target UPID and timeout window. Identify blocked task, main-thread work and relevant owner/peer tasks rather than equating the longest wait with the full timeout.
+
+### anr_dependencies (dependency_chain)
+
+Trace Binder transactions, lock ownership, IO and wakeup dependencies where available; distinguish observed waiting from an established blocking chain and from ANR trigger attribution.
 
 #### anr Core Strategy
 

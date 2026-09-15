@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 2dcba698d9cc63e045e9346afc44cab60148cf55a58161bf0378383d624af4ff
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 8f9a0954db22c1fcbcbb1d90da0bb15de24e08b37ba60f59c45fb99fa915eb4b
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -146,6 +146,76 @@ rewriteTo: recommended_process_name_param
 
 ## Ordered execution
 
+### 系统证据窗口
+
+- ID: `system_context_window`
+- Type: `atomic`
+- SQL: [`../sql/scrolling_analysis/system_context_window.sql`](../sql/scrolling_analysis/system_context_window.sql)
+
+```yaml
+id: system_context_window
+type: atomic
+process_scope:
+  role: identity_metadata
+display: false
+save_as: system_context_window
+```
+### 窗口 CPU 系统上下文
+
+- ID: `system_cpu_context`
+- Type: `skill`
+
+```yaml
+id: system_cpu_context
+type: skill
+skill: cpu_system_context_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+save_as: system_cpu_context
+display:
+  level: detail
+  layer: deep
+```
+### 目标任务系统状态
+
+- ID: `system_task_summary`
+- Type: `skill`
+
+```yaml
+id: system_task_summary
+type: skill
+skill: thread_system_summary_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${package}
+save_as: system_task_summary
+display:
+  level: detail
+  layer: deep
+```
+### 目标任务调度交接
+
+- ID: `system_task_handoffs`
+- Type: `skill`
+
+```yaml
+id: system_task_handoffs
+type: skill
+skill: thread_preemption_handoffs_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${package}
+save_as: system_task_handoffs
+display:
+  level: detail
+  layer: deep
+```
 ### 主线程全窗口与帧内外状态
 
 - ID: `main_thread_work_summary`
@@ -1375,6 +1445,9 @@ display: false
 save_as: session_stats
 condition: scroll_sessions.data?.length > 0
 sql_fragments:
+- fragments/system_cpu_frequency_spans.sql
+- fragments/system_sched_spans.sql
+- fragments/system_thread_state_spans.sql
 - fragments/effective_target_processes.sql
 process_scope:
   role: target
@@ -1474,6 +1547,9 @@ id: batch_frame_root_cause
 type: atomic
 optional: true
 sql_fragments:
+- fragments/system_cpu_frequency_spans.sql
+- fragments/system_sched_spans.sql
+- fragments/system_thread_state_spans.sql
 - fragments/effective_target_processes.sql
 - fragments/vsync_config.sql
 - fragments/root_cause_sample_cap.sql
@@ -1499,6 +1575,10 @@ display:
   - process_name
   - pid
   columns:
+  - name: system_evidence_json
+    label: system_evidence_json
+    type: string
+    hidden: true
   - name: frame_id
     label: 帧 ID
     type: string
@@ -1852,6 +1932,8 @@ optional: true
 display:
   level: hidden
 sql_fragments:
+- fragments/system_cpu_frequency_spans.sql
+- fragments/system_sched_spans.sql
 - fragments/effective_target_processes.sql
 process_scope:
   role: target
@@ -1863,6 +1945,8 @@ process_scope:
     - trace_peak_freq_mhz
     - tail_min_freq_mhz
     - thermal_trending
+    - frequency_decline_observed
+    - thermal_evidence
     peer_context:
     - non_app_big_core_pct
     - background_cpu_heavy
@@ -1880,6 +1964,8 @@ type: atomic
 optional: true
 display: false
 sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_thread_state_spans.sql
 - fragments/effective_target_processes.sql
 process_scope:
   role: target
@@ -1896,6 +1982,9 @@ condition: frame_timeline.data[0]?.has_frame_timeline === 1 && (perf_summary?.da
 ```yaml
 id: session_cpu_freq
 type: atomic
+sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_frequency_spans.sql
 optional: true
 display: false
 process_scope:
@@ -1915,6 +2004,8 @@ type: atomic
 optional: true
 display: false
 sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_thread_state_spans.sql
 - fragments/effective_target_processes.sql
 process_scope:
   role: target
@@ -1966,6 +2057,8 @@ display:
     label: 优化建议
     type: string
 sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_thread_state_spans.sql
 - fragments/effective_target_processes.sql
 process_scope:
   role: target

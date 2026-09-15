@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_detail.skill.yaml
-Source SHA-256: 051bdc9c5edc28e6120e77e34dfa9036ffbfc5b1c4ea529604ca31a7435714b5
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: e6caf5c56483f80b2e80c360f82ad97098e9d0865e1914f3c4c3d5c772e6c4ab
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 点击详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -90,6 +90,76 @@ modules:
 
 ## Ordered execution
 
+### 系统证据窗口
+
+- ID: `system_context_window`
+- Type: `atomic`
+- SQL: [`../sql/click_response_detail/system_context_window.sql`](../sql/click_response_detail/system_context_window.sql)
+
+```yaml
+id: system_context_window
+type: atomic
+process_scope:
+  role: identity_metadata
+display: false
+save_as: system_context_window
+```
+### 窗口 CPU 系统上下文
+
+- ID: `system_cpu_context`
+- Type: `skill`
+
+```yaml
+id: system_cpu_context
+type: skill
+skill: cpu_system_context_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+save_as: system_cpu_context
+display:
+  level: detail
+  layer: deep
+```
+### 目标任务系统状态
+
+- ID: `system_task_summary`
+- Type: `skill`
+
+```yaml
+id: system_task_summary
+type: skill
+skill: thread_system_summary_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${process_name}
+save_as: system_task_summary
+display:
+  level: detail
+  layer: deep
+```
+### 目标任务调度交接
+
+- ID: `system_task_handoffs`
+- Type: `skill`
+
+```yaml
+id: system_task_handoffs
+type: skill
+skill: thread_preemption_handoffs_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${process_name}
+save_as: system_task_handoffs
+display:
+  level: detail
+  layer: deep
+```
 ### 初始化 CPU 拓扑
 
 - ID: `init_cpu_topology`
@@ -280,11 +350,41 @@ save_as: input_lifecycle
 ```yaml
 id: cpu_core_analysis
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_sched_spans.sql
 display:
   level: key
   layer: deep
   title: 大小核占比
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
+  - name: unknown_running_ms
+    label: unknown_running_ms
+    type: number
+    hidden: true
+  - name: priority_min
+    label: priority_min
+    type: number
+    hidden: true
+  - name: priority_max
+    label: priority_max
+    type: number
+    hidden: true
+  - name: scheduling_policy_evidence
+    label: scheduling_policy_evidence
+    type: string
+    hidden: true
   - name: thread_type
     label: 线程类型
     type: string
@@ -309,6 +409,10 @@ display:
     label: 运行占总时长(%)
     type: percentage
     format: percentage
+  - name: used_ucpus
+    label: 实际 UCPU
+    type: string
+    hidden: true
   - name: used_cpus
     label: 使用CPU
     type: string
@@ -326,12 +430,43 @@ save_as: cpu_core
 ```yaml
 id: quadrant_analysis
 type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_thread_state_spans.sql
+- fragments/system_sched_spans.sql
 optional: true
 display:
   level: key
   layer: deep
   title: 四大象限分析
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
+  - name: unknown_running_ms
+    label: unknown_running_ms
+    type: number
+    hidden: true
+  - name: uninterruptible_ms
+    label: uninterruptible_ms
+    type: number
+    hidden: true
+  - name: interruptible_sleep_ms
+    label: interruptible_sleep_ms
+    type: number
+    hidden: true
+  - name: state_coverage_pct
+    label: state_coverage_pct
+    type: number
+    hidden: true
   - name: thread_type
     label: 线程类型
     type: string
@@ -621,8 +756,9 @@ rules:
   suggestions:
   - 检查主线程阻塞原因
   - 将阻塞操作移到后台线程
-- condition: cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms > 20 && quadrant.data[0]?.q3_runnable_ms
-    > 20 && (sched_delay.data[0]?.severe_count || 0) > 0 && !(cpu_core.data[0]?.classify_method || '').includes('cpu_id_fallback')
+- condition: cpu_core.data[0]?.unknown_running_ms === 0 && cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms
+    > 20 && quadrant.data[0]?.q3_runnable_ms > 20 && (sched_delay.data[0]?.severe_count || 0) > 0 && !(cpu_core.data[0]?.classify_method
+    || '').includes('cpu_id_fallback')
   severity: warning
   diagnosis: 主线程大核占比偏低（${cpu_core.data[0].big_core_pct}%）且 Runnable 等待 ${quadrant.data[0].q3_runnable_ms}ms，存在调度供给不足迹象
   confidence: medium

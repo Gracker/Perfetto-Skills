@@ -62,11 +62,60 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/composite/main_thread_frame_work.skill.yaml",
-    "sha256": "5b782c252c80af2d4d445da11db4f32db6b09a78f4e8c5ef19dd24fbbf7f201b"
+    "sha256": "335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0"
   },
   "steps": [
+    {
+      "id": "system_context_window",
+      "name": "系统证据窗口",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
+      "query_id": "main_thread_frame_work/system_context_window",
+      "result_dependencies": [],
+      "save_as": "system_context_window",
+      "type": "atomic"
+    },
+    {
+      "id": "system_cpu_context",
+      "name": "窗口 CPU 系统上下文",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_cpu_context",
+      "skill": "cpu_system_context_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "system_task_summary",
+      "name": "目标任务系统状态",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${package}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_task_summary",
+      "skill": "thread_system_summary_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "system_task_handoffs",
+      "name": "目标任务调度交接",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${package}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_task_handoffs",
+      "skill": "thread_preemption_handoffs_in_range",
+      "type": "skill"
+    },
     {
       "id": "main_thread_work_summary",
       "name": "主线程全窗口与帧内外状态",

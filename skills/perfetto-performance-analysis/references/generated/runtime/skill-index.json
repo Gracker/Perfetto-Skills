@@ -55,6 +55,7 @@
     "cpu_process_utilization_period": "skills/cpu_process_utilization_period.json",
     "cpu_profiling": "skills/cpu_profiling.json",
     "cpu_slice_analysis": "skills/cpu_slice_analysis.json",
+    "cpu_system_context_in_range": "skills/cpu_system_context_in_range.json",
     "cpu_thread_utilization_period": "skills/cpu_thread_utilization_period.json",
     "cpu_throttling_in_range": "skills/cpu_throttling_in_range.json",
     "cpu_time_per_frame": "skills/cpu_time_per_frame.json",
@@ -221,6 +222,9 @@
     "thermal_throttling_chain": "skills/thermal_throttling_chain.json",
     "third_party_module": "skills/third_party_module.json",
     "thread_affinity_violation": "skills/thread_affinity_violation.json",
+    "thread_cpu_placement_timeline": "skills/thread_cpu_placement_timeline.json",
+    "thread_preemption_handoffs_in_range": "skills/thread_preemption_handoffs_in_range.json",
+    "thread_system_summary_in_range": "skills/thread_system_summary_in_range.json",
     "touch_to_display_latency": "skills/touch_to_display_latency.json",
     "trace_state_track_summary": "skills/trace_state_track_summary.json",
     "util_tracking_analysis": "skills/util_tracking_analysis.json",
@@ -238,13 +242,13 @@
     "webview_v8_analysis": "skills/webview_v8_analysis.json",
     "wms_module": "skills/wms_module.json"
   },
-  "source_commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+  "source_commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
   "summary": {
-    "conditions": 615,
-    "executable": 204,
+    "conditions": 614,
+    "executable": 208,
     "knowledge_only": 32,
-    "skills": 236,
+    "skills": 240,
     "step_conditions": 254,
-    "steps": 765
+    "steps": 787
   }
 }

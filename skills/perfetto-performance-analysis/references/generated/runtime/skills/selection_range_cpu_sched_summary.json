@@ -1,6 +1,11 @@
 {
   "android": {
-    "adapters": [],
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
     "selection_order": [
       "device_capability",
       "trace_config_and_setup_errors",
@@ -9,7 +14,7 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "cpufreq"
+      "${package|}:*"
     ]
   },
   "id": "selection_range_cpu_sched_summary",
@@ -68,9 +73,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
-    "sha256": "31127ebb648421f06248c4ceb054d614d12df318c63b0a652a41f341b556310e"
+    "sha256": "95df0f44514ceae080e9a7b042ac2b618628a1b74c44e9fc73fb1daa8fc9ad67"
   },
   "steps": [
     {
@@ -88,6 +93,10 @@
       "id": "running_thread_quadrants",
       "name": "Running 线程四象限与摆核",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "selection_range_cpu_sched_summary/running_thread_quadrants",
       "result_dependencies": [],
       "save_as": "running_thread_quadrants",
@@ -97,6 +106,10 @@
       "id": "running_process_ranking",
       "name": "Running 进程排名",
       "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "selection_range_cpu_sched_summary/running_process_ranking",
       "result_dependencies": [],
       "save_as": "running_process_ranking",
@@ -106,6 +119,9 @@
       "id": "cpu_freq_by_core",
       "name": "各核 duration-weighted 频率",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "selection_range_cpu_sched_summary/cpu_freq_by_core",
       "result_dependencies": [],
       "save_as": "cpu_freq_by_core",
@@ -115,6 +131,9 @@
       "id": "cpu_freq_distribution",
       "name": "各核频率分布",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "selection_range_cpu_sched_summary/cpu_freq_distribution",
       "result_dependencies": [],
       "save_as": "cpu_freq_distribution",

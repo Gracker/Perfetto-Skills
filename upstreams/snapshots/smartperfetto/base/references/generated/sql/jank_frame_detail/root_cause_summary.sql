@@ -1,11 +1,126 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: 89b4d18013a6f905876e70327ad35d2b6b486969311b984b2eabdcf58eeffa90
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: 337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 -- 根因分析: 综合四象限、CPU频率、耗时操作等数据，输出明确的根因结论
 -- CTEs vsync_ticks, vsync_config, target_threads, thread_states injected via sql_fragments
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Inputs: system_windows(window_id, window_start_ts, window_end_ts),
+-- system_target_threads(window_id, upid, utid, role). Half-open intersections.
+-- Unfinished states are observed only through the trace bound; clipping never
+-- converts that bound into a real switch/wakeup event.
+system_thread_state_spans AS (
+  SELECT w.window_id, w.window_start_ts, w.window_end_ts,
+    tt.upid, tt.utid, tt.role, ts.id AS thread_state_id,
+    ts.ts AS raw_start_ts, ts.dur AS raw_dur,
+    CASE WHEN ts.dur >= 0 THEN ts.ts + ts.dur END AS raw_end_ts,
+    MAX(ts.ts, w.window_start_ts) AS clipped_start_ts,
+    MIN(CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE ts.ts + ts.dur END, w.window_end_ts) AS clipped_end_ts,
+    MIN(CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE ts.ts + ts.dur END, w.window_end_ts) - MAX(ts.ts, w.window_start_ts) AS dur_ns,
+    ts.dur = -1 AS is_unfinished,
+    ts.ts < w.window_start_ts AS left_censored,
+    ts.dur = -1 OR ts.ts + ts.dur > w.window_end_ts AS right_censored,
+    ts.state, ts.cpu, ts.ucpu, ts.io_wait, ts.blocked_function, ts.waker_utid, ts.irq_context
+  FROM system_windows w
+  JOIN system_target_threads tt ON tt.window_id = w.window_id
+  JOIN thread_state ts ON ts.utid = tt.utid
+  WHERE w.window_end_ts > w.window_start_ts AND ts.dur != 0 AND ts.dur >= -1
+    AND ts.ts < w.window_end_ts
+    AND CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE ts.ts + ts.dur END > w.window_start_ts
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Input: system_windows(window_id, window_start_ts, window_end_ts).
+-- The pinned linux.cpu.frequency relation exposes the native ucpu after a
+-- machine_id + cpu join. Use that identity rather than merging cpu ordinals.
+-- Zero is a recorded counter value, not missing data or proof that hardware
+-- actually executed instructions at zero frequency.
+system_frequency_cpu_mapping AS (
+  SELECT cpu,id AS ucpu,machine_id,1 AS mapping_count FROM cpu
+),
+system_cpu_frequency_spans AS (
+  SELECT w.window_id, w.window_start_ts, w.window_end_ts,
+    f.id AS counter_id,f.track_id,f.cpu,m.ucpu,m.machine_id,f.freq AS freq_khz,
+    f.ts AS raw_start_ts, f.dur AS raw_dur,
+    CASE WHEN f.dur >= 0 THEN f.ts + f.dur END AS raw_end_ts,
+    MAX(f.ts, w.window_start_ts) AS clipped_start_ts,
+    MIN(CASE WHEN f.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE f.ts + f.dur END, w.window_end_ts) AS clipped_end_ts,
+    MIN(CASE WHEN f.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE f.ts + f.dur END, w.window_end_ts) - MAX(f.ts, w.window_start_ts) AS dur_ns,
+    f.dur = -1 AS is_unfinished,
+    'linux.cpu.frequency:cpu_frequency_counters' AS frequency_source
+  FROM system_windows w JOIN cpu_frequency_counters f
+    ON f.ts < w.window_end_ts AND f.dur >= -1 AND f.dur != 0 AND f.freq >= 0
+      AND CASE WHEN f.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+        ELSE f.ts + f.dur END > w.window_start_ts
+  JOIN system_frequency_cpu_mapping m ON m.ucpu=f.ucpu AND m.cpu=f.cpu
+  WHERE w.window_end_ts > w.window_start_ts
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Input: system_windows(window_id, window_start_ts, window_end_ts).
+-- Global CPU spans retain peer identity. Consumers join system_target_threads
+-- explicitly; no global process-table replacement or synthetic switch boundary.
+-- Capacity extrema require a complete machine population. A missing capacity
+-- on any CPU prevents certifying which recorded CPU is fastest or smallest.
+system_cpu_topology AS (
+  SELECT c.id AS ucpu,c.cpu,c.machine_id,c.cluster_id,c.capacity,
+    CASE WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'unknown'
+      WHEN c.min_capacity=c.max_capacity THEN 'unknown'
+      WHEN c.capacity=c.min_capacity THEN 'little'
+      WHEN c.capacity=c.max_capacity THEN 'big'
+      ELSE 'medium' END AS core_type,
+    CASE WHEN c.recorded_capacity_count=0 THEN 'capacity_unavailable'
+      WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'capacity_incomplete'
+      WHEN c.min_capacity=c.max_capacity THEN 'capacity_uniform_no_big_little'
+      ELSE 'recorded_capacity' END AS topology_source
+  FROM (
+    SELECT cpu.*,
+      COUNT(*) OVER (PARTITION BY machine_id) AS machine_cpu_count,
+      COUNT(CASE WHEN capacity>0 THEN 1 END) OVER (PARTITION BY machine_id) AS recorded_capacity_count,
+      MIN(CASE WHEN capacity>0 THEN capacity END) OVER (PARTITION BY machine_id) AS min_capacity,
+      MAX(CASE WHEN capacity>0 THEN capacity END) OVER (PARTITION BY machine_id) AS max_capacity
+    FROM cpu
+  ) c
+),
+system_sched_spans AS (
+  SELECT w.window_id, w.window_start_ts, w.window_end_ts,
+    s.id AS sched_id, s.utid, t.upid, t.is_idle, s.cpu, s.ucpu,
+    s.ts AS raw_start_ts, s.dur AS raw_dur,
+    CASE WHEN s.dur >= 0 THEN s.ts + s.dur END AS raw_end_ts,
+    MAX(s.ts, w.window_start_ts) AS clipped_start_ts,
+    MIN(CASE WHEN s.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE s.ts + s.dur END, w.window_end_ts) AS clipped_end_ts,
+    MIN(CASE WHEN s.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+      ELSE s.ts + s.dur END, w.window_end_ts) - MAX(s.ts, w.window_start_ts) AS dur_ns,
+    s.dur = -1 AS is_unfinished,
+    s.ts < w.window_start_ts AS left_censored,
+    s.dur = -1 OR s.ts + s.dur > w.window_end_ts AS right_censored,
+    s.end_state, s.priority,
+    ct.machine_id, ct.cluster_id, ct.capacity,
+    COALESCE(ct.core_type, 'unknown') AS core_type,
+    COALESCE(ct.topology_source, 'cpu_identity_unavailable') AS topology_source
+  FROM system_windows w JOIN sched_slice s
+    ON s.ts < w.window_end_ts AND s.dur >= -1 AND s.dur != 0
+      AND CASE WHEN s.dur = -1 THEN (SELECT end_ts FROM trace_bounds)
+        ELSE s.ts + s.dur END > w.window_start_ts
+  LEFT JOIN thread t ON t.utid = s.utid
+  LEFT JOIN system_cpu_topology ct ON ct.ucpu = s.ucpu
+  WHERE w.window_end_ts > w.window_start_ts
+)
+,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
 -- This file is part of SmartPerfetto. See LICENSE for details.
@@ -136,34 +251,36 @@ target_threads AS (
          OR t.name GLOB '[0-9]*.raster' OR t.name GLOB '[0-9]*.ui')
 )
 ,
--- Fragment: thread_states_quadrant
--- Depends on: target_threads (CTE), _cpu_topology (VIEW)
--- Maps thread states to Q1-Q4 quadrant classification
--- Q1: Running on big/prime cores (compute-capable)
--- Q2: Running on medium/little cores (power-efficient)
--- Q3: Runnable but not scheduled (scheduling contention)
--- Q4a: Uninterruptible wait (D/DK). Treat as IO only when io_wait=1
---       or blocked_function matches an IO/page-cache family.
--- Q4b: Voluntary/interruptible sleep (S/I). This is an observed wait state,
---       not a root cause; lock, Binder, futex, timer, event-loop, and
---       UI-to-RenderThread synchronization need independent direct evidence.
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- Compatibility fragment. Inputs: target_threads(utid,thread_type,
+-- thread_start_ts,thread_end_ts). New consumers use system_thread_state_spans.
+-- Q1 groups recorded big/medium capacity; Q2 is little only. Uniform/missing
+-- capacity remains unknown. D/DK and S/I are observed waits, not root causes.
 thread_states AS (
-  SELECT
-    tt.thread_type,
-    CASE
-      WHEN ts.state = 'Running' AND COALESCE(ct.core_type, 'little') IN ('prime', 'big') THEN 'Q1'
-      WHEN ts.state = 'Running' AND COALESCE(ct.core_type, 'little') IN ('medium', 'little') THEN 'Q2'
-      WHEN ts.state IN ('R', 'R+') THEN 'Q3'
-      WHEN ts.state IN ('D', 'DK') THEN 'Q4a'
-      WHEN ts.state IN ('S', 'I') THEN 'Q4b'
-      ELSE 'Other'
-    END as quadrant,
-    SUM(ts.dur) as dur_ns
-  FROM thread_state ts
-  JOIN target_threads tt ON ts.utid = tt.utid
-  LEFT JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
-  WHERE ts.ts >= tt.thread_start_ts AND ts.ts < tt.thread_end_ts
-  GROUP BY tt.thread_type, quadrant
+  SELECT thread_type, quadrant, SUM(dur_ns) AS dur_ns
+  FROM (
+    SELECT tt.thread_type,
+      CASE
+        WHEN ts.state='Running' AND c.capacity>0
+          AND NOT EXISTS (SELECT 1 FROM cpu c2 WHERE c2.machine_id IS c.machine_id AND (c2.capacity IS NULL OR c2.capacity<=0))
+          AND c.capacity>(SELECT MIN(c2.capacity) FROM cpu c2 WHERE c2.machine_id IS c.machine_id AND c2.capacity>0) THEN 'Q1'
+        WHEN ts.state='Running' AND c.capacity>0
+          AND NOT EXISTS (SELECT 1 FROM cpu c2 WHERE c2.machine_id IS c.machine_id AND (c2.capacity IS NULL OR c2.capacity<=0))
+          AND c.capacity=(SELECT MIN(c2.capacity) FROM cpu c2 WHERE c2.machine_id IS c.machine_id AND c2.capacity>0)
+          AND c.capacity<(SELECT MAX(c2.capacity) FROM cpu c2 WHERE c2.machine_id IS c.machine_id) THEN 'Q2'
+        WHEN ts.state='Running' THEN 'UnknownRunning'
+        WHEN ts.state IN ('R','R+') THEN 'Q3'
+        WHEN ts.state IN ('D','DK') THEN 'Q4a'
+        WHEN ts.state IN ('S','I') THEN 'Q4b'
+        ELSE 'Other' END AS quadrant,
+      MIN(CASE WHEN ts.dur=-1 THEN (SELECT end_ts FROM trace_bounds) ELSE ts.ts+ts.dur END,tt.thread_end_ts)
+        -MAX(ts.ts,tt.thread_start_ts) AS dur_ns
+    FROM thread_state ts JOIN target_threads tt ON tt.utid=ts.utid
+    LEFT JOIN cpu c ON c.id=ts.ucpu
+    WHERE ts.dur>=-1 AND ts.dur!=0 AND ts.ts<tt.thread_end_ts
+      AND CASE WHEN ts.dur=-1 THEN (SELECT end_ts FROM trace_bounds) ELSE ts.ts+ts.dur END>tt.thread_start_ts
+  ) GROUP BY thread_type,quadrant
 )
 ,
 -- 3. 计算各线程四象限百分比
@@ -174,7 +291,7 @@ quadrant_pct AS (
     dur_ns,
     ROUND(100.0 * dur_ns / NULLIF(SUM(dur_ns) OVER (PARTITION BY thread_type), 0), 1) as pct
   FROM thread_states
-  WHERE quadrant != 'Other'
+  -- All observed states remain in the denominator, including unknown topology.
 ),
 main_summary AS (
   SELECT
@@ -318,7 +435,7 @@ top_slice_state_overlap AS (
     COALESCE(ct.core_type, 'unknown') as core_type,
     (
       CASE
-        WHEN ts.ts + ts.dur < b.slice_end_ns THEN ts.ts + ts.dur
+        WHEN (CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds) ELSE ts.ts + ts.dur END) < b.slice_end_ns THEN (CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds) ELSE ts.ts + ts.dur END)
         ELSE b.slice_end_ns
       END
       -
@@ -330,24 +447,24 @@ top_slice_state_overlap AS (
   FROM thread_state ts
   JOIN main_thread_utid mtu ON ts.utid = mtu.utid
   JOIN top_slice_bounds b
-  LEFT JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
+  LEFT JOIN system_cpu_topology ct ON ts.ucpu = ct.ucpu
   WHERE ts.ts < b.slice_end_ns
-    AND ts.ts + ts.dur > b.slice_start_ns
+    AND (CASE WHEN ts.dur = -1 THEN (SELECT end_ts FROM trace_bounds) ELSE ts.ts + ts.dur END) > b.slice_start_ns
 ),
 top_slice_cpu_mix AS (
   SELECT
     ROUND(
-      100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('medium', 'little') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+      100.0 * SUM(CASE WHEN state = 'Running' AND core_type = 'little' AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF((SELECT slice_dur_ns FROM top_slice_bounds), 0),
       1
     ) as little_run_pct,
     ROUND(
-      100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+      100.0 * SUM(CASE WHEN state = 'Running' AND core_type IN ('prime', 'big', 'medium') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF((SELECT slice_dur_ns FROM top_slice_bounds), 0),
       1
     ) as big_run_pct,
     ROUND(
-      100.0 * SUM(CASE WHEN state = 'R' AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
+      100.0 * SUM(CASE WHEN state IN ('R', 'R+') AND overlap_ns > 0 THEN overlap_ns ELSE 0 END)
       / NULLIF((SELECT slice_dur_ns FROM top_slice_bounds), 0),
       1
     ) as runnable_pct,
@@ -358,49 +475,38 @@ top_slice_cpu_mix AS (
     ) as blocked_pct
   FROM top_slice_state_overlap
 ),
--- 5. 获取 CPU 频率
+system_windows AS (
+  SELECT 'frame' AS window_id,${start_ts} AS window_start_ts,${end_ts} AS window_end_ts
+  UNION ALL SELECT 'top_slice',MAX(slice_start_ns,${start_ts}),MIN(slice_end_ns,${end_ts}) FROM top_slice_bounds
+),
 freq_info AS (
   SELECT
-    ROUND(AVG(CASE WHEN ct.core_type IN ('prime', 'big') THEN c.value END) / 1000, 0) as big_avg_freq,
-    ROUND(MAX(CASE WHEN ct.core_type IN ('prime', 'big') THEN c.value END) / 1000, 0) as big_max_freq,
-    ROUND(MIN(CASE WHEN ct.core_type IN ('prime', 'big') THEN c.value END) / 1000, 0) as big_min_freq,
-    ROUND(AVG(CASE WHEN ct.core_type IN ('medium', 'little') THEN c.value END) / 1000, 0) as little_avg_freq,
-    ROUND(MAX(CASE WHEN ct.core_type IN ('medium', 'little') THEN c.value END) / 1000, 0) as little_max_freq,
-    ROUND(MIN(CASE WHEN ct.core_type IN ('medium', 'little') THEN c.value END) / 1000, 0) as little_min_freq
-  FROM counter c
-  JOIN cpu_counter_track t ON c.track_id = t.id
-  LEFT JOIN _cpu_topology ct ON t.cpu = ct.cpu_id
-  WHERE t.name = 'cpufreq'
-    AND c.ts >= ${start_ts} AND c.ts < ${end_ts}
+    ROUND((SUM(CASE WHEN ct.core_type IN ('prime','big','medium') THEN f.freq_khz*1.0*f.dur_ns END)/NULLIF(SUM(CASE WHEN ct.core_type IN ('prime','big','medium') THEN f.dur_ns END),0))/1000,0) AS big_avg_freq,
+    ROUND((MAX(CASE WHEN ct.core_type IN ('prime','big','medium') THEN f.freq_khz END))/1000,0) AS big_max_freq,
+    ROUND((MIN(CASE WHEN ct.core_type IN ('prime','big','medium') THEN f.freq_khz END))/1000,0) AS big_min_freq,
+    ROUND((SUM(CASE WHEN ct.core_type IN ('little') THEN f.freq_khz*1.0*f.dur_ns END)/NULLIF(SUM(CASE WHEN ct.core_type IN ('little') THEN f.dur_ns END),0))/1000,0) AS little_avg_freq,
+    ROUND((MAX(CASE WHEN ct.core_type IN ('little') THEN f.freq_khz END))/1000,0) AS little_max_freq,
+    ROUND((MIN(CASE WHEN ct.core_type IN ('little') THEN f.freq_khz END))/1000,0) AS little_min_freq
+  FROM system_cpu_frequency_spans f LEFT JOIN system_cpu_topology ct ON ct.ucpu=f.ucpu WHERE f.window_id='frame'
 ),
 top_slice_freq AS (
   SELECT
-    ROUND(AVG(CASE WHEN ct.core_type IN ('prime', 'big') THEN c.value END) / 1000, 0) as top_big_avg_freq_mhz,
-    ROUND(MAX(CASE WHEN ct.core_type IN ('prime', 'big') THEN c.value END) / 1000, 0) as top_big_max_freq_mhz,
-    ROUND(MIN(CASE WHEN ct.core_type IN ('prime', 'big') THEN c.value END) / 1000, 0) as top_big_min_freq_mhz,
-    ROUND(AVG(CASE WHEN ct.core_type IN ('medium', 'little') THEN c.value END) / 1000, 0) as top_little_avg_freq_mhz
-  FROM counter c
-  JOIN cpu_counter_track t ON c.track_id = t.id
-  LEFT JOIN _cpu_topology ct ON t.cpu = ct.cpu_id
-  WHERE t.name = 'cpufreq'
-    AND EXISTS (SELECT 1 FROM top_slice_bounds)
-    AND c.ts >= (SELECT slice_start_ns FROM top_slice_bounds)
-    AND c.ts < (SELECT slice_end_ns FROM top_slice_bounds)
+    ROUND((SUM(CASE WHEN ct.core_type IN ('prime','big','medium') THEN f.freq_khz*1.0*f.dur_ns END)/NULLIF(SUM(CASE WHEN ct.core_type IN ('prime','big','medium') THEN f.dur_ns END),0))/1000,0) AS top_big_avg_freq_mhz,
+    ROUND((MAX(CASE WHEN ct.core_type IN ('prime','big','medium') THEN f.freq_khz END))/1000,0) AS top_big_max_freq_mhz,
+    ROUND((MIN(CASE WHEN ct.core_type IN ('prime','big','medium') THEN f.freq_khz END))/1000,0) AS top_big_min_freq_mhz,
+    ROUND((SUM(CASE WHEN ct.core_type IN ('little') THEN f.freq_khz*1.0*f.dur_ns END)/NULLIF(SUM(CASE WHEN ct.core_type IN ('little') THEN f.dur_ns END),0))/1000,0) AS top_little_avg_freq_mhz
+  FROM system_cpu_frequency_spans f LEFT JOIN system_cpu_topology ct ON ct.ucpu=f.ucpu WHERE f.window_id='top_slice'
 ),
 big_freq_window AS (
-  SELECT c.ts, c.value as freq_khz
-  FROM counter c
-  JOIN cpu_counter_track t ON c.track_id = t.id
-  WHERE t.name = 'cpufreq'
-    AND t.cpu IN (SELECT cpu_id FROM _cpu_topology WHERE core_type IN ('prime', 'big'))
-    AND c.ts >= ${start_ts}
-    AND c.ts < ${end_ts}
+  SELECT f.clipped_start_ts AS ts,f.freq_khz,f.dur_ns
+  FROM system_cpu_frequency_spans f JOIN system_cpu_topology ct ON ct.ucpu=f.ucpu
+  WHERE f.window_id='frame' AND ct.core_type IN ('prime','big','medium')
 ),
 big_freq_stats AS (
   SELECT
     MAX(freq_khz) as peak_khz,
     MIN(freq_khz) as min_khz,
-    AVG(freq_khz) as avg_khz
+    SUM(freq_khz*1.0*dur_ns)/NULLIF(SUM(dur_ns),0) as avg_khz
   FROM big_freq_window
 ),
 big_freq_ramp AS (
@@ -431,13 +537,17 @@ big_freq_ramp AS (
   FROM big_freq_window b
   CROSS JOIN big_freq_stats s
 ),
+system_target_threads AS (
+  SELECT 'frame' AS window_id,t.upid,tt.utid,tt.thread_type AS role
+  FROM target_threads tt JOIN thread t ON t.utid=tt.utid
+),
 -- 6. IO/page-cache 候选检测（主线程 D/DK + io_wait/blocked_function）
 io_block AS (
-  SELECT COALESCE(ROUND(SUM(ts2.dur) / 1e6, 2), 0) as io_block_ms
-  FROM thread_state ts2
+  SELECT COALESCE(ROUND(SUM(ts2.dur_ns) / 1e6, 2), 0) as io_block_ms
+  FROM system_thread_state_spans ts2
   JOIN target_threads tt2 ON ts2.utid = tt2.utid
   WHERE tt2.thread_type = 'MainThread'
-    AND ts2.ts >= ${start_ts} AND ts2.ts < ${end_ts}
+    AND ts2.window_id = 'frame'
     AND ts2.state IN ('D', 'DK')
     AND (
       COALESCE(ts2.io_wait, 0) = 1
@@ -460,13 +570,13 @@ io_block AS (
 -- 7. 调度延迟检测（Runnable 等待）
 sched_latency AS (
   SELECT
-    COALESCE(ROUND(MAX(ts3.dur) / 1e6, 2), 0) as max_sched_ms,
-    COALESCE(ROUND(SUM(ts3.dur) / 1e6, 2), 0) as total_sched_ms
-  FROM thread_state ts3
+    COALESCE(ROUND(MAX(ts3.dur_ns) / 1e6, 2), 0) as max_sched_ms,
+    COALESCE(ROUND(SUM(ts3.dur_ns) / 1e6, 2), 0) as total_sched_ms
+  FROM system_thread_state_spans ts3
   JOIN target_threads tt3 ON ts3.utid = tt3.utid
   WHERE tt3.thread_type = 'MainThread'
-    AND ts3.ts >= ${start_ts} AND ts3.ts < ${end_ts}
-    AND ts3.state = 'R'
+    AND ts3.window_id = 'frame'
+    AND ts3.state IN ('R', 'R+')
 ),
 -- 8. GPU Fence / GPU 同步检测
 -- 包含 GPU fence 等待、eglSwapBuffers（GPU backpressure）、dequeueBuffer（BufferQueue 阻塞）
@@ -503,30 +613,17 @@ shader_compile AS (
 ),
 -- 9. CPU 簇负载检测（动态核心计数，适配所有 SoC 拓扑）
 cluster_core_counts AS (
-  SELECT
-    COUNT(DISTINCT CASE WHEN COALESCE(ct.core_type, 'unknown') IN ('prime', 'big') THEN ts.cpu END) as big_cores,
-    COUNT(DISTINCT CASE WHEN COALESCE(ct.core_type, 'unknown') IN ('medium', 'little') THEN ts.cpu END) as little_cores
-  FROM thread_state ts
-  LEFT JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
-  WHERE ts.ts < ${end_ts}
-    AND ts.ts + ts.dur > ${start_ts}
-    AND ts.state = 'Running'
-    AND ts.cpu IS NOT NULL
+  SELECT SUM(CASE WHEN core_type IN ('prime','big','medium') THEN 1 ELSE 0 END) AS big_cores,
+    SUM(CASE WHEN core_type='little' THEN 1 ELSE 0 END) AS little_cores
+  FROM system_cpu_topology
 ),
 cluster_load AS (
   SELECT
-    ROUND(100.0 * SUM(CASE WHEN COALESCE(ct.core_type, 'unknown') IN ('prime', 'big') THEN
-      MIN(ts.ts + ts.dur, ${end_ts}) - MAX(ts.ts, ${start_ts})
-    ELSE 0 END) / NULLIF((${end_ts} - ${start_ts}) * MAX((SELECT big_cores FROM cluster_core_counts), 1), 0), 1) as big_load_pct,
-    ROUND(100.0 * SUM(CASE WHEN COALESCE(ct.core_type, 'unknown') IN ('medium', 'little') THEN
-      MIN(ts.ts + ts.dur, ${end_ts}) - MAX(ts.ts, ${start_ts})
-    ELSE 0 END) / NULLIF((${end_ts} - ${start_ts}) * MAX((SELECT little_cores FROM cluster_core_counts), 1), 0), 1) as little_load_pct
-  FROM thread_state ts
-  LEFT JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
-  WHERE ts.ts < ${end_ts}
-    AND ts.ts + ts.dur > ${start_ts}
-    AND ts.state = 'Running'
-    AND ts.cpu IS NOT NULL
+    ROUND(100.0*SUM(CASE WHEN sched_span.core_type IN ('prime','big','medium') AND t.is_idle=0 THEN sched_span.dur_ns ELSE 0 END)
+      /NULLIF((${end_ts}-${start_ts})*(SELECT big_cores FROM cluster_core_counts),0),1) AS big_load_pct,
+    ROUND(100.0*SUM(CASE WHEN sched_span.core_type='little' AND t.is_idle=0 THEN sched_span.dur_ns ELSE 0 END)
+      /NULLIF((${end_ts}-${start_ts})*(SELECT little_cores FROM cluster_core_counts),0),1) AS little_load_pct
+  FROM system_sched_spans sched_span LEFT JOIN thread t ON t.utid=sched_span.utid WHERE sched_span.window_id='frame'
 ),
 -- 10. GC 事件与帧窗口重叠检测
 -- android_garbage_collection_events view 由 prerequisites 中的

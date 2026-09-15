@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S11_camera_type.md
 Source SHA-256: 9b2a89db6cedcca193c8f0a2267dd448ee52be4c8728ac05e77f7d110aa2460e
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Android Perfetto 系列 - App 出图类型 - Camera 类型
 

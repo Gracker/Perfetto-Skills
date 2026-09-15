@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_events_in_range.skill.yaml
--- Source SHA-256: 3c39c9e592a65c6658573a29c979ab0e061b421e67010515cafd7ddf75feb080
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source SHA-256: e10744671cf490370b05905679d0af9addd3c30ba2986cda6cb7174873fd78a2
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 -- Multi-signal startup type validation:
 --   bindApplication exists           → cold  (process created from zygote)
@@ -61,9 +61,18 @@ process_age AS (
   LEFT JOIN process p ON p.upid = asp.upid
   GROUP BY s.startup_id
 ),
+startup_process_identity AS (
+  SELECT
+    startup_id,
+    CASE WHEN COUNT(DISTINCT upid) = 1 AND MAX(upid) > 0 THEN MAX(upid) END AS upid
+  FROM android_startup_processes
+  WHERE upid IS NOT NULL
+  GROUP BY startup_id
+),
 validated AS (
   SELECT
     s.startup_id,
+    spi.upid,
     s.package,
     s.startup_type as original_type,
     CASE
@@ -103,6 +112,7 @@ validated AS (
   LEFT JOIN android_startup_time_to_display ttd USING (startup_id)
   LEFT JOIN startup_type_signals sts USING (startup_id)
   LEFT JOIN process_age pa USING (startup_id)
+  LEFT JOIN startup_process_identity spi USING (startup_id)
   WHERE (('${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*') OR '${package}' = '')
     AND (${startup_id} IS NULL OR s.startup_id = ${startup_id})
     AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
@@ -110,6 +120,7 @@ validated AS (
 )
 SELECT
   startup_id,
+  upid,
   package,
   startup_type,
   original_type,

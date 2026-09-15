@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/smart.strategy.md
-Source SHA-256: 85a09187e5ab929984ba5b0897d330595a777ea27c6c101c1f29661a95181870
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 87cc70e82a8ee72d5e2cc98e4848163852c602b3a1774e6ce845b091907644c4
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Smart Strategy
 
@@ -85,6 +85,10 @@ final_report_contract:
       - 优先
       - 建议
 ```
+
+## Investigation methodology
+
+Aggregate bound child-scene investigation states; this contract does not define a new trace investigation.
 
 # Smart Analysis Contract
 

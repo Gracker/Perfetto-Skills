@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/touch-tracking.strategy.md
-Source SHA-256: 1d3d35569d7184b4a68b4e1788ba114b46df47d1a142f574164d9ecd052d5931
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: ecc7f0e42b369a653e1c1808bfbf11bda58c52c9bd5caae1f2607e416e136847
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 # Touch Tracking Strategy
 
@@ -73,6 +73,20 @@ plan_template:
     required_expected_calls:
     - skill_id: touch_to_display_latency
 ```
+
+## Investigation methodology
+
+Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+
+### touch_tracking_critical_path (critical_path)
+
+Correlate continuous input samples with corresponding app updates and presentation windows. Select input/Main/render/SF critical tasks across that sequence; summarize tracking delay distributions with actual coverage.
+
+### touch_tracking_dependencies (dependency_chain)
+
+Distinguish input sampling, queueing, task service and presentation lag. Matching FPS alone does not prove good tracking or locate its cause.
 
 #### touch_tracking Core Strategy
 

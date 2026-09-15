@@ -114,9 +114,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/composite/anr_analysis.skill.yaml",
-    "sha256": "9a20a24042252892aabc8ff420a5f4777953bd6c041b00285dc3402f3cf6182e"
+    "sha256": "b4477788d50246d11d2483cd0837b27f8088afd90565197ab4f32613a52e680d"
   },
   "steps": [
     {
@@ -163,6 +163,9 @@
       "id": "system_cpu_health",
       "name": "系统 CPU 健康状况",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "anr_analysis/system_cpu_health",
       "result_dependencies": [
         "anr_ctx"

@@ -1,6 +1,11 @@
 {
   "android": {
-    "adapters": [],
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
     "selection_order": [
       "device_capability",
       "trace_config_and_setup_errors",
@@ -9,9 +14,7 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}",
-      "${package}:*",
-      "RenderThread"
+      "${package}:*"
     ]
   },
   "id": "task_migration_in_range",
@@ -50,9 +53,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/atomic/task_migration_in_range.skill.yaml",
-    "sha256": "6b439d1de33342825c0e07b756b2e0b4ee97eb56287f7df8d9312a9a14ce14f2"
+    "sha256": "8b1703cdcf2d63f210900cbb978a2a645b9ca530a25e37a3a8fd946d20df39f0"
   },
   "steps": [
     {

@@ -1,5 +1,10 @@
 {
-  "adapters": [],
+  "adapters": [
+    {
+      "id": "kernel_tracepoints",
+      "selection": "available events, trace config/setup errors, schema, then rows"
+    }
+  ],
   "api": {
     "28": {
       "reason": "Runtime capabilities are authoritative; no full-Skill exact API fixture",
@@ -61,6 +66,7 @@
   ],
   "signal_patterns": [
     "${process_name}*",
+    "${process_name}:*",
     "*futex*"
   ],
   "skill_id": "anr_main_thread_blocking",

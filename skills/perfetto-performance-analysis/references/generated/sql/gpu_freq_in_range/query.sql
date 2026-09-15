@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_freq_in_range.skill.yaml
 -- Source SHA-256: c9f3c23f79f32591148e7aa55971b4c5942b49679d8f46914963b038fc0ee060
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 WITH gpu_raw AS (
   SELECT gpu_id, gpu_freq, dur

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/anr_detail.skill.yaml
-Source SHA-256: 283e74c341c76d3959624287f046bcc7f85e2b7b1cbe1edfab07c544a01660af
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 69869c165513d6e975cde75d83230b412b1276132fd888e9d2fbf6a898cc2db3
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # ANR 详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -106,6 +106,76 @@ aliases:
 
 ## Ordered execution
 
+### 系统证据窗口
+
+- ID: `system_context_window`
+- Type: `atomic`
+- SQL: [`../sql/anr_detail/system_context_window.sql`](../sql/anr_detail/system_context_window.sql)
+
+```yaml
+id: system_context_window
+type: atomic
+process_scope:
+  role: identity_metadata
+display: false
+save_as: system_context_window
+```
+### 窗口 CPU 系统上下文
+
+- ID: `system_cpu_context`
+- Type: `skill`
+
+```yaml
+id: system_cpu_context
+type: skill
+skill: cpu_system_context_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+save_as: system_cpu_context
+display:
+  level: detail
+  layer: deep
+```
+### 目标任务系统状态
+
+- ID: `system_task_summary`
+- Type: `skill`
+
+```yaml
+id: system_task_summary
+type: skill
+skill: thread_system_summary_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${process_name}
+save_as: system_task_summary
+display:
+  level: detail
+  layer: deep
+```
+### 目标任务调度交接
+
+- ID: `system_task_handoffs`
+- Type: `skill`
+
+```yaml
+id: system_task_handoffs
+type: skill
+skill: thread_preemption_handoffs_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${process_name}
+save_as: system_task_handoffs
+display:
+  level: detail
+  layer: deep
+```
 ### 初始化 CPU 拓扑
 
 - ID: `init_cpu_topology`
@@ -188,6 +258,8 @@ process_scope:
   role: target
   binding: effective_target_processes
 sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_thread_state_spans.sql
 - fragments/effective_target_processes.sql
 optional: true
 display:
@@ -195,6 +267,30 @@ display:
   layer: deep
   title: 主线程状态分布
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
+  - name: unknown_running_ms
+    label: unknown_running_ms
+    type: number
+    hidden: true
+  - name: uninterruptible_ms
+    label: uninterruptible_ms
+    type: number
+    hidden: true
+  - name: interruptible_sleep_ms
+    label: interruptible_sleep_ms
+    type: number
+    hidden: true
+  - name: state_coverage_pct
+    label: state_coverage_pct
+    type: number
+    hidden: true
   - name: q1_big_running_ms
     label: Q1大核运行(ms)
     type: number
@@ -222,6 +318,14 @@ display:
     label: Sleeping占比(%)
     type: percentage
     format: percentage
+  - name: classify_method
+    label: 核类型证据来源
+    type: string
+    hidden: true
+  - name: thread_type
+    label: 线程角色
+    type: string
+    hidden: true
   - name: status_verdict
     label: 状态判断
     type: string
@@ -456,12 +560,45 @@ process_scope:
     - waker_thread
     - waker_process
 sql_fragments:
+- fragments/system_thread_state_spans.sql
 - fragments/effective_target_processes.sql
 display:
   level: detail
   layer: deep
   title: 唤醒链
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
+  - name: wait_span_count
+    label: wait_span_count
+    type: number
+    hidden: true
+  - name: unfinished_wait_count
+    label: unfinished_wait_count
+    type: number
+    hidden: true
+  - name: left_censored_wait_count
+    label: left_censored_wait_count
+    type: number
+    hidden: true
+  - name: right_censored_wait_count
+    label: right_censored_wait_count
+    type: number
+    hidden: true
+  - name: raw_max_sleep_ms
+    label: raw_max_sleep_ms
+    type: number
+    hidden: true
+  - name: evidence_scope
+    label: evidence_scope
+    type: string
+    hidden: true
   - name: waker_thread
     label: 唤醒线程
     type: string

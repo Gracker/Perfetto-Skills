@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/target_threads.sql
 -- Source SHA-256: 9ac867ea21f7e28e03b1d606f8598ecc222479a870a220a87e94eecbed7566fe
--- Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+-- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 
 -- Fragment: target_threads
 -- Resolves MainThread + RenderThread for the target package.

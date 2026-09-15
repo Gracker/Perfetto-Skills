@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/cpu_analysis.skill.yaml
-Source SHA-256: bbe145b95ab30fa9dd885a45be7807284558b2acb6ae49984bc6a0c137982397
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: 989cec6fb1956e104659dcc758e1ca76a37d1a8b98930d2c6653997e4317cb30
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # CPU 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -165,6 +165,12 @@ display:
   - name: process_name
     label: 进程名
     type: string
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_sched_spans.sql
 save_as: target_process
 on_empty: 未找到目标进程
 ```
@@ -195,6 +201,20 @@ display:
   layer: overview
   title: 大小核分布（基于 capacity）
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
   - name: core_type
     label: 核心类型
     type: string
@@ -218,6 +238,12 @@ display:
   - name: core_count
     label: 核心数
     type: number
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_sched_spans.sql
 save_as: core_stats
 condition: target_process.data.length > 0
 ```
@@ -249,6 +275,24 @@ display:
   layer: overview
   title: 线程 CPU 使用 Top10
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
   - name: tid
     label: TID
     type: number
@@ -276,6 +320,12 @@ display:
     label: 大核占比
     type: percentage
     format: percentage
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_sched_spans.sql
 save_as: thread_usage
 condition: target_process.data.length > 0
 ```
@@ -307,6 +357,24 @@ display:
   layer: overview
   title: 主线程状态
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
   - name: state
     label: 状态码
     type: string
@@ -329,6 +397,12 @@ display:
   - name: io_wait
     label: io_wait
     type: number
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_thread_state_spans.sql
 save_as: main_thread_states
 condition: target_process.data.length > 0
 ```
@@ -362,6 +436,24 @@ display:
   layer: list
   title: 调度延迟分析（Runnable 等待）
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
   - name: wait_ms
     label: 等待时间
     type: duration
@@ -389,6 +481,12 @@ display:
   - name: severity
     label: 严重程度
     type: string
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_thread_state_spans.sql
 save_as: runnable_delays
 condition: target_process.data.length > 0
 ```
@@ -406,6 +504,24 @@ display:
   layer: list
   title: 主线程运行核心分布
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
   - name: cpu
     label: CPU
     type: number
@@ -428,6 +544,12 @@ display:
     label: 调度次数
     type: number
     format: compact
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_sched_spans.sql
 save_as: main_thread_cores
 condition: target_process.data.length > 0
 ```
@@ -446,6 +568,24 @@ display:
   layer: list
   title: 主线程阻塞函数
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
   - name: blocked_function
     label: 阻塞函数
     type: string
@@ -477,6 +617,12 @@ display:
   - name: evidence_strength
     label: 证据强度
     type: string
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_thread_state_spans.sql
 save_as: blocked_functions
 condition: target_process.data.length > 0
 ```
@@ -495,6 +641,20 @@ display:
   layer: list
   title: CPU 频率使用分布
   columns:
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: ucpu
+    label: ucpu
+    type: number
+    hidden: true
   - name: cpu
     label: CPU
     type: number
@@ -517,6 +677,12 @@ display:
     label: 占比
     type: percentage
     format: percentage
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_frequency_spans.sql
 save_as: cpu_freq
 condition: target_process.data.length > 0
 ```
@@ -535,6 +701,24 @@ display:
   layer: list
   title: 主线程唤醒者分析
   columns:
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: window_start_ts
+    label: window_start_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: window_end_ts
+    label: window_end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: utid
+    label: utid
+    type: number
+    hidden: true
   - name: waker_thread
     label: 唤醒线程
     type: string
@@ -558,6 +742,12 @@ display:
   - name: irq_wakeups
     label: IRQ 唤醒
     type: number
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/system_thread_state_spans.sql
 save_as: wakeup_chain
 condition: target_process.data.length > 0
 ```

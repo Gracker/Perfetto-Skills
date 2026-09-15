@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_events_in_range.skill.yaml
-Source SHA-256: 3c39c9e592a65c6658573a29c979ab0e061b421e67010515cafd7ddf75feb080
-Source commit: 2b51bc3d909d2c7a877853ffc644d7a042057f38
+Source SHA-256: e10744671cf490370b05905679d0af9addd3c30ba2986cda6cb7174873fd78a2
+Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
 # 启动事件列表 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -76,6 +76,10 @@ columns:
 - name: startup_id
   label: 启动 ID
   type: number
+- name: upid
+  label: UPID
+  type: number
+  hidden: true
 - name: package
   label: 包名
   type: string

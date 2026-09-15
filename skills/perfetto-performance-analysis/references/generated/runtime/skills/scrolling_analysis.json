@@ -181,11 +181,60 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+    "commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
     "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-    "sha256": "2dcba698d9cc63e045e9346afc44cab60148cf55a58161bf0378383d624af4ff"
+    "sha256": "8f9a0954db22c1fcbcbb1d90da0bb15de24e08b37ba60f59c45fb99fa915eb4b"
   },
   "steps": [
+    {
+      "id": "system_context_window",
+      "name": "系统证据窗口",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
+      "query_id": "scrolling_analysis/system_context_window",
+      "result_dependencies": [],
+      "save_as": "system_context_window",
+      "type": "atomic"
+    },
+    {
+      "id": "system_cpu_context",
+      "name": "窗口 CPU 系统上下文",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_cpu_context",
+      "skill": "cpu_system_context_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "system_task_summary",
+      "name": "目标任务系统状态",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${package}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_task_summary",
+      "skill": "thread_system_summary_in_range",
+      "type": "skill"
+    },
+    {
+      "id": "system_task_handoffs",
+      "name": "目标任务调度交接",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${package}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_task_handoffs",
+      "skill": "thread_preemption_handoffs_in_range",
+      "type": "skill"
+    },
     {
       "id": "main_thread_work_summary",
       "name": "主线程全窗口与帧内外状态",
@@ -511,7 +560,9 @@
             "video_slice_count",
             "trace_peak_freq_mhz",
             "tail_min_freq_mhz",
-            "thermal_trending"
+            "thermal_trending",
+            "frequency_decline_observed",
+            "thermal_evidence"
           ],
           "peer_context": [
             "non_app_big_core_pct",

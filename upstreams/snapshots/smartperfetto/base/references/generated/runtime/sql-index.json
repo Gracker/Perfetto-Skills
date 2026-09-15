@@ -55,6 +55,7 @@
     "queries/cpu_process_utilization_period.json",
     "queries/cpu_profiling.json",
     "queries/cpu_slice_analysis.json",
+    "queries/cpu_system_context_in_range.json",
     "queries/cpu_thread_utilization_period.json",
     "queries/cpu_throttling_in_range.json",
     "queries/cpu_time_per_frame.json",
@@ -221,6 +222,9 @@
     "queries/thermal_throttling_chain.json",
     "queries/third_party_module.json",
     "queries/thread_affinity_violation.json",
+    "queries/thread_cpu_placement_timeline.json",
+    "queries/thread_preemption_handoffs_in_range.json",
+    "queries/thread_system_summary_in_range.json",
     "queries/touch_to_display_latency.json",
     "queries/trace_state_track_summary.json",
     "queries/util_tracking_analysis.json",
@@ -238,9 +242,9 @@
     "queries/webview_v8_analysis.json",
     "queries/wms_module.json"
   ],
-  "source_commit": "2b51bc3d909d2c7a877853ffc644d7a042057f38",
+  "source_commit": "00559cb4068232b511e24c614eadcad0b122bdc5",
   "summary": {
-    "queries": 662,
-    "shards": 236
+    "queries": 673,
+    "shards": 240
   }
 }
