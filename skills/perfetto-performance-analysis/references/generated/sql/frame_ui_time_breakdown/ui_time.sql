@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/frame_ui_time_breakdown.skill.yaml
 -- Source SHA-256: e954401abb0cdd3049a98ff540b0dcb21f44e7008292d852ac5fdc4426d59fcd
--- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+-- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 
 SELECT
   frame_id,

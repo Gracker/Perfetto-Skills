@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/present_fence_timing.skill.yaml
 -- Source SHA-256: 9e5adfaae742b5ab37687acc966a57565c867df82c5a3c63c794d89bf486b258
--- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+-- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 
 WITH
 time_bounds AS (

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/wms_module.skill.yaml
 -- Source SHA-256: ec088f394851b6fb0426109a0105b0d0ae930adf759b15011ab45a18a1a5831f
--- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+-- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 
 SELECT
   s.name AS animation_type,

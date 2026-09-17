@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/vsync_phase_alignment.skill.yaml
 -- Source SHA-256: aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c
--- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+-- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 
 WITH vsync_intervals AS (
   SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) AS interval_ns

@@ -76,7 +76,11 @@ exclusive exemption rules. Normalize shared and local requirements before
 merging IDs: identical reuse is allowed, while differences in description,
 condition, domain, required status or native metric bindings fail the import.
 Metric bindings participate in this compatibility check but remain absent from
-the public methodology text.
+the public methodology text. A condition is either `semantic` (a description)
+or `evidence`, which SmartPerfetto resolves from its producer ledger with
+`metric_id`, `operator` (`gt`/`gte`/`lt`/`lte`) and a finite numeric `value`.
+Only the description is rendered as "Apply when"; the ledger binding is kept
+for the same compatibility check and never published.
 
 ## Synchronize the Google official Perfetto Skill
 

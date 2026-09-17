@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 8f9a0954db22c1fcbcbb1d90da0bb15de24e08b37ba60f59c45fb99fa915eb4b
-Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+Source SHA-256: 7c73e3893771fc262f7afad100bd5963d65ee2afe54b8bd139a0cf95e9c82eb8
+Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -940,7 +940,8 @@ synthesize:
   - condition: jank_rate > 10
     template: 感知掉帧率 {{jank_rate}}% 较高，需要优化
   - condition: buffer_stuffing_rate > 50
-    template: Buffer Stuffing 占比 {{buffer_stuffing_rate}}%，管线背压显著（非 App 问题）
+    template: Buffer Stuffing 占比 {{buffer_stuffing_rate}}%，帧呈现被队列推迟为主；需区分消费端回收慢与生产端提交节奏，用 consumer_jank_detection / fence_wait_decomposition
+      定位，勿直接归因任一侧
   - condition: app_jank > sf_jank
     template: App 侧掉帧 ({{app_jank}}) 多于 SF 侧 ({{sf_jank}})
 display:
@@ -1007,6 +1008,17 @@ process_scope:
     - vsync_period_ms
     - vsync_source
 save_as: perf_summary
+investigation_evidence:
+  window:
+    start: evidence_window_start_ts
+    end: evidence_window_end_ts
+  metrics:
+  - domain: frame_production
+    metric_id: render.frame.buffer_stuffing.rate
+    value: buffer_stuffing_rate
+    unit: percent
+    status: buffer_stuffing_evidence
+    aggregation: analysed_frame_window
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1 && buffer_tx_coverage.data[0]?.coverage_status
   !== 'target_process_not_found' && buffer_tx_coverage.data[0]?.should_fallback !== 1
 ```

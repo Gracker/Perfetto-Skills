@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/fence_wait_decomposition.skill.yaml
-Source SHA-256: a932c07018ae1cdbedf22f4c468de729ebbda4baf16f1e1d0cf33b29f24196cd
-Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+Source SHA-256: 75f359793eed661eb1be28d6514d7eca7a9defec4fa11b309b3166f25d9ee94a
+Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 # Fence 等待分解（acquire/present/release）
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -151,6 +151,17 @@ display:
     label: dequeueBuffer > 5ms 次数（疑似卡 release fence）
     type: number
 save_as: release_fence_impact
+investigation_evidence:
+  window:
+    start: evidence_window_start_ts
+    end: evidence_window_end_ts
+  metrics:
+  - domain: frame_production
+    metric_id: render.buffer.dequeue.wait.duration
+    value: avg_dequeue_ms
+    unit: ms
+    status: dequeue_evidence
+    aggregation: window_mean
 ```
 ### Fence 三分归因提示
 

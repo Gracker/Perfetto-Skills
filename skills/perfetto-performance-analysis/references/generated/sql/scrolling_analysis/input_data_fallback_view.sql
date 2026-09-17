@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 8f9a0954db22c1fcbcbb1d90da0bb15de24e08b37ba60f59c45fb99fa915eb4b
--- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+-- Source SHA-256: 7c73e3893771fc262f7afad100bd5963d65ee2afe54b8bd139a0cf95e9c82eb8
+-- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 
 CREATE VIEW IF NOT EXISTS android_input_events AS
 SELECT

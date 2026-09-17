@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_blocking_in_range.skill.yaml
 -- Source SHA-256: 5c7bb147c3adc2ccd2e734f970b9b8ddc51d65f05e9f84c85be092b0130a0a9d
--- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+-- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

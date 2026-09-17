@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 8f9a0954db22c1fcbcbb1d90da0bb15de24e08b37ba60f59c45fb99fa915eb4b
--- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+-- Source SHA-256: 7c73e3893771fc262f7afad100bd5963d65ee2afe54b8bd139a0cf95e9c82eb8
+-- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -337,5 +337,17 @@ SELECT
   (SELECT fps_source FROM resolved_jank) as fps_source,
   (SELECT max_vsync_missed FROM resolved_jank) as max_vsync_missed,
   (SELECT total_vsync_missed FROM resolved_jank) as total_vsync_missed,
-  ROUND((SELECT vsync_period_ns FROM timing_config) / 1e6, 2) as vsync_period_ms
+  ROUND((SELECT vsync_period_ns FROM timing_config) / 1e6, 2) as vsync_period_ms,
+  -- Producer-bound ledger columns. The window is the analysed frame range
+  -- rather than the requested range, so a later requirement binds to what
+  -- was actually measured. Status is `unavailable` rather than a zero rate
+  -- when the sample is too small to mean anything.
+  (SELECT start_ts FROM time_range) as evidence_window_start_ts,
+  (SELECT end_ts FROM time_range) as evidence_window_end_ts,
+  CASE
+    WHEN (SELECT total FROM app_stats) >= 20
+      AND (SELECT buffer_stuffing_frames FROM resolved_jank) IS NOT NULL
+      THEN 'observed'
+    ELSE 'unavailable'
+  END as buffer_stuffing_evidence
 LIMIT 1

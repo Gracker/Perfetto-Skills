@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/fence_wait_decomposition.skill.yaml
--- Source SHA-256: a932c07018ae1cdbedf22f4c468de729ebbda4baf16f1e1d0cf33b29f24196cd
--- Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+-- Source SHA-256: 75f359793eed661eb1be28d6514d7eca7a9defec4fa11b309b3166f25d9ee94a
+-- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 
 WITH
 target_app_filter AS (
@@ -33,4 +33,12 @@ SELECT
     WHERE rn = CAST(total * 0.95 AS INTEGER)
     LIMIT 1
   ), 0) as p95_dequeue_ms,
-  COALESCE((SELECT COUNT(*) FROM dequeue_slices WHERE dur_ns > 5e6), 0) as blocked_dequeue_count
+  COALESCE((SELECT COUNT(*) FROM dequeue_slices WHERE dur_ns > 5e6), 0) as blocked_dequeue_count,
+  -- Ledger columns. A window with no dequeueBuffer slices is reported as
+  -- `unavailable`, not as a measured zero: the difference between "the
+  -- producer never blocked" and "this trace does not carry the slice" is
+  -- the whole point of asking.
+  ${start_ts} as evidence_window_start_ts,
+  ${end_ts} as evidence_window_end_ts,
+  CASE WHEN (SELECT COUNT(*) FROM dequeue_slices) > 0
+    THEN 'observed' ELSE 'unavailable' END as dequeue_evidence

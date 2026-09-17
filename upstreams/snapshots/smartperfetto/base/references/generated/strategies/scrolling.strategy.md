@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: 1d9ccd63ee9445762f4fc9d5bb34338da5e3e8d1ae285a5848c006e5750fcf67
-Source commit: 00559cb4068232b511e24c614eadcad0b122bdc5
+Source SHA-256: c1f78a14c6adc4cfdde957b4661da16d2b4d56c1e982c35568c0e14e05f34fa7
+Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
 
 # Scrolling Strategy
 
@@ -491,6 +491,12 @@ Bind the actual scroll sessions and problematic intervals. Follow continuous mai
 ### scrolling_dependencies (dependency_chain)
 
 Connect Main/Render/raster/GPU/SF/present only with matching identities and timing. Explain separate app, system and pipeline evidence; a long frame or sleeping main thread is not itself the cause.
+
+### scrolling_buffer_backpressure (dependency_chain)
+
+Buffer Stuffing dominates the analysed frames. Decompose the producer/consumer boundary before attributing or excluding a side: measure dequeueBuffer waits and release-fence return, and say which side the evidence supports. A stuffing rate alone is the symptom, not the mechanism.
+
+Apply when: Buffer Stuffing accounts for more than half of the analysed frames.
 
 #### Scrolling Core Strategy
 

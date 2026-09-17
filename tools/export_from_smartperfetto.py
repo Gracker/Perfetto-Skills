@@ -6,6 +6,7 @@ from collections import Counter
 import fnmatch
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -2026,6 +2027,29 @@ def investigation_version(value: Any) -> int:
     return int(value)
 
 
+INVESTIGATION_EVIDENCE_OPERATORS = frozenset({"gt", "gte", "lt", "lte"})
+
+
+def parse_investigation_condition(value: Any) -> dict[str, Any]:
+    kind = value.get("kind") if isinstance(value, dict) else None
+    if kind == "semantic":
+        condition = investigation_mapping(value, {"kind", "description"}, "condition")
+        return {"kind": "semantic", "description": investigation_text(condition.get("description"), "condition")}
+    if kind == "evidence":
+        # SmartPerfetto resolves this from its evidence ledger. Retain the binding
+        # for semantic conflict detection, never for public display.
+        condition = investigation_mapping(value, {"kind", "description", "metric_id", "operator", "value"}, "condition")
+        operator = condition.get("operator")
+        threshold = condition.get("value")
+        if (not isinstance(operator, str) or operator not in INVESTIGATION_EVIDENCE_OPERATORS
+                or type(threshold) not in (int, float) or not math.isfinite(threshold)):
+            raise ExportError("Invalid investigation evidence condition")
+        return {"kind": "evidence", "description": investigation_text(condition.get("description"), "condition"),
+                "metric_id": investigation_text(condition.get("metric_id"), "condition metric"),
+                "operator": operator, "value": threshold}
+    raise ExportError("Invalid investigation condition kind")
+
+
 def parse_investigation_requirements(value: Any) -> list[dict[str, Any]]:
     if not isinstance(value, list):
         raise ExportError("Invalid investigation requirements: expected list")
@@ -2054,10 +2078,7 @@ def parse_investigation_requirements(value: Any) -> list[dict[str, Any]]:
             if len(set(normalized["evidence_metrics"])) != len(metrics):
                 raise ExportError("Duplicate investigation evidence metric")
         if "condition" in requirement:
-            condition = investigation_mapping(requirement["condition"], {"kind", "description"}, "condition")
-            if condition.get("kind") != "semantic":
-                raise ExportError("Invalid investigation condition kind")
-            normalized["condition"] = {"kind": "semantic", "description": investigation_text(condition.get("description"), "condition")}
+            normalized["condition"] = parse_investigation_condition(requirement["condition"])
         requirements.append(normalized)
     return requirements
 

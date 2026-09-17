@@ -435,6 +435,53 @@ class InvestigationMethodologyExportTest(unittest.TestCase):
                 with self.subTest(field=field, location=location), self.assertRaises(exporter.ExportError):
                     self.render_contract(contract, profiles)
 
+    def evidence_condition(self, **changes):
+        condition = {"kind": "evidence", "description": "Buffer Stuffing dominates the frames.",
+                     "metric_id": "render.frame.buffer_stuffing.rate", "operator": "gt", "value": 50}
+        condition.update(changes)
+        return condition
+
+    def test_evidence_conditions_export_description_without_ledger_binding(self):
+        profile = self.profile()
+        profile["profiles"]["system_execution"]["requirements"][0]["condition"] = self.evidence_condition()
+        rendered = self.render("investigation-profiles.yaml", json.dumps(profile))
+        self.assertIn("Apply when: Buffer Stuffing dominates the frames.", rendered)
+        for private in ("render.frame.buffer_stuffing.rate", "metric_id", "operator"):
+            self.assertNotIn(private, rendered)
+
+    def test_invalid_evidence_conditions_fail_closed(self):
+        invalid = [self.evidence_condition(**changes) for changes in (
+            {"metric_id": ""}, {"metric_id": 7}, {"operator": "eq"}, {"operator": ["gt"]},
+            {"value": "50"}, {"value": True}, {"value": None}, {"extra": 1},
+        )]
+        for missing in ("description", "metric_id", "operator", "value"):
+            condition = self.evidence_condition()
+            del condition[missing]
+            invalid.append(condition)
+        invalid.append({"kind": "semantic", "description": "When tasks wait.", "metric_id": "system.metric"})
+        for condition in invalid:
+            profile = self.profile()
+            profile["profiles"]["system_execution"]["requirements"][0]["condition"] = condition
+            with self.subTest(condition=condition), self.assertRaises(exporter.ExportError):
+                self.render("investigation-profiles.yaml", json.dumps(profile))
+
+    def test_evidence_condition_bindings_take_part_in_conflict_detection(self):
+        for changes in ({}, {"metric_id": "render.other.rate"}, {"operator": "gte"}, {"value": 60}):
+            profiles = self.profile()
+            profiles["profiles"]["system_execution"]["requirements"][0]["condition"] = self.evidence_condition()
+            secondary = json.loads(json.dumps(profiles["profiles"]["system_execution"]))
+            secondary["requirements"][0]["condition"] = self.evidence_condition(**changes)
+            profiles["profiles"]["secondary"] = secondary
+            contract = {"schema_version": 1,
+                        "profiles": [{"id": "system_execution", "version": 1}, {"id": "secondary", "version": 1}]}
+            with self.subTest(changes=changes):
+                if changes:
+                    with self.assertRaises(exporter.ExportError):
+                        self.render_contract(contract, profiles)
+                else:
+                    # Identical bindings merge; the scene links the shared profiles.
+                    self.assertIn("Apply `secondary` version 1", self.render_contract(contract, profiles))
+
     def test_identifier_metric_and_safe_integer_version_match_source_schema(self):
         for bad_id in ("bad-id", "bad.id", " upper", "Upper"):
             for target in ("profile", "requirement"):
