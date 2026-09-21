@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-gc-dynamics.template.md
 Source SHA-256: 9f83ec01efe0397edad2c5a9db81ecac67b6d7813cf7ead1fecb1e07a0ca6f84
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source commit: bc007586871a720aed82537913617c64fb95a459
 
 # Knowledge Gc Dynamics Template
 

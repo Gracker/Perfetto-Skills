@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/wakelock_tracking.skill.yaml
 -- Source SHA-256: 0384f134ae9d3dff888d962e31723669769e7f31268205c764b027d8888a973c
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 SELECT
   s.name as blocker_name,

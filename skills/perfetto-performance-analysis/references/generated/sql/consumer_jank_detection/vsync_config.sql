@@ -1,12 +1,12 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/consumer_jank_detection.skill.yaml
--- Source SHA-256: bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 4b5eabe1c5639d55456e498bdf6125fda0f49f1b49a216536b0f7ffde8cf04c7
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 WITH
 sf_vsync_intervals AS (
   SELECT
-    c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
+    c.ts - LAG(c.ts) OVER (PARTITION BY c.track_id ORDER BY c.ts) as interval_ns
   FROM counter c
   JOIN counter_track t ON c.track_id = t.id
   WHERE t.name = 'VSYNC-sf'
@@ -24,16 +24,9 @@ vsync_median AS (
     ELSE raw_ns
   END AS vsync_period_ns
   FROM (
-    SELECT CAST(COALESCE(
-      (SELECT PERCENTILE(interval_ns, 50)
-       FROM sf_vsync_intervals
-       WHERE interval_ns > 5500000 AND interval_ns < 50000000),
-      (SELECT CAST(PERCENTILE(dur, 50) AS INTEGER)
-       FROM expected_frame_timeline_slice
-       WHERE dur > 5000000 AND dur < 50000000
-         AND (${start_ts} IS NULL OR ts >= ${start_ts})
-         AND (${end_ts} IS NULL OR ts < ${end_ts})),
-      16666667
+    SELECT CAST((SELECT PERCENTILE(interval_ns, 50)
+      FROM sf_vsync_intervals
+      WHERE interval_ns > 5500000 AND interval_ns < 50000000
     ) AS INTEGER) AS raw_ns
   )
 )

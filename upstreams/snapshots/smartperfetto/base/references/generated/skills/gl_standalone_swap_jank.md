@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gl_standalone_swap_jank.skill.yaml
 Source SHA-256: 447ebc3c3b48e2e926a9396ffc5ca266846c57a134b77d3637f1bedb1c9ff76d
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source commit: bc007586871a720aed82537913617c64fb95a459
 # 独立 GL/Vulkan Swap 卡顿
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

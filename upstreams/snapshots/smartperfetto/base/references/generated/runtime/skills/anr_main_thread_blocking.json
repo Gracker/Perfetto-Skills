@@ -25,9 +25,10 @@
   },
   "inputs": [
     {
-      "description": "目标进程名",
+      "default": "",
+      "description": "目标进程名；省略时仅通过 wakeup_chain 发现各应用主线程最长等待候选，不判定 ANR",
       "name": "process_name",
-      "required": true,
+      "required": false,
       "type": "string"
     },
     {
@@ -47,6 +48,24 @@
       "name": "anr_ts",
       "required": false,
       "type": "timestamp"
+    },
+    {
+      "description": "无目标发现模式的最短单段等待毫秒数，默认 3000",
+      "name": "min_wait_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "无目标发现模式的候选条数，默认 20，上限 100",
+      "name": "top_n",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "无目标发现模式的分页偏移，默认 0",
+      "name": "offset",
+      "required": false,
+      "type": "number"
     }
   ],
   "prerequisites": {
@@ -64,9 +83,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+    "commit": "bc007586871a720aed82537913617c64fb95a459",
     "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
-    "sha256": "ce0f0f6648e41098ec6dbbc24717b4d7fdb5047edf34700c9a446c4a49fed625"
+    "sha256": "88ec9683e76751ade4cdc4a899a482dfba921d757006beab05b108b52ba9d299"
   },
   "steps": [
     {
@@ -115,6 +134,6 @@
     }
   ],
   "type": "composite",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "anr-blocking"
 }

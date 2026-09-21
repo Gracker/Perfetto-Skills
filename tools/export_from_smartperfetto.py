@@ -861,7 +861,11 @@ def render_step(
     step_type = infer_step_type(step, skill_name)
     title = str(step.get("name") or step_id)
     lines = [f"### {title}", "", f"- ID: `{step_id}`", f"- Type: `{step_type}`"]
-    details = {key: value for key, value in step.items() if key not in {"sql", "name"}}
+    # Acquisition-ledger bindings belong to SmartPerfetto, not portable execution.
+    details = {
+        key: value for key, value in step.items()
+        if key not in {"sql", "name", "investigation_evidence"}
+    }
     if "sql" in step:
         sql = step["sql"]
         if not isinstance(sql, str) or not sql.strip():

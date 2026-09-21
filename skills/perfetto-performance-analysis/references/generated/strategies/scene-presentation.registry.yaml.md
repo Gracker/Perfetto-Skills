@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scene-presentation.registry.yaml
-Source SHA-256: c8d1dcd7dc7c8d0ff40f0e005942a8a3313071f0306352c79305dc958f996f13
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: fb3a53c4d0824edec666f7555b5b25fd2228be50a439713d2719f9f9d467e28a
+Source commit: bc007586871a720aed82537913617c64fb95a459
 
 # Scene Presentation Registry Yaml
 
@@ -20,14 +20,23 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 ```yaml
 version: 1
 scenes:
+  scene_observation: {zh-CN: 场景观测, en: Scene observation}
   cold_start: {zh-CN: 冷启动, en: Cold start}
   warm_start: {zh-CN: 温启动, en: Warm start}
   hot_start: {zh-CN: 热启动, en: Hot start}
   scroll: {zh-CN: 滑动, en: Scroll}
   scroll_start: {zh-CN: 滑动开始, en: Scroll start}
+  scroll_processing: {zh-CN: 滚动处理, en: Scroll processing}
   inertial_scroll: {zh-CN: 惯性滑动, en: Inertial scroll}
   tap: {zh-CN: 点击, en: Tap}
   long_press: {zh-CN: 长按, en: Long press}
+  touch_move: {zh-CN: 连续触摸移动, en: Touch movement}
+  touch_hold: {zh-CN: 持续触摸, en: Touch held}
+  cancelled: {zh-CN: 输入取消, en: Input cancelled}
+  input_unknown: {zh-CN: 输入状态未知, en: Input state unknown}
+  key: {zh-CN: 按键输入, en: Key input}
+  wheel: {zh-CN: 滚轮输入, en: Wheel input}
+  scroll_input: {zh-CN: 滚动轴输入（ACTION_SCROLL）, en: Scroll axis input (ACTION_SCROLL)}
   screen_unlock: {zh-CN: 解锁, en: Screen unlock}
   back_key: {zh-CN: 返回键, en: Back}
   home_key: {zh-CN: Home 键, en: Home}
@@ -42,6 +51,7 @@ scenes:
   screen_on: {zh-CN: 亮屏, en: Screen on}
   screen_off: {zh-CN: 熄屏, en: Screen off}
   screen_sleep: {zh-CN: 息屏, en: Screen sleep}
+  screen_unknown: {zh-CN: 屏幕状态未知, en: Screen state unknown}
   idle: {zh-CN: 空闲, en: Idle}
   notification: {zh-CN: 通知操作, en: Notification}
   split_screen: {zh-CN: 分屏操作, en: Split screen}

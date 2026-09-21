@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/state_timeline.skill.yaml
-Source SHA-256: 847df75d4dff0db6d9e8a10b5d5654d248cc898fde909ce265075dfb85209401
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: fd6c633f728fed86747941747f63d55962479f3073fb5dada8da2116d5ec350b
+Source commit: bc007586871a720aed82537913617c64fb95a459
 # 连续状态时间线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: state_timeline
-version: '1.0'
+version: '1.1'
 type: composite
 category: interaction
 tier: S
@@ -62,10 +62,31 @@ modules:
 - name: trace_id
   type: string
   required: true
+- name: scene_row_limit
+  type: number
+  required: false
+  default: 4096
 ```
 
 ## Ordered execution
 
+### 输入事实覆盖范围
+
+- ID: `input_coverage`
+- Type: `atomic`
+- SQL: [`../sql/state_timeline/input_coverage.sql`](../sql/state_timeline/input_coverage.sql)
+
+```yaml
+id: input_coverage
+type: atomic
+display:
+  level: hidden
+  layer: overview
+sql_fragments:
+- fragments/scene_input_facts.sql
+save_as: input_coverage
+optional: true
+```
 ### 时间线范围与可用表
 
 - ID: `timeline_bounds`
@@ -127,6 +148,8 @@ display:
     label: 数据源
     type: string
     hidden: true
+sql_fragments:
+- fragments/scene_screen_facts.sql
 ```
 ### 设备状态泳道（降级）
 
@@ -177,7 +200,7 @@ display:
     type: string
     hidden: true
 ```
-### 用户输入状态泳道（帧级）
+### 用户输入状态泳道
 
 - ID: `input_state_lane_frames`
 - Type: `atomic`
@@ -225,8 +248,10 @@ display:
     label: 数据源
     type: string
     hidden: true
+sql_fragments:
+- fragments/scene_input_facts.sql
 ```
-### 用户输入状态泳道（启发式）
+### 用户输入状态泳道
 
 - ID: `input_state_lane_fallback`
 - Type: `atomic`
@@ -274,6 +299,8 @@ display:
     label: 数据源
     type: string
     hidden: true
+sql_fragments:
+- fragments/scene_input_facts.sql
 ```
 ### 应用状态泳道
 

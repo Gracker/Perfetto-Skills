@@ -66,6 +66,41 @@ class ExpandSqlFragmentsTest(unittest.TestCase):
         self.assertNotIn(",\nRECURSIVE paths", expanded)
 
 
+class PortableStepMetadataTest(unittest.TestCase):
+    def test_product_investigation_binding_is_not_portable_step_metadata(self):
+        step = {
+            "id": "state_sources", "name": "State coverage", "type": "atomic",
+            "sql": "SELECT 'investigation_evidence' AS observation;",
+            "investigation_evidence": {
+                "window": {"start": "start_ts", "end": "end_ts"},
+                "context": {"role": "dimension"},
+                "metrics": [{"metric_id": "scene.device.state", "column": "state"}],
+                "scan": {"domain": "scene_device", "sourceColumn": "dimension",
+                         "resultStepId": "state_intervals", "cursorClosedColumn": "cursor_closed"},
+            },
+            "condition": "${state_sources.length} > 0", "save_as": "state_sources",
+            "sql_fragments": ["fragments/scene_device_state_facts.sql"],
+            "output": {"columns": [{"name": "investigation_evidence", "type": "string"}]},
+            "display": {"level": "detail", "layer": "list",
+                        "title_i18n": {"en": "Input observation gaps"}},
+        }
+        original = json.loads(json.dumps(step))
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            result = exporter.render_step(step, "scene_device_state_changes", {
+                "source_path": "backend/skills/atomic/scene_device_state_changes.skill.yaml",
+                "source_sha256": "a" * 64,
+            }, "b" * 40, root, set())
+            details = exporter.yaml.safe_load(result.split("```yaml\n", 1)[1].split("```", 1)[0])
+            self.assertNotIn("investigation_evidence", details)
+            for key in ("condition", "save_as", "sql_fragments", "output", "display"):
+                self.assertEqual(details[key], original[key])
+            sql = (root / "sql/scene_device_state_changes/state_sources.sql").read_text()
+            self.assertIn(step["sql"], sql)
+            self.assertIn("GENERATED FILE", sql)
+        self.assertEqual(step, original)
+
+
 class ExporterTest(unittest.TestCase):
     def setUp(self) -> None:
         self.assertTrue(EXPORTER.is_file(), "tools/export_from_smartperfetto.py")

@@ -1,16 +1,8 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scene_reconstruction.skill.yaml
--- Source SHA-256: ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 8832b9e9b6f0bb86a0676bcd50f367546a3406ef8111be90fe60511d26678d5b
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
-SELECT
-  MIN(ts) AS start_ts,
-  MAX(ts) AS end_ts,
-  printf('%d', MIN(ts)) AS start_ts_str,
-  printf('%d', MAX(ts)) AS end_ts_str,
-  ROUND((MAX(ts) - MIN(ts)) / 1e9, 2) AS duration_sec
-FROM (
-  SELECT ts FROM slice WHERE dur > 0
-  UNION ALL
-  SELECT ts FROM counter WHERE value IS NOT NULL
-)
+SELECT printf('%d', start_ts) AS start_ts, printf('%d', end_ts) AS end_ts,
+  printf('%d', start_ts) AS start_ts_str, printf('%d', end_ts) AS end_ts_str,
+  ROUND((end_ts - start_ts) / 1e9, 2) AS duration_sec FROM trace_bounds

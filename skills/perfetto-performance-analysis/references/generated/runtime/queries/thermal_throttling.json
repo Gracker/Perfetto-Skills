@@ -57,7 +57,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/data_check.sql",
-      "sha256": "830e240f471fb2e686e30df6947eb5590416aef5b2c240048b02c54c4223c4ef",
+      "sha256": "e1323e1c9401cc447628cc6500e186b747268b9929c53a29be673a9a422f544a",
       "signal_patterns": [
         "%temp%",
         "%temperature%",
@@ -68,10 +68,10 @@
       ],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -157,7 +157,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/expert_analysis_window.sql",
-      "sha256": "b8f1ec4398cada483d1f030f947d76abe283817046d453b87e2b6c3c6674d7fb",
+      "sha256": "aa5dc4c4d0b95fc03f81e7ccb6e91949f10ea425e2b8954fb5dcd2b57afd81b6",
       "signal_patterns": [
         "%gpu%",
         "%temp%",
@@ -168,10 +168,10 @@
       ],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -260,19 +260,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/thermal_overview.sql",
-      "sha256": "132e8819a7301c5f8ace62d7ea7b29b0018a5296ead28b20bfacc8ddb45e133f",
-      "signal_patterns": [
-        "%temp%",
-        "%temperature%",
-        "%thermal%",
-        "%tsens%"
-      ],
+      "sha256": "eb7f4ac31456a42ae58238be7a4e9e1bd5d0da3f71ca9f074780ea3e3c1c3912",
+      "signal_patterns": [],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -286,7 +281,13 @@
       },
       "step_id": "thermal_overview",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_sample_quality.sql",
+            "source_sha256": "b0083fc8abe7db59f2b703a70b1eaa61fea7566d308b8b699d226b0bc70c03ed"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
@@ -361,16 +362,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/cpu_freq_overview.sql",
-      "sha256": "2c986dd21881f9ef2feb8ac3173da0f0e2b6f27e2e4d5453ee029270769151df",
+      "sha256": "566f5741201ff2911b1c9dab0b3da316fb96cfb2e56bedecc2bb15d6eb738ad2",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -459,19 +460,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/thermal_timeline.sql",
-      "sha256": "050900a8d40266b029eb254ba140c07ecd1daa1e6736c50a42ea7c7c87a8f487",
-      "signal_patterns": [
-        "%temp%",
-        "%temperature%",
-        "%thermal%",
-        "%tsens%"
-      ],
+      "sha256": "6599957c2ea68a8d683b68f9ddc671aaaf38b97fdcce0032bddbe27df7c644da",
+      "signal_patterns": [],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -485,7 +481,13 @@
       },
       "step_id": "thermal_timeline",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_sample_quality.sql",
+            "source_sha256": "b0083fc8abe7db59f2b703a70b1eaa61fea7566d308b8b699d226b0bc70c03ed"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
@@ -560,16 +562,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/frequency_drop_events.sql",
-      "sha256": "ff22985fb732dfbfc9825095fd46ac5ad6749616e0744716ec8e912e37a3027c",
+      "sha256": "91820d8248a8cf92f38d2819bb30283ee992fd581c0d4df08daa0955c823f00f",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -658,19 +660,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/thermal_freq_correlation.sql",
-      "sha256": "afc632be740b2d9d334dd744412ee968a80d58a6683103bdab8dd7773c8bc140",
+      "sha256": "fbab48222f73f2156e1a39908d3d5e06514f737ee71b71b5ba1f562880afd234",
       "signal_patterns": [
-        "%temp%",
-        "%thermal%",
-        "%tsens%",
         "cpufreq"
       ],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -684,7 +683,13 @@
       },
       "step_id": "thermal_freq_correlation",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_sample_quality.sql",
+            "source_sha256": "b0083fc8abe7db59f2b703a70b1eaa61fea7566d308b8b699d226b0bc70c03ed"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
@@ -759,18 +764,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/high_temp_periods.sql",
-      "sha256": "7206601ebbd02a65deebe5644d9d49fb43987e73a6b524d63e7a5ca07c3cafe5",
-      "signal_patterns": [
-        "%temp%",
-        "%thermal%",
-        "%tsens%"
-      ],
+      "sha256": "cfaad5c936448ba47b63514b1cba2d9693d5c586e371d443007e6c9225e2b380",
+      "signal_patterns": [],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -784,7 +785,13 @@
       },
       "step_id": "high_temp_periods",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_sample_quality.sql",
+            "source_sha256": "b0083fc8abe7db59f2b703a70b1eaa61fea7566d308b8b699d226b0bc70c03ed"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
@@ -859,19 +866,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/root_cause_classification.sql",
-      "sha256": "40f0cb1b8be25e6eeaf55626434af535e487e8a722ee0aa27adf95678255e735",
+      "sha256": "a94540a7149b851e7bee54ddc9ce23a4a906e4231afef74e1b6dd13e3781610b",
       "signal_patterns": [
-        "%temp%",
-        "%thermal%",
-        "%tsens%",
         "cpufreq"
       ],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],
@@ -885,7 +889,13 @@
       },
       "step_id": "root_cause_classification",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_sample_quality.sql",
+            "source_sha256": "b0083fc8abe7db59f2b703a70b1eaa61fea7566d308b8b699d226b0bc70c03ed"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
@@ -960,14 +970,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/thermal_throttling/no_data_fallback.sql",
-      "sha256": "1c54b31e71f000c2829f86c396e7d749a03be6d653d92156bc5731a6940da284",
+      "sha256": "72391692c9e60fb7c502c26d385e45e17b4be2ad09928326b02d3190c43aeb77",
       "signal_patterns": [],
       "skill_id": "thermal_throttling",
       "source": {
-        "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
         "path": "backend/skills/composite/thermal_throttling.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c"
+        "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
       },
       "sql_dependencies": {
         "creates": [],

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/thermal_throttling.skill.yaml
--- Source SHA-256: da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 SELECT
   cct.cpu as cpu_id,
@@ -12,9 +12,9 @@ SELECT
   -- 相对节流比例：(max - min) / max * 100
   ROUND((MAX(c.value) - MIN(c.value)) * 100.0 / NULLIF(MAX(c.value), 0), 1) as throttle_ratio,
   CASE
-    WHEN MIN(c.value) < MAX(c.value) * 0.3 THEN '严重节流'
-    WHEN MIN(c.value) < MAX(c.value) * 0.5 THEN '显著节流'
-    WHEN MIN(c.value) < MAX(c.value) * 0.7 THEN '中度节流'
+    WHEN MIN(c.value) < MAX(c.value) * 0.3 THEN '大幅 DVFS 变化，原因未核验'
+    WHEN MIN(c.value) < MAX(c.value) * 0.5 THEN 'DVFS 变化，原因未核验'
+    WHEN MIN(c.value) < MAX(c.value) * 0.7 THEN 'DVFS 变化，原因未核验'
     ELSE '正常'
   END as throttling_status
 FROM counter c

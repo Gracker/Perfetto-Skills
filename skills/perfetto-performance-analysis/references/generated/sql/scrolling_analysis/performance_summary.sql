@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 7c73e3893771fc262f7afad100bd5963d65ee2afe54b8bd139a0cf95e9c82eb8
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 917a301ba39a39244344d671654334dbea71801fdead788f5de43bd07d2f2865
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -187,7 +187,7 @@ app_stats AS (
 ),
 -- Per-layer 帧序列：双信号混合检测基础数据
 -- present_type = SurfaceFlinger 的消费状态（非 BS 帧的权威信号）
--- present_ts interval = BS 帧的二次验证信号（区分真实掉帧 vs 管线背压）
+-- present_ts interval = BS 标签帧的呈现节奏信号，不直接证明队列背压
 consumer_layer_frames AS (
   SELECT
     frame_key,
@@ -211,7 +211,7 @@ consumer_layer_frames AS (
 -- 掉帧检测：双信号混合策略
 -- 非 BS 帧：present_type IN ('Late Present', 'Dropped Frame') 为权威信号
 -- BS 帧：present_type 始终为 Late Present，需用 present_ts 间隔作为二次验证
---        间隔 > 1.5x vsync = 真实掉帧（被 BS 掩盖）；否则 = 管线背压（非感知掉帧）
+--        间隔 > 1.5x vsync 为掉帧候选；其他间隔仍需核验节奏与晚拍，不能直接归因背压
 consumer_frame_signals AS (
   SELECT
     frame_key,
@@ -284,7 +284,7 @@ SELECT
     100.0 * (SELECT perceived_jank_frames FROM resolved_jank) / NULLIF((SELECT total FROM app_stats), 0),
     2
   ) as jank_rate,
-  -- Buffer Stuffing 帧数（管线背压，非 App 逻辑问题）
+  -- Buffer Stuffing 标签帧数；标签不证明管线背压，也不排除 App 侧原因
   (SELECT buffer_stuffing_frames FROM resolved_jank) as buffer_stuffing_frames,
   -- 总掉帧数（含 Buffer Stuffing，用于完整性展示）
   (SELECT janky_frames FROM resolved_jank) as janky_frames,

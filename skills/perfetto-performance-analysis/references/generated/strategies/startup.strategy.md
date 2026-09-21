@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/startup.strategy.md
-Source SHA-256: 75bd98c5938b1125fa7a06cf9d06003960f3f0ff20ad77e49c5e4ee51d4d5a1d
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: a3068edb13bca75b1323e5f35f8025fa7b08206ec3f309c5d42c07c85f6af9f3
+Source commit: bc007586871a720aed82537913617c64fb95a459
 
 # Startup Strategy
 
@@ -209,8 +209,8 @@ phase_hints:
   - startup_detail
   - 耗时
   constraints: 必须把 Phase 1 选中行的 startup_id/start_ts/end_ts/dur_ms/package/startup_type 原样传给 startup_detail；该行有 positive upid
-    时也必须原样传入，以便后续 target Skill 继承已验证的 exact scope。upid 为 NULL/缺失/歧义时不得从 package 或进程名推断。TTID/TTFD 只能作为可选 ttid_ms/ttfd_ms，不能充当时间边界。使用
-    self_ms（排除子切片）而非 wall-time。
+    时也必须原样传入，以便后续 target Skill 继承已验证的 exact scope。upid 为 NULL/缺失/歧义时不得从 package 或进程名推断。get_startups 为 0 行时改用 Phase 1 空结果回退，禁止伪造
+    startup_id/TTID。TTID/TTFD 只能作为可选 ttid_ms/ttfd_ms，不能充当时间边界。使用 self_ms（排除子切片）而非 wall-time。
   critical_tools:
   - startup_detail
   critical: false
@@ -472,6 +472,15 @@ Use launch phase, Binder, lock, GC, IO and render dependencies when supported. E
 返回：启动事件列表、延迟归因分析、主线程热点操作（含 self_dur_ms）、文件 IO、Binder 调用、**主线程状态分布（含 blocked_functions）**、GC 事件、数据质量检查、调度延迟。
 从结果中提取 startup_id、start_ts、end_ts、dur_ms、package、startup_type 参数。
 
+**⚠️ Phase 1 空结果回退（get_startups 返回 0 行或 android_startups 表不存在时）：**
+
+进程内页面启动（Activity 在已运行进程内打开）、trace 起点晚于进程创建等场景不会产生框架启动事件。此时：
+
+1. **不得伪造** startup_id/TTID/TTFD，也不得把 android_startups 的语义套用到自定窗口；报告写明"框架启动事件未检测到（可能为进程内页面启动或采集未覆盖进程创建）"。
+2. 用 `execute_sql` 锚定启动触发点，锚点必须是实际观测到的 slice，不得从包名或猜测的时间点出发：主线程首次进入持续忙碌的转换，如 `receiveMessage(... type=MOTION/KEY)` 输入事件、`activityStart`/`performCreate:*`/`inflate` 首个 slice 簇、首个 `Choreographer#doFrame` 簇。锚点 slice 不存在时不得硬选，改报告窗口无法锚定。
+3. 分析窗口写成**推断窗口 [锚点证据, 边界证据]**：边界取首个 doFrame 簇结束、主线程输入/渲染活动沉寂点或用户问题所指区间。窗口起点之前的主线程空闲 sleep 属于启动前等待，不计入启动阻塞（忙/闲分期见根因诊断决策树第 1.5 步）。
+4. 后续 Phase 全部使用该推断窗口并保持"推断窗口"口径；TTID/TTFD 写"框架启动指标不可用（无框架启动事件）"。
+
 ⚠️ **数据质量门禁特别注意：**
 - **R008_TTID_GT_DUR**（TTID > 启动时长）：不要只说"TTID 不可信"或"建议在 Perfetto UI 中查看"。先从同一 `startup_id` 的 `android_startups.ts` 与 `android_startup_time_to_display.time_to_initial_display` 取得原始整数纳秒，令框架完成点为 `startup.ts + startup.dur`、TTID 绝对终点为 `startup.ts + time_to_initial_display`；仅当 TTID 终点更晚时，分析半开尾窗 `[框架完成点, TTID 终点)`。不要用任意 `DrawFrame` 的开始或结束替代 TTID，也不要用显示用的浮点毫秒反算边界。
   - 对 slice 和 thread state 使用 overlap 条件，并把贡献裁剪到尾窗；`dur = -1` 只裁到 trace bound/尾窗，不得假定真实结束事件。
@@ -635,9 +644,25 @@ Use launch phase, Binder, lock, GC, IO and render dependencies when supported. E
 
 **⚠️ 冷启动时此步骤为必须，跳过将触发验证警告。** 即使是测试/基准应用，也应执行此步骤——SR 检测可发现自有分析未覆盖的系统因素。
 
-**Phase 2.7 — 阻塞链深钻（Q4>25% 时必须执行 ⚠️）：**
+**Phase 2.7 — 阻塞链深钻（Q4>25% 或忙期内主线程 S/D 等待 ≥10ms 未归因时必须执行 ⚠️）：**
 
-当四象限分析 Q4(Sleeping) > 25% 时，此步骤为**必须**。不能仅依赖间接推断（如"推测为 join/await 模式"）来解释 S 状态根因——如果 blocked_functions 为空且 Q4 > 25%，blocking_chain_analysis 是获取直接证据的唯一途径。基于间接推断的发现在结论中可信度会被自动降低。
+触发条件（满足其一即为必须）：
+- 四象限 Q4(Sleeping) > 25%；
+- 启动忙期内（忙/闲分期见根因诊断决策树第 1.5 步）主线程任一 S/D 等待段 ≥10ms 且尚无唤醒者归因。忙期内主线程消息队列通常饱和，几十毫秒的等待也要逐段归因，不能只靠 Q4 聚合占比决定是否深钻。
+
+不能仅依赖间接推断（如"推测为 join/await 模式"）来解释 S 状态根因；基于间接推断的发现在结论中可信度会被自动降低。
+
+数据分工：
+- startup_detail 的 `thread_blocking_graph` artifact 已含每个等待区间的 `waker_thread/waker_process/waker_current_slice` 与 `wakeup_status`，**优先直接使用**；
+- `blocking_chain_analysis` 用于热点 slice 子窗口的下钻，或在 thread_blocking_graph 不可用时按窗口聚合唤醒者（`waker_chain` 从等待结束后的第一个 R/R+ 行解析唤醒者；等待行自身的 waker_utid 与 blocked_function 为空是正常采集形态，不代表没有等待或没有唤醒者）；
+- 直接唤醒者往往只是接力：真正执行工作的线程在链上游。忙期等待 ≥10ms 必须看 `wakeup_chain_trace` 的**多跳唤醒链**——沿"唤醒者的上一次被唤醒"上溯（只计本等待窗口内的唤醒），报告每跳线程（hop 1=直接唤醒者）、每跳此前的等待时长、在等待窗口内的运行时长，并识别链的根部（`end_root_before_window`=等待开始前已在运行的线程；`end_no_waker`=中断/定时器等无观测唤醒者；`end_depth_cap`=跳数上限，常见于 binder 线程互相唤醒的循环）。链是观测到的接力顺序，不是已证实的因果链；窗口内运行但不在链上的线程只是共存候选。
+- 覆盖边界：`wakeup_chain_trace` 默认只追踪窗口内**最长的 8 段**等待（`top_waits`），忙期等待超过 8 段时，用热点 slice 子窗口分批调用或调大 `top_waits`/`min_wait_ms` 参数后重跑；报告中必须写明已覆盖与未覆盖的等待数量，不得把"top 8 里没出现"当成"不存在"。
+
+blocked_functions 为空时，唤醒链（waker + 唤醒时刻 slice）是等待侧的直接证据；但唤醒者身份仍只是起点——需要独立的 Binder transaction/reply、锁对象/持有者等依赖证据才能断言因果（见 Phase 2.55 的因果边界）。
+
+链上数字的读法：当 `wait_ms` 明显大于链上各跳 `run_ms_in_wait` 之和时，剩余时间要看直接唤醒者**自身的状态分布**（如 worker 长 D 态/长 S 态后再唤醒主线程——等待发生在 worker 侧而非链的接力上），用 execute_sql 查该线程同区间状态后再下结论；不要把剩余量默认当成"无事发生"。
+
+waker 为 `swapper`（idle task）或唤醒事件来自 `<idle>` 上下文时，表示该唤醒由 idle CPU 上的定时器/中断路径发出或无具名发出者（也见于只采 sched_switch、sched_waking 归属不完整的 trace）：链在 hop1 终止是正确行为，不得编造上游线程；此时改从等待窗口内各线程的运行分布与直接唤醒者前序状态入手归因。
 
 **Phase 2.75 — 首帧后可交互性检查（TTFD 存在或 dur > 2s 时执行）：**
 
@@ -772,6 +797,12 @@ Android 启动有两个串行大阶段，**分析结论必须覆盖两个阶段*
 
 这些比例是排查提示，不是异常或因果判据。Q4a 的 D/DK 与 Q4b 的 S/I 应分别解释；无独立证据时保留等待原因未知。
 
+**第 1.5 步：忙/闲分期——同一段 S 的含义取决于所处分期，先分期再归因，禁止跨期混算占比**
+
+- **忙期**：启动锚点（框架启动事件或推断窗口锚点）到框架完成/首帧的关键路径区间，以及其后主线程仍在连续处理 doFrame/输入消息的子区间。忙期内主线程消息队列通常饱和，任一 S/D 段 ≥10ms 都必须给出**唤醒链**归因，不止于直接唤醒者：直接唤醒者可能只是接力，需沿链上溯到根部线程（如"worker 线程跑完后经 2-3 个中间线程把主线程唤醒"，或"多个线程在等待窗口内各跑一段"），报告链上每跳线程的等待与运行贡献（`thread_blocking_graph` 的直接唤醒者 + `blocking_chain_analysis` 的 `wakeup_chain_trace` 多跳链）。等待数量多时按时长排序覆盖，无法覆盖的写明数量。没有唤醒链数据时如实写"唤醒者未观测"，不得默认无害。
+- **闲期**：忙期之外、主线程等待下一个输入/消息的区间。被 `InputDispatcher` 唤醒且唤醒时刻 slice 为 `sendMessage(... type=MOTION/KEY)` 的长 S，归类为**等待输入的空闲**，不计入启动阻塞总量；该分类必须引用唤醒证据，不能凭时长或位置断言，也不得据此声称"启动已完成/消息队列为空"。被定时器或采样器（如 `traced_perf`）戳醒后随即回睡、无其他唤醒者的长 S，同样按闲期证据处理，只描述观测到的唤醒来源。
+- 报告必须写明忙期边界与各期内 S/D 总量；跨忙闲边界的长 sleep 按重叠区间拆分说明，不得整段计入某一期。
+
 **第二步：当 Q4 占比高时，用线程状态 + blocked_functions 定位阻塞根因**
 
 主线程状态分布数据包含 state（Running/S/D/R）和 **blocked_functions** 列。下面是排查候选，blocked_function 是内核等待位置，不是完整调用栈；需要结合任务范围和实际事件验证具体机制：
@@ -871,6 +902,7 @@ TTID 和 TTFD 是两个不同的指标，必须区分：
    - **分析边界**必须明确写出，格式示例：
      - TTID 有值且与 dur 一致时："分析范围：启动开始 → 首帧显示（TTID = XXms）"
      - TTID 无值但 dur 有值时："分析范围：启动开始 → 框架启动完成（dur = XXms，基于 android_startups），近似首帧显示"
+     - 框架启动事件未检测到时："分析范围：推断窗口 锚点证据 → 边界证据（框架启动事件未检测到，可能为进程内页面启动）；TTID/TTFD 框架指标不可用"
      - R008_TTID_GT_DUR 触发时（TTID > dur）："分析范围：启动开始 → 框架启动完成（dur = XXms）。注意 TTID = YYms > dur，差值 ZZms 需单独分析（见数据质量提示）"
      - TTFD 有值时追加："TTFD = XXms（应用调用了 reportFullyDrawn）"
      - TTFD 无值时追加："TTFD 未观测到，不能仅凭 NULL 判断是否调用 reportFullyDrawn()"
@@ -972,6 +1004,8 @@ TTID 和 TTFD 是两个不同的指标，必须区分：
 - 忽略 blocked_functions 数据（这是定位 Q4 根因的关键）
 - 在证据中只复制 slice 列表，不做根因推理链
 - 把 S/I 直接当作锁/Binder阻塞或队列空闲，或在没有 io_wait/blocked_function/IO 证据时把 D/DK 当成 IO 根因
+- 把启动锚点之前或闲期的主线程长 sleep 计入启动阻塞总量；或在缺少唤醒证据（waker + 唤醒时刻 slice）时把闲期 sleep 写成"等待输入/空闲"
+- 在忙/闲分期未建立的情况下，仅凭 Q4 聚合占比下"主线程睡眠严重/不严重"的结论
 - 不区分 GC 在主线程还是后台线程
 - 把延迟归因（opinionated_breakdown）的 category 字段（IO/Layout/Other 等）当作真实的阻塞原因。这些 category 是 Perfetto 基于 slice 名称的**启发式分类**，不代表实际线程状态。例如 bind_application 被标记为 IO 类别，但实际阻塞原因可能是锁等待。**必须用线程状态数据（特别是 hot_slice_states）来验证真实根因**
 - 用 slice wall time 与全区间线程状态总量做直接数值对比来推断因果（如"inflate 479ms ≈ S状态 468ms 所以它是 S 状态的根因"）。wall time 包含所有线程状态，正确做法是使用 hot_slice_states 的 per-slice 状态分解

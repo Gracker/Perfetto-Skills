@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling.skill.yaml
-Source SHA-256: da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6
+Source commit: bc007586871a720aed82537913617c64fb95a459
 # 热节流分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -186,11 +186,14 @@ display:
     type: percentage
     format: percentage
   - name: throttled_core_ratio_pct
-    label: 疑似限频核心占比
+    label: 频率变化核心占比
     type: percentage
     format: percentage
+  - name: frequency_trend_risk
+    label: 频率变化信号
+    type: string
   - name: thermal_risk
-    label: 热风险
+    label: 热原因证据
     type: string
   - name: prediction
     label: 预测
@@ -224,7 +227,7 @@ synthesize:
     label: 温度评级
   insights:
   - condition: max_temp_c > 80
-    template: 传感器 {{sensor_name}} 峰值 {{max_temp_c}}C，存在严重过热
+    template: 传感器 {{sensor_name}} 峰值 {{max_temp_c}}C，需核对传感器位置和热阈值
   - condition: max_temp_c > 60 && max_temp_c <= 80
     template: 传感器 {{sensor_name}} 峰值 {{max_temp_c}}C，温度偏高
   - condition: temp_range_c > 20
@@ -236,6 +239,12 @@ display:
   columns:
   - name: sensor_name
     label: 传感器
+    type: string
+  - name: sample_quality
+    label: 样本质量
+    type: string
+  - name: unit_basis
+    label: 单位依据
     type: string
   - name: sample_count
     label: 采样数
@@ -260,6 +269,8 @@ display:
   - name: temp_severity
     label: 评级
     type: string
+sql_fragments:
+- fragments/thermal_sample_quality.sql
 save_as: thermal_overview
 optional: true
 condition: data_check.data[0]?.has_thermal_data === 1
@@ -285,12 +296,12 @@ synthesize:
     label: 最高频率
     format: '{{value}} MHz'
   - key: throttle_ratio
-    label: 节流比例
+    label: 观测频率跨度
   insights:
   - condition: throttle_ratio > 50
-    template: CPU{{cpu_id}} 频率下降超过最大频率 50%，存在显著节流
+    template: CPU{{cpu_id}} 频率下降超过最大频率 50%，仅说明 DVFS 频率变化，不能确定热节流
   - condition: throttle_ratio > 30
-    template: CPU{{cpu_id}} 频率下降超过最大频率 30%，存在中度节流
+    template: CPU{{cpu_id}} 频率下降超过最大频率 30%，需结合负载和直接限频证据判断原因
 display:
   level: summary
   layer: overview
@@ -316,7 +327,7 @@ display:
     type: number
     format: compact
   - name: throttle_ratio
-    label: 节流比例(%)
+    label: 观测频率跨度(%)
     type: percentage
     format: percentage
   - name: throttling_status
@@ -403,6 +414,8 @@ display:
   - name: severity
     label: 状态
     type: string
+sql_fragments:
+- fragments/thermal_sample_quality.sql
 save_as: thermal_timeline
 optional: true
 condition: data_check.data[0]?.has_thermal_data === 1
@@ -433,7 +446,7 @@ synthesize:
 display:
   level: detail
   layer: list
-  title: CPU 频率骤降事件（可能因热节流）
+  title: CPU 频率骤降事件（需核对负载）
   columns:
   - name: ts
     label: 时间
@@ -484,8 +497,8 @@ synthesize:
   - key: status
     label: 状态
   insights:
-  - condition: status === 'thermal_throttled'
-    template: 在 {{second}}s 检测到高温伴随低频，存在热节流
+  - condition: status === 'high_temperature_with_low_frequency'
+    template: 在 {{second}}s 检测到高温伴随低频，不能据此确定热节流
 display:
   level: detail
   layer: list
@@ -509,6 +522,8 @@ display:
   - name: status
     label: 状态
     type: string
+sql_fragments:
+- fragments/thermal_sample_quality.sql
 save_as: thermal_freq_correlation
 optional: true
 condition: data_check.data[0]?.has_thermal_data === 1 && data_check.data[0]?.has_freq_data === 1
@@ -550,6 +565,8 @@ display:
     label: 采样数
     type: number
     format: compact
+sql_fragments:
+- fragments/thermal_sample_quality.sql
 save_as: high_temp_periods
 optional: true
 condition: data_check.data[0]?.has_thermal_data === 1
@@ -572,12 +589,12 @@ synthesize:
     label: 峰值温度
     format: '{{value}} C'
   - key: throttled_cpu_count
-    label: 受影响CPU数
+    label: 已核验热限频CPU数
   insights:
-  - condition: classification === 'THERMAL_THROTTLING'
-    template: 热节流严重：峰值 {{peak_temp_c}}C，{{throttled_cpu_count}} 核受影响
-  - condition: classification === 'SUSTAINED_HIGH_TEMP'
-    template: 持续高温 {{peak_temp_c}}C，存在热节流风险
+  - condition: classification === 'DATA_SUSPECT'
+    template: 温度数据需复核，峰值 {{peak_temp_c}}C 仅来自通过质量筛选的传感器
+  - condition: classification === 'HIGH_TEMP_OBSERVED'
+    template: 观测到高温 {{peak_temp_c}}C，热节流原因未核验
 display:
   level: summary
   layer: overview
@@ -591,7 +608,7 @@ display:
     type: number
     format: compact
   - name: throttled_cpu_count
-    label: 受影响CPU数
+    label: 已核验热限频CPU数
     type: number
   - name: severe_drop_count
     label: 严重降频次数
@@ -600,6 +617,8 @@ display:
   - name: description
     label: 描述
     type: string
+sql_fragments:
+- fragments/thermal_sample_quality.sql
 save_as: root_cause
 condition: data_check.data[0]?.has_thermal_data === 1 || data_check.data[0]?.has_freq_data === 1
 ```
@@ -635,50 +654,28 @@ inputs:
 - high_temp_periods
 - root_cause
 rules:
-- condition: root_cause.data[0]?.classification === 'THERMAL_THROTTLING'
-  severity: critical
-  diagnosis: 检测到热节流：峰值 ${root_cause.data[0].peak_temp_c}C，${root_cause.data[0].throttled_cpu_count} 核受影响
-  confidence: high
-  suggestions:
-  - 减少后台 CPU 密集任务
-  - 优化计算密集操作，添加冷却间隔
-  - 检查设备散热条件
-- condition: root_cause.data[0]?.classification === 'SUSTAINED_HIGH_TEMP'
+- condition: root_cause.data[0]?.classification === 'DATA_SUSPECT'
   severity: warning
-  diagnosis: 持续高温 ${root_cause.data[0].peak_temp_c}C，存在热节流风险
-  confidence: high
+  diagnosis: 温度数据可疑或传感器不可直接比较；峰值仅来自通过质量筛选的轨道，不能确定热节流
+  confidence: low
   suggestions:
-  - 降低持续 CPU 负载
-  - 避免长时间高强度计算
-  - 监控温度变化趋势
-- condition: (thermal_prediction?.data?.[0]?.thermal_risk || '') === 'high'
-  severity: critical
-  diagnosis: 热风险预测为高：频率平均降幅 ${thermal_prediction.data[0].avg_drop_pct}%
-  confidence: high
-  suggestions:
-  - 立即降低持续计算密度，增加任务分批与冷却间隔
-  - 优先优化后台并发，避免长时间满载
-  - 结合温度传感器与 FPS 继续观测 1-3 分钟趋势
-- condition: (gpu_power_probe?.data?.[0]?.downshift_ratio_pct || 0) >= (gpu_downshift_warning_pct || 25)
+  - 检查各轨道 sample_quality、unit_basis 和传感器位置，勿将皮肤温度视为 CPU 结温
+- condition: root_cause.data[0]?.classification === 'THERMAL_DATA_UNAVAILABLE'
+  severity: info
+  diagnosis: 没有足够可靠的温度数据，热状态不可判定
+  confidence: low
+- condition: root_cause.data[0]?.classification === 'HIGH_TEMP_OBSERVED'
   severity: warning
-  diagnosis: GPU 降频占比 ${gpu_power_probe.data[0].downshift_ratio_pct}% ，存在图形侧热压或功耗抖动
+  diagnosis: 观测到高温 ${root_cause.data[0].peak_temp_c}C；需要持续时间和直接限频证据才能判断热节流
   confidence: medium
-  suggestions:
-  - 降低高峰渲染负载，减少过度绘制和昂贵 shader
-  - 平滑 GPU 突发任务，避免频繁升降频震荡
 - condition: root_cause.data[0]?.classification === 'FREQ_INSTABILITY'
-  severity: warning
-  diagnosis: CPU 频率不稳定 (${root_cause.data[0].severe_drop_count} 次骤降)，可能受温度影响
+  severity: info
+  diagnosis: 观测到 ${root_cause.data[0].severe_drop_count} 次频率下降，负载或空闲 DVFS 均可解释，热原因未核验
   confidence: medium
-  suggestions:
-  - 检查散热条件
-  - 优化任务调度避免突发负载
 - condition: root_cause.data[0]?.classification === 'THERMAL_NORMAL'
   severity: info
-  diagnosis: 温度正常，无明显热节流
-  confidence: high
-  suggestions:
-  - 当前热状态良好
+  diagnosis: 有效传感器未见高温；不代表所有 CPU 结温均可观测
+  confidence: medium
 ```
 ### 无温度数据
 

@@ -1,8 +1,9 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scene_reconstruction.skill.yaml
--- Source SHA-256: ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 8832b9e9b6f0bb86a0676bcd50f367546a3406ef8111be90fe60511d26678d5b
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
+SELECT scene_rows.*, COUNT(*) OVER () AS total_rows FROM (
 WITH lifecycle_slices AS (
   SELECT
     s.ts,
@@ -77,4 +78,5 @@ FROM (
   SELECT ts, activity_name, lifecycle_event, dur FROM startup_activities
 )
 ORDER BY ts
-LIMIT 200
+) AS scene_rows
+LIMIT MIN(MAX(CAST(${scene_row_limit|4096} AS INT), 1), 4096)

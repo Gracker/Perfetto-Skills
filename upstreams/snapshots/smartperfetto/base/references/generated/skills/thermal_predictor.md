@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/thermal_predictor.skill.yaml
-Source SHA-256: 16bb6ec7bc5e0769d25f1b2b46ed3a8d7d71648c6c6ae67e745ef86966aaa7ef
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: b08c970d2d762c889d727456acccfef18f7088620076c63b8de51afc4b6704fa
+Source commit: bc007586871a720aed82537913617c64fb95a459
 # 热控风险预测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -20,7 +20,7 @@ tier: B
 
 ```yaml
 display_name: 热控风险预测
-description: 基于 CPU 频率趋势预测热限频风险
+description: CPU 频率趋势观察；未提供温度或限频证据时不预测热机制
 icon: thermostat
 tags:
 - thermal
@@ -121,11 +121,14 @@ columns:
   type: percentage
   format: percentage
 - name: throttled_core_ratio_pct
-  label: 疑似限频核心占比
+  label: 频率变化核心占比
   type: percentage
   format: percentage
+- name: frequency_trend_risk
+  label: 频率变化信号
+  type: string
 - name: thermal_risk
-  label: 热控风险
+  label: 热原因证据
   type: string
 - name: prediction
   label: 预测

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
-Source SHA-256: ce0f0f6648e41098ec6dbbc24717b4d7fdb5047edf34700c9a446c4a49fed625
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: 88ec9683e76751ade4cdc4a899a482dfba921d757006beab05b108b52ba9d299
+Source commit: bc007586871a720aed82537913617c64fb95a459
 # ANR 主线程阻塞链分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: anr_main_thread_blocking
-version: '1.0'
+version: '1.1'
 type: composite
 category: anr
 tier: S
@@ -20,7 +20,7 @@ tier: S
 
 ```yaml
 display_name: ANR 主线程阻塞链分析
-description: 深度分析 ANR 事件中主线程的阻塞原因：线程状态、阻塞函数、唤醒链、Binder、锁竞争
+description: 分析主线程等待；无 ANR 时间戳或目标进程时发现应用主线程长等待候选，再结合输入时间线判断是否无响应
 icon: bug_report
 tags:
 - anr
@@ -49,8 +49,9 @@ modules:
 ```yaml
 - name: process_name
   type: string
-  required: true
-  description: 目标进程名
+  required: false
+  default: ''
+  description: 目标进程名；省略时仅通过 wakeup_chain 发现各应用主线程最长等待候选，不判定 ANR
 - name: start_ts
   type: timestamp
   required: false
@@ -63,6 +64,18 @@ modules:
   type: timestamp
   required: false
   description: ANR 事件时间戳(ns)，用于自动计算分析窗口
+- name: min_wait_ms
+  type: number
+  required: false
+  description: 无目标发现模式的最短单段等待毫秒数，默认 3000
+- name: top_n
+  type: number
+  required: false
+  description: 无目标发现模式的候选条数，默认 20，上限 100
+- name: offset
+  type: number
+  required: false
+  description: 无目标发现模式的分页偏移，默认 0
 ```
 
 ## Ordered execution
@@ -123,7 +136,7 @@ synthesize:
     format: '{{value}} ms'
   insights:
   - condition: state === 'S' && pct > 50
-    template: 主线程 {{pct}}% 时间处于 Sleep 状态，可能在等待锁或 Binder
+    template: 主线程 {{pct}}% 时间处于 Sleep 状态；正常空闲也可如此，需输入处理或调用链证据判断是否异常等待
   - condition: state === 'D' && pct > 20
     template: 主线程 {{pct}}% 时间处于不可中断睡眠 (D)，需结合 io_wait/blocked_function 判断是否为 IO
   - condition: state === 'R' && pct > 80
@@ -181,8 +194,14 @@ type: atomic
 display:
   level: key
   layer: list
-  title: 主线程唤醒链（谁唤醒了主线程）
+  title: 主线程等待候选与唤醒证据（长睡眠不等于无响应）
   columns:
+  - name: process_name
+    label: 进程名
+    type: string
+  - name: candidate_status
+    label: 候选证据边界
+    type: string
   - name: upid
     label: upid
     type: number

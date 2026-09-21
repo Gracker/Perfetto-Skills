@@ -1,0 +1,76 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "scene_response_markers",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 4096,
+      "name": "row_limit",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [],
+    "required_tables": [
+      "slice",
+      "track",
+      "thread_track",
+      "thread",
+      "process_track",
+      "process",
+      "trace_bounds"
+    ]
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "bc007586871a720aed82537913617c64fb95a459",
+    "path": "backend/skills/atomic/scene_response_markers.skill.yaml",
+    "sha256": "ffba8ce063278ad7adf1117f3147088dbb88f6d85aff3296d7cba291e26b6d50"
+  },
+  "steps": [
+    {
+      "id": "response_sources",
+      "name": "响应标记扫描范围",
+      "query_id": "scene_response_markers/response_sources",
+      "result_dependencies": [],
+      "save_as": "response_sources",
+      "type": "atomic"
+    },
+    {
+      "id": "response_markers",
+      "name": "响应标记原始区间",
+      "query_id": "scene_response_markers/response_markers",
+      "result_dependencies": [],
+      "save_as": "response_markers",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "scene-reconstruction"
+}

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 7c73e3893771fc262f7afad100bd5963d65ee2afe54b8bd139a0cf95e9c82eb8
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 917a301ba39a39244344d671654334dbea71801fdead788f5de43bd07d2f2865
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 使用相同优先级 CASE 树
@@ -1246,9 +1246,8 @@ analysis AS (
 classified AS (
   SELECT *,
     CASE
-      -- P0: Buffer Stuffing 管线背压 — 短路跳过线程分析
-      -- App 未错过 deadline，但 BufferQueue 积压导致 dequeueBuffer 背压
-      -- 主线程 S 状态来自 syncFrameState 等待，非锁/Binder 问题
+      -- P0: 保留 Buffer Stuffing 标签分类；此分支没有独立验证背压机制。
+      -- 不能凭标签排除 App、锁或 Binder；需核验呈现节奏与 dequeue/release-fence。
       WHEN jank_responsibility = 'BUFFER_STUFFING'
         THEN 'buffer_stuffing'
       -- P0.5: SF 责任按 Perfetto FrameTimeline 的直接类型细分。
@@ -1402,7 +1401,7 @@ SELECT
   scope.root_cause_sample_limit_per_session,
   scope.root_cause_analysis_scope,
   CASE
-    WHEN reason_code = 'buffer_stuffing' THEN 'Buffer Stuffing: 管线背压，帧耗时 ' || dur_ms || 'ms，BufferQueue 积压导致跳帧（非 App 问题）'
+    WHEN reason_code = 'buffer_stuffing' THEN '原始 Buffer Stuffing 标签，帧耗时 ' || dur_ms || 'ms；呈现间隔异常候选，需用 presentation_cadence_audit 与 dequeue/release-fence 核验；尚未证明 BufferQueue 背压，也不能排除 App 原因'
     WHEN reason_code = 'sf_composition_slow' THEN 'SF合成超时: SurfaceFlinger 侧导致掉帧（非 App 问题），帧耗时 ' || dur_ms || 'ms'
     WHEN reason_code = 'display_hal' THEN 'Display HAL 延迟: SurfaceFlinger 已按时下发，但该帧未在目标 VSync 呈现（非 App 根因）'
     WHEN reason_code = 'prediction_error' THEN 'FrameTimeline 预测误差: SurfaceFlinger scheduler 的预测呈现时间发生漂移；孤立事件通常不代表用户可感知 App 卡顿'

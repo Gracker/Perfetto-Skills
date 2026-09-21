@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
-Source SHA-256: 0a859a43248b1f22f4883740217d1a87512628179bae6f459c4ec6c1295f8c39
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: fed929d6d7ff2b89a7099eb9a05664bfac7d412ebe1e7ce67bb2cf1d123282ab
+Source commit: bc007586871a720aed82537913617c64fb95a459
 # CPU 限频检测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -20,7 +20,7 @@ tier: B
 
 ```yaml
 display_name: CPU 限频检测
-description: 检测 CPU 热控限频情况（动态拓扑检测）
+description: 观测 CPU 频率变化；频率跨度不能独立证明热控限频
 icon: thermostat
 tags:
 - cpu
@@ -92,8 +92,17 @@ display:
     label: 降幅
     type: percentage
     format: percentage
+  - name: frequency_variation_detected
+    label: 观测到频率变化
+    type: boolean
+  - name: evidence_status
+    label: 热原因证据
+    type: string
+  - name: interpretation
+    label: 解释
+    type: string
   - name: throttle_detected
-    label: 检测到限频
+    label: 已核验热控限频
     type: boolean
 save_as: throttle_data
 ```

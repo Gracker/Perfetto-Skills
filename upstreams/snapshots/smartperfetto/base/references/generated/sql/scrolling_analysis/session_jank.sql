@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 7c73e3893771fc262f7afad100bd5963d65ee2afe54b8bd139a0cf95e9c82eb8
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 917a301ba39a39244344d671654334dbea71801fdead788f5de43bd07d2f2865
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -121,7 +121,7 @@ session_token_gap_jank AS (
       ELSE 0 END) as consumer_jank_count,
     SUM(CASE WHEN sr.present_type IN ('Late Present', 'Dropped Frame')
       AND sr.jank_responsibility = 'APP' THEN 1 ELSE 0 END) as app_jank_count,
-    -- Buffer Stuffing 总帧数（管线背压，含正常 BS 和异常 BS）
+    -- Buffer Stuffing 标签总帧数，机制与呈现节奏需另行核验
     SUM(CASE WHEN sr.jank_responsibility = 'BUFFER_STUFFING' THEN 1 ELSE 0 END) as buffer_stuffing_count,
     MAX(CASE
       WHEN (

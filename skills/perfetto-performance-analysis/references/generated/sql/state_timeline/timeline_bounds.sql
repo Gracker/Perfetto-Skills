@@ -1,14 +1,14 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/state_timeline.skill.yaml
--- Source SHA-256: 847df75d4dff0db6d9e8a10b5d5654d248cc898fde909ce265075dfb85209401
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: fd6c633f728fed86747941747f63d55962479f3073fb5dada8da2116d5ec350b
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 SELECT
-  MIN(ts) AS t_start,
-  MAX(ts) AS t_end,
-  printf('%d', MIN(ts)) AS t_start_str,
-  printf('%d', MAX(ts)) AS t_end_str,
-  ROUND((MAX(ts) - MIN(ts)) / 1e9, 2) AS duration_sec,
+  printf('%d', start_ts) AS t_start,
+  printf('%d', end_ts) AS t_end,
+  printf('%d', start_ts) AS t_start_str,
+  printf('%d', end_ts) AS t_end_str,
+  ROUND((end_ts - start_ts) / 1e9, 2) AS duration_sec,
   CASE
     WHEN EXISTS (SELECT 1 FROM sqlite_master WHERE type IN ('table', 'view') AND name='android_screen_state') THEN 1
     ELSE 0
@@ -25,8 +25,4 @@ SELECT
     WHEN EXISTS (SELECT 1 FROM sqlite_master WHERE type IN ('table', 'view') AND name='actual_frame_timeline_slice') THEN 1
     ELSE 0
   END AS has_frame_timeline
-FROM (
-  SELECT ts FROM slice WHERE dur > 0
-  UNION ALL
-  SELECT ts FROM counter WHERE value IS NOT NULL
-)
+FROM trace_bounds

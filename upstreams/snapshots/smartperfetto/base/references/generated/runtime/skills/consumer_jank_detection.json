@@ -68,9 +68,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+    "commit": "bc007586871a720aed82537913617c64fb95a459",
     "path": "backend/skills/atomic/consumer_jank_detection.skill.yaml",
-    "sha256": "bd6cecfa7dc06e2b74d023498fb38d336bec28f1214c4364880f4091e2ffb7fa"
+    "sha256": "4b5eabe1c5639d55456e498bdf6125fda0f49f1b49a216536b0f7ffde8cf04c7"
   },
   "steps": [
     {
@@ -79,6 +79,14 @@
       "query_id": "consumer_jank_detection/vsync_config",
       "result_dependencies": [],
       "save_as": "vsync_config",
+      "type": "atomic"
+    },
+    {
+      "id": "presentation_cadence_audit",
+      "name": "呈现节奏与晚拍交叉核验",
+      "query_id": "consumer_jank_detection/presentation_cadence_audit",
+      "result_dependencies": [],
+      "save_as": "presentation_cadence_audit",
       "type": "atomic"
     },
     {
@@ -91,7 +99,7 @@
     },
     {
       "id": "consumer_jank_summary",
-      "name": "消费端掉帧汇总",
+      "name": "消费端混合呈现信号汇总",
       "query_id": "consumer_jank_detection/consumer_jank_summary",
       "result_dependencies": [],
       "save_as": "consumer_jank_summary",
@@ -107,6 +115,6 @@
     }
   ],
   "type": "atomic",
-  "version": "1.1",
+  "version": "1.2",
   "workflow": "scrolling"
 }

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
--- Source SHA-256: ce0f0f6648e41098ec6dbbc24717b4d7fdb5047edf34700c9a446c4a49fed625
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 88ec9683e76751ade4cdc4a899a482dfba921d757006beab05b108b52ba9d299
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -40,8 +40,11 @@ system_windows AS (
     COALESCE(${end_ts},${anr_ts}+1000000000,(SELECT end_ts FROM trace_bounds)) AS window_end_ts
 ),
 main_thread AS (
-  SELECT t.utid,t.upid FROM thread t JOIN process p ON t.upid=p.upid
-  WHERE (p.name='${process_name}' OR p.name GLOB '${process_name}:*') AND t.tid=p.pid
+  SELECT t.utid,t.upid,p.name AS process_name FROM thread t JOIN process p ON t.upid=p.upid
+  WHERE t.tid=p.pid AND (
+    ('${process_name}' != '' AND (p.name='${process_name}' OR p.name GLOB '${process_name}:*'))
+    OR ('${process_name}' = '' AND p.uid % 100000 >= 10000)
+  )
 ),
 system_target_threads AS (
   SELECT w.window_id,t.upid,t.utid,'main' AS role FROM system_windows w CROSS JOIN main_thread t
@@ -67,8 +70,16 @@ waits AS (
   FROM system_thread_state_spans s
   LEFT JOIN wakeup_events e ON e.utid=s.utid AND e.ts=s.raw_end_ts
   WHERE s.state IN ('S','I','D','DK') AND s.dur_ns>0
+),
+ranked_waits AS (
+  SELECT w.*,ROW_NUMBER() OVER(PARTITION BY w.upid,w.is_unfinished ORDER BY w.dur_ns DESC,w.thread_state_id) AS process_wait_rank
+  FROM waits w
+  WHERE '${process_name}' != '' OR (
+    w.state IN ('S','D','DK') AND w.dur_ns >= MAX(0,${min_wait_ms|3000})*1000000
+  )
 )
-SELECT w.upid,w.utid,w.thread_state_id,w.state AS blocked_state,w.blocked_function,
+SELECT mt.process_name,'observed_wait_not_proven_unresponsiveness' AS candidate_status,
+  w.upid,w.utid,w.thread_state_id,w.state AS blocked_state,w.blocked_function,
   printf('%d',w.raw_start_ts) AS raw_start_ts,
   CASE WHEN w.raw_end_ts IS NOT NULL THEN printf('%d',w.raw_end_ts) END AS raw_end_ts,
   printf('%d',w.clipped_start_ts) AS start_ts,printf('%d',w.clipped_end_ts) AS end_ts,
@@ -81,6 +92,10 @@ SELECT w.upid,w.utid,w.thread_state_id,w.state AS blocked_state,w.blocked_functi
   1 AS wait_span_count,w.wakeup_status,
   'observed_wakeup_not_proven_blocking_cause' AS relation_status,
   'one_wait_span_clipped_to_window' AS evidence_scope
-FROM waits w LEFT JOIN thread wt ON wt.utid=w.resolved_waker_utid
+FROM ranked_waits w JOIN main_thread mt ON mt.utid=w.utid
+LEFT JOIN thread wt ON wt.utid=w.resolved_waker_utid
 LEFT JOIN process wp ON wp.upid=wt.upid
-ORDER BY w.dur_ns DESC,w.thread_state_id LIMIT 20
+WHERE '${process_name}' != '' OR w.process_wait_rank=1
+ORDER BY w.dur_ns DESC,w.thread_state_id
+LIMIT CASE WHEN '${process_name}' != '' THEN 20 ELSE MIN(100,MAX(1,CAST(${top_n|20} AS INT))) END
+OFFSET CASE WHEN '${process_name}' != '' THEN 0 ELSE MAX(0,CAST(${offset|0} AS INT)) END

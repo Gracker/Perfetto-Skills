@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/flutter_process_identity.sql
 -- Source SHA-256: cf8f4b8c4ca9d6f62b2f69f9acda09229d7f3a6ac0824c1d6f3b7fab4af3295c
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 -- Fragment: flutter_process_identity
 -- Resolves the Flutter process scope used by Flutter-specific Skills.

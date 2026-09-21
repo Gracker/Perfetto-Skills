@@ -1,43 +1,66 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/thermal_throttling.skill.yaml
--- Source SHA-256: da05d8739326315402aed126434265da76f5216ccd8cefbbfa0ee780bbfe9f6c
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
-WITH thermal_samples AS (
-  SELECT
-    c.ts,
-    ct.name as sensor_name,
-    CASE WHEN c.value > 1000 THEN c.value / 1000.0 ELSE c.value END as temp_c,
-    LAG(CASE WHEN c.value > 1000 THEN c.value / 1000.0 ELSE c.value END)
-      OVER (PARTITION BY ct.name ORDER BY c.ts) as prev_temp_c,
-    ROW_NUMBER() OVER (PARTITION BY ct.name ORDER BY c.ts) as rn,
-    COUNT(*) OVER (PARTITION BY ct.name) as total_samples
-  FROM counter c
-  JOIN counter_track ct ON c.track_id = ct.id
-  WHERE (
-      ct.name LIKE '%thermal%'
-      OR ct.name LIKE '%temp%'
-      OR ct.name LIKE '%temperature%'
-      OR ct.name LIKE '%tsens%'
-    )
+WITH
+-- Quality gates apply per track, not per sensor name or individual value.
+-- Null units are inferred conservatively and disclosed; explicit unknown units
+-- are never overridden. Skin and junction temperatures are not interchangeable.
+thermal_raw AS (
+  SELECT c.id, c.ts, c.track_id AS sensor_track_id, ct.name AS sensor_name,
+    ct.unit AS source_unit, c.value,
+    MAX(ABS(c.value)) OVER (PARTITION BY ct.id) AS track_max_abs
+  FROM counter c JOIN counter_track ct ON c.track_id = ct.id
+  WHERE (LOWER(ct.name) LIKE '%thermal%' OR LOWER(ct.name) LIKE '%temp%'
+    OR LOWER(ct.name) LIKE '%tsens%')
     AND (${start_ts} IS NULL OR c.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR c.ts < ${end_ts})
+),
+thermal_normalized AS (
+  SELECT *, CASE
+    WHEN source_unit IN ('C', '°C', 'celsius') THEN value
+    WHEN source_unit IN ('mC', 'millidegrees', 'millidegree_celsius') THEN value / 1000.0
+    WHEN source_unit IS NULL AND track_max_abs > 1000 THEN value / 1000.0
+    WHEN source_unit IS NULL THEN value
+    ELSE NULL END AS temp_c,
+    CASE WHEN source_unit IS NULL THEN 'inferred_from_track_range'
+      ELSE 'explicit_unit' END AS unit_basis
+  FROM thermal_raw
+),
+thermal_ordered AS (
+  SELECT *, LAG(temp_c) OVER (PARTITION BY sensor_track_id ORDER BY ts, id) AS prev_temp_c,
+    LAG(ts) OVER (PARTITION BY sensor_track_id ORDER BY ts, id) AS prev_ts
+  FROM thermal_normalized
+),
+thermal_track_stats AS (
+  SELECT sensor_track_id, sensor_name, source_unit, unit_basis,
+    COUNT(*) AS sample_count, MIN(ts) AS first_ts, MAX(ts) AS last_ts,
+    MIN(temp_c) AS raw_min_temp_c, MAX(temp_c) AS raw_max_temp_c,
+    AVG(temp_c) AS raw_avg_temp_c,
+    CASE WHEN COUNT(*) < 5 THEN 'insufficient_samples'
+      WHEN COUNT(temp_c) != COUNT(*) THEN 'unsupported_unit'
+      WHEN MIN(temp_c) < 5 OR MAX(temp_c) > 150 THEN 'implausible_range'
+      WHEN MAX(CASE WHEN prev_ts IS NOT NULL AND ts - prev_ts <= 100000000
+        AND ABS(temp_c - prev_temp_c) > 10 THEN 1 ELSE 0 END) = 1 THEN 'abrupt_jump'
+      ELSE 'accepted' END AS sample_quality
+  FROM thermal_ordered
+  GROUP BY sensor_track_id, sensor_name, source_unit, unit_basis
+),
+thermal_valid_samples AS (
+  SELECT s.* FROM thermal_ordered s JOIN thermal_track_stats q USING(sensor_track_id)
+  WHERE q.sample_quality = 'accepted'
 )
-SELECT
-  printf('%d', ts) as ts,
-  sensor_name,
-  ROUND(temp_c, 1) as temp_c,
-  ROUND(temp_c - COALESCE(prev_temp_c, temp_c), 1) as delta_c,
-  CASE
-    WHEN temp_c > 80 THEN 'critical'
-    WHEN temp_c > 60 THEN 'warning'
-    WHEN temp_c > 45 THEN 'normal'
-    ELSE 'cool'
-  END as severity
-FROM thermal_samples
--- 采样：取每个传感器的均匀分布样本，最多 100 条
-WHERE rn % MAX(1, total_samples / 100) = 0
-   OR temp_c > 60
-   OR ABS(temp_c - COALESCE(prev_temp_c, temp_c)) > 3
-ORDER BY ts
-LIMIT 200
+,
+sampled AS (
+  SELECT *, ROW_NUMBER() OVER (PARTITION BY sensor_track_id ORDER BY ts, id) AS rn,
+    COUNT(*) OVER (PARTITION BY sensor_track_id) AS total_samples
+  FROM thermal_valid_samples
+)
+SELECT printf('%d', ts) AS ts, sensor_track_id, sensor_name,
+  ROUND(temp_c, 1) AS temp_c, ROUND(temp_c - COALESCE(prev_temp_c, temp_c), 1) AS delta_c,
+  CASE WHEN temp_c > 60 THEN 'high_temperature_observed' ELSE 'temperature_observed' END AS severity
+FROM sampled
+WHERE rn % MAX(1, total_samples / 100) = 0 OR temp_c > 60
+  OR ABS(temp_c - COALESCE(prev_temp_c, temp_c)) > 3
+ORDER BY ts LIMIT 200

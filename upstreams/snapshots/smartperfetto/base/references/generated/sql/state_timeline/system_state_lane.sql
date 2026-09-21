@@ -1,15 +1,11 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/state_timeline.skill.yaml
--- Source SHA-256: 847df75d4dff0db6d9e8a10b5d5654d248cc898fde909ce265075dfb85209401
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: fd6c633f728fed86747941747f63d55962479f3073fb5dada8da2116d5ec350b
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
-WITH trace_bounds AS (
-  SELECT MIN(ts) AS t_start, MAX(ts) AS t_end
-  FROM (
-    SELECT ts FROM slice WHERE dur > 0
-    UNION ALL
-    SELECT ts FROM counter WHERE value IS NOT NULL
-  )
+SELECT scene_rows.*, COUNT(*) OVER () AS total_rows FROM (
+WITH lane_bounds AS (
+  SELECT start_ts AS t_start, end_ts AS t_end FROM trace_bounds
 ),
 -- Detect system events from known patterns in system_server / SurfaceFlinger
 system_events AS (
@@ -138,8 +134,8 @@ numbered AS (
 gaps AS (
   -- Leading gap
   SELECT
-    (SELECT t_start FROM trace_bounds) AS start_ts,
-    COALESCE((SELECT MIN(start_ts) FROM deduped), (SELECT t_end FROM trace_bounds)) AS end_ts,
+    (SELECT t_start FROM lane_bounds) AS start_ts,
+    COALESCE((SELECT MIN(start_ts) FROM deduped), (SELECT t_end FROM lane_bounds)) AS end_ts,
     'UNKNOWN' AS state
 
   UNION ALL
@@ -158,10 +154,10 @@ gaps AS (
   -- Trailing gap (only when deduped has events; otherwise leading gap covers full trace)
   SELECT
     (SELECT MAX(end_ts) FROM deduped) AS start_ts,
-    (SELECT t_end FROM trace_bounds) AS end_ts,
+    (SELECT t_end FROM lane_bounds) AS end_ts,
     'UNKNOWN' AS state
   WHERE EXISTS (SELECT 1 FROM deduped)
-    AND (SELECT MAX(end_ts) FROM deduped) < (SELECT t_end FROM trace_bounds)
+    AND (SELECT MAX(end_ts) FROM deduped) < (SELECT t_end FROM lane_bounds)
 ),
 all_segments AS (
   SELECT start_ts, end_ts, state FROM deduped
@@ -191,4 +187,5 @@ SELECT
 FROM all_segments
 WHERE end_ts > start_ts
 ORDER BY start_ts
-LIMIT 500
+) AS scene_rows
+LIMIT MIN(MAX(CAST(${scene_row_limit|4096} AS INT), 1), 4096)

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/blocking_chain_analysis.skill.yaml
-Source SHA-256: d2c7a63dade5310e92b508c129b78b4e3a420c57d613ac75107d93e89f7418cf
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: 68f73be9504b37b7a6d8966693adf2fe179f9183db279f10d9fe883226dfa5c9
+Source commit: bc007586871a720aed82537913617c64fb95a459
 # 阻塞链分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: blocking_chain_analysis
-version: '1.0'
+version: '1.2'
 type: composite
 category: diagnostics
 tier: A
@@ -54,6 +54,18 @@ required_tables:
   type: timestamp
   required: true
   description: 分析结束时间戳(ns)
+- name: min_wait_ms
+  type: number
+  required: false
+  description: 多跳唤醒链追踪的最小等待时长(ms)
+- name: max_hops
+  type: number
+  required: false
+  description: 唤醒链最大跳数
+- name: top_waits
+  type: number
+  required: false
+  description: 追踪的等待区间数（按时长降序）
 ```
 
 ## Identity requirements
@@ -171,6 +183,60 @@ display:
 save_as: waker_chain
 optional: true
 ```
+### 多跳唤醒链追踪
+
+- ID: `wakeup_chain_trace`
+- Type: `atomic`
+- SQL: [`../sql/blocking_chain_analysis/wakeup_chain_trace.sql`](../sql/blocking_chain_analysis/wakeup_chain_trace.sql)
+
+```yaml
+id: wakeup_chain_trace
+type: atomic
+display:
+  level: detail
+  layer: list
+  title: 主线程长等待的多跳唤醒链（谁最终唤醒了主线程）
+  columns:
+  - name: wait_start_ts
+    label: 等待开始
+    type: timestamp
+    unit: ns
+    clickAction: navigate_timeline
+  - name: wait_ms
+    label: 总等待(ms)
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: hop
+    label: 跳数
+    type: number
+    format: compact
+  - name: waker_thread_name
+    label: 该跳线程
+    type: string
+  - name: waker_process_name
+    label: 所属进程
+    type: string
+  - name: waker_runnable_ts
+    label: 该跳被唤醒时刻
+    type: timestamp
+    unit: ns
+  - name: waker_wait_before_ms
+    label: 该跳此前等待(ms)
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: run_ms_in_wait
+    label: 等待窗口内运行(ms)
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: chain_status
+    label: 链状态
+    type: string
+save_as: wakeup_chain_trace
+optional: true
+```
 ### 阻塞函数汇总
 
 - ID: `blocked_function_summary`
@@ -211,5 +277,6 @@ format: layered
 default_expanded:
 - thread_state_distribution
 - waker_chain
+- wakeup_chain_trace
 - blocked_function_summary
 ```

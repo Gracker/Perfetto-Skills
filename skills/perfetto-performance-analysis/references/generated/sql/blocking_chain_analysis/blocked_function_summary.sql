@@ -1,14 +1,18 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/blocking_chain_analysis.skill.yaml
--- Source SHA-256: d2c7a63dade5310e92b508c129b78b4e3a420c57d613ac75107d93e89f7418cf
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 68f73be9504b37b7a6d8966693adf2fe179f9183db279f10d9fe883226dfa5c9
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 WITH main_thread AS (
   SELECT t.utid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${process_name}*'
+  WHERE (p.name = '${process_name}' OR p.name GLOB '${process_name}*')
     AND (t.is_main_thread = 1 OR t.tid = p.pid)
+  ORDER BY
+    (p.name = '${process_name}') DESC,
+    EXISTS(SELECT 1 FROM thread_state ts WHERE ts.utid = t.utid) DESC,
+    t.utid
   LIMIT 1
 ),
 blocked AS (

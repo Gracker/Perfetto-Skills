@@ -9,6 +9,7 @@
       "api_hint"
     ],
     "signal_patterns": [
+      "${process_name}",
       "${process_name}*"
     ]
   },
@@ -40,6 +41,24 @@
       "name": "end_ts",
       "required": true,
       "type": "timestamp"
+    },
+    {
+      "description": "多跳唤醒链追踪的最小等待时长(ms)",
+      "name": "min_wait_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "唤醒链最大跳数",
+      "name": "max_hops",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "description": "追踪的等待区间数（按时长降序）",
+      "name": "top_waits",
+      "required": false,
+      "type": "number"
     }
   ],
   "prerequisites": {
@@ -54,9 +73,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "e198ac39082cf1b029b0833e46e8ee49dd9387ce",
+    "commit": "bc007586871a720aed82537913617c64fb95a459",
     "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
-    "sha256": "d2c7a63dade5310e92b508c129b78b4e3a420c57d613ac75107d93e89f7418cf"
+    "sha256": "68f73be9504b37b7a6d8966693adf2fe179f9183db279f10d9fe883226dfa5c9"
   },
   "steps": [
     {
@@ -77,6 +96,15 @@
       "type": "atomic"
     },
     {
+      "id": "wakeup_chain_trace",
+      "name": "多跳唤醒链追踪",
+      "optional": true,
+      "query_id": "blocking_chain_analysis/wakeup_chain_trace",
+      "result_dependencies": [],
+      "save_as": "wakeup_chain_trace",
+      "type": "atomic"
+    },
+    {
       "id": "blocked_function_summary",
       "name": "阻塞函数汇总",
       "optional": true,
@@ -87,6 +115,6 @@
     }
   ],
   "type": "composite",
-  "version": "1.0",
+  "version": "1.2",
   "workflow": "anr-blocking"
 }

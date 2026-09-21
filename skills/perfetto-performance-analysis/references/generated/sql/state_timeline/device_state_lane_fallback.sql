@@ -1,15 +1,11 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/state_timeline.skill.yaml
--- Source SHA-256: 847df75d4dff0db6d9e8a10b5d5654d248cc898fde909ce265075dfb85209401
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: fd6c633f728fed86747941747f63d55962479f3073fb5dada8da2116d5ec350b
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
-WITH trace_bounds AS (
-  SELECT MIN(ts) AS t_start, MAX(ts) AS t_end
-  FROM (
-    SELECT ts FROM slice WHERE dur > 0
-    UNION ALL
-    SELECT ts FROM counter WHERE value IS NOT NULL
-  )
+SELECT scene_rows.*, COUNT(*) OVER () AS total_rows FROM (
+WITH lane_bounds AS (
+  SELECT start_ts AS t_start, end_ts AS t_end FROM trace_bounds
 )
 SELECT
   'device' AS lane,
@@ -20,4 +16,6 @@ SELECT
   t_end - t_start AS dur_ns,
   CAST((t_end - t_start) / 1000000 AS INT) AS dur_ms,
   'table_missing' AS source_status
-FROM trace_bounds
+FROM lane_bounds
+) AS scene_rows
+LIMIT MIN(MAX(CAST(${scene_row_limit|4096} AS INT), 1), 4096)

@@ -1,0 +1,214 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scene_device_state_changes/state_sources",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scene_device_state_changes/state_sources.sql",
+      "sha256": "4cfd035f918fa176bd5578c963b328c80a082d19c72e8964dfcc905d5fbf352d",
+      "signal_patterns": [
+        "DeviceStateChanged"
+      ],
+      "skill_id": "scene_device_state_changes",
+      "source": {
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "path": "backend/skills/atomic/scene_device_state_changes.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "095556b596031e7b8be9188eb7fef73927a190792460e88d97c190453848ed5f"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.screen_state",
+          "android.battery.charging_states"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "state_sources",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/scene_device_state_facts.sql",
+            "source_sha256": "41d1ae85cd57990943466e1d1590e4e6e30013f8a2c4e18409775cd71885ce45"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "row_limit",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "scene_device_state_changes/state_intervals",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scene_device_state_changes/state_intervals.sql",
+      "sha256": "63475a7513ad54bbd4c9c9dadd549415a83389b69e252934226877ad20e75e03",
+      "signal_patterns": [
+        "DeviceStateChanged"
+      ],
+      "skill_id": "scene_device_state_changes",
+      "source": {
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "path": "backend/skills/atomic/scene_device_state_changes.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "095556b596031e7b8be9188eb7fef73927a190792460e88d97c190453848ed5f"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.screen_state",
+          "android.battery.charging_states"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "state_intervals",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/scene_device_state_facts.sql",
+            "source_sha256": "41d1ae85cd57990943466e1d1590e4e6e30013f8a2c4e18409775cd71885ce45"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "row_limit",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "scene_device_state_changes"
+}

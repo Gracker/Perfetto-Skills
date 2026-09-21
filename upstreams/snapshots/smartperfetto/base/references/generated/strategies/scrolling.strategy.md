@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: c1f78a14c6adc4cfdde957b4661da16d2b4d56c1e982c35568c0e14e05f34fa7
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: 269d87e89f8eeb7b378b74bb0a2947b03c461d29f70f20159ae52f08284011d4
+Source commit: bc007586871a720aed82537913617c64fb95a459
 
 # Scrolling Strategy
 
@@ -494,9 +494,9 @@ Connect Main/Render/raster/GPU/SF/present only with matching identities and timi
 
 ### scrolling_buffer_backpressure (dependency_chain)
 
-Buffer Stuffing dominates the analysed frames. Decompose the producer/consumer boundary before attributing or excluding a side: measure dequeueBuffer waits and release-fence return, and say which side the evidence supports. A stuffing rate alone is the symptom, not the mechanism.
+Raw Buffer Stuffing tags exceed half of analysed frames. Read consumer_jank_detection presentation_cadence_audit to distinguish steady_late from cadence excursions, retaining mixed missed/drop signals. Before attributing or excluding producer/consumer backpressure, measure dequeueBuffer waits and release-fence return; raw tag share alone proves neither queue delay nor mechanism.
 
-Apply when: Buffer Stuffing accounts for more than half of the analysed frames.
+Apply when: Raw Buffer Stuffing tags account for more than half of the analysed frames.
 
 #### Scrolling Core Strategy
 
@@ -521,7 +521,7 @@ Apply when: Buffer Stuffing accounts for more than half of the analysed frames.
 
 **⚠️ 核心原则：**
 1. **逐帧根因诊断是最重要的**。概览统计（帧率、卡顿率）只是入口，真正有价值的是每一个掉帧帧的根因分析。
-2. **掉帧检测使用混合证据口径**：非 Buffer Stuffing 帧以 `present_type in (Late Present, Dropped Frame)` 为权威消费状态；Buffer Stuffing 才用同 layer `present_ts` 间隔 `>1.5x && <=6x VSync` 二次验证。`On-time Present` 仅有长间隔时只能记为 cadence candidate，不能升级为 hidden jank。
+2. **帧状态与画面节奏分开**：Dropped Frame 保留为丢弃；非 Stuffing 的 Late Present 保留为呈现状态异常。任何含 Buffer Stuffing 的标签（包括混合 App Deadline Missed）都要用同进程同 layer 的实际呈现间隔核验，不以责任类别绕过此规则。缺间隔或过长间隔保留未判定/复核，不能计为流畅或误报。混合口径统计不是用户可感知停顿率；`On-time Present` 的长间隔也只记 cadence candidate，不能直接升级为 hidden jank。
    - **Per-Layer Buffer 枯竭检测（token-gap 辅助模型）**：当 App Layer 在连续 SF DisplayFrame 中出现 token 跳跃（gap > 1），说明 SF 在中间帧合成时该 Layer 没有新 Buffer = 缓冲区枯竭
    - `token_gap = 1` → 正常（每帧都有新 buffer），`token_gap = N` → 跳过 N-1 个 DisplayFrame
    - 这是 per-layer 检测，不受 SF 全局合成状态影响（SF 可能在消费其他 Layer 的 buffer）

@@ -1,185 +1,215 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scene_reconstruction.skill.yaml
--- Source SHA-256: ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 8832b9e9b6f0bb86a0676bcd50f367546a3406ef8111be90fe60511d26678d5b
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
-WITH RECURSIVE input_check AS (
-  SELECT 1 AS dummy WHERE EXISTS (
-    SELECT 1 FROM sqlite_master WHERE type='table' AND name='android_input_events'
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Shared input observation contract. Legacy android_input_events contains only
+-- acknowledged deliveries: absence never proves that a user/device was idle.
+-- Do not infer scrolling, long-click recognition or fling from MOVE counts,
+-- contact duration or subsequent frames. Preserve native device/display IDs.
+scene_raw_input AS (
+  SELECT 'android_motion_events' AS source_table, CAST(id AS TEXT) AS source_id,
+    ts, 'MOTION' AS event_type,
+    CASE action & 255
+      WHEN 0 THEN 'DOWN' WHEN 1 THEN 'UP' WHEN 2 THEN 'MOVE'
+      WHEN 3 THEN 'CANCEL' WHEN 5 THEN 'POINTER_DOWN' WHEN 6 THEN 'POINTER_UP'
+      WHEN 7 THEN 'HOVER_MOVE' WHEN 8 THEN 'SCROLL' ELSE 'UNKNOWN' END AS event_action,
+    device_id, display_id, source AS input_source, NULL AS upid,
+    NULL AS process_name, NULL AS event_channel,
+    'device:' || COALESCE(CAST(device_id AS TEXT), 'unknown:' || id) ||
+      ':display:' || COALESCE(CAST(display_id AS TEXT), 'unknown') ||
+      ':source:' || COALESCE(CAST(source AS TEXT), 'unknown') AS stream_key,
+    'event:' || event_id AS event_key, CAST(event_id AS TEXT) AS physical_event_id, id AS source_order
+  FROM android_motion_events
+  UNION ALL
+  SELECT 'android_key_events', CAST(id AS TEXT), ts, 'KEY',
+    CASE action WHEN 0 THEN 'KEY_DOWN' WHEN 1 THEN 'KEY_UP' ELSE 'UNKNOWN' END,
+    device_id, display_id, source, NULL, NULL, NULL,
+    'device:' || COALESCE(CAST(device_id AS TEXT), 'unknown:' || id) ||
+      ':display:' || COALESCE(CAST(display_id AS TEXT), 'unknown') ||
+      ':source:' || COALESCE(CAST(source AS TEXT), 'unknown'),
+    'event:' || event_id, CAST(event_id AS TEXT), id
+  FROM android_key_events
+  UNION ALL
+  SELECT 'android_input_events',
+    COALESCE(input_event_id, event_seq, '') || ':' || COALESCE(event_channel, '') || ':' || dispatch_ts,
+    COALESCE(read_time, dispatch_ts, receive_ts), event_type,
+    COALESCE(NULLIF(event_action, ''), 'UNKNOWN'), NULL, NULL, NULL, upid,
+    process_name, event_channel,
+    -- Channel + process incarnation, not pid/name or a global DOWN counter.
+    COALESCE(CAST(upid AS TEXT), 'unknown') || ':' ||
+      COALESCE(event_channel, 'unknown:' || COALESCE(input_event_id, event_seq, CAST(dispatch_ts AS TEXT))),
+    COALESCE(input_event_id, event_seq, '') || ':' || COALESCE(event_channel, '') || ':' || dispatch_ts,
+    input_event_id, dispatch_ts
+  FROM android_input_events AS legacy
+  WHERE NOT EXISTS (
+    SELECT 1 FROM android_motion_events AS m
+    WHERE legacy.input_event_id IN (CAST(m.event_id AS TEXT), printf('0x%x', m.event_id))
+  ) AND NOT EXISTS (
+    SELECT 1 FROM android_key_events AS k
+    WHERE legacy.input_event_id IN (CAST(k.event_id AS TEXT), printf('0x%x', k.event_id))
   )
 ),
-startup_check AS (
-  SELECT 1 AS dummy WHERE EXISTS (
-    SELECT 1 FROM sqlite_master WHERE type='table' AND name='android_startups'
-  )
+scene_input_facts AS (
+  SELECT * FROM (
+    SELECT *, ROW_NUMBER() OVER (
+      PARTITION BY source_table, stream_key, event_key, ts, event_action ORDER BY source_id
+    ) AS duplicate_rank FROM scene_raw_input
+    WHERE ts IS NOT NULL AND ts >= (SELECT start_ts FROM trace_bounds)
+      AND ts <= (SELECT end_ts FROM trace_bounds)
+  ) WHERE duplicate_rank = 1
 ),
-frame_check AS (
-  SELECT 1 AS dummy WHERE EXISTS (
-    SELECT 1 FROM sqlite_master WHERE type='table' AND name='actual_frame_timeline_slice'
-  )
+-- Multiple dispatch targets are observations of one physical event. Rank by
+-- action availability on the receiving stream, not app/vendor name. Ambiguous
+-- action-bearing recipients remain unassigned; the selected row is provenance,
+-- never a claim that this recipient owns the user's action.
+scene_stream_quality AS (
+  SELECT stream_key, SUM(event_action != 'UNKNOWN') AS known_actions
+  FROM scene_input_facts GROUP BY stream_key
 ),
-startup_spans AS (
-  SELECT
-    ts AS start_ts,
-    ts + dur AS end_ts,
-    package AS app_package
-  FROM android_startups
-  WHERE dur > 0
+scene_physical_ranked AS (
+  SELECT f.*, q.known_actions,
+    COALESCE(f.physical_event_id || ':' || f.ts, f.source_table || ':' || f.source_id) AS physical_event_key,
+    ROW_NUMBER() OVER (
+      PARTITION BY COALESCE(f.physical_event_id || ':' || f.ts, f.source_table || ':' || f.source_id)
+      ORDER BY f.event_action = 'UNKNOWN', q.known_actions DESC, f.stream_key, f.source_id
+    ) AS physical_rank
+  FROM scene_input_facts f JOIN scene_stream_quality q USING (stream_key)
 ),
-frame_apps AS (
-  SELECT
-    a.ts,
-    a.ts + a.dur AS end_ts,
-    COALESCE(
-      NULLIF(p.name, ''),
-      CASE
-        WHEN a.layer_name IS NOT NULL AND instr(a.layer_name, '/') > 1
-        THEN substr(a.layer_name, 1, instr(a.layer_name, '/') - 1)
-        ELSE NULL
-      END
-    ) AS app_package
-  FROM actual_frame_timeline_slice a
-  LEFT JOIN process p ON p.upid = a.upid
-  WHERE a.dur > 0
-    AND a.surface_frame_token IS NOT NULL
+scene_physical_quality AS (
+  SELECT physical_event_key, COUNT(*) AS dispatch_count,
+    CASE WHEN MAX(known_actions) > 0
+      THEN COUNT(DISTINCT CASE WHEN known_actions > 0 THEN stream_key END)
+      ELSE COUNT(DISTINCT stream_key) END AS receiver_count,
+    COUNT(DISTINCT CASE WHEN event_action != 'UNKNOWN' THEN event_action END) AS action_variants
+  FROM scene_physical_ranked GROUP BY physical_event_key
 ),
-gesture_events AS (
-  SELECT
-    read_time AS ts,
-    event_action,
-    process_name,
-    CASE WHEN event_action = 'DOWN' THEN 1 ELSE 0 END AS is_start
-  FROM android_input_events
-  WHERE event_type = 'MOTION'
-    AND process_name NOT IN ('system_server', '/system/bin/inputflinger')
-    AND process_name NOT GLOB 'com.android.systemui*'
+scene_primary_input AS (
+  SELECT f.source_table, f.source_id, f.ts, f.event_type,
+    CASE WHEN q.action_variants > 1 THEN 'UNKNOWN' ELSE f.event_action END AS event_action,
+    f.device_id, f.display_id, f.input_source,
+    CASE WHEN q.receiver_count <= 1 THEN f.upid END AS upid,
+    CASE WHEN q.receiver_count <= 1 THEN f.process_name END AS process_name,
+    CASE WHEN q.receiver_count <= 1 THEN f.event_channel END AS event_channel,
+    f.stream_key, f.source_order, f.physical_event_id, f.physical_event_key, q.dispatch_count, q.receiver_count,
+    CASE WHEN q.receiver_count > 1 THEN 'multiple_recipients'
+      WHEN f.upid IS NULL THEN 'unresolved' ELSE 'observed_recipient' END AS identity_status
+  FROM scene_physical_ranked f JOIN scene_physical_quality q USING (physical_event_key)
+  WHERE f.physical_rank = 1
 ),
-gesture_groups AS (
-  SELECT ts, event_action, process_name,
-         SUM(is_start) OVER (ORDER BY ts) AS gesture_id
-  FROM gesture_events
+scene_input_ordered AS (
+  SELECT *, LAG(event_action) OVER (
+    PARTITION BY stream_key ORDER BY ts, source_order, source_id
+  ) AS previous_action
+  FROM scene_primary_input
 ),
-gestures AS (
-  SELECT
-    gesture_id,
-    MIN(ts) AS ts,
-    MAX(ts) AS end_ts,
-    MAX(ts) - MIN(ts) AS dur,
+scene_input_grouped AS (
+  SELECT *, SUM(CASE WHEN event_action = 'DOWN' OR previous_action IS NULL
+      OR previous_action IN ('UP', 'CANCEL') OR event_type != 'MOTION'
+      OR event_action IN ('SCROLL', 'HOVER_MOVE') THEN 1 ELSE 0 END)
+    OVER (PARTITION BY stream_key ORDER BY ts, source_order, source_id ROWS UNBOUNDED PRECEDING) AS gesture_id
+  FROM scene_input_ordered
+),
+scene_input_segmented AS (
+  SELECT *, FIRST_VALUE(source_id) OVER (
+      PARTITION BY stream_key, gesture_id ORDER BY ts, source_order, source_id
+    ) AS start_source_id,
+    FIRST_VALUE(source_id) OVER (
+      PARTITION BY stream_key, gesture_id ORDER BY ts DESC, source_order DESC, source_id DESC
+    ) AS end_source_id,
+    FIRST_VALUE(physical_event_id) OVER (
+      PARTITION BY stream_key, gesture_id ORDER BY ts, source_order, source_id
+    ) AS first_physical_event_id,
+    FIRST_VALUE(physical_event_id) OVER (
+      PARTITION BY stream_key, gesture_id ORDER BY ts DESC, source_order DESC, source_id DESC
+    ) AS last_physical_event_id
+  FROM scene_input_grouped
+),
+scene_contacts AS (
+  SELECT stream_key, gesture_id, MIN(ts) AS ts, MAX(ts) AS end_ts,
+    MAX(ts) - MIN(ts) AS dur, CASE WHEN MAX(identity_status = 'multiple_recipients') = 0 THEN MAX(upid) END AS upid,
+    CASE WHEN MAX(identity_status = 'multiple_recipients') = 0 THEN MAX(process_name) END AS app_package,
+    CASE WHEN MAX(identity_status = 'multiple_recipients') = 0 THEN MAX(event_channel) END AS event_channel,
+    MAX(device_id) AS device_id, MAX(display_id) AS display_id, MAX(input_source) AS input_source,
+    SUM(dispatch_count) AS dispatch_count, MAX(receiver_count) AS receiver_count,
+    CASE WHEN MAX(identity_status = 'multiple_recipients') THEN 'multiple_recipients'
+      WHEN MAX(identity_status = 'unresolved') THEN 'unresolved' ELSE 'observed_recipient' END AS identity_status,
+    MIN(source_table) AS source_table, MIN(start_source_id) AS source_id,
+    MIN(start_source_id) || ',' || MAX(end_source_id) AS source_ids,
+    MAX(first_physical_event_id) AS first_physical_event_id,
+    MAX(last_physical_event_id) AS last_physical_event_id, COUNT(*) AS event_count,
+    SUM(event_action = 'MOVE') AS move_count,
+    SUM(event_action = 'UNKNOWN') AS missing_action_count,
+    MIN(CASE WHEN event_action = 'DOWN' THEN ts END) AS down_ts,
     MAX(CASE WHEN event_action = 'UP' THEN ts END) AS up_ts,
-    COUNT(*) AS event_count,
-    COUNT(CASE WHEN event_action = 'MOVE' THEN 1 END) AS move_count,
-    MAX(process_name) AS raw_process_name
-  FROM gesture_groups
-  WHERE gesture_id > 0
-  GROUP BY gesture_id
+    MAX(event_action = 'CANCEL') AS was_cancelled,
+    MAX(event_type = 'KEY') AS is_key,
+    -- ACTION_SCROLL describes axis input, not the physical device or app content motion.
+    MAX(event_action = 'SCROLL') AS has_scroll_action,
+    MAX(event_action IN ('POINTER_DOWN', 'POINTER_UP')) AS multi_pointer
+  FROM scene_input_segmented GROUP BY stream_key, gesture_id
 ),
-gesture_with_app AS (
-  SELECT
-    g.*,
-    (SELECT MIN(g2.ts) FROM gestures g2 WHERE g2.ts > g.ts) AS next_gesture_ts,
-    CASE
-      WHEN g.raw_process_name GLOB 'com.*'
-        OR g.raw_process_name GLOB 'org.*'
-        OR g.raw_process_name GLOB 'io.*'
-        OR g.raw_process_name GLOB 'net.*'
-      THEN g.raw_process_name
-      ELSE COALESCE(
-        (SELECT f.app_package
-         FROM frame_apps f
-         WHERE f.app_package IS NOT NULL
-           AND f.app_package != ''
-           AND f.app_package NOT GLOB 'surfaceflinger*'
-           AND f.app_package NOT GLOB 'system_server*'
-           AND f.app_package NOT GLOB 'com.android.systemui*'
-           AND f.ts >= g.ts - 300000000
-           AND f.end_ts <= g.end_ts + 800000000
-         GROUP BY f.app_package
-         ORDER BY COUNT(*) DESC
-         LIMIT 1),
-        (SELECT s.app_package
-         FROM startup_spans s
-         WHERE g.ts BETWEEN s.start_ts AND s.end_ts
-         ORDER BY s.start_ts DESC
-         LIMIT 1),
-        g.raw_process_name
-      )
-    END AS app_package
-  FROM gestures g
+scene_gestures AS (
+  SELECT *,
+    CASE WHEN was_cancelled THEN 'cancelled'
+      WHEN is_key THEN 'key' WHEN has_scroll_action THEN 'scroll_input'
+      WHEN move_count > 0 THEN 'touch_move'
+      WHEN missing_action_count > 0 OR down_ts IS NULL OR up_ts IS NULL THEN 'input_unknown'
+      WHEN multi_pointer THEN 'input_unknown'
+      WHEN dur >= 500000000 THEN 'touch_hold' ELSE 'tap' END AS gesture_type,
+    CASE WHEN down_ts IS NOT NULL AND up_ts IS NOT NULL AND missing_action_count = 0
+      AND was_cancelled = 0 THEN 1 ELSE 0 END AS boundary_complete,
+    CASE WHEN missing_action_count > 0 OR identity_status = 'multiple_recipients' OR (is_key = 0 AND has_scroll_action = 0
+      AND (down_ts IS NULL OR (up_ts IS NULL AND was_cancelled = 0)))
+      THEN 'partial' ELSE 'observed' END AS source_status
+  FROM scene_contacts
 ),
-gesture_with_window AS (
-  SELECT
-    g.*,
-    CASE
-      WHEN g.up_ts IS NOT NULL THEN
-        MIN(
-          COALESCE(g.next_gesture_ts, g.up_ts + 3000000000),
-          g.up_ts + 3000000000
-        )
-      ELSE g.end_ts
-    END AS scroll_window_end
-  FROM gesture_with_app g
+-- A one-nanosecond occupancy is used only for gap subtraction at an instant.
+-- The event itself keeps dur=0. Open contacts stop at their last observation.
+scene_input_occupied AS (
+  SELECT ts, MIN(MAX(end_ts, ts + 1), (SELECT end_ts FROM trace_bounds)) AS end_ts
+  FROM scene_gestures
 ),
-gesture_with_duration AS (
-  SELECT
-    g.*,
-    CASE
-      -- For scroll gestures, extend duration to the last rendered frame after UP
-      -- (bounded by next gesture or 3s) to match user-perceived scroll length.
-      WHEN g.move_count >= 3 AND g.up_ts IS NOT NULL THEN
-        MAX(
-          g.dur,
-          COALESCE(
-            (SELECT MAX(f.end_ts)
-             FROM frame_apps f
-             WHERE f.ts >= g.up_ts
-               AND f.ts < g.scroll_window_end
-               AND (
-                 g.app_package IS NULL
-                 OR g.app_package = ''
-                 OR f.app_package = g.app_package
-               )),
-            (SELECT MAX(f.end_ts)
-             FROM frame_apps f
-             WHERE f.ts >= g.up_ts
-               AND f.ts < g.scroll_window_end),
-            MIN(
-              COALESCE(g.next_gesture_ts, g.up_ts + 1800000000),
-              g.up_ts + 1800000000
-            )
-          ) - g.ts
-        )
-      ELSE g.dur
-    END AS scene_dur
-  FROM gesture_with_window g
+scene_input_union_scan AS (
+  SELECT *, MAX(end_ts) OVER (
+    ORDER BY ts, end_ts ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING
+  ) AS previous_end FROM scene_input_occupied
+),
+scene_input_gaps AS (
+  SELECT (SELECT start_ts FROM trace_bounds) AS ts,
+    COALESCE(MIN(ts), (SELECT end_ts FROM trace_bounds)) AS end_ts FROM scene_input_occupied
+  UNION ALL
+  SELECT previous_end, ts FROM scene_input_union_scan WHERE ts > previous_end
+  UNION ALL
+  SELECT MAX(end_ts), (SELECT end_ts FROM trace_bounds) FROM scene_input_occupied
+  HAVING MAX(end_ts) < (SELECT end_ts FROM trace_bounds)
 )
-SELECT
-  printf('%d', ts) AS ts,
-  printf('%d', scene_dur) AS dur,
-  CASE
-    WHEN move_count >= 3 THEN '滑动 (' || move_count || '次移动, ' || CAST(scene_dur / 1000000 AS INT) || 'ms)'
-    WHEN dur > 500000000 AND move_count <= 2 THEN '长按 (' || CAST(dur / 1000000 AS INT) || 'ms)'
-    ELSE '点击'
-  END ||
-  CASE
-    WHEN app_package IS NOT NULL AND app_package != ''
-    THEN ' [' || REPLACE(REPLACE(app_package, 'com.', ''), 'android.', '') || ']'
-    ELSE ''
-  END AS event,
-  CASE
-    WHEN move_count >= 3 THEN 'scroll'
-    WHEN dur > 500000000 AND move_count <= 2 THEN 'long_press'
-    ELSE 'tap'
-  END AS gesture_type,
-  CASE
-    WHEN move_count >= 10 THEN '高'
-    WHEN move_count >= 5 THEN '中'
-    WHEN move_count >= 3 THEN '低'
-    ELSE '高'
-  END AS confidence,
-  move_count,
-  app_package,
-  'gesture' AS category
-FROM gesture_with_duration
-WHERE event_count >= 2
-ORDER BY ts
-LIMIT 200
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Normalize the full input stream before clipping. Gesture/source identity and
+-- pre-window DOWN or post-window UP remain in the original fact provenance.
+scene_requested_bounds AS (
+  SELECT MAX(start_ts, COALESCE(${start_ts}, start_ts)) AS start_ts,
+    MIN(end_ts, COALESCE(${end_ts}, end_ts)) AS end_ts FROM trace_bounds
+),
+scene_windowed_gestures AS (
+  SELECT g.*, MAX(g.ts, b.start_ts) AS clipped_ts, MIN(g.end_ts, b.end_ts) AS clipped_end_ts
+  FROM scene_gestures g CROSS JOIN scene_requested_bounds b
+  WHERE b.end_ts >= b.start_ts AND (
+    (g.end_ts > g.ts AND g.ts < b.end_ts AND g.end_ts > b.start_ts) OR
+    (g.end_ts = g.ts AND g.ts >= b.start_ts AND
+      (g.ts < b.end_ts OR (b.end_ts = (SELECT end_ts FROM trace_bounds) AND g.ts = b.end_ts))))
+)
+SELECT printf('%d', clipped_ts) AS ts, printf('%d', clipped_end_ts) AS end_ts, printf('%d', clipped_end_ts - clipped_ts) AS dur,
+  printf('%d', ts) AS source_start_ts, printf('%d', end_ts) AS source_end_ts,
+  CASE WHEN ts != clipped_ts OR end_ts != clipped_end_ts THEN 1 ELSE 0 END AS window_clipped,
+  CASE gesture_type WHEN 'touch_move' THEN '连续触摸移动' WHEN 'touch_hold' THEN '持续触摸（长按识别未确认）' WHEN 'tap' THEN '点击接触' WHEN 'cancelled' THEN '触摸取消' WHEN 'key' THEN '按键输入' WHEN 'scroll_input' THEN '滚动轴输入（ACTION_SCROLL）' WHEN 'wheel' THEN '滚轮输入' ELSE '输入活动（动作信息不完整）' END AS event, gesture_type, 'MEDIUM' AS confidence,
+  move_count, app_package, 'gesture' AS category, CASE WHEN ts != clipped_ts OR end_ts != clipped_end_ts THEN 'partial' ELSE source_status END AS source_status,
+  source_table, source_id, source_ids, stream_key, upid, event_channel,
+  device_id, display_id, input_source, CASE WHEN ts = clipped_ts AND end_ts = clipped_end_ts THEN boundary_complete ELSE 0 END AS boundary_complete, event_count, missing_action_count, 'original_gesture' AS event_count_scope,
+  first_physical_event_id, last_physical_event_id, dispatch_count, receiver_count, identity_status,
+  COUNT(*) OVER () AS total_rows
+FROM scene_windowed_gestures ORDER BY ts, stream_key, gesture_id
+LIMIT MIN(MAX(CAST(${scene_row_limit|4096} AS INT), 1), 4096)

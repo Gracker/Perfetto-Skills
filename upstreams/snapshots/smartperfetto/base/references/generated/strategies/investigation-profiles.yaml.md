@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/investigation-profiles.yaml
-Source SHA-256: ec33e42ea469eb8a1c03749061aead98ca5f6eaaf736d501315b1a5bc58690eb
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: a6bd593f1a512a72d61da7c61cf80e9f7aee0b927d6aed49e940f11acbaf41b9
+Source commit: bc007586871a720aed82537913617c64fb95a459
 
 # Investigation Profiles Yaml
 
@@ -74,3 +74,29 @@ Put supported root-cause detail, quantitative evidence and relevant App/system r
 ### comparable_system_evidence (comparison)
 
 Compare only compatible evidence across explicitly identified trace sides, windows, process instances, sampling coverage, units and denominators. Keep absent saved dimensions not_checked; a missing metric is not zero or absence of a problem. Saved-result comparison uses stored provenance and does not silently fetch either raw trace to fill gaps. Separate observed deltas from causes.
+
+## scene_reconstruction (version 1)
+
+### scene_input_observations (scene_input)
+
+Reconstruct observed input actions with exact intervals and available device, channel, display and target identities. Preserve partial dispatch, missing action, cancellation and open gesture boundaries. Distinguish physical events from delivery recipients. Missing input is unknown, not evidence of inactivity or a completed gesture.
+
+### scene_device_observations (scene_device)
+
+Explain observed device state and changes separately from user action, including screen, charging and committed device state plus other relevant sources when captured. Preserve raw values and source coverage. Screen state is not lock state; vendor device state numbers do not establish posture without configuration evidence. Initial state before its first observation remains unknown unless a prior observation supports carry-in.
+
+### scene_application_response (scene_response)
+
+Relate user input to observed window, application lifecycle and rendering responses only with compatible time and object evidence. Preserve alternatives, process instances, multiple windows/displays and unresolved ownership. ACK completion is not display completion; simultaneous activity does not prove attribution or causation.
+
+### scene_scan_coverage (scene_coverage)
+
+Account for the whole requested trace range, including observed, unscanned and unknown intervals. Read complete available artifact pages; distinguish transport pagination from producer SQL truncation. Window further acquisition when needed, carry preceding states and unfinished gestures, and deduplicate stable event identities across boundaries. Preserve failures, truncation and exhausted budgets.
+
+### scene_finding_coverage (scene_findings)
+
+In the visible account, retain every distinct material user-operation phase, device transition and application response supported within the requested scope. Include adjacent readable intervals, identities and observed values or source limitations. A short overview or hidden structured timeline cannot replace the explanation of material findings; preserve late-trace observations and unresolved alternatives without turning reconstruction into an unrelated performance-remediation task.
+
+### scene_candidate_revision (scene_revision)
+
+Maintain the structured timeline through current-run candidate deltas. Explain every segment's user action, device state and application response, including explicit unknowns, using exact boundaries and original evidence locators. Investigate competing explanations and correct segment identity, boundaries or dependencies when evidence changes. Proposal acceptance and finite checks do not establish semantic verification or full coverage.

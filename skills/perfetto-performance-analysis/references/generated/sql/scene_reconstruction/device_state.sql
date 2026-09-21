@@ -1,15 +1,11 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scene_reconstruction.skill.yaml
--- Source SHA-256: ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 8832b9e9b6f0bb86a0676bcd50f367546a3406ef8111be90fe60511d26678d5b
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
+SELECT scene_rows.*, COUNT(*) OVER () AS total_rows FROM (
 WITH time_bounds AS (
-  SELECT MIN(ts) AS t_start, MAX(ts) AS t_end
-  FROM (
-    SELECT ts FROM slice WHERE dur > 0
-    UNION ALL
-    SELECT ts FROM counter WHERE value IS NOT NULL
-  )
+  SELECT start_ts AS t_start, end_ts AS t_end FROM trace_bounds
 ),
 -- CPU frequency ranges: report min/max freq per CPU cluster
 cpu_freq AS (
@@ -54,7 +50,7 @@ thermal AS (
     AND c.value IS NOT NULL
   GROUP BY ct.name
   HAVING c.ts = MAX(c.ts)
-  LIMIT 10
+
 ),
 -- Battery / charging status from counter tracks
 battery AS (
@@ -89,7 +85,7 @@ battery AS (
   GROUP BY ct.name
   HAVING c.ts = MIN(c.ts)
   ORDER BY c.ts
-  LIMIT 10
+
 ),
 -- Foreground apps (oom_adj <= 0)
 fg_apps AS (
@@ -111,7 +107,7 @@ fg_apps AS (
   GROUP BY p.name
   HAVING c.ts = MIN(c.ts)
   ORDER BY c.ts
-  LIMIT 20
+
 )
 SELECT * FROM cpu_freq
 UNION ALL SELECT * FROM mem_pressure
@@ -119,4 +115,5 @@ UNION ALL SELECT * FROM thermal
 UNION ALL SELECT * FROM battery
 UNION ALL SELECT * FROM fg_apps
 ORDER BY ts
-LIMIT 100
+) AS scene_rows
+LIMIT MIN(MAX(CAST(${scene_row_limit|4096} AS INT), 1), 4096)

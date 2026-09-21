@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scene_reconstruction.skill.yaml
-Source SHA-256: ec96c177d3117ad0a376bfbc407543f718b9c6d3a6be27998121846e11be3978
-Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+Source SHA-256: 8832b9e9b6f0bb86a0676bcd50f367546a3406ef8111be90fe60511d26678d5b
+Source commit: bc007586871a720aed82537913617c64fb95a459
 # 场景还原
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: scene_reconstruction
-version: '1.0'
+version: '1.1'
 type: composite
 category: interaction
 tier: S
@@ -69,13 +69,41 @@ modules:
 ## Inputs
 
 ```yaml
+- name: start_ts
+  type: timestamp
+  required: false
+- name: end_ts
+  type: timestamp
+  required: false
 - name: trace_id
   type: string
   required: true
+- name: scene_row_limit
+  type: number
+  required: false
+  default: 4096
 ```
 
 ## Ordered execution
 
+### 输入事实覆盖范围
+
+- ID: `input_coverage`
+- Type: `atomic`
+- SQL: [`../sql/scene_reconstruction/input_coverage.sql`](../sql/scene_reconstruction/input_coverage.sql)
+
+```yaml
+id: input_coverage
+type: atomic
+display:
+  level: hidden
+  layer: overview
+sql_fragments:
+- fragments/scene_input_facts.sql
+- fragments/scene_input_window.sql
+save_as: input_coverage
+optional: true
+```
 ### Trace 时间范围
 
 - ID: `trace_time_range`
@@ -149,6 +177,8 @@ display:
   - name: category
     label: 类别
     type: string
+sql_fragments:
+- fragments/scene_screen_facts.sql
 save_as: screen_events
 optional: true
 ```
@@ -229,8 +259,7 @@ optional: true
 ```yaml
 id: user_gestures
 type: atomic
-condition: table_availability.data[0]?.has_input_events === 1 && table_availability.data[0]?.has_startups === 1 && table_availability.data[0]?.has_frame_timeline
-  === 1
+condition: table_availability.data[0]?.has_input_events === 1
 display:
   level: hidden
   layer: list
@@ -265,10 +294,13 @@ display:
   - name: category
     label: 类别
     type: string
+sql_fragments:
+- fragments/scene_input_facts.sql
+- fragments/scene_input_window.sql
 save_as: gestures
 optional: true
 ```
-### 滑动启动时刻
+### 滚动处理区间
 
 - ID: `scroll_initiation`
 - Type: `atomic`
@@ -281,7 +313,7 @@ condition: table_availability.data[0]?.has_input_events === 1
 display:
   level: hidden
   layer: list
-  title: 滑动启动
+  title: 滚动处理
   columns:
   - name: ts
     label: 时间
@@ -538,7 +570,7 @@ display:
 save_as: inertial_scrolls
 optional: true
 ```
-### Idle 区间
+### 未观测到输入的区间（采集完整性未确认）
 
 - ID: `idle_periods`
 - Type: `atomic`
@@ -547,12 +579,19 @@ optional: true
 ```yaml
 id: idle_periods
 type: atomic
-condition: table_availability.data[0]?.has_input_events === 1 && table_availability.data[0]?.has_startups === 1
+condition: table_availability.data[0]?.has_input_events === 1
 display:
   level: hidden
   layer: list
-  title: 空闲区间
+  title: 未观测到输入的区间（采集完整性未确认）
+  title_i18n:
+    en: Intervals with no observed input (capture completeness unconfirmed)
   columns:
+  - name: end_ts
+    label: 结束时间
+    type: timestamp
+    unit: ns
+    hidden: true
   - name: ts
     label: 开始时间
     type: timestamp
@@ -573,6 +612,8 @@ display:
   - name: category
     label: 类别
     type: string
+sql_fragments:
+- fragments/scene_input_facts.sql
 save_as: idle_periods
 optional: true
 ```
@@ -861,6 +902,8 @@ display:
   - name: priority
     label: 优先级
     type: number
+sql_fragments:
+- fragments/scene_input_facts.sql
 save_as: operation_chain
 optional: true
 ```
@@ -915,6 +958,8 @@ display:
   - name: rating
     label: 评级
     type: string
+sql_fragments:
+- fragments/scene_input_facts.sql
 save_as: clean_timeline
 optional: true
 ```
@@ -957,6 +1002,9 @@ display:
   - name: priority
     label: 优先级
     type: number
+sql_fragments:
+- fragments/scene_input_facts.sql
+- fragments/scene_screen_facts.sql
 save_as: timeline
 optional: true
 ```
@@ -1033,11 +1081,11 @@ prompt: '你是一位 Android 性能分析专家，你的任务是帮助初学�
   说明：这里记录手指抬起（UP）后界面仍在滚动的区间，通常对应 Fling 惯性滚动
 
 
-  ## 空闲区间（Idle）
+  ## 未观测到输入的区间（采集完整性未确认）
 
   ${idle_periods}
 
-  说明：这里记录较长时间没有明显用户交互/切换的区间
+  说明：这里只记录未观测到输入的区间；采集完整性未确认，不能据此判断用户没有操作或设备空闲。
 
 
   ## App 启动事件

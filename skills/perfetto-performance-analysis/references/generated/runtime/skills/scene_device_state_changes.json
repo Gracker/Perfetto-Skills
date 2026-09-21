@@ -1,0 +1,71 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "scene_device_state_changes",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 4096,
+      "name": "row_limit",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.screen_state",
+      "android.battery.charging_states"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "bc007586871a720aed82537913617c64fb95a459",
+    "path": "backend/skills/atomic/scene_device_state_changes.skill.yaml",
+    "sha256": "095556b596031e7b8be9188eb7fef73927a190792460e88d97c190453848ed5f"
+  },
+  "steps": [
+    {
+      "id": "state_sources",
+      "name": "设备状态采集范围",
+      "query_id": "scene_device_state_changes/state_sources",
+      "result_dependencies": [],
+      "save_as": "state_sources",
+      "type": "atomic"
+    },
+    {
+      "id": "state_intervals",
+      "name": "设备状态区间",
+      "query_id": "scene_device_state_changes/state_intervals",
+      "result_dependencies": [],
+      "save_as": "state_intervals",
+      "type": "atomic"
+    }
+  ],
+  "type": "composite",
+  "version": "1.0",
+  "workflow": "scene-reconstruction"
+}

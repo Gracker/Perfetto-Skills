@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 7c73e3893771fc262f7afad100bd5963d65ee2afe54b8bd139a0cf95e9c82eb8
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 917a301ba39a39244344d671654334dbea71801fdead788f5de43bd07d2f2865
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -400,7 +400,7 @@ SELECT
     WHEN jank_responsibility = 'APP' THEN
       'FrameTimeline 确认 App 侧帧时序异常（' || COALESCE(jank_type, '未知') || '），底层原因需结合直接证据判断'
     WHEN jank_responsibility = 'BUFFER_STUFFING' THEN
-      '帧耗时 ' || ROUND(actual_dur / 1e6, 2) || 'ms，BufferQueue 阻塞（Buffer Stuffing），延迟 ' || vsync_missed || ' 个 VSync'
+      '帧耗时 ' || ROUND(actual_dur / 1e6, 2) || 'ms，原始 Buffer Stuffing 标签；呈现间隔估算跳过 ' || vsync_missed || ' 个 VSync，需核验 cadence 与 dequeue/release-fence，标签不证明 BufferQueue 阻塞或排除 App 原因'
     WHEN jank_responsibility = 'SF' AND jank_type GLOB '*Prediction Error*' THEN
       'SurfaceFlinger 调度器预测时间漂移；应看聚合占比，孤立事件通常不代表用户可感知 App 卡顿'
     WHEN jank_responsibility = 'SF' AND jank_type GLOB '*Display HAL*' THEN

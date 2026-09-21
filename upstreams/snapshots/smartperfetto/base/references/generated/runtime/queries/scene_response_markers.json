@@ -1,0 +1,232 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "scene_response_markers/response_sources",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scene_response_markers/response_sources.sql",
+      "sha256": "076c099f01119a19e7d3f3a2a8def45db203615420b031da866d06d6b9265051",
+      "signal_patterns": [
+        "FlingStart",
+        "FlingStart *",
+        "Scroll"
+      ],
+      "skill_id": "scene_response_markers",
+      "source": {
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "path": "backend/skills/atomic/scene_response_markers.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "ffba8ce063278ad7adf1117f3147088dbb88f6d85aff3296d7cba291e26b6d50"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "track",
+          "thread_track",
+          "thread",
+          "process_track",
+          "process",
+          "trace_bounds"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "response_sources",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/scene_response_marker_facts.sql",
+            "source_sha256": "1d4b4b1e3d41541acb418fe44b3aaf53357b5fce9d1d02c852e1e99a7a9fa164"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "row_limit",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices"
+        ]
+      },
+      "id": "scene_response_markers/response_markers",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scene_response_markers/response_markers.sql",
+      "sha256": "6513cba218d2a0f64a2becfa1273b7363dc4e499f1e09d8c7d4d31f50947caf6",
+      "signal_patterns": [
+        "FlingStart",
+        "FlingStart *",
+        "Scroll"
+      ],
+      "skill_id": "scene_response_markers",
+      "source": {
+        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "path": "backend/skills/atomic/scene_response_markers.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "ffba8ce063278ad7adf1117f3147088dbb88f6d85aff3296d7cba291e26b6d50"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "track",
+          "thread_track",
+          "thread",
+          "process_track",
+          "process",
+          "trace_bounds"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "response_markers",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/scene_response_marker_facts.sql",
+            "source_sha256": "1d4b4b1e3d41541acb418fe44b3aaf53357b5fce9d1d02c852e1e99a7a9fa164"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "row_limit",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "scene_response_markers"
+}

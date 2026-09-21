@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
--- Source SHA-256: 0a859a43248b1f22f4883740217d1a87512628179bae6f459c4ec6c1295f8c39
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: fed929d6d7ff2b89a7099eb9a05664bfac7d412ebe1e7ce67bb2cf1d123282ab
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 WITH
 -- 频率采样（带拓扑分类）
@@ -42,7 +42,10 @@ SELECT
   ROUND(MIN(min_freq), 0) as min_freq_mhz,
   ROUND(MAX(max_freq), 0) as max_freq_mhz,
   ROUND(100.0 * (MAX(max_freq) - MIN(min_freq)) / NULLIF(MAX(max_freq), 0), 1) as freq_drop_pct,
-  CASE WHEN MIN(min_freq) < MAX(max_freq) * 0.7 THEN 1 ELSE 0 END as throttle_detected
+  CASE WHEN MIN(min_freq) < MAX(max_freq) * 0.7 THEN 1 ELSE 0 END as frequency_variation_detected,
+  NULL as throttle_detected,
+  'thermal_evidence_missing' as evidence_status,
+  '频率变化可能来自负载下降或空闲 DVFS；需直接限频证据与同窗口负载才能确定热控原因' as interpretation
 FROM per_cpu_stats
 GROUP BY
   CASE

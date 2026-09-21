@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
--- Source SHA-256: ce0f0f6648e41098ec6dbbc24717b4d7fdb5047edf34700c9a446c4a49fed625
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: 88ec9683e76751ade4cdc4a899a482dfba921d757006beab05b108b52ba9d299
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 WITH analysis_window AS (
   SELECT
@@ -18,7 +18,7 @@ main_thread AS (
   SELECT t.utid, t.tid, p.upid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE p.name GLOB '${process_name}*'
+  WHERE '${process_name}' != '' AND p.name GLOB '${process_name}*'
     AND (t.is_main_thread = 1 OR t.tid = p.pid)
   LIMIT 1
 ),

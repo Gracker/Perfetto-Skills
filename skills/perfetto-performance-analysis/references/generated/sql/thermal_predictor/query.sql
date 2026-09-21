@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thermal_predictor.skill.yaml
--- Source SHA-256: 16bb6ec7bc5e0769d25f1b2b46ed3a8d7d71648c6c6ae67e745ef86966aaa7ef
--- Source commit: e198ac39082cf1b029b0833e46e8ee49dd9387ce
+-- Source SHA-256: b08c970d2d762c889d727456acccfef18f7088620076c63b8de51afc4b6704fa
+-- Source commit: bc007586871a720aed82537913617c64fb95a459
 
 WITH freq_samples AS (
   SELECT
@@ -69,20 +69,21 @@ SELECT
          ) >= ${medium_core_ratio_threshold_pct|25}
       THEN 'medium'
     ELSE 'low'
-  END as thermal_risk,
+  END as frequency_trend_risk,
+  'unknown' as thermal_risk,
   CASE
     WHEN AVG(drop_pct) >= ${high_drop_threshold_pct|30}
          OR (
            100.0 * SUM(CASE WHEN start_freq_mhz IS NOT NULL AND start_freq_mhz > 0 THEN likely_throttled ELSE 0 END)
            / NULLIF(SUM(CASE WHEN start_freq_mhz IS NOT NULL AND start_freq_mhz > 0 THEN 1 ELSE 0 END), 0)
          ) >= ${high_core_ratio_threshold_pct|50}
-      THEN '频率持续下探，预计短时间内出现热限频，建议降载或分批执行重任务'
+      THEN '频率变化显著；负载下降或空闲 DVFS 也可产生此信号，热限频原因未核验'
     WHEN AVG(drop_pct) >= ${medium_drop_threshold_pct|15}
          OR (
            100.0 * SUM(CASE WHEN start_freq_mhz IS NOT NULL AND start_freq_mhz > 0 THEN likely_throttled ELSE 0 END)
            / NULLIF(SUM(CASE WHEN start_freq_mhz IS NOT NULL AND start_freq_mhz > 0 THEN 1 ELSE 0 END), 0)
          ) >= ${medium_core_ratio_threshold_pct|25}
-      THEN '存在热压趋势，建议观察后续频率恢复与帧稳定性'
-    ELSE '当前热控风险较低'
+      THEN '观测到频率下探，需核对负载、温度和直接限频证据'
+    ELSE '频率变化较小；热控风险仍需温度和直接限频证据'
   END as prediction
 FROM scored
