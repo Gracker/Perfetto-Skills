@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/main_thread_frame_work.skill.yaml
 -- Source SHA-256: 335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 SELECT COALESCE(${start_ts}, (SELECT start_ts FROM trace_bounds)) AS start_ts, COALESCE(${end_ts}, (SELECT end_ts FROM trace_bounds)) AS end_ts

@@ -1,17 +1,121 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_heap_graph_summary.skill.yaml
--- Source SHA-256: e4b8220ce04f7c700df3feb487e732421353aeda901ecc144e00008b8cc3b2d6
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: de6251b10137d1d773f7eef2c440c14fbe12fc4312d3dee7872e20ec632eb0e8
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
-WITH sample_totals AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Process scope shared by the heap graph and heapprofd Skills. Candidates are
+-- processes that have heap data (a heap graph dump or heapprofd allocations).
+-- Rule, in order:
+--   1. An explicit upid selects exactly that process.
+--   2. process_name (or package) matches a process name exactly or as its
+--      `name:*` subprocess. There is no substring matching, so `com.foo` never
+--      selects `com.foobar`.
+--   3. When a name was given and no candidate matches, candidates without a
+--      process name are used instead (an .hprof dump has none) and flagged
+--      process_name_unavailable_upid_fallback; they are never silently dropped.
+--   4. With no upid and no name every candidate is in scope.
+heap_target_input AS (
   SELECT
-    upid,
-    graph_sample_ts,
-    reachable_heap_size
-  FROM android_heap_graph_stats
+    ${upid} AS target_upid,
+    COALESCE(NULLIF('${process_name|}', ''), NULLIF('${package|}', ''), '') AS target_name
+),
+heap_data_processes AS (
+  SELECT upid FROM heap_graph
+  UNION
+  SELECT DISTINCT upid FROM heap_profile_allocation
+),
+heap_target_name_matches AS (
+  SELECT d.upid
+  FROM heap_data_processes AS d
+  JOIN process AS p USING (upid)
+  CROSS JOIN heap_target_input AS i
+  WHERE i.target_name != ''
+    AND (p.name = i.target_name OR p.name GLOB i.target_name || ':*')
+),
+heap_target_process AS (
+  SELECT
+    d.upid,
+    COALESCE(p.name, printf('upid:%d', d.upid)) AS process_name,
+    CASE
+      WHEN i.target_upid IS NOT NULL THEN 'upid_selected'
+      WHEN i.target_name = '' THEN 'all_heap_processes'
+      WHEN m.upid IS NOT NULL THEN 'process_name_match'
+      ELSE 'process_name_unavailable_upid_fallback'
+    END AS process_identity
+  FROM heap_data_processes AS d
+  CROSS JOIN heap_target_input AS i
+  LEFT JOIN process AS p USING (upid)
+  LEFT JOIN heap_target_name_matches AS m USING (upid)
+  WHERE (i.target_upid IS NOT NULL AND d.upid = i.target_upid)
+    OR (i.target_upid IS NULL AND (
+      i.target_name = ''
+      OR m.upid IS NOT NULL
+      OR (p.name IS NULL AND NOT EXISTS (SELECT 1 FROM heap_target_name_matches))
+    ))
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Heap graph dumps in scope, one row per (upid, graph_sample_ts). Requires
+-- fragments/heap_target_process.sql before it (process rule lives there).
+-- An incomplete dump (packet loss, non-finalized graph) keeps forward
+-- references as placeholder objects with self_size = -1, typed with class id
+-- 0; they are counted here per scoped dump and never read as real objects.
+-- dump_issues lists heap_graph/hprof error or data-loss stats for the process
+-- (or global ones); either signal marks the dump incomplete, so its sizes and
+-- counts are lower bounds.
+heap_graph_dump_scope AS MATERIALIZED (
+  SELECT
+    d.*,
+    CASE
+      WHEN d.placeholder_object_count > 0 OR d.dump_issues IS NOT NULL THEN 'incomplete_dump'
+      ELSE 'no_incompleteness_signal'
+    END AS dump_completeness
+  FROM (
+    SELECT
+      h.upid,
+      h.ts AS graph_sample_ts,
+      t.process_name,
+      t.process_identity,
+      (
+        SELECT COUNT(*)
+        FROM heap_graph_object AS o
+        WHERE o.upid = h.upid
+          AND o.graph_sample_ts = h.ts
+          AND o.self_size = -1
+      ) AS placeholder_object_count,
+      (
+        SELECT GROUP_CONCAT(s.name || '=' || s.value, ', ')
+        FROM stats AS s
+        WHERE (s.name GLOB 'heap_graph*' OR s.name GLOB 'hprof*')
+          AND s.severity IN ('error', 'data_loss')
+          AND s.value > 0
+          AND (s.idx = h.upid OR s.idx IS NULL)
+      ) AS dump_issues
+    FROM heap_graph AS h
+    JOIN heap_target_process AS t USING (upid)
+    WHERE ${graph_sample_ts} IS NULL OR h.ts = ${graph_sample_ts}
+  ) AS d
+),
+-- The only read path for heap objects: real objects of scoped dumps, so no
+-- sum or count can include a placeholder.
+heap_graph_scoped_objects AS (
+  SELECT o.*
+  FROM heap_graph_object AS o
+  JOIN heap_graph_dump_scope AS d
+    ON d.upid = o.upid
+    AND d.graph_sample_ts = o.graph_sample_ts
+  WHERE o.self_size >= 0
 )
 SELECT
-  COALESCE(p.name, printf('upid:%d', classes.upid)) AS process_name,
+  d.process_name,
   printf('%d', classes.graph_sample_ts) AS graph_sample_ts,
   classes.name AS class_name,
   classes.root_type,
@@ -19,21 +123,20 @@ SELECT
   ROUND(classes.self_size / 1048576.0, 2) AS self_size_mb,
   classes.cumulative_count,
   ROUND(classes.cumulative_size / 1048576.0, 2) AS cumulative_size_mb,
-  ROUND(100.0 * classes.cumulative_size / NULLIF(sample_totals.reachable_heap_size, 0), 2) AS retained_pct_of_sample,
+  ROUND(100.0 * classes.cumulative_size / NULLIF(z.reachable_heap_size, 0), 2) AS retained_pct_of_sample,
   CASE
     WHEN classes.root_type IN ('ROOT_JAVA_FRAME', 'ROOT_JNI_GLOBAL') AND classes.cumulative_size > 1048576 THEN 'root_retainer'
     WHEN classes.name GLOB '*Activity*' AND classes.self_count > 1 THEN 'activity_instances'
     WHEN classes.name GLOB '*Fragment*' AND classes.self_count > 5 THEN 'fragment_instances'
-    WHEN classes.cumulative_size > sample_totals.reachable_heap_size * 0.2 THEN 'dominant_retainer'
+    WHEN classes.cumulative_size > z.reachable_heap_size * 0.2 THEN 'dominant_retainer'
     ELSE 'inspect_if_relevant'
   END AS leak_hint
 FROM android_heap_graph_class_summary_tree AS classes
-JOIN sample_totals
-  ON sample_totals.upid = classes.upid
-  AND sample_totals.graph_sample_ts = classes.graph_sample_ts
-LEFT JOIN process AS p
-  ON p.upid = classes.upid
-WHERE ('${process_name}' = '' OR p.name GLOB '*${process_name}*')
-  AND (${graph_sample_ts} IS NULL OR classes.graph_sample_ts = ${graph_sample_ts})
+JOIN heap_graph_dump_scope AS d
+  ON d.upid = classes.upid
+  AND d.graph_sample_ts = classes.graph_sample_ts
+LEFT JOIN __sp_heap_graph_dump_sizes AS z
+  ON z.upid = classes.upid
+  AND z.graph_sample_ts = classes.graph_sample_ts
 ORDER BY classes.cumulative_size DESC
 LIMIT COALESCE(${max_rows|30}, 30)

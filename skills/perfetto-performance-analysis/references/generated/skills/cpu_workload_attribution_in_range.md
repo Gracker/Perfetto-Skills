@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_workload_attribution_in_range.skill.yaml
 Source SHA-256: deda79ad447ced6323b09d92a57c1031fe27378e197e1e8cb0845a30efca29e8
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 窗口 CPU 负载归因
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

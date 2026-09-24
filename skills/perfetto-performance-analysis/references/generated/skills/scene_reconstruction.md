@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scene_reconstruction.skill.yaml
-Source SHA-256: 8832b9e9b6f0bb86a0676bcd50f367546a3406ef8111be90fe60511d26678d5b
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 2dc3194fd8730e6ce16c5d4db97860cc8cdfccee8b6b2f23dfd11ddb3d752ab4
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 场景还原
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -99,6 +99,7 @@ display:
   level: hidden
   layer: overview
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/scene_input_facts.sql
 - fragments/scene_input_window.sql
 save_as: input_coverage
@@ -295,6 +296,7 @@ display:
     label: 类别
     type: string
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/scene_input_facts.sql
 - fragments/scene_input_window.sql
 save_as: gestures
@@ -613,6 +615,7 @@ display:
     label: 类别
     type: string
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/scene_input_facts.sql
 save_as: idle_periods
 optional: true
@@ -903,6 +906,7 @@ display:
     label: 优先级
     type: number
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/scene_input_facts.sql
 save_as: operation_chain
 optional: true
@@ -959,6 +963,7 @@ display:
     label: 评级
     type: string
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/scene_input_facts.sql
 save_as: clean_timeline
 optional: true
@@ -1003,6 +1008,7 @@ display:
     label: 优先级
     type: number
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/scene_input_facts.sql
 - fragments/scene_screen_facts.sql
 save_as: timeline

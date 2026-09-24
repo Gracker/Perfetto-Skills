@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/vsync_phase_alignment.skill.yaml
-Source SHA-256: aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 72caf1238bfbf0f4c1aa7d5644f91719be30535ea54bee340c89bc2827eb11ba
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # VSync 相位对齐分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -121,6 +121,8 @@ display:
     label: VSync等待(ms)
     type: duration
     format: duration_ms
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 ```
 ### 相位分布统计
 
@@ -142,6 +144,8 @@ display:
   - name: value
     label: 值
     type: string
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 ```
 ## Output and evidence contract
 

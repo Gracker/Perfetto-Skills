@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S04_textureview_type.md
 Source SHA-256: 2eff31edccc57811d6795c873ec59411e167b8344a538629ee1db77e5a8e4ce5
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 # Android Perfetto 系列 - App 出图类型 - TextureView 类型
 

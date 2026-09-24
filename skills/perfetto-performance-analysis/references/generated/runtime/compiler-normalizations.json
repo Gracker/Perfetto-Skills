@@ -1,6 +1,106 @@
 {
   "normalizations": [
     {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_heap_dominator_path_extract/data_check",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_heap_dominator_path_extract/data_check",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_heap_dominator_path_extract/dominator_paths",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_heap_dominator_path_extract/dominator_paths",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_heap_graph_leak_candidates/leak_candidates",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_heap_graph_leak_candidates/leak_candidates",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_heap_graph_leak_candidates/reference_holders",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_heap_graph_leak_candidates/reference_holders",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_heap_graph_summary/heap_graph_availability",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_heap_graph_summary/heap_graph_availability",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_heap_graph_summary/heap_graph_samples",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_heap_graph_summary/heap_graph_samples",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_heap_graph_summary/heap_graph_truncation",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_heap_graph_summary/heap_graph_truncation",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_heap_graph_summary/top_retained_classes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_heap_graph_summary/top_retained_classes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_memory_v57_ai_diagnostics/heap_graph_repeated_objects",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_memory_v57_ai_diagnostics/heap_graph_repeated_objects",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_memory_v57_ai_diagnostics/heap_graph_size_frequencies",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_graph_dump_scope.sql.source_sha256",
+      "query_id": "android_memory_v57_ai_diagnostics/heap_graph_size_frequencies",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.system_sched_spans.sql.source_sha256",
       "query_id": "anr_analysis/system_cpu_health",
       "reason": "hash identifies the packaged runtime fragment"
@@ -91,6 +191,41 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/check_input_data",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/get_process",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/input_latency_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/latency_by_event_type",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/latency_by_window",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/slow_input_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/input_thread_state",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "click_response_analysis/input_thread_state",
       "reason": "hash identifies the packaged runtime fragment"
@@ -98,6 +233,26 @@
     {
       "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
       "query_id": "click_response_analysis/input_thread_state",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/input_binder_calls",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/input_to_frame",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_analysis/latency_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "click_response_detail/input_pipeline_lifecycle",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -481,6 +636,31 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "input_events_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "input_to_frame_latency/input_sampling_rate",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "input_to_frame_latency/per_frame_latency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "input_to_frame_latency/latency_statistics",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "input_to_frame_latency/latency_spikes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
       "query_id": "io_pressure/data_check",
       "reason": "hash identifies the packaged runtime fragment"
@@ -686,6 +866,26 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "native_heap_breakdown/heap_profile_inventory",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_profile_scope.sql.source_sha256",
+      "query_id": "native_heap_breakdown/heap_profile_inventory",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "native_heap_breakdown/native_heap_hotspots",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_profile_scope.sql.source_sha256",
+      "query_id": "native_heap_breakdown/native_heap_hotspots",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "page_fault_in_range/root",
       "reason": "hash identifies the packaged runtime fragment"
@@ -751,6 +951,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scene_reconstruction/input_coverage",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.scene_input_facts.sql.source_sha256",
       "query_id": "scene_reconstruction/input_coverage",
       "reason": "hash identifies the packaged runtime fragment"
@@ -766,6 +971,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scene_reconstruction/user_gestures",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.scene_input_facts.sql.source_sha256",
       "query_id": "scene_reconstruction/user_gestures",
       "reason": "hash identifies the packaged runtime fragment"
@@ -776,8 +986,18 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scene_reconstruction/idle_periods",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.scene_input_facts.sql.source_sha256",
       "query_id": "scene_reconstruction/idle_periods",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scene_reconstruction/operation_chain",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -786,8 +1006,18 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scene_reconstruction/clean_timeline",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.scene_input_facts.sql.source_sha256",
       "query_id": "scene_reconstruction/clean_timeline",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scene_reconstruction/merged_timeline",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -858,6 +1088,11 @@
     {
       "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
       "query_id": "scheduling_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scroll_response_latency/root",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -951,6 +1186,16 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scrolling_analysis/input_data_check",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scrolling_analysis/input_latency_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "scrolling_analysis/expert_analysis_window",
       "reason": "hash identifies the packaged runtime fragment"
@@ -998,6 +1243,11 @@
     {
       "field": "template.fragments.root_cause_sample_cap.sql.source_sha256",
       "query_id": "scrolling_analysis/get_app_jank_frames",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "scrolling_analysis/batch_frame_root_cause",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -1256,6 +1506,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "state_timeline/input_coverage",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.scene_input_facts.sql.source_sha256",
       "query_id": "state_timeline/input_coverage",
       "reason": "hash identifies the packaged runtime fragment"
@@ -1266,8 +1521,18 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "state_timeline/input_state_lane_frames",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.scene_input_facts.sql.source_sha256",
       "query_id": "state_timeline/input_state_lane_frames",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "state_timeline/input_state_lane_fallback",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -1393,6 +1658,21 @@
     {
       "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
       "query_id": "thread_system_summary_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "touch_to_display_latency/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "vsync_phase_alignment/phase_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.android_input_events_normalized.sql.source_sha256",
+      "query_id": "vsync_phase_alignment/phase_distribution",
       "reason": "hash identifies the packaged runtime fragment"
     }
   ],

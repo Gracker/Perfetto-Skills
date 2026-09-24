@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/input_to_frame_latency.skill.yaml
-Source SHA-256: 1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 40aedd3e7920ed09d8db24bb531a0799836e04ad1f129ba0b23358230a4af76d
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 逐帧 Input-to-Display 延迟
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -123,6 +123,8 @@ display:
   - name: total_events
     label: 事件总数
     type: number
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 ```
 ### 逐帧延迟
 
@@ -179,6 +181,8 @@ display:
   - name: rating
     label: 评级
     type: string
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 ```
 ### 延迟统计
 
@@ -200,6 +204,8 @@ display:
   - name: value_ms
     label: 值(ms)
     type: number
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 ```
 ### 延迟飙升检测
 
@@ -234,6 +240,8 @@ display:
   - name: is_speculative
     label: 推测帧
     type: boolean
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 ```
 ## Output and evidence contract
 

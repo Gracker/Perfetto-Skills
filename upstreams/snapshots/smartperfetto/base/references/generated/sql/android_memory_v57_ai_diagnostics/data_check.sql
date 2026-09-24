@@ -1,11 +1,17 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml
--- Source SHA-256: 7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: bb2e6b53cdde9eef70dca527316ceb2d87cdaed5c609cafd9ec516f76b3cd770
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 SELECT
   (SELECT COUNT(*) FROM android_heap_graph_stats) AS heap_graph_samples,
   (SELECT COUNT(*) FROM android_heap_graph_class_summary_tree) AS heap_graph_class_rows,
-  (SELECT COUNT(*) FROM heap_graph_object) AS heap_graph_objects,
-  (SELECT COUNT(*) FROM heap_profile_allocation) AS heap_profile_allocations,
-  (SELECT COUNT(*) FROM android_heap_profile_summary_tree) AS heap_profile_summary_rows
+  objects.heap_graph_objects,
+  objects.heap_graph_placeholder_objects,
+  (SELECT COUNT(*) FROM heap_profile_allocation) AS heap_profile_allocations
+FROM (
+  SELECT
+    COUNT(*) AS heap_graph_objects,
+    COALESCE(SUM(self_size = -1), 0) AS heap_graph_placeholder_objects
+  FROM heap_graph_object
+) AS objects

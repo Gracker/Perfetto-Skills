@@ -59,14 +59,14 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "8f7f45304eca3a0d964bb7642df5124f196d686515004f66bfb6bc2bb119c359",
+      "sha256": "a3322d8383733d0f93bffc8d4cce55485b2b7b9cc092a9c238e28dc9882bf17d",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_hot_slice_states",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/atomic/startup_hot_slice_states.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "d87bcfb1ca39ddc75d8a3175c3e44a4155e55a79ca1c50e34de7315d83bc1517"
@@ -85,12 +85,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
+            "source_sha256": "d85ebb91e2373508a290992bbfb3f44159c3ec686683118fad18266e2eba5645"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
-            "source_sha256": "48ab049a0b2a75d4a0fa85f035a936b253729c8144b54ecc484e9f02c3f945a5"
+            "source_sha256": "b9e61024dff62c0a3768ec723449ce80a97bbd18150862ae7825ec4f4a452be5"
           }
         ],
         "name_parameters": [],

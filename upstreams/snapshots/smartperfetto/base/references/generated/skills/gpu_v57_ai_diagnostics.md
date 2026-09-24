@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml
 Source SHA-256: ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # GPU v57 AI Diagnostics
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/sf_layer_count_in_range.skill.yaml
 Source SHA-256: 32c86a668275bbbc02ac545c67d1fef7366d86414bac478468751d7dde71027a
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # SF 图层数统计
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

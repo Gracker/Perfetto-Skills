@@ -58,14 +58,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/trace_window.sql",
-      "sha256": "9604da253a9134a60180f26a86704f7e743765486985a24722cd92778b2e178f",
+      "sha256": "cca9de4ccc9e1412d9ceefffecb95dd0429aa66e24390aa68787be1f154ae0c6",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
+        "sha256": "1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -160,14 +160,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/trace_diagnostics.sql",
-      "sha256": "a63554e02725cb0297a5316eae953f6e839729bddb709f9436e848a02a77ffc8",
+      "sha256": "0106da281156d4b73f5d720d96089bd4b21f025dfa2fec39d413cd19538b63d0",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
+        "sha256": "1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -251,6 +251,106 @@
           "thread_states"
         ]
       },
+      "id": "global_trace_sanity_check/data_loss_stats",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/global_trace_sanity_check/data_loss_stats.sql",
+      "sha256": "ef727d34c1b878c93f736f7dafb3932487035221cba01f368df1518c5ac14bb0",
+      "signal_patterns": [],
+      "skill_id": "global_trace_sanity_check",
+      "source": {
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "sched.thread_level_parallelism"
+        ],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread_state",
+          "sched_slice"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "data_loss_stats",
+      "template": {
+        "fragments": [],
+        "name_parameters": [],
+        "parameters": [
+          "max_rows"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "slices",
+          "thread_states"
+        ]
+      },
       "id": "global_trace_sanity_check/top_d_state_threads",
       "identity": {
         "policy": "none"
@@ -260,14 +360,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/top_d_state_threads.sql",
-      "sha256": "187f25c2cab502c6304ba85e1d6c0b5b895e0edb2965233e28c011dd10f9b3f4",
+      "sha256": "5bc0ea0e7dfde7e901d6ee8b3655c963bd9a742b8df1ea8f39fba9df71fd37c3",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
+        "sha256": "1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -362,14 +462,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/top_runnable_waits.sql",
-      "sha256": "2af8ff885062cd40347900396d7e187a9351ae4a363939b4997f9aa7db6c64ca",
+      "sha256": "696449c069da8bbccbfc939a0358b0156578d5076484acd2c6358be6a4e2df45",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
+        "sha256": "1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -464,14 +564,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/runqueue_pressure.sql",
-      "sha256": "e793dfd6c291dcdae395bc04a859990524d638e8271b04d8cdd243c558b20149",
+      "sha256": "013574e844f361a9a5ae2bab94cbae995f2946e6fdea9c81dc0309b7868d02d7",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
+        "sha256": "1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -565,14 +665,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/global_trace_sanity_check/top_cpu_processes.sql",
-      "sha256": "290bb8f1e3c6c0426fa1ae152531844aee26877bf49aa6d20582bc61c54225ff",
+      "sha256": "51e75b9ca5e0ffa6c4979ef26a5fc7f2f36fbe0ad1fc7321111b4b7dd586f360",
       "signal_patterns": [],
       "skill_id": "global_trace_sanity_check",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
+        "sha256": "1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0"
       },
       "sql_dependencies": {
         "creates": [],

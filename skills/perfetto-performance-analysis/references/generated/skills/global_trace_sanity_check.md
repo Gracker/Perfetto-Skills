@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/global_trace_sanity_check.skill.yaml
-Source SHA-256: a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 全局 Trace Sanity 检查
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -186,6 +186,38 @@ display:
     type: number
     hidden: true
 save_as: trace_diagnostics
+```
+### 数据丢失统计
+
+- ID: `data_loss_stats`
+- Type: `atomic`
+- SQL: [`../sql/global_trace_sanity_check/data_loss_stats.sql`](../sql/global_trace_sanity_check/data_loss_stats.sql)
+
+```yaml
+id: data_loss_stats
+type: atomic
+display:
+  level: summary
+  layer: list
+  title: 数据丢失统计
+  columns:
+  - name: name
+    label: 统计项
+    type: string
+  - name: idx
+    label: 索引
+    type: number
+  - name: value
+    label: 丢失计数
+    type: number
+  - name: source
+    label: 来源
+    type: string
+  - name: description
+    label: 说明
+    type: string
+    format: truncate
+save_as: data_loss_stats
 ```
 ### 最长 Slice
 

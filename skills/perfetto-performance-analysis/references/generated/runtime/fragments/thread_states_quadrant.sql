@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/thread_states_quadrant.sql
 -- Source SHA-256: 1f65fbcca966c86979223453dc24fc86479415b3dd6698a494373c93336d2e64
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)

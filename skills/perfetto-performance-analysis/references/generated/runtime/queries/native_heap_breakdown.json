@@ -46,6 +46,115 @@
         },
         "probe_capabilities": []
       },
+      "id": "native_heap_breakdown/heap_profile_inventory",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/native_heap_breakdown/heap_profile_inventory.sql",
+      "sha256": "4cb77ba48ff6c92baf6c4d892b4dad10ecf92c6c6f4b288b114c7a07c5b95e37",
+      "signal_patterns": [
+        "heapprofd*",
+        "heapprofd_malformed_packet"
+      ],
+      "skill_id": "native_heap_breakdown",
+      "source": {
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "c60782edef05f79ebd9a79e7f0f8f3f2dfec35cd35c839c661f0f34a68681fff"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "callstacks.stack_profile"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "heap_profile_inventory",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/heap_target_process.sql",
+            "source_sha256": "691ca21707634557e50038d8b74d569c796105163d5fa4a34e30bdb7e272c9cc"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/heap_profile_scope.sql",
+            "source_sha256": "aaf66e02b87f61b1b2b3b93a4e1e8ca62e616ebaddc0aab1c5767dfab232bdf7"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "package",
+          "process_name",
+          "upid"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
       "id": "native_heap_breakdown/native_heap_hotspots",
       "identity": {
         "policy": "none"
@@ -55,19 +164,26 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/native_heap_breakdown/native_heap_hotspots.sql",
-      "sha256": "e53cb767c655fe348028a1d042cde9e94f4c496f252d76e57556d7bd2fec969b",
-      "signal_patterns": [],
+      "sha256": "2e401c10b401cc3fb81f9c4ccf320e1e84458e9d171e96e528ab2729d2953dfe",
+      "signal_patterns": [
+        "/[[]anon_shmem:dalvik-jit-code-cache]*",
+        "/apex/com.android.art/*",
+        "/apex/com.android.runtime/*",
+        "/system/lib*/libart.so",
+        "/system/lib*/libc++.so",
+        "/system/lib*/libc.so"
+      ],
       "skill_id": "native_heap_breakdown",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9de17b88dbea86451c2107ac4494967a6a6bb290b473eefe52f7650cc9e00550"
+        "sha256": "c60782edef05f79ebd9a79e7f0f8f3f2dfec35cd35c839c661f0f34a68681fff"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "android.memory.heap_profile.summary_tree"
+          "callstacks.stack_profile"
         ],
         "drops": [],
         "required_tables": [],
@@ -76,12 +192,26 @@
       },
       "step_id": "native_heap_hotspots",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/heap_target_process.sql",
+            "source_sha256": "691ca21707634557e50038d8b74d569c796105163d5fa4a34e30bdb7e272c9cc"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/heap_profile_scope.sql",
+            "source_sha256": "aaf66e02b87f61b1b2b3b93a4e1e8ca62e616ebaddc0aab1c5767dfab232bdf7"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "max_rows",
           "min_alloc_mb",
-          "min_size_mb"
+          "min_size_mb",
+          "package",
+          "process_name",
+          "upid"
         ],
         "result_dependencies": [],
         "runtime_bindings": []

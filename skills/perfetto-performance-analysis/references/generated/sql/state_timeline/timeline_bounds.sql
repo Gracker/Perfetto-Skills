@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/state_timeline.skill.yaml
--- Source SHA-256: fd6c633f728fed86747941747f63d55962479f3073fb5dada8da2116d5ec350b
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: b623b459c65d02509ded27617664691fec7c3b8848ac371759151eb7064d489a
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 SELECT
   printf('%d', start_ts) AS t_start,

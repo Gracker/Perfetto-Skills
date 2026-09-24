@@ -55,14 +55,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_memory_v57_ai_diagnostics/data_check.sql",
-      "sha256": "4e5fc34bec5297a114cdcdf5f4d9346fa12dbb954e3c8a43e1a18113473f9679",
+      "sha256": "a00a066ae5e92cef382031d97a9873540e677e905e2090eb08690d358d46e1ad",
       "signal_patterns": [],
       "skill_id": "android_memory_v57_ai_diagnostics",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+        "sha256": "bb2e6b53cdde9eef70dca527316ceb2d87cdaed5c609cafd9ec516f76b3cd770"
       },
       "sql_dependencies": {
         "creates": [],
@@ -70,8 +70,7 @@
           "prelude.after_eof.memory",
           "prelude.after_eof.views",
           "android.memory.heap_graph.heap_graph_stats",
-          "android.memory.heap_graph.class_summary_tree",
-          "android.memory.heap_profile.summary_tree"
+          "android.memory.heap_graph.class_summary_tree"
         ],
         "drops": [],
         "required_tables": [],
@@ -152,14 +151,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_memory_v57_ai_diagnostics/heap_graph_repeated_objects.sql",
-      "sha256": "4c3d5fda20d0d5f542375b8d1c934fb94babdacd098331ffcbce4156f6bbb7aa",
-      "signal_patterns": [],
+      "sha256": "41630e434eb02d2a6079a8c5d1a3c6372892be4257dafa1abaf6ceff98d95f92",
+      "signal_patterns": [
+        "heap_graph*",
+        "hprof*"
+      ],
       "skill_id": "android_memory_v57_ai_diagnostics",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+        "sha256": "bb2e6b53cdde9eef70dca527316ceb2d87cdaed5c609cafd9ec516f76b3cd770"
       },
       "sql_dependencies": {
         "creates": [],
@@ -167,8 +169,7 @@
           "prelude.after_eof.memory",
           "prelude.after_eof.views",
           "android.memory.heap_graph.heap_graph_stats",
-          "android.memory.heap_graph.class_summary_tree",
-          "android.memory.heap_profile.summary_tree"
+          "android.memory.heap_graph.class_summary_tree"
         ],
         "drops": [],
         "required_tables": [],
@@ -177,12 +178,25 @@
       },
       "step_id": "heap_graph_repeated_objects",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/heap_target_process.sql",
+            "source_sha256": "e788383fbf3eb24fe8a5df419b95a9694046dc64f51c7852daea28d4547285db"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/heap_graph_dump_scope.sql",
+            "source_sha256": "8dd10469b7bd15dfae1d2d9cfd2d15ce2140f3353d85c9a3587290535ec8bceb"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "graph_sample_ts",
           "max_rows",
-          "process_name"
+          "package",
+          "process_name",
+          "upid"
         ],
         "result_dependencies": [],
         "runtime_bindings": []
@@ -253,14 +267,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_memory_v57_ai_diagnostics/heap_graph_size_frequencies.sql",
-      "sha256": "3d1acea3204fda1832cbb9b117446d36d1481bfea58c9102b601245b56e007b7",
-      "signal_patterns": [],
+      "sha256": "5fad75714ba55af10f5e74e0c834d089ff444f4a83eef9a19b025a3fce51c66d",
+      "signal_patterns": [
+        "heap_graph*",
+        "hprof*"
+      ],
       "skill_id": "android_memory_v57_ai_diagnostics",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+        "sha256": "bb2e6b53cdde9eef70dca527316ceb2d87cdaed5c609cafd9ec516f76b3cd770"
       },
       "sql_dependencies": {
         "creates": [],
@@ -268,8 +285,7 @@
           "prelude.after_eof.memory",
           "prelude.after_eof.views",
           "android.memory.heap_graph.heap_graph_stats",
-          "android.memory.heap_graph.class_summary_tree",
-          "android.memory.heap_profile.summary_tree"
+          "android.memory.heap_graph.class_summary_tree"
         ],
         "drops": [],
         "required_tables": [],
@@ -278,110 +294,25 @@
       },
       "step_id": "heap_graph_size_frequencies",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/heap_target_process.sql",
+            "source_sha256": "e788383fbf3eb24fe8a5df419b95a9694046dc64f51c7852daea28d4547285db"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/heap_graph_dump_scope.sql",
+            "source_sha256": "8dd10469b7bd15dfae1d2d9cfd2d15ce2140f3353d85c9a3587290535ec8bceb"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "graph_sample_ts",
           "max_rows",
-          "process_name"
-        ],
-        "result_dependencies": [],
-        "runtime_bindings": []
-      },
-      "validation": {
-        "default_execution": "capability_gate_required",
-        "execution_verified": false,
-        "fixtures": [],
-        "runtime_compatible": null,
-        "semantic_verified": false,
-        "static_valid": true
-      }
-    },
-    {
-      "compatibility": {
-        "android": {
-          "28": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "29": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "30": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "31": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "32": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "33": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "34": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "35": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "36": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "37": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          }
-        },
-        "probe_capabilities": []
-      },
-      "id": "android_memory_v57_ai_diagnostics/heap_profile_hotspots",
-      "identity": {
-        "policy": "none"
-      },
-      "license": {
-        "origin": "smartperfetto",
-        "spdx": "AGPL-3.0-or-later"
-      },
-      "path": "sql/android_memory_v57_ai_diagnostics/heap_profile_hotspots.sql",
-      "sha256": "3970868e9bc379a229ecac1234873dcc53f5cb8edc7867dc85282f135d435e36",
-      "signal_patterns": [],
-      "skill_id": "android_memory_v57_ai_diagnostics",
-      "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
-        "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
-        "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
-      },
-      "sql_dependencies": {
-        "creates": [],
-        "declared_modules": [
-          "prelude.after_eof.memory",
-          "prelude.after_eof.views",
-          "android.memory.heap_graph.heap_graph_stats",
-          "android.memory.heap_graph.class_summary_tree",
-          "android.memory.heap_profile.summary_tree"
-        ],
-        "drops": [],
-        "required_tables": [],
-        "requires": [],
-        "setup_queries": []
-      },
-      "step_id": "heap_profile_hotspots",
-      "template": {
-        "fragments": [],
-        "name_parameters": [],
-        "parameters": [
-          "max_rows",
-          "min_size_mb"
+          "package",
+          "process_name",
+          "upid"
         ],
         "result_dependencies": [],
         "runtime_bindings": []
@@ -450,14 +381,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_memory_v57_ai_diagnostics/no_data_contract.sql",
-      "sha256": "51851052873f469083e8e507af1152cb388144e051b9c95fd4dc6f26116b4121",
+      "sha256": "261e43dcd2c86c6b3ed4034f3c5036f9b9b905787398dfe19afb243f04477280",
       "signal_patterns": [],
       "skill_id": "android_memory_v57_ai_diagnostics",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+        "sha256": "bb2e6b53cdde9eef70dca527316ceb2d87cdaed5c609cafd9ec516f76b3cd770"
       },
       "sql_dependencies": {
         "creates": [],
@@ -465,8 +396,7 @@
           "prelude.after_eof.memory",
           "prelude.after_eof.views",
           "android.memory.heap_graph.heap_graph_stats",
-          "android.memory.heap_graph.class_summary_tree",
-          "android.memory.heap_profile.summary_tree"
+          "android.memory.heap_graph.class_summary_tree"
         ],
         "drops": [],
         "required_tables": [],

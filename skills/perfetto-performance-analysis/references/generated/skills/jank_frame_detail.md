@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: 337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 601e2490169eb1b6b6c35ac9f2bc34e6c55075bfa03ef83af956a9e886ebf863
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1279,6 +1279,13 @@ rules:
   - 大核资源严重不足
   - 检查是否有后台密集计算任务
   - 考虑优化或推迟非关键任务
+- condition: cluster_load_data?.data?.find(c => c.cluster === '超大核簇')?.load_pct > 90
+  severity: critical
+  diagnosis: 超大核簇负载 ${cluster_load_data.data.find(c => c.cluster === '超大核簇')?.load_pct}%，接近跑满
+  confidence: high
+  suggestions:
+  - 超大核资源严重不足，关键线程可能被迫落到大核或更小的核
+  - 检查是否有后台密集计算任务占用超大核
 - condition: cluster_load_data?.data?.find(c => c.cluster === '小核簇')?.load_pct > 95
   severity: warning
   diagnosis: 小核簇负载 ${cluster_load_data.data.find(c => c.cluster === '小核簇')?.load_pct}%，几乎跑满

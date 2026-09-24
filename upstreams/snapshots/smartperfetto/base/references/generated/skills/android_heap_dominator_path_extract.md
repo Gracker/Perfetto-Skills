@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/android_heap_dominator_path_extract.skill.yaml
-Source SHA-256: de4b9f64860789167409e6604441d8c932167169e8bed9c34ff6cbd580dc0daf
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 79a6054d4d6744e18381baa97106c13e0a4e11f4c8655ba9ade28004904aab52
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # Android Heap Dominator Path Extract
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: android_heap_dominator_path_extract
-version: '1.0'
+version: '1.1'
 type: composite
 category: memory
 tier: B
@@ -69,7 +69,8 @@ modules:
 - name: process_name
   type: string
   required: false
-  description: Optional process name substring
+  description: Optional process name, exact or name:* subprocess (fragments/heap_target_process.sql); when nothing matches,
+    dumps without a process name (e.g. .hprof) are used and flagged process_name_unavailable_upid_fallback
 - name: graph_sample_ts
   type: timestamp
   required: false
@@ -103,10 +104,36 @@ display:
   - name: object_count
     label: Heap Objects
     type: number
+  - name: placeholder_object_count
+    label: Placeholder Objects (self_size=-1)
+    type: number
+  - name: incomplete_dump_count
+    label: Incomplete Dumps
+    type: number
+  - name: process_identity
+    label: Process Identity
+    type: string
   - name: status
     label: Status
     type: string
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
 save_as: data_check
+```
+### Dominator tree pass
+
+- ID: `dominator_tree_pass`
+- Type: `atomic`
+- SQL: [`../sql/android_heap_dominator_path_extract/dominator_tree_pass.sql`](../sql/android_heap_dominator_path_extract/dominator_tree_pass.sql)
+
+```yaml
+id: dominator_tree_pass
+type: atomic
+optional: true
+display:
+  level: hidden
+save_as: dominator_tree_pass
 ```
 ### Bounded dominator paths
 
@@ -154,6 +181,12 @@ display:
   - name: retained_size_bytes
     label: Retained Size
     type: bytes
+  - name: process_identity
+    label: Process Identity
+    type: string
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
 save_as: dominator_paths
 ```
 ## Output and evidence contract
@@ -162,7 +195,8 @@ save_as: dominator_paths
 format: structured
 fields:
 - name: data_check
-  description: Heap graph sample and object availability; zero means unavailable evidence, not absence of a leak
+  description: Heap graph sample and object availability; zero means unavailable evidence, not absence of a leak. incomplete_dump_count
+    > 0 (placeholder objects or heap graph packet errors) means retained sizes are lower bounds
 - name: dominator_paths
   description: Bounded per-(upid, graph_sample_ts) dominator paths with propagated root and cumulative retained size
 ```

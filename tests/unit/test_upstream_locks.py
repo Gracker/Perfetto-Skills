@@ -50,9 +50,9 @@ class UpstreamLockTest(unittest.TestCase):
         )
         self.assertEqual(
             google["runtime"]["revision"],
-            "add693d8b338ba9599dbcbc3e300b1ab8c000897",
+            "99234d73fe356bf7edf6b2cb7afcf2a9eefc5368",
         )
-        self.assertEqual(google["runtime"]["reported_version"], "v58.2")
+        self.assertEqual(google["runtime"]["reported_version"], "v58.3")
         self.assertEqual(
             google["official_reference"]["skill"]["role"], "gap_check_only"
         )

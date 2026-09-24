@@ -97,11 +97,11 @@
   ],
   "public_skill": "perfetto-performance-analysis",
   "runtime_perfetto": {
-    "reported_version": "v58.2",
+    "reported_version": "v58.3",
     "repository": "https://github.com/google/perfetto",
-    "revision": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
+    "revision": "99234d73fe356bf7edf6b2cb7afcf2a9eefc5368",
     "rpc_api_version": 14,
-    "stdlib_tree": "54fc9f0b5c8dedb8772283b6786753fbb918da0d"
+    "stdlib_tree": "c4ed7bdb0dfc5c21fb00e3982220d39abe2911bf"
   },
   "schema_version": 1,
   "skills": [
@@ -123,7 +123,7 @@
       "name": "android_bitmap_memory_per_process",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml",
-      "source_sha256": "fcb998f355d4b59effa774ad1bbdf5e5f786de7a6b686385a57f6cfea779555f",
+      "source_sha256": "1b5b8388a9a3b0ee3fbe651cab6e8b3ccd6b2258a0c3313e7633833fb896f08c",
       "tier": "B",
       "version": "1.1",
       "workflow": "memory"
@@ -159,9 +159,9 @@
       "name": "android_heap_dominator_path_extract",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
-      "source_sha256": "de4b9f64860789167409e6604441d8c932167169e8bed9c34ff6cbd580dc0daf",
+      "source_sha256": "79a6054d4d6744e18381baa97106c13e0a4e11f4c8655ba9ade28004904aab52",
       "tier": "B",
-      "version": "1.0",
+      "version": "1.1",
       "workflow": "memory"
     },
     {
@@ -171,9 +171,9 @@
       "name": "android_heap_graph_leak_candidates",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
-      "source_sha256": "a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4",
+      "source_sha256": "e2af69bca6b92ed9ca91e615637c3e86b5fc9daba767af5db4f2ef7225f98f20",
       "tier": "A",
-      "version": "1.0",
+      "version": "1.1",
       "workflow": "memory"
     },
     {
@@ -183,9 +183,9 @@
       "name": "android_heap_graph_summary",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/android_heap_graph_summary.skill.yaml",
-      "source_sha256": "e4b8220ce04f7c700df3feb487e732421353aeda901ecc144e00008b8cc3b2d6",
+      "source_sha256": "de6251b10137d1d773f7eef2c440c14fbe12fc4312d3dee7872e20ec632eb0e8",
       "tier": "B",
-      "version": "1.0",
+      "version": "1.1",
       "workflow": "memory"
     },
     {
@@ -219,9 +219,9 @@
       "name": "android_memory_v57_ai_diagnostics",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
-      "source_sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da",
+      "source_sha256": "bb2e6b53cdde9eef70dca527316ceb2d87cdaed5c609cafd9ec516f76b3cd770",
       "tier": "B",
-      "version": "1.0",
+      "version": "1.1",
       "workflow": "memory"
     },
     {
@@ -552,7 +552,7 @@
       "name": "click_response_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/click_response_analysis.skill.yaml",
-      "source_sha256": "a4b934d0ea9e3be026e38cff778d34fc9482780ab04a5fd0a4d3f6542323e245",
+      "source_sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6",
       "tier": "S",
       "version": "1.0",
       "workflow": "interaction"
@@ -564,7 +564,7 @@
       "name": "click_response_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/click_response_detail.skill.yaml",
-      "source_sha256": "e6caf5c56483f80b2e80c360f82ad97098e9d0865e1914f3c4c3d5c772e6c4ab",
+      "source_sha256": "ea1dbfeefa7e520390871f47166afa3655d5c3c23bd962c9958c75ed6a1ba059",
       "tier": "S",
       "version": "2.0",
       "workflow": "interaction"
@@ -635,9 +635,9 @@
       "name": "cpu_cluster_load_in_range",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml",
-      "source_sha256": "eb8ce5835904a74d489339331c73cea778d49024dc1654b842d6111f3269d382",
+      "source_sha256": "eb2b4612a94cf363df5045d9d2a8f55599a90a2533d2de33465aae42238aee58",
       "tier": "B",
-      "version": "2.0",
+      "version": "2.1",
       "workflow": "cpu-scheduling"
     },
     {
@@ -1113,7 +1113,7 @@
       "name": "global_trace_sanity_check",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
-      "source_sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec",
+      "source_sha256": "1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0",
       "tier": "S",
       "version": "1.0",
       "workflow": "trace-overview"
@@ -1231,7 +1231,7 @@
       "name": "input_events_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/input_events_in_range.skill.yaml",
-      "source_sha256": "b7265363c10d92317461adfe71626b4fa2edd15b86edb523146dc565ce4cd042",
+      "source_sha256": "aa8801102419f8c6eca4acd64f77667749850504022424e3996ef4d0e2ae7caf",
       "tier": "B",
       "version": "2.0",
       "workflow": "interaction"
@@ -1254,7 +1254,7 @@
       "name": "input_to_frame_latency",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
-      "source_sha256": "1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa",
+      "source_sha256": "40aedd3e7920ed09d8db24bb531a0799836e04ad1f129ba0b23358230a4af76d",
       "tier": "A",
       "version": "2.0",
       "workflow": "interaction"
@@ -1289,7 +1289,7 @@
       "name": "jank_frame_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-      "source_sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f",
+      "source_sha256": "601e2490169eb1b6b6c35ac9f2bc34e6c55075bfa03ef83af956a9e886ebf863",
       "tier": "S",
       "version": "2.0",
       "workflow": "scrolling"
@@ -1657,9 +1657,9 @@
       "name": "native_heap_breakdown",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
-      "source_sha256": "9de17b88dbea86451c2107ac4494967a6a6bb290b473eefe52f7650cc9e00550",
+      "source_sha256": "c60782edef05f79ebd9a79e7f0f8f3f2dfec35cd35c839c661f0f34a68681fff",
       "tier": "B",
-      "version": "1.0",
+      "version": "2.0",
       "workflow": "memory"
     },
     {
@@ -2236,7 +2236,7 @@
       "name": "scene_reconstruction",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scene_reconstruction.skill.yaml",
-      "source_sha256": "8832b9e9b6f0bb86a0676bcd50f367546a3406ef8111be90fe60511d26678d5b",
+      "source_sha256": "2dc3194fd8730e6ce16c5d4db97860cc8cdfccee8b6b2f23dfd11ddb3d752ab4",
       "tier": "S",
       "version": "1.1",
       "workflow": "scene-reconstruction"
@@ -2307,7 +2307,7 @@
       "name": "scroll_response_latency",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/scroll_response_latency.skill.yaml",
-      "source_sha256": "da35bbd788db3f909aaf7b95ab17b841c7e57a3d6e1bfc17ed9b974541569485",
+      "source_sha256": "830043fea116a8e503cbd283fed3b735fb091115466495f32c784c1fab435142",
       "tier": "B",
       "version": "2.0",
       "workflow": "scrolling"
@@ -2330,7 +2330,7 @@
       "name": "scrolling_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-      "source_sha256": "917a301ba39a39244344d671654334dbea71801fdead788f5de43bd07d2f2865",
+      "source_sha256": "192564e961761d7f0b09ad3f7c230a9b7dc62f5e8b965d6524c61fa8de1d6b66",
       "tier": "S",
       "version": "2.2",
       "workflow": "scrolling"
@@ -2390,7 +2390,7 @@
       "name": "startup_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/startup_analysis.skill.yaml",
-      "source_sha256": "19e670f2aa0de3907d9b5f1b0455412237089ad9bbc5935b4c76e65543ade69b",
+      "source_sha256": "793ae9585817a58767920f4404c8b9a64b6074d2bd53ba12d22f1e4d373f1c79",
       "tier": "S",
       "version": "1.0",
       "workflow": "startup"
@@ -2486,7 +2486,7 @@
       "name": "startup_events_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_events_in_range.skill.yaml",
-      "source_sha256": "e10744671cf490370b05905679d0af9addd3c30ba2986cda6cb7174873fd78a2",
+      "source_sha256": "038e6baef3bea018d57ff5db83ee6b30d4f089f339989e7aeaac6cd804ee108d",
       "tier": "A",
       "version": "1.0",
       "workflow": "startup"
@@ -2642,7 +2642,7 @@
       "name": "state_timeline",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/state_timeline.skill.yaml",
-      "source_sha256": "fd6c633f728fed86747941747f63d55962479f3073fb5dada8da2116d5ec350b",
+      "source_sha256": "b623b459c65d02509ded27617664691fec7c3b8848ac371759151eb7064d489a",
       "tier": "S",
       "version": "1.1",
       "workflow": "trace-overview"
@@ -2852,7 +2852,7 @@
       "name": "touch_to_display_latency",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/touch_to_display_latency.skill.yaml",
-      "source_sha256": "e8e103d0fc42354515cf44afdb33a1507e394a29f4c0d29142e35bc52917df15",
+      "source_sha256": "1fc1f7b408fd541ca0186fd2bbf779282392819e110e55e2026a0cd645a9700f",
       "tier": "B",
       "version": "2.0",
       "workflow": "interaction"
@@ -2936,7 +2936,7 @@
       "name": "vsync_phase_alignment",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
-      "source_sha256": "aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c",
+      "source_sha256": "72caf1238bfbf0f4c1aa7d5644f91719be30535ea54bee340c89bc2827eb11ba",
       "tier": "A",
       "version": "2.0",
       "workflow": "scrolling"
@@ -3038,10 +3038,10 @@
     }
   ],
   "source": {
-    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+    "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "85820de44f9cc53917aeee8af1878453906cbde0df1576d367b1b55ef0612e0e",
+    "policy_sha256": "6845d87e8cf2172411efc0d95570e46953a6a9541fecea83540a2e7d5813613c",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3050,6 +3050,12 @@
       "disposition": "exported",
       "source_path": "backend/skills/fragments/actor_class_labels.sql",
       "source_sha256": "3c425851e00996bd8471be41b1db1c5c813ba25c9fb1879f5803447988e2c252"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/android_input_events_normalized.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
+      "source_sha256": "115335ecf7a2cebd6c6ca34acc38d3f9c2b06a6737893da328859aee0072a415"
     },
     {
       "destination": "references/generated/runtime/fragments/buffer_tx_frame_production.sql",
@@ -3068,6 +3074,24 @@
       "disposition": "exported",
       "source_path": "backend/skills/fragments/flutter_process_identity.sql",
       "source_sha256": "cf8f4b8c4ca9d6f62b2f69f9acda09229d7f3a6ac0824c1d6f3b7fab4af3295c"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/heap_graph_dump_scope.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/heap_graph_dump_scope.sql",
+      "source_sha256": "8dd10469b7bd15dfae1d2d9cfd2d15ce2140f3353d85c9a3587290535ec8bceb"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/heap_profile_scope.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/heap_profile_scope.sql",
+      "source_sha256": "4799e5a6b0c12e61e55bdc3e85315e0da57f218cf4b4d1ffd48d986f68a61014"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/heap_target_process.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/heap_target_process.sql",
+      "source_sha256": "e788383fbf3eb24fe8a5df419b95a9694046dc64f51c7852daea28d4547285db"
     },
     {
       "destination": "references/generated/runtime/fragments/io_blocked_function_families.sql",
@@ -3115,7 +3139,7 @@
       "destination": "references/generated/runtime/fragments/scene_input_facts.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/scene_input_facts.sql",
-      "source_sha256": "6b1505385d9b828db1f041a1fd1a1c5cbc1f214ce608b456e8ebf4eaf5288c31"
+      "source_sha256": "4634ff33d5ba31bf1949dbc9337c5f3e8a7c75d83de57341233910e465fb4fe8"
     },
     {
       "destination": "references/generated/runtime/fragments/scene_input_window.sql",
@@ -3355,7 +3379,7 @@
       "destination": "references/generated/strategies/interaction.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/interaction.strategy.md",
-      "source_sha256": "04c7a6744eaded2dc49d8ed645aa51a0482589dca860694c5c69c87b7f20b577",
+      "source_sha256": "4d6c0a4113b8d862c0895884074652750bed3cb8ae18cc02203a8b6a40aa13c6",
       "workflow": "interaction"
     },
     {
@@ -3481,7 +3505,7 @@
       "destination": "references/generated/knowledge/knowledge-startup-root-causes.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-startup-root-causes.template.md",
-      "source_sha256": "a873bc95644c74aac6277c6914451ddd44d438c2a6d4cca9b5a803ccffc695f3",
+      "source_sha256": "566d29aa6d2a1981fc87eccac2ef905ade3d2c451d91381838f944518b6c42a9",
       "workflow": "startup"
     },
     {
@@ -3523,7 +3547,7 @@
       "destination": "references/generated/strategies/memory.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/memory.strategy.md",
-      "source_sha256": "c325b91d229736b0d2e482609cdb23e5a085ded59f9b30778918f884c979553b",
+      "source_sha256": "51bd482861e0a855fbf5ad7b7a931906a654ae4f41c4ee899ced7a10fac8c4f6",
       "workflow": "memory"
     },
     {
@@ -4174,7 +4198,7 @@
       "destination": "references/generated/strategies/startup.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/startup.strategy.md",
-      "source_sha256": "6ad0ed78deaf1341300a10121594e26863e78336af7373814e0e40a86bfe35b7",
+      "source_sha256": "399f61a5c0bb1be037cfc976ad505c505cd6765f96f7285886baf94a67aebddb",
       "workflow": "startup"
     },
     {
@@ -4188,7 +4212,7 @@
       "destination": "references/generated/strategies/touch-tracking.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/touch-tracking.strategy.md",
-      "source_sha256": "0272908a48db53161f3cad1cb1b8236971ce06d9395c0337eb978b14390b1389",
+      "source_sha256": "8089dddd29b2b30cfe2cc28f6e9cb193ad36896ff7d846202b6d6197457517c8",
       "workflow": "interaction"
     },
     {
@@ -4201,7 +4225,7 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_sql_fragments": 30,
+    "exported_sql_fragments": 34,
     "exported_strategy_sources": 47,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
@@ -4215,7 +4239,7 @@
       "pipeline_definition": 31
     },
     "skill_yaml_files": 254,
-    "sql_fragments": 37,
+    "sql_fragments": 41,
     "strategy_sources": 147,
     "vendor_overrides": 8
   },

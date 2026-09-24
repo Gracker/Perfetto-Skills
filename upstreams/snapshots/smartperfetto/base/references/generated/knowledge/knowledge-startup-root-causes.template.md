@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-startup-root-causes.template.md
-Source SHA-256: a873bc95644c74aac6277c6914451ddd44d438c2a6d4cca9b5a803ccffc695f3
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 566d29aa6d2a1981fc87eccac2ef905ade3d2c451d91381838f944518b6c42a9
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 # Knowledge Startup Root Causes Template
 
@@ -33,6 +33,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 4. 结论中使用根因编号（如 A9、B3）以便交叉引用；编号仅用于分类，不自动代表因果已证实。
 5. 下表 Good/Warning/Critical 是调查优先级，不是确认或排除条件。小总量只能描述该口径的观测成本，不能推出“不在关键路径”“系统正常”或排除其他机制。
 6. 源码函数名、调用参数、注释和模拟标记不等于实现行为；先读实际被调用函数定义。Running 占比只证明线程在执行，不能证明指令效率、供给充足或所有实例行为相同。
+7. 启动事件 `trampoline_ms > 0` 时，启动区间前段是另一个入口 Activity/包的 trampoline 跳转。按占比或时长套用本手册阈值、归入 A 类根因时，以目标包的 `dur_without_trampoline_ms` 为分母；trampoline 段的耗时只能归到发起跳转的入口，不属于目标 App。
 
 ---
 

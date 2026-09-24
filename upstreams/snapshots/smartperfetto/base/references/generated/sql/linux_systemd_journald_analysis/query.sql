@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/linux_systemd_journald_analysis.skill.yaml
 -- Source SHA-256: cd2cf0fd458e13893bab21974f26f9653bd1d4fe8b5fc6c41687bed42288a561
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 WITH input AS (
   SELECT

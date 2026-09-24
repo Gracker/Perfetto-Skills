@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_analysis.skill.yaml
-Source SHA-256: a4b934d0ea9e3be026e38cff778d34fc9482780ab04a5fd0a4d3f6542323e245
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 点击响应分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -145,6 +145,8 @@ display:
   - name: status
     label: 状态
     type: string
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: input_check
 ```
 ### 选择目标进程
@@ -173,6 +175,8 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: target_process
 condition: input_check.data[0]?.status === 'available'
 ```
@@ -260,6 +264,8 @@ display:
   - name: rating
     label: 评级
     type: string
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: latency_overview
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -318,6 +324,8 @@ display:
   - name: slow_events
     label: 慢事件数
     type: number
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: latency_by_type
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -372,6 +380,8 @@ display:
   - name: slow_events
     label: 慢事件数
     type: number
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: latency_by_window
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -476,6 +486,8 @@ display:
   - name: main_bottleneck
     label: 主要瓶颈
     type: string
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: slow_events
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -492,6 +504,7 @@ process_scope:
   role: target
   binding: effective_target_processes
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/effective_target_processes.sql
 - fragments/system_thread_state_spans.sql
 optional: true
@@ -579,6 +592,8 @@ display:
   - name: main_thread_calls
     label: 主线程调用
     type: number
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: input_binder
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -624,6 +639,8 @@ display:
   - name: rating
     label: 评级
     type: enum
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: input_to_frame
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -662,6 +679,8 @@ display:
     label: 占比
     type: percentage
     format: percentage
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: latency_distribution
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```

@@ -56,9 +56,9 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "*${process_name}*",
     "*Activity*",
-    "*Fragment*"
+    "*Fragment*",
+    "truncated"
   ],
   "skill_id": "android_heap_graph_summary",
   "steps": {
@@ -107,6 +107,51 @@
       },
       "query_id": "android_heap_graph_summary/heap_graph_availability"
     },
+    "heap_graph_dump_sizes": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "android_heap_graph_summary/heap_graph_dump_sizes"
+    },
     "heap_graph_samples": {
       "api": {
         "28": {
@@ -151,6 +196,51 @@
         }
       },
       "query_id": "android_heap_graph_summary/heap_graph_samples"
+    },
+    "heap_graph_truncation": {
+      "api": {
+        "28": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "29": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "30": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "31": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "32": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "33": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "34": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "35": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "36": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        },
+        "37": {
+          "reason": "No exact API semantic fixture; runtime capability proof required",
+          "status": "capability_gated"
+        }
+      },
+      "query_id": "android_heap_graph_summary/heap_graph_truncation"
     },
     "top_retained_classes": {
       "api": {

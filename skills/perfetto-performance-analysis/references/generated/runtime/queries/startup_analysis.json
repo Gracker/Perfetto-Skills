@@ -61,7 +61,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_analysis/startup_quality.sql",
-      "sha256": "aa63960978b3ecb3dd57cec758de80537430f6c005954cfdc811577f77a10174",
+      "sha256": "1cde1056a37a42d64a6e2a33b5e4e62390a21a25c3ab5f385a6f67a78756c785",
       "signal_patterns": [
         "bindApplication",
         "handleRelaunchActivity*",
@@ -70,16 +70,17 @@
       ],
       "skill_id": "startup_analysis",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/startup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "19e670f2aa0de3907d9b5f1b0455412237089ad9bbc5935b4c76e65543ade69b"
+        "sha256": "793ae9585817a58767920f4404c8b9a64b6074d2bd53ba12d22f1e4d373f1c79"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.startup.startups",
           "android.startup.time_to_display",
+          "android.startup.startup_events",
           "android.startup.startup_breakdowns",
           "android.binder"
         ],
@@ -173,20 +174,21 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_analysis/startup_evidence_matrix.sql",
-      "sha256": "3f8d8f27cccd2bdcda62d1d16315c76c2ca34a724c941e5777d88994148a675f",
+      "sha256": "1238a0efb90b86007dd3799ec33e3b86c5474a2a4db3c0fd2c8e858ea209eb1f",
       "signal_patterns": [],
       "skill_id": "startup_analysis",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/composite/startup_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "19e670f2aa0de3907d9b5f1b0455412237089ad9bbc5935b4c76e65543ade69b"
+        "sha256": "793ae9585817a58767920f4404c8b9a64b6074d2bd53ba12d22f1e4d373f1c79"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
           "android.startup.startups",
           "android.startup.time_to_display",
+          "android.startup.startup_events",
           "android.startup.startup_breakdowns",
           "android.binder"
         ],

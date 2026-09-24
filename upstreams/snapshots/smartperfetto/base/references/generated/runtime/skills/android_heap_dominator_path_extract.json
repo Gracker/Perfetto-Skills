@@ -22,7 +22,7 @@
       "type": "integer"
     },
     {
-      "description": "Optional process name substring",
+      "description": "Optional process name, exact or name:* subprocess (fragments/heap_target_process.sql); when nothing matches, dumps without a process name (e.g. .hprof) are used and flagged process_name_unavailable_upid_fallback",
       "name": "process_name",
       "required": false,
       "type": "string"
@@ -53,9 +53,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+    "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
     "path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
-    "sha256": "de4b9f64860789167409e6604441d8c932167169e8bed9c34ff6cbd580dc0daf"
+    "sha256": "79a6054d4d6744e18381baa97106c13e0a4e11f4c8655ba9ade28004904aab52"
   },
   "steps": [
     {
@@ -64,6 +64,15 @@
       "query_id": "android_heap_dominator_path_extract/data_check",
       "result_dependencies": [],
       "save_as": "data_check",
+      "type": "atomic"
+    },
+    {
+      "id": "dominator_tree_pass",
+      "name": "Dominator tree pass",
+      "optional": true,
+      "query_id": "android_heap_dominator_path_extract/dominator_tree_pass",
+      "result_dependencies": [],
+      "save_as": "dominator_tree_pass",
       "type": "atomic"
     },
     {
@@ -77,6 +86,6 @@
     }
   ],
   "type": "composite",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "memory"
 }

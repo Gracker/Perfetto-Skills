@@ -1,32 +1,139 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml
--- Source SHA-256: a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: e2af69bca6b92ed9ca91e615637c3e86b5fc9daba767af5db4f2ef7225f98f20
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Process scope shared by the heap graph and heapprofd Skills. Candidates are
+-- processes that have heap data (a heap graph dump or heapprofd allocations).
+-- Rule, in order:
+--   1. An explicit upid selects exactly that process.
+--   2. process_name (or package) matches a process name exactly or as its
+--      `name:*` subprocess. There is no substring matching, so `com.foo` never
+--      selects `com.foobar`.
+--   3. When a name was given and no candidate matches, candidates without a
+--      process name are used instead (an .hprof dump has none) and flagged
+--      process_name_unavailable_upid_fallback; they are never silently dropped.
+--   4. With no upid and no name every candidate is in scope.
+heap_target_input AS (
+  SELECT
+    ${upid} AS target_upid,
+    COALESCE(NULLIF('${process_name|}', ''), NULLIF('${package|}', ''), '') AS target_name
+),
+heap_data_processes AS (
+  SELECT upid FROM heap_graph
+  UNION
+  SELECT DISTINCT upid FROM heap_profile_allocation
+),
+heap_target_name_matches AS (
+  SELECT d.upid
+  FROM heap_data_processes AS d
+  JOIN process AS p USING (upid)
+  CROSS JOIN heap_target_input AS i
+  WHERE i.target_name != ''
+    AND (p.name = i.target_name OR p.name GLOB i.target_name || ':*')
+),
+heap_target_process AS (
+  SELECT
+    d.upid,
+    COALESCE(p.name, printf('upid:%d', d.upid)) AS process_name,
+    CASE
+      WHEN i.target_upid IS NOT NULL THEN 'upid_selected'
+      WHEN i.target_name = '' THEN 'all_heap_processes'
+      WHEN m.upid IS NOT NULL THEN 'process_name_match'
+      ELSE 'process_name_unavailable_upid_fallback'
+    END AS process_identity
+  FROM heap_data_processes AS d
+  CROSS JOIN heap_target_input AS i
+  LEFT JOIN process AS p USING (upid)
+  LEFT JOIN heap_target_name_matches AS m USING (upid)
+  WHERE (i.target_upid IS NOT NULL AND d.upid = i.target_upid)
+    OR (i.target_upid IS NULL AND (
+      i.target_name = ''
+      OR m.upid IS NOT NULL
+      OR (p.name IS NULL AND NOT EXISTS (SELECT 1 FROM heap_target_name_matches))
+    ))
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Heap graph dumps in scope, one row per (upid, graph_sample_ts). Requires
+-- fragments/heap_target_process.sql before it (process rule lives there).
+-- An incomplete dump (packet loss, non-finalized graph) keeps forward
+-- references as placeholder objects with self_size = -1, typed with class id
+-- 0; they are counted here per scoped dump and never read as real objects.
+-- dump_issues lists heap_graph/hprof error or data-loss stats for the process
+-- (or global ones); either signal marks the dump incomplete, so its sizes and
+-- counts are lower bounds.
+heap_graph_dump_scope AS MATERIALIZED (
+  SELECT
+    d.*,
+    CASE
+      WHEN d.placeholder_object_count > 0 OR d.dump_issues IS NOT NULL THEN 'incomplete_dump'
+      ELSE 'no_incompleteness_signal'
+    END AS dump_completeness
+  FROM (
+    SELECT
+      h.upid,
+      h.ts AS graph_sample_ts,
+      t.process_name,
+      t.process_identity,
+      (
+        SELECT COUNT(*)
+        FROM heap_graph_object AS o
+        WHERE o.upid = h.upid
+          AND o.graph_sample_ts = h.ts
+          AND o.self_size = -1
+      ) AS placeholder_object_count,
+      (
+        SELECT GROUP_CONCAT(s.name || '=' || s.value, ', ')
+        FROM stats AS s
+        WHERE (s.name GLOB 'heap_graph*' OR s.name GLOB 'hprof*')
+          AND s.severity IN ('error', 'data_loss')
+          AND s.value > 0
+          AND (s.idx = h.upid OR s.idx IS NULL)
+      ) AS dump_issues
+    FROM heap_graph AS h
+    JOIN heap_target_process AS t USING (upid)
+    WHERE ${graph_sample_ts} IS NULL OR h.ts = ${graph_sample_ts}
+  ) AS d
+),
+-- The only read path for heap objects: real objects of scoped dumps, so no
+-- sum or count can include a placeholder.
+heap_graph_scoped_objects AS (
+  SELECT o.*
+  FROM heap_graph_object AS o
+  JOIN heap_graph_dump_scope AS d
+    ON d.upid = o.upid
+    AND d.graph_sample_ts = o.graph_sample_ts
+  WHERE o.self_size >= 0
+)
+,
 input AS (
   SELECT
-    COALESCE(NULLIF('${process_name|}', ''), NULLIF('${package|}', ''), '') AS target_process,
     NULLIF('${class_name_glob|}', '') AS class_name_glob,
     COALESCE(NULLIF('${lifecycle_slice_prefix|SI$}', ''), '') AS lifecycle_prefix,
     MIN(MAX(COALESCE(${max_candidates|50}, 50), 1), 200) AS max_candidates
 ),
-heap_objects AS (
+heap_objects AS MATERIALIZED (
   SELECT
     o.id AS object_id,
     o.upid,
     o.graph_sample_ts,
-    COALESCE(p.name, printf('upid:%d', o.upid)) AS process_name,
     COALESCE(c.deobfuscated_name, c.name) AS class_name,
     o.self_size,
     COALESCE(o.native_size, 0) AS native_size
-  FROM heap_graph_object o
+  -- Real objects of scoped dumps only (no self_size = -1 placeholders).
+  FROM heap_graph_scoped_objects o
   JOIN heap_graph_class c ON o.type_id = c.id
-  LEFT JOIN process p ON p.upid = o.upid
   CROSS JOIN input
   WHERE o.reachable = 1
-    AND (input.target_process = '' OR p.name = input.target_process OR p.name GLOB input.target_process || ':*')
-    AND (${graph_sample_ts} IS NULL OR o.graph_sample_ts = ${graph_sample_ts})
     AND COALESCE(c.deobfuscated_name, c.name) NOT IN (
       'android.app.Activity',
       'android.app.Fragment',
@@ -48,7 +155,6 @@ class_candidates AS (
   SELECT
     upid,
     graph_sample_ts,
-    process_name,
     class_name,
     CASE
       WHEN class_name GLOB '*Fragment' OR class_name GLOB '*Fragment$*' OR class_name GLOB '*Fragment_*' THEN 'Fragment'
@@ -60,7 +166,7 @@ class_candidates AS (
     SUM(native_size) AS native_size_bytes,
     GROUP_CONCAT(object_id) AS object_ids
   FROM heap_objects
-  GROUP BY upid, graph_sample_ts, process_name, class_name
+  GROUP BY upid, graph_sample_ts, class_name
 ),
 candidates_with_lifecycle AS (
   SELECT
@@ -100,15 +206,17 @@ candidates_with_lifecycle AS (
   FROM class_candidates c
 )
 SELECT
-  process_name,
-  upid,
-  printf('%d', graph_sample_ts) AS graph_sample_ts,
+  d.process_name,
+  l.upid,
+  printf('%d', l.graph_sample_ts) AS graph_sample_ts,
   class_name,
   component_type,
   reachable_obj_count,
   ROUND(self_size_bytes / 1048576.0, 2) AS self_size_mb,
   ROUND(native_size_bytes / 1048576.0, 2) AS native_size_mb,
   COALESCE(lifecycle_phase_at_sample, 'unknown') AS lifecycle_phase_at_sample,
+  d.process_identity,
+  d.dump_completeness,
   CASE
     WHEN lifecycle_phase_at_sample = 'destroyed' THEN 'destroyed_reachable'
     WHEN reachable_obj_count > 1 THEN 'multi_instance_reachable'
@@ -121,7 +229,8 @@ SELECT
     ELSE 'info'
   END AS confidence,
   object_ids
-FROM candidates_with_lifecycle
+FROM candidates_with_lifecycle AS l
+JOIN heap_graph_dump_scope AS d USING (upid, graph_sample_ts)
 ORDER BY
   CASE
     WHEN lifecycle_phase_at_sample = 'destroyed' THEN 0

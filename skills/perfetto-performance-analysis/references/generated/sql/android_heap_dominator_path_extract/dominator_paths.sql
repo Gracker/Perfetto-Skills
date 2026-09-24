@@ -1,115 +1,141 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/android_heap_dominator_path_extract.skill.yaml
--- Source SHA-256: de4b9f64860789167409e6604441d8c932167169e8bed9c34ff6cbd580dc0daf
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: 79a6054d4d6744e18381baa97106c13e0a4e11f4c8655ba9ade28004904aab52
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
-CREATE OR REPLACE PERFETTO TABLE __sp_heap_dominator_cumulatives AS
-SELECT *
-FROM _graph_aggregating_scan!(
-  (
-    SELECT id AS source_node_id, parent_id AS dest_node_id
-    FROM _heap_graph_dominator_class_tree
-    WHERE parent_id IS NOT NULL
-  ),
-  (
-    SELECT
-      parent.id,
-      parent.self_count AS cumulative_count,
-      parent.self_size AS cumulative_size
-    FROM _heap_graph_dominator_class_tree AS parent
-    LEFT JOIN _heap_graph_dominator_class_tree AS child
-      ON child.parent_id = parent.id
-    WHERE child.id IS NULL
-  ),
-  (cumulative_count, cumulative_size),
-  (
-    WITH child_totals AS (
-      SELECT
-        id,
-        SUM(cumulative_count) AS cumulative_count,
-        SUM(cumulative_size) AS cumulative_size
-      FROM $table
-      GROUP BY id
-    )
-    SELECT
-      child_totals.id,
-      child_totals.cumulative_count + node.self_count AS cumulative_count,
-      child_totals.cumulative_size + node.self_size AS cumulative_size
-    FROM child_totals
-    JOIN _heap_graph_dominator_class_tree AS node USING (id)
-  )
-);
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
 
-CREATE OR REPLACE PERFETTO TABLE __sp_heap_top_dominator_nodes AS
-SELECT id
-FROM (
+-- Process scope shared by the heap graph and heapprofd Skills. Candidates are
+-- processes that have heap data (a heap graph dump or heapprofd allocations).
+-- Rule, in order:
+--   1. An explicit upid selects exactly that process.
+--   2. process_name (or package) matches a process name exactly or as its
+--      `name:*` subprocess. There is no substring matching, so `com.foo` never
+--      selects `com.foobar`.
+--   3. When a name was given and no candidate matches, candidates without a
+--      process name are used instead (an .hprof dump has none) and flagged
+--      process_name_unavailable_upid_fallback; they are never silently dropped.
+--   4. With no upid and no name every candidate is in scope.
+heap_target_input AS (
   SELECT
-    tree.id,
-    ROW_NUMBER() OVER (
-      PARTITION BY tree.upid, tree.graph_sample_ts
-      ORDER BY tree.self_size DESC, cumulative.cumulative_size DESC, tree.id
-    ) AS row_number
-  FROM _heap_graph_dominator_class_tree AS tree
-  JOIN __sp_heap_dominator_cumulatives AS cumulative USING (id)
-  LEFT JOIN process AS pr ON pr.upid = tree.upid
-  WHERE (${upid} IS NULL OR tree.upid = ${upid})
-    AND ('${process_name|}' = '' OR LOWER(COALESCE(pr.name, '')) GLOB '*' || LOWER('${process_name|}') || '*')
-    AND (${graph_sample_ts} IS NULL OR tree.graph_sample_ts = ${graph_sample_ts})
+    ${upid} AS target_upid,
+    COALESCE(NULLIF('${process_name|}', ''), NULLIF('${package|}', ''), '') AS target_name
+),
+heap_data_processes AS (
+  SELECT upid FROM heap_graph
+  UNION
+  SELECT DISTINCT upid FROM heap_profile_allocation
+),
+heap_target_name_matches AS (
+  SELECT d.upid
+  FROM heap_data_processes AS d
+  JOIN process AS p USING (upid)
+  CROSS JOIN heap_target_input AS i
+  WHERE i.target_name != ''
+    AND (p.name = i.target_name OR p.name GLOB i.target_name || ':*')
+),
+heap_target_process AS (
+  SELECT
+    d.upid,
+    COALESCE(p.name, printf('upid:%d', d.upid)) AS process_name,
+    CASE
+      WHEN i.target_upid IS NOT NULL THEN 'upid_selected'
+      WHEN i.target_name = '' THEN 'all_heap_processes'
+      WHEN m.upid IS NOT NULL THEN 'process_name_match'
+      ELSE 'process_name_unavailable_upid_fallback'
+    END AS process_identity
+  FROM heap_data_processes AS d
+  CROSS JOIN heap_target_input AS i
+  LEFT JOIN process AS p USING (upid)
+  LEFT JOIN heap_target_name_matches AS m USING (upid)
+  WHERE (i.target_upid IS NOT NULL AND d.upid = i.target_upid)
+    OR (i.target_upid IS NULL AND (
+      i.target_name = ''
+      OR m.upid IS NOT NULL
+      OR (p.name IS NULL AND NOT EXISTS (SELECT 1 FROM heap_target_name_matches))
+    ))
 )
-WHERE row_number = 1;
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
 
-CREATE OR REPLACE PERFETTO TABLE __sp_heap_dominator_ancestor_ids AS
-SELECT id
-FROM _tree_reachable_ancestors_or_self!((
-  SELECT id, parent_id FROM _heap_graph_dominator_class_tree
-), (SELECT id FROM __sp_heap_top_dominator_nodes));
-
-CREATE OR REPLACE PERFETTO TABLE __sp_heap_dominator_labels AS
-SELECT
-  tree.id,
-  tree.parent_id,
-  IFNULL(tree.name, '[Unknown]') || ' [' || tree.self_count || ']' AS label,
-  tree.root_type
-FROM _heap_graph_dominator_class_tree AS tree
-JOIN __sp_heap_dominator_ancestor_ids AS ancestor USING (id);
-
-CREATE OR REPLACE PERFETTO TABLE __sp_heap_dominator_paths AS
-WITH RECURSIVE paths(id, path, root_type) AS (
+-- Heap graph dumps in scope, one row per (upid, graph_sample_ts). Requires
+-- fragments/heap_target_process.sql before it (process rule lives there).
+-- An incomplete dump (packet loss, non-finalized graph) keeps forward
+-- references as placeholder objects with self_size = -1, typed with class id
+-- 0; they are counted here per scoped dump and never read as real objects.
+-- dump_issues lists heap_graph/hprof error or data-loss stats for the process
+-- (or global ones); either signal marks the dump incomplete, so its sizes and
+-- counts are lower bounds.
+heap_graph_dump_scope AS MATERIALIZED (
   SELECT
-    id,
-    '[' || COALESCE(root_type, 'ROOT') || '] ' || label AS path,
-    COALESCE(root_type, 'ROOT') AS root_type
-  FROM __sp_heap_dominator_labels
-  WHERE parent_id IS NULL
-  UNION ALL
-  SELECT
-    child.id,
-    parent.path || ' -> ' || child.label AS path,
-    parent.root_type
-  FROM paths AS parent
-  JOIN __sp_heap_dominator_labels AS child ON child.parent_id = parent.id
+    d.*,
+    CASE
+      WHEN d.placeholder_object_count > 0 OR d.dump_issues IS NOT NULL THEN 'incomplete_dump'
+      ELSE 'no_incompleteness_signal'
+    END AS dump_completeness
+  FROM (
+    SELECT
+      h.upid,
+      h.ts AS graph_sample_ts,
+      t.process_name,
+      t.process_identity,
+      (
+        SELECT COUNT(*)
+        FROM heap_graph_object AS o
+        WHERE o.upid = h.upid
+          AND o.graph_sample_ts = h.ts
+          AND o.self_size = -1
+      ) AS placeholder_object_count,
+      (
+        SELECT GROUP_CONCAT(s.name || '=' || s.value, ', ')
+        FROM stats AS s
+        WHERE (s.name GLOB 'heap_graph*' OR s.name GLOB 'hprof*')
+          AND s.severity IN ('error', 'data_loss')
+          AND s.value > 0
+          AND (s.idx = h.upid OR s.idx IS NULL)
+      ) AS dump_issues
+    FROM heap_graph AS h
+    JOIN heap_target_process AS t USING (upid)
+    WHERE ${graph_sample_ts} IS NULL OR h.ts = ${graph_sample_ts}
+  ) AS d
+),
+-- The only read path for heap objects: real objects of scoped dumps, so no
+-- sum or count can include a placeholder.
+heap_graph_scoped_objects AS (
+  SELECT o.*
+  FROM heap_graph_object AS o
+  JOIN heap_graph_dump_scope AS d
+    ON d.upid = o.upid
+    AND d.graph_sample_ts = o.graph_sample_ts
+  WHERE o.self_size >= 0
 )
-SELECT id, path, root_type
-FROM paths;
-
-WITH input AS (
+,
+input AS (
   SELECT MIN(MAX(COALESCE(${max_rows|500}, 500), 1), 500) AS max_rows
 )
 SELECT
   tree.upid AS upid,
-  COALESCE(pr.name, printf('upid:%d', tree.upid)) AS process_name,
+  scope.process_name,
   printf('%d', tree.graph_sample_ts) AS graph_sample_ts,
   COALESCE(p.path, '[ROOT] ' || COALESCE(tree.name, '[Unknown]')) AS path,
   COALESCE(tree.name, '[Unknown]') AS class_name,
   COALESCE(p.root_type, 'ROOT') AS root_type,
   tree.self_count AS self_count,
   c.cumulative_count AS retained_count,
-  tree.self_size AS self_size_bytes,
-  c.cumulative_size AS retained_size_bytes
+  MAX(tree.self_size, 0) AS self_size_bytes,
+  c.cumulative_size AS retained_size_bytes,
+  scope.process_identity
 FROM __sp_heap_top_dominator_nodes AS top
 JOIN _heap_graph_dominator_class_tree AS tree ON tree.id = top.id
 JOIN __sp_heap_dominator_cumulatives AS c ON c.id = top.id
+JOIN heap_graph_dump_scope AS scope
+  ON scope.upid = tree.upid
+  AND scope.graph_sample_ts = tree.graph_sample_ts
 LEFT JOIN __sp_heap_dominator_paths AS p ON p.id = top.id
-LEFT JOIN process AS pr ON pr.upid = tree.upid
 ORDER BY c.cumulative_size DESC, tree.self_size DESC, p.path
 LIMIT (SELECT max_rows FROM input)

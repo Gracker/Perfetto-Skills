@@ -8,7 +8,16 @@
       "target_range_row_coverage",
       "api_hint"
     ],
-    "signal_patterns": []
+    "signal_patterns": [
+      "/[[]anon_shmem:dalvik-jit-code-cache]*",
+      "/apex/com.android.art/*",
+      "/apex/com.android.runtime/*",
+      "/system/lib*/libart.so",
+      "/system/lib*/libc++.so",
+      "/system/lib*/libc.so",
+      "heapprofd*",
+      "heapprofd_malformed_packet"
+    ]
   },
   "id": "native_heap_breakdown",
   "identity": {
@@ -16,13 +25,13 @@
   },
   "inputs": [
     {
-      "description": "最小累计未释放大小(MB)，默认 1",
+      "description": "热点门槛(MB)：native 按归因未释放大小，Java 按归因分配大小，默认 1",
       "name": "min_size_mb",
       "required": false,
       "type": "number"
     },
     {
-      "description": "最小累计分配大小(MB)，默认 0；用于捕获已释放但分配量很高的 churn 热点",
+      "description": "最小分配量(MB)，默认 0；用于捕获已释放但分配量很高的 churn 热点",
       "name": "min_alloc_mb",
       "required": false,
       "type": "number"
@@ -32,11 +41,23 @@
       "name": "max_rows",
       "required": false,
       "type": "number"
+    },
+    {
+      "description": "目标进程名（精确或 name:* 子进程，见 fragments/heap_target_process.sql）；留空分析全部 heapprofd 进程",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "可选的稳定进程身份",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
     }
   ],
   "prerequisites": {
     "modules": [
-      "android.memory.heap_profile.summary_tree"
+      "callstacks.stack_profile"
     ],
     "required_tables": []
   },
@@ -44,14 +65,22 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+    "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
     "path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
-    "sha256": "9de17b88dbea86451c2107ac4494967a6a6bb290b473eefe52f7650cc9e00550"
+    "sha256": "c60782edef05f79ebd9a79e7f0f8f3f2dfec35cd35c839c661f0f34a68681fff"
   },
   "steps": [
     {
+      "id": "heap_profile_inventory",
+      "name": "Heap Profile 清单",
+      "query_id": "native_heap_breakdown/heap_profile_inventory",
+      "result_dependencies": [],
+      "save_as": "heap_profile_inventory",
+      "type": "atomic"
+    },
+    {
       "id": "native_heap_hotspots",
-      "name": "Native Heap 热点",
+      "name": "Heap Profile 热点",
       "query_id": "native_heap_breakdown/native_heap_hotspots",
       "result_dependencies": [],
       "save_as": "native_heap_hotspots",
@@ -59,6 +88,6 @@
     }
   ],
   "type": "atomic",
-  "version": "1.0",
+  "version": "2.0",
   "workflow": "memory"
 }

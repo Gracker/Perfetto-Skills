@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml
-Source SHA-256: 7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: bb2e6b53cdde9eef70dca527316ceb2d87cdaed5c609cafd9ec516f76b3cd770
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # Android Memory v57 AI Diagnostics
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: android_memory_v57_ai_diagnostics
-version: '1.0'
+version: '1.1'
 type: composite
 category: memory
 tier: B
@@ -62,7 +62,6 @@ modules:
 - prelude.after_eof.views
 - android.memory.heap_graph.heap_graph_stats
 - android.memory.heap_graph.class_summary_tree
-- android.memory.heap_profile.summary_tree
 ```
 
 ## Inputs
@@ -71,7 +70,12 @@ modules:
 - name: process_name
   type: string
   required: false
-  description: Optional process name substring for heap graph rows
+  description: Optional process name, exact or name:* subprocess (fragments/heap_target_process.sql); scopes heap graph and
+    heap profile rows
+- name: upid
+  type: integer
+  required: false
+  description: Optional stable process identity
 - name: graph_sample_ts
   type: timestamp
   required: false
@@ -147,6 +151,9 @@ display:
   - name: single_object_cumulative_size
     label: Retained Size
     type: number
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
 save_as: heap_graph_repeated_objects
 ```
 ### Heap graph object size frequencies
@@ -187,51 +194,31 @@ display:
   - name: reachable_count
     label: Reachable
     type: number
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
 save_as: heap_graph_size_frequencies
 ```
 ### Heap profile allocation hotspots
 
 - ID: `heap_profile_hotspots`
-- Type: `atomic`
-- SQL: [`../sql/android_memory_v57_ai_diagnostics/heap_profile_hotspots.sql`](../sql/android_memory_v57_ai_diagnostics/heap_profile_hotspots.sql)
+- Type: `skill`
 
 ```yaml
 id: heap_profile_hotspots
-type: atomic
+type: skill
+skill: native_heap_breakdown
 optional: true
-condition: data_check.data[0]?.heap_profile_summary_rows > 0
+condition: data_check.data[0]?.heap_profile_allocations > 0
+params:
+  min_size_mb: ${min_size_mb}
+  max_rows: ${max_rows}
+  process_name: ${process_name}
+  upid: ${upid}
 display:
   level: detail
   layer: list
-  title: Heap Profile Allocation Hotspots
-  columns:
-  - name: scope
-    label: Scope
-    type: string
-  - name: name
-    label: Frame
-    type: string
-  - name: mapping_name
-    label: Mapping
-    type: string
-  - name: self_size_mb
-    label: Self Retained(MB)
-    type: number
-  - name: cumulative_size_mb
-    label: Cumulative Retained(MB)
-    type: number
-  - name: self_alloc_mb
-    label: Self Alloc(MB)
-    type: number
-  - name: cumulative_alloc_mb
-    label: Cumulative Alloc(MB)
-    type: number
-  - name: allocation_signal
-    label: Signal
-    type: string
-  - name: source_file
-    label: Source
-    type: string
+  title: Heap Profile Allocation Hotspots (per process × heap)
 save_as: heap_profile_hotspots
 ```
 ### Memory v57 no-data contract
@@ -244,7 +231,7 @@ save_as: heap_profile_hotspots
 id: no_data_contract
 type: atomic
 optional: true
-condition: data_check.data[0]?.heap_graph_class_rows === 0 && data_check.data[0]?.heap_graph_objects === 0 && data_check.data[0]?.heap_profile_summary_rows
+condition: data_check.data[0]?.heap_graph_class_rows === 0 && data_check.data[0]?.heap_graph_objects === 0 && data_check.data[0]?.heap_profile_allocations
   === 0
 display:
   level: summary
@@ -270,7 +257,9 @@ fields:
 - name: heap_graph_repeated_objects
   description: Repeated class/root paths translated from upstream query_most_repeated_objects.sql
 - name: heap_graph_size_frequencies
-  description: Object size frequency rows translated from upstream query_size_frequencies.sql
+  description: Object size frequency rows translated from upstream query_size_frequencies.sql; self_size = -1 placeholder
+    objects of incomplete dumps are excluded (data_check.heap_graph_placeholder_objects counts them)
 - name: heap_profile_hotspots
-  description: Heap profile summary-tree allocation hotspots for Java/native allocation profile workflows
+  description: 'native_heap_breakdown per (process, heap): inventory plus hotspots attributed to the first app/library frame
+    above allocator frames; com.android.art is allocation churn only'
 ```

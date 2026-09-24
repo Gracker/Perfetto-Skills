@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/main_thread_work.sql
 -- Source SHA-256: dba7758c0c8c29ccf1d027690251f5985beb4f3a46a9b24efdff87f406160d38
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)

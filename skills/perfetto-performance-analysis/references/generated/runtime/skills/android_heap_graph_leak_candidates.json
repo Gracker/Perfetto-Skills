@@ -25,16 +25,22 @@
   },
   "inputs": [
     {
-      "description": "目标进程名（支持前缀/GLOB）；process_name 为空时使用",
+      "description": "目标进程名（精确或 name:* 子进程）；process_name 为空时使用",
       "name": "package",
       "required": false,
       "type": "string"
     },
     {
-      "description": "目标进程名别名；为空则分析所有 heap graph 进程",
+      "description": "目标进程名（精确或 name:* 子进程）；为空则分析所有 heap graph 进程；无匹配时回退到没有进程名的 dump（如 .hprof）",
       "name": "process_name",
       "required": false,
       "type": "string"
+    },
+    {
+      "description": "可选的稳定进程身份；进程名不可用时（.hprof）用它限定 dump",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
     },
     {
       "description": "指定 heap graph sample 时间戳；为空分析全部 sample",
@@ -84,9 +90,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+    "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
     "path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
-    "sha256": "a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4"
+    "sha256": "e2af69bca6b92ed9ca91e615637c3e86b5fc9daba767af5db4f2ef7225f98f20"
   },
   "steps": [
     {
@@ -108,6 +114,6 @@
     }
   ],
   "type": "atomic",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "memory"
 }

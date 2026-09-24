@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml
 -- Source SHA-256: a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 -- 按原始等待时长排序；窗口只用来筛选重叠行，不改写 ts/dur，
 -- 否则跳转区间会与 trace 上的真实等待段不一致。

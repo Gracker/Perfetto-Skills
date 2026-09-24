@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 917a301ba39a39244344d671654334dbea71801fdead788f5de43bd07d2f2865
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 192564e961761d7f0b09ad3f7c230a9b7dc62f5e8b965d6524c61fa8de1d6b66
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1141,6 +1141,8 @@ display:
 process_scope:
   role: target
   binding: native_upid
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: input_data
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1
 ```
@@ -1233,6 +1235,8 @@ process_scope:
   context_fields:
     global_context:
     - frame_budget_ms
+sql_fragments:
+- fragments/android_input_events_normalized.sql
 save_as: input_latency
 condition: input_data.data[0]?.total_input_events > 0
 ```
@@ -1548,6 +1552,7 @@ id: batch_frame_root_cause
 type: atomic
 optional: true
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/system_cpu_frequency_spans.sql
 - fragments/system_sched_spans.sql
 - fragments/system_thread_state_spans.sql

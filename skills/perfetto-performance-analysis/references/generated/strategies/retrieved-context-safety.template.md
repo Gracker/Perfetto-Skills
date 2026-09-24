@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/retrieved-context-safety.template.md
 Source SHA-256: 65ab91f7343814a82954f608f41e68d3408615f8cc86df38ca9580593f5f78d0
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 # Retrieved Context Safety Template
 

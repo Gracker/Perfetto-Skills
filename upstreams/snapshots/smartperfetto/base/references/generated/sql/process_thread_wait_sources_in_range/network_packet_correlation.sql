@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml
 -- Source SHA-256: a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 -- 只有"网络角色线程 + irq 唤醒 + 唤醒前 2ms 内本进程有 rx 包"三者同时成立，
 -- 才把候选升级为 trace_direct:packet_activity。时间相关仍然不是因果证明：

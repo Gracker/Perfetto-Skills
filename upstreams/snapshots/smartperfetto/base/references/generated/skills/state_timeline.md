@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/state_timeline.skill.yaml
-Source SHA-256: fd6c633f728fed86747941747f63d55962479f3073fb5dada8da2116d5ec350b
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: b623b459c65d02509ded27617664691fec7c3b8848ac371759151eb7064d489a
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 连续状态时间线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -83,6 +83,7 @@ display:
   level: hidden
   layer: overview
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/scene_input_facts.sql
 save_as: input_coverage
 optional: true
@@ -249,6 +250,7 @@ display:
     type: string
     hidden: true
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/scene_input_facts.sql
 ```
 ### 用户输入状态泳道
@@ -300,6 +302,7 @@ display:
     type: string
     hidden: true
 sql_fragments:
+- fragments/android_input_events_normalized.sql
 - fragments/scene_input_facts.sql
 ```
 ### 应用状态泳道

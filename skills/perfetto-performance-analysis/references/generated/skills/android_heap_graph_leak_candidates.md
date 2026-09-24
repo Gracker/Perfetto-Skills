@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml
-Source SHA-256: a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: e2af69bca6b92ed9ca91e615637c3e86b5fc9daba767af5db4f2ef7225f98f20
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # Android Heap Graph Leak Candidates
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: android_heap_graph_leak_candidates
-version: '1.0'
+version: '1.1'
 type: atomic
 category: memory
 tier: A
@@ -72,11 +72,15 @@ required_tables:
 - name: package
   type: string
   required: false
-  description: 目标进程名（支持前缀/GLOB）；process_name 为空时使用
+  description: 目标进程名（精确或 name:* 子进程）；process_name 为空时使用
 - name: process_name
   type: string
   required: false
-  description: 目标进程名别名；为空则分析所有 heap graph 进程
+  description: 目标进程名（精确或 name:* 子进程）；为空则分析所有 heap graph 进程；无匹配时回退到没有进程名的 dump（如 .hprof）
+- name: upid
+  type: integer
+  required: false
+  description: 可选的稳定进程身份；进程名不可用时（.hprof）用它限定 dump
 - name: graph_sample_ts
   type: timestamp
   required: false
@@ -146,12 +150,21 @@ display:
   - name: lifecycle_phase_at_sample
     label: Sample 前生命周期
     type: string
+  - name: process_identity
+    label: 进程身份
+    type: string
+  - name: dump_completeness
+    label: Dump 完整性
+    type: string
   - name: leak_state
     label: 判定
     type: string
   - name: confidence
     label: 置信度
     type: string
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
 save_as: leak_candidates
 ```
 ### 候选对象保留引用来源
@@ -194,6 +207,9 @@ display:
   - name: leak_state
     label: 候选判定
     type: string
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
 save_as: reference_holders
 ```
 ## Output and evidence contract
@@ -202,7 +218,8 @@ save_as: reference_holders
 format: structured
 fields:
 - name: leak_candidates
-  description: Reachable Activity/Fragment heap objects classified against sample-time lifecycle evidence
+  description: Reachable Activity/Fragment heap objects classified against sample-time lifecycle evidence; placeholder objects
+    (self_size = -1) are excluded, and dump_completeness=incomplete_dump means counts and sizes are lower bounds
 - name: reference_holders
   description: Small-scope incoming retaining references for suspect heap objects, excluding Perfetto _excluded_refs referent
     edges (weak/phantom/finalizer in v56; soft reference edges are not filtered by this stdlib helper)

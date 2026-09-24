@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
-Source SHA-256: c325b91d229736b0d2e482609cdb23e5a085ded59f9b30778918f884c979553b
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 51bd482861e0a855fbf5ad7b7a931906a654ae4f41c4ee899ced7a10fac8c4f6
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 # Memory Strategy
 
@@ -280,7 +280,8 @@ Keep memory growth, leakage, OOM/LMK, reclaim and GC evidence distinct. A high a
 | 几毫秒级内存尖峰 | `linux.ftrace` 的 `kmem/rss_stat`、`mm_event/mm_event_record`、LMK 事件 | 轮询 counters 可能漏掉的短时 RSS burst、reclaim/compaction/fault 压力 | 如果只有 1s process stats，峰值结论必须降级 |
 | Java/Kotlin 泄漏 | `android.java_hprof` / `heap_graph_*` / `android_heap_graph_class_summary_tree` | sample 点 reachable 对象、引用路径、dominator/retained size | 不含对象数据；不提供 allocation callstack；需要生命周期对齐才能写高置信泄漏 |
 | Java OOMError | Android 14+ `android.java_hprof.oom` 触发 heap dump、ApplicationExitInfo | OOM 发生时 Java heap 引用图和进程退出上下文 | Java OOM 不等于系统 LMK，也不等于 native/device 内存耗尽 |
-| Native 泄漏或 churn | `android.heapprofd` / `android_heap_profile_summary_tree` / `heap_profile_allocation` | profiler 启动后的 native 未释放保留、累计分配 churn、调用栈热点 | 不覆盖启动前已有分配；custom allocator/fragmentation/RSS 差异需要 meminfo/smaps/allocator 证据 |
+| Native 泄漏或 churn | `android.heapprofd` `libc.malloc` / `native_heap_breakdown` | profiler 启动后按进程的 native 未释放保留、累计分配 churn、分配器之上首个应用/库帧 | 不覆盖启动前已有分配；custom allocator/fragmentation/RSS 差异需要 meminfo/smaps/allocator 证据 |
+| Java 分配 churn | heapprofd `com.android.art` / `native_heap_breakdown` | 分配字节/次数和分配调用栈（GC 压力来源） | 不记录释放，不能证明 Java 保留或泄漏；需要 heap dump |
 | 系统低内存杀进程 | `mem.lmk`、`oom_score_adj`、process state | 被杀进程、adj/state、用户影响等级、kill storm | Android LMK 与 Linux OOM killer 机制不同；没有事件时不能命名 LMK |
 
 #### 内存场景关键 Stdlib 表
@@ -306,6 +307,8 @@ Keep memory growth, leakage, OOM/LMK, reclaim and GC evidence distinct. A high a
 - Heap graph 可用 + retained class 集中 → 按 `android_heap_graph_summary` 的 top retainer 继续查 dominator/reference path；不要只按 raw object id 下结论
 - Heap graph 可用 + destroyed Activity/Fragment 仍 reachable → 用 `android_heap_graph_leak_candidates` 输出高置信候选；没有生命周期对齐时只写候选，不写已泄漏
 - Heapprofd 可用 + `native_signal=unreleased_native_retention` → 写 native 未释放保留候选；若 `native_signal=allocation_churn`，写分配抖动/allocator hotspot，不写泄漏；若 `retention_with_churn`，同时报告未释放保留和高分配 churn，不要把二者合并成单一根因
+- Heap `com.android.art`（`retention_claim=churn_only_frees_not_recorded`）→ 只报分配字节/次数和热点，不写 Java 泄漏；两次 profile 的差值在一个采样间隔（默认 4096 B）内视为噪声；`heapprofd_issues` 非 none 时说明 profile 可能截断
+- Heap dump `dump_completeness=incomplete_dump`（self_size=-1 占位对象、丢包统计或 `heap_graph.truncated`）→ 大小和实例数只是下界，不能据此写“没有泄漏”；`process_identity=process_name_unavailable_upid_fallback`（如 .hprof 无进程名）→ 用 upid + graph_sample_ts 指代并说明进程身份未知
 - DMA-BUF 增长 → GPU 内存泄漏（纹理/Buffer 未释放）
 - 内存压力 + ANR → 系统内存不足导致的 ANR（非 App 代码 Bug）
 

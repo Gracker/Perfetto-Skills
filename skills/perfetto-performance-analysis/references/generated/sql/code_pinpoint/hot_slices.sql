@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/code_pinpoint.skill.yaml
 -- Source SHA-256: c2560c8a63a870cc090ef0176632c2c572fd52bb4301adaa16342cbb651204ce
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 INCLUDE PERFETTO MODULE slices.with_context;
 

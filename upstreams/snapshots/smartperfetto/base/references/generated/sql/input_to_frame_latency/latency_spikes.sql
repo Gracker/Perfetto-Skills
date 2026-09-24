@@ -1,14 +1,39 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/input_to_frame_latency.skill.yaml
--- Source SHA-256: 1f7f88a61952702a668509a62d95c478285ae1e000eed21507c133e4fa55c1aa
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: 40aedd3e7920ed09d8db24bb531a0799836e04ad1f129ba0b23358230a4af76d
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
-WITH latencies AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- The single read path for stdlib android_input_events. Skill contract:
+-- event_action is the uppercase action without the Android prefix (MOVE, DOWN,
+-- UP, CANCEL, ...). Newer trace processors report legacy atrace actions as
+-- ACTION_MOVE/ACTION_DOWN/ACTION_UP; older ones reported MOVE/DOWN/UP. Every
+-- other column passes through unchanged, NULL actions stay NULL. The column
+-- list is the set every supported runtime has (v58.2 lacks frame_event_time);
+-- keep it aligned with scrolling_analysis's input_data_fallback_view. NOT MATERIALIZED: consumers read it more than once
+-- under their own filters, so SQLite should inline it rather than copy the table.
+android_input_events_normalized AS NOT MATERIALIZED (
+  SELECT
+    dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
+    total_latency_dur, end_to_end_latency_dur,
+    tid, thread_name, upid, pid, process_name,
+    event_type,
+    CASE WHEN event_action GLOB 'ACTION_*' THEN SUBSTR(event_action, 8)
+      ELSE event_action END AS event_action,
+    event_seq, event_channel, normalized_event_channel, input_event_id,
+    read_time, dispatch_track_id, dispatch_ts, dispatch_dur,
+    receive_ts, receive_dur, receive_track_id,
+    frame_id, is_speculative_frame, event_time
+  FROM android_input_events
+)
+,
+latencies AS (
   SELECT
     dispatch_ts as input_ts,
     end_to_end_latency_dur as latency_ns,
     is_speculative_frame
-  FROM android_input_events
+  FROM android_input_events_normalized
   WHERE (('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*') OR '${package}' = '')
     AND event_action = 'MOVE'
     AND (${start_ts} IS NULL OR dispatch_ts >= ${start_ts})

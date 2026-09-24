@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/sf_composition_in_range.skill.yaml
 -- Source SHA-256: 5dc13944bfe44aee46c4837d9878849d127dfb191206259dadec031bc26bbeb6
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 WITH sf_slices AS (
   SELECT

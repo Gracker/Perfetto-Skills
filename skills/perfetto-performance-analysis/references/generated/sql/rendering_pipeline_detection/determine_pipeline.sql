@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rendering_pipeline_detection.skill.yaml
 -- Source SHA-256: 8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 WITH
       pipeline_scores AS (

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml
-Source SHA-256: eb8ce5835904a74d489339331c73cea778d49024dc1654b842d6111f3269d382
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: eb2b4612a94cf363df5045d9d2a8f55599a90a2533d2de33465aae42238aee58
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # CPU 簇负载分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: cpu_cluster_load_in_range
-version: '2.0'
+version: '2.1'
 type: composite
 category: cpu
 tier: B
@@ -80,6 +80,14 @@ display:
   - name: core_count
     label: 核心数
     type: number
+  - name: active_core_count
+    label: 活跃核心数
+    type: number
+  - name: awake_ms
+    label: 非挂起时长
+    type: duration
+    format: duration_ms
+    unit: ms
   - name: running_ms
     label: Running 时间
     type: duration

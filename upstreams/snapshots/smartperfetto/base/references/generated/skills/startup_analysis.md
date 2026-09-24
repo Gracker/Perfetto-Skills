@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_analysis.skill.yaml
-Source SHA-256: 19e670f2aa0de3907d9b5f1b0455412237089ad9bbc5935b4c76e65543ade69b
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 793ae9585817a58767920f4404c8b9a64b6074d2bd53ba12d22f1e4d373f1c79
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 应用启动分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -59,6 +59,7 @@ patterns:
 modules:
 - android.startup.startups
 - android.startup.time_to_display
+- android.startup.startup_events
 - android.startup.startup_breakdowns
 - android.binder
 ```
@@ -138,6 +139,8 @@ synthesize:
     template: 冷启动耗时 {{dur_ms}}ms，超过 1s 建议优化
   - condition: dur_ms > 1000 && startup_type === 'warm'
     template: 温启动耗时 {{dur_ms}}ms，超过 1s 建议优化
+  - condition: trampoline_ms > 0
+    template: 启动区间含 {{trampoline_ms}}ms trampoline 跳转，目标包自身启动 {{dur_without_trampoline_ms}}ms
 display:
   level: key
   layer: overview
@@ -194,6 +197,16 @@ display:
     type: duration
     format: duration_ms
     unit: ns
+  - name: dur_without_trampoline_ms
+    label: 去 Trampoline 耗时
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: trampoline_ms
+    label: Trampoline 耗时
+    type: duration
+    format: duration_ms
+    unit: ms
   - name: ttid_ms
     label: TTID
     type: duration

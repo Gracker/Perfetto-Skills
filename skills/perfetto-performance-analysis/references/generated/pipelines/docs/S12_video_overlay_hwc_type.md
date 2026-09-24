@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S12_video_overlay_hwc_type.md
 Source SHA-256: d7791d38863dbddf3dd9ca7242ed0f78c5febe53b4c899ce8568dd4b38447e6a
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 # Android Perfetto 系列 - App 出图类型 - Video Overlay / HWC 类型
 

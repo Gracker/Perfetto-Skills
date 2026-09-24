@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/interaction.strategy.md
-Source SHA-256: 04c7a6744eaded2dc49d8ed645aa51a0482589dca860694c5c69c87b7f20b577
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 4d6c0a4113b8d862c0895884074652750bed3cb8ae18cc02203a8b6a40aa13c6
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 # Interaction Strategy
 
@@ -323,14 +323,16 @@ Use Binder, lock, queue, input dispatch and display dependencies only where they
 | **长按 (Long Press)** | ACTION_DOWN 到 ACTION_UP 之间持续时间 > 500ms，且无 MOVE 事件（或 MOVE < 3 次） | 长按响应由 ViewConfiguration.getLongPressTimeout() 控制（默认 500ms）。如果用户反馈长按响应慢，检查：① 主线程在 DOWN 后 500ms 内是否有阻塞导致 Looper 延迟处理 LongPress Runnable；② onLongClick 回调本身的执行耗时 |
 | **双击 (Double Tap)** | 两次 ACTION_DOWN 之间间隔 < 300ms（ViewConfiguration.getDoubleTapTimeout()） | 双击检测由 GestureDetector 处理。如果用户反馈双击不灵敏，检查：① 两次 tap 间隔是否接近 300ms 阈值；② 首次 tap 的 ACTION_UP 处理是否过慢导致第二次 DOWN 被错过 |
 
+手写 SQL 直接读 `android_input_events` 时，`event_action` 可能带 `ACTION_` 前缀（新版 trace processor 输出 `ACTION_MOVE`，旧版输出 `MOVE`）。Skill 已统一为不带前缀的大写动作；raw SQL 先用 `CASE WHEN event_action GLOB 'ACTION_*' THEN SUBSTR(event_action, 8) ELSE event_action END` 归一化，再与 `DOWN`/`MOVE`/`UP` 比较。
+
 **长按事件检测 SQL（仅在用户提及时使用）：**
 ```
-execute_sql("WITH motion AS (SELECT read_time AS ts, event_action, process_name, SUM(CASE WHEN event_action='DOWN' THEN 1 ELSE 0 END) OVER (ORDER BY read_time) AS gid FROM android_input_events WHERE event_type='MOTION'), gestures AS (SELECT gid, MIN(ts) AS down_ts, MAX(CASE WHEN event_action='UP' THEN ts END) AS up_ts, COUNT(CASE WHEN event_action='MOVE' THEN 1 END) AS move_cnt FROM motion WHERE gid>0 GROUP BY gid) SELECT printf('%d', down_ts) AS ts, ROUND((up_ts - down_ts)/1e6, 1) AS hold_ms FROM gestures WHERE up_ts IS NOT NULL AND (up_ts - down_ts) > 500000000 AND move_cnt <= 2 ORDER BY down_ts LIMIT 20")
+execute_sql("WITH input AS (SELECT read_time AS ts, CASE WHEN event_action GLOB 'ACTION_*' THEN SUBSTR(event_action, 8) ELSE event_action END AS event_action FROM android_input_events WHERE event_type='MOTION'), motion AS (SELECT ts, event_action, SUM(CASE WHEN event_action='DOWN' THEN 1 ELSE 0 END) OVER (ORDER BY ts) AS gid FROM input), gestures AS (SELECT gid, MIN(ts) AS down_ts, MAX(CASE WHEN event_action='UP' THEN ts END) AS up_ts, COUNT(CASE WHEN event_action='MOVE' THEN 1 END) AS move_cnt FROM motion WHERE gid>0 GROUP BY gid) SELECT printf('%d', down_ts) AS ts, ROUND((up_ts - down_ts)/1e6, 1) AS hold_ms FROM gestures WHERE up_ts IS NOT NULL AND (up_ts - down_ts) > 500000000 AND move_cnt <= 2 ORDER BY down_ts LIMIT 20")
 ```
 
 **双击事件检测 SQL（仅在用户提及时使用）：**
 ```
-execute_sql("WITH downs AS (SELECT read_time AS ts, LAG(read_time) OVER (ORDER BY read_time) AS prev_ts FROM android_input_events WHERE event_type='MOTION' AND event_action='DOWN') SELECT printf('%d', ts) AS ts, ROUND((ts - prev_ts)/1e6, 1) AS gap_ms FROM downs WHERE prev_ts IS NOT NULL AND (ts - prev_ts) < 300000000 ORDER BY ts LIMIT 20")
+execute_sql("WITH downs AS (SELECT read_time AS ts, LAG(read_time) OVER (ORDER BY read_time) AS prev_ts FROM android_input_events WHERE event_type='MOTION' AND event_action IN ('DOWN', 'ACTION_DOWN')) SELECT printf('%d', ts) AS ts, ROUND((ts - prev_ts)/1e6, 1) AS gap_ms FROM downs WHERE prev_ts IS NOT NULL AND (ts - prev_ts) < 300000000 ORDER BY ts LIMIT 20")
 ```
 
 ### 输出结构必须遵循：

@@ -16,10 +16,16 @@
   },
   "inputs": [
     {
-      "description": "Optional process name substring for heap graph rows",
+      "description": "Optional process name, exact or name:* subprocess (fragments/heap_target_process.sql); scopes heap graph and heap profile rows",
       "name": "process_name",
       "required": false,
       "type": "string"
+    },
+    {
+      "description": "Optional stable process identity",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
     },
     {
       "description": "Optional heap graph sample timestamp",
@@ -47,8 +53,7 @@
       "prelude.after_eof.memory",
       "prelude.after_eof.views",
       "android.memory.heap_graph.heap_graph_stats",
-      "android.memory.heap_graph.class_summary_tree",
-      "android.memory.heap_profile.summary_tree"
+      "android.memory.heap_graph.class_summary_tree"
     ],
     "required_tables": []
   },
@@ -56,9 +61,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+    "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
     "path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
-    "sha256": "7dc0d526cc82e5a6cdcf44d923ed6b520120af61b4527abee948ab91566875da"
+    "sha256": "bb2e6b53cdde9eef70dca527316ceb2d87cdaed5c609cafd9ec516f76b3cd770"
   },
   "steps": [
     {
@@ -90,17 +95,22 @@
       "type": "atomic"
     },
     {
-      "condition": "data_check.data[0]?.heap_profile_summary_rows > 0",
+      "condition": "data_check.data[0]?.heap_profile_allocations > 0",
       "id": "heap_profile_hotspots",
       "name": "Heap profile allocation hotspots",
       "optional": true,
-      "query_id": "android_memory_v57_ai_diagnostics/heap_profile_hotspots",
-      "result_dependencies": [],
+      "params": {
+        "max_rows": "${max_rows}",
+        "min_size_mb": "${min_size_mb}",
+        "process_name": "${process_name}",
+        "upid": "${upid}"
+      },
       "save_as": "heap_profile_hotspots",
-      "type": "atomic"
+      "skill": "native_heap_breakdown",
+      "type": "skill"
     },
     {
-      "condition": "data_check.data[0]?.heap_graph_class_rows === 0 && data_check.data[0]?.heap_graph_objects === 0 && data_check.data[0]?.heap_profile_summary_rows === 0",
+      "condition": "data_check.data[0]?.heap_graph_class_rows === 0 && data_check.data[0]?.heap_graph_objects === 0 && data_check.data[0]?.heap_profile_allocations === 0",
       "id": "no_data_contract",
       "name": "Memory v57 no-data contract",
       "optional": true,
@@ -113,6 +123,6 @@
     }
   ],
   "type": "composite",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "memory"
 }

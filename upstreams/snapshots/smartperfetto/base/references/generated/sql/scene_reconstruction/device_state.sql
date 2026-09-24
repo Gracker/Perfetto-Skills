@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scene_reconstruction.skill.yaml
--- Source SHA-256: 8832b9e9b6f0bb86a0676bcd50f367546a3406ef8111be90fe60511d26678d5b
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: 2dc3194fd8730e6ce16c5d4db97860cc8cdfccee8b6b2f23dfd11ddb3d752ab4
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 SELECT scene_rows.*, COUNT(*) OVER () AS total_rows FROM (
 WITH time_bounds AS (

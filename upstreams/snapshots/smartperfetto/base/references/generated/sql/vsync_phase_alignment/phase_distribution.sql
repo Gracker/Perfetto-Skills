@@ -1,9 +1,34 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/vsync_phase_alignment.skill.yaml
--- Source SHA-256: aa679a4012ff427342720c41889b1a0f80611cc2773e76cc5875c582d7427d6c
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: 72caf1238bfbf0f4c1aa7d5644f91719be30535ea54bee340c89bc2827eb11ba
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
-WITH vsync_intervals AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- The single read path for stdlib android_input_events. Skill contract:
+-- event_action is the uppercase action without the Android prefix (MOVE, DOWN,
+-- UP, CANCEL, ...). Newer trace processors report legacy atrace actions as
+-- ACTION_MOVE/ACTION_DOWN/ACTION_UP; older ones reported MOVE/DOWN/UP. Every
+-- other column passes through unchanged, NULL actions stay NULL. The column
+-- list is the set every supported runtime has (v58.2 lacks frame_event_time);
+-- keep it aligned with scrolling_analysis's input_data_fallback_view. NOT MATERIALIZED: consumers read it more than once
+-- under their own filters, so SQLite should inline it rather than copy the table.
+android_input_events_normalized AS NOT MATERIALIZED (
+  SELECT
+    dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
+    total_latency_dur, end_to_end_latency_dur,
+    tid, thread_name, upid, pid, process_name,
+    event_type,
+    CASE WHEN event_action GLOB 'ACTION_*' THEN SUBSTR(event_action, 8)
+      ELSE event_action END AS event_action,
+    event_seq, event_channel, normalized_event_channel, input_event_id,
+    read_time, dispatch_track_id, dispatch_ts, dispatch_dur,
+    receive_ts, receive_dur, receive_track_id,
+    frame_id, is_speculative_frame, event_time
+  FROM android_input_events
+)
+,
+vsync_intervals AS (
   SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) AS interval_ns
   FROM counter c
   JOIN counter_track t ON c.track_id = t.id
@@ -25,7 +50,7 @@ vsync_events AS (
 ),
 input_events AS (
   SELECT dispatch_ts as input_ts
-  FROM android_input_events
+  FROM android_input_events_normalized
   WHERE (('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*') OR '${package}' = '')
     AND event_action = 'MOVE'
     AND (${start_ts} IS NULL OR dispatch_ts >= ${start_ts})

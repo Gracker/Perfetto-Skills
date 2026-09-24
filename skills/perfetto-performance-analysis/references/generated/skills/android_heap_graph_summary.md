@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/android_heap_graph_summary.skill.yaml
-Source SHA-256: e4b8220ce04f7c700df3feb487e732421353aeda901ecc144e00008b8cc3b2d6
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: de6251b10137d1d773f7eef2c440c14fbe12fc4312d3dee7872e20ec632eb0e8
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # Android Heap Graph Summary
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: android_heap_graph_summary
-version: '1.0'
+version: '1.1'
 type: atomic
 category: memory
 tier: B
@@ -66,7 +66,11 @@ modules:
 - name: process_name
   type: string
   required: false
-  description: 目标进程名；留空分析全部 heap graph sample
+  description: 目标进程名（精确或 name:* 子进程）；留空分析全部 heap graph sample；无匹配时回退到没有进程名的 dump（如 .hprof）
+- name: upid
+  type: integer
+  required: false
+  description: 可选的稳定进程身份；进程名不可用时（.hprof）用它限定 dump
 - name: graph_sample_ts
   type: timestamp
   required: false
@@ -80,6 +84,19 @@ modules:
 
 ## Ordered execution
 
+### Heap Graph dump 大小
+
+- ID: `heap_graph_dump_sizes`
+- Type: `atomic`
+- SQL: [`../sql/android_heap_graph_summary/heap_graph_dump_sizes.sql`](../sql/android_heap_graph_summary/heap_graph_dump_sizes.sql)
+
+```yaml
+id: heap_graph_dump_sizes
+type: atomic
+display:
+  level: hidden
+save_as: heap_graph_dump_sizes
+```
 ### Heap Graph 数据可用性
 
 - ID: `heap_graph_availability`
@@ -106,9 +123,21 @@ display:
   - name: total_heap_mb
     label: Total Heap(MB)
     type: number
+  - name: incomplete_dump_count
+    label: 不完整 dump 数
+    type: number
+  - name: process_identity
+    label: 进程身份
+    type: string
+  - name: has_truncated_column
+    label: Runtime 有截断标记
+    type: number
   - name: status
     label: 状态
     type: string
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
 save_as: heap_graph_availability
 ```
 ### Heap Graph Samples
@@ -129,6 +158,9 @@ display:
   - name: process_name
     label: 进程
     type: string
+  - name: upid
+    label: UPID
+    type: number
   - name: graph_sample_ts
     label: Sample 时间
     type: timestamp
@@ -154,7 +186,62 @@ display:
   - name: unreachable_heap_mb
     label: Unreachable Heap(MB)
     type: number
+  - name: placeholder_object_count
+    label: 占位对象(self_size=-1)
+    type: number
+  - name: dump_completeness
+    label: Dump 完整性
+    type: string
+  - name: dump_issues
+    label: Dump 错误/丢包统计
+    type: string
+  - name: process_identity
+    label: 进程身份
+    type: string
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
 save_as: heap_graph_samples
+```
+### Heap Dump 截断标记
+
+- ID: `heap_graph_truncation`
+- Type: `atomic`
+- SQL: [`../sql/android_heap_graph_summary/heap_graph_truncation.sql`](../sql/android_heap_graph_summary/heap_graph_truncation.sql)
+
+```yaml
+id: heap_graph_truncation
+type: atomic
+optional: true
+condition: heap_graph_availability.data[0]?.has_truncated_column === 1
+display:
+  level: detail
+  layer: list
+  title: Heap Dump 截断标记（trace processor 导入时记录）
+  columns:
+  - name: process_name
+    label: 进程
+    type: string
+  - name: upid
+    label: UPID
+    type: number
+  - name: graph_sample_ts
+    label: Sample 时间
+    type: timestamp
+    unit: ns
+  - name: dump_reason
+    label: Dump 原因
+    type: string
+  - name: truncated
+    label: 截断
+    type: number
+  - name: dump_completeness
+    label: Dump 完整性
+    type: string
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
+save_as: heap_graph_truncation
 ```
 ### Top Retained Classes
 
@@ -203,6 +290,9 @@ display:
   - name: leak_hint
     label: 风险提示
     type: string
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/heap_graph_dump_scope.sql
 save_as: top_retained_classes
 ```
 ## Output and evidence contract
@@ -213,7 +303,10 @@ fields:
 - name: heap_graph_availability
   description: Heap graph sample/data availability
 - name: heap_graph_samples
-  description: Heap graph sample-level heap/RSS/OOM orientation
+  description: Heap graph sample-level heap/RSS/OOM orientation; placeholder objects (self_size = -1) are excluded from sizes
+    and counts and mark the dump incomplete, so its sizes are lower bounds
+- name: heap_graph_truncation
+  description: Per-dump heap_graph.truncated flag recorded at import (trace processors after v58.2 only)
 - name: top_retained_classes
   description: Class retained-size ranking from android_heap_graph_class_summary_tree
 ```

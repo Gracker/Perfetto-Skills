@@ -1,8 +1,32 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
--- Source SHA-256: a4b934d0ea9e3be026e38cff778d34fc9482780ab04a5fd0a4d3f6542323e245
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- The single read path for stdlib android_input_events. Skill contract:
+-- event_action is the uppercase action without the Android prefix (MOVE, DOWN,
+-- UP, CANCEL, ...). Newer trace processors report legacy atrace actions as
+-- ACTION_MOVE/ACTION_DOWN/ACTION_UP; older ones reported MOVE/DOWN/UP. Every
+-- other column passes through unchanged, NULL actions stay NULL. The column
+-- list is the set every supported runtime has (v58.2 lacks frame_event_time);
+-- keep it aligned with scrolling_analysis's input_data_fallback_view. NOT MATERIALIZED: consumers read it more than once
+-- under their own filters, so SQLite should inline it rather than copy the table.
+android_input_events_normalized AS NOT MATERIALIZED (
+  SELECT
+    dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
+    total_latency_dur, end_to_end_latency_dur,
+    tid, thread_name, upid, pid, process_name,
+    event_type,
+    CASE WHEN event_action GLOB 'ACTION_*' THEN SUBSTR(event_action, 8)
+      ELSE event_action END AS event_action,
+    event_seq, event_channel, normalized_event_channel, input_event_id,
+    read_time, dispatch_track_id, dispatch_ts, dispatch_dur,
+    receive_ts, receive_dur, receive_track_id,
+    frame_id, is_speculative_frame, event_time
+  FROM android_input_events
+)
 SELECT
   normalized_event_channel as window,
   COUNT(*) as count,
@@ -10,7 +34,7 @@ SELECT
   ROUND(MAX(total_latency_dur) / 1e6, 2) as max_latency_ms,
   ROUND(AVG(handling_latency_dur) / 1e6, 2) as avg_handling_ms,
   SUM(CASE WHEN total_latency_dur / 1e6 > ${slow_event_threshold_ms|100} THEN 1 ELSE 0 END) as slow_events
-FROM android_input_events
+FROM android_input_events_normalized
 WHERE process_name = '${target_process.data[0].process_name}'
   AND normalized_event_channel IS NOT NULL
   AND (${start_ts} IS NULL OR receive_ts + receive_dur > ${start_ts})

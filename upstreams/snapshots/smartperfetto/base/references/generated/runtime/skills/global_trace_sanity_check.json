@@ -54,9 +54,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+    "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
     "path": "backend/skills/composite/global_trace_sanity_check.skill.yaml",
-    "sha256": "a38acbd87473cf64ef93cbdceadc701c047dbec3202ccb3af19a59f7ef9cf5ec"
+    "sha256": "1adb4b390eb80646b03d2994e975e118a1077859bf5dd960f70edeb33b0084e0"
   },
   "steps": [
     {
@@ -73,6 +73,14 @@
       "query_id": "global_trace_sanity_check/trace_diagnostics",
       "result_dependencies": [],
       "save_as": "trace_diagnostics",
+      "type": "atomic"
+    },
+    {
+      "id": "data_loss_stats",
+      "name": "数据丢失统计",
+      "query_id": "global_trace_sanity_check/data_loss_stats",
+      "result_dependencies": [],
+      "save_as": "data_loss_stats",
       "type": "atomic"
     },
     {

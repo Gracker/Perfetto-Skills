@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/comparison/multi_trace_result_comparison.skill.yaml
 Source SHA-256: 77585c59a25d4c89d4510b6d4017e3bd1d0e48dcd05e45064517414e5ec8a738
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 # File-based trace comparison
 

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_events_in_range.skill.yaml
-Source SHA-256: e10744671cf490370b05905679d0af9addd3c30ba2986cda6cb7174873fd78a2
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 038e6baef3bea018d57ff5db83ee6b30d4f089f339989e7aeaac6cd804ee108d
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 # 启动事件列表 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -34,6 +34,7 @@ tags:
 modules:
 - android.startup.startups
 - android.startup.time_to_display
+- android.startup.startup_events
 ```
 
 ## Inputs
@@ -108,6 +109,16 @@ columns:
   format: duration_ms
   unit: ns
   hidden: true
+- name: dur_without_trampoline_ms
+  label: 去 Trampoline 耗时
+  type: duration
+  format: duration_ms
+  unit: ms
+- name: trampoline_ms
+  label: Trampoline 耗时
+  type: duration
+  format: duration_ms
+  unit: ms
 - name: ttid_ms
   label: TTID
   type: duration

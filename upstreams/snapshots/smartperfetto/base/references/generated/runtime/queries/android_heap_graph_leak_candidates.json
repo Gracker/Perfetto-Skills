@@ -57,7 +57,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_leak_candidates/leak_candidates.sql",
-      "sha256": "ef33e5ea9dc2d6eac8ac82df50740b5ee6be672d7dffa95c79fb6420b6fed981",
+      "sha256": "463d7146d45a382eed58142b22fc7c459dcc8dfed650b9d38fe29228daa54cbd",
       "signal_patterns": [
         "*",
         "*onCreate*",
@@ -66,14 +66,16 @@
         "*onPause*",
         "*onResume*",
         "*onStart*",
-        "*onStop*"
+        "*onStop*",
+        "heap_graph*",
+        "hprof*"
       ],
       "skill_id": "android_heap_graph_leak_candidates",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4"
+        "sha256": "e2af69bca6b92ed9ca91e615637c3e86b5fc9daba767af5db4f2ef7225f98f20"
       },
       "sql_dependencies": {
         "creates": [],
@@ -91,7 +93,18 @@
       },
       "step_id": "leak_candidates",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/heap_target_process.sql",
+            "source_sha256": "e788383fbf3eb24fe8a5df419b95a9694046dc64f51c7852daea28d4547285db"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/heap_graph_dump_scope.sql",
+            "source_sha256": "8dd10469b7bd15dfae1d2d9cfd2d15ce2140f3353d85c9a3587290535ec8bceb"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "class_name_glob",
@@ -99,7 +112,8 @@
           "lifecycle_slice_prefix",
           "max_candidates",
           "package",
-          "process_name"
+          "process_name",
+          "upid"
         ],
         "result_dependencies": [],
         "runtime_bindings": []
@@ -170,7 +184,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_leak_candidates/reference_holders.sql",
-      "sha256": "0e903e6630fb33335078fe864b7689f005dcb68b3b55889a6884d638984fa646",
+      "sha256": "e0dc539e6d40bd1b8ef347f00b8a1b980d5a99a4c43ba4e3a0e86c3f8fe16ea2",
       "signal_patterns": [
         "*",
         "*onCreate*",
@@ -179,14 +193,16 @@
         "*onPause*",
         "*onResume*",
         "*onStart*",
-        "*onStop*"
+        "*onStop*",
+        "heap_graph*",
+        "hprof*"
       ],
       "skill_id": "android_heap_graph_leak_candidates",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/atomic/android_heap_graph_leak_candidates.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a2fbe5f92aecccb26dbd49f2a3657a89c76fd60d27dbfd66080bbb7eaa7327a4"
+        "sha256": "e2af69bca6b92ed9ca91e615637c3e86b5fc9daba767af5db4f2ef7225f98f20"
       },
       "sql_dependencies": {
         "creates": [],
@@ -204,7 +220,18 @@
       },
       "step_id": "reference_holders",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/heap_target_process.sql",
+            "source_sha256": "e788383fbf3eb24fe8a5df419b95a9694046dc64f51c7852daea28d4547285db"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/heap_graph_dump_scope.sql",
+            "source_sha256": "8dd10469b7bd15dfae1d2d9cfd2d15ce2140f3353d85c9a3587290535ec8bceb"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "class_name_glob",
@@ -213,7 +240,8 @@
           "max_candidates",
           "max_reference_edges",
           "package",
-          "process_name"
+          "process_name",
+          "upid"
         ],
         "result_dependencies": [],
         "runtime_bindings": []

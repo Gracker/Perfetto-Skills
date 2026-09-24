@@ -160,11 +160,11 @@ class V02ContractTest(unittest.TestCase):
         )
         self.assertEqual(
             source_lock["runtime"]["revision"],
-            "add693d8b338ba9599dbcbc3e300b1ab8c000897",
+            "99234d73fe356bf7edf6b2cb7afcf2a9eefc5368",
         )
         self.assertEqual(
             source_lock["runtime"]["stdlib_tree"],
-            "54fc9f0b5c8dedb8772283b6786753fbb918da0d",
+            "c4ed7bdb0dfc5c21fb00e3982220d39abe2911bf",
         )
         self.assertEqual(
             source_lock["official_reference"]["skill"]["role"], "gap_check_only"

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S06_multi_window_type.md
 Source SHA-256: e180be5faeb94832ff4bff9647b9b5a8a24760b2de69a8d0f80729f1d29a9557
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 # Android Perfetto 系列 - App 出图类型 - 多窗口类型
 

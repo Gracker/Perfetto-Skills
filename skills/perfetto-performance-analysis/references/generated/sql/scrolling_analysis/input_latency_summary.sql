@@ -1,9 +1,33 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 917a301ba39a39244344d671654334dbea71801fdead788f5de43bd07d2f2865
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: 192564e961761d7f0b09ad3f7c230a9b7dc62f5e8b965d6524c61fa8de1d6b66
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- The single read path for stdlib android_input_events. Skill contract:
+-- event_action is the uppercase action without the Android prefix (MOVE, DOWN,
+-- UP, CANCEL, ...). Newer trace processors report legacy atrace actions as
+-- ACTION_MOVE/ACTION_DOWN/ACTION_UP; older ones reported MOVE/DOWN/UP. Every
+-- other column passes through unchanged, NULL actions stay NULL. The column
+-- list is the set every supported runtime has (v58.2 lacks frame_event_time);
+-- keep it aligned with scrolling_analysis's input_data_fallback_view. NOT MATERIALIZED: consumers read it more than once
+-- under their own filters, so SQLite should inline it rather than copy the table.
+android_input_events_normalized AS NOT MATERIALIZED (
+  SELECT
+    dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
+    total_latency_dur, end_to_end_latency_dur,
+    tid, thread_name, upid, pid, process_name,
+    event_type,
+    CASE WHEN event_action GLOB 'ACTION_*' THEN SUBSTR(event_action, 8)
+      ELSE event_action END AS event_action,
+    event_seq, event_channel, normalized_event_channel, input_event_id,
+    read_time, dispatch_track_id, dispatch_ts, dispatch_dur,
+    receive_ts, receive_dur, receive_track_id,
+    frame_id, is_speculative_frame, event_time
+  FROM android_input_events
+)
+,
 vsync_intervals AS (
   SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
   FROM counter c
@@ -33,7 +57,7 @@ timing_config AS (
 ),
 scoped_events AS (
   SELECT *
-  FROM android_input_events
+  FROM android_input_events_normalized
   WHERE (${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid})
     AND (
     ${__process_scope.upid} IS NOT NULL OR '${package}' = ''

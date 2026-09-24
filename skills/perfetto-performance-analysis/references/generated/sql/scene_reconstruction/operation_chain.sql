@@ -1,14 +1,40 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scene_reconstruction.skill.yaml
--- Source SHA-256: 8832b9e9b6f0bb86a0676bcd50f367546a3406ef8111be90fe60511d26678d5b
--- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+-- Source SHA-256: 2dc3194fd8730e6ce16c5d4db97860cc8cdfccee8b6b2f23dfd11ddb3d752ab4
+-- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- The single read path for stdlib android_input_events. Skill contract:
+-- event_action is the uppercase action without the Android prefix (MOVE, DOWN,
+-- UP, CANCEL, ...). Newer trace processors report legacy atrace actions as
+-- ACTION_MOVE/ACTION_DOWN/ACTION_UP; older ones reported MOVE/DOWN/UP. Every
+-- other column passes through unchanged, NULL actions stay NULL. The column
+-- list is the set every supported runtime has (v58.2 lacks frame_event_time);
+-- keep it aligned with scrolling_analysis's input_data_fallback_view. NOT MATERIALIZED: consumers read it more than once
+-- under their own filters, so SQLite should inline it rather than copy the table.
+android_input_events_normalized AS NOT MATERIALIZED (
+  SELECT
+    dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
+    total_latency_dur, end_to_end_latency_dur,
+    tid, thread_name, upid, pid, process_name,
+    event_type,
+    CASE WHEN event_action GLOB 'ACTION_*' THEN SUBSTR(event_action, 8)
+      ELSE event_action END AS event_action,
+    event_seq, event_channel, normalized_event_channel, input_event_id,
+    read_time, dispatch_track_id, dispatch_ts, dispatch_dur,
+    receive_ts, receive_dur, receive_track_id,
+    frame_id, is_speculative_frame, event_time
+  FROM android_input_events
+)
+,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Shared input observation contract. Legacy android_input_events contains only
 -- acknowledged deliveries: absence never proves that a user/device was idle.
 -- Do not infer scrolling, long-click recognition or fling from MOVE counts,
 -- contact duration or subsequent frames. Preserve native device/display IDs.
+-- Requires fragments/android_input_events_normalized.sql listed before this
+-- fragment: the legacy branch reads its prefix-free actions (MOVE, DOWN, UP).
 scene_raw_input AS (
   SELECT 'android_motion_events' AS source_table, CAST(id AS TEXT) AS source_id,
     ts, 'MOTION' AS event_type,
@@ -43,7 +69,7 @@ scene_raw_input AS (
       COALESCE(event_channel, 'unknown:' || COALESCE(input_event_id, event_seq, CAST(dispatch_ts AS TEXT))),
     COALESCE(input_event_id, event_seq, '') || ':' || COALESCE(event_channel, '') || ':' || dispatch_ts,
     input_event_id, dispatch_ts
-  FROM android_input_events AS legacy
+  FROM android_input_events_normalized AS legacy
   WHERE NOT EXISTS (
     SELECT 1 FROM android_motion_events AS m
     WHERE legacy.input_event_id IN (CAST(m.event_id AS TEXT), printf('0x%x', m.event_id))

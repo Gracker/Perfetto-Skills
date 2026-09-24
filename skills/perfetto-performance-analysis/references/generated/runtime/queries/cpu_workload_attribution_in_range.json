@@ -58,7 +58,7 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "d2b5a0e705c9adb59266c893c9e843f006ad400d05a7aa2c00bd970b48b30d46",
+      "sha256": "1daf54b400dd8852fb9db4bca9f04a7e0cf2bbc547461e5ab621cd1bce5cebc9",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -67,7 +67,7 @@
       ],
       "skill_id": "cpu_workload_attribution_in_range",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/atomic/cpu_workload_attribution_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "deda79ad447ced6323b09d92a57c1031fe27378e197e1e8cb0845a30efca29e8"
@@ -94,17 +94,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "2d4e4c41a0b60f6574a37f4b20164b38abb2b4a4a203ac472cd5acf3646fb46a"
+            "source_sha256": "a1d417547344d3772b1953e7c088155abc672ccd48e664e65aecd87be4f59500"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "e7d6d10ecb161e7744df86d880a54dd8c9ff3c71c80e756464551c74e6b29b9f"
+            "source_sha256": "9511d72a57767e5f16c6c86520805ec3acf9203bfd490b9c44b200b42583eb0d"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/actor_class_labels.sql",
-            "source_sha256": "9829fe65223d2b1d379b3819578e907a70b0e5d6617aef9ab9646b5fc1c9a903"
+            "source_sha256": "1d94d5874afbb51ec9bfa29c2f8f2a2d13006a9fce42fe5ca7abf52dd91b77c8"
           }
         ],
         "name_parameters": [],
@@ -185,7 +185,7 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "354bfe3e850840de753feda1bc5d36854edb9ae5c417bad7aa19a9148cf3b9da",
+      "sha256": "15e02049ed8189678dceeee0a77c96478989517e8dfb551e136e981843aea81b",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -194,7 +194,7 @@
       ],
       "skill_id": "cpu_workload_attribution_in_range",
       "source": {
-        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
         "path": "backend/skills/atomic/cpu_workload_attribution_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "deda79ad447ced6323b09d92a57c1031fe27378e197e1e8cb0845a30efca29e8"
@@ -221,12 +221,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "2d4e4c41a0b60f6574a37f4b20164b38abb2b4a4a203ac472cd5acf3646fb46a"
+            "source_sha256": "a1d417547344d3772b1953e7c088155abc672ccd48e664e65aecd87be4f59500"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/actor_class_labels.sql",
-            "source_sha256": "9829fe65223d2b1d379b3819578e907a70b0e5d6617aef9ab9646b5fc1c9a903"
+            "source_sha256": "1d94d5874afbb51ec9bfa29c2f8f2a2d13006a9fce42fe5ca7abf52dd91b77c8"
           }
         ],
         "name_parameters": [],

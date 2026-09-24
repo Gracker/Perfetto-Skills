@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/startup.strategy.md
-Source SHA-256: 6ad0ed78deaf1341300a10121594e26863e78336af7373814e0e40a86bfe35b7
-Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
+Source SHA-256: 399f61a5c0bb1be037cfc976ad505c505cd6765f96f7285886baf94a67aebddb
+Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
 
 # Startup Strategy
 
@@ -869,6 +869,7 @@ TTID 和 TTFD 是两个不同的指标，必须区分：
 - `android_startups` 表的 `dur`（= `end_ts - start_ts`）是框架层启动时长，通常表示框架认定的 startup completion，可近似首帧显示边界
 - 注意：`dur` 与 TTID 在部分 trace 上并不严格等价（文档前面的 `R008_TTID_GT_DUR` 数据质量检查即为此设计）。当数据质量检查触发 R008 时，需单独核验 `dur` 与 TTID 的偏差原因
 - 即使 `ttid_ms` 字段为 NULL，`dur_ms` 仍然定义了有效的分析窗口，分析的全部内容（Phase 1 到 Phase 3）都基于 `start_ts` 到 `end_ts` 范围
+- **Launch trampoline（SDK 33+）**：`trampoline_ms > 0` 表示同一启动区间先启动了另一个 Activity/包（trampoline），再跳转到目标包；`dur_ms` 包含这段跳转，`dur_without_trampoline_ms` 才是目标包自身 `launching:` 区间的时长。trampoline 段属于发起跳转的入口，不得计入目标 App 的阶段分解、根因或优化收益；报告须同时列出两个时长，并注明 `rating` 仍按含 trampoline 的 `dur_ms` 评定。
 
 **诊断逻辑**：
 - `ttid_ms` 存在 → 报告中显示 TTID 值
