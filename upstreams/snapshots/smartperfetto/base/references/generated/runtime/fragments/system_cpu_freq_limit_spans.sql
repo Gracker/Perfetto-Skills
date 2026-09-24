@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/system_cpu_freq_limit_spans.sql
 -- Source SHA-256: f450e0e8409525a535050150f123a25f4f2dc2577ef7941ce180f1360c0a9244
--- Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
+-- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)

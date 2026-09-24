@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/investigation-profiles.yaml
 Source SHA-256: a6bd593f1a512a72d61da7c61cf80e9f7aee0b927d6aed49e940f11acbaf41b9
-Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
+Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
 
 # Investigation Profiles Yaml
 

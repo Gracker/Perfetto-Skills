@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/android_heap_dominator_path_extract.skill.yaml
 Source SHA-256: 79a6054d4d6744e18381baa97106c13e0a4e11f4c8655ba9ade28004904aab52
-Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
+Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
 # Android Heap Dominator Path Extract
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

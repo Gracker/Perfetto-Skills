@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/battery_doze_state_timeline.skill.yaml
 -- Source SHA-256: 76538da9dab1b6f5e68441be298de8fa40633dbe1e8b0cf79d547d49c1f1e4a1
--- Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
+-- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
 
 SELECT
   ts,

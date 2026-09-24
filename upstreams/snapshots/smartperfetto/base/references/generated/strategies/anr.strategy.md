@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
 Source SHA-256: 016e87b6b171d0855beac6248714c7b8bb7ecf7360e59fba877ca03a172593f3
-Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
+Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
 
 # Anr Strategy
 

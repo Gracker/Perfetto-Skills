@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-rendering-pipeline.template.md
-Source SHA-256: 647f1c76a6b387ddf8ba479a55dbc2d1d5dbc62a28d71d55e16844b53fd1e8b8
-Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
+Source SHA-256: dba840a804afc4f6e53df4c8194211fd1e01ae041696e09a8c3c3c8b60afc4bb
+Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
 
 # Knowledge Rendering Pipeline Template
 
@@ -80,6 +80,21 @@ Android 版本、框架版本或常见默认值代替证据。
   五模式清单。
 - present fence 是 Android 显示栈时间锚点。它不是 panel 光学响应、像素完全
   稳定或用户主观感知时刻的证明。
+
+## 输入到上屏的测量边界
+
+`android_input_events` 只把输入关联到接收该事件的 UI 线程上的
+`Choreographer#doFrame`：与投递相交为精确关联；否则取之后的下一个 doFrame，
+标为 `is_speculative_frame=1`。`end_to_end_latency_dur` 再取该帧之后同进程
+第一个未丢弃的 app 层 FrameTimeline 帧的 present。
+
+- 画面由其他线程或 producer 产出时（SurfaceView、Native Graphics、Flutter
+  SurfaceView、Game），推测关联到的宿主 doFrame 不是出图帧。进程没有 app 层
+  FrameTimeline 时 `end_to_end_latency_dur` 为 NULL：输入到上屏在该 trace 中
+  不可测量，不是 0，也不是正常。
+- 经宿主帧合成的 TextureView（含 Flutter TextureView）可能有 e2e 值；若来自推测
+  关联，它只是候选值，不是该事件的实测上屏时间。
+- 不要用 producer 帧节奏、宿主 doFrame 和 SF present 自行拼出端到端延迟来填补缺口。
 
 ## 输出顺序
 

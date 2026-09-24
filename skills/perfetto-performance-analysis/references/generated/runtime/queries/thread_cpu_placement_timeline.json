@@ -63,14 +63,14 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "cf0484abbfc6941ffd2b1842428539d26c6263ab1f90ae5e0cf64dfa50380ac2",
+      "sha256": "65169036ab22ddd2462799b8e32e6a3896bd4165afd51a2f255c66e07e0a015f",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "thread_cpu_placement_timeline",
       "source": {
-        "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
+        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
         "path": "backend/skills/atomic/thread_cpu_placement_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "34281aa6d8fb63c02afd70d429360ea02b61774c67d9a554d7a96c0ec77facfc"
@@ -91,12 +91,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "7d55d5e94601418f0dc60989faa7e988ee36fe0846c098be6065b781a218965e"
+            "source_sha256": "d76bab426eebfe5d0dedd8055f0c5530512f95bdfd9fd75c932d23d6c8807d71"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "88e2844a40248a5cb2b5fa9da669176b8accfa39ff36f4d5616dee95bee914b9"
+            "source_sha256": "fcb1daeb335463feed868da3d37dae9303caa8e79d03a27b6959c6f7130ff08a"
           }
         ],
         "name_parameters": [

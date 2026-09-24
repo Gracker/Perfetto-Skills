@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: a4a369d7aa253c788ffc49d308e6d2a53fa2f10b30851279fac8ecff4712c6f8
-Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
+Source SHA-256: 9f470b0813f6eee68671ae2ef9ff39bcaf9e7da1b5f9728aee88f0e7db88f40a
+Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
 
 # Scrolling Strategy
 
@@ -497,6 +497,12 @@ Connect Main/Render/raster/GPU/SF/present only with matching identities and timi
 Raw Buffer Stuffing tags exceed half of analysed frames. Read consumer_jank_detection presentation_cadence_audit to distinguish steady_late from cadence excursions, retaining mixed missed/drop signals. Before attributing or excluding producer/consumer backpressure, measure dequeueBuffer waits and release-fence return; raw tag share alone proves neither queue delay nor mechanism.
 
 Apply when: Raw Buffer Stuffing tags account for more than half of the analysed frames.
+
+### scrolling_input_latency_boundary (dependency_chain)
+
+Speculative input-frame matches (is_speculative_frame=1) are unproven candidates; count input backlog only from exact matches. NULL input-to-present latency is unmeasured, not zero or normal; without app FrameTimeline/present (e.g. Flutter SurfaceView) it is unmeasurable.
+
+Apply when: Applies when citing input-frame association, input backlog or input-to-present latency.
 
 #### Scrolling Core Strategy
 

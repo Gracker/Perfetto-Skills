@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 192564e961761d7f0b09ad3f7c230a9b7dc62f5e8b965d6524c61fa8de1d6b66
--- Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
+-- Source SHA-256: 932de9b3d1c489168bad805861e11436f709ab3f63663add77ae3582aab383db
+-- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 使用相同优先级 CASE 树
@@ -1297,13 +1297,14 @@ classified AS (
       WHEN gc_count >= 3 AND gc_overlap_ms > 0.5
         THEN 'gc_pressure_cascade'
       -- P1.7: App input stage 慢。只使用 App 责任/隐形掉帧帧；android.input
-      -- handling 或主线程 input slice 都可作为直接证据，同帧事件堆积只是辅助信号。
+      -- handling 或主线程 input slice 都可作为直接证据，同帧事件堆积只是辅助信号，
+      -- 且只计精确帧关联（推测关联只是接收线程的下一个 doFrame）。
       WHEN jank_responsibility IN ('APP', 'HIDDEN')
         AND (
           input_handling_ms > frame_budget_ms * ${input_handling_budget_ratio|0.5}
           OR input_slice_ms > frame_budget_ms * ${input_handling_budget_ratio|0.5}
           OR (
-            input_event_count >= ${input_event_backlog_threshold|3}
+            input_event_count - input_speculative_events >= ${input_event_backlog_threshold|3}
             AND input_handling_ms > frame_budget_ms * 0.25
           )
         )

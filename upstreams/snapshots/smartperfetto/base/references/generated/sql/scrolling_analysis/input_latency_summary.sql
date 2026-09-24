@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 192564e961761d7f0b09ad3f7c230a9b7dc62f5e8b965d6524c61fa8de1d6b66
--- Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
+-- Source SHA-256: 932de9b3d1c489168bad805861e11436f709ab3f63663add77ae3582aab383db
+-- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -85,10 +85,12 @@ target_events AS (
   FROM scoped_events e
   JOIN target t ON e.upid = t.upid
 ),
+-- A speculative association is only the next doFrame on the receiving
+-- thread, not proof the frame consumed the event; backlog counts exact ones.
 frame_backlog AS (
   SELECT frame_id, COUNT(*) as event_count
   FROM target_events
-  WHERE frame_id IS NOT NULL
+  WHERE frame_id IS NOT NULL AND COALESCE(is_speculative_frame, 0) = 0
   GROUP BY frame_id
 )
 SELECT
