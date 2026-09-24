@@ -5,7 +5,7 @@ import sys
 import tempfile
 import unittest
 from unittest import mock
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 import io
 
 from tests.support import load_skill_script
@@ -274,6 +274,44 @@ class RuntimeCliV02Test(unittest.TestCase):
                     max_output_bytes=1024,
                 )
         run_query.assert_called_once()
+
+    def test_skill_cli_rejects_undeclared_parameters_before_resolving_a_processor(self) -> None:
+        cli = load_skill_script("perfetto_skill")
+        cases = (
+            # game_fps_analysis binds `package`; `process_name` would leave it unscoped.
+            ("game_fps_analysis", 'process_name="com.foo"', r"undeclared input\(s\): process_name; declared inputs: .*package"),
+            # jank_frame_detail verifies `process_name` as an alias but binds only `package`.
+            ("jank_frame_detail", 'process_name="com.foo"', r"identity alias process_name .*pass the value as package"),
+            ("frame_blocking_calls", 'start_ts=1', r"frame_blocking_calls missing required input: process_name"),
+        )
+        for skill_id, param, message in cases:
+            with self.subTest(skill=skill_id), tempfile.TemporaryDirectory() as temporary:
+                stderr = io.StringIO()
+                with mock.patch.object(cli, "resolve_verified_processor") as resolve, mock.patch.object(
+                    cli, "probe_trace",
+                ) as probe, redirect_stderr(stderr):
+                    exit_code = cli.main([
+                        "run", str(Path(temporary) / "trace.pftrace"), "--skill", skill_id,
+                        "--param", param, "--output-dir", str(Path(temporary) / "out"),
+                    ])
+                self.assertEqual(exit_code, 2)
+                self.assertRegex(stderr.getvalue(), message)
+                resolve.assert_not_called()
+                probe.assert_not_called()
+                self.assertFalse((Path(temporary) / "out").exists())
+
+    def test_every_identity_alias_that_is_not_an_input_has_a_bound_input(self) -> None:
+        from runtime.executor import _declared_inputs, resolve_inputs
+
+        catalog = load_skill_script("perfetto_skill").ManifestCatalog()
+        for skill_id in sorted(catalog.index["skills"]):
+            skill = catalog.load(skill_id)
+            for alias in (skill.get("identity") or {}).get("aliases", []) or []:
+                if alias in _declared_inputs(skill):
+                    continue
+                with self.subTest(skill=skill_id, alias=alias):
+                    with self.assertRaisesRegex(ValueError, rf"identity alias {alias} .*pass the value as \w+"):
+                        resolve_inputs(skill_id, skill, {alias: "com.example"})
 
     def test_report_validator_rejects_non_object_json(self) -> None:
         from runtime.report import validate_report_payload

@@ -1,10 +1,15 @@
 from pathlib import Path
 import copy
 import json
+import sys
 import tempfile
 import unittest
+from unittest import mock
 
 from tests.support import SCRIPTS, load_skill_script
+
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
 
 
 class RuntimeTest(unittest.TestCase):
@@ -390,6 +395,129 @@ class RuntimeProcessScopeTest(unittest.TestCase):
             self.common.render_sql_template(template, {"note": "${__process_scope.upid|99}"}, {}),
             "SELECT '${__process_scope.upid|99}' AS note -- ${__process_scope.upid|99}\n",
         )
+
+
+class SkillInputContractTest(unittest.TestCase):
+    """A supplied parameter the Skill does not declare must never be ignored."""
+
+    def setUp(self) -> None:
+        from runtime.executor import SkillRunner
+
+        self.runner_type = SkillRunner
+        self.skills = {
+            "fps": {
+                "id": "fps", "runtime_status": "executable", "type": "atomic",
+                "query_id": "fps/root", "identity": {"policy": "none"},
+                "inputs": [
+                    {"name": "package", "type": "string", "required": False},
+                    {"name": "start_ts", "type": "timestamp", "required": False},
+                ],
+            },
+            "frame": {
+                "id": "frame", "runtime_status": "executable", "type": "atomic",
+                "query_id": "frame/root",
+                "identity": {"policy": "verify_if_present", "aliases": ["package", "process_name"]},
+                "inputs": [{"name": "package", "type": "string", "required": False}],
+            },
+        }
+
+    def runner(self, skills, query, **kwargs):
+        return self.runner_type({"skills": skills}, query, **kwargs)
+
+    def with_parent(self, steps, inputs=()):
+        skills = copy.deepcopy(self.skills)
+        skills["parent"] = {
+            "id": "parent", "runtime_status": "executable", "type": "composite",
+            "inputs": list(inputs), "steps": steps,
+        }
+        return skills
+
+    def with_iterator(self, item_skill, **step):
+        return self.with_parent([
+            {"id": "items", "type": "atomic", "query_id": "parent/items", "save_as": "items"},
+            {"id": "iter", "type": "iterator", "source": "items", "item_skill": item_skill, **step},
+        ])
+
+    def test_undeclared_parameter_is_rejected_before_any_trace_work(self) -> None:
+        query = mock.Mock(return_value=[{"value": 1}])
+        resolver = mock.Mock(return_value={"status": "exempt"})
+        prerequisite = mock.Mock(return_value={"status": "satisfied", "missing": []})
+        runner = self.runner(
+            self.skills, query, identity_resolver=resolver, prerequisite_checker=prerequisite,
+        )
+        with self.assertRaisesRegex(ValueError, r"fps.*undeclared.*frame_rate.*declared inputs: package, start_ts"):
+            runner.run("fps", {"package": "com.example", "frame_rate": 60})
+        query.assert_not_called()
+        resolver.assert_not_called()
+        prerequisite.assert_not_called()
+
+    def test_identity_alias_without_bound_input_names_the_bound_input(self) -> None:
+        for params in ({"process_name": "com.example"}, {"process_name": "com.example", "package": "com.example"}):
+            with self.subTest(params=params):
+                query = mock.Mock(return_value=[{"value": 1}])
+                resolver = mock.Mock(return_value={"status": "resolved", "target": "com.example"})
+                runner = self.runner(self.skills, query, identity_resolver=resolver)
+                with self.assertRaisesRegex(
+                    ValueError, r"frame.*identity alias process_name.*not bound.*pass the value as package",
+                ):
+                    runner.run("frame", params)
+                query.assert_not_called()
+                resolver.assert_not_called()
+
+    def test_alias_that_is_not_an_identity_alias_of_an_unscoped_skill_is_plainly_undeclared(self) -> None:
+        runner = self.runner(self.skills, mock.Mock(return_value=[]))
+        with self.assertRaisesRegex(ValueError, r"fps.*undeclared.*process_name.*declared inputs: package, start_ts") as caught:
+            runner.run("fps", {"process_name": "com.example"})
+        self.assertNotIn("identity alias", str(caught.exception))
+
+    def test_declared_inputs_still_run(self) -> None:
+        query = mock.Mock(return_value=[{"value": 1}])
+        result = self.runner(self.skills, query).run("frame", {"package": "com.example"})
+        self.assertTrue(result["success"])
+        self.assertEqual(query.call_args.kwargs["params"], {"package": "com.example"})
+
+    def test_child_skill_call_with_undeclared_parameter_is_an_explicit_step_error(self) -> None:
+        for optional in (True, False):
+            with self.subTest(optional=optional):
+                skills = self.with_parent(
+                    [{
+                        "id": "child", "type": "skill", "skill": "fps", "optional": optional,
+                        "params": {"start_ts": "${start_ts}", "end_ts": "${start_ts}"},
+                    }],
+                    inputs=[{"name": "start_ts", "type": "timestamp", "required": False}],
+                )
+                query = mock.Mock(return_value=[{"value": 1}])
+                result = self.runner(skills, query).run("parent", {"start_ts": 5})
+                step = result["steps"][0]
+                self.assertEqual(step["status"], "error")
+                self.assertEqual(step["child"]["status"], "input_rejected")
+                self.assertIn("end_ts", step["child"]["error"])
+                self.assertEqual(result["success"], optional)
+                query.assert_not_called()
+
+    def test_iterator_item_with_undeclared_mapping_fails_that_item(self) -> None:
+        skills = self.with_iterator("frame", item_params={"process_name": "name"})
+
+        def query(query_id, **_kwargs):
+            return [{"name": "com.example"}] if query_id == "parent/items" else [{"value": 1}]
+
+        result = self.runner(skills, query).run("parent")
+        iterator = result["steps"][1]
+        self.assertFalse(result["success"])
+        self.assertEqual(iterator["failed_items"], 1)
+        self.assertEqual(iterator["items"][0]["result"]["status"], "input_rejected")
+
+    def test_iterator_without_item_params_binds_only_declared_row_fields(self) -> None:
+        skills = self.with_iterator("fps")
+        calls = []
+
+        def query(query_id, **kwargs):
+            calls.append((query_id, kwargs["params"]))
+            return [{"package": "com.example", "dur": 3}] if query_id == "parent/items" else [{"value": 1}]
+
+        result = self.runner(skills, query).run("parent")
+        self.assertTrue(result["success"])
+        self.assertEqual(calls[1], ("fps/root", {"package": "com.example", "start_ts": None}))
 
 
 if __name__ == "__main__":

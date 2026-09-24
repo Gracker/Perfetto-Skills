@@ -16,6 +16,71 @@ def _canonical(value: Any) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), default=str).encode("utf-8")
 
 
+class SkillInputError(ValueError):
+    """A Skill call whose parameters do not satisfy the Skill's input contract."""
+
+
+def _declared_inputs(skill: Mapping[str, Any]) -> list[str]:
+    return [str(spec["name"]) for spec in skill.get("inputs", []) or []]
+
+
+_EXPECTED_TYPES = {
+    "string": str,
+    "number": (int, float),
+    "integer": int,
+    "boolean": bool,
+    "timestamp": (int, float),
+    "duration": (int, float),
+    "array": list,
+    "json_array": list,
+    "object": dict,
+}
+_NUMERIC_TYPES = frozenset({"number", "integer", "timestamp", "duration"})
+
+
+def _reject_undeclared(skill_id: str, skill: Mapping[str, Any], declared: list[str], names: list[str]) -> None:
+    message = (
+        f"{skill_id} rejects undeclared input(s): {', '.join(names)}; "
+        f"declared inputs: {', '.join(sorted(declared)) or 'none'}"
+    )
+    aliases = [str(name) for name in (skill.get("identity", {}) or {}).get("aliases", []) or []]
+    bound = [name for name in aliases if name in declared]
+    for name in sorted(set(names) & set(aliases)):
+        # Aliases only select the process for identity verification; SQL reads
+        # the declared input, so an alias alone would run the query unscoped.
+        message += (
+            f"; identity alias {name} only verifies the target process and is not bound into SQL; "
+            + (f"pass the value as {' or '.join(bound)}" if bound else "this Skill binds no process name input")
+        )
+    raise SkillInputError(message)
+
+
+def resolve_inputs(skill_id: str, skill: Mapping[str, Any], supplied: Mapping[str, Any]) -> dict[str, Any]:
+    """Apply the Skill's input contract; a supplied name it does not declare is never ignored."""
+    declared = _declared_inputs(skill)
+    undeclared = sorted(set(supplied) - set(declared))
+    if undeclared:
+        _reject_undeclared(skill_id, skill, declared, undeclared)
+    result = dict(supplied)
+    for spec in skill.get("inputs", []) or []:
+        name = str(spec["name"])
+        if name not in result and "default" in spec:
+            result[name] = spec["default"]
+        if spec.get("required") and name not in result:
+            raise SkillInputError(f"{skill_id} missing required input: {name}")
+        if name not in result and not spec.get("required"):
+            result[name] = None
+        if name in result and spec.get("type") in _EXPECTED_TYPES:
+            value = result[name]
+            if value is None and not spec.get("required"):
+                continue
+            if (isinstance(value, bool) and spec["type"] in _NUMERIC_TYPES) or not isinstance(
+                value, _EXPECTED_TYPES[spec["type"]]
+            ):
+                raise SkillInputError(f"{skill_id} invalid {spec['type']} input: {name}")
+    return result
+
+
 def _meaningful(value: Any) -> bool:
     if value is None:
         return False
@@ -47,37 +112,6 @@ class SkillRunner:
         self.prerequisite_checker = prerequisite_checker
         self.process_scope_enabled = process_scope_enabled
 
-    def _inputs(self, skill: Mapping[str, Any], supplied: Mapping[str, Any]) -> dict[str, Any]:
-        result = dict(supplied)
-        expected_types = {
-            "string": str,
-            "number": (int, float),
-            "integer": int,
-            "boolean": bool,
-            "timestamp": (int, float),
-            "duration": (int, float),
-            "array": list,
-            "json_array": list,
-            "object": dict,
-        }
-        for spec in skill.get("inputs", []) or []:
-            name = str(spec["name"])
-            if name not in result and "default" in spec:
-                result[name] = spec["default"]
-            if spec.get("required") and name not in result:
-                raise ValueError(f"missing required input: {name}")
-            if name not in result and not spec.get("required"):
-                result[name] = None
-            if name in result and spec.get("type") in expected_types:
-                if result[name] is None and not spec.get("required"):
-                    continue
-                expected = expected_types[spec["type"]]
-                if isinstance(result[name], bool) and spec["type"] in {"number", "integer", "timestamp", "duration"}:
-                    raise ValueError(f"invalid {spec['type']} input: {name}")
-                if not isinstance(result[name], expected):
-                    raise ValueError(f"invalid {spec['type']} input: {name}")
-        return result
-
     def _evidence(self, skill_id: str, step_id: str, query_id: str | None, params: Mapping[str, Any], status: str, rows: Any, error: str | None = None) -> dict[str, Any]:
         payload = {
             "skill_id": skill_id,
@@ -106,6 +140,23 @@ class SkillRunner:
             return evaluate(value, context)
         return value
 
+    def _run_child(self, skill_id: str, params: Mapping[str, Any], *, depth: int, inherited: Mapping[str, Any]) -> dict[str, Any]:
+        try:
+            return self.run(skill_id, params, _depth=depth, _inherited=inherited)
+        except SkillInputError as exc:
+            # A manifest-authored call that breaks the child's input contract is
+            # a visible step failure; optional/required handling decides the parent.
+            return {
+                "schema_version": 1,
+                "skill_id": skill_id,
+                "success": False,
+                "status": "input_rejected",
+                "error": str(exc),
+                "params": dict(params),
+                "steps": [],
+                "evidence": [],
+            }
+
     def run(self, skill_id: str, params: Mapping[str, Any] | None = None, *, _depth: int = 0, _inherited: Mapping[str, Any] | None = None) -> dict[str, Any]:
         if _depth > self.max_depth:
             raise RuntimeError(f"Skill recursion depth exceeds {self.max_depth}")
@@ -119,7 +170,7 @@ class SkillRunner:
         reject_process_scope_names(_inherited or {})
         for step in skill.get("steps", []) or []:
             reject_process_scope_names({name: None for name in (step.get("id"), step.get("save_as")) if name is not None})
-        inputs = self._inputs(skill, params or {})
+        inputs = resolve_inputs(skill_id, skill, params or {})
         prerequisite = (
             dict(self.prerequisite_checker(skill))
             if self.prerequisite_checker is not None
@@ -231,7 +282,7 @@ class SkillRunner:
                     key: self._resolve_param(value, context)
                     for key, value in (step.get("params", {}) or {}).items()
                 }
-                child = self.run(str(step["skill"]), child_params, _depth=_depth + 1, _inherited=variables)
+                child = self._run_child(str(step["skill"]), child_params, depth=_depth + 1, inherited=variables)
                 rows = self._extract_child_rows(child)
                 status = "observed" if rows else ("empty" if child.get("success") else "error")
                 optional = bool(step.get("optional"))
@@ -267,15 +318,21 @@ class SkillRunner:
                     ]
                 maximum = int(step.get("max_items") or 100)
                 item_results = []
+                mappings = step.get("item_params", {}) or {}
+                # Without explicit mappings, a row binds only its fields that the
+                # child declares; extra result columns are data, not requested inputs.
+                row_inputs = set(_declared_inputs(self.skills.get(str(step["item_skill"]), {})))
                 for index, item in enumerate(items[:maximum]):
-                    mappings = step.get("item_params", {}) or {}
                     child_params = {
                         key: item.get(path, path) if isinstance(item, Mapping) else path
                         for key, path in mappings.items()
                     }
                     if not mappings and isinstance(item, Mapping):
-                        child_params = dict(item)
-                    child = self.run(str(step["item_skill"]), child_params, _depth=_depth + 1, _inherited={**variables, "item": item})
+                        child_params = {key: value for key, value in item.items() if key in row_inputs}
+                    child = self._run_child(
+                        str(step["item_skill"]), child_params,
+                        depth=_depth + 1, inherited={**variables, "item": item},
+                    )
                     item_results.append({"index": index, "item": item, "result": child})
                     evidence.extend(child.get("evidence", []))
                 failed_items = sum(

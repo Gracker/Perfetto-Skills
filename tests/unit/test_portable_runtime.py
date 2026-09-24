@@ -340,9 +340,12 @@ class PortableProcessScopeRunnerTest(unittest.TestCase):
             return [{"value": 1}]
 
         resolver = mock.Mock(return_value=self.identity)
+        # A declared input named `identity` still cannot stand in for the resolver.
+        skill = copy.deepcopy(self.skill)
+        skill["inputs"].append({"name": "identity", "type": "object", "required": False})
         params = {"package": "com.example", "identity": {"status": "not_requested"}}
         result = self.runner_type(
-            {"skills": {"scoped": self.skill}}, execute, identity_resolver=resolver,
+            {"skills": {"scoped": skill}}, execute, identity_resolver=resolver,
         ).run("scoped", params)
         self.assertTrue(result["success"])
         self.assertEqual(len(calls), 1)

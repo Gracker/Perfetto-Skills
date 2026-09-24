@@ -81,6 +81,11 @@ python3 <skill-root>/scripts/perfetto_skill.py run /absolute/trace.pftrace \
   --output-dir /absolute/output/run
 ```
 
+Pass only the Skill's declared inputs through `--param`; the runner rejects
+any other name before touching the trace. An identity alias is not a bound
+input: when a Skill binds `package`, pass the target as `package`, not
+`process_name`, even if a strategy names `process_name`.
+
 Complete Skill runs and `--query-id` runs verify the selected processor's
 v57.2 commit, RPC API, platform, and SHA-256 before executing SQL. Inspect that
 identity independently with:

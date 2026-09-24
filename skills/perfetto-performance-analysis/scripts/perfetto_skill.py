@@ -27,7 +27,7 @@ from perfetto_query import (
 )
 from perfetto_doctor import resolve_verified_processor
 from perfetto_probe import probe_trace
-from runtime.executor import SkillRunner
+from runtime.executor import SkillRunner, resolve_inputs
 from runtime.report import validate_report_payload
 from runtime.validation import validate_query_execution
 
@@ -239,12 +239,15 @@ def main(argv: list[str] | None = None) -> int:
             issues = validate_report_payload(report)
             print(json.dumps({"status": "valid" if not issues else "invalid", "issues": issues}, ensure_ascii=False, indent=2))
             return 0 if not issues else 2
+        params = parse_parameters(args.param)
+        graph = catalog.graph(args.skill)
+        # Enforce the root Skill's input contract before any trace work.
+        resolve_inputs(args.skill, graph[args.skill], params)
         processor, processor_identity = resolve_verified_processor(
             args.trace_processor,
             skill_root=SKILL_ROOT,
             allow_unsupported=args.allow_unsupported_processor,
         )
-        graph = catalog.graph(args.skill)
         probe = probe_trace(
             args.trace,
             trace_processor=str(processor),
@@ -261,7 +264,7 @@ def main(argv: list[str] | None = None) -> int:
             probe=probe,
             trace_side=args.trace_side,
         )
-        result = runner.run(args.skill, parse_parameters(args.param))
+        result = runner.run(args.skill, params)
         result["processor"] = processor_identity
         for item in result.get("evidence", []):
             item["processor"] = processor_identity
