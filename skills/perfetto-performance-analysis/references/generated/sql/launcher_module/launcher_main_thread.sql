@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/app/launcher_module.skill.yaml
 -- Source SHA-256: 09423f22ca1cc723d498d6e9ecfbfb935d5cf177154c5eab813f3bf7d0bcef40
--- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+-- Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 
 WITH launcher AS (
   SELECT p.upid, p.pid, p.name

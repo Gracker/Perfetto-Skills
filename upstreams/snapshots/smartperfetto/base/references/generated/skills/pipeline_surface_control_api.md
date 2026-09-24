@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/surface_control_api.skill.yaml
 Source SHA-256: 1266b84034af985d1a068b0c07d116bdae9ac9a81965014efb1ddcb9632912cd
-Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 # SurfaceControl API
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

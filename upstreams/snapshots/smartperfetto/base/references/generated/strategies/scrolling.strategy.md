@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: 90d9e38704340e3aa3234cc248673266763c4082ec7782b7f6bf5c0fb0822496
-Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+Source SHA-256: a4a369d7aa253c788ffc49d308e6d2a53fa2f10b30851279fac8ecff4712c6f8
+Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 
 # Scrolling Strategy
 
@@ -542,7 +542,7 @@ Apply when: Raw Buffer Stuffing tags account for more than half of the analysed 
 
 **Phase 1 — 概览 + 掉帧列表 + 批量根因分类（1 次调用）：**
 
-如果 `process_name` 来自自动焦点检测、或用户/trace 证据提示进程名与包名/线程名/layer 不一致，先执行 **Phase 1.6 进程身份交叉确认**，再调用本阶段的 `scrolling_analysis`。
+如果目标包名（下面的 `package`）来自自动焦点检测、或用户/trace 证据提示进程名与包名/线程名/layer 不一致，先执行 **Phase 1.6 进程身份交叉确认**，再调用本阶段的 `scrolling_analysis`。
 
 **Phase 1.3 — 全局上下文检查（基于 `global_context_flags` 结果，scrolling_analysis 自动输出）：**
 

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_root_cause.skill.yaml
 -- Source SHA-256: 9fb3e26f37f2a7dead03e0b85dda71300e9c3c216b4676072b9ef31385ea33ec
--- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+-- Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 
 SELECT
   bd.reason,

@@ -10,9 +10,11 @@
     ],
     "signal_patterns": [
       "*${process_name}*",
+      "*_lock_held",
       "*monitor*",
       "*mutex*",
-      "Lock contention*(owner tid: *)*"
+      "Lock contention*(owner tid: *)*",
+      "android_lock_held"
     ]
   },
   "id": "lock_contention_analysis",
@@ -49,6 +51,7 @@
   "prerequisites": {
     "modules": [
       "android.monitor_contention",
+      "android.lock_held",
       "slices.with_context"
     ],
     "required_tables": [
@@ -59,9 +62,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+    "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
     "path": "backend/skills/composite/lock_contention_analysis.skill.yaml",
-    "sha256": "3ab24e4626566ee3a7eedcbdc46815378b714668c8dd6ee54ddd6d6c2f1b1b56"
+    "sha256": "2218440cfc32dab82a764464dea62719d04148dbaff34657cbe3590d4a063523"
   },
   "steps": [
     {
@@ -147,6 +150,35 @@
       "query_id": "lock_contention_analysis/contention_binder_correlation",
       "result_dependencies": [],
       "save_as": "contention_binder_correlation",
+      "type": "atomic"
+    },
+    {
+      "id": "lock_held_capability",
+      "name": "持锁区间数据检查",
+      "optional": true,
+      "query_id": "lock_contention_analysis/lock_held_capability",
+      "result_dependencies": [],
+      "save_as": "lock_held_capability",
+      "type": "atomic"
+    },
+    {
+      "condition": "lock_held_capability.data[0]?.status === 'available'",
+      "id": "lock_held_owner_summary",
+      "name": "持锁时长汇总",
+      "optional": true,
+      "query_id": "lock_contention_analysis/lock_held_owner_summary",
+      "result_dependencies": [],
+      "save_as": "lock_held_owner_summary",
+      "type": "atomic"
+    },
+    {
+      "condition": "lock_held_capability.data[0]?.status === 'available'",
+      "id": "lock_held_long_holds",
+      "name": "长时间持锁",
+      "optional": true,
+      "query_id": "lock_contention_analysis/lock_held_long_holds",
+      "result_dependencies": [],
+      "save_as": "lock_held_long_holds",
       "type": "atomic"
     },
     {

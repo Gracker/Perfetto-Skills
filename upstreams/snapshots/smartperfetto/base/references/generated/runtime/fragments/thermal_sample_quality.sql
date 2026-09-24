@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/thermal_sample_quality.sql
 -- Source SHA-256: 3ea92b260e77466c79f80d05239c6146143afd3b9a90b511b41e54260f04b28d
--- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+-- Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 
 -- Quality gates apply per track, not per sensor name or individual value.
 -- Null units are inferred conservatively and disclosed; explicit unknown units

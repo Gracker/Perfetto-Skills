@@ -2,15 +2,18 @@
   "schema_version": 1,
   "skills": {
     "ams_module": "skills/ams_module.json",
+    "android_app_background_power_state": "skills/android_app_background_power_state.json",
     "android_bitmap_memory_per_process": "skills/android_bitmap_memory_per_process.json",
     "android_dvfs_counter_stats": "skills/android_dvfs_counter_stats.json",
     "android_gpu_work_period_track": "skills/android_gpu_work_period_track.json",
     "android_heap_dominator_path_extract": "skills/android_heap_dominator_path_extract.json",
+    "android_heap_graph_class_growth": "skills/android_heap_graph_class_growth.json",
     "android_heap_graph_leak_candidates": "skills/android_heap_graph_leak_candidates.json",
     "android_heap_graph_summary": "skills/android_heap_graph_summary.json",
     "android_job_scheduler_events": "skills/android_job_scheduler_events.json",
     "android_kernel_wakelock_summary": "skills/android_kernel_wakelock_summary.json",
     "android_memory_v57_ai_diagnostics": "skills/android_memory_v57_ai_diagnostics.json",
+    "android_process_state_residency": "skills/android_process_state_residency.json",
     "anr_analysis": "skills/anr_analysis.json",
     "anr_context_in_range": "skills/anr_context_in_range.json",
     "anr_detail": "skills/anr_detail.json",
@@ -251,13 +254,13 @@
     "webview_v8_analysis": "skills/webview_v8_analysis.json",
     "wms_module": "skills/wms_module.json"
   },
-  "source_commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+  "source_commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
   "summary": {
-    "conditions": 640,
-    "executable": 217,
+    "conditions": 652,
+    "executable": 220,
     "knowledge_only": 32,
-    "skills": 249,
-    "step_conditions": 269,
-    "steps": 840
+    "skills": 252,
+    "step_conditions": 281,
+    "steps": 861
   }
 }

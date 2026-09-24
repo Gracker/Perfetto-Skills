@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/interaction.strategy.md
 Source SHA-256: 4d6c0a4113b8d862c0895884074652750bed3cb8ae18cc02203a8b6a40aa13c6
-Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 
 # Interaction Strategy
 

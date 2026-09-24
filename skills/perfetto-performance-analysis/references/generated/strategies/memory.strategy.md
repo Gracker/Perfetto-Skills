@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
-Source SHA-256: 51bd482861e0a855fbf5ad7b7a931906a654ae4f41c4ee899ced7a10fac8c4f6
-Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+Source SHA-256: f5a9a812f223b0db19cab510c3fc64ccbb2236a1a0a442efd5f745e5e028f722
+Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 
 # Memory Strategy
 
@@ -299,12 +299,21 @@ Keep memory growth, leakage, OOM/LMK, reclaim and GC evidence distinct. A high a
 - `oom_adjuster_score_timeline`：进程 OOM adj 分数时间线
 - `memory_rss_high_watermark`：RSS high watermark，辅助识别增长型内存压力
 
+需要解释进程为什么被杀、在后台停留多久，或 adj 变化背后的 framework 角色时：
+- `process_state_residency`：各 framework 进程状态（TOP、FOREGROUND_SERVICE、CACHED_* 等）在存活时间内的驻留时长和占比
+- `process_state_transitions`：状态切换序列、上一状态停留时长、OomAdjuster 原因
+- `process_state_last_observed`：每个进程最后一次观测到的状态；进程已结束时就是它结束前所处的状态
+- `oom_score_adj` 是内核看到的分数，process state 是 framework 给的角色，两者对照着读：长时间 CACHED_* 解释了为什么在内存压力下先被杀；被杀前处于 TOP/FOREGROUND_SERVICE 则说明是压力极高或异常 kill，不是正常的缓存回收
+- `process_state_capability.status=runtime_lacks_process_state` 表示 trace processor 早于该解析器，`no_process_state_data` 表示采集没开 `android.process_state` 或设备不支持；两种都只能写数据缺口，不能写“进程一直在前台”
+
 **Phase 3 — 深度分析（按需选择）：**
 
 **Phase 4 — 交叉分析：**
 - 内存压力 + LMK → 检查是否有进程被反复杀死重启（thrashing）
+- LMK 事件 + process state 可用 → 用 `process_state_last_observed` 和 `process_state_residency` 说明被杀进程当时的 framework 角色和在 CACHED 状态停留的时间，再与 kill 的 adj 对照；两者不一致时如实报告，不强行统一
 - GC 频繁 + RSS/Anon 增长 → 可能存在分配抖动或 Java 对象增长，但需要 heap graph / allocation / GC 后回落证据确认
 - Heap graph 可用 + retained class 集中 → 按 `android_heap_graph_summary` 的 top retainer 继续查 dominator/reference path；不要只按 raw object id 下结论
+- Heap dump class 增长 `growth_signal=instance_growth` → 报告首次→末次实例数（如 2 → 6，+4）和 dominated 增量，再对该 class 查 dominator/reference path；`retained_growth_only` 是实例数不变但保留集变大的持有者，通常是引用链上的容器，不是泄漏对象本身；`monotonic_growth=0` 说明中间有回落，写成波动而非持续增长；`comparability=incomplete_dump_lower_bound` 时增量只是下界
 - Heap graph 可用 + destroyed Activity/Fragment 仍 reachable → 用 `android_heap_graph_leak_candidates` 输出高置信候选；没有生命周期对齐时只写候选，不写已泄漏
 - Heapprofd 可用 + `native_signal=unreleased_native_retention` → 写 native 未释放保留候选；若 `native_signal=allocation_churn`，写分配抖动/allocator hotspot，不写泄漏；若 `retention_with_churn`，同时报告未释放保留和高分配 churn，不要把二者合并成单一根因
 - Heap `com.android.art`（`retention_claim=churn_only_frees_not_recorded`）→ 只报分配字节/次数和热点，不写 Java 泄漏；两次 profile 的差值在一个采样间隔（默认 4096 B）内视为噪声；`heapprofd_issues` 非 none 时说明 profile 可能截断

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/android_heap_dominator_path_extract.skill.yaml
 -- Source SHA-256: 79a6054d4d6744e18381baa97106c13e0a4e11f4c8655ba9ade28004904aab52
--- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+-- Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -84,13 +84,7 @@ heap_graph_dump_scope AS MATERIALIZED (
       h.ts AS graph_sample_ts,
       t.process_name,
       t.process_identity,
-      (
-        SELECT COUNT(*)
-        FROM heap_graph_object AS o
-        WHERE o.upid = h.upid
-          AND o.graph_sample_ts = h.ts
-          AND o.self_size = -1
-      ) AS placeholder_object_count,
+      COALESCE(ph.placeholder_object_count, 0) AS placeholder_object_count,
       (
         SELECT GROUP_CONCAT(s.name || '=' || s.value, ', ')
         FROM stats AS s
@@ -101,6 +95,15 @@ heap_graph_dump_scope AS MATERIALIZED (
       ) AS dump_issues
     FROM heap_graph AS h
     JOIN heap_target_process AS t USING (upid)
+    -- One pass over the object table for every dump, not one per dump.
+    LEFT JOIN (
+      SELECT upid, graph_sample_ts, COUNT(*) AS placeholder_object_count
+      FROM heap_graph_object
+      WHERE self_size = -1
+      GROUP BY upid, graph_sample_ts
+    ) AS ph
+      ON ph.upid = h.upid
+      AND ph.graph_sample_ts = h.ts
     WHERE ${graph_sample_ts} IS NULL OR h.ts = ${graph_sample_ts}
   ) AS d
 ),

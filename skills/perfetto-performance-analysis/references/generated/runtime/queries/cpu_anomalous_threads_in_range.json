@@ -58,7 +58,7 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "74139c28c20b4d32a4e5cd572458979867a3588889eac0a7eeef59e9a90e02f6",
+      "sha256": "8f6bb2cbec10e1b188a25de710f56bb3d81e6fbc214df6bbcd36a4d2e7ecdd33",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -67,7 +67,7 @@
       ],
       "skill_id": "cpu_anomalous_threads_in_range",
       "source": {
-        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
         "path": "backend/skills/atomic/cpu_anomalous_threads_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ebd323de6763d2610995f371f900c448a892c16151ffa0bec43f440e1c702042"
@@ -91,12 +91,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "a1d417547344d3772b1953e7c088155abc672ccd48e664e65aecd87be4f59500"
+            "source_sha256": "88e2844a40248a5cb2b5fa9da669176b8accfa39ff36f4d5616dee95bee914b9"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/actor_class_labels.sql",
-            "source_sha256": "1d94d5874afbb51ec9bfa29c2f8f2a2d13006a9fce42fe5ca7abf52dd91b77c8"
+            "source_sha256": "01ffb1f5efebaf6d5c94fe7151dd6b1ac678d7dd83c3f06ae6541d75746dd4a5"
           }
         ],
         "name_parameters": [],

@@ -2,15 +2,18 @@
   "schema_version": 1,
   "shards": [
     "queries/ams_module.json",
+    "queries/android_app_background_power_state.json",
     "queries/android_bitmap_memory_per_process.json",
     "queries/android_dvfs_counter_stats.json",
     "queries/android_gpu_work_period_track.json",
     "queries/android_heap_dominator_path_extract.json",
+    "queries/android_heap_graph_class_growth.json",
     "queries/android_heap_graph_leak_candidates.json",
     "queries/android_heap_graph_summary.json",
     "queries/android_job_scheduler_events.json",
     "queries/android_kernel_wakelock_summary.json",
     "queries/android_memory_v57_ai_diagnostics.json",
+    "queries/android_process_state_residency.json",
     "queries/anr_analysis.json",
     "queries/anr_context_in_range.json",
     "queries/anr_detail.json",
@@ -251,9 +254,9 @@
     "queries/webview_v8_analysis.json",
     "queries/wms_module.json"
   ],
-  "source_commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+  "source_commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
   "summary": {
-    "queries": 717,
-    "shards": 249
+    "queries": 737,
+    "shards": 252
   }
 }

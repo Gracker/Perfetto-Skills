@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/lock_contention_analysis.skill.yaml
-Source SHA-256: 3ab24e4626566ee3a7eedcbdc46815378b714668c8dd6ee54ddd6d6c2f1b1b56
-Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+Source SHA-256: 2218440cfc32dab82a764464dea62719d04148dbaff34657cbe3590d4a063523
+Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 # 锁竞争分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -68,6 +68,7 @@ required_tables:
 - thread_state
 modules:
 - android.monitor_contention
+- android.lock_held
 - slices.with_context
 ```
 
@@ -478,6 +479,145 @@ display:
     unit: ms
 save_as: contention_binder_correlation
 condition: data_check.data[0]?.status === 'available'
+```
+### 持锁区间数据检查
+
+- ID: `lock_held_capability`
+- Type: `atomic`
+- SQL: [`../sql/lock_contention_analysis/lock_held_capability.sql`](../sql/lock_contention_analysis/lock_held_capability.sql)
+
+```yaml
+id: lock_held_capability
+type: atomic
+optional: true
+display:
+  level: detail
+  layer: overview
+  title: 持锁区间（lock_held）数据可用性
+  columns:
+  - name: lock_held_slice_count
+    label: lock_held slice 数
+    type: number
+  - name: lock_held_slice_count_in_scope
+    label: 目标进程内 slice 数
+    type: number
+  - name: runtime_has_lock_held
+    label: Runtime 有 android.lock_held
+    type: number
+  - name: status
+    label: 状态
+    type: string
+save_as: lock_held_capability
+```
+### 持锁时长汇总
+
+- ID: `lock_held_owner_summary`
+- Type: `atomic`
+- SQL: [`../sql/lock_contention_analysis/lock_held_owner_summary.sql`](../sql/lock_contention_analysis/lock_held_owner_summary.sql)
+
+```yaml
+id: lock_held_owner_summary
+type: atomic
+optional: true
+condition: lock_held_capability.data[0]?.status === 'available'
+display:
+  level: key
+  layer: list
+  title: 持锁时长汇总（按锁）
+  columns:
+  - name: process_name
+    label: 进程名
+    type: string
+  - name: lock_name
+    label: 锁
+    type: string
+  - name: hold_count
+    label: 持有次数
+    type: number
+  - name: total_held_ms
+    label: 总持有时长
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: max_held_ms
+    label: 最长持有
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: contended_hold_count
+    label: 期间有线程等锁
+    type: number
+  - name: incomplete_hold_count
+    label: trace 结束仍持有
+    type: number
+  - name: top_holder_thread
+    label: 主要持锁线程
+    type: string
+  - name: top_holder_held_ms
+    label: 该线程持有时长
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: top_blocking_method
+    label: 等锁方看到的持锁方法
+    type: string
+save_as: lock_held_owner_summary
+```
+### 长时间持锁
+
+- ID: `lock_held_long_holds`
+- Type: `atomic`
+- SQL: [`../sql/lock_contention_analysis/lock_held_long_holds.sql`](../sql/lock_contention_analysis/lock_held_long_holds.sql)
+
+```yaml
+id: lock_held_long_holds
+type: atomic
+optional: true
+condition: lock_held_capability.data[0]?.status === 'available'
+display:
+  level: detail
+  layer: list
+  title: 长时间持锁（持锁线程、时长、等锁方看到的持锁方法）
+  columns:
+  - name: process_name
+    label: 进程名
+    type: string
+  - name: lock_name
+    label: 锁
+    type: string
+  - name: holder_thread
+    label: 持锁线程
+    type: string
+  - name: holder_tid
+    label: TID
+    type: number
+  - name: is_main_thread
+    label: 主线程
+    type: number
+  - name: ts
+    label: 获取时间
+    type: timestamp
+    unit: ns
+  - name: held_ms
+    label: 窗口内持有时长
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: full_held_ms
+    label: 完整持有时长
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: blocking_method
+    label: 等锁方看到的持锁方法
+    type: string
+  - name: is_incomplete
+    label: trace 结束仍持有
+    type: number
+  - name: slice_id
+    label: Slice ID
+    type: number
+save_as: lock_held_long_holds
 ```
 ### 根因分类
 

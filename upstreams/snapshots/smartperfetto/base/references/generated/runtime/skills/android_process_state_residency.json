@@ -1,0 +1,119 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": [
+      "_android_process_state_intervals"
+    ]
+  },
+  "id": "android_process_state_residency",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名或包名（精确或 name:* 子进程）；留空返回全部有进程状态数据的进程",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "可选的稳定进程身份",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "分析起始时间戳(ns)；驻留时长按窗口裁剪",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 200,
+      "description": "状态切换序列最多返回的行数",
+      "name": "max_rows",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.process_state"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
+    "path": "backend/skills/atomic/android_process_state_residency.skill.yaml",
+    "sha256": "f785279fb41abf9e40451b7089d02655c17180229724e8a28759af866c6347cf"
+  },
+  "steps": [
+    {
+      "id": "process_state_capability",
+      "name": "进程状态能力检查",
+      "query_id": "android_process_state_residency/process_state_capability",
+      "result_dependencies": [],
+      "save_as": "process_state_capability",
+      "type": "atomic"
+    },
+    {
+      "condition": "process_state_capability.data[0]?.status === 'runtime_supported'",
+      "id": "process_state_data",
+      "name": "进程状态数据检查",
+      "optional": true,
+      "query_id": "android_process_state_residency/process_state_data",
+      "result_dependencies": [],
+      "save_as": "process_state_data",
+      "type": "atomic"
+    },
+    {
+      "condition": "process_state_data.data[0]?.status === 'available'",
+      "id": "process_state_residency",
+      "name": "进程状态驻留",
+      "optional": true,
+      "query_id": "android_process_state_residency/process_state_residency",
+      "result_dependencies": [],
+      "save_as": "process_state_residency",
+      "type": "atomic"
+    },
+    {
+      "condition": "process_state_data.data[0]?.status === 'available'",
+      "id": "process_state_transitions",
+      "name": "进程状态切换",
+      "optional": true,
+      "query_id": "android_process_state_residency/process_state_transitions",
+      "result_dependencies": [],
+      "save_as": "process_state_transitions",
+      "type": "atomic"
+    },
+    {
+      "condition": "process_state_data.data[0]?.status === 'available'",
+      "id": "process_state_last_observed",
+      "name": "最后观测状态",
+      "optional": true,
+      "query_id": "android_process_state_residency/process_state_last_observed",
+      "result_dependencies": [],
+      "save_as": "process_state_last_observed",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "memory"
+}

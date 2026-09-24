@@ -63,14 +63,14 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "aa12d43e772895b663e90d2f973d8fd2990362551253693204d41ad2e2890937",
+      "sha256": "9c80cb066f62a81ec9576631c0b37e4342c7d3721093ed2a0253a4971e2ff260",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "thread_preemption_handoffs_in_range",
       "source": {
-        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
         "path": "backend/skills/atomic/thread_preemption_handoffs_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "0d6aa446f7bc33de7c1867ce6be9c1042f9c3ba2c3da5fa80100744c268332ef"
@@ -91,7 +91,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "d85ebb91e2373508a290992bbfb3f44159c3ec686683118fad18266e2eba5645"
+            "source_sha256": "7d55d5e94601418f0dc60989faa7e988ee36fe0846c098be6065b781a218965e"
           }
         ],
         "name_parameters": [

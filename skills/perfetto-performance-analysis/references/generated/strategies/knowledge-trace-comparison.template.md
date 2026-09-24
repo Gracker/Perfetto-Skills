@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-trace-comparison.template.md
-Source SHA-256: 3927000a927da084e0b47ad8589675897eb8ee670799356db2af04a06692fe48
-Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+Source SHA-256: fcf732b8f1e0d71fcd611d247546129334ab569193c5aa2946a9cc9945412901
+Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 
 # Knowledge Trace Comparison Template
 

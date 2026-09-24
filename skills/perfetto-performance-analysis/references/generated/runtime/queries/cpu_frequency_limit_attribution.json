@@ -60,11 +60,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "bf269c7dd559033b789d12bc2612333cc37a0b73bb9774ab4bb6bebeb65e6a5e",
+      "sha256": "81e90b1f70648f38851a6394b133b9521d1b1b9fb19c638f1ba5051beca02fc6",
       "signal_patterns": [],
       "skill_id": "cpu_frequency_limit_attribution",
       "source": {
-        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
         "path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9b27b3315b361c5cd21809d36d2415240a89ae8baf023b849ee3a4a8ba068888"
@@ -161,11 +161,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "45dd368148b83640a44c89ac696d757fd785ce066a28dcda237540afc42b3df7",
+      "sha256": "0d458be6f9324dcc2a6785bdcec9a6f4701039ae781b19e6ff02c1fcb023a275",
       "signal_patterns": [],
       "skill_id": "cpu_frequency_limit_attribution",
       "source": {
-        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
         "path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9b27b3315b361c5cd21809d36d2415240a89ae8baf023b849ee3a4a8ba068888"
@@ -265,11 +265,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "1c5f40e675ef464a773ec65eb9b62da93dd5ec59d33d01d59c543319ecc4ad79",
+      "sha256": "7d6d96d6acdd0495fe949d7b4a1d66646db3b03286a2877fa5881465ff8abf03",
       "signal_patterns": [],
       "skill_id": "cpu_frequency_limit_attribution",
       "source": {
-        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
         "path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9b27b3315b361c5cd21809d36d2415240a89ae8baf023b849ee3a4a8ba068888"
@@ -295,22 +295,22 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/observed_data_bounds.sql",
-            "source_sha256": "0d749dd40b952a25d974ba5292246e625d38cd6d54a2754d187ebbe1cbcec243"
+            "source_sha256": "281b88fb64ccd786b72cfe6516585f30b0f6c529de017013d78bd37fe1089ec1"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "a1d417547344d3772b1953e7c088155abc672ccd48e664e65aecd87be4f59500"
+            "source_sha256": "88e2844a40248a5cb2b5fa9da669176b8accfa39ff36f4d5616dee95bee914b9"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
-            "source_sha256": "c815416fed9c92c5ace43bde26b91bd62a4ced12a913031d43561283922a1f1b"
+            "source_sha256": "237c7666d5007c2efbe76d6fa90117acce3e6979abfcc71464d8f15f4023860c"
           },
           {
             "order": 3,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_episodes.sql",
-            "source_sha256": "cdac86de8a0b16e69ee63fdf4ef4509ebd1cd2a8edce7d5b62206754ac71a8b2"
+            "source_sha256": "16425a16928be5172f57cc6d3ea3354e4ee08cc06a9dc5dacf1b28fa620a3ba5"
           }
         ],
         "name_parameters": [],
@@ -404,7 +404,7 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "809a3414ef17880322b7202a70e2fc2cf44fc8bc170a254fd89bda9c2e8edc66",
+      "sha256": "b7c0a2e62b4b67f59756f59bfd5ab4dc2c5db5040f0ca271f52cabc02213f36a",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -413,7 +413,7 @@
       ],
       "skill_id": "cpu_frequency_limit_attribution",
       "source": {
-        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
         "path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9b27b3315b361c5cd21809d36d2415240a89ae8baf023b849ee3a4a8ba068888"
@@ -439,42 +439,42 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/observed_data_bounds.sql",
-            "source_sha256": "0d749dd40b952a25d974ba5292246e625d38cd6d54a2754d187ebbe1cbcec243"
+            "source_sha256": "281b88fb64ccd786b72cfe6516585f30b0f6c529de017013d78bd37fe1089ec1"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "a1d417547344d3772b1953e7c088155abc672ccd48e664e65aecd87be4f59500"
+            "source_sha256": "88e2844a40248a5cb2b5fa9da669176b8accfa39ff36f4d5616dee95bee914b9"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
-            "source_sha256": "c815416fed9c92c5ace43bde26b91bd62a4ced12a913031d43561283922a1f1b"
+            "source_sha256": "237c7666d5007c2efbe76d6fa90117acce3e6979abfcc71464d8f15f4023860c"
           },
           {
             "order": 3,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_episodes.sql",
-            "source_sha256": "cdac86de8a0b16e69ee63fdf4ef4509ebd1cd2a8edce7d5b62206754ac71a8b2"
+            "source_sha256": "16425a16928be5172f57cc6d3ea3354e4ee08cc06a9dc5dacf1b28fa620a3ba5"
           },
           {
             "order": 4,
             "source_path": "backend/skills/fragments/thermal_cooling_spans.sql",
-            "source_sha256": "1f3dccb924cebb580e933bc10a340e2296f3fd249ccc11a3fe8c8d6e9c4337cb"
+            "source_sha256": "a31d2127de08c8d3a00bde118d294cae2d5ef28b13f218cdfc50d5ff025ff17a"
           },
           {
             "order": 5,
             "source_path": "backend/skills/fragments/thermal_signal_signatures.sql",
-            "source_sha256": "5628a8f1db8745cf48b648ae45fe0ea843db1189594b3fe405703f43dfd8cf35"
+            "source_sha256": "c1067f4ec0ad26455f8c6f1a11d05e48e75677d13b60df19c2a1cb2ddf16e314"
           },
           {
             "order": 6,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_episode_verdicts.sql",
-            "source_sha256": "e039944be6e54804bd3e73b995c437dbdc4c5a0bb5732c74574432d9537238be"
+            "source_sha256": "2e069e48d9982e1fdb5a12e4ff33acdcef4f0dc1108faa6b944df46ee3a20b94"
           },
           {
             "order": 7,
             "source_path": "backend/skills/fragments/actor_class_labels.sql",
-            "source_sha256": "1d94d5874afbb51ec9bfa29c2f8f2a2d13006a9fce42fe5ca7abf52dd91b77c8"
+            "source_sha256": "01ffb1f5efebaf6d5c94fe7151dd6b1ac678d7dd83c3f06ae6541d75746dd4a5"
           }
         ],
         "name_parameters": [],
@@ -561,11 +561,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "28677e65d3e9e6d92874e5f68f1d8071023f275d4545f61ca5af56cda9652eec",
+      "sha256": "49af8e52ce67eb72d3f3050efb7c9b77d37fac427be2fafcf1a6b4520232cd6b",
       "signal_patterns": [],
       "skill_id": "cpu_frequency_limit_attribution",
       "source": {
-        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
         "path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9b27b3315b361c5cd21809d36d2415240a89ae8baf023b849ee3a4a8ba068888"
@@ -591,7 +591,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thermal_signal_signatures.sql",
-            "source_sha256": "5628a8f1db8745cf48b648ae45fe0ea843db1189594b3fe405703f43dfd8cf35"
+            "source_sha256": "c1067f4ec0ad26455f8c6f1a11d05e48e75677d13b60df19c2a1cb2ddf16e314"
           }
         ],
         "name_parameters": [],
@@ -672,11 +672,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "d3487cc5f8a9fd0d0c6ec2288d65ac96caa7e22e28c4cdcc28ba253da55290a1",
+      "sha256": "c427066dff0eebaff1d35da30862ceda17503529b45579400ed612acb3b648ba",
       "signal_patterns": [],
       "skill_id": "cpu_frequency_limit_attribution",
       "source": {
-        "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+        "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
         "path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9b27b3315b361c5cd21809d36d2415240a89ae8baf023b849ee3a4a8ba068888"

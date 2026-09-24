@@ -1,0 +1,130 @@
+{
+  "android": {
+    "adapters": [],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "android_heap_graph_class_growth",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "目标进程名（精确或 name:* 子进程）；留空使用全部有 heap dump 的进程；无匹配时回退到没有进程名的 dump（如 .hprof）",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "可选的稳定进程身份；进程名不可用时（.hprof）用它限定 dump",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "description": "只看某一次 dump（trace 内的时间戳，compare_skill 时必须按侧分别传）；留空使用全部 dump",
+      "name": "graph_sample_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": "latest",
+      "description": "排名与指定 class 行使用哪些 dump：latest（每个进程最后一次，默认）、first 或 all；compare_skill 两侧用默认值即可，无需时间戳。首尾增长总是比较全部 dump",
+      "name": "dump_selector",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "逗号分隔的完整 class 名；给出时为每个 dump 输出这些 class 的对齐行（不存在的 class 输出 0），用于 compare_skill 两侧对齐",
+      "name": "class_names",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 20,
+      "description": "每个 dump 每个类别（app / libcore+数组）返回的 class 行数上限",
+      "name": "max_rows",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.memory.heap_graph.heap_graph_class_aggregation",
+      "android.memory.heap_graph.heap_graph_stats"
+    ],
+    "required_tables": []
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
+    "path": "backend/skills/atomic/android_heap_graph_class_growth.skill.yaml",
+    "sha256": "7f3005702a7a0b160c86748bb1b535119fb9647f5d1bfa60496bf33c11551a55"
+  },
+  "steps": [
+    {
+      "id": "heap_class_table",
+      "name": "Heap class 聚合",
+      "query_id": "android_heap_graph_class_growth/heap_class_table",
+      "result_dependencies": [],
+      "save_as": "heap_class_table",
+      "type": "atomic"
+    },
+    {
+      "id": "class_growth_availability",
+      "name": "Heap dump 对比可用性",
+      "query_id": "android_heap_graph_class_growth/class_growth_availability",
+      "result_dependencies": [],
+      "save_as": "class_growth_availability",
+      "type": "atomic"
+    },
+    {
+      "id": "class_dump_inventory",
+      "name": "Heap dump 清单",
+      "optional": true,
+      "query_id": "android_heap_graph_class_growth/class_dump_inventory",
+      "result_dependencies": [],
+      "save_as": "class_dump_inventory",
+      "type": "atomic"
+    },
+    {
+      "id": "class_ranking",
+      "name": "Class 排名",
+      "optional": true,
+      "query_id": "android_heap_graph_class_growth/class_ranking",
+      "result_dependencies": [],
+      "save_as": "class_ranking",
+      "type": "atomic"
+    },
+    {
+      "id": "requested_classes",
+      "name": "指定 class 对齐行",
+      "optional": true,
+      "query_id": "android_heap_graph_class_growth/requested_classes",
+      "result_dependencies": [],
+      "save_as": "requested_classes",
+      "type": "atomic"
+    },
+    {
+      "condition": "class_growth_availability.data[0]?.status === 'multiple_dumps'",
+      "id": "class_growth_within_trace",
+      "name": "同 trace 首尾 dump class 增长",
+      "optional": true,
+      "query_id": "android_heap_graph_class_growth/class_growth_within_trace",
+      "result_dependencies": [],
+      "save_as": "class_growth_within_trace",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "memory"
+}

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/battery_drain_attribution.skill.yaml
-Source SHA-256: 5dbee520bc3d159247b9e1b88c3bbd17ce26fb19f616c6184a3d18184ac700e2
-Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+Source SHA-256: c23ed620fef56b5f7dfcbec6429b630bf3c0ec3ef8c0ac607daf2ead75d7fc57
+Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 # 掉电归因分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -20,7 +20,7 @@ tier: S
 
 ```yaml
 display_name: 掉电归因分析
-description: 组合 battery、Doze、wakelock、job、network、suspend/wakeup 证据，分析掉电和待机耗电原因
+description: 组合 battery、Doze、kernel/app wakelock、standby bucket、freezer、job、network、suspend/wakeup 证据，分析掉电和待机耗电原因
 icon: battery_alert
 tags:
 - battery
@@ -175,6 +175,24 @@ params:
 display:
   level: summary
 save_as: wakeup_frequency
+optional: true
+```
+### 应用后台功耗状态
+
+- ID: `app_background_power`
+- Type: `skill`
+
+```yaml
+id: app_background_power
+type: skill
+skill: android_app_background_power_state
+params:
+  package: ${package || process_name || ''}
+  start_ts: ${start_ts}
+  end_ts: ${end_ts}
+display:
+  level: detail
+save_as: app_background_power
 optional: true
 ```
 ### 熄屏后台 CPU

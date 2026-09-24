@@ -62,9 +62,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "98eb78f5af52822edd880b120aa27e2f5f41c6df",
+    "commit": "751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad",
     "path": "backend/skills/composite/battery_drain_attribution.skill.yaml",
-    "sha256": "5dbee520bc3d159247b9e1b88c3bbd17ce26fb19f616c6184a3d18184ac700e2"
+    "sha256": "c23ed620fef56b5f7dfcbec6429b630bf3c0ec3ef8c0ac607daf2ead75d7fc57"
   },
   "steps": [
     {
@@ -125,6 +125,19 @@
       },
       "save_as": "wakeup_frequency",
       "skill": "wakeup_frequency_summary",
+      "type": "skill"
+    },
+    {
+      "id": "app_background_power",
+      "name": "应用后台功耗状态",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package || process_name || ''}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "app_background_power",
+      "skill": "android_app_background_power_state",
       "type": "skill"
     },
     {

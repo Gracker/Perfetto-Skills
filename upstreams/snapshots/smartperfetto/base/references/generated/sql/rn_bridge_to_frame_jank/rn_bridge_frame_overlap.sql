@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rn_bridge_to_frame_jank.skill.yaml
 -- Source SHA-256: ad2f132e37678faad64409bf393833b3ad9d793854bbdd442e507dabf5dab6af
--- Source commit: 98eb78f5af52822edd880b120aa27e2f5f41c6df
+-- Source commit: 751cebf0e6a67b946b26aa0abfb12d4a0a5ac8ad
 
 WITH
 input AS (
