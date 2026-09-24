@@ -1,0 +1,421 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "thermal_cooling_device_timeline/cooling_data_check",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/thermal_cooling_device_timeline/cooling_data_check.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "d085586cbacfafe50c9cfe5f12e9837dd537e09de5023bf394ea0a34ca0a4e70",
+      "signal_patterns": [],
+      "skill_id": "thermal_cooling_device_timeline",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/atomic/thermal_cooling_device_timeline.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "212c1203887256c5706a1e12c54ae6d163c0bb8647edd88afb0f73cc624cf16f"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter_track",
+          "counter"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "cooling_data_check",
+      "template": {
+        "fragments": [],
+        "name_parameters": [],
+        "parameters": [],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "thermal_cooling_device_timeline/cooling_summary",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/thermal_cooling_device_timeline/cooling_summary.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "42ba46fbb6f1712db89d9f268d8c32d4c0b277518e24fcbd3bf8fc094c3bcf9b",
+      "signal_patterns": [],
+      "skill_id": "thermal_cooling_device_timeline",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/atomic/thermal_cooling_device_timeline.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "212c1203887256c5706a1e12c54ae6d163c0bb8647edd88afb0f73cc624cf16f"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter_track",
+          "counter"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "cooling_summary",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_cooling_spans.sql",
+            "source_sha256": "8b6e06e95999bd5e362839bb0495d123354feb7de5205fa02fda93991d997677"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "thermal_cooling_device_timeline/cooling_transitions",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/thermal_cooling_device_timeline/cooling_transitions.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "30d8786b932f452b6d0f6f024ae813a6a0f755f99d620b063c9c8005c396d6fd",
+      "signal_patterns": [],
+      "skill_id": "thermal_cooling_device_timeline",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/atomic/thermal_cooling_device_timeline.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "212c1203887256c5706a1e12c54ae6d163c0bb8647edd88afb0f73cc624cf16f"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter_track",
+          "counter"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "cooling_transitions",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_cooling_spans.sql",
+            "source_sha256": "8b6e06e95999bd5e362839bb0495d123354feb7de5205fa02fda93991d997677"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "max_transitions",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "thermal_cooling_device_timeline/cooling_unavailable",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/thermal_cooling_device_timeline/cooling_unavailable.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "4b6a782e95ffb7f4cb220a32a25aadcb0481386a3116755d87e9da4099978f7c",
+      "signal_patterns": [],
+      "skill_id": "thermal_cooling_device_timeline",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/atomic/thermal_cooling_device_timeline.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "212c1203887256c5706a1e12c54ae6d163c0bb8647edd88afb0f73cc624cf16f"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter_track",
+          "counter"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "cooling_unavailable",
+      "template": {
+        "fragments": [],
+        "name_parameters": [],
+        "parameters": [],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "thermal_cooling_device_timeline"
+}

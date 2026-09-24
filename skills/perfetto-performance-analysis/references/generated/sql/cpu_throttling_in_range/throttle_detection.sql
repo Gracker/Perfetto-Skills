@@ -1,9 +1,14 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
--- Source SHA-256: fed929d6d7ff2b89a7099eb9a05664bfac7d412ebe1e7ce67bb2cf1d123282ab
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source SHA-256: 66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 WITH
+-- 上一步的限频证据读一次，供下面的判定复用
+limit_status AS (
+  SELECT '${limit_evidence.data[0].evidence_status}' AS status,
+    ${limit_evidence.data[0].deepest_depth_pct|0} AS depth_pct
+),
 -- 频率采样（带拓扑分类）
 freq_samples AS (
   SELECT
@@ -43,9 +48,16 @@ SELECT
   ROUND(MAX(max_freq), 0) as max_freq_mhz,
   ROUND(100.0 * (MAX(max_freq) - MIN(min_freq)) / NULLIF(MAX(max_freq), 0), 1) as freq_drop_pct,
   CASE WHEN MIN(min_freq) < MAX(max_freq) * 0.7 THEN 1 ELSE 0 END as frequency_variation_detected,
-  NULL as throttle_detected,
-  'thermal_evidence_missing' as evidence_status,
-  '频率变化可能来自负载下降或空闲 DVFS；需直接限频证据与同窗口负载才能确定热控原因' as interpretation
+  -- Only the cpufreq policy limit track can turn this from unknown into
+  -- a fact; an observed frequency span never can.
+  CASE WHEN (SELECT status FROM limit_status) = 'freq_limit_observed' THEN 1
+    WHEN (SELECT status FROM limit_status) = 'no_limit_episode_in_range' THEN 0
+    ELSE NULL END as throttle_detected,
+  CASE WHEN (SELECT status FROM limit_status) = 'freq_limit_observed'
+    THEN 'freq_limit_observed' ELSE 'thermal_evidence_missing' END as evidence_status,
+  CASE WHEN (SELECT status FROM limit_status) = 'freq_limit_observed'
+    THEN '区间内观测到 cpufreq policy 上限被下调（最大深度 ' || (SELECT depth_pct FROM limit_status) || '%）：限频确实发生；触发方仍需用 cpu_frequency_limit_attribution 判定'
+    ELSE '频率变化可能来自负载下降或空闲 DVFS；需直接限频证据与同窗口负载才能确定热控原因' END as interpretation
 FROM per_cpu_stats
 GROUP BY
   CASE

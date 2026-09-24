@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_topology_detection.skill.yaml
 -- Source SHA-256: 539074112cd1527ea174f211bee7834c523e137e7c052281ce81e1a3832ca6d0
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 SELECT
   core_type as cluster_type,

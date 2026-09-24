@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/effective_target_processes.sql
 -- Source SHA-256: 97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)

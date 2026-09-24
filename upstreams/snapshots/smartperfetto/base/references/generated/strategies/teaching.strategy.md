@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/teaching.strategy.md
-Source SHA-256: e30cf9bd02a1d5a70b33b79ffa678f25aef3a448cff6dc100e8e0a4a33295df5
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 2c6d8e6189a32916dcef23d5c0311c60db085173893c5cf07f453ed6eada2bd0
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Teaching Strategy
 
@@ -44,14 +44,6 @@ keywords:
 - 源码
 - source code
 - 这个slice
-compound_patterns:
-- 这个.*是什么
-- .*怎么.*工作
-- .*是.*什么意思
-- explain.*this
-- what.*does.*this
-- .*管线.*是
-- .*pipeline.*is
 plan_template:
   mandatory_aspects:
   - id: architecture_detection

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/scene_response_marker_facts.sql
 -- Source SHA-256: 1d4b4b1e3d41541acb418fe44b3aaf53357b5fce9d1d02c852e1e99a7a9fa164
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- This inventory observes named producer slices, not an entire scroll/fling.

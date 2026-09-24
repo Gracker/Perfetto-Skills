@@ -1,6 +1,11 @@
 {
   "android": {
-    "adapters": [],
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
     "selection_order": [
       "device_capability",
       "trace_config_and_setup_errors",
@@ -73,9 +78,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "bc007586871a720aed82537913617c64fb95a459",
+    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
     "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
-    "sha256": "68f73be9504b37b7a6d8966693adf2fe179f9183db279f10d9fe883226dfa5c9"
+    "sha256": "3bf11270d8e25d4d0471955b857c8d086163252df80124bfb7e57983b0ee2574"
   },
   "steps": [
     {
@@ -115,6 +120,6 @@
     }
   ],
   "type": "composite",
-  "version": "1.2",
+  "version": "1.3",
   "workflow": "anr-blocking"
 }

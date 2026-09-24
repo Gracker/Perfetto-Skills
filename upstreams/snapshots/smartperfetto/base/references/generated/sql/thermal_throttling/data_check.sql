@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/thermal_throttling.skill.yaml
--- Source SHA-256: d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source SHA-256: 5fad39740c373b463c8080622927249e67de2e731ea1cf79253d443663541c7e
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 SELECT
   CASE WHEN EXISTS (
@@ -17,4 +17,13 @@ SELECT
   CASE WHEN EXISTS (
     SELECT 1 FROM sqlite_master
     WHERE type IN ('table', 'view') AND name = 'android_gpu_frequency'
-  ) THEN 1 ELSE 0 END as has_gpu_freq_data
+  ) THEN 1 ELSE 0 END as has_gpu_freq_data,
+  -- Direct throttling evidence. A temperature counter correlating with a
+  -- low frequency proves nothing; these two do the actual work.
+  CASE WHEN EXISTS (
+    SELECT 1 FROM cpu_counter_track
+    WHERE type IN ('cpu_max_frequency_limit', 'cpu_min_frequency_limit')
+  ) THEN 1 ELSE 0 END as has_limit_data,
+  CASE WHEN EXISTS (
+    SELECT 1 FROM counter_track WHERE type = 'cooling_device_counter'
+  ) THEN 1 ELSE 0 END as has_cdev_data

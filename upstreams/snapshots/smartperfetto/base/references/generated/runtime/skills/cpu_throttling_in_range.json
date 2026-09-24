@@ -1,6 +1,11 @@
 {
   "android": {
-    "adapters": [],
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
     "selection_order": [
       "device_capability",
       "trace_config_and_setup_errors",
@@ -38,11 +43,23 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "bc007586871a720aed82537913617c64fb95a459",
+    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
     "path": "backend/skills/atomic/cpu_throttling_in_range.skill.yaml",
-    "sha256": "fed929d6d7ff2b89a7099eb9a05664bfac7d412ebe1e7ce67bb2cf1d123282ab"
+    "sha256": "66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39"
   },
   "steps": [
+    {
+      "id": "limit_evidence",
+      "name": "限频证据",
+      "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_throttling_in_range/limit_evidence",
+      "result_dependencies": [],
+      "save_as": "limit_evidence",
+      "type": "atomic"
+    },
     {
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
@@ -57,7 +74,9 @@
         "role": "global_context"
       },
       "query_id": "cpu_throttling_in_range/throttle_detection",
-      "result_dependencies": [],
+      "result_dependencies": [
+        "limit_evidence"
+      ],
       "save_as": "throttle_data",
       "type": "atomic"
     }

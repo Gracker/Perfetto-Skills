@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/linux_perf_counter_hotspots.skill.yaml
 -- Source SHA-256: e626f52d15d809aef38cbdcc4ba3e597ff08de9f37353328d71d16426405dfcc
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 WITH
 input AS (

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_freq_residency_summary.skill.yaml
 Source SHA-256: 551f4b3dae5db3b84e15a017225eeb4399a0a9824fe59a04fbf47a30395103d5
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 # CPU 高频驻留摘要
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

@@ -1,9 +1,46 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_states_in_range.skill.yaml
--- Source SHA-256: 5e5a3a2c89481901979330ce8412ec570bf8ea3cdf5a757e413553bd076d2769
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source SHA-256: 7bad768d4547674b19d7268f5385de1b17e3746f458a9f2eaee723f02edde5c4
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
-WITH main_thread AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- No input CTE. The kernel wait-channel (thread_state.blocked_function) families
+-- that name file, page-cache or block I/O. Consumers test a lower-cased
+-- blocked_function against every pattern:
+--   EXISTS (SELECT 1 FROM io_blocked_function_families f
+--           WHERE LOWER(COALESCE(ts.blocked_function, '')) GLOB f.pattern)
+--
+-- GLOB, not LIKE: in LIKE `_` is a one-character wildcard, so '%dm_%' also
+-- matched 'dma_fence_wait_timeout' and booked GPU fence waits (D state, common
+-- on RenderThread and SurfaceFlinger) as I/O; '%blk_%' and '%mmc_%' were
+-- looser than written for the same reason. GLOB reads `_` literally and is
+-- case-sensitive, hence the LOWER() on the consumer side.
+--
+-- blocked_function is a single-frame wchan, emitted by sched_blocked_reason for
+-- D-state waits only. A match is an I/O candidate that still needs file,
+-- page-fault or block-layer evidence; it is not proof of an I/O root cause.
+io_blocked_function_families(pattern) AS (
+  VALUES
+    ('*io_schedule*'),
+    ('*wait_on_page*'),
+    ('*folio_wait*'),
+    ('*wait_on_buffer*'),
+    ('*submit_bio*'),
+    ('*filemap*'),
+    ('*page_fault*'),
+    ('*ext4*'),
+    ('*f2fs*'),
+    ('*erofs*'),
+    ('*blk_*'),
+    ('*dm_*'),
+    ('*mmc_*'),
+    ('*ufshcd*')
+)
+,
+main_thread AS (
   SELECT t.utid
   FROM thread t
   JOIN process p ON t.upid = p.upid
@@ -33,19 +70,7 @@ SELECT
   CASE
     WHEN ts.state IN ('D', 'DK') AND COALESCE(ts.io_wait, 0) = 1 THEN 'direct_io_wait'
     WHEN ts.state IN ('D', 'DK') AND (
-      LOWER(COALESCE(ts.blocked_function, '')) LIKE '%filemap%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%page_fault%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%wait_on_page%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%folio_wait%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%io_schedule%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%submit_bio%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%blk_%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%ext4%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%f2fs%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%erofs%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%ufshcd%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%mmc_%'
-      OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%dm_%'
+      EXISTS (SELECT 1 FROM io_blocked_function_families f WHERE LOWER(COALESCE(ts.blocked_function, '')) GLOB f.pattern)
     ) THEN 'inferred_io_or_page_cache'
     WHEN ts.state IN ('D', 'DK') THEN 'ambiguous_uninterruptible_wait'
     WHEN ts.state = 'S' AND (LOWER(COALESCE(ts.blocked_function, '')) LIKE '%epoll%' OR LOWER(COALESCE(ts.blocked_function, '')) LIKE '%poll%') THEN 'poll_idle_or_ambiguous'

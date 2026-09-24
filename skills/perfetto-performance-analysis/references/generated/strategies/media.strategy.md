@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/media.strategy.md
-Source SHA-256: c40b0db672c5c9f8aae13e1ca149eb6abecf9004a1e760643e960fec945b19ea
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: d71f3076a5e368b276aa2c86623230749c5de77a141c6f9ddeab722402f94411
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Media Strategy
 
@@ -45,9 +45,6 @@ keywords:
 - mediacodec
 - codec2
 - omx
-compound_patterns:
-- (视频|音频|解码|编码).*(卡顿|耗电|延迟|掉帧)
-- (media|video|audio|codec|decoder).*(jank|power|latency|stutter)
 phase_hints:
 - id: codec_activity
   keywords:

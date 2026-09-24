@@ -66,6 +66,97 @@ class ExpandSqlFragmentsTest(unittest.TestCase):
         self.assertNotIn(",\nRECURSIVE paths", expanded)
 
 
+    def test_leading_block_comment_stays_in_front_of_the_composed_with(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            self._write(root, "base.sql", "base_cte AS (SELECT 1 AS value)")
+            expanded, _ = exporter.expand_sql_fragments(
+                "/* header */\n-- note\nWITH own AS (SELECT 2) SELECT * FROM own",
+                ["fragments/base.sql"],
+                root,
+            )
+
+        self.assertEqual(
+            expanded,
+            "/* header */\n-- note\nWITH\nbase_cte AS (SELECT 1 AS value)\n,\n"
+            "own AS (SELECT 2) SELECT * FROM own",
+        )
+
+
+class PortableToolNotesTest(unittest.TestCase):
+    def test_note_is_added_only_where_the_product_tool_is_named(self) -> None:
+        self.assertIn(
+            "process_thread_wait_sources_in_range",
+            exporter.portable_tool_notes("run `analyze_wait_chain({ start_ts })` first"),
+        )
+        self.assertEqual(exporter.portable_tool_notes("run blocking_chain_analysis"), "")
+        self.assertEqual(exporter.portable_tool_notes("analyze_wait_chains_later"), "")
+
+
+class ProductOnlySqlFragmentTest(unittest.TestCase):
+    """SmartPerfetto engines may own fragments that no portable Skill uses."""
+
+    def build(self, skill_fragments: list[str]) -> dict:
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp).resolve()
+            skills = source / "backend/skills"
+            (skills / "fragments").mkdir(parents=True)
+            (skills / "fragments/shared.sql").write_text("shared AS (SELECT 1)", encoding="utf-8")
+            (skills / "fragments/engine.sql").write_text("engine AS (SELECT 2)", encoding="utf-8")
+            (skills / "atomic").mkdir()
+            (skills / "atomic/probe.skill.yaml").write_text(json.dumps({
+                "name": "probe", "type": "composite",
+                "steps": [{"id": "s", "sql": "SELECT 1", "sql_fragments": skill_fragments}],
+            }), encoding="utf-8")
+            (source / "fixtures.json").write_text("{}", encoding="utf-8")
+            policy = {
+                "version": 2, "public_skill": exporter.PUBLIC_SKILL,
+                "fixture_manifest_source": "fixtures.json",
+                "official_perfetto": dict.fromkeys((
+                    "repository", "tag", "commit", "rpc_api_version", "stdlib_tree",
+                    "official_skill_reference", "official_skill_role",
+                ), "x"),
+                "runtime_perfetto": dict.fromkeys((
+                    "repository", "reported_version", "revision", "rpc_api_version", "stdlib_tree",
+                ), "x"),
+                "skills": {"probe": {
+                    "source": "backend/skills/atomic/probe.skill.yaml",
+                    "disposition": "exported", "workflow": sorted(exporter.WORKFLOWS)[0],
+                    "destination": "references/probe.md",
+                }},
+                "strategies": {}, "pipeline_docs": {}, "vendor_overrides": {},
+                "sql_fragments": {
+                    "backend/skills/fragments/shared.sql": {
+                        "disposition": "exported",
+                        "destination": "references/generated/runtime/fragments/shared.sql",
+                    },
+                    "backend/skills/fragments/engine.sql": {
+                        "disposition": "product-only", "reason": "engine-owned input",
+                    },
+                },
+            }
+            policy_path = source / "backend/skills/public-export.yaml"
+            policy_path.write_text(json.dumps(policy), encoding="utf-8")
+            state = {"commit": "a" * 40, "dirty": False, "remote": "https://example.invalid/repo"}
+            with mock.patch.object(exporter, "source_state", return_value=state):
+                return exporter.build_catalog(source, policy_path)
+
+    def test_product_only_fragment_is_catalogued_without_a_destination(self) -> None:
+        catalog = self.build(["fragments/shared.sql"])
+        by_path = {entry["source_path"]: entry for entry in catalog["sql_fragments"]}
+        engine = by_path["backend/skills/fragments/engine.sql"]
+        self.assertEqual(engine["disposition"], "product-only")
+        self.assertEqual(engine["reason"], "engine-owned input")
+        self.assertNotIn("destination", engine)
+        self.assertEqual(by_path["backend/skills/fragments/shared.sql"]["disposition"], "exported")
+        self.assertEqual(catalog["summary"]["exported_sql_fragments"], 1)
+        self.assertEqual(catalog["summary"]["product_only_sql_fragments"], 1)
+
+    def test_exported_skill_cannot_inline_a_product_only_fragment(self) -> None:
+        with self.assertRaisesRegex(exporter.ExportError, "inlines product-only SQL fragments"):
+            self.build(["fragments/shared.sql", "fragments/engine.sql"])
+
+
 class PortableStepMetadataTest(unittest.TestCase):
     def test_product_investigation_binding_is_not_portable_step_metadata(self):
         step = {

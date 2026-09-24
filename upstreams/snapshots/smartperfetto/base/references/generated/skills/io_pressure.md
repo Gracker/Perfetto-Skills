@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/io_pressure.skill.yaml
-Source SHA-256: 446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 # IO 压力分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -120,6 +120,8 @@ modules:
 id: data_check
 type: atomic
 display: false
+sql_fragments:
+- fragments/io_blocked_function_families.sql
 save_as: data_check
 ```
 ### IO Wait 总览
@@ -189,6 +191,8 @@ display:
   - name: severity
     label: 严重度
     type: string
+sql_fragments:
+- fragments/io_blocked_function_families.sql
 save_as: io_overview
 ```
 ### 进程 IO Wait 分布
@@ -243,6 +247,8 @@ display:
   - name: pct_of_total
     label: 占比(%)
     type: percentage
+sql_fragments:
+- fragments/io_blocked_function_families.sql
 save_as: process_io
 ```
 ### 阻塞函数热点
@@ -298,6 +304,8 @@ display:
   - name: category
     label: 分类
     type: string
+sql_fragments:
+- fragments/io_blocked_function_families.sql
 save_as: blocking_functions
 ```
 ### 线程 IO Wait 详情
@@ -338,6 +346,8 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+sql_fragments:
+- fragments/io_blocked_function_families.sql
 save_as: thread_io
 ```
 ### 长 IO Wait 事件
@@ -374,6 +384,8 @@ display:
   - name: blocked_function
     label: 阻塞函数
     type: string
+sql_fragments:
+- fragments/io_blocked_function_families.sql
 save_as: long_io_events
 ```
 ### IO 根因分类
@@ -431,6 +443,8 @@ display:
   - name: suggestion
     label: 建议
     type: string
+sql_fragments:
+- fragments/io_blocked_function_families.sql
 save_as: root_cause
 ```
 ### IO 诊断

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling_chain.skill.yaml
-Source SHA-256: 88ca7678544866f3bdf2f6bf2981c58e877c818ed37501a056c0e7cb57bc3ce7
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 9fee58a6513438b7adf13fa4309d986f18305c344947793ea1fd7f3ce58aaba8
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 # 温控降频链路分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -86,6 +86,24 @@ modules:
 
 ## Ordered execution
 
+### 限频归因（谁触发 / 限频前负载 / 异常线程）
+
+- ID: `limit_attribution`
+- Type: `skill`
+
+```yaml
+id: limit_attribution
+type: skill
+skill: cpu_frequency_limit_attribution
+params:
+  package: ${package || process_name || ''}
+  start_ts: ${start_ts}
+  end_ts: ${end_ts}
+display:
+  level: key
+save_as: limit_attribution
+optional: true
+```
 ### 温度/热节流分析
 
 - ID: `thermal`

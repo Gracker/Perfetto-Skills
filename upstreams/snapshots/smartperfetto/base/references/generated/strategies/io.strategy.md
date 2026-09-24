@@ -1,13 +1,15 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/io.strategy.md
-Source SHA-256: 654f26933fe4cf7b4b5d76d6526dd51d1128f0f35341aff2fbef002a9b7f6681
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 1c18310d1743d2f6379687faaee6f293ce8250cbb1d5b71f285e40311a0de428
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Io Strategy
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
+`analyze_wait_chain(...)` steps mean: run the `process_thread_wait_sources_in_range` Skill for the same process and window, whose `wait_class` column uses the same labels as `wake_source_class`, and `blocking_chain_analysis` for the waker chain. The portable Skills aggregate waits by thread role; they do not return one thread's critical-path segments.
 
 ## Portable execution commands
 
@@ -58,10 +60,6 @@ keywords:
 - 数据库
 - 共享偏好
 - 内容提供者
-compound_patterns:
-- (?:磁盘|存储|文件|I/O|io|fsync|fdatasync).*(?:慢|卡|阻塞|等待|ANR|启动|延迟)
-- (?:SQLite|Room|database|DB|数据库).*(?:慢|卡|阻塞|等待|ANR|启动|迁移|checkpoint|WAL)
-- (?:SharedPreferences|QueuedWork|ContentProvider|CursorWindow|MediaProvider|scoped storage).*(?:慢|卡|阻塞|等待|ANR|启动)
 final_report_contract:
   required_sections:
   - id: io_evidence_class
@@ -288,7 +286,7 @@ I/O 场景的第一原则：先分证据类型，再命名根因。`D-state`、`
 
 输出时先写清楚证据属于哪一类：
 1. `block_io`: block 层请求排队、issue/complete 延迟、设备或文件系统压力。
-2. `thread_wait`: 主线程或关键线程 `D-state`、blocked_functions、waker/blocked chain。
+2. `thread_wait`: 主线程或关键线程 `D-state`、blocked_functions、waker/blocked chain。先用 `analyze_wait_chain` 看这段区间里线程到底在跑、在排队还是在睡，再决定是否值得用 `main_thread_file_io_in_range` 往文件 API 深钻——D 态 + io 相关 `blocked_function` 才是 I/O 证据，S 态只能按唤醒来源给候选。
 3. `file_api`: read/write/fsync/fdatasync、文件路径或路径类型。
 4. `page_fault`: 文件映射首次访问、page cache miss、reclaim 后重新读。
 5. `missing_evidence`: trace 没有路径、栈、block I/O 或 app API signal。

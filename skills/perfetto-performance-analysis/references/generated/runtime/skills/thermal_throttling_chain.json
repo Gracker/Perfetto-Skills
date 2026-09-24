@@ -54,11 +54,24 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "bc007586871a720aed82537913617c64fb95a459",
+    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
     "path": "backend/skills/composite/thermal_throttling_chain.skill.yaml",
-    "sha256": "88ca7678544866f3bdf2f6bf2981c58e877c818ed37501a056c0e7cb57bc3ce7"
+    "sha256": "9fee58a6513438b7adf13fa4309d986f18305c344947793ea1fd7f3ce58aaba8"
   },
   "steps": [
+    {
+      "id": "limit_attribution",
+      "name": "限频归因（谁触发 / 限频前负载 / 异常线程）",
+      "optional": true,
+      "params": {
+        "end_ts": "${end_ts}",
+        "package": "${package || process_name || ''}",
+        "start_ts": "${start_ts}"
+      },
+      "save_as": "limit_attribution",
+      "skill": "cpu_frequency_limit_attribution",
+      "type": "skill"
+    },
     {
       "id": "thermal",
       "name": "温度/热节流分析",

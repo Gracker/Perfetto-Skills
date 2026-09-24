@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: f26d3c80e0cbde93119f840e48c128a191896437e720bb28372add365456f7a5
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 016e87b6b171d0855beac6248714c7b8bb7ecf7360e59fba877ca03a172593f3
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Anr Strategy
 
@@ -45,11 +45,6 @@ keywords:
 - 冻屏
 - freeze
 - 卡死
-compound_patterns:
-- (ApplicationExitInfo|getHistoricalProcessExitReasons|ProfilingManager|ProfilingTrigger|Play Vitals|Android Vitals|client
-  watchdog|SDK watchdog).*(ANR|not responding|无响应|卡死)
-- (ANR|not responding|无响应|卡死).*(ApplicationExitInfo|getHistoricalProcessExitReasons|ProfilingManager|ProfilingTrigger|Play
-  Vitals|Android Vitals|client watchdog|SDK watchdog)
 final_report_contract:
   required_sections:
   - id: anr_diagnostic_api_boundary

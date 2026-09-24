@@ -1,0 +1,127 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "cpu_anomalous_threads_in_range",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "窗口起始时间戳(ns)",
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "窗口结束时间戳(ns)",
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "目标包名/进程名；用于标注 actor_class=target_app",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 80,
+      "description": "持续占用阈值：线程运行时长占窗口时长的百分比",
+      "name": "sustained_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 200,
+      "description": "疑似空转阈值：平均调度片时长上限(us)",
+      "name": "spin_avg_slice_us",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 2000,
+      "description": "疑似空转阈值：每秒调度片数下限",
+      "name": "spin_switches_per_s",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 500,
+      "description": "唤醒风暴阈值：每秒发出唤醒次数下限",
+      "name": "waker_per_s",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10,
+      "description": "内核守护重载阈值：占窗口内全部运行时长的百分比",
+      "name": "kernel_daemon_share_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 30,
+      "description": "最多返回的被标记线程数",
+      "name": "top_n",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "android.process_metadata"
+    ],
+    "required_tables": [
+      "sched_slice",
+      "thread"
+    ]
+  },
+  "process_scope": {
+    "role": "global_context"
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+    "path": "backend/skills/atomic/cpu_anomalous_threads_in_range.skill.yaml",
+    "sha256": "ebd323de6763d2610995f371f900c448a892c16151ffa0bec43f440e1c702042"
+  },
+  "steps": [
+    {
+      "id": "anomalous_threads",
+      "name": "窗口异常线程",
+      "on_empty": "窗口内没有调度数据可供判定；确认 trace 含 ftrace sched/sched_switch 且窗口落在数据范围内。",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_anomalous_threads_in_range/anomalous_threads",
+      "result_dependencies": [],
+      "save_as": "anomalous_threads",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

@@ -76,6 +76,21 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "blocking_chain_analysis/waker_chain",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.sleep_wake_source.sql.source_sha256",
+      "query_id": "blocking_chain_analysis/waker_chain",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.sleep_wake_source_labels.sql.source_sha256",
+      "query_id": "blocking_chain_analysis/waker_chain",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "click_response_analysis/input_thread_state",
       "reason": "hash identifies the packaged runtime fragment"
@@ -177,6 +192,11 @@
     },
     {
       "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "cpu_analysis/blocked_functions",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
       "query_id": "cpu_analysis/blocked_functions",
       "reason": "hash identifies the packaged runtime fragment"
     },
@@ -203,6 +223,151 @@
     {
       "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
       "query_id": "cpu_analysis/wakeup_chain",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_anomalous_threads_in_range/anomalous_threads",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.actor_class_labels.sql.source_sha256",
+      "query_id": "cpu_anomalous_threads_in_range/anomalous_threads",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_freq_limit_timeline/limit_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_spans.sql.source_sha256",
+      "query_id": "cpu_freq_limit_timeline/limit_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_freq_limit_timeline/limit_episodes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_spans.sql.source_sha256",
+      "query_id": "cpu_freq_limit_timeline/limit_episodes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_episodes.sql.source_sha256",
+      "query_id": "cpu_freq_limit_timeline/limit_episodes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_freq_limit_timeline/limit_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_spans.sql.source_sha256",
+      "query_id": "cpu_freq_limit_timeline/limit_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.observed_data_bounds.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/episodes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/episodes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_spans.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/episodes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_episodes.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/episodes",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.observed_data_bounds.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/attribution_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/attribution_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_spans.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/attribution_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_episodes.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/attribution_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_cooling_spans.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/attribution_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_signal_signatures.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/attribution_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_episode_verdicts.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/attribution_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.actor_class_labels.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/attribution_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_signal_signatures.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_attribution/vendor_signal_discovery",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.observed_data_bounds.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_episode/episode_windows",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_cooling_spans.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_episode/who_cooling",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_signal_signatures.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_episode/who_daemon",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_sample_quality.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_episode/temperature_context",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_signal_signatures.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_episode/non_cpu_heat_context",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_cooling_spans.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_episode/who_verdict",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_signal_signatures.sql.source_sha256",
+      "query_id": "cpu_frequency_limit_episode/who_verdict",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -228,6 +393,51 @@
     {
       "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
       "query_id": "cpu_system_context_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_throttling_in_range/limit_evidence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_spans.sql.source_sha256",
+      "query_id": "cpu_throttling_in_range/limit_evidence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_episodes.sql.source_sha256",
+      "query_id": "cpu_throttling_in_range/limit_evidence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_workload_attribution_in_range/workload_by_thread",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_frequency_spans.sql.source_sha256",
+      "query_id": "cpu_workload_attribution_in_range/workload_by_thread",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.actor_class_labels.sql.source_sha256",
+      "query_id": "cpu_workload_attribution_in_range/workload_by_thread",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "cpu_workload_attribution_in_range/workload_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.actor_class_labels.sql.source_sha256",
+      "query_id": "cpu_workload_attribution_in_range/workload_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "filesystem_module/io_wait_state",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -268,6 +478,41 @@
     {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "gpu_render_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "io_pressure/data_check",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "io_pressure/io_wait_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "io_pressure/process_io_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "io_pressure/blocking_functions",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "io_pressure/thread_io_details",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "io_pressure/long_io_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "io_pressure/root_cause_classification",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -436,8 +681,63 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "main_thread_states_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "page_fault_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/role_state_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/wait_class_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.sleep_wake_source.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/wait_class_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.sleep_wake_source_labels.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/wait_class_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/top_waits",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.sleep_wake_source.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/top_waits",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.sleep_wake_source_labels.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/top_waits",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/network_packet_correlation",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.sleep_wake_source.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/network_packet_correlation",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.sleep_wake_source_labels.sql.source_sha256",
+      "query_id": "process_thread_wait_sources_in_range/network_packet_correlation",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -861,6 +1161,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "startup_critical_tasks/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
       "query_id": "startup_critical_tasks/root",
       "reason": "hash identifies the packaged runtime fragment"
@@ -936,6 +1241,16 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "startup_hot_slice_states/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "startup_main_thread_states_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
       "query_id": "startup_thread_blocking_graph/root",
       "reason": "hash identifies the packaged runtime fragment"
@@ -973,6 +1288,51 @@
     {
       "field": "template.fragments.vsync_config.sql.source_sha256",
       "query_id": "textureview_producer_frame_timing/textureview_producer_intervals",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_cooling_spans.sql.source_sha256",
+      "query_id": "thermal_cooling_device_timeline/cooling_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_cooling_spans.sql.source_sha256",
+      "query_id": "thermal_cooling_device_timeline/cooling_transitions",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.observed_data_bounds.sql.source_sha256",
+      "query_id": "thermal_throttling/direct_limit_evidence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_sched_spans.sql.source_sha256",
+      "query_id": "thermal_throttling/direct_limit_evidence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_spans.sql.source_sha256",
+      "query_id": "thermal_throttling/direct_limit_evidence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_episodes.sql.source_sha256",
+      "query_id": "thermal_throttling/direct_limit_evidence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_cooling_spans.sql.source_sha256",
+      "query_id": "thermal_throttling/direct_limit_evidence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thermal_signal_signatures.sql.source_sha256",
+      "query_id": "thermal_throttling/direct_limit_evidence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_cpu_freq_limit_episode_verdicts.sql.source_sha256",
+      "query_id": "thermal_throttling/direct_limit_evidence",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {

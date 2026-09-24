@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/scene_input_window.sql
 -- Source SHA-256: 7f089f40766b6d80c41e6cd9b39f9c1ff0ade7b2b771edf757e710e1260e5dd8
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Normalize the full input stream before clipping. Gesture/source identity and

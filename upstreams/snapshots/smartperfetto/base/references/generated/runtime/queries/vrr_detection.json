@@ -57,14 +57,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vrr_detection/vsync_interval_distribution.sql",
-      "sha256": "7b142fbc28842378a3a84feb0a62580793e4e5cd70e2bebb6231e9e1035001e7",
+      "sha256": "584e8bf6c170a081f6c7ae01ff0b583b34dc3f9011dd1b14abb66cc748e64975",
       "signal_patterns": [
         "*VSYNC-sf*",
         "VSYNC"
       ],
       "skill_id": "vrr_detection",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/atomic/vrr_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "dbd96fdb066f3be0defa9135a69e115de91d28e52f9f9585a9fad0f12fd2cd06"
@@ -159,13 +159,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vrr_detection/vrr_mode_detection.sql",
-      "sha256": "ddeaa3723e05fd0d0f73c3e214b1246aad576bf4221db9354225cc2ab0c10107",
+      "sha256": "d3646d2147b93b6d396b9c496e6e2108ecda2138fc6324d249c9c5915743a289",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "vrr_detection",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/atomic/vrr_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "dbd96fdb066f3be0defa9135a69e115de91d28e52f9f9585a9fad0f12fd2cd06"
@@ -257,13 +257,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vrr_detection/refresh_rate_switches.sql",
-      "sha256": "b6a90d4069fd96c4f17a02b67097c613ade7912e687ee4deecea3d092ec1def2",
+      "sha256": "916f743c2d0ea949b4329ca5977257f123873e465390046208e969cc3ef8d31b",
       "signal_patterns": [
         "VSYNC-sf"
       ],
       "skill_id": "vrr_detection",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/atomic/vrr_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "dbd96fdb066f3be0defa9135a69e115de91d28e52f9f9585a9fad0f12fd2cd06"

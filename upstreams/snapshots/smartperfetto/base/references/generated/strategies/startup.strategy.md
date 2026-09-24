@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/startup.strategy.md
-Source SHA-256: a3068edb13bca75b1323e5f35f8025fa7b08206ec3f309c5d42c07c85f6af9f3
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 6ad0ed78deaf1341300a10121594e26863e78336af7373814e0e40a86bfe35b7
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Startup Strategy
 
@@ -60,11 +60,6 @@ keywords:
 - START_TIMESTAMP
 - START_REASON
 - START_COMPONENT
-compound_patterns:
-- 打开.*(应用|app|软件)
-- 打开.*(速度|时间|耗时)
-- (App Performance Score|Android Vitals|Play Vitals|online APM|\bAPM\b|A/B|experiment).*(startup|launch|TTID|TTFD|启动|冷启动|温启动|热启动)
-- (startup|launch|TTID|TTFD|启动|冷启动|温启动|热启动).*(App Performance Score|Android Vitals|Play Vitals|online APM|\bAPM\b|A/B|experiment)
 final_report_contract:
   required_sections:
   - id: startup_type_and_metrics
@@ -601,12 +596,6 @@ Use launch phase, Binder, lock, GC, IO and render dependencies when supported. E
 - `power_rails` + `cpu_freq_idle` 可用 → 可以做 Wattson 启动窗口能耗归因
 - `battery_counters` 可用 → 可以看启动前后电池采样趋势
 - 任一关键 capability 缺失 → 结论中加“数据采集建议”，不要把空表当成“启动不耗电”
-
-
-交叉验证：
-- 若启动窗口能耗高，再调用 `app_process_starts_summary` 判断是否有进程反复拉起
-- 若 DVFS/温控相关，再调用 `android_dvfs_counter_stats` 或 `thermal_throttling`
-- 若 GPU 首帧渲染占比高且 `gpu_work_period` 可用，再调用 `android_gpu_work_period_track`
 
 输出必须标明可信度：Wattson 量化归因 / 电池采样趋势 / 数据不足。
 

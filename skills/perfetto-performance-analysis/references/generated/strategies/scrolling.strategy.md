@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: 269d87e89f8eeb7b378b74bb0a2947b03c461d29f70f20159ae52f08284011d4
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 90d9e38704340e3aa3234cc248673266763c4082ec7782b7f6bf5c0fb0822496
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Scrolling Strategy
 
@@ -547,13 +547,6 @@ Apply when: Raw Buffer Stuffing tags account for more than half of the analysed 
 **Phase 1.3 — 全局上下文检查（基于 `global_context_flags` 结果，scrolling_analysis 自动输出）：**
 
 检查 `global_context` 数据源中的标志。在**结论概述段**（帧率/掉帧率数据紧后）用粗体标注，格式如下：
-
-| 标志 | 条件 | 在结论概述段标注 |
-|------|------|----------------|
-| `video_during_scroll = 1` | 滑动期间有视频解码活跃 | ⚠️ **视频播放并行**：滑动期间检测到视频解码活跃，workload_heavy 帧的负载归因不能全部归因于滑动渲染 |
-| `interpolation_active = 1` | 大量 frame_id=-1 的插帧 | ⚠️ **OEM 插帧模式活跃**：统计指标（帧率/掉帧率）可能受插帧影响失真 |
-| `thermal_trending = 1` | trace 尾部频率天花板明显低于峰值 | ⚠️ **温控持续降频**：thermal_throttling 帧的根因是系统级热管理，非 App 问题 |
-| `background_cpu_heavy = 1` | 非 App 大核占比 >60% | ⚠️ **后台 CPU 干扰**：{non_app_big_core_pct}% 的大核 CPU 被非前台进程占用。需用 `execute_sql` 查询 top 占用进程 |
 
 ⚠️ 全局上下文标志**不改变 reason_code 分类**，仅在结论概述段增加修饰标注。多个标志同时为 1 时全部标注。
 <!-- /strategy-detail -->

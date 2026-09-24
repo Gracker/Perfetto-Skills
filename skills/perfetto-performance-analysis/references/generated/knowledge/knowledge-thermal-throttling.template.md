@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-thermal-throttling.template.md
-Source SHA-256: ff0bb590ff50f6eb686cac1cd29723dafbe402ae6ff7a515bba0ca6a3a2f8df1
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: b307e550df669fabb58ce24e4d6a6464b33cca716a3b7347205a42e3eb424dff
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Knowledge Thermal Throttling Template
 
@@ -20,53 +20,123 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
 
-# Thermal Throttling
+# CPU Frequency Limits and Thermal Throttling
 
-## Mechanism
+## What the trace actually records
 
-Android devices contain multiple thermal sensors monitoring SoC junction temperature, battery temperature, and skin temperature. When any sensor exceeds a defined threshold, the **thermal governor** intervenes by reducing CPU and GPU frequency caps, limiting the maximum performance available to the system.
+A frequency **limit** and the **actual frequency** are different facts. The kernel publishes the
+cap it applies to a cpufreq policy; the actual frequency reflects that cap *and* the demand. A low
+actual frequency alone proves nothing — an idle device runs slow on purpose.
 
-### Throttle Chain
+| `counter_track.type` | Track name | Unit | Source |
+|---|---|---|---|
+| `cpu_max_frequency_limit` / `cpu_min_frequency_limit` | `Cpu N Max Freq Limit` / `Cpu N Min Freq Limit` | kHz | ftrace `power/cpu_frequency_limits`. N is the policy leader CPU, and the limit covers the whole policy, not that one core |
+| `thermal_temperature` | `<zone> Temperature` | milli-degrees C | ftrace `thermal/thermal_temperature` |
+| `cooling_device_counter` | `<cdev> Cooling Device` | cooling state | ftrace `thermal/cdev_update`; state 0 means no limiting |
 
-```
-Sustained workload → heat generation → thermal zone exceeds threshold
-    → governor reduces frequency cap → CPU/GPU run slower
-    → frame rendering takes longer → frames miss VSync deadline → jank
-```
+Actual frequency stays where it always was: `cpufreq` counters on `cpu_counter_track`.
 
-### Hysteresis
+## Reading a limit track without over-claiming
 
-Thermal management uses hysteresis to prevent rapid oscillation. Once throttling activates at threshold T1 (e.g., 85C), it does not deactivate until temperature drops below a lower threshold T2 (e.g., 80C). This means:
-- Throttling onset can lag the actual hot workload by seconds
-- Recovery takes longer than expected -- temperature must drop significantly before full performance restores
-- Users experience prolonged jank even after the heavy workload ends
+- **The reference is the observed maximum limit in this trace, not the hardware maximum.** A device
+  spec sheet is not evidence about this trace; "dropped 40% from 3.0 GHz" is fabricated if 3.0 GHz
+  never appears.
+- **The first sample on a limit track is the first *change*, not the start of limiting.** Everything
+  before it is unknown state. A trace that begins already capped has an unknown onset, and the
+  honest statement is "capped from the start of data", never "throttling began at t=0".
+- **Read the capped state as debounced episodes.** A PID-style governor (Pixel) re-writes the cap
+  every ~60 ms while it regulates; that is one episode of limiting, not dozens of throttle events.
+  Merge adjacent capped intervals across short gaps before counting anything.
+- **Limits are also raised.** A boost, a game mode, or a governor releasing an earlier cap all move
+  the same track. `cpu_min_frequency_limit` movement is equally a policy action.
+- **Hysteresis delays both edges.** Throttling that engages at T1 releases only below a lower T2, so
+  onset lags the hot workload and recovery lags the cool-down. Expect the limited window to outlast
+  the workload that caused it.
 
-### Sustained vs Burst Workloads
+## Evidence ladder for "who capped the frequency"
 
-- **Burst** (< 2s): Brief spikes rarely trigger throttling. The thermal mass of the SoC absorbs short bursts.
-- **Sustained** (> 5-10s): Continuous high load accumulates heat until throttle thresholds are reached.
-- Gaming, video recording, benchmarks, and scroll-through-large-lists scenarios are common sustained workload triggers.
+Rank the answer by what the trace can actually support. Each rung down is a weaker claim, not a
+worse device.
 
-## Trace Signatures
+1. **Cooling-device transition coincident with the limit change** — strongest. A `cdev` state step
+   at the same timestamp as a `cpu_max_frequency_limit` change names the thermal actor directly.
+   Report the cooling device name and the temperature context around it.
+2. **Userspace thermal daemon active shortly before the limit change** — a *candidate*, never a
+   confirmation. On platforms where the daemon writes sysfs directly there is no kernel event to
+   correlate, so proximity is all there is.
+3. **Limit changed with no cooling or thermal evidence** — non-thermal until proven otherwise.
+   PowerHAL and vendor perf services, game/battery/power-saving modes, and OEM policy daemons all
+   move the same cap. Say the limit changed and that the trigger is unidentified.
+4. **Only a cpufreq ceiling observed, no limit track at all** — an observation, not an attribution.
+   The capability is missing; ask for the ftrace events rather than inferring a cause.
 
-| What to Look For | Meaning |
-|-----------------|---------|
-| `android_dvfs_counters` | Frequency caps imposed by thermal governor |
-| `cpu_frequency_counters` | Actual operating frequency -- compare against max to detect capping |
-| `thermal_zone` counters | Raw temperature readings from SoC sensors |
-| Actual freq << max supported freq | Active thermal throttling |
-| Frequency dropping mid-trace | Throttle onset -- correlate with jank increase |
-| GPU frequency counters | GPU throttling (affects DrawFrame duration) |
+A claim of *thermal* throttling requires rung 1 or 2 plus temperature context. Rungs 3 and 4 must
+never be written as thermal.
 
-### Detection Pattern
+## Platform differences
 
-Compare the CPU frequency in the first 5 seconds of the trace (before thermal buildup) against the frequency during the janky period. A significant drop (e.g., big core going from 2.8GHz to 1.8GHz) confirms thermal throttling as a contributing factor.
+The same question yields different evidence depending on who owns the thermal policy.
 
-## Typical Solutions
+- **Kernel thermal management** (Pixel, and GKI-based MTK devices in most cases) emits cooling
+  device transitions, so limit changes can be matched to a named cooling device directly. Rung 1 is
+  reachable.
+- **Userspace thermal daemons** (Qualcomm `thermal-engine`, `android.hardware.thermal-service.qti`)
+  write limits through sysfs. The limit track moves with **no cooling-device event at all**, and
+  temperature sampling is sparse — a few points per minute. Rung 2 is the ceiling, and a sparse
+  temperature curve is background context, not causal evidence.
+- **Vendor signals are hints, not a catalog.** Names observed in real traces include the Pixel
+  thermal HAL atrace counters `VIRTUAL-SKIN-CPU-GPU-thermal-cpufreq-2-pid_request` and
+  `...-cdev_ceiling`, `H:THERMAL_VIRTUAL-SKIN-HINT_*`, slices `ThermalHelper::readThermalSensor -
+  <zone>`, and the kernel thread `thermal_BIG`; on Qualcomm and OEM builds, processes such as
+  `thermal-engine-v2`, `android.hardware.thermal-service.qti`,
+  `vendor.bytedance.thermalextservice.service` and `perfservice`, plus the system_server slice
+  `ThermalAtomicEventMonitor$ThermalHandler`. MTK has not been characterised here. Treat every one
+  of these as a name to *investigate*: query the values and check whether its transitions line up
+  with the limit changes before using it as evidence. A counter's name never defines its semantics.
 
-- **Reduce sustained CPU/GPU load**: Optimize shaders, reduce overdraw, simplify animations
-- **Implement frame pacing**: Deliver consistent work per frame instead of bursty patterns. Inconsistent frame times cause higher peak temperatures
-- **Offload to RenderThread**: Move draw work off the main thread to distribute heat across cores
-- **Avoid busy-wait patterns**: Spin loops generate maximum heat with no useful work
-- **Reduce background work during performance-critical paths**: Pause non-essential jobs during scrolling or animation
-- **Consider workload spreading**: Distribute computation across multiple cores rather than saturating one core
+## What ran before the limit
+
+Attribution of the cap is only half the question; the other half is what produced the heat. Look at
+a window ending at the limit change (a few seconds is usually enough) and separate:
+
+- **Freq-weighted CPU work** per actor: sum of running duration × frequency, in MHz·ms. This is a
+  *work proxy*, not energy — it has no voltage term and no idle/leakage term. Group it by actor
+  class (target app, other apps, system services, kernel threads) so App-generated load is visible
+  next to everything else.
+- **Anomalous thread patterns** in the same window: a thread running sustained without blocking, a
+  spin-like pattern with high CPU and no wakeups, a kernel daemon consuming disproportionate CPU,
+  or a wakeup storm where one thread repeatedly wakes many others.
+- **Non-CPU heat sources.** Skin and battery zones are *not* CPU junction temperatures. Charging,
+  modem activity, display brightness, GPU load and the camera all raise skin temperature, and a
+  skin-driven cap can occur while the CPU is comparatively idle. An analysis that only looks at CPU
+  work will blame the app for a cap that charging caused.
+
+## Remedies, split by owner
+
+Separate what the app team can change from what it cannot. Mixing them produces advice nobody can
+act on.
+
+**App side** — reduce the sustained load this app contributes before the cap:
+- Cut sustained CPU/GPU work: fewer redundant recompositions, simpler shaders, less overdraw.
+- Pace work evenly instead of in bursts; bursty frames reach higher peak temperatures for the same
+  average load.
+- Eliminate spin-waits and polling loops — maximum heat, no useful work.
+- Move non-essential background work out of scroll/animation/startup windows.
+- Spread computation across cores rather than saturating one big core.
+- If the heat is not CPU-bound, look at the app's own camera, video encode, network and screen-on
+  behaviour before the cap.
+
+**System / vendor side** — record these as findings, not as app action items:
+- Thermal policy thresholds, cooling-device mapping and governor tuning.
+- Other apps, system services or kernel daemons contributing the measured load.
+- Non-thermal limiters: PowerHAL and vendor perf services, game/battery modes, OEM policy.
+- Charging, modem or display heat that the app does not control.
+
+## When the evidence is missing
+
+An empty limit track means this trace did not record limit events; it does not mean the device was
+never capped. Ask for the ftrace events `power/cpu_frequency_limits`, `thermal/thermal_temperature`,
+`thermal/cdev_update` and `power/cpu_frequency`, plus the vendor thermal HAL atrace category for
+that device.
+
+## Related Skills

@@ -1,0 +1,130 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": []
+      },
+      "id": "cpu_anomalous_threads_in_range/anomalous_threads",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/cpu_anomalous_threads_in_range/anomalous_threads.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "f7e4b6b9e39ad931f3d56678bd228526bb28c077797649b0c24c95c4d46f054e",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*",
+        "${process_name}",
+        "${process_name}:*"
+      ],
+      "skill_id": "cpu_anomalous_threads_in_range",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/atomic/cpu_anomalous_threads_in_range.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "ebd323de6763d2610995f371f900c448a892c16151ffa0bec43f440e1c702042"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.process_metadata"
+        ],
+        "drops": [],
+        "required_tables": [
+          "sched_slice",
+          "thread"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "anomalous_threads",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "78e59040294b58d96a54449102109fd8536434ea1b93435f88eb700c612784d9"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/actor_class_labels.sql",
+            "source_sha256": "3c425851e00996bd8471be41b1db1c5c813ba25c9fb1879f5803447988e2c252"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "kernel_daemon_share_pct",
+          "package",
+          "process_name",
+          "spin_avg_slice_us",
+          "spin_switches_per_s",
+          "start_ts",
+          "sustained_pct",
+          "top_n",
+          "waker_per_s"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "cpu_anomalous_threads_in_range"
+}

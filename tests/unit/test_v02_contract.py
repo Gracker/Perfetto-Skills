@@ -1,6 +1,7 @@
 import hashlib
 import json
 from pathlib import Path
+import re
 import unittest
 
 import yaml
@@ -172,6 +173,18 @@ class V02ContractTest(unittest.TestCase):
             (runtime / "fixture-manifest.json").read_text(encoding="utf-8")
         )
         self.assertIn("fixtures", fixture_manifest)
+
+    def test_portable_tool_equivalents_name_exported_skills(self) -> None:
+        from tools import export_from_smartperfetto as exporter
+
+        exported = {path.stem for path in (GENERATED / "runtime/skills").glob("*.json")}
+        for tool, note in exporter.PORTABLE_TOOL_EQUIVALENTS.items():
+            named = set(re.findall(r"`([a-z0-9_]+)`", note)) & exported
+            self.assertTrue(named, f"{tool} note names no exported Skill")
+            for strategy in (GENERATED / "strategies").glob("*.md"):
+                text = strategy.read_text(encoding="utf-8")
+                if f"{tool}(" in text:
+                    self.assertIn(note, text, f"{strategy.name} names {tool} without its equivalent")
 
     def test_declared_modules_resolve_in_locked_official_index(self) -> None:
         runtime = GENERATED / "runtime"

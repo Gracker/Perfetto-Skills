@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-data-sources.template.md
-Source SHA-256: eb034d0e2cd592b9279a3efc87c6573d4ce857e2c928fd30ec2df7949d2e2556
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 58dc678a6e945a883bfdf0b6b41766c906ea5cecd7b21c320f4dab91b640c62f
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Knowledge Data Sources Template
 
@@ -333,19 +333,27 @@ data_sources {
 
 ---
 
-## 热降频分析 (thermal_throttling)
+## 热区温度 / 散热设备 (thermal_throttling)
 
-**依赖表**: `counter`（thermal_zone counters）, `android_dvfs_counters`
+**依赖表**: `counter` join `counter_track`，`counter_track.type` 为
+`thermal_temperature`（轨道名 `<zone> Temperature`，单位毫摄氏度）或
+`cooling_device_counter`（轨道名 `<cdev type> Cooling Device`，值为该散热设备的
+目标档位 cooling state）
 **架构适用**: 所有架构
 **最低版本**: 任意版本
 
 ### 所需采集配置
 
 **必要源:**
-- ftrace event: `power/cpu_frequency` — CPU 频率变化（频率被钳位时可诊断降频）
+- ftrace event: `thermal/thermal_temperature` — 热区温度采样，落到
+  `counter_track.type = 'thermal_temperature'`
+- ftrace event: `thermal/cdev_update` — 散热设备档位变化，落到
+  `counter_track.type = 'cooling_device_counter'`
 
 **增强源:**
-- ftrace event: `thermal/*` — 热区温度和功耗限制
+- ftrace event: `power/cpu_frequency_limits` — 限频上下限，用于把温度升高与
+  实际钳位对应起来（见下一节 cpu_freq_limits）
+- ftrace event: `power/cpu_frequency` — 实际频率，用于判断限频是否真的生效
 - Perfetto data source: `linux.sys_stats` — 系统统计（包含 thermal zone）
 
 ### Perfetto 配置片段
@@ -355,18 +363,65 @@ data_sources {
   config {
     name: "linux.ftrace"
     ftrace_config {
-      ftrace_events: "power/cpu_frequency"
       ftrace_events: "thermal/thermal_temperature"
       ftrace_events: "thermal/cdev_update"
+      ftrace_events: "power/cpu_frequency_limits"
+      ftrace_events: "power/cpu_frequency"
     }
   }
 }
 ```
 
 ### 常见缺失原因
-- `thermal/*` ftrace 事件依赖设备/内核支持，非所有设备都暴露
-- 即使无 thermal ftrace，可通过 CPU 频率钳位间接诊断降频
+- `thermal/*` ftrace 事件依赖设备/内核支持，非所有设备都暴露；有温度轨道但没有
+  cooling device 轨道是常见组合，此时只能说“热区在升温”，不能说“散热设备已介入”
+- 这两类轨道是 trace_processor 的 ftrace 解析结果，不依赖 Pixel 专属的
+  `android_dvfs_counters`；不要用后者为空来判断设备没有热数据
+- 温度升高本身不证明降频：要下降频结论，需要同一时间窗内的 cpu_freq_limits
+  或实际频率证据
 - GPU 降频依赖厂商特定的 counter track（Qualcomm/MTK/Exynos 各不同）
+
+---
+
+## CPU 频率上下限（限频）(cpu_freq_limits)
+
+**依赖表**: `counter` join `counter_track`，`counter_track.type` 为
+`cpu_max_frequency_limit` 或 `cpu_min_frequency_limit`（轨道名
+`Cpu N Max Freq Limit` / `Cpu N Min Freq Limit`，单位 kHz）
+**架构适用**: 所有架构
+**最低版本**: 任意版本
+
+### 所需采集配置
+
+**必要源:**
+- ftrace event: `power/cpu_frequency_limits` — 每个 CPU 的频率上下限变化
+
+**增强源:**
+- ftrace event: `power/cpu_frequency` — 实际频率，用于判断上限是否真的被撞到
+- ftrace event: `thermal/thermal_temperature` — 把限频归因到热，而不是其他限频源
+
+### Perfetto 配置片段
+
+```
+data_sources {
+  config {
+    name: "linux.ftrace"
+    ftrace_config {
+      ftrace_events: "power/cpu_frequency_limits"
+      ftrace_events: "power/cpu_frequency"
+      ftrace_events: "thermal/thermal_temperature"
+    }
+  }
+}
+```
+
+### 常见缺失原因
+- 只开了 `power/cpu_frequency` 时只有实际频率，看不到上下限，无法区分“负载低所以
+  频率低”和“被限频压住”
+- 限频的来源不止热：thermal、用户空间 governor、厂商省电策略、电池低电量保护都会
+  改写同一组上下限轨道。只有限频证据不能直接归因到温度，需要 thermal 轨道在同一
+  时间窗内对应
+- 部分设备/内核不暴露该 tracepoint
 
 ---
 

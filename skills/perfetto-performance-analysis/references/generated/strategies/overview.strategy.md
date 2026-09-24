@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/overview.strategy.md
-Source SHA-256: 1028dd85d60aeb28598f4ce0df21ef6fbccd00503ef91eab195aecabb74d3c79
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 2a04b013e838e4438e2ec257698bd5e00a9ca869ae3e4049ba44c45dc7265885
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Overview Strategy
 
@@ -45,11 +45,6 @@ keywords:
 - analyze the trace
 - performance overview
 - 全局分析
-compound_patterns:
-- 整体.*分析
-- 分析.*整体
-- trace.*中.*问题
-- performance.*overview
 ```
 
 ## Investigation methodology

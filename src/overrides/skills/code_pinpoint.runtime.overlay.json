@@ -2,9 +2,9 @@
   "schema_version": 1,
   "target": "runtime/skills/code_pinpoint.json",
   "kind": "skill",
-  "expected_base_sha256": "118fae2529f61e285ffc8153f224d2db8dd18e694173d755dcff79ccbad6c6df",
+  "expected_base_sha256": "9c36814d747a78dff9524bee7b1b3719431fa23d9f1ad7dcc3cbfb54013d87b9",
   "replacement": "code_pinpoint.runtime.json",
-  "replacement_sha256": "fb2d11b25960f308e98e6d0beb2a058bfd0ecca69b61536d8096464939571ae1",
+  "replacement_sha256": "6365c9a6145d0cacb1af3e43714efdcc86b5c6ecaff4a4e566dc5e8160f53412",
   "reason": "Keep the public projection portable: English anchor wording and no SmartPerfetto ${package} signal patterns. The deterministic native-symbol query itself was upstreamed and is now taken from the base.",
   "regression_ids": [
     "startup-heavy-code-pinpoint-anchor-kind",
@@ -19,15 +19,15 @@
     },
     {
       "target": "runtime/queries/code_pinpoint.json",
-      "expected_base_sha256": "6d22fcaa3f19fc9b1b0130e61e1225646976324586b602809404ecf7ea276d39",
+      "expected_base_sha256": "ca08adbdc18744e4267b3c597d82391c3f75aa490b3b1fcb7b1df5ec7166f8bb",
       "replacement": "code_pinpoint.queries.json",
-      "replacement_sha256": "9fc854ec4008a7e035b2bda08758746e7d8446e2633d9463f04cf00de12e16ed"
+      "replacement_sha256": "97053cebf6c875566ac6bb8b8797dca9b1efca74125988c427492d74af8f2304"
     },
     {
       "target": "skills/code_pinpoint.md",
-      "expected_base_sha256": "488cb0fbb0a3f7f1adc6f413ae8d955c355dfb27a68ead81215926565533f4ca",
+      "expected_base_sha256": "497a72067e00354c0e5d3d4b54c09a8f0634ab411aaf2c8c7936d368f4390950",
       "replacement": "code_pinpoint.md",
-      "replacement_sha256": "da90d5fcc09bb3b00812deef5130c01fbe7540346bd04339a37da7a3728fb6cd"
+      "replacement_sha256": "cd28053fc707bfc10cfc3a0d8eb8ab2747e66ff29983603896cf4b427561d6dd"
     }
   ],
   "upstream_candidate": "propose"

@@ -9,6 +9,7 @@ import json
 import math
 import os
 from pathlib import Path
+import posixpath
 import re
 import shutil
 import subprocess
@@ -585,12 +586,15 @@ def build_catalog(source: Path, policy_path: Path) -> dict[str, Any]:
 
     policy_skills = policy["skills"]
     skill_entries: list[dict[str, Any]] = []
+    exported_fragment_refs: dict[str, set[str]] = {}
     runtime_types: Counter[str] = Counter()
     for name in sorted(policy_skills):
         config = policy_skills[name]
         validate_disposition(config, f"Skill {name}")
         path = source / config["source"]
         raw = load_yaml(path)
+        if config["disposition"] != "product-only":
+            exported_fragment_refs[name] = referenced_sql_fragments(raw)
         runtime_type = str(raw.get("type", "unknown"))
         runtime_types[runtime_type] += 1
         entry = {
@@ -644,17 +648,30 @@ def build_catalog(source: Path, policy_path: Path) -> dict[str, Any]:
     fragment_entries: list[dict[str, Any]] = []
     for relative in sorted(policy["sql_fragments"]):
         config = policy["sql_fragments"][relative]
-        if config.get("disposition") != "exported" or not config.get("destination"):
-            raise ExportError(f"SQL fragment must be exported: {relative}")
+        disposition = config.get("disposition")
         path = source / relative
-        fragment_entries.append(
-            {
-                "source_path": relative,
-                "source_sha256": sha256_file(path),
-                "destination": config["destination"],
-                "disposition": "exported",
-            }
-        )
+        entry = {"source_path": relative, "source_sha256": sha256_file(path)}
+        if disposition == "product-only":
+            if not config.get("reason") or config.get("destination"):
+                raise ExportError(
+                    f"Product-only SQL fragment requires a reason and no destination: {relative}"
+                )
+            entry.update(disposition="product-only", reason=config["reason"])
+        elif disposition == "exported" and config.get("destination"):
+            entry.update(destination=config["destination"], disposition="exported")
+        else:
+            raise ExportError(f"SQL fragment must be exported or product-only: {relative}")
+        fragment_entries.append(entry)
+    product_only_fragments = {
+        entry["source_path"]
+        for entry in fragment_entries
+        if entry["disposition"] == "product-only"
+    }
+    for name, refs in exported_fragment_refs.items():
+        if leaked := sorted(refs & product_only_fragments):
+            raise ExportError(
+                f"Exported Skill {name} inlines product-only SQL fragments: {leaked}"
+            )
 
     override_entries: list[dict[str, Any]] = []
     for relative in sorted(policy["vendor_overrides"]):
@@ -679,6 +696,9 @@ def build_catalog(source: Path, policy_path: Path) -> dict[str, Any]:
     exported_strategies = sum(
         entry["disposition"] != "product-only" for entry in strategy_entries
     )
+    exported_fragments = sum(
+        entry["disposition"] == "exported" for entry in fragment_entries
+    )
     return {
         "schema_version": 1,
         "public_skill": PUBLIC_SKILL,
@@ -699,6 +719,8 @@ def build_catalog(source: Path, policy_path: Path) -> dict[str, Any]:
             "product_only_strategy_sources": len(strategy_entries) - exported_strategies,
             "pipeline_docs": len(pipeline_entries),
             "sql_fragments": len(fragment_entries),
+            "exported_sql_fragments": exported_fragments,
+            "product_only_sql_fragments": len(fragment_entries) - exported_fragments,
             "vendor_overrides": len(override_entries),
         },
         "skills": skill_entries,
@@ -764,7 +786,9 @@ def render_migration_coverage(catalog: dict[str, Any]) -> str:
         f"{summary['exported_strategy_sources']} | {summary['product_only_strategy_sources']} |\n"
         f"| Rendering-pipeline docs | {summary['pipeline_docs']} | "
         f"{sum(value for key, value in pipeline_dispositions.items() if key != 'product-only')} | "
-        f"{pipeline_dispositions.get('product-only', 0)} |\n\n"
+        f"{pipeline_dispositions.get('product-only', 0)} |\n"
+        f"| SQL fragments | {summary['sql_fragments']} | "
+        f"{summary['exported_sql_fragments']} | {summary['product_only_sql_fragments']} |\n\n"
         f"The source tree also contains {summary['excluded_skill_definitions']} "
         "authoring template/base definitions that are not runtime candidates.\n\n"
         + markdown_count_table("Runtime types", "Runtime type", runtime_types)
@@ -778,7 +802,9 @@ def render_migration_coverage(catalog: dict[str, Any]) -> str:
         + "## Boundary\n\n"
         "Exported and merged entries become portable references under the standard Agent Skill. "
         "Product-only strategy sources remain in SmartPerfetto because they depend on provider, "
-        "session, artifact, streaming, codebase, or UI orchestration. Every discovered source must "
+        "session, artifact, streaming, codebase, or UI orchestration. Product-only SQL fragments "
+        "serve SmartPerfetto engines outside the Skill runtime; no exported Skill may inline one. "
+        "Every discovered source must "
         "remain explicitly classified by the committed export policy.\n"
     )
 
@@ -1061,6 +1087,23 @@ def validate_conditions(value: object, label: str) -> int:
     return count
 
 
+def referenced_sql_fragments(value: Any) -> set[str]:
+    """Policy paths of every `sql_fragments` entry anywhere in a Skill definition."""
+    found: set[str] = set()
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key == "sql_fragments" and isinstance(item, list):
+                found.update(
+                    posixpath.normpath(posixpath.join("backend/skills", str(ref))) for ref in item
+                )
+            else:
+                found |= referenced_sql_fragments(item)
+    elif isinstance(value, list):
+        for item in value:
+            found |= referenced_sql_fragments(item)
+    return found
+
+
 def expand_sql_fragments(
     sql: str,
     fragment_paths: list[str],
@@ -1089,7 +1132,9 @@ def expand_sql_fragments(
     # ignore it and leaves the next CTE syntactically unseparated.
     block = "\n,\n".join(fragments)
     trimmed = sql.lstrip()
-    no_comments = re.sub(r"^(?:--[^\n]*\n\s*)*", "", trimmed)
+    # Mirror SmartPerfetto's injectFragmentCtes: leading line and block
+    # comments are kept in front of the composed WITH clause.
+    no_comments = re.sub(r"^(?:(?:--[^\n]*(?:\n|$)|/\*.*?\*/)\s*)*", "", trimmed, flags=re.S)
     match = re.match(r"^WITH(?:\s+(RECURSIVE))?\s+", no_comments, flags=re.I)
     if match:
         prefix = trimmed[: len(trimmed) - len(no_comments)]
@@ -1844,6 +1889,8 @@ def build_runtime_assets(
     )
 
     for entry in catalog["sql_fragments"]:
+        if entry["disposition"] != "exported":
+            continue
         source_path = source / entry["source_path"]
         write_generated_text(
             generated_root / destination_in_generated_root(entry["destination"]),
@@ -1935,6 +1982,27 @@ _PRODUCT_RUNTIME_TOKENS = (
     "flag_uncertainty", "write_analysis_note", "detect_architecture",
     "lookup_sql_schema", "process_identity_resolver",
 )
+
+
+# Product tools that strategies may still name because a portable Skill
+# workflow answers the same question. The rendered strategy keeps the routing
+# text and explains the portable equivalent instead of dropping the paragraph.
+PORTABLE_TOOL_EQUIVALENTS = {
+    "analyze_wait_chain": (
+        "`analyze_wait_chain(...)` steps mean: run the `process_thread_wait_sources_in_range` "
+        "Skill for the same process and window, whose `wait_class` column uses the same labels "
+        "as `wake_source_class`, and `blocking_chain_analysis` for the waker chain. The portable "
+        "Skills aggregate waits by thread role; they do not return one thread's critical-path segments."
+    ),
+}
+
+
+def portable_tool_notes(body: str) -> str:
+    return "".join(
+        note + "\n\n"
+        for tool, note in sorted(PORTABLE_TOOL_EQUIVALENTS.items())
+        if re.search(rf"\b{re.escape(tool)}\b", body)
+    )
 
 
 def contains_product_runtime(value: str) -> bool:
@@ -2198,6 +2266,7 @@ def render_strategy_reference(
         + "Portable methodology extracted from the SmartPerfetto strategy library.\n\n"
         + "`execute_sql(...)` examples mean to run the contained SQL through "
         "`perfetto_query.py`; they do not require a product tool.\n\n"
+        + portable_tool_notes(portable)
         + "## Portable execution commands\n\n"
         + "- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.\n"
         + "- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.\n"

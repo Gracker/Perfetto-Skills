@@ -55,14 +55,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/get_process.sql",
-      "sha256": "0106b83536d8cdff0fdef8181d39273e6224b22c12e6df0fb241d0d0f0ca55e0",
+      "sha256": "d2edc5e2f5c25e682ae64e147f8a8b204d95b889ec7607872145789fba262f80",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "memory_analysis",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"
@@ -149,7 +149,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/init_gc_view.sql",
-      "sha256": "4b5c36e7dd288c9a7938ad7cc6b48f99e058b28a15b1581e746e064eafb4b469",
+      "sha256": "bc8435008453acab6592ca48c7183f58faa1ec08920a7307fe1ce7c751fafbbc",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -167,7 +167,7 @@
       ],
       "skill_id": "memory_analysis",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"
@@ -266,11 +266,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_overview.sql",
-      "sha256": "5134e69847bec965d2dac132aa22d2b86c0f8dc42b5da4c03e93efbff8858f2a",
+      "sha256": "20727cd980bad6184fc0fd99419c05367a6c79092f97b2032f16e6f1db84b942",
       "signal_patterns": [],
       "skill_id": "memory_analysis",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"
@@ -363,11 +363,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_stats.sql",
-      "sha256": "4c9964fc6ecf2fa8e69c467f115de81d21da264923b63d9f9c92c88a00cbc624",
+      "sha256": "7f865ac71276163fad001a6f695003281e53e0bb38cd82bca6034b3c80f03075",
       "signal_patterns": [],
       "skill_id": "memory_analysis",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"
@@ -456,14 +456,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_frame_impact.sql",
-      "sha256": "9ee9baba2d02e082a84fe68478b55c313db1293b67b46a77c95524c615b98ea9",
+      "sha256": "9b0d7ad86d578f5855a701f2be5c74c4eb2a86c0cbf2b72780a9bcf44ed7b684",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "memory_analysis",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"
@@ -556,11 +556,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/main_thread_gc.sql",
-      "sha256": "70d5ad6115804d43bd8ad1605d8786e446eac1ee82d721a176b7228acc5a2060",
+      "sha256": "e23ec9938a06df44eb6082d7103797f68a6781876fb7e886359646031b5adeb4",
       "signal_patterns": [],
       "skill_id": "memory_analysis",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"
@@ -653,14 +653,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_thread_state.sql",
-      "sha256": "f0d88a157a14893ac4a19258034ca19ad60e47e72cf220e8338022ef9a4b1d15",
+      "sha256": "6e38986cac179238a12bbcb786b3980fa9205c443c95cd113019fb33125d56f4",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "memory_analysis",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"
@@ -751,11 +751,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_interval_analysis.sql",
-      "sha256": "22bb91933f7e18c8e7ae174f921a132efaca004bec7820ebb06bbf20f94321c9",
+      "sha256": "a30dbe8935303d517476aa3aef3764fc31f2436c718299e006cf660afeaabb2f",
       "signal_patterns": [],
       "skill_id": "memory_analysis",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"
@@ -844,11 +844,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/long_gc_events.sql",
-      "sha256": "f8f36333cadeab54e84cfb3e4c41340710242bbe40c71f760cdaba320f75ab2d",
+      "sha256": "7be5802219adc1091832a0fe8fc4011da685a1f38d701f74d7e23c343f281b63",
       "signal_patterns": [],
       "skill_id": "memory_analysis",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"

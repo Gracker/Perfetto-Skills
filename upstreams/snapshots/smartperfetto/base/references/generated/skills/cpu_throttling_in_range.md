@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
-Source SHA-256: fed929d6d7ff2b89a7099eb9a05664bfac7d412ebe1e7ce67bb2cf1d123282ab
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 # CPU 限频检测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -44,6 +44,59 @@ tags:
 
 ## Ordered execution
 
+### 限频证据
+
+- ID: `limit_evidence`
+- Type: `atomic`
+- SQL: [`../sql/cpu_throttling_in_range/limit_evidence.sql`](../sql/cpu_throttling_in_range/limit_evidence.sql)
+
+```yaml
+id: limit_evidence
+type: atomic
+optional: true
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_freq_limit_spans.sql
+- fragments/system_cpu_freq_limit_episodes.sql
+display:
+  level: summary
+  layer: overview
+  title: 限频证据（cpufreq policy 上限）
+  columns:
+  - name: has_limit_track
+    label: 有限频轨道
+    type: boolean
+  - name: episode_count
+    label: 限频区段数
+    type: number
+  - name: policy_count
+    label: 涉及 policy 数
+    type: number
+  - name: deepest_depth_pct
+    label: 最大限频深度
+    type: percentage
+  - name: min_limit_khz
+    label: 最低上限
+    type: number
+  - name: reference_max_limit_khz
+    label: 参考上限
+    type: number
+  - name: reference_basis
+    label: 参考依据
+    type: string
+  - name: evidence_status
+    label: 证据状态
+    type: string
+  - name: next_step
+    label: 下一步
+    type: string
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+save_as: limit_evidence
+```
 ### 初始化 CPU 拓扑
 
 - ID: `init_cpu_topology`

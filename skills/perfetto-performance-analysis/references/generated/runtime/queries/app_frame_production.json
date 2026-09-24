@@ -66,14 +66,14 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "4d8ad9220730209fba4128fa993dc8d3efee87d86b1646ba69336abfcd77b233",
+      "sha256": "2a24717b8dc0a269d99ca6f22cca1f3d1cbfc7c359ea402202857c76b0f18145",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "app_frame_production",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/atomic/app_frame_production.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "f7c24d6aa56cc29422e948867cc203415f06ff4182964dd3fc594aa23a3be29a"
@@ -96,7 +96,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           }
         ],
         "name_parameters": [

@@ -63,36 +63,52 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "b904f1e866015e4d3f48fc2b0a9013a09a0c1d7c141f03fc1960b65fb2cfdb95",
+      "sha256": "1377f3c5753f26b9839c4a743ae508e2907d4c0e24539425012b59203702f385",
       "signal_patterns": [
         "${package}",
         "${package}:*",
-        "*AsyncTask*",
-        "*DefaultDispatcher*",
-        "*Dispatchers.Default*",
+        "*Decode*",
+        "*Dispatcher*",
         "*Executor*",
-        "*FinalizerDaemon*",
-        "*HeapTaskDaemon*",
-        "*Profile Saver*",
-        "*ReferenceQueueDaemon*",
-        "*Signal Catcher*",
+        "*Network*",
         "*Worker*",
+        "*decode*",
         "1.raster",
         "1.ui",
+        "AsyncTask*",
         "Binder:*",
-        "CrRendererMain",
+        "ChromiumNet*",
+        "Coil*",
+        "CrRendererMain*",
+        "Cronet*",
+        "DefaultDispatcher*",
+        "Dispatchers.Default*",
+        "FinalizerDaemon*",
+        "Fresco*",
+        "Glide*",
+        "HeapTaskDaemon*",
+        "HwBinder:*",
         "Jit thread pool*",
+        "NetworkThread*",
         "OkHttp*",
-        "RenderThread",
+        "Okio*",
+        "Profile Saver*",
+        "ReferenceQueueD*",
+        "RenderThread*",
+        "RxCached*",
+        "Signal Catcher*",
         "arch_disk_io*",
-        "pool-*-thread-*"
+        "binder:*",
+        "glide*",
+        "hwbinder:*",
+        "pool-*"
       ],
       "skill_id": "startup_critical_tasks",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "1d150607593a0244cfb5f012f525c17145c2fb18304e076afb7d7b460799c0d3"
+        "sha256": "7d1fb6e3724c17a9610aa5aa28d054f13a96c7a2ee6e955ac720bfcaee25de9f"
       },
       "sql_dependencies": {
         "creates": [],
@@ -110,17 +126,22 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           },
           {
             "order": 1,
-            "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "72d795029fae16c3a685af8b8c8ea0ef95cc82dbbd334c278ab9ebf2cf36a45d"
+            "source_path": "backend/skills/fragments/thread_role.sql",
+            "source_sha256": "344140a5057d03ac7aa56e48e9c36aa3901e00045a8384108dcdb1bbff808f1e"
           },
           {
             "order": 2,
+            "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
+            "source_sha256": "819de1a78034ea92e41143f33864b30307cffcbe7c7d1d5b242d2d56bf03258f"
+          },
+          {
+            "order": 3,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "3809d839125381f9eee52628cd975f035e9ab10efe80f6ce2666bb301bdc6a06"
+            "source_sha256": "2d4e4c41a0b60f6574a37f4b20164b38abb2b4a4a203ac472cd5acf3646fb46a"
           }
         ],
         "name_parameters": [

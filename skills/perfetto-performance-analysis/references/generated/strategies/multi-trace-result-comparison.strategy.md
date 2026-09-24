@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/multi-trace-result-comparison.strategy.md
-Source SHA-256: 942577d9f2720de874f24ed0620f2adeb5507a40e65aea139ca28816b427b844
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: d5d5f1054761c3838d03ffcf3d25d15cd48044b3e3114e2039ba58fd97427d25
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Multi Trace Result Comparison Strategy
 
@@ -43,11 +43,6 @@ keywords:
 - multi trace result comparison
 - compare snapshots
 - compare analysis results
-compound_patterns:
-- 对比.*(分析结果|结果|snapshot|snapshots|SID|sid)
-- 对比.*(另一个\s*Trace|另外一个\s*Trace|两个\s*Trace|多个\s*Trace|多\s*Trace).*(分析结果|结果|snapshot|snapshots|SID|sid)
-- (分析结果|结果|snapshot|snapshots).*(对比|compare)
-- compare.*(analysis results|result snapshots|snapshots|snapshot ids|SIDs|session results|multi trace results)
 phase_hints:
 - id: result_snapshot_selection
   keywords:

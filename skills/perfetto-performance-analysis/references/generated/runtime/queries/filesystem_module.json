@@ -58,7 +58,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/io_overview.sql",
-      "sha256": "cc6d11e3bde54cd7147a2458faa8fa9fa486fd2f788a15a44e06f9a29fed51f8",
+      "sha256": "da5abbddce3e65d39c3663b51038a92e769413696779eea1e3183a081801c253",
       "signal_patterns": [
         "%${package}%",
         "*File*",
@@ -79,10 +79,10 @@
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
+        "sha256": "374e420be6fc4ef20beaf8f62a49e88d1241daf9f337af2b57cc2689d9987ee8"
       },
       "sql_dependencies": {
         "creates": [],
@@ -174,7 +174,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/main_thread_io.sql",
-      "sha256": "61db808887599cff1794ce9f1a15544e2aef42f3237179a2f33f4e7ce2989b21",
+      "sha256": "6f899731f7f167abc803b1b44a5c65625a945aac1ec507d637fcb62c40086b75",
       "signal_patterns": [
         "%${package}%",
         "*File*",
@@ -190,10 +190,10 @@
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
+        "sha256": "374e420be6fc4ef20beaf8f62a49e88d1241daf9f337af2b57cc2689d9987ee8"
       },
       "sql_dependencies": {
         "creates": [],
@@ -285,16 +285,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/database_operations.sql",
-      "sha256": "f0900bec9adab5e827cda6ae5e6cbd1331f2913215893a3a13d29c95abd3ee1a",
+      "sha256": "5df5a0b92f3dd24261c4bd29bcf4258b7c924901b5edfefbeba7f436dc27ef52",
       "signal_patterns": [
         "%${package}%"
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
+        "sha256": "374e420be6fc4ef20beaf8f62a49e88d1241daf9f337af2b57cc2689d9987ee8"
       },
       "sql_dependencies": {
         "creates": [],
@@ -386,16 +386,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/shared_prefs_operations.sql",
-      "sha256": "5545a51e03c77a3e1a02278cb168c393c0c4a3dd22555f6fbe46c9e4328ba57b",
+      "sha256": "8bb9a5b7ca6e65cfb376ac4a3677b30972d2b354af46fe86433fa0bef1f65e82",
       "signal_patterns": [
         "%${package}%"
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
+        "sha256": "374e420be6fc4ef20beaf8f62a49e88d1241daf9f337af2b57cc2689d9987ee8"
       },
       "sql_dependencies": {
         "creates": [],
@@ -487,16 +487,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/io_wait_state.sql",
-      "sha256": "099e394c554b7cd8f8a0bd066fa333913df8052de0ae229f66128a646f6e721e",
+      "sha256": "e06e8774f4dac4fa5fdfca8b07b02cffd89ccb420f8f79bf35f876622d4b3320",
       "signal_patterns": [
         "%${package}%"
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
+        "sha256": "374e420be6fc4ef20beaf8f62a49e88d1241daf9f337af2b57cc2689d9987ee8"
       },
       "sql_dependencies": {
         "creates": [],
@@ -513,7 +513,13 @@
       },
       "step_id": "io_wait_state",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
+            "source_sha256": "48ab049a0b2a75d4a0fa85f035a936b253729c8144b54ecc484e9f02c3f945a5"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "package"
@@ -588,7 +594,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/slow_io_operations.sql",
-      "sha256": "6cca29467c2317c3908e27bda895a25f77562a0237857585a3a66ef812df659e",
+      "sha256": "0e0fdb1dd1f8eaad449a160f4853485a9441912dca82b39ba279e5222d4f6993",
       "signal_patterns": [
         "%${package}%",
         "*File*",
@@ -600,10 +606,10 @@
       ],
       "skill_id": "filesystem_module",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94"
+        "sha256": "374e420be6fc4ef20beaf8f62a49e88d1241daf9f337af2b57cc2689d9987ee8"
       },
       "sql_dependencies": {
         "creates": [],

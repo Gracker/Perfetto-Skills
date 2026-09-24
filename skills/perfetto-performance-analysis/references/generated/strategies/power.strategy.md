@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/power.strategy.md
-Source SHA-256: 29c926bcd86fa657c32af5402c2d470a0cd11364fbda5cd54d999675baa346fc
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 95e9cb3cd7c3bb149042d1425c32c179d03261a5baec8611bcecb8f8f64569e4
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Power Strategy
 
@@ -21,7 +21,9 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 ```yaml
 scene: power
-classification_description: Energy use, battery drain, thermal behavior and resource activity associated with power consumption.
+classification_description: 'Energy use, battery drain, thermal behavior and resource activity associated with power consumption,
+  including CPU frequency limits and thermal throttling attribution: who capped the frequency, what ran before it, and anomalous
+  threads.'
 priority: 4
 effort: medium
 required_capabilities:
@@ -32,6 +34,7 @@ optional_capabilities:
 - cpu_freq_idle
 - gpu_work_period
 - thermal_throttling
+- cpu_freq_limits
 - device_state
 keywords:
 - 功耗
@@ -45,26 +48,22 @@ keywords:
 - drain
 - energy
 - thermal
+- 限频
+- 温控
+- 降频
+- 热限频
+- 频率上限
+- throttl
+- throttling
+- frequency limit
+- freq cap
+- cooling
 - allow-while-idle
 - setExactAndAllowWhileIdle
 - exact alarm
 - wakeup alarm
 - Android vitals
 - partial wakelock
-compound_patterns:
-- 电池.*掉
-- 耗电.*原因
-- 功耗.*分析
-- battery.*drain
-- power.*analysis
-- (JobScheduler|WorkManager|JobParameters|WorkInfo).*(quota|stop reason|pending reason|timeout|standby bucket|expedited|foreground
-  worker|后台|耗电|power|battery)
-- (quota|stop reason|pending reason|timeout|standby bucket|expedited).*(JobScheduler|WorkManager|JobParameters|WorkInfo)
-- (Foreground Service|foreground service|\bFGS\b|dataSync|mediaProcessing|shortService).*(timeout|quota|battery|power|耗电|后台|前台服务|前景服务)
-- (timeout|quota).*(Foreground Service|foreground service|\bFGS\b|dataSync|mediaProcessing|shortService)
-- (UIDT|user[- ]initiated data transfer).*(transfer|job|quota|power|battery|耗电|后台)
-- (allow[- ]while[- ]idle|setExactAndAllowWhileIdle|exact alarm|wakeup alarm|AlarmManager).*(battery|power|wake|wakeup|doze|idle|耗电|唤醒|待机)
-- (wakelock|wake lock|partial wakelock|Vitals|excessive wakeups).*(background|battery|power|24h|2h|1h|stuck|excessive|耗电|后台|唤醒)
 final_report_contract:
   required_sections:
   - id: job_work_fgs_governance_boundary
@@ -372,11 +371,17 @@ Align active work, wakeups, CPU idle and frequency residency with the measured e
 
 Separate measured rails from model estimates such as Wattson. Correlate thermal, GPU and network only with supporting evidence; frequency/occupancy alone is not measured energy or thermal throttling.
 
+### frequency_limit_attribution (cpu_frequency)
+
+Read limits from the observed limit tracks as debounced episodes against the observed maximum limit, not hardware maximum; the first sample is the first change, so a trace that starts capped has unknown onset. Attribute in ladder order: coincident cooling-device transition, then userspace thermal daemon activity before the change, then limit-only. Without cooling or thermal evidence a limit change stays non-thermal or daemon-suspected, never confirmed thermal; limits can also be raised. Separate App-generated load from system-owned limiting, and keep non-CPU heat sources and sparse temperature sampling explicit.
+
+Apply when: Applies when the question concerns CPU frequency limits or caps, thermal throttling, or who triggered them.
+
 #### power Core Strategy
 
-**Route card**: 功耗 / 耗电 / 电池 / 掉电 / 发热 / wattson / power / battery / drain / energy
+**Route card**: 功耗 / 耗电 / 电池 / 掉电 / 发热 / 限频 / 降频 / 温控 / wattson / power / battery / drain / energy / throttling / frequency limit
 
-**Capabilities**: required=[cpu_scheduling], optional=[power_rails, battery_counters, cpu_freq_idle, gpu_work_period, thermal_throttling, device_state]
+**Capabilities**: required=[cpu_scheduling], optional=[power_rails, battery_counters, cpu_freq_idle, gpu_work_period, thermal_throttling, cpu_freq_limits, device_state]
 
 **Final report contract summary**
 - Job/Work/FGS 治理边界
@@ -418,6 +423,8 @@ Separate measured rails from model estimates such as Wattson. Correlate thermal,
 | `battery_counters` | 无电量/电流采样 | 不计算掉电速率；输出 `battery_poll_ms` 采集建议 |
 | `cpu_freq_idle` | 无 CPU idle/freq 完整状态 | 不做 Wattson CPU 能耗归因；可退化为 CPU 频率/DVFS 定性分析 |
 | `gpu_work_period` | 无 GPU active region | 不做 GPU work period/能耗归因；可退化为 GPU 频率或 Mali power state 分析 |
+| `cpu_freq_limits` | 无 `cpu_max/min_frequency_limit` 轨道 | 不能给限频归因结论；只能用实际 `cpufreq` 做观测，并按 Phase 4(e) 给 `power/cpu_frequency_limits` 采集建议 |
+| `thermal_throttling` | 无热区温度 / cooling device 轨道 | 不能确认热触发；限频结论最多停在 `NON_THERMAL` 或守护进程候选 |
 
 如果用户明确问“怎么采集”，优先调用：
 
@@ -467,11 +474,74 @@ Separate measured rails from model estimates such as Wattson. Correlate thermal,
 - UIDT：Android 14+ 的 user-initiated data transfer 是长耗时用户触发传输的边界；trace 只能看到 Job/网络/CPU 现象，是否 UIDT 需要 JobInfo/API 或 app 日志。
 - Alarm / allow-while-idle：wakeup trace 只能证明设备被唤醒；exact alarm、`setExactAndAllowWhileIdle`、`SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM` 权限和 Android 17 listener API 需要 app/API/dumpsys 证据。
 
-**Phase 4 — GPU/温控/频率交叉验证（按需）：**
+**Phase 4 — 限频归因 / 温控 / 频率交叉验证（按需）：**
 
-温控/降频/发热导致性能问题时优先：
+用户问“谁把频率限住了”“限频之前跑了什么”“有没有异常线程”时，入口是：
+一次返回：data_check、限频总览、cooling device 总览、按受限程度排序的 capped episodes，每个 episode 的 who_cooling / who_daemon / temperature_context / before_workload / before_anomalies / non_cpu_heat_context / who_verdict，以及 vendor_signal_discovery（候选 counter track、slice、进程及其计数与时间范围）。
 
-**输出结构：**
+**(a) 先读共性证据（各平台通用）**
+
+| counter_track.type | 轨道名示例 | 单位 | 来源与含义 |
+|---|---|---|---|
+| `cpu_max_frequency_limit` / `cpu_min_frequency_limit` | `Cpu N Max Freq Limit` / `Cpu N Min Freq Limit` | kHz | ftrace `power/cpu_frequency_limits`；N 是 policy leader CPU，这条上限管整个 policy，不只那一个核 |
+| `thermal_temperature` | `<zone> Temperature` | mC | ftrace `thermal/thermal_temperature`，热区温度采样 |
+| `cooling_device_counter` | `<cdev> Cooling Device` | state | ftrace `thermal/cdev_update`，冷却设备档位，0 = 未限制 |
+
+实际频率是 `cpu_counter_track` 上的 `cpufreq`，和上限是两件事：频率低也可能只是没负载。
+
+读数纪律（必须写进结论）：
+- 参照系是 **trace 内观测到的最大上限**，不是硬件最大频率；不要按 spec 频率算“降了百分之多少”。
+- limit 轨道的**第一个样本是第一次变化**，不是限频起点；trace 一开始就是低上限时 onset 未知，只能说“数据起点即受限”。
+- capped 状态按**去抖后的 episode** 读：Pixel 的 PID governor 会 ~60ms 反复切换上限，那是一个 episode，不是几十次限频。
+- 上限也会被**抬高**（boost）；`cpu_min_frequency_limit` 的变化同样是策略动作。
+
+**(b) 读 who_verdict，按证据阶梯收口**
+
+| who_verdict | 证据强度 | 结论写法 |
+|---|---|---|
+| `thermal_cooling_device_confirmed` | 强：cdev 档位跳变与 limit 变化同刻 | 可写“热管理触发的限频”，给出 cdev 名与温度上下文 |
+| `userspace_thermal_daemon_active_before_limit` | 中：limit 变化前窗口内有 thermal 守护进程活动 | 只能写**候选触发源**；说明该平台把限频写进 sysfs，trace 里没有 cdev 事件 |
+| `limit_changed_no_thermal_evidence` | 弱：限频确实发生，但无 cooling/温度证据 | 写 `NON_THERMAL`：PowerHAL/perf service、游戏/省电模式、厂商策略都可能限频，需要补证 |
+| `onset_unknown_capped_at_data_start` | 起点缺失 | 只报受限时长与影响，不报触发者 |
+
+对应诊断分级：`THERMAL_LIMIT_CONFIRMED` / `THERMAL_DAEMON_SUSPECTED` / `NON_THERMAL_LIMIT` / `LIMIT_EVIDENCE_MISSING`。
+
+平台差异决定你最多能拿到哪一级证据，不是结论本身：内核热管理平台（Pixel，GKI 上的 MTK 多半也是）会发 cooling device 跳变，可直接对上 limit 变化；高通把限频写在用户态（`thermal-engine` / `android.hardware.thermal-service.qti` 直写 sysfs），**limit 变了却没有任何 cdev 事件**，温度采样也稀疏（每分钟几个点），此时最强结论只能到“守护进程在限频前活跃”。
+
+**(c) 厂商信号靠探索，不靠清单**
+
+vendor_signal_discovery 给的是**候选**。用 `execute_sql` 逐个验证：名字是数据不是定义，要看值域、看跳变时刻是否与 limit 变化对齐，才决定它能否当证据。真实 trace 里见过的例子（示例，不是目录；MTK 尚未实测，必须现场探索）：
+- Pixel thermal HAL atrace counter `VIRTUAL-SKIN-CPU-GPU-thermal-cpufreq-2-pid_request` / `...-cdev_ceiling`、`H:THERMAL_VIRTUAL-SKIN-HINT_*`；slice `ThermalHelper::readThermalSensor - <zone>`；内核线程 `thermal_BIG`。
+- 高通/OEM 进程 `thermal-engine-v2`、`android.hardware.thermal-service.qti`、`vendor.bytedance.thermalextservice.service`、`perfservice`；system_server slice `ThermalAtomicEventMonitor$ThermalHandler`。
+
+**(d) “限频之前跑了什么”与 App / 系统责任边界**
+
+`before_workload`（`cpu_workload_attribution_in_range`）按 `actor_class` 把 target_app / other_app / system_service / kernel 分开；其 freq-weighted work = Σ dur×频率，单位 MHz·ms，**不是能量**。`before_anomalies`（`cpu_anomalous_threads_in_range`）标出 sustained_runner / spin_like / kernel_daemon_heavy / waker_storm。
+
+结论必须把两侧分开写：
+- App 侧可动作：本 App 线程在限频前持续满载、自旋、唤醒风暴、后台线程抢大核。
+- 系统/厂商侧：其他 App、系统服务、内核线程的热贡献，以及限频策略本身。
+- **skin / battery 热区不是 CPU 结温**：充电、Modem、屏幕、GPU、相机都会把 skin 推高，`non_cpu_heat_context` 就是为此而设。只做 CPU 归因会把充电导致的限频写成 App 的锅。
+- 温度采样稀疏时（高通常见），温度曲线只能作背景，不能当因果证据。
+
+**(e) `LIMIT_EVIDENCE_MISSING` 时给采集建议**
+
+这说明这条 trace 没采到限频事件，不是“没有限频”。建议补采 ftrace：`power/cpu_frequency_limits`、`thermal/thermal_temperature`、`thermal/cdev_update`，以及 `power/cpu_frequency`；厂商 thermal HAL 的 atrace tag 按设备补。CLI 可建议 `smp capture android --preset power --app <pkg> --duration <sec>`。
+
+**(f) 其余频率/GPU 交叉验证**
+
+`android_dvfs_counter_stats` 不是通用 DVFS 入口：它走 `android.dvfs` stdlib，而该模块按固定 counter 名白名单匹配（`domain@N Frequency`、`17000010.devfreq_mif Frequency`、`cpuNdsu Frequency` 等 Pixel/Tensor 命名），在高通/MTK 设备上通常为空。空结果只说明该设备不发这些 counter，不能写成“没有 DVFS 问题”；通用路径用上面的 limit 轨道和 `cpu_counter_track` 的 `cpufreq`。
+
+**限频子场景输出结构（问“谁限的频”时用这个）：**
+
+1. **限频是否发生**：观测到的最大上限、受限 episode 数、受限时长占比、是否 trace 起点即受限（onset 未知）
+2. **谁触发**：who_verdict + 诊断分级，给出 cdev / 守护进程 / 无证据的具体依据；候选就写候选
+3. **限频前发生了什么**：freq-weighted work 的 actor_class 分布 + 异常线程及其标志
+4. **非 CPU 热源**：充电、Modem、屏幕、GPU、相机等 skin 贡献；说明温度采样密度
+5. **责任边界**：App 可动作项 vs 系统/厂商侧项分开写，不混成一句“系统降频”
+6. **证据边界与采集建议**：缺 cdev / 温度 / limit 事件时明确说缺什么、补什么
+
+**输出结构（功耗主线）：**
 
 1. **数据完整度判定**：power_rails / battery_counters / cpu_freq_idle / gpu_work_period 哪些可用，哪些缺失
 2. **全局能量/掉电趋势**：硬件 rail mWh、Wattson 估算 mWh、battery drain rate 分开列

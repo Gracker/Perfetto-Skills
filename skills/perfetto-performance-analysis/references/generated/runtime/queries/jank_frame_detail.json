@@ -64,13 +64,13 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "ecae66b48777bfd5c1c7d7ba20b9cf073af5d82815d4bf8239a6cba254c08a3c",
+      "sha256": "fda2abf5c7b2318fd31906b61e30d697278bb98c9b0f7e3f6a60d4058e8cb397",
       "signal_patterns": [
         "android_monitor_contention"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -171,13 +171,13 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "6b68c5b1b39073232820f21f7c2d3033fd77bc47fd89bdebd61641acf70bf934",
+      "sha256": "8a23e5a3fb4537d01e18253b425b35df48de5ea98291310ce7dfda2f3c6496d7",
       "signal_patterns": [
         "android_garbage_collection_events"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -280,7 +280,7 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "b9ac157efee81a1da3e2438a38e4df721274e4ad9e5f861a86518f4f84fa421d",
+      "sha256": "48e5fe711354ed32c1fd45b34f42292888880c9f757cc65f4705c619ba5f3eba",
       "signal_patterns": [
         "*Draw*",
         "*Fence*",
@@ -291,7 +291,7 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -392,13 +392,13 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "cea781ee32ddc08fc1cba07c2cd2129b3be8db50cebc1cc0e7d2c0c744f012ff",
+      "sha256": "9259c6f9ae71bb0a3ce31fc3ced3471ce2db02f1caba5e36472280851552a9ff",
       "signal_patterns": [
         "android_binder_txns"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -500,7 +500,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "5f99fc9378493f24c3395f60244b318521507395e6c2a3532c815e95b042886b",
+      "sha256": "db9dbb899539f3a2e4685d4a1d6df887fefab506e20f27d99896e1a1476a6a45",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -510,7 +510,7 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -536,17 +536,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "3809d839125381f9eee52628cd975f035e9ab10efe80f6ce2666bb301bdc6a06"
+            "source_sha256": "2d4e4c41a0b60f6574a37f4b20164b38abb2b4a4a203ac472cd5acf3646fb46a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "72d795029fae16c3a685af8b8c8ea0ef95cc82dbbd334c278ab9ebf2cf36a45d"
+            "source_sha256": "819de1a78034ea92e41143f33864b30307cffcbe7c7d1d5b242d2d56bf03258f"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/target_threads.sql",
-            "source_sha256": "94e0271e007cd7a247c0bb9b311d60c8c52030bc555ddf03fad74ffbe76cb9bb"
+            "source_sha256": "9d999d8d139c2ced151eb7522de5bbd0fd825eb86a97d191d913a42b02c61333"
           }
         ],
         "name_parameters": [
@@ -645,11 +645,11 @@
         },
         "role": "target"
       },
-      "sha256": "5483420a95971856beecddfa73de0807ca3f2c193e5b69bfc2127479a219a819",
+      "sha256": "df9e19259cf59f96403850dbacffa94bef415be1d9880c85e3f137798181fda3",
       "signal_patterns": [],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -758,11 +758,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "584cc4c5ce1a3677cca93bbec9afb103070fa7ab706a7ab92985a542b1842a5d",
+      "sha256": "be530d7c7d40b81f78602aff7ab6eee177844c05eabc2bbb909b2c162da1bc6f",
       "signal_patterns": [],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -788,12 +788,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "3809d839125381f9eee52628cd975f035e9ab10efe80f6ce2666bb301bdc6a06"
+            "source_sha256": "2d4e4c41a0b60f6574a37f4b20164b38abb2b4a4a203ac472cd5acf3646fb46a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "0efdfd00b7910e94c71aab11e2207a563bf667847942b98f0a2e64c5f811a781"
+            "source_sha256": "e7d6d10ecb161e7744df86d880a54dd8c9ff3c71c80e756464551c74e6b29b9f"
           }
         ],
         "name_parameters": [],
@@ -878,7 +878,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "7c7726d73ada95a00fb4e17fcfcc54c8daee78814cd1185cd7bbf08eeeb36891",
+      "sha256": "49f8a472cabaa73af97c6f12c8df23efea321e42f944b84153310c162d6b7e8c",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -886,7 +886,7 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -912,7 +912,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           }
         ],
         "name_parameters": [
@@ -1004,7 +1004,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "9014b04b2c2814de6f51d9ddf1b1094034bf3f0b7fae74007936c2d60c9a56c5",
+      "sha256": "679492c6face0a0cbfb52b4cdead2e006ac1181b8a6411ac8db4579a324d0954",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1013,7 +1013,7 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -1039,7 +1039,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           }
         ],
         "name_parameters": [
@@ -1131,7 +1131,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "f7df64cb77143150825303ac61920de2d8ae18ae82291910f0e3e867dfe53fda",
+      "sha256": "3b6418c60acbae0fc02914856f1bdadb0e08b1b5c1b48f366cb74b73547f2453",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1140,7 +1140,7 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -1166,7 +1166,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           }
         ],
         "name_parameters": [
@@ -1257,11 +1257,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "62c319c69b845f628610bc71098ca3529d86a105a17b94afb3c716807c8e1f07",
+      "sha256": "b9335dd9cea1b39075e2598de59288f60b19ecafe6253544f5d5e2e5db43ba73",
       "signal_patterns": [],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -1287,12 +1287,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "3809d839125381f9eee52628cd975f035e9ab10efe80f6ce2666bb301bdc6a06"
+            "source_sha256": "2d4e4c41a0b60f6574a37f4b20164b38abb2b4a4a203ac472cd5acf3646fb46a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "0efdfd00b7910e94c71aab11e2207a563bf667847942b98f0a2e64c5f811a781"
+            "source_sha256": "e7d6d10ecb161e7744df86d880a54dd8c9ff3c71c80e756464551c74e6b29b9f"
           }
         ],
         "name_parameters": [],
@@ -1384,14 +1384,14 @@
         },
         "role": "target"
       },
-      "sha256": "f21e6999f4561968405f62517220c5f8eaa55f37c0a1a796c06f005db7a9a8d3",
+      "sha256": "b4f570f9315643b8be7475a6df92ca4ed731cae73a5ba44f953a54409f7177b6",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -1501,14 +1501,14 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "71948d163ec2aa4df6f5e8c930700d918b35f97cf36751495ecbb400e0b768c6",
+      "sha256": "cba912d77bb13fc38380245fb41db5d4a186afce8e5fbde7a21179167678d4c3",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -1534,7 +1534,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           }
         ],
         "name_parameters": [
@@ -1624,7 +1624,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "0c1fc85c1b8927e9a2505e6fcf40284fae153c20a2953bd08798a807b2dba331",
+      "sha256": "aac110844bcf4716a73c37d0cac5d4c320e67012550763bc444e8638fa8a7faa",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1634,7 +1634,7 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -1660,12 +1660,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "72d795029fae16c3a685af8b8c8ea0ef95cc82dbbd334c278ab9ebf2cf36a45d"
+            "source_sha256": "819de1a78034ea92e41143f33864b30307cffcbe7c7d1d5b242d2d56bf03258f"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           }
         ],
         "name_parameters": [
@@ -1768,7 +1768,7 @@
         ],
         "role": "target"
       },
-      "sha256": "9727b205f97ab7413b60473a598eab690bcaf7f9c7b0e257e2438ffb2bf71a5e",
+      "sha256": "bf3ded4600265c95c9d04a1f87c282857934b92f31a93dd714245f6bf8c9871b",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1794,7 +1794,7 @@
       ],
       "skill_id": "jank_frame_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "337f07b019184e56d2cbd55423b8bdf1d62ee20eb90821ab2d0791340050512f"
@@ -1820,37 +1820,37 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "72d795029fae16c3a685af8b8c8ea0ef95cc82dbbd334c278ab9ebf2cf36a45d"
+            "source_sha256": "819de1a78034ea92e41143f33864b30307cffcbe7c7d1d5b242d2d56bf03258f"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "0efdfd00b7910e94c71aab11e2207a563bf667847942b98f0a2e64c5f811a781"
+            "source_sha256": "e7d6d10ecb161e7744df86d880a54dd8c9ff3c71c80e756464551c74e6b29b9f"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "3809d839125381f9eee52628cd975f035e9ab10efe80f6ce2666bb301bdc6a06"
+            "source_sha256": "2d4e4c41a0b60f6574a37f4b20164b38abb2b4a4a203ac472cd5acf3646fb46a"
           },
           {
             "order": 3,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           },
           {
             "order": 4,
             "source_path": "backend/skills/fragments/vsync_config.sql",
-            "source_sha256": "d25691efd52bdb11596c604daa8f0b1fbffff6093f4a2c45420e7df6a8d18926"
+            "source_sha256": "ba3a86a7119bc95a85c40d5651d08812cb8f306a0014778bc99acf78408495e2"
           },
           {
             "order": 5,
             "source_path": "backend/skills/fragments/target_threads.sql",
-            "source_sha256": "94e0271e007cd7a247c0bb9b311d60c8c52030bc555ddf03fad74ffbe76cb9bb"
+            "source_sha256": "9d999d8d139c2ced151eb7522de5bbd0fd825eb86a97d191d913a42b02c61333"
           },
           {
             "order": 6,
             "source_path": "backend/skills/fragments/thread_states_quadrant.sql",
-            "source_sha256": "c9103dab88b468b100df9eb7481ba403eb4a362dc46efd7b3494cd0b14b01f08"
+            "source_sha256": "f20e6cd45f6242db034e626227bec6ef4f8906cfed7aca9503ad38143e7709e7"
           }
         ],
         "name_parameters": [

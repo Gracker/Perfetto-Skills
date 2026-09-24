@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-evidence-provenance.template.md
-Source SHA-256: 2d9053f33f224f11f3c38086602477834282da9988d6df5a45ffb80320a2dff8
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 78a4a2cad8088a577a3bcda968061077fc53847813730c439d43f6a753450c25
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Knowledge Evidence Provenance Template
 
@@ -43,3 +43,8 @@ the portable runtime 报告应先说明证据能证明什么，再给根因和�
 - packet-level 网络数据不是 DNS/TCP/TLS/TTFB 阶段耗时；需要 request-level telemetry、OkHttp/Cronet events 或接入层日志补证。
 - 短窗口 wakelock/功耗数据不是 24h Vitals 判定；只能写成局部窗口证据或换算参考。
 - 版本敏感能力必须写明 Android/API/Extension 或“未知，需按目标设备确认”。
+- 生产者的 `claim_boundary` 和 `evidence_scope` 限定结论范围；`aggregate.complete=true` 只表示该 artifact 内的聚合完整，不代表已采集全部符合条件的事件。
+- “时间 T 之后未再出现”只有在确认被监控活动仍在继续且覆盖充分时，才可能支持恢复/零复发；活动停止或采集缺失只能保留未知。
+- 已确认的 synthetic/mock/benchmark/非生产 trace 要标明来源并限制对真实业务的外推；包名或切片名本身只构成候选线索。
+- 最终结论应自包含，保留范围内所有重要发现、支持证据和限制。可以整理结构、合并同义重复，不可为限制字数、表格行数或声明数而删去独立发现。
+- 每个数值命题分别绑定实际原始行、列、值；一个数值的证据不能证明同句其他数值或因果。显示舍入须标“约”，声明和引用保留精确值，正文各处保持一致。

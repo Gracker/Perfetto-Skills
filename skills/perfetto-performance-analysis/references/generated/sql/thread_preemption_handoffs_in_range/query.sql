@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thread_preemption_handoffs_in_range.skill.yaml
 -- Source SHA-256: 0d6aa446f7bc33de7c1867ce6be9c1042f9c3ba2c3da5fa80100744c268332ef
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

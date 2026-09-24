@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S01_rendering_types_overview.md
 Source SHA-256: 9e61960d979bd9d5837bcc0976274a1dcaf191ae5d5b65e2c2207bf1b95eb386
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Android Perfetto 系列 - App 出图类型 - 总览与识别方法
 

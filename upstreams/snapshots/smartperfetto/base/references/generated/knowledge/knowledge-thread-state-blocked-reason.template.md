@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-thread-state-blocked-reason.template.md
-Source SHA-256: dd8f6737c3f5a62a376d1d44aa26b635232e13c6eb9a02f4b4289fa1ac38632e
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 2765f8388c714fc05aaf7cac63dd2deffc819a50d7ab5e900667c3103da4f5a5
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Knowledge Thread State Blocked Reason Template
 
@@ -32,6 +32,21 @@ Perfetto `thread_state` blocking evidence comes from two scheduler signals:
   `blocked_function` is the kernel wchan single frame returned for the blocked
   task. It is not an atrace slice and not a full kernel call stack.
 
+The Android common kernel emits that event for TASK_UNINTERRUPTIBLE only:
+android14-6.1 `kernel/sched/core.c` guards it inside `try_to_wake_up` with
+`if (READ_ONCE(p->__state) & TASK_UNINTERRUPTIBLE) trace_sched_blocked_reason(p);`,
+and android16-6.12 guards it inside `__schedule` with
+`if (block && (prev_state & TASK_UNINTERRUPTIBLE) && trace_sched_blocked_reason_enabled())`.
+So `blocked_function` exists on `D` / `DK` / `I` rows and is NULL on every `S`
+row, on every device, whatever the recording config. A socket receive, an epoll
+wait and a `Object.wait()` are all `S`, so none of them can be named this way.
+Attribute an `S` wait by its WAKE SOURCE instead: Perfetto records `waker_utid`
+and `irq_context` on the first `R`/`R+` row after the sleep, and combining that
+with the sleeping thread's role (and, where the trace has it, rx-packet
+correlation) produces a candidate class — never a proven cause. The Skill for
+that is `process_thread_wait_sources_in_range`; `blocking_chain_analysis` exposes
+the same `wake_source` / `wait_class` columns on its waker chain.
+
 Evidence strength:
 
 | Signal | What it proves | Confidence |
@@ -39,7 +54,9 @@ Evidence strength:
 | `D/DK + io_wait=1` | The task entered an I/O wait path such as `io_schedule()` | High for I/O wait |
 | `D/DK + IO/page-cache blocked_function` | The task is blocked near a storage, filesystem, or page-cache path | Medium, needs slice/block-I/O correlation |
 | `D/DK` only | Uninterruptible kernel wait | Low; do not call it disk I/O alone |
-| `S + epoll/poll` | Looper or poll wait, often idle or waiting for an event | Exclusion/ambiguous evidence |
+| `S` (any) | Interruptible wait: Looper/epoll, socket receive, lock or timed wait | No `blocked_function` exists; attribute by wake source, not by function name |
+| `S` + irq-context wake + network-role thread | A receive-side wake is plausible | Candidate only; a timer expiry looks identical |
+| `S` + irq-context wake + rx packet within the correlation window | Receive activity at the same moment | `trace_direct:packet_activity`; still not proof this wake carried that packet |
 
 Rows grouped by `blocked_function` are flat aggregates. Multiple rows such as
 `filemap_read`, `io_schedule`, and `ext4_*` are sibling buckets, not a nested
@@ -61,10 +78,10 @@ on scheduler events with a target-thread filter; do not sample every
 | `futex_wait*`, `__mutex_lock*`, `rwsem_*`, `pthread_mutex*` | Thread is waiting for a userspace/kernel lock | Java monitor, native mutex, SharedPreferences awaitLoadedLocked | lock contention chain, owner thread slices |
 | `binder_ioctl`, `binder_thread_read` | Binder client or server thread is in binder driver | Synchronous IPC wait or binder pool wait | Binder txn peer, server thread state, system_server load |
 | `binder_wait_for_work` | Binder pool is idle waiting for incoming work | Normal binder thread-pool idle; suspicious only on main thread | Thread role, binder transaction context |
-| `epoll_wait`, `do_epoll_wait`, `poll_schedule_timeout` | Thread waits for fd events | Looper idle, network/socket wait, async callback wait | Main Looper slices, input/log events, request telemetry |
+| `epoll_wait`, `do_epoll_wait`, `poll_schedule_timeout` | Only reachable when the poll path itself entered an uninterruptible wait; an ordinary Looper or socket poll is `S` and produces no row at all | Rare; do not expect it for Looper idle or network waits | Wake source of the `S` wait, Main Looper slices, request telemetry |
 | `hrtimer_nanosleep`, `clock_nanosleep` | Explicit sleep timer | `Thread.sleep()` / `SystemClock.sleep()` | App slice or stack proving caller |
 | `pipe_wait`, `pipe_read` | Waiting on pipe data or pipe buffer | Subprocess or local IPC | Peer process/thread, pipe-related slices |
-| `inet_*`, `tcp_*`, `sk_wait_*` | Socket/network wait in kernel | Main-thread network, DNS/TCP wait, socket backpressure | Network telemetry, packet trace, OkHttp/Cronet spans |
+| `inet_*`, `tcp_*`, `sk_wait_*` | Visible only for D-state socket paths, for example `tcp_sendmsg` blocking under memory pressure; ordinary receive waits are `S` and are not visible through `blocked_function` at all | Send-side backpressure or allocation stall inside the socket path | Wake source of the `S` receive wait, `android_network_packets`, network telemetry, OkHttp/Cronet spans |
 
 ## Reporting Rule
 

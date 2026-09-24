@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_thread_blocking_graph.skill.yaml
 -- Source SHA-256: 69238dda35542463041b9a6abaac5497e3ce646dd30ab5172692caa825eb5d2f
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

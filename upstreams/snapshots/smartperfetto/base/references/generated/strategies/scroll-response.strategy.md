@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scroll-response.strategy.md
-Source SHA-256: 3abcc4405b2948ace1048ff17603a8fcae276e2015774f95ce0ac091afbfc9e6
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 9e2e4a7ad41e2c9a56112c202dc7eadf027d91723ed270a7e90d403a7bed505b
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Scroll Response Strategy
 
@@ -44,14 +44,6 @@ keywords:
 - scroll start
 - initial response
 - 触摸响应
-compound_patterns:
-- 滑动.*响应
-- 滑动.*延迟
-- scroll.*response
-- scroll.*latency
-- 首帧.*延迟
-- 首帧.*响应
-- 滑动.*首帧
 final_report_contract:
   required_sections:
   - id: scroll_response_scope

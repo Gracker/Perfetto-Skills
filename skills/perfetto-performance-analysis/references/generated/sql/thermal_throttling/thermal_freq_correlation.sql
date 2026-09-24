@@ -1,31 +1,45 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/thermal_throttling.skill.yaml
--- Source SHA-256: d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source SHA-256: 5fad39740c373b463c8080622927249e67de2e731ea1cf79253d443663541c7e
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 WITH
 -- Quality gates apply per track, not per sensor name or individual value.
 -- Null units are inferred conservatively and disclosed; explicit unknown units
 -- are never overridden. Skin and junction temperatures are not interchangeable.
+--
+-- counter_track.type='thermal_temperature' is produced by the ftrace event
+-- thermal/thermal_temperature, whose value is millidegrees Celsius by
+-- definition. For those tracks the unit is therefore KNOWN (unit_basis
+-- 'perfetto_track_type') and must not be guessed from the observed value
+-- range: a device that only ever reports 30-40 C would otherwise be read as
+-- degrees and silently reported 1000x too hot. Range inference stays in place
+-- for untyped tracks that merely have a thermal-looking name.
+thermal_tracks AS (
+  SELECT id, name, unit, type FROM counter_track
+  WHERE type = 'thermal_temperature'
+    OR LOWER(name) LIKE '%thermal%' OR LOWER(name) LIKE '%temp%'
+    OR LOWER(name) LIKE '%tsens%'
+),
 thermal_raw AS (
   SELECT c.id, c.ts, c.track_id AS sensor_track_id, ct.name AS sensor_name,
-    ct.unit AS source_unit, c.value,
+    ct.unit AS source_unit, ct.type AS track_type, c.value,
     MAX(ABS(c.value)) OVER (PARTITION BY ct.id) AS track_max_abs
-  FROM counter c JOIN counter_track ct ON c.track_id = ct.id
-  WHERE (LOWER(ct.name) LIKE '%thermal%' OR LOWER(ct.name) LIKE '%temp%'
-    OR LOWER(ct.name) LIKE '%tsens%')
-    AND (${start_ts} IS NULL OR c.ts >= ${start_ts})
+  FROM thermal_tracks ct JOIN counter c ON c.track_id = ct.id
+  WHERE (${start_ts} IS NULL OR c.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR c.ts < ${end_ts})
 ),
 thermal_normalized AS (
   SELECT *, CASE
     WHEN source_unit IN ('C', '°C', 'celsius') THEN value
     WHEN source_unit IN ('mC', 'millidegrees', 'millidegree_celsius') THEN value / 1000.0
+    WHEN source_unit IS NULL AND track_type = 'thermal_temperature' THEN value / 1000.0
     WHEN source_unit IS NULL AND track_max_abs > 1000 THEN value / 1000.0
     WHEN source_unit IS NULL THEN value
     ELSE NULL END AS temp_c,
-    CASE WHEN source_unit IS NULL THEN 'inferred_from_track_range'
-      ELSE 'explicit_unit' END AS unit_basis
+    CASE WHEN source_unit IS NOT NULL THEN 'explicit_unit'
+      WHEN track_type = 'thermal_temperature' THEN 'perfetto_track_type'
+      ELSE 'inferred_from_track_range' END AS unit_basis
   FROM thermal_raw
 ),
 thermal_ordered AS (

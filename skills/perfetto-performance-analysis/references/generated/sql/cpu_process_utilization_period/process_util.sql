@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_process_utilization_period.skill.yaml
 -- Source SHA-256: 7ab91a94b9e4a6be4e1b8224e9e1b993140280825cff454d6124a73e98b00ec8
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 WITH target_processes AS (
   SELECT upid, name AS process_name

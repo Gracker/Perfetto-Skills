@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/game.strategy.md
-Source SHA-256: 8fa7eec08d59b8a9ceefd8957138bbed44ab1b6efcd2a9c424f37d053ae16c06
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 04aaf5a311a0b31d69b17d8eb6cebce8ce4c38008c600ed36ae1da8f8cfb3f03
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Game Strategy
 
@@ -46,11 +46,6 @@ keywords:
 - game performance
 - godot
 - cocos
-compound_patterns:
-- 游戏.*卡
-- 游戏.*帧
-- game.*jank
-- game.*fps
 phase_hints:
 - id: game_loop_jank
   keywords:

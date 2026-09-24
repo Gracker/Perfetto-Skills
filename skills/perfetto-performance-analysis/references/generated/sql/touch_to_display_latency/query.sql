@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/touch_to_display_latency.skill.yaml
 -- Source SHA-256: e8e103d0fc42354515cf44afdb33a1507e394a29f4c0d29142e35bc52917df15
--- Source commit: bc007586871a720aed82537913617c64fb95a459
+-- Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 SELECT
   printf('%d', dispatch_ts) as input_ts,

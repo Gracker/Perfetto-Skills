@@ -1,0 +1,688 @@
+{
+  "queries": [
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "cpu_frequency_limit_episode/episode_windows",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/cpu_frequency_limit_episode/episode_windows.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "eb9e8a71b7076d04a9e9af650b6c02b36afb1b0001bd297db0e6b49323a71630",
+      "signal_patterns": [],
+      "skill_id": "cpu_frequency_limit_episode",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency",
+          "android.process_metadata"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter",
+          "counter_track",
+          "sched_slice"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "episode_windows",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/observed_data_bounds.sql",
+            "source_sha256": "05853d32a47512244b61b489b0553a40b8187ab21537ad55ca130499ae922171"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "core_type",
+          "episode_end_ts",
+          "episode_id",
+          "episode_start_ts",
+          "lookback_ms",
+          "policy_cpu",
+          "starts_at_data_start",
+          "who_window_ms"
+        ],
+        "result_dependencies": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "cpu_frequency_limit_episode/who_cooling",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/cpu_frequency_limit_episode/who_cooling.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "d53e6c49e9003304c3de1456b7c5d9b3b308206f72658de9aff8e08e3aaa7551",
+      "signal_patterns": [],
+      "skill_id": "cpu_frequency_limit_episode",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency",
+          "android.process_metadata"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter",
+          "counter_track",
+          "sched_slice"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "who_cooling",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_cooling_spans.sql",
+            "source_sha256": "eade250ec22acef9e23ebe05b7f0990c23820236cdbd661b59da9d9d886b22d7"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "episode_start_ts"
+        ],
+        "result_dependencies": [
+          "episode_windows"
+        ],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "cpu_frequency_limit_episode/who_daemon",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/cpu_frequency_limit_episode/who_daemon.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "bfafd652d3f4b803229ec86976b1f7b427ac919325fe5251f8d21fab1a7eaa22",
+      "signal_patterns": [],
+      "skill_id": "cpu_frequency_limit_episode",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency",
+          "android.process_metadata"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter",
+          "counter_track",
+          "sched_slice"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "who_daemon",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_signal_signatures.sql",
+            "source_sha256": "e43561d1440689f101759d9553d04cabf99e0ec820f19e07db37a68a2e2ee7d3"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "episode_start_ts"
+        ],
+        "result_dependencies": [
+          "episode_windows"
+        ],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "cpu_frequency_limit_episode/temperature_context",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/cpu_frequency_limit_episode/temperature_context.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "6e847ecba89af1ef9db4a10e2cf86966202c79ec02fdf06250406debf2037433",
+      "signal_patterns": [],
+      "skill_id": "cpu_frequency_limit_episode",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency",
+          "android.process_metadata"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter",
+          "counter_track",
+          "sched_slice"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "temperature_context",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_sample_quality.sql",
+            "source_sha256": "3ea92b260e77466c79f80d05239c6146143afd3b9a90b511b41e54260f04b28d"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "start_ts"
+        ],
+        "result_dependencies": [
+          "episode_windows"
+        ],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "cpu_frequency_limit_episode/non_cpu_heat_context",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/cpu_frequency_limit_episode/non_cpu_heat_context.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "1fa61b4daf9ce50520223503ed0f4b4fa9eac5033c6021dd4a944af4f928ffcc",
+      "signal_patterns": [],
+      "skill_id": "cpu_frequency_limit_episode",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency",
+          "android.process_metadata"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter",
+          "counter_track",
+          "sched_slice"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "non_cpu_heat_context",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_signal_signatures.sql",
+            "source_sha256": "e43561d1440689f101759d9553d04cabf99e0ec820f19e07db37a68a2e2ee7d3"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [],
+        "result_dependencies": [
+          "episode_windows"
+        ],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "probe_capabilities": [
+          "counters"
+        ]
+      },
+      "id": "cpu_frequency_limit_episode/who_verdict",
+      "identity": {
+        "policy": "none"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/cpu_frequency_limit_episode/who_verdict.sql",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "30554d3fcee151fb95a783dabaad659951329b62d410b1ed551404b37f20d0e1",
+      "signal_patterns": [],
+      "skill_id": "cpu_frequency_limit_episode",
+      "source": {
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+        "path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.cpu.frequency",
+          "android.process_metadata"
+        ],
+        "drops": [],
+        "required_tables": [
+          "counter",
+          "counter_track",
+          "sched_slice"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "who_verdict",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/thermal_cooling_spans.sql",
+            "source_sha256": "eade250ec22acef9e23ebe05b7f0990c23820236cdbd661b59da9d9d886b22d7"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/thermal_signal_signatures.sql",
+            "source_sha256": "e43561d1440689f101759d9553d04cabf99e0ec820f19e07db37a68a2e2ee7d3"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "cooling_coincidence_ms",
+          "core_type",
+          "episode_end_ts",
+          "episode_id",
+          "episode_start_ts",
+          "policy_cpu",
+          "starts_at_data_start",
+          "who_window_ms"
+        ],
+        "result_dependencies": [
+          "episode_windows"
+        ],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    }
+  ],
+  "schema_version": 1,
+  "skill_id": "cpu_frequency_limit_episode"
+}

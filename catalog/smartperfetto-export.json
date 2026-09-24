@@ -469,9 +469,9 @@
       "name": "blocking_chain_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
-      "source_sha256": "68f73be9504b37b7a6d8966693adf2fe179f9183db279f10d9fe883226dfa5c9",
+      "source_sha256": "3bf11270d8e25d4d0471955b857c8d086163252df80124bfb7e57983b0ee2574",
       "tier": "A",
-      "version": "1.2",
+      "version": "1.3",
       "workflow": "anr-blocking"
     },
     {
@@ -611,8 +611,20 @@
       "name": "cpu_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_analysis.skill.yaml",
-      "source_sha256": "989cec6fb1956e104659dcc758e1ca76a37d1a8b98930d2c6653997e4317cb30",
+      "source_sha256": "2af64b097eb6ef55456b39938820e6bc4ae09d23ff1331109751e7499b6603f3",
       "tier": "S",
+      "version": "1.0",
+      "workflow": "cpu-scheduling"
+    },
+    {
+      "category": "cpu",
+      "destination": "references/generated/skills/cpu_anomalous_threads_in_range.md",
+      "disposition": "exported",
+      "name": "cpu_anomalous_threads_in_range",
+      "runtime_type": "atomic",
+      "source_path": "backend/skills/atomic/cpu_anomalous_threads_in_range.skill.yaml",
+      "source_sha256": "ebd323de6763d2610995f371f900c448a892c16151ffa0bec43f440e1c702042",
+      "tier": "A",
       "version": "1.0",
       "workflow": "cpu-scheduling"
     },
@@ -641,6 +653,18 @@
       "workflow": "cpu-scheduling"
     },
     {
+      "category": "cpu",
+      "destination": "references/generated/skills/cpu_freq_limit_timeline.md",
+      "disposition": "exported",
+      "name": "cpu_freq_limit_timeline",
+      "runtime_type": "atomic",
+      "source_path": "backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml",
+      "source_sha256": "9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b",
+      "tier": "B",
+      "version": "1.0",
+      "workflow": "power-thermal"
+    },
+    {
       "category": "power",
       "destination": "references/generated/skills/cpu_freq_residency_summary.md",
       "disposition": "exported",
@@ -663,6 +687,30 @@
       "tier": "B",
       "version": "2.0",
       "workflow": "cpu-scheduling"
+    },
+    {
+      "category": "thermal",
+      "destination": "references/generated/skills/cpu_frequency_limit_attribution.md",
+      "disposition": "exported",
+      "name": "cpu_frequency_limit_attribution",
+      "runtime_type": "composite",
+      "source_path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
+      "source_sha256": "9b27b3315b361c5cd21809d36d2415240a89ae8baf023b849ee3a4a8ba068888",
+      "tier": "S",
+      "version": "1.0",
+      "workflow": "power-thermal"
+    },
+    {
+      "category": "thermal",
+      "destination": "references/generated/skills/cpu_frequency_limit_episode.md",
+      "disposition": "exported",
+      "name": "cpu_frequency_limit_episode",
+      "runtime_type": "composite",
+      "source_path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
+      "source_sha256": "b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd",
+      "tier": "A",
+      "version": "1.0",
+      "workflow": "power-thermal"
     },
     {
       "category": "cpu",
@@ -778,7 +826,7 @@
       "name": "cpu_throttling_in_range",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_throttling_in_range.skill.yaml",
-      "source_sha256": "fed929d6d7ff2b89a7099eb9a05664bfac7d412ebe1e7ce67bb2cf1d123282ab",
+      "source_sha256": "66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39",
       "tier": "B",
       "version": "2.0",
       "workflow": "cpu-scheduling"
@@ -828,6 +876,18 @@
       "source_path": "backend/skills/atomic/cpu_utilization_per_period.skill.yaml",
       "source_sha256": "9920c14a1dfb568ab235f8ad07dc05900335274cf3a7715383808227764b30a7",
       "tier": "B",
+      "version": "1.0",
+      "workflow": "cpu-scheduling"
+    },
+    {
+      "category": "cpu",
+      "destination": "references/generated/skills/cpu_workload_attribution_in_range.md",
+      "disposition": "exported",
+      "name": "cpu_workload_attribution_in_range",
+      "runtime_type": "atomic",
+      "source_path": "backend/skills/atomic/cpu_workload_attribution_in_range.skill.yaml",
+      "source_sha256": "deda79ad447ced6323b09d92a57c1031fe27378e197e1e8cb0845a30efca29e8",
+      "tier": "A",
       "version": "1.0",
       "workflow": "cpu-scheduling"
     },
@@ -886,7 +946,7 @@
       "name": "filesystem_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
-      "source_sha256": "e2ba372b872ef978f342ad67351e9294edd801ecae1c716d110212a8bc88cd94",
+      "source_sha256": "374e420be6fc4ef20beaf8f62a49e88d1241daf9f337af2b57cc2689d9987ee8",
       "version": "1.0",
       "workflow": "io-network-media"
     },
@@ -1206,7 +1266,7 @@
       "name": "io_pressure",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/io_pressure.skill.yaml",
-      "source_sha256": "446a6d9d2400ee436427aeafcbe13eb29606e2215271049729b298ef581927dd",
+      "source_sha256": "376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb",
       "tier": "S",
       "version": "3.0",
       "workflow": "io-network-media"
@@ -1479,7 +1539,7 @@
       "name": "main_thread_states_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/main_thread_states_in_range.skill.yaml",
-      "source_sha256": "5e5a3a2c89481901979330ce8412ec570bf8ea3cdf5a757e413553bd076d2769",
+      "source_sha256": "7bad768d4547674b19d7268f5385de1b17e3746f458a9f2eaee723f02edde5c4",
       "tier": "B",
       "version": "1.0",
       "workflow": "trace-overview"
@@ -2086,6 +2146,18 @@
       "workflow": "cpu-scheduling"
     },
     {
+      "category": "diagnostics",
+      "destination": "references/generated/skills/process_thread_wait_sources_in_range.md",
+      "disposition": "exported",
+      "name": "process_thread_wait_sources_in_range",
+      "runtime_type": "composite",
+      "source_path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
+      "source_sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1",
+      "tier": "B",
+      "version": "1.0",
+      "workflow": "anr-blocking"
+    },
+    {
       "category": "rendering",
       "destination": "references/generated/skills/render_pipeline_latency.md",
       "disposition": "exported",
@@ -2390,7 +2462,7 @@
       "name": "startup_critical_tasks",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
-      "source_sha256": "1d150607593a0244cfb5f012f525c17145c2fb18304e076afb7d7b460799c0d3",
+      "source_sha256": "7d1fb6e3724c17a9610aa5aa28d054f13a96c7a2ee6e955ac720bfcaee25de9f",
       "tier": "A",
       "version": "1.0",
       "workflow": "startup"
@@ -2450,7 +2522,7 @@
       "name": "startup_hot_slice_states",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_hot_slice_states.skill.yaml",
-      "source_sha256": "6f1cb08c42ead7e7aa287894f77a423902cbe8e0cbe67bea6e8b9699f7fc777c",
+      "source_sha256": "d87bcfb1ca39ddc75d8a3175c3e44a4155e55a79ca1c50e34de7315d83bc1517",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2510,7 +2582,7 @@
       "name": "startup_main_thread_states_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_main_thread_states_in_range.skill.yaml",
-      "source_sha256": "7954cdcfca60448ea5660a2a248b81e890cf50e39618e236b96470c56e9d0fca",
+      "source_sha256": "47e6b6e9b545b31fe26b0e29c8e3ab63e959a93d20dcd35c28f09facb3963b61",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2657,13 +2729,25 @@
       "workflow": "scrolling"
     },
     {
+      "category": "thermal",
+      "destination": "references/generated/skills/thermal_cooling_device_timeline.md",
+      "disposition": "exported",
+      "name": "thermal_cooling_device_timeline",
+      "runtime_type": "atomic",
+      "source_path": "backend/skills/atomic/thermal_cooling_device_timeline.skill.yaml",
+      "source_sha256": "212c1203887256c5706a1e12c54ae6d163c0bb8647edd88afb0f73cc624cf16f",
+      "tier": "B",
+      "version": "1.0",
+      "workflow": "power-thermal"
+    },
+    {
       "category": "hardware",
       "destination": "references/generated/skills/thermal_module.md",
       "disposition": "exported",
       "name": "thermal_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
-      "source_sha256": "95a308c02902be7277bd6109628fc67a93014b6f3cedc063e3df00fff0bb4a3e",
+      "source_sha256": "6125d0a80aa8a0085e13bd9dde675dcd250b22db719a7359f4c54c3503a4fd33",
       "version": "1.0",
       "workflow": "power-thermal"
     },
@@ -2685,7 +2769,7 @@
       "name": "thermal_throttling",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/thermal_throttling.skill.yaml",
-      "source_sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6",
+      "source_sha256": "5fad39740c373b463c8080622927249e67de2e731ea1cf79253d443663541c7e",
       "tier": "S",
       "version": "3.0",
       "workflow": "power-thermal"
@@ -2697,7 +2781,7 @@
       "name": "thermal_throttling_chain",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/thermal_throttling_chain.skill.yaml",
-      "source_sha256": "88ca7678544866f3bdf2f6bf2981c58e877c818ed37501a056c0e7cb57bc3ce7",
+      "source_sha256": "9fee58a6513438b7adf13fa4309d986f18305c344947793ea1fd7f3ce58aaba8",
       "tier": "S",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -2954,13 +3038,19 @@
     }
   ],
   "source": {
-    "commit": "bc007586871a720aed82537913617c64fb95a459",
+    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "864f1142426179dbdcb456fddf2d8b619b33e005bfd45544e373ce9b45e194ff",
+    "policy_sha256": "85820de44f9cc53917aeee8af1878453906cbde0df1576d367b1b55ef0612e0e",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
+    {
+      "destination": "references/generated/runtime/fragments/actor_class_labels.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/actor_class_labels.sql",
+      "source_sha256": "3c425851e00996bd8471be41b1db1c5c813ba25c9fb1879f5803447988e2c252"
+    },
     {
       "destination": "references/generated/runtime/fragments/buffer_tx_frame_production.sql",
       "disposition": "exported",
@@ -2980,6 +3070,12 @@
       "source_sha256": "cf8f4b8c4ca9d6f62b2f69f9acda09229d7f3a6ac0824c1d6f3b7fab4af3295c"
     },
     {
+      "destination": "references/generated/runtime/fragments/io_blocked_function_families.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
+      "source_sha256": "2610f0d4a9fdc3232af16c2e9459a360a97100d7c7a2890167a5d535590c878a"
+    },
+    {
       "destination": "references/generated/runtime/fragments/main_thread_work.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/main_thread_work.sql",
@@ -2996,6 +3092,12 @@
       "disposition": "exported",
       "source_path": "backend/skills/fragments/main_thread_work_tasks.sql",
       "source_sha256": "f508ec91e3316251213184454d85ff59628312db024e97cef29d6cdd433288be"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/observed_data_bounds.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/observed_data_bounds.sql",
+      "source_sha256": "05853d32a47512244b61b489b0553a40b8187ab21537ad55ca130499ae922171"
     },
     {
       "destination": "references/generated/runtime/fragments/root_cause_sample_cap.sql",
@@ -3034,6 +3136,78 @@
       "source_sha256": "e064d74cd1501151bf0dadebddabc3ac0ca8868f0ecf6677e10fa74e418bf866"
     },
     {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto critical-path engine attribution over its product-specific segment_windows input",
+      "source_path": "backend/skills/fragments/segment_binder_txns.sql",
+      "source_sha256": "ac3f427789eec5c629b71a1bd776a99a768483b2ae3c50c0009164d54522ec51"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto critical-path engine attribution over its product-specific segment_windows input",
+      "source_path": "backend/skills/fragments/segment_cpu_competition.sql",
+      "source_sha256": "f6127227ab858b7d99e8890adfaa3ef50b4b4407deffa6310dde9706e0510c2f"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto critical-path engine attribution over its product-specific segment_windows input",
+      "source_path": "backend/skills/fragments/segment_cpu_frequency.sql",
+      "source_sha256": "387ccc5ff6519ca1cf7a9e0a82348d289b0a035d01e196dcc275fcec873b2656"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto critical-path engine attribution over its product-specific segment_windows input",
+      "source_path": "backend/skills/fragments/segment_gc_events.sql",
+      "source_sha256": "39b1d0dedda8b271de65222c4265b792ab29086dfaf5ebd3da970347b324adb4"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto critical-path engine attribution over its product-specific segment_windows input",
+      "source_path": "backend/skills/fragments/segment_io_signals.sql",
+      "source_sha256": "0955d3ff6467fbdf32ffdc71c3db541b0e456d261b5c9967fa41aeda68bded48"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto critical-path engine attribution over its product-specific segment_windows input",
+      "source_path": "backend/skills/fragments/segment_monitor_contention.sql",
+      "source_sha256": "1348e1ccac90313a272c0a5c9ce7d6b9650e25b46fb3153516f520571c11ac56"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto critical-path engine attribution over its product-specific segment_windows input",
+      "source_path": "backend/skills/fragments/segment_wake_sources.sql",
+      "source_sha256": "99bb38df988d8a81a3c1e122985b10172db9332b1071f1f31ef486779a1e7f0e"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/sleep_wake_source.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/sleep_wake_source.sql",
+      "source_sha256": "295fc90c1d1cbc5f87acda56779324a263e5589cdb97f3e0da3ae5a8548965b1"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/sleep_wake_source_labels.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/sleep_wake_source_labels.sql",
+      "source_sha256": "5b87f6089e3eeed84762e2e763512e2828930584ca7da366f99655008cb11e6c"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/system_cpu_freq_limit_episode_verdicts.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/system_cpu_freq_limit_episode_verdicts.sql",
+      "source_sha256": "8212cb7e87c9c19b5eae2fc7b6273d6ab2f19a4b4fa4588ecd4510a3a75ea71b"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/system_cpu_freq_limit_episodes.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/system_cpu_freq_limit_episodes.sql",
+      "source_sha256": "1982e5efbe0a9f772b45bbc48a9a30fa7d79d56eb1270a14af757d8132f4e5a3"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/system_cpu_freq_limit_spans.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
+      "source_sha256": "f450e0e8409525a535050150f123a25f4f2dc2577ef7941ce180f1360c0a9244"
+    },
+    {
       "destination": "references/generated/runtime/fragments/system_cpu_frequency_spans.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
@@ -3058,10 +3232,28 @@
       "source_sha256": "9ac867ea21f7e28e03b1d606f8598ecc222479a870a220a87e94eecbed7566fe"
     },
     {
+      "destination": "references/generated/runtime/fragments/thermal_cooling_spans.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/thermal_cooling_spans.sql",
+      "source_sha256": "eade250ec22acef9e23ebe05b7f0990c23820236cdbd661b59da9d9d886b22d7"
+    },
+    {
       "destination": "references/generated/runtime/fragments/thermal_sample_quality.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/thermal_sample_quality.sql",
-      "source_sha256": "f12f365d07093c2d1615b23bb79e840ed69d850a7b145a996c6d3857be3a9f3f"
+      "source_sha256": "3ea92b260e77466c79f80d05239c6146143afd3b9a90b511b41e54260f04b28d"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/thermal_signal_signatures.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/thermal_signal_signatures.sql",
+      "source_sha256": "e43561d1440689f101759d9553d04cabf99e0ec820f19e07db37a68a2e2ee7d3"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/thread_role.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/thread_role.sql",
+      "source_sha256": "93ed894a283f2f6590793c6b21aef470b5e64370e5ac66a861bace835dd62228"
     },
     {
       "destination": "references/generated/runtime/fragments/thread_states_quadrant.sql",
@@ -3093,36 +3285,8 @@
       "destination": "references/generated/strategies/anr.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/anr.strategy.md",
-      "source_sha256": "f26d3c80e0cbde93119f840e48c128a191896437e720bb28372add365456f7a5",
+      "source_sha256": "016e87b6b171d0855beac6248714c7b8bb7ecf7360e59fba877ca03a172593f3",
       "workflow": "anr-blocking"
-    },
-    {
-      "destination": "references/generated/strategies/arch-compose.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/arch-compose.template.md",
-      "source_sha256": "6a46163bb5da7bba10ce66b7617c3f8a87851185766c0a8221e185e5e05308cb",
-      "workflow": "rendering-pipeline"
-    },
-    {
-      "destination": "references/generated/strategies/arch-flutter.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/arch-flutter.template.md",
-      "source_sha256": "e9390b364cd97b5cb28319401df7c000e46e1dbf3b3f77d8b35cef2cfafe41e7",
-      "workflow": "rendering-pipeline"
-    },
-    {
-      "destination": "references/generated/strategies/arch-standard.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/arch-standard.template.md",
-      "source_sha256": "232617991e3a3521fbcc1ada6390c9745e291caa1a68e19838128b779710575f",
-      "workflow": "rendering-pipeline"
-    },
-    {
-      "destination": "references/generated/strategies/arch-webview.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/arch-webview.template.md",
-      "source_sha256": "b8a937586f62b7401f1fcf7071de354b108be6a7dcbb8f9f72157215451321f6",
-      "workflow": "rendering-pipeline"
     },
     {
       "disposition": "product-only",
@@ -3155,44 +3319,10 @@
       "source_sha256": "761017c52b86a14acfb1b91fb6fff92a3f9779d85d91ab35762a766566027acf"
     },
     {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
-      "source_path": "backend/strategies/code-aware.template.md",
-      "source_sha256": "9e0a7950aaa9692dded431967c39e26ce9eb2e1e281999e1226a57cf11a97de8"
-    },
-    {
       "destination": "references/generated/strategies/comparison-conclusion.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/comparison-conclusion.template.md",
       "source_sha256": "10ee3b7133bcb7f8903af771be4dd3ee41748b117e995cfa052889e5da1b2e7e",
-      "workflow": "trace-comparison"
-    },
-    {
-      "destination": "references/generated/strategies/comparison-context-en.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/comparison-context-en.template.md",
-      "source_sha256": "f25baa74f86327cb52dbf6c39778a3f1d001a0c5390c24f33df6d696df65151a",
-      "workflow": "trace-comparison"
-    },
-    {
-      "destination": "references/generated/strategies/comparison-context.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/comparison-context.template.md",
-      "source_sha256": "9af05d23028e1cf02c665fd92bafd16c3590d5332aa9c78732c03ffb12535f81",
-      "workflow": "trace-comparison"
-    },
-    {
-      "destination": "references/generated/strategies/comparison-methodology.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/comparison-methodology.template.md",
-      "source_sha256": "d2234499ab776a677fed95f4b8ee774f89dbf7a3c88a88ddf68b501be39f1657",
-      "workflow": "trace-comparison"
-    },
-    {
-      "destination": "references/generated/strategies/comparison-result-methodology.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/comparison-result-methodology.template.md",
-      "source_sha256": "7e90c0a2fb309eaabb079e038748338fad67cd988bdff2fc82ad2bcd48780732",
       "workflow": "trace-comparison"
     },
     {
@@ -3205,27 +3335,27 @@
       "destination": "references/generated/strategies/game.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/game.strategy.md",
-      "source_sha256": "8fa7eec08d59b8a9ceefd8957138bbed44ab1b6efcd2a9c424f37d053ae16c06",
+      "source_sha256": "04aaf5a311a0b31d69b17d8eb6cebce8ce4c38008c600ed36ae1da8f8cfb3f03",
       "workflow": "frameworks-games"
     },
     {
       "destination": "references/generated/strategies/general.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/general.strategy.md",
-      "source_sha256": "e02eae7aa020599445ba40a15f3434a4c6ef8d7392ed024c57426266856c798d",
+      "source_sha256": "4487580a2eb7a294bcfc27a3ffbb217a852e3066cfbbecc6ec37ad6023ff57fb",
       "workflow": "trace-overview"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto golden trace evaluation corpus and gated overlay lifecycle",
       "source_path": "backend/strategies/golden-trace-eval.registry.json",
-      "source_sha256": "25fec918ad989a2a7af862d720a50fcdb0359c9b0f669933be4a39d62012c9fb"
+      "source_sha256": "c2a09e478d4fc0a03dc7f5470a7e2263fb8bf473fbd2c95834c833c97622f0a2"
     },
     {
       "destination": "references/generated/strategies/interaction.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/interaction.strategy.md",
-      "source_sha256": "407538f5e65b714551009d13783059171f0b5aeb5e7b6bad8b271eb040b77e51",
+      "source_sha256": "04c7a6744eaded2dc49d8ed645aa51a0482589dca860694c5c69c87b7f20b577",
       "workflow": "interaction"
     },
     {
@@ -3239,7 +3369,7 @@
       "destination": "references/generated/strategies/io.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/io.strategy.md",
-      "source_sha256": "654f26933fe4cf7b4b5d76d6526dd51d1128f0f35341aff2fbef002a9b7f6681",
+      "source_sha256": "1c18310d1743d2f6379687faaee6f293ce8250cbb1d5b71f285e40311a0de428",
       "workflow": "io-network-media"
     },
     {
@@ -3260,14 +3390,14 @@
       "destination": "references/generated/knowledge/knowledge-data-sources.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-data-sources.template.md",
-      "source_sha256": "eb034d0e2cd592b9279a3efc87c6573d4ce857e2c928fd30ec2df7949d2e2556",
+      "source_sha256": "58dc678a6e945a883bfdf0b6b41766c906ea5cecd7b21c320f4dab91b640c62f",
       "workflow": "memory"
     },
     {
       "destination": "references/generated/knowledge/knowledge-evidence-provenance.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-evidence-provenance.template.md",
-      "source_sha256": "2d9053f33f224f11f3c38086602477834282da9988d6df5a45ffb80320a2dff8",
+      "source_sha256": "78a4a2cad8088a577a3bcda968061077fc53847813730c439d43f6a753450c25",
       "workflow": "trace-overview"
     },
     {
@@ -3313,6 +3443,13 @@
       "workflow": "trace-overview"
     },
     {
+      "destination": "references/generated/strategies/knowledge-perfetto-sql.template.md",
+      "disposition": "exported",
+      "source_path": "backend/strategies/knowledge-perfetto-sql.template.md",
+      "source_sha256": "eacb05011e18376a86667f44c168cd1de900b897605a50fe9a4d91447ac799f9",
+      "workflow": "trace-overview"
+    },
+    {
       "destination": "references/generated/knowledge/knowledge-pipeline-anchors.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-pipeline-anchors.template.md",
@@ -3334,6 +3471,13 @@
       "workflow": "rendering-pipeline"
     },
     {
+      "destination": "references/generated/strategies/knowledge-selection-scope.template.md",
+      "disposition": "exported",
+      "source_path": "backend/strategies/knowledge-selection-scope.template.md",
+      "source_sha256": "a8d55c6fce3dfe2d7cd64aac27b38a033fbf1b09f568927e07256467226a1e5f",
+      "workflow": "trace-overview"
+    },
+    {
       "destination": "references/generated/knowledge/knowledge-startup-root-causes.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-startup-root-causes.template.md",
@@ -3344,56 +3488,63 @@
       "destination": "references/generated/knowledge/knowledge-thermal-throttling.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-thermal-throttling.template.md",
-      "source_sha256": "ff0bb590ff50f6eb686cac1cd29723dafbe402ae6ff7a515bba0ca6a3a2f8df1",
+      "source_sha256": "b307e550df669fabb58ce24e4d6a6464b33cca716a3b7347205a42e3eb424dff",
       "workflow": "power-thermal"
     },
     {
       "destination": "references/generated/knowledge/knowledge-thread-state-blocked-reason.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-thread-state-blocked-reason.template.md",
-      "source_sha256": "dd8f6737c3f5a62a376d1d44aa26b635232e13c6eb9a02f4b4289fa1ac38632e",
+      "source_sha256": "2765f8388c714fc05aaf7cac63dd2deffc819a50d7ab5e900667c3103da4f5a5",
       "workflow": "anr-blocking"
+    },
+    {
+      "destination": "references/generated/strategies/knowledge-trace-comparison.template.md",
+      "disposition": "exported",
+      "source_path": "backend/strategies/knowledge-trace-comparison.template.md",
+      "source_sha256": "3927000a927da084e0b47ad8589675897eb8ee670799356db2af04a06692fe48",
+      "workflow": "trace-comparison"
     },
     {
       "destination": "references/generated/strategies/linux.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/linux.strategy.md",
-      "source_sha256": "98b3d52ab5a636190a80f9a57538cba4306f31d8c0beaac2c7ead88b1f9356e9",
+      "source_sha256": "0a65e59b0ec9179c432ab964faf5bc6492526a6206adb8e886c6ffd709ab18a3",
       "workflow": "cpu-scheduling"
     },
     {
       "destination": "references/generated/strategies/media.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/media.strategy.md",
-      "source_sha256": "c40b0db672c5c9f8aae13e1ca149eb6abecf9004a1e760643e960fec945b19ea",
+      "source_sha256": "d71f3076a5e368b276aa2c86623230749c5de77a141c6f9ddeab722402f94411",
       "workflow": "io-network-media"
     },
     {
       "destination": "references/generated/strategies/memory.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/memory.strategy.md",
-      "source_sha256": "9f3bbaf028afcfbf4cea489963e3470ebe33a2bc5e7a08247a0e61930dd0bd26",
+      "source_sha256": "c325b91d229736b0d2e482609cdb23e5a085ded59f9b30778918f884c979553b",
       "workflow": "memory"
     },
     {
       "destination": "references/generated/strategies/multi-trace-result-comparison.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/multi-trace-result-comparison.strategy.md",
-      "source_sha256": "942577d9f2720de874f24ed0620f2adeb5507a40e65aea139ca28816b427b844",
+      "source_sha256": "d5d5f1054761c3838d03ffcf3d25d15cd48044b3e3114e2039ba58fd97427d25",
       "workflow": "trace-comparison"
     },
     {
       "destination": "references/generated/strategies/network.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/network.strategy.md",
-      "source_sha256": "d7494457f9eab645121ac5aef92cf5054265a3a1dcd1aeb7d8e06909b5662097",
+      "source_sha256": "5fa5a230f3c2fe82209c82c61187ab0cedcdfe128c3920f3ee4c74f3262e0790",
       "workflow": "io-network-media"
     },
     {
       "destination": "references/generated/strategies/overview.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/overview.strategy.md",
-      "source_sha256": "1028dd85d60aeb28598f4ce0df21ef6fbccd00503ef91eab195aecabb74d3c79",
+      "source_sha256": "2a04b013e838e4438e2ec257698bd5e00a9ca869ae3e4049ba44c45dc7265885",
       "workflow": "trace-overview"
     },
     {
@@ -3407,14 +3558,14 @@
       "destination": "references/generated/strategies/pipeline.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/pipeline.strategy.md",
-      "source_sha256": "19c4e960b33606bb6d1d867f4dd57adb6eedef32b07db36bedd50d04c3f51be7",
+      "source_sha256": "1e10561fa72092b93a666e2d5a21c45f230ac9774bbb894598ea42c20f2f1c18",
       "workflow": "rendering-pipeline"
     },
     {
       "destination": "references/generated/strategies/power.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/power.strategy.md",
-      "source_sha256": "29c926bcd86fa657c32af5402c2d470a0cd11364fbda5cd54d999675baa346fc",
+      "source_sha256": "95e9cb3cd7c3bb149042d1425c32c179d03261a5baec8611bcecb8f8f64569e4",
       "workflow": "power-thermal"
     },
     {
@@ -3433,7 +3584,19 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto native runtime intent classification protocol",
       "source_path": "backend/strategies/prompt-analysis-turn-intent.template.md",
-      "source_sha256": "a5a900bbda4a250a70f3a6d612fda7e2dd4b2e4817305e9537d64151c776deaf"
+      "source_sha256": "60f904044a6448b1f89ee85a732bc077ec744a9c1e8976e64d5d2f8d9f12f470"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto analyze_wait_chain MCP tool contract",
+      "source_path": "backend/strategies/prompt-analyze-wait-chain-tool-description.template.md",
+      "source_sha256": "79f3bef9466b0c9bdd17f84af502819d6f2c546cd3bc48c5d5a1fb0f6f2d9cc6"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "Runtime artifact access policy and preview interpretation",
+      "source_path": "backend/strategies/prompt-artifact-result-guidance.template.md",
+      "source_sha256": "45e9f4c320c5e108fec4d17db234266c85413dcad02ef8dfd3bdc11c7e13f898"
     },
     {
       "disposition": "product-only",
@@ -3470,6 +3633,18 @@
       "reason": "SmartPerfetto runtime session and conversation orchestration",
       "source_path": "backend/strategies/prompt-conversation.template.md",
       "source_sha256": "1e556e6fbd52a4612fc73a9dbec603f2bcc1f237b397cdedf1bdf29b08010bd1"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto critical-path route one-shot summary over its engine payload",
+      "source_path": "backend/strategies/prompt-critical-path-summary-en.template.md",
+      "source_sha256": "52e4eedc2eeced6ed6da25cd32d714d645386a14d1f2548d37fac96457fbc9a6"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto critical-path route one-shot summary over its engine payload",
+      "source_path": "backend/strategies/prompt-critical-path-summary-zh.template.md",
+      "source_sha256": "8a8107befe9458284de0e4e47d6eaec8bdc9380ecbec13ea5d946c4ce4c24ce3"
     },
     {
       "disposition": "product-only",
@@ -3527,9 +3702,15 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto flamegraph route one-shot summary over its analyzer payload",
+      "source_path": "backend/strategies/prompt-flamegraph-summary.template.md",
+      "source_sha256": "00a71959fc26f89130c617639e77a856d86b3427c1d1d0c71f0e8ee0239b1543"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto typed-turn finding presentation and runtime strategy discovery",
       "source_path": "backend/strategies/prompt-investigation-findings.template.md",
-      "source_sha256": "383be314091a208c8aeacaa9220f43ccc7974b709c9e73f3bf197882a43a17f4"
+      "source_sha256": "0baddbac403ae501fd227c9ae6f27236a8930e3f513085f33fb1f66070ddb709"
     },
     {
       "disposition": "product-only",
@@ -3550,23 +3731,16 @@
       "source_sha256": "72043611e8cbe1200f72fc4b01cd9f931c8b6adfc3d56c68aaf4c7a25c830435"
     },
     {
-      "destination": "references/generated/strategies/prompt-methodology.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/prompt-methodology.template.md",
-      "source_sha256": "c669d340a8e1dbf4c11f774582bdc227e2f7c778ed7d129c713c4204cc244818",
-      "workflow": "trace-overview"
-    },
-    {
       "disposition": "product-only",
       "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
       "source_path": "backend/strategies/prompt-native-declaration-completion-en.template.md",
-      "source_sha256": "9aba59dc71b4adbbe738cfbeb8b47841edf759c06b401c5e1203959e02340b1d"
+      "source_sha256": "ee58ffd4b67848797101ccdf1c37dd4f23957190c99fb7282f9d37ad2253d338"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
       "source_path": "backend/strategies/prompt-native-declaration-completion-zh.template.md",
-      "source_sha256": "7e854289825d2df4ef82d59e266176eef745782b9aab1d7ade17f6ad05641ead"
+      "source_sha256": "2b2f9c0d126ec1bd1c758b9828f03e45787ebc5479383699a7ef4aa388a9eb0c"
     },
     {
       "disposition": "product-only",
@@ -3579,13 +3753,6 @@
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-openai-final-report-continuation-zh.template.md",
       "source_sha256": "1ea0c868d1fa19a2fa968687363df47b0b1f83463aee09e3dc7ef6f3bd95ed91"
-    },
-    {
-      "destination": "references/generated/strategies/prompt-output-format.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/prompt-output-format.template.md",
-      "source_sha256": "5225b63ab46c0fb9bc41d1125372f3aaaf8ab76fd9b051985f2d676f535c52c8",
-      "workflow": "trace-overview"
     },
     {
       "disposition": "product-only",
@@ -3607,18 +3774,6 @@
     },
     {
       "disposition": "product-only",
-      "reason": "SmartPerfetto runtime SQL catalog injection and execute_sql guidance",
-      "source_path": "backend/strategies/prompt-quick-sql-definitions.template.md",
-      "source_sha256": "b09551ceba54024b76022776d103ab1d256b52be5833e3065e67debd5ca910a0"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
-      "source_path": "backend/strategies/prompt-quick.template.md",
-      "source_sha256": "bfb47b381d46b62f49312faec366de7cc3b17cbf3a1868ece0744c14730705de"
-    },
-    {
-      "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-recent-sql-results.template.md",
       "source_sha256": "c970de6d485dc0a0bcdfa7a3abc726c8b2908e016014a41299f8d0081d2a9dc7"
@@ -3634,12 +3789,6 @@
       "reason": "SmartPerfetto native evidence relation candidate recovery protocol",
       "source_path": "backend/strategies/prompt-relation-proposal-recovery-zh.template.md",
       "source_sha256": "776d47654be9faa28bad82f7e1e89bcb537c1dff2c55f70f764fec17c263146d"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
-      "source_path": "backend/strategies/prompt-role.template.md",
-      "source_sha256": "4e4dde0b9326bbf397209fae89a8530d744feedb61622715582acf4bb61c4a77"
     },
     {
       "disposition": "product-only",
@@ -3778,13 +3927,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime source-use control, provider consent, and codebase-aware orchestration",
       "source_path": "backend/strategies/prompt-source-use-decision-en.template.md",
-      "source_sha256": "695e562d3f142ff72a84e95d7dba5e230dd208b1af500f6f4ca12de820da14a8"
+      "source_sha256": "ec546b2da6d6f3c44dc78017dbff7c533572ba8b9b8cfc93d40a54ded8d8a2b8"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime source-use control, provider consent, and codebase-aware orchestration",
       "source_path": "backend/strategies/prompt-source-use-decision-zh.template.md",
-      "source_sha256": "7e430b182ec4aa753910fa887e0fdb3189b8d85a650092d72356ce9ffdcb4022"
+      "source_sha256": "82546dab17ef1cd02a06f573aaf3d5e89754b37c8960d31a872c5f6201e4bbf1"
     },
     {
       "disposition": "product-only",
@@ -3802,7 +3951,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto resolved turn policy and source authorization",
       "source_path": "backend/strategies/prompt-turn-policy.template.md",
-      "source_sha256": "42be60e8623b09f2096ef5cd28ec3258d6011f35ecfac29d09aeb0817f43f296"
+      "source_sha256": "82c493a6eef61df84cd25d2745c3702ffdf2ba0240f628ac1e8b669210327ce0"
     },
     {
       "disposition": "product-only",
@@ -3930,13 +4079,37 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/runtime-correctness.strategy.md",
-      "source_sha256": "4ba768d7c16767545db7cfee5b03bc168f1e9f3a61e76d110d54aa2d0ec57940"
+      "source_sha256": "f243a71a5c4561cc442d590cbc372efa1cd2d817b9a15fb41a1d04bc5a3ebb39"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto issued run required-source scan policy and producer bindings",
       "source_path": "backend/strategies/scene-coverage-policy.yaml",
       "source_sha256": "9e050670f9cd1cc827da16b1425827e999cdaa2a7e46d3e65e1b099622ac6ba4"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto issued scene-run acquisition pacing notice",
+      "source_path": "backend/strategies/scene-pacing-deadline-near.template.md",
+      "source_sha256": "d5cf0a8548541001b5de43e038b6e010ce968121672dde347b1e052575600367"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto issued scene-run acquisition pacing notice",
+      "source_path": "backend/strategies/scene-pacing-first-revision-due.template.md",
+      "source_sha256": "1f6651b16870fe56d6023792437c9dfae193ace75827f1114775c080c01cbfca"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto issued scene-run acquisition pacing notice",
+      "source_path": "backend/strategies/scene-pacing-no-revision.template.md",
+      "source_sha256": "bc33788ddbeae789fb7fd8edad080cc509d7ece9d02627331456b4df8f052f67"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto issued scene-run acquisition pacing notice",
+      "source_path": "backend/strategies/scene-pacing-window-closed.template.md",
+      "source_sha256": "ab66010bc4a22fcae7ab7dd268d460b88b812841c83a459a5908c11e6ee40386"
     },
     {
       "destination": "references/generated/strategies/scene-presentation.registry.yaml.md",
@@ -3956,41 +4129,27 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto issued scene-run proposal and verification lifecycle",
       "source_path": "backend/strategies/scene-reconstruction.strategy.md",
-      "source_sha256": "5355eaa76a30bacfc0492b889a2c6fe5b78a2aa1a73438e5b0b1adf6caa6bb5d"
+      "source_sha256": "c3efe8a3b61a7e523fbe9799a5d2cacca9c8d2d60a0405323d32349ee07f64a9"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto structured scene proposal protocol",
       "source_path": "backend/strategies/scene-tool-guidance.template.md",
-      "source_sha256": "3cdb4fe4631b7016c3e761d0583a455b28d0ccb9fd57717a8bcfb2787772b0a2"
+      "source_sha256": "94eef2906ecdc285f2ca584660faf6f59ce7c9de97e1259ab76e4932af3f1cdc"
     },
     {
       "destination": "references/generated/strategies/scroll-response.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scroll-response.strategy.md",
-      "source_sha256": "3abcc4405b2948ace1048ff17603a8fcae276e2015774f95ce0ac091afbfc9e6",
+      "source_sha256": "9e2e4a7ad41e2c9a56112c202dc7eadf027d91723ed270a7e90d403a7bed505b",
       "workflow": "scrolling"
     },
     {
       "destination": "references/generated/strategies/scrolling.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scrolling.strategy.md",
-      "source_sha256": "269d87e89f8eeb7b378b74bb0a2947b03c461d29f70f20159ae52f08284011d4",
+      "source_sha256": "90d9e38704340e3aa3234cc248673266763c4082ec7782b7f6bf5c0fb0822496",
       "workflow": "scrolling"
-    },
-    {
-      "destination": "references/generated/strategies/selection-area.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/selection-area.template.md",
-      "source_sha256": "ce1ecbde75384022d028e1025ca885e1984539d80131f57e7d25dcfedd3d0aee",
-      "workflow": "trace-overview"
-    },
-    {
-      "destination": "references/generated/strategies/selection-slice.template.md",
-      "disposition": "exported",
-      "source_path": "backend/strategies/selection-slice.template.md",
-      "source_sha256": "5f8cd9bb4c7f260b3754be777224e199a353948d70053b9dc2655dec25ab086c",
-      "workflow": "trace-overview"
     },
     {
       "disposition": "product-only",
@@ -4015,21 +4174,21 @@
       "destination": "references/generated/strategies/startup.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/startup.strategy.md",
-      "source_sha256": "a3068edb13bca75b1323e5f35f8025fa7b08206ec3f309c5d42c07c85f6af9f3",
+      "source_sha256": "6ad0ed78deaf1341300a10121594e26863e78336af7373814e0e40a86bfe35b7",
       "workflow": "startup"
     },
     {
       "destination": "references/generated/strategies/teaching.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/teaching.strategy.md",
-      "source_sha256": "e30cf9bd02a1d5a70b33b79ffa678f25aef3a448cff6dc100e8e0a4a33295df5",
+      "source_sha256": "2c6d8e6189a32916dcef23d5c0311c60db085173893c5cf07f453ed6eada2bd0",
       "workflow": "trace-overview"
     },
     {
       "destination": "references/generated/strategies/touch-tracking.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/touch-tracking.strategy.md",
-      "source_sha256": "ecc7f0e42b369a653e1c1808bfbf11bda58c52c9bd5caae1f2607e416e136847",
+      "source_sha256": "0272908a48db53161f3cad1cb1b8236971ce06d9395c0337eb978b14390b1389",
       "workflow": "interaction"
     },
     {
@@ -4042,20 +4201,22 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_strategy_sources": 56,
+    "exported_sql_fragments": 30,
+    "exported_strategy_sources": 47,
     "pipeline_docs": 14,
-    "product_only_strategy_sources": 95,
-    "runtime_candidates": 242,
+    "product_only_sql_fragments": 7,
+    "product_only_strategy_sources": 100,
+    "runtime_candidates": 249,
     "runtime_types": {
-      "atomic": 125,
+      "atomic": 129,
       "comparison": 1,
-      "composite": 83,
+      "composite": 86,
       "deep": 2,
       "pipeline_definition": 31
     },
-    "skill_yaml_files": 247,
-    "sql_fragments": 19,
-    "strategy_sources": 151,
+    "skill_yaml_files": 254,
+    "sql_fragments": 37,
+    "strategy_sources": 147,
     "vendor_overrides": 8
   },
   "vendor_overrides": [

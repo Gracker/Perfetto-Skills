@@ -1,0 +1,139 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "cpu_freq_limit_timeline",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "分析起始时间戳(ns)；缺省使用观测数据起点",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "分析结束时间戳(ns)；缺省使用 trace 数据终点",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 10,
+      "description": "判定限频区段的降幅阈值（相对本 trace 观测到的最大上限，%）",
+      "name": "episode_drop_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 500,
+      "description": "限频区段合并间隔（ms）；内核调控器高频改写上限，短间隔属同一次限频",
+      "name": "merge_gap_ms",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.cpu.frequency"
+    ],
+    "required_tables": [
+      "cpu_counter_track",
+      "counter"
+    ]
+  },
+  "process_scope": {
+    "role": "global_context"
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+    "path": "backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml",
+    "sha256": "9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b"
+  },
+  "steps": [
+    {
+      "id": "limit_data_check",
+      "name": "限频数据检测",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_freq_limit_timeline/limit_data_check",
+      "result_dependencies": [],
+      "save_as": "limit_data_check",
+      "type": "atomic"
+    },
+    {
+      "condition": "limit_data_check.data?.[0]?.has_max_limit_track === 1 || limit_data_check.data?.[0]?.has_min_limit_track === 1",
+      "id": "limit_summary",
+      "name": "限频概览",
+      "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_freq_limit_timeline/limit_summary",
+      "result_dependencies": [],
+      "save_as": "limit_summary",
+      "type": "atomic"
+    },
+    {
+      "condition": "limit_data_check.data?.[0]?.has_max_limit_track === 1",
+      "id": "limit_episodes",
+      "name": "限频区段",
+      "on_empty": "窗口内没有超过阈值的限频区段；可调低 episode_drop_pct 复查更浅的限频。",
+      "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_freq_limit_timeline/limit_episodes",
+      "result_dependencies": [],
+      "save_as": "limit_episodes",
+      "type": "atomic"
+    },
+    {
+      "condition": "limit_data_check.data?.[0]?.has_max_limit_track === 1 || limit_data_check.data?.[0]?.has_min_limit_track === 1",
+      "id": "limit_events",
+      "name": "限频变更事件",
+      "on_empty": "窗口内没有限频变更事件。",
+      "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_freq_limit_timeline/limit_events",
+      "result_dependencies": [],
+      "save_as": "limit_events",
+      "type": "atomic"
+    },
+    {
+      "condition": "limit_data_check.data?.[0]?.has_max_limit_track !== 1 && limit_data_check.data?.[0]?.has_min_limit_track !== 1",
+      "id": "limit_unavailable",
+      "name": "限频数据不可用",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_freq_limit_timeline/limit_unavailable",
+      "result_dependencies": [],
+      "save_as": "limit_unavailable",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "power-thermal"
+}

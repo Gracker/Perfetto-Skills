@@ -44,10 +44,14 @@
     "compose_recomposition_hotspot": "skills/compose_recomposition_hotspot.json",
     "consumer_jank_detection": "skills/consumer_jank_detection.json",
     "cpu_analysis": "skills/cpu_analysis.json",
+    "cpu_anomalous_threads_in_range": "skills/cpu_anomalous_threads_in_range.json",
     "cpu_cluster_load_in_range": "skills/cpu_cluster_load_in_range.json",
     "cpu_cluster_mapping_view": "skills/cpu_cluster_mapping_view.json",
+    "cpu_freq_limit_timeline": "skills/cpu_freq_limit_timeline.json",
     "cpu_freq_residency_summary": "skills/cpu_freq_residency_summary.json",
     "cpu_freq_timeline": "skills/cpu_freq_timeline.json",
+    "cpu_frequency_limit_attribution": "skills/cpu_frequency_limit_attribution.json",
+    "cpu_frequency_limit_episode": "skills/cpu_frequency_limit_episode.json",
     "cpu_idle_analysis": "skills/cpu_idle_analysis.json",
     "cpu_idle_state_residency": "skills/cpu_idle_state_residency.json",
     "cpu_load_in_range": "skills/cpu_load_in_range.json",
@@ -62,6 +66,7 @@
     "cpu_topology_detection": "skills/cpu_topology_detection.json",
     "cpu_topology_view": "skills/cpu_topology_view.json",
     "cpu_utilization_per_period": "skills/cpu_utilization_per_period.json",
+    "cpu_workload_attribution_in_range": "skills/cpu_workload_attribution_in_range.json",
     "device_state_snapshot": "skills/device_state_snapshot.json",
     "device_state_timeline": "skills/device_state_timeline.json",
     "dmabuf_analysis": "skills/dmabuf_analysis.json",
@@ -170,6 +175,7 @@
     "present_fence_timing": "skills/present_fence_timing.json",
     "process_identity_resolver": "skills/process_identity_resolver.json",
     "process_slice_cpu_hotspots": "skills/process_slice_cpu_hotspots.json",
+    "process_thread_wait_sources_in_range": "skills/process_thread_wait_sources_in_range.json",
     "render_pipeline_latency": "skills/render_pipeline_latency.json",
     "render_thread_slices": "skills/render_thread_slices.json",
     "rendering_pipeline_detection": "skills/rendering_pipeline_detection.json",
@@ -218,6 +224,7 @@
     "systemui_module": "skills/systemui_module.json",
     "task_migration_in_range": "skills/task_migration_in_range.json",
     "textureview_producer_frame_timing": "skills/textureview_producer_frame_timing.json",
+    "thermal_cooling_device_timeline": "skills/thermal_cooling_device_timeline.json",
     "thermal_module": "skills/thermal_module.json",
     "thermal_predictor": "skills/thermal_predictor.json",
     "thermal_throttling": "skills/thermal_throttling.json",
@@ -244,13 +251,13 @@
     "webview_v8_analysis": "skills/webview_v8_analysis.json",
     "wms_module": "skills/wms_module.json"
   },
-  "source_commit": "bc007586871a720aed82537913617c64fb95a459",
+  "source_commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
   "summary": {
-    "conditions": 613,
-    "executable": 210,
+    "conditions": 637,
+    "executable": 217,
     "knowledge_only": 32,
-    "skills": 242,
-    "step_conditions": 254,
-    "steps": 795
+    "skills": 249,
+    "step_conditions": 268,
+    "steps": 835
   }
 }

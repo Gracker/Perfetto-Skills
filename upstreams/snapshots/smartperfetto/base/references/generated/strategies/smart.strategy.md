@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/smart.strategy.md
 Source SHA-256: 87cc70e82a8ee72d5e2cc98e4848163852c602b3a1774e6ce845b091907644c4
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Smart Strategy
 

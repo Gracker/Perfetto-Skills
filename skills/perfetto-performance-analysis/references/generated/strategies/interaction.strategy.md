@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/interaction.strategy.md
-Source SHA-256: 407538f5e65b714551009d13783059171f0b5aeb5e7b6bad8b271eb040b77e51
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 04c7a6744eaded2dc49d8ed645aa51a0482589dca860694c5c69c87b7f20b577
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Interaction Strategy
 
@@ -54,12 +54,6 @@ keywords:
 - wq
 - stale event
 - focused window
-compound_patterns:
-- 点击.*响应
-- 响应.*时间
-- 输入.*慢
-- (?:InputDispatcher|InputChannel|wait queue|wq|FINISHED|ACK).*(?:latency|delay|blocked|stuck|慢|延迟|阻塞|积压)
-- (?:focused window|target window|stale event|输入焦点|目标窗口|陈旧事件).*(?:input|touch|key|输入|触摸|按键)
 final_report_contract:
   required_sections:
   - id: input_stage_breakdown

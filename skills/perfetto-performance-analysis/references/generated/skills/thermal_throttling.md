@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling.skill.yaml
-Source SHA-256: d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 5fad39740c373b463c8080622927249e67de2e731ea1cf79253d443663541c7e
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 # 热节流分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -202,6 +202,66 @@ save_as: thermal_prediction
 condition: enable_expert_probes !== false && data_check.data[0]?.has_freq_data === 1 && analysis_window.data?.[0]?.window_start_ts
   != null && analysis_window.data?.[0]?.window_end_ts != null
 optional: true
+```
+### 直接限频证据
+
+- ID: `direct_limit_evidence`
+- Type: `atomic`
+- SQL: [`../sql/thermal_throttling/direct_limit_evidence.sql`](../sql/thermal_throttling/direct_limit_evidence.sql)
+
+```yaml
+id: direct_limit_evidence
+type: atomic
+optional: true
+condition: data_check.data?.[0]?.has_limit_data === 1
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/observed_data_bounds.sql
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_freq_limit_spans.sql
+- fragments/system_cpu_freq_limit_episodes.sql
+- fragments/thermal_cooling_spans.sql
+- fragments/thermal_signal_signatures.sql
+- fragments/system_cpu_freq_limit_episode_verdicts.sql
+display:
+  level: summary
+  layer: overview
+  title: 直接限频证据（限频区段 x 散热设备）
+  columns:
+  - name: episode_count
+    label: 限频区段数
+    type: number
+  - name: policy_count
+    label: 涉及 policy 数
+    type: number
+  - name: deepest_depth_pct
+    label: 最大限频深度
+    type: percentage
+  - name: longest_episode_ns
+    label: 最长区段
+    type: duration
+    unit: ns
+  - name: cooling_confirmed_episodes
+    label: 与散热设备同期的区段
+    type: number
+  - name: onset_unknown_episodes
+    label: 起点不可观测的区段
+    type: number
+  - name: has_cdev_data
+    label: 有内核散热设备数据
+    type: boolean
+  - name: thermal_throttling_evidence
+    label: 热节流证据
+    type: string
+  - name: next_step
+    label: 下一步
+    type: string
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+on_empty: 窗口内没有超过阈值的限频区段。
+save_as: direct_limit_evidence
 ```
 ### 温度传感器概览
 
@@ -614,6 +674,15 @@ display:
     label: 严重降频次数
     type: number
     format: compact
+  - name: thermal_throttling_evidence
+    label: 热节流证据
+    type: string
+  - name: limit_episode_count
+    label: 限频区段数
+    type: number
+  - name: next_step
+    label: 下一步
+    type: string
   - name: description
     label: 描述
     type: string
@@ -652,8 +721,22 @@ inputs:
 - gpu_power_probe
 - frequency_drops
 - high_temp_periods
+- direct_limit_evidence
 - root_cause
 rules:
+- condition: root_cause.data[0]?.classification === 'THERMAL_LIMIT_CONFIRMED'
+  severity: warning
+  diagnosis: 已核验热限频：${direct_limit_evidence.data[0].cooling_confirmed_episodes} 段限频区段与内核散热设备的非零档位同时存在（最大深度 ${direct_limit_evidence.data[0].deepest_depth_pct}%）
+  confidence: high
+  suggestions:
+  - 用 cpu_frequency_limit_attribution 查看谁触发了限频、限频前的负载归因与异常线程
+  - 核对该散热设备治理的 cpufreq policy 与触发它的热区阈值；cdev_update 事件本身不声明作用对象
+- condition: root_cause.data[0]?.thermal_throttling_evidence === 'limit_observed_cause_unverified'
+  severity: info
+  diagnosis: 观测到 ${direct_limit_evidence.data[0].episode_count} 段限频区段，但没有同期的内核散热设备活动；限频原因未核验
+  confidence: medium
+  suggestions:
+  - 用 cpu_frequency_limit_attribution 判断是用户态温控守护进程、非热策略限频，还是采集缺少 thermal/cdev_update
 - condition: root_cause.data[0]?.classification === 'DATA_SUSPECT'
   severity: warning
   diagnosis: 温度数据可疑或传感器不可直接比较；峰值仅来自通过质量筛选的轨道，不能确定热节流
@@ -703,6 +786,7 @@ condition: data_check.data[0]?.has_thermal_data !== 1 && data_check.data[0]?.has
 ```yaml
 format: layered
 default_expanded:
+- direct_limit_evidence
 - thermal_overview
 - cpu_freq_overview
 - root_cause_classification

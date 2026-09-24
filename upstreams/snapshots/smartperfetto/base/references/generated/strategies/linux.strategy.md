@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/linux.strategy.md
-Source SHA-256: 98b3d52ab5a636190a80f9a57538cba4306f31d8c0beaac2c7ead88b1f9356e9
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 0a65e59b0ec9179c432ab964faf5bc6492526a6206adb8e886c6ffd709ab18a3
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Linux Strategy
 
@@ -47,9 +47,6 @@ keywords:
 - 调度延迟
 - 缓存未命中
 - 分支预测
-compound_patterns:
-- (linux|kernel|内核).*(调度|runqueue|PMU|perf|内存)
-- (sched|runqueue|pmu|perf).*(latency|counter|miss|压力)
 phase_hints:
 - id: sched_latency
   keywords:

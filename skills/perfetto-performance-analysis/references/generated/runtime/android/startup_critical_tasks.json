@@ -61,26 +61,7 @@
   ],
   "signal_patterns": [
     "${package}",
-    "${package}:*",
-    "*AsyncTask*",
-    "*DefaultDispatcher*",
-    "*Dispatchers.Default*",
-    "*Executor*",
-    "*FinalizerDaemon*",
-    "*HeapTaskDaemon*",
-    "*Profile Saver*",
-    "*ReferenceQueueDaemon*",
-    "*Signal Catcher*",
-    "*Worker*",
-    "1.raster",
-    "1.ui",
-    "Binder:*",
-    "CrRendererMain",
-    "Jit thread pool*",
-    "OkHttp*",
-    "RenderThread",
-    "arch_disk_io*",
-    "pool-*-thread-*"
+    "${package}:*"
   ],
   "skill_id": "startup_critical_tasks",
   "steps": {}

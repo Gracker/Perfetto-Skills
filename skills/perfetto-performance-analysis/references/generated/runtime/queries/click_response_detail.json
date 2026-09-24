@@ -60,11 +60,11 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "f2320c73a70c8e15ad8e113b2bb077e071e475feb22a312308be4a441a5f9a91",
+      "sha256": "203fe39962da008e14b2ad8258e17ecf4737bb86b3d6ac49cad5779f8102d58d",
       "signal_patterns": [],
       "skill_id": "click_response_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/click_response_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e6caf5c56483f80b2e80c360f82ad97098e9d0865e1914f3c4c3d5c772e6c4ab"
@@ -163,11 +163,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_detail/event_info.sql",
-      "sha256": "777a97f659299e05929e9fda07a8812175eb74e5796a0a38810a3f6a86a0095a",
+      "sha256": "320de754b860e4f4a1a36f3a20a1723fae5515b8f1e170ff1c52413dcb981c57",
       "signal_patterns": [],
       "skill_id": "click_response_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/click_response_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e6caf5c56483f80b2e80c360f82ad97098e9d0865e1914f3c4c3d5c772e6c4ab"
@@ -274,7 +274,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_detail/input_dispatch_breakdown.sql",
-      "sha256": "187d3a54bf54021ea6c19a17f20b16fdf6ad863b18db51fbd9f41ef38e0bd135",
+      "sha256": "dcedee43bd07183df26d21523fd64cab93ae4e70f16a37c9d78bace4a9633849",
       "signal_patterns": [
         "${process_name}*",
         "*InputDispatcher*",
@@ -288,7 +288,7 @@
       ],
       "skill_id": "click_response_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/click_response_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e6caf5c56483f80b2e80c360f82ad97098e9d0865e1914f3c4c3d5c772e6c4ab"
@@ -388,14 +388,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_detail/input_pipeline_lifecycle.sql",
-      "sha256": "ba393590e0edfd9fd2b02ffcb465ed0db4cb803b43c60626ef73623df2bf7565",
+      "sha256": "112a0ac04d58e1dbab7fdcef2bb45ae1fa9cefc4c468d0fc2193941c66e6671c",
       "signal_patterns": [
         "${process_name}",
         "UnwantedInteractionBlocker::notifyMotion*"
       ],
       "skill_id": "click_response_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/click_response_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e6caf5c56483f80b2e80c360f82ad97098e9d0865e1914f3c4c3d5c772e6c4ab"
@@ -503,13 +503,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "2a6388ecea56856d4ab5aacb684b5e58cd0416cbd11ccc15bc9884b8d5c1fd8e",
+      "sha256": "77016332fce34b60698bc6d2680f89a1d99553e8988d81df87db891a7277868c",
       "signal_patterns": [
         "${process_name}:*"
       ],
       "skill_id": "click_response_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/click_response_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e6caf5c56483f80b2e80c360f82ad97098e9d0865e1914f3c4c3d5c772e6c4ab"
@@ -537,12 +537,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "3809d839125381f9eee52628cd975f035e9ab10efe80f6ce2666bb301bdc6a06"
+            "source_sha256": "2d4e4c41a0b60f6574a37f4b20164b38abb2b4a4a203ac472cd5acf3646fb46a"
           }
         ],
         "name_parameters": [],
@@ -626,13 +626,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "a717129ab12820234d1d8946ac7303bc1bb4c59aa6dd22c839ffadd21f587c32",
+      "sha256": "2c4d42e488c87ef700ca640f3fa45e52714d66781029b9e916f3a382a7b248a6",
       "signal_patterns": [
         "${process_name}:*"
       ],
       "skill_id": "click_response_detail",
       "source": {
-        "commit": "bc007586871a720aed82537913617c64fb95a459",
+        "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
         "path": "backend/skills/composite/click_response_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e6caf5c56483f80b2e80c360f82ad97098e9d0865e1914f3c4c3d5c772e6c4ab"
@@ -660,17 +660,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "c91252912018c8be1e44d3d59280f708d66b7e6f8135e004da4b1c73d56fa880"
+            "source_sha256": "4e387ca3115ef43bf278169ecc3c35261360d9e02c09a4eb6f32bd81528304f2"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "72d795029fae16c3a685af8b8c8ea0ef95cc82dbbd334c278ab9ebf2cf36a45d"
+            "source_sha256": "819de1a78034ea92e41143f33864b30307cffcbe7c7d1d5b242d2d56bf03258f"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "3809d839125381f9eee52628cd975f035e9ab10efe80f6ce2666bb301bdc6a06"
+            "source_sha256": "2d4e4c41a0b60f6574a37f4b20164b38abb2b4a4a203ac472cd5acf3646fb46a"
           }
         ],
         "name_parameters": [],

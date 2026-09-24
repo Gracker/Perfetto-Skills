@@ -1,0 +1,107 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "cpu_workload_attribution_in_range",
+  "identity": {
+    "policy": "none"
+  },
+  "inputs": [
+    {
+      "description": "窗口起始时间戳(ns)",
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "窗口结束时间戳(ns)",
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "目标包名/进程名；用于标注 actor_class=target_app",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "目标进程名别名；package 为空时使用",
+      "name": "process_name",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "default": 30,
+      "description": "按工作量返回前 N 个线程",
+      "name": "top_n",
+      "required": false,
+      "type": "number"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.cpu.frequency",
+      "intervals.intersect",
+      "android.process_metadata"
+    ],
+    "required_tables": [
+      "sched_slice",
+      "thread",
+      "process"
+    ]
+  },
+  "process_scope": {
+    "role": "global_context"
+  },
+  "query_id": null,
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
+    "path": "backend/skills/atomic/cpu_workload_attribution_in_range.skill.yaml",
+    "sha256": "deda79ad447ced6323b09d92a57c1031fe27378e197e1e8cb0845a30efca29e8"
+  },
+  "steps": [
+    {
+      "id": "workload_by_thread",
+      "name": "线程级 CPU 负载归因",
+      "on_empty": "窗口内没有可归因的非 idle 调度片；确认 trace 含 ftrace sched/sched_switch 且窗口落在数据范围内。",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_workload_attribution_in_range/workload_by_thread",
+      "result_dependencies": [],
+      "save_as": "workload_by_thread",
+      "type": "atomic"
+    },
+    {
+      "id": "workload_summary",
+      "name": "窗口负载汇总",
+      "on_empty": "窗口内无调度数据。",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_workload_attribution_in_range/workload_summary",
+      "result_dependencies": [],
+      "save_as": "workload_summary",
+      "type": "atomic"
+    }
+  ],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

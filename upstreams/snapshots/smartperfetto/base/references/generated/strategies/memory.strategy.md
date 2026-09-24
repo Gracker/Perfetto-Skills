@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
-Source SHA-256: 9f3bbaf028afcfbf4cea489963e3470ebe33a2bc5e7a08247a0e61930dd0bd26
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: c325b91d229736b0d2e482609cdb23e5a085ded59f9b30778918f884c979553b
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 
 # Memory Strategy
 
@@ -44,17 +44,6 @@ keywords:
 - out of memory
 - dmabuf
 - 内存占用
-compound_patterns:
-- 内存.*泄漏
-- 内存.*压力
-- 内存.*不足
-- memory.*leak
-- memory.*pressure
-- (ApplicationExitInfo|getHistoricalProcessExitReasons|REASON_LOW_MEMORY|REASON_FREEZER|REASON_EXCESSIVE_RESOURCE_USAGE).*(OOM|LMK|freezer|memory|low
-  memory|kill|内存|杀进程)
-- (OOM|LMK|freezer|memory|low memory|kill|内存|杀进程).*(ApplicationExitInfo|getHistoricalProcessExitReasons|REASON_LOW_MEMORY|REASON_FREEZER|REASON_EXCESSIVE_RESOURCE_USAGE)
-- (ProfilingManager|ProfilingTrigger|heap dump|heap profile|Java heap dump).*(OOM|memory|heap|leak|内存|泄漏)
-- (OOM|memory|heap|leak|内存|泄漏).*(ProfilingManager|ProfilingTrigger|heap dump|heap profile|Java heap dump)
 final_report_contract:
   required_sections:
   - id: memory_evidence_scope

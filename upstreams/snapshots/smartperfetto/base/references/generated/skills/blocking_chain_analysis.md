@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/blocking_chain_analysis.skill.yaml
-Source SHA-256: 68f73be9504b37b7a6d8966693adf2fe179f9183db279f10d9fe883226dfa5c9
-Source commit: bc007586871a720aed82537913617c64fb95a459
+Source SHA-256: 3bf11270d8e25d4d0471955b857c8d086163252df80124bfb7e57983b0ee2574
+Source commit: e7ff73a937cc66d89fdc69d59728025734759acd
 # 阻塞链分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: blocking_chain_analysis
-version: '1.2'
+version: '1.3'
 type: composite
 category: diagnostics
 tier: A
@@ -163,6 +163,15 @@ display:
   - name: waker_process_name
     label: 唤醒者进程
     type: string
+  - name: waker_role
+    label: 唤醒者角色
+    type: string
+  - name: wake_source
+    label: 唤醒来源
+    type: string
+  - name: wait_class
+    label: 等待类别（候选）
+    type: string
   - name: blocked_function
     label: 阻塞函数
     type: string
@@ -180,6 +189,10 @@ display:
     label: 唤醒次数
     type: number
     format: compact
+sql_fragments:
+- fragments/thread_role.sql
+- fragments/sleep_wake_source.sql
+- fragments/sleep_wake_source_labels.sql
 save_as: waker_chain
 optional: true
 ```

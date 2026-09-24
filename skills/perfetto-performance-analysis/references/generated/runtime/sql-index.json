@@ -44,10 +44,14 @@
     "queries/compose_recomposition_hotspot.json",
     "queries/consumer_jank_detection.json",
     "queries/cpu_analysis.json",
+    "queries/cpu_anomalous_threads_in_range.json",
     "queries/cpu_cluster_load_in_range.json",
     "queries/cpu_cluster_mapping_view.json",
+    "queries/cpu_freq_limit_timeline.json",
     "queries/cpu_freq_residency_summary.json",
     "queries/cpu_freq_timeline.json",
+    "queries/cpu_frequency_limit_attribution.json",
+    "queries/cpu_frequency_limit_episode.json",
     "queries/cpu_idle_analysis.json",
     "queries/cpu_idle_state_residency.json",
     "queries/cpu_load_in_range.json",
@@ -62,6 +66,7 @@
     "queries/cpu_topology_detection.json",
     "queries/cpu_topology_view.json",
     "queries/cpu_utilization_per_period.json",
+    "queries/cpu_workload_attribution_in_range.json",
     "queries/device_state_snapshot.json",
     "queries/device_state_timeline.json",
     "queries/dmabuf_analysis.json",
@@ -170,6 +175,7 @@
     "queries/present_fence_timing.json",
     "queries/process_identity_resolver.json",
     "queries/process_slice_cpu_hotspots.json",
+    "queries/process_thread_wait_sources_in_range.json",
     "queries/render_pipeline_latency.json",
     "queries/render_thread_slices.json",
     "queries/rendering_pipeline_detection.json",
@@ -218,6 +224,7 @@
     "queries/systemui_module.json",
     "queries/task_migration_in_range.json",
     "queries/textureview_producer_frame_timing.json",
+    "queries/thermal_cooling_device_timeline.json",
     "queries/thermal_module.json",
     "queries/thermal_predictor.json",
     "queries/thermal_throttling.json",
@@ -244,9 +251,9 @@
     "queries/webview_v8_analysis.json",
     "queries/wms_module.json"
   ],
-  "source_commit": "bc007586871a720aed82537913617c64fb95a459",
+  "source_commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
   "summary": {
-    "queries": 681,
-    "shards": 242
+    "queries": 713,
+    "shards": 249
   }
 }

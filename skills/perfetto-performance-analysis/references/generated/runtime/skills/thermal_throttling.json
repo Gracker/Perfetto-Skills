@@ -113,9 +113,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "bc007586871a720aed82537913617c64fb95a459",
+    "commit": "e7ff73a937cc66d89fdc69d59728025734759acd",
     "path": "backend/skills/composite/thermal_throttling.skill.yaml",
-    "sha256": "d4e9863b2759a03fe335ca68987e3e400bc1aa0a503a3b2f711fc6173cae70a6"
+    "sha256": "5fad39740c373b463c8080622927249e67de2e731ea1cf79253d443663541c7e"
   },
   "steps": [
     {
@@ -153,6 +153,22 @@
       "save_as": "thermal_prediction",
       "skill": "thermal_predictor",
       "type": "skill"
+    },
+    {
+      "condition": "data_check.data?.[0]?.has_limit_data === 1",
+      "id": "direct_limit_evidence",
+      "name": "直接限频证据",
+      "on_empty": "窗口内没有超过阈值的限频区段。",
+      "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "thermal_throttling/direct_limit_evidence",
+      "result_dependencies": [
+        "data_check"
+      ],
+      "save_as": "direct_limit_evidence",
+      "type": "atomic"
     },
     {
       "condition": "data_check.data[0]?.has_thermal_data === 1",
@@ -233,7 +249,9 @@
       "id": "root_cause_classification",
       "name": "根因分类",
       "query_id": "thermal_throttling/root_cause_classification",
-      "result_dependencies": [],
+      "result_dependencies": [
+        "direct_limit_evidence"
+      ],
       "save_as": "root_cause",
       "type": "atomic"
     },
@@ -246,10 +264,30 @@
         "gpu_power_probe",
         "frequency_drops",
         "high_temp_periods",
+        "direct_limit_evidence",
         "root_cause"
       ],
       "name": "热节流诊断",
       "rules": [
+        {
+          "condition": "root_cause.data[0]?.classification === 'THERMAL_LIMIT_CONFIRMED'",
+          "confidence": "high",
+          "diagnosis": "已核验热限频：${direct_limit_evidence.data[0].cooling_confirmed_episodes} 段限频区段与内核散热设备的非零档位同时存在（最大深度 ${direct_limit_evidence.data[0].deepest_depth_pct}%）",
+          "severity": "warning",
+          "suggestions": [
+            "用 cpu_frequency_limit_attribution 查看谁触发了限频、限频前的负载归因与异常线程",
+            "核对该散热设备治理的 cpufreq policy 与触发它的热区阈值；cdev_update 事件本身不声明作用对象"
+          ]
+        },
+        {
+          "condition": "root_cause.data[0]?.thermal_throttling_evidence === 'limit_observed_cause_unverified'",
+          "confidence": "medium",
+          "diagnosis": "观测到 ${direct_limit_evidence.data[0].episode_count} 段限频区段，但没有同期的内核散热设备活动；限频原因未核验",
+          "severity": "info",
+          "suggestions": [
+            "用 cpu_frequency_limit_attribution 判断是用户态温控守护进程、非热策略限频，还是采集缺少 thermal/cdev_update"
+          ]
+        },
         {
           "condition": "root_cause.data[0]?.classification === 'DATA_SUSPECT'",
           "confidence": "low",
