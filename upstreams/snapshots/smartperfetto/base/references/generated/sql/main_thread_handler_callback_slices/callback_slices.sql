@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_handler_callback_slices.skill.yaml
 -- Source SHA-256: 33502513a6be13a722153be01a9eebf84781088e428b1ccd383a3b8f72f0d1de
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 INCLUDE PERFETTO MODULE android.slices;
 

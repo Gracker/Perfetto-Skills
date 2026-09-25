@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rendering_pipeline_detection.skill.yaml
 -- Source SHA-256: 8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 WITH
       -- Identify a dominant app (when package is not provided) by looking for rendering-related slices,

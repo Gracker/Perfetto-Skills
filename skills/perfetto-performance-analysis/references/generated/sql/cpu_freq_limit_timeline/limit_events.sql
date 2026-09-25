@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml
 -- Source SHA-256: 9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

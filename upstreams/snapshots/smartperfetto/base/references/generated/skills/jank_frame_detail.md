@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: 601e2490169eb1b6b6c35ac9f2bc34e6c55075bfa03ef83af956a9e886ebf863
-Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+Source SHA-256: 960209f7b80fdced155eebd63d089f78ed033bbbb671d3a56279b95f8f92fc2b
+Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: jank_frame_detail
-version: '2.0'
+version: '2.1'
 type: composite
 category: rendering
 tier: S
@@ -1035,6 +1035,7 @@ sql_fragments:
 - fragments/vsync_config.sql
 - fragments/target_threads.sql
 - fragments/thread_states_quadrant.sql
+- fragments/cpu_cluster_load.sql
 display:
   level: key
   layer: deep
@@ -1286,6 +1287,13 @@ rules:
   suggestions:
   - 超大核资源严重不足，关键线程可能被迫落到大核或更小的核
   - 检查是否有后台密集计算任务占用超大核
+- condition: cluster_load_data?.data?.find(c => c.cluster === '中核簇')?.load_pct > 90
+  severity: warning
+  diagnosis: 中核簇负载 ${cluster_load_data.data.find(c => c.cluster === '中核簇')?.load_pct}%，接近跑满
+  confidence: high
+  suggestions:
+  - 中核簇跑满时从大核迁出的任务无处可去，调度会继续挤压大核或落到小核
+  - 检查是否有后台密集计算任务占用中核
 - condition: cluster_load_data?.data?.find(c => c.cluster === '小核簇')?.load_pct > 95
   severity: warning
   diagnosis: 小核簇负载 ${cluster_load_data.data.find(c => c.cluster === '小核簇')?.load_pct}%，几乎跑满

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/vsync_config.sql
 -- Source SHA-256: 96a6e07816d67db7ac8db23c91406a6abca0b42c314c66a06843dbbf57d0faa5
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 -- Fragment: vsync_config
 -- Estimates VSync period using scoped then trace-wide VSYNC/FrameTimeline evidence.

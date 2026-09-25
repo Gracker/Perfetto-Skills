@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/process_slice_cpu_hotspots.skill.yaml
 Source SHA-256: fea05288f19596170a55ed5350e9ae1fe2f1a6a3eda249948f57db8b1c894236
-Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 # 进程 Slice CPU 热点
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

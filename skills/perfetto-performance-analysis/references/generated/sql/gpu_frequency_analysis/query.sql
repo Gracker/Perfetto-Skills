@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_frequency_analysis.skill.yaml
 -- Source SHA-256: d8233f4d110ef07ec6469fa923b1ac018e0e6e0993faa2e079bf8d58bbc6b408
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 WITH gpu_freq AS (
   SELECT

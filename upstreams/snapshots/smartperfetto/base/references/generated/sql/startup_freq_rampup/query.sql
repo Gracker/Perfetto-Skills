@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_freq_rampup.skill.yaml
 -- Source SHA-256: 6f5c949fb38180d0c6f2fb90172a4357d8a192a449da1c88d7bfe8ebade4a876
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 -- Observed frequency is not hardware capacity, a governor request or proof of delay.
 WITH phases AS (

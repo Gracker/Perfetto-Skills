@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/android_kernel_wakelock_summary.skill.yaml
 Source SHA-256: b87beb54fd7e610df76952ec79d79249a37e510e08dd650fae66893a20e4af63
-Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 # Kernel Wakelock 汇总
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

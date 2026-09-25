@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scene-reconstruction-verifier.template.md
 Source SHA-256: 71e6699b5cefbff15953bfafff875392a0e3a6b645b9af6b99448d7bc870dc8b
-Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 # Scene Reconstruction Verifier Template
 

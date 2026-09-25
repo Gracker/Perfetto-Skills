@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S08_native_graphics_type.md
 Source SHA-256: 2abcf50db6a318723ff2427f3e1299f4ab44c8f82fd7e64f63e1eaa372c280e2
-Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 # Android Perfetto 系列 - App 出图类型 - Native Graphics 类型
 

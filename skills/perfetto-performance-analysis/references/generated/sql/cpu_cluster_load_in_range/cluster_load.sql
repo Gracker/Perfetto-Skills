@@ -1,12 +1,26 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml
--- Source SHA-256: eb2b4612a94cf363df5045d9d2a8f55599a90a2533d2de33465aae42238aee58
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source SHA-256: aa2f4145af6db47f2b6928a496e665965dc44b69e487030be44ae5115b4d8054
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 WITH
--- 分母 = 簇内全部核心 × 窗口内非挂起时长（与上游 7af4ec945c 同法）。
--- to_monotonic 不计挂起时间；无时钟快照或结果越界时回退到墙钟时长。
-awake AS (
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Per-tier CPU cluster load over [${start_ts}, ${end_ts}], shared by
+-- cpu_cluster_load_in_range and jank_frame_detail's root cause so their numbers
+-- agree (cpu_load_in_range still reports its own per-machine sched measure).
+-- Requires _cpu_topology: run the cpu_topology_view Skill first in the same
+-- Skill. Denominator follows upstream
+-- android_cpu_cluster_utilization_in_interval (7af4ec945c):
+--   - every core of the tier in _cpu_topology, not only cores that ran a task
+--     in the window (idle cores leaving the denominator overstate the load);
+--   - awake time: to_monotonic excludes suspend; without a clock snapshot, or
+--     when the result is out of range, the wall-clock duration is used.
+-- Running time comes from thread_state, which carries no idle-thread rows; a
+-- row still running at trace end (dur = -1) runs to the trace end.
+cpu_cluster_awake AS (
   SELECT IIF(monotonic_ns > 0 AND monotonic_ns <= wall_ns, monotonic_ns, wall_ns) AS awake_ns
   FROM (
     SELECT
@@ -14,45 +28,47 @@ awake AS (
       to_monotonic(${end_ts}) - to_monotonic(${start_ts}) AS monotonic_ns
   )
 ),
--- 核心数取自 _cpu_topology（trace 中实际出现过的核心），不再只数窗口内跑过任务的核心
-cluster_cores AS (
-  SELECT core_type AS cluster_type, COUNT(DISTINCT cpu_id) AS core_count
-  FROM _cpu_topology
-  GROUP BY core_type
-),
-cpu_running AS (
-  SELECT
-    ts.cpu,
-    ct.core_type AS cluster_type,
-    MIN(ts.ts + ts.dur, ${end_ts}) - MAX(ts.ts, ${start_ts}) AS clipped_dur
-  FROM thread_state ts
-  JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
-  WHERE ts.ts < ${end_ts}
-    AND ts.ts + ts.dur > ${start_ts}
-    AND ts.state = 'Running'
-    AND ts.cpu IS NOT NULL
-),
-per_cpu_stats AS (
+cpu_cluster_core_running AS (
   SELECT
     cpu,
-    cluster_type,
-    SUM(CASE WHEN clipped_dur > 0 THEN clipped_dur ELSE 0 END) AS running_ns
-  FROM cpu_running
-  GROUP BY cpu, cluster_type
+    core_type,
+    SUM(MIN(end_ts, ${end_ts}) - MAX(ts, ${start_ts})) AS running_ns
+  FROM (
+    SELECT
+      ts.cpu,
+      ct.core_type,
+      ts.ts,
+      IIF(ts.dur < 0, (SELECT end_ts FROM trace_bounds), ts.ts + ts.dur) AS end_ts
+    FROM thread_state ts
+    JOIN _cpu_topology ct ON ts.cpu = ct.cpu_id
+    WHERE ts.ts < ${end_ts}
+      AND (ts.dur < 0 OR ts.ts + ts.dur > ${start_ts})
+      AND ts.state = 'Running'
+      AND ts.cpu IS NOT NULL
+  )
+  WHERE end_ts > ${start_ts}
+  GROUP BY cpu, core_type
 ),
-cluster_stats AS (
+-- One row per tier present in _cpu_topology (prime/big/medium/little/unknown).
+cpu_cluster_load_by_tier AS (
   SELECT
-    cc.cluster_type,
+    cc.core_type,
     cc.core_count,
-    COUNT(pcs.cpu) AS active_core_count,
-    COALESCE(SUM(pcs.running_ns), 0) AS total_running_ns,
-    COALESCE(MAX(pcs.running_ns), 0) AS max_core_running_ns
-  FROM cluster_cores cc
-  LEFT JOIN per_cpu_stats pcs ON pcs.cluster_type = cc.cluster_type
-  GROUP BY cc.cluster_type, cc.core_count
+    COUNT(r.cpu) AS active_core_count,
+    a.awake_ns,
+    COALESCE(SUM(r.running_ns), 0) AS running_ns,
+    COALESCE(MAX(r.running_ns), 0) AS max_core_running_ns
+  FROM (
+    SELECT core_type, COUNT(DISTINCT cpu_id) AS core_count
+    FROM _cpu_topology
+    GROUP BY core_type
+  ) cc
+  CROSS JOIN cpu_cluster_awake a
+  LEFT JOIN cpu_cluster_core_running r ON r.core_type = cc.core_type
+  GROUP BY cc.core_type, cc.core_count, a.awake_ns
 )
 SELECT
-  CASE cs.cluster_type
+  CASE cs.core_type
     WHEN 'prime' THEN '超大核簇'
     WHEN 'big' THEN '大核簇'
     WHEN 'medium' THEN '中核簇'
@@ -61,14 +77,13 @@ SELECT
   END AS cluster,
   cs.core_count,
   cs.active_core_count,
-  ROUND(a.awake_ns / 1e6, 2) AS awake_ms,
-  ROUND(cs.total_running_ns / 1e6, 2) AS running_ms,
-  ROUND(a.awake_ns * cs.core_count / 1e6, 2) AS total_capacity_ms,
-  ROUND(100.0 * cs.total_running_ns / NULLIF(a.awake_ns * cs.core_count, 0), 1) AS load_pct,
-  ROUND(100.0 - 100.0 * cs.total_running_ns / NULLIF(a.awake_ns * cs.core_count, 0), 1) AS idle_pct,
-  ROUND(100.0 * cs.max_core_running_ns / NULLIF(a.awake_ns, 0), 1) AS max_single_core_pct
-FROM cluster_stats cs
-CROSS JOIN awake a
-ORDER BY CASE cs.cluster_type
+  ROUND(cs.awake_ns / 1e6, 2) AS awake_ms,
+  ROUND(cs.running_ns / 1e6, 2) AS running_ms,
+  ROUND(cs.awake_ns * cs.core_count / 1e6, 2) AS total_capacity_ms,
+  ROUND(100.0 * cs.running_ns / NULLIF(cs.awake_ns * cs.core_count, 0), 1) AS load_pct,
+  ROUND(100.0 - 100.0 * cs.running_ns / NULLIF(cs.awake_ns * cs.core_count, 0), 1) AS idle_pct,
+  ROUND(100.0 * cs.max_core_running_ns / NULLIF(cs.awake_ns, 0), 1) AS max_single_core_pct
+FROM cpu_cluster_load_by_tier cs
+ORDER BY CASE cs.core_type
   WHEN 'prime' THEN 0 WHEN 'big' THEN 1 WHEN 'medium' THEN 2 WHEN 'little' THEN 3 ELSE 4
 END

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-selection-scope.template.md
 Source SHA-256: ed1f850a10c1636dd9d1f71fca34afbad4d82de0f1d16e0aa24bdeeeea6326d9
-Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 # Knowledge Selection Scope Template
 

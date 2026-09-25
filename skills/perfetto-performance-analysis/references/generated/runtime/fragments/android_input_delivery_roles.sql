@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/android_input_delivery_roles.sql
 -- Source SHA-256: 301598150c37ec9f6b6dafb7ed38f22f5f2c8e9a856f8c9bcf4bb112bfd413e8
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Which receiver of a physical input event is its application delivery.

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_power_state_analysis.skill.yaml
 -- Source SHA-256: 0a4ae145d64ac7d9eddb15b2f73f8f209e360d4d06e87e8bb500751ee7162f6d
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 WITH freq_samples AS (
   SELECT

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-thermal-throttling.template.md
 Source SHA-256: b307e550df669fabb58ce24e4d6a6464b33cca716a3b7347205a42e3eb424dff
-Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 # Knowledge Thermal Throttling Template
 

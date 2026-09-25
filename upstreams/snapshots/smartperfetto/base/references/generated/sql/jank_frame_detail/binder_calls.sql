@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: 601e2490169eb1b6b6c35ac9f2bc34e6c55075bfa03ef83af956a9e886ebf863
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source SHA-256: 960209f7b80fdced155eebd63d089f78ed033bbbb671d3a56279b95f8f92fc2b
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 SELECT
   server_process as interface,

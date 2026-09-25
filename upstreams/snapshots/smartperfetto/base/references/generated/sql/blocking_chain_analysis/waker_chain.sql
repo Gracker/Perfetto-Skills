@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/blocking_chain_analysis.skill.yaml
 -- Source SHA-256: 3bf11270d8e25d4d0471955b857c8d086163252df80124bfb7e57983b0ee2574
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 -- Perfetto 只把 waker_utid 记录在唤醒后的第一个 R/R+ 行上；S/D 等待行自身的
 -- waker_utid 为 NULL。回连后继行解析唤醒者的逻辑现在由

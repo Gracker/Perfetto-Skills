@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml
-Source SHA-256: eb2b4612a94cf363df5045d9d2a8f55599a90a2533d2de33465aae42238aee58
-Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+Source SHA-256: aa2f4145af6db47f2b6928a496e665965dc44b69e487030be44ae5115b4d8054
+Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 # CPU 簇负载分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: cpu_cluster_load_in_range
-version: '2.1'
+version: '2.2'
 type: composite
 category: cpu
 tier: B
@@ -110,6 +110,8 @@ display:
     label: 最忙核心
     type: percentage
     format: percentage
+sql_fragments:
+- fragments/cpu_cluster_load.sql
 save_as: cluster_load
 ```
 ## Output and evidence contract

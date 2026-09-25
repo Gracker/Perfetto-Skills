@@ -2,6 +2,21 @@
   "normalizations": [
     {
       "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_bitmap_memory_per_process/bitmap_memory",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_bitmap_memory_per_process/heap_bitmap_metadata",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_bitmap_memory_per_process/heap_bitmap_sender_attribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
       "query_id": "android_heap_dominator_path_extract/data_check",
       "reason": "hash identifies the packaged runtime fragment"
     },
@@ -486,6 +501,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.cpu_cluster_load.sql.source_sha256",
+      "query_id": "cpu_cluster_load_in_range/cluster_load",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.system_sched_spans.sql.source_sha256",
       "query_id": "cpu_freq_limit_timeline/limit_summary",
       "reason": "hash identifies the packaged runtime fragment"
@@ -887,6 +907,11 @@
     },
     {
       "field": "template.fragments.thread_states_quadrant.sql.source_sha256",
+      "query_id": "jank_frame_detail/root_cause_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.cpu_cluster_load.sql.source_sha256",
       "query_id": "jank_frame_detail/root_cause_summary",
       "reason": "hash identifies the packaged runtime fragment"
     },

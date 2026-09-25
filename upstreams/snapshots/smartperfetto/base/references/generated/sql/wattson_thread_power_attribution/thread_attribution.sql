@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/wattson_thread_power_attribution.skill.yaml
 -- Source SHA-256: 870e236f5b23da815f89f8d2d3ed6d5ca592a73f300afe43a5a1e077c7723685
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 SELECT
   process_name,

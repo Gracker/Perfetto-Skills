@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_freq_residency_summary.skill.yaml
 -- Source SHA-256: 551f4b3dae5db3b84e15a017225eeb4399a0a9824fe59a04fbf47a30395103d5
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 WITH params AS (
   SELECT COALESCE(${start_ts}, trace_start()) AS start_ts,

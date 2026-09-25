@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml
-Source SHA-256: 1b5b8388a9a3b0ee3fbe651cab6e8b3ccd6b2258a0c3313e7633833fb896f08c
-Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+Source SHA-256: c60050ad32c18950da78069dabe941919f7dd55aa3df9ac7ad86d51254da582d
+Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 # Bitmap 内存（按进程）
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -10,7 +10,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: android_bitmap_memory_per_process
-version: '1.1'
+version: '1.2'
 type: atomic
 category: memory
 tier: B
@@ -44,11 +44,15 @@ modules:
 - name: process_name
   type: string
   required: false
-  description: 目标进程名（可选，前缀匹配）
+  description: 目标进程名（精确或 name:* 子进程，见 fragments/heap_target_process.sql）；为空则统计全部进程；无匹配时回退到没有进程名的 dump（如 .hprof）
 - name: package
   type: string
   required: false
-  description: 目标包名（可选，前缀匹配）
+  description: 目标包名（精确或 name:* 子进程）；process_name 为空时使用
+- name: upid
+  type: integer
+  required: false
+  description: 可选的稳定进程身份；进程名不可用时（.hprof）用它限定进程
 ```
 
 ## Ordered execution
@@ -71,13 +75,21 @@ display:
     label: 进程
     type: string
   - name: bitmap_count
-    label: Bitmap 数量
+    label: 峰值时 Bitmap 数量
     type: number
     format: compact
   - name: total_bytes
-    label: 总字节
+    label: Bitmap 内存峰值
     type: bytes
     format: compact
+  - name: peak_ts
+    label: 峰值时刻
+    type: timestamp
+  - name: process_identity
+    label: 进程身份
+    type: string
+sql_fragments:
+- fragments/heap_target_process.sql
 ```
 ### Heap Graph Bitmap 数据可用性
 
@@ -145,6 +157,11 @@ display:
   - name: storage_types
     label: 存储类型
     type: string
+  - name: process_identity
+    label: 进程身份
+    type: string
+sql_fragments:
+- fragments/heap_target_process.sql
 ```
 ### 跨进程 Bitmap 来源归因
 
@@ -182,4 +199,9 @@ display:
   - name: source_storage_types
     label: 来源端存储
     type: string
+  - name: process_identity
+    label: 接收进程身份
+    type: string
+sql_fragments:
+- fragments/heap_target_process.sql
 ```

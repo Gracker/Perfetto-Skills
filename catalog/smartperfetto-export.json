@@ -135,9 +135,9 @@
       "name": "android_bitmap_memory_per_process",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml",
-      "source_sha256": "1b5b8388a9a3b0ee3fbe651cab6e8b3ccd6b2258a0c3313e7633833fb896f08c",
+      "source_sha256": "c60050ad32c18950da78069dabe941919f7dd55aa3df9ac7ad86d51254da582d",
       "tier": "B",
-      "version": "1.1",
+      "version": "1.2",
       "workflow": "memory"
     },
     {
@@ -671,9 +671,9 @@
       "name": "cpu_cluster_load_in_range",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml",
-      "source_sha256": "eb2b4612a94cf363df5045d9d2a8f55599a90a2533d2de33465aae42238aee58",
+      "source_sha256": "aa2f4145af6db47f2b6928a496e665965dc44b69e487030be44ae5115b4d8054",
       "tier": "B",
-      "version": "2.1",
+      "version": "2.2",
       "workflow": "cpu-scheduling"
     },
     {
@@ -1325,9 +1325,9 @@
       "name": "jank_frame_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-      "source_sha256": "601e2490169eb1b6b6c35ac9f2bc34e6c55075bfa03ef83af956a9e886ebf863",
+      "source_sha256": "960209f7b80fdced155eebd63d089f78ed033bbbb671d3a56279b95f8f92fc2b",
       "tier": "S",
-      "version": "2.0",
+      "version": "2.1",
       "workflow": "scrolling"
     },
     {
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "969f91bb3872e4998d5b2e92b9c3ceea2e78e4751bee90e5605badcf042a1572",
+    "policy_sha256": "d10007c0d879637082ae4b10d610850cf8fbec367049f333edf11b1abd73798c",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3104,6 +3104,12 @@
       "disposition": "exported",
       "source_path": "backend/skills/fragments/buffer_tx_frame_production.sql",
       "source_sha256": "9aecf87a50b14e951568c87371924350b4bead0c88070104108ef4ae1a706c31"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/cpu_cluster_load.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/cpu_cluster_load.sql",
+      "source_sha256": "3e04c9d00dd47d78215589a35a3e9ce80e803da7ed94fed3337daef51535f8b4"
     },
     {
       "destination": "references/generated/runtime/fragments/effective_target_processes.sql",
@@ -3139,7 +3145,7 @@
       "destination": "references/generated/runtime/fragments/heap_target_process.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/heap_target_process.sql",
-      "source_sha256": "e788383fbf3eb24fe8a5df419b95a9694046dc64f51c7852daea28d4547285db"
+      "source_sha256": "2501f16f49b1b70eae19e70e98c8e66da29ee6335c6a4dafce480282c879058e"
     },
     {
       "destination": "references/generated/runtime/fragments/io_blocked_function_families.sql",
@@ -4285,7 +4291,7 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_sql_fragments": 37,
+    "exported_sql_fragments": 38,
     "exported_strategy_sources": 47,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
@@ -4299,7 +4305,7 @@
       "pipeline_definition": 31
     },
     "skill_yaml_files": 257,
-    "sql_fragments": 44,
+    "sql_fragments": 45,
     "strategy_sources": 148,
     "vendor_overrides": 8
   },

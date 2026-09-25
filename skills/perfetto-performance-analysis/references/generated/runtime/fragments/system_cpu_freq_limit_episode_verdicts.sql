@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/system_cpu_freq_limit_episode_verdicts.sql
 -- Source SHA-256: 8212cb7e87c9c19b5eae2fc7b6273d6ab2f19a4b4fa4588ecd4510a3a75ea71b
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)

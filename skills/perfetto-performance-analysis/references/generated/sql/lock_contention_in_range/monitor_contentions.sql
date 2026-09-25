@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/lock_contention_in_range.skill.yaml
 -- Source SHA-256: 660f675d614aec2af8885125bcb62d2a5410b5318a01e545990ff3642f53a566
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 SELECT
   short_blocking_method as blocking_method,

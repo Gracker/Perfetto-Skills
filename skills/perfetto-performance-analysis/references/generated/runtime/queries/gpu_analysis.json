@@ -57,7 +57,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_analysis/data_check.sql",
-      "sha256": "2b0e9af4892a37f22ec8626630cf862fd958f6270cd52a75565449ba806bd4bc",
+      "sha256": "b7b6ee09d69eee9908a831ee798eacfeae321da0ef9944be2262b7948ec6d4e7",
       "signal_patterns": [
         "actual_frame_timeline_slice",
         "android_gpu_frequency",
@@ -65,7 +65,7 @@
       ],
       "skill_id": "gpu_analysis",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/composite/gpu_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96"
@@ -155,11 +155,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_analysis/gpu_freq_overview.sql",
-      "sha256": "ef736a7e871d57b65d0e35e3373898f5c446ac3cdb4977c1101dbdca122a72bd",
+      "sha256": "9f30417266737de032bd0a347f3d34ee9db722c64d21308bd1ea82a9b783216e",
       "signal_patterns": [],
       "skill_id": "gpu_analysis",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/composite/gpu_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96"
@@ -255,14 +255,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_analysis/gpu_memory_overview.sql",
-      "sha256": "e4afb7dbb2b49fc27b60dbfbf0dfcafdcb056dbbfff6097d6e7185f047433795",
+      "sha256": "2b3efff085141beb2e4212c328a2eeace9be47dcdb40c66d29a7fa0de17f7c9d",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "gpu_analysis",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/composite/gpu_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96"
@@ -356,11 +356,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_analysis/gpu_freq_distribution.sql",
-      "sha256": "c5ef9d4e1b1c7c3844868cebd3951f1da304167592470b64b97406338d62db5e",
+      "sha256": "df44c97b2502d7a05a1315ff54620c98a9ac42229bf9227c4c3a02c7dd9898e8",
       "signal_patterns": [],
       "skill_id": "gpu_analysis",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/composite/gpu_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96"
@@ -453,14 +453,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_analysis/gpu_frame_correlation.sql",
-      "sha256": "8bbae6f416f016124e88d9ea8a0f39572caf92832cd0ef06513350a19f2f1364",
+      "sha256": "d6107bbc16c5fe81855de359cda9b3ea3a766e181626b86bd9c33dcd8def8d0a",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "gpu_analysis",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/composite/gpu_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96"
@@ -554,11 +554,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_analysis/gpu_high_load_periods.sql",
-      "sha256": "5adf7f19daafdc055826093a06c25631c998de10814789575a1f70ddf5c32d11",
+      "sha256": "9ffb019f4794b5632dee1e3f8629697ed05f15c656aa75b5be3986ef9c46f7de",
       "signal_patterns": [],
       "skill_id": "gpu_analysis",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/composite/gpu_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96"
@@ -652,11 +652,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_analysis/root_cause_classification.sql",
-      "sha256": "9f5eb1dee9894034932400ef8d8dbcbba8e098f5dc87dfad8fa55cb7d4dc5864",
+      "sha256": "a2a2b134be0e71aa13e6651d7ede343ce23b2e024c167e50e089fe45d048e553",
       "signal_patterns": [],
       "skill_id": "gpu_analysis",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/composite/gpu_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96"
@@ -752,11 +752,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_analysis/fallback_no_gpu_data.sql",
-      "sha256": "4f6e47bc591856b27e75b795c887def1afd3984094f418298be381bf4f968c4f",
+      "sha256": "7336ab2022841939449c4e1e1011643853c3a54dc56e459ad13255b6b126a0d7",
       "signal_patterns": [],
       "skill_id": "gpu_analysis",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/composite/gpu_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96"

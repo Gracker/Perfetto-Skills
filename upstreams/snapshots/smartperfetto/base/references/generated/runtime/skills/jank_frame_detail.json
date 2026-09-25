@@ -191,9 +191,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
     "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-    "sha256": "601e2490169eb1b6b6c35ac9f2bc34e6c55075bfa03ef83af956a9e886ebf863"
+    "sha256": "960209f7b80fdced155eebd63d089f78ed033bbbb671d3a56279b95f8f92fc2b"
   },
   "steps": [
     {
@@ -785,6 +785,16 @@
           ]
         },
         {
+          "condition": "cluster_load_data?.data?.find(c => c.cluster === '中核簇')?.load_pct > 90",
+          "confidence": "high",
+          "diagnosis": "中核簇负载 ${cluster_load_data.data.find(c => c.cluster === '中核簇')?.load_pct}%，接近跑满",
+          "severity": "warning",
+          "suggestions": [
+            "中核簇跑满时从大核迁出的任务无处可去，调度会继续挤压大核或落到小核",
+            "检查是否有后台密集计算任务占用中核"
+          ]
+        },
+        {
           "condition": "cluster_load_data?.data?.find(c => c.cluster === '小核簇')?.load_pct > 95",
           "confidence": "high",
           "diagnosis": "小核簇负载 ${cluster_load_data.data.find(c => c.cluster === '小核簇')?.load_pct}%，几乎跑满",
@@ -989,6 +999,6 @@
     }
   ],
   "type": "composite",
-  "version": "2.0",
+  "version": "2.1",
   "workflow": "scrolling"
 }

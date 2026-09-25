@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/android_input_events_normalized.sql
 -- Source SHA-256: 115335ecf7a2cebd6c6ca34acc38d3f9c2b06a6737893da328859aee0072a415
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- The single read path for stdlib android_input_events. Skill contract:

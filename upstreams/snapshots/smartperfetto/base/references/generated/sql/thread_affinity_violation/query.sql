@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thread_affinity_violation.skill.yaml
 -- Source SHA-256: d66b29385d8481d5950b064fbc5c7fa8f18e83ee05c5ff08e5c5e9fa535469fb
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 WITH target_threads AS (
   SELECT

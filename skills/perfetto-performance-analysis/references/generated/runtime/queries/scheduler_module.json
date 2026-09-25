@@ -59,13 +59,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "75ba33880875b611377f939f9b59b10bab754db4119f0b150b01bd3b1f84e3d3",
+      "sha256": "bbe954dd2dc1f27c03f8d41f705cfeea7b9444a070f2b8430c1256df8cd66fea",
       "signal_patterns": [
         "${package}:*"
       ],
       "skill_id": "scheduler_module",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8a8766ab483cb11df87f4263431bba840d057a3ef4a846e42cbf605a76e2062c"
@@ -86,12 +86,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4992c4f38c759cdea0f0035847df8930ef83e49fe1f41938033c761d237380d2"
+            "source_sha256": "789091cc4c46ff69693355013da16d01be6b6520fe11554e020a8a4f23ce49de"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "da5aa1831bfac7e3148accdd97c96bef423d029d0e5ff14e7be5a99c88d92429"
+            "source_sha256": "2f54feab14aa57a949385f6dd65b1a2771c89a7af62f3e92edfbd45c05ef0f45"
           }
         ],
         "name_parameters": [],
@@ -173,11 +173,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "78e4d6280535718d3c508e9f7563f6016cb8ca1883994dbec408ae35760335d9",
+      "sha256": "92c7e4970db5852116a3e60067265bc654bfa720c4497bc59b82e393d3298fdd",
       "signal_patterns": [],
       "skill_id": "scheduler_module",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8a8766ab483cb11df87f4263431bba840d057a3ef4a846e42cbf605a76e2062c"
@@ -198,12 +198,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "04d18620cf1d17bf08daec836b36e2da7ae277f58a1dd82841a80809899cc95f"
+            "source_sha256": "c6916211a5072c18855197208948769a8c541d9a16b5c103d2ea260ad37dc363"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "75f92c08f64d31e7a2764e4595ebe5ef853d473ccfa83944a54f7b86ddbe2078"
+            "source_sha256": "46306dfb87ad8b573fd39397b47c9fd5fef2340038d72c5c905396d8f4e85f95"
           }
         ],
         "name_parameters": [],
@@ -282,13 +282,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "b62a5171c9d509ebb232da0367cc37137a51d2f504f6fb62ac40c039018cd28a",
+      "sha256": "8950a7a4d7a0aa9a5d5a1d6a2ac02b1fb831f59fd6012b13b1562cd80046e9aa",
       "signal_patterns": [
         "${package}:*"
       ],
       "skill_id": "scheduler_module",
       "source": {
-        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
+        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
         "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "8a8766ab483cb11df87f4263431bba840d057a3ef4a846e42cbf605a76e2062c"
@@ -309,12 +309,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4992c4f38c759cdea0f0035847df8930ef83e49fe1f41938033c761d237380d2"
+            "source_sha256": "789091cc4c46ff69693355013da16d01be6b6520fe11554e020a8a4f23ce49de"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "04d18620cf1d17bf08daec836b36e2da7ae277f58a1dd82841a80809899cc95f"
+            "source_sha256": "c6916211a5072c18855197208948769a8c541d9a16b5c103d2ea260ad37dc363"
           }
         ],
         "name_parameters": [],

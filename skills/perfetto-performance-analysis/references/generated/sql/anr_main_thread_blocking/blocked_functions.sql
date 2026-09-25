@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
 -- Source SHA-256: 88ec9683e76751ade4cdc4a899a482dfba921d757006beab05b108b52ba9d299
--- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
+-- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
 
 WITH analysis_window AS (
   SELECT
