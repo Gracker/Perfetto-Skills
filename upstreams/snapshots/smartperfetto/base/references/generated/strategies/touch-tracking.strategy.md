@@ -9,6 +9,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -83,6 +85,9 @@ Distinguish input sampling, queueing, task service and presentation lag. Matchin
 
 **Capabilities**: required=[input_latency, frame_rendering, surfaceflinger], optional=[cpu_scheduling, gpu]
 
+**Mandatory aspects**
+- per_frame_latency_measurement: 跟手度场景建议包含逐帧 Input-to-Display 延迟测量阶段 (required: invoke_skill(touch_to_display_latency))
+
 **Phase reminders**
 - 无额外 phase hint。
 
@@ -106,6 +111,9 @@ Distinguish input sampling, queueing, task service and presentation lag. Matchin
 
 **Phase 1 — 逐帧 Input-to-Display 延迟测量：**
 
+```
+invoke_skill("input_to_frame_latency", { package: "<包名>" })
+```
 返回：每个 MOVE 事件的 5 维延迟分解（dispatch/handling/ack/e2e）+ 帧内分解（frame_dur/frame_to_present），以及统计指标（均值、P50、P90、P99、抖动）和 is_speculative 帧关联置信度。
 
 **写任何跟手度数值前，先判读证据可用性：**
@@ -172,6 +180,9 @@ ORDER BY input_ts
 
 跟手延迟的一个关键因素是 **input sampling 与 VSync 的相位关系**。
 
+```
+invoke_skill("vsync_phase_alignment", { package: "<包名>" })
+```
 
 该 Skill 测量：
 - Input event timestamp 与最近 VSync 信号的相位差
@@ -218,6 +229,13 @@ LIMIT 5
 | **输入采样率低** | input event 间隔 >12ms | 触控 IC 采样率低（120Hz touch sampling = 8.3ms interval） |
 
 **深钻决策：**
+
+| 条件 | 深钻动作 |
+|------|---------|
+| **VSync→FrameEnd 过长** | `invoke_skill("jank_frame_detail", ...)` 查看帧内瓶颈 |
+| **管线深度 ≥3** | 检查 BufferQueue 深度和 BLAST/Legacy 模式 |
+| **持续高延迟 + 低频率** | `invoke_skill("thermal_throttling")` 检查温度/频率；确认是否真被限频以及谁触发，用 `invoke_skill("cpu_frequency_limit_attribution")` |
+| **VSync 周期异常** | `invoke_skill("vrr_detection")` 检查 VRR 状态 |
 
 ### 输出结构必须遵循：
 

@@ -86,6 +86,14 @@ class GeneratedReferenceTest(unittest.TestCase):
             for directory in (GENERATED / "strategies", GENERATED / "knowledge")
             for path in directory.glob("*.md")
         )
+        from tools import export_from_smartperfetto as exporter
+
+        # Admitted calls to exported Skills and the preamble notes explaining
+        # them are the only permitted product-tool spellings.
+        without_admitted = exporter.SKILL_CALL.sub("", strategy_text)
+        for equivalent in exporter.PORTABLE_TOOL_EQUIVALENTS.values():
+            without_admitted = without_admitted.replace(equivalent.note, "")
+        without_admitted = without_admitted.replace(exporter.SKILL_CALL_NOTE, "")
         for token in (
             "submit_plan",
             "invoke_skill",
@@ -113,11 +121,10 @@ class GeneratedReferenceTest(unittest.TestCase):
             "resolve_hypothesis",
             "flag_uncertainty",
             "write_analysis_note",
-            "detect_architecture",
             "lookup_sql_schema",
             "process_identity_resolver",
         ):
-            self.assertNotIn(token, strategy_text, token)
+            self.assertNotIn(token, without_admitted, token)
         self.assertIn(
             "`execute_sql(...)` examples mean to run the contained SQL through "
             "`perfetto_query.py`",

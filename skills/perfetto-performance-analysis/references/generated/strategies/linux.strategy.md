@@ -9,6 +9,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -120,6 +122,9 @@ Preserve homogeneous topology and missing perf/PSI/policy capabilities as explic
 
 **Capabilities**: required=[cpu_scheduling], optional=[cpu_freq_idle, perf_samples]
 
+**Mandatory aspects**
+- sched_or_linux_signal: Linux 调度问题需要包含 sched latency 或 runqueue 深度分析 (requires one of: invoke_skill(linux_sched_latency_distribution), invoke_skill(linux_runqueue_depth_timeline))
+
 **Phase reminders**
 - sched_latency: 调度问题优先调用 linux_sched_latency_distribution 和 linux_runqueue_depth_timeline；如果用户给定时间窗必须传 start_ts/end_ts。 工具: linux_sched_latency_distribution, linux_runqueue_depth_timeline
 - pmu_perf: PMU 问题调用 linux_perf_counter_hotspots。无 perf sample/counter 数据时必须说明 trace 未启用 PMU，不能给 cache/branch 结论。 工具: linux_perf_counter_hotspots
@@ -136,16 +141,27 @@ Linux 场景必须先判断 trace 是否包含对应数据源：sched 基础数�
 
 **Phase 1 — 调度延迟与 runqueue：**
 
+```
+invoke_skill("linux_sched_latency_distribution", { package: "<包名>", start_ts: "<start>", end_ts: "<end>" })
+invoke_skill("linux_runqueue_depth_timeline", { start_ts: "<start>", end_ts: "<end>" })
+```
 
 用于判断 Runnable→Running 等待是否构成瓶颈，以及系统级 runnable thread count 是否持续高压。
 
 **Phase 2 — PMU / perf counter（仅数据可用时）：**
 
+```
+invoke_skill("linux_perf_counter_hotspots", { package: "<包名>", start_ts: "<start>", end_ts: "<end>" })
+```
 
 无 perf samples/counters 时，结论必须是"当前 trace 不支持 PMU 判断"。
 
 **Phase 3 — 进程内存 / page fault：**
 
+```
+invoke_skill("linux_process_rss_swap_timeline", { package: "<包名>", start_ts: "<start>", end_ts: "<end>" })
+invoke_skill("page_fault_in_range", { package: "<包名>", start_ts: "<start>", end_ts: "<end>" })
+```
 
 RSS/swap 是容量证据，page fault/reclaim 是阻塞证据，不能互相替代。
 <!-- /strategy-detail -->

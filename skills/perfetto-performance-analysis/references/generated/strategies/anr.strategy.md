@@ -9,6 +9,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -169,6 +171,9 @@ Trace Binder transactions, lock ownership, IO and wakeup dependencies where avai
 
 **Capabilities**: required=[anr, cpu_scheduling], optional=[binder_ipc, lock_contention, gc_memory]
 
+**Mandatory aspects**
+- anr_root_cause: ANR 场景建议包含 ANR 原因定位阶段 (anr_analysis) (required: invoke_skill(anr_analysis))
+
 **无 ANR 锚点仍须调查无响应**
 - 用户询问主线程无响应而未记录 ANR 时，调用 `anr_main_thread_blocking`，省略 `process_name` / `anr_ts`，读取 `wakeup_chain` 的应用主线程最长 S/D 等待候选（默认 ≥3s，每进程分别保留最长已结束/未结束等待，支持 `top_n` / `offset` 分页）。无结果只代表该阈值/UID 覆盖内未命中，不能证明没有无响应。
 - 用输入目标/前台活动核对候选 UPID，再以观测到的 `process_name` 和窗口调用该 Skill。同名多实例或重启时改用带明确 UPID/UTID 等值条件的 SQL 核查，不能依赖旧详情中的首个同名进程。按原始 ns 对齐目标 channel 的 DOWN/UP、receive 与 FINISHED，窗口应覆盖等待结束后的响应；只描述实际重叠，不把派发自动等同超时。
@@ -212,6 +217,9 @@ Trace Binder transactions, lock ownership, IO and wakeup dependencies where avai
 写 execute_sql 时优先使用（完整列表见方法论模板）：`android_oom_adj_intervals`、`android_monitor_contention_chain`、`android_screen_state`、`sched_latency_for_running_interval`、`cpu_utilization_in_interval(ts, dur)`、`android_garbage_collection_events`
 
 **Phase 1 — ANR 检测 + 系统健康评估（1 次调用）：**
+```
+invoke_skill("anr_analysis")
+```
 - 如果知道包名，传入 `process_name` 或 `package` 参数
 - 返回结果包含以下关键 artifact：
   - `detection`：ANR 检测（总数、受影响进程数、时间跨度）
@@ -245,6 +253,13 @@ Trace Binder transactions, lock ownership, IO and wakeup dependencies where avai
 **Phase 3 — App 级根因诊断决策树（当 freeze_verdict = app_specific）：**
 
 ### 第一步：看四象限分布（来自 anr_detail 的 `quadrant`）
+
+| 四象限 | 占比 | 含义 | 下一步 |
+|--------|------|------|--------|
+| Q4 Sleeping 极高 | >80% | 等待占比高，可能正常空闲；单独不能证明阻塞或无响应 | → 第二步：结合 blocked_functions、输入处理/ACK 与调用链判断 |
+| Q3 Runnable 高 | >30% | CPU 饥饿——可运行但得不到 CPU | → 检查 `sched_latency`、`cpu_health`、后台进程抢占 |
+| Q1+Q2 Running 高 | >70% | CPU-bound——主线程在执行重计算 | → 检查 `main_slices`（from `main_thread_slices`），并调用 `invoke_skill("process_slice_cpu_hotspots", { process_name, start_ts, end_ts, thread_scope: "main" })` 定位主线程热点函数/slice 的 Running CPU time |
+| 混合 | 无明显主导 | 多因素共同导致 | → 依次排查 Q4→Q3→Q1 |
 
 ### 第二步：当 Q4 占比高时 — 以 direct_blocker + 线程状态定位
 

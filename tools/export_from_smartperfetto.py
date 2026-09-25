@@ -15,7 +15,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from typing import Any
+from types import MappingProxyType
+from typing import Any, Mapping, NamedTuple
 
 import yaml
 
@@ -1547,6 +1548,23 @@ def normalize_step(
     return kept, query
 
 
+def declared_input_names(raw: dict[str, Any]) -> frozenset[str]:
+    """The inputs `perfetto_skill.py run` binds; it ignores any other `--param`."""
+    inputs = portable_inputs(raw)
+    return frozenset(
+        str(value["name"])
+        for value in (inputs if isinstance(inputs, list) else [])
+        if isinstance(value, dict) and isinstance(value.get("name"), str)
+    )
+
+
+def runtime_status(raw: dict[str, Any]) -> str:
+    """`knowledge_only` Skill types have no portable `perfetto_skill.py run` path."""
+    if str(raw.get("type", "unknown")) in {"pipeline_definition", "comparison"}:
+        return "knowledge_only"
+    return "executable"
+
+
 def build_runtime_assets(
     source: Path,
     catalog: dict[str, Any],
@@ -1621,23 +1639,15 @@ def build_runtime_assets(
         skill_id = str(entry["name"])
         raw = load_yaml(source / entry["source_path"])
         skill_type = str(raw.get("type", "unknown"))
-        runtime_status = (
-            "knowledge_only"
-            if skill_type in {"pipeline_definition", "comparison"}
-            else "executable"
-        )
-        runtime_counts[runtime_status] += 1
+        skill_status = runtime_status(raw)
+        runtime_counts[skill_status] += 1
         modules = [str(value) for value in raw.get("prerequisites", {}).get("modules", []) or []]
         unknown_modules = sorted(set(modules) - official_modules)
         if unknown_modules:
             raise ExportError(f"Unknown official modules in {skill_id}: {unknown_modules}")
         inputs = portable_inputs(raw)
         input_list = inputs if isinstance(inputs, list) else []
-        input_names = {
-            str(value["name"])
-            for value in input_list
-            if isinstance(value, dict) and isinstance(value.get("name"), str)
-        }
+        input_names = declared_input_names(raw)
         reject_process_scope_names({name: None for name in input_names})
         raw_steps = raw.get("steps", []) or []
         if not isinstance(raw_steps, list):
@@ -1719,7 +1729,7 @@ def build_runtime_assets(
             "id": skill_id,
             "version": str(raw.get("version", "1.0")),
             "type": skill_type,
-            "runtime_status": runtime_status,
+            "runtime_status": skill_status,
             "workflow": entry.get("workflow"),
             "source": {
                 "path": entry["source_path"],
@@ -1761,7 +1771,7 @@ def build_runtime_assets(
             query["id"] for query in queries if query["validation"]["semantic_verified"]
         )
 
-        status = "not_applicable" if runtime_status == "knowledge_only" else "capability_gated"
+        status = "not_applicable" if skill_status == "knowledge_only" else "capability_gated"
         query_by_id = {str(query["id"]): query for query in queries}
         android_manifest = {
             "schema_version": 1,
@@ -1979,30 +1989,123 @@ _PRODUCT_RUNTIME_TOKENS = (
     "read_evidence_bundle", "write_evidence_bundle", "portable_checklist",
     "update_plan_phase", "lookup_strategy_detail",
     "lookup_knowledge", "submit_hypothesis", "resolve_hypothesis",
-    "flag_uncertainty", "write_analysis_note", "detect_architecture",
+    "flag_uncertainty", "write_analysis_note",
     "lookup_sql_schema", "process_identity_resolver",
 )
+
+
+class ToolEquivalent(NamedTuple):
+    skills: tuple[str, ...]  # exported Skills that answer the tool's question
+    note: str
 
 
 # Product tools that strategies may still name because a portable Skill
 # workflow answers the same question. The rendered strategy keeps the routing
 # text and explains the portable equivalent instead of dropping the paragraph.
 PORTABLE_TOOL_EQUIVALENTS = {
-    "analyze_wait_chain": (
+    "analyze_wait_chain": ToolEquivalent(
+        ("process_thread_wait_sources_in_range", "blocking_chain_analysis"),
         "`analyze_wait_chain(...)` steps mean: run the `process_thread_wait_sources_in_range` "
         "Skill for the same process and window, whose `wait_class` column uses the same labels "
         "as `wake_source_class`, and `blocking_chain_analysis` for the waker chain. The portable "
-        "Skills aggregate waits by thread role; they do not return one thread's critical-path segments."
+        "Skills aggregate waits by thread role; they do not return one thread's critical-path segments.",
+    ),
+    "detect_architecture": ToolEquivalent(
+        ("rendering_pipeline_detection",),
+        "`detect_architecture` steps mean: run the `rendering_pipeline_detection` Skill; the "
+        "product tool only executes that Skill and maps its pipeline result to an architecture type.",
     ),
 }
 
+# `invoke_skill` stays a product token; a unit is kept only when every call in
+# it passes `skill_call_rejections`, and this note maps those calls.
+SKILL_CALL_NOTE = (
+    "`invoke_skill(\"<name>\", {...})` steps mean: run "
+    "`python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` "
+    "and pass each object field as `--param NAME=JSON`. Every Skill named this way is an "
+    "exported, executable portable Skill, and every field is one of its declared inputs."
+)
+
+# `invoke_skill("name", {...})`, `invoke_skill('name')`, or `invoke_skill(name)`.
+# A bare identifier must close the call: `invoke_skill(skill_id, params)` names
+# a variable, not a Skill, and stays a product-runtime token.
+SKILL_CALL = re.compile(
+    r"""\binvoke_skill\(\s*(?:(?P<quote>["'])|(?=\w+\s*\)))(?P<name>\w+)(?(quote)(?P=quote))"""
+    r"""(?:\s*,\s*(?P<args>\{[^{}]*\}))?"""
+)
+
 
 def portable_tool_notes(body: str) -> str:
-    return "".join(
-        note + "\n\n"
-        for tool, note in sorted(PORTABLE_TOOL_EQUIVALENTS.items())
+    notes = [
+        equivalent.note
+        for tool, equivalent in sorted(PORTABLE_TOOL_EQUIVALENTS.items())
         if re.search(rf"\b{re.escape(tool)}\b", body)
-    )
+    ]
+    if SKILL_CALL.search(body):
+        notes.append(SKILL_CALL_NOTE)
+    return "".join(note + "\n\n" for note in notes)
+
+
+class PortableSkill(NamedTuple):
+    status: str  # `executable`, `knowledge_only`, or `product-only`
+    inputs: frozenset[str]  # the parameters `perfetto_skill.py run` binds
+
+
+def portable_skill_runtime(
+    catalog: dict[str, Any], raw_skills: Mapping[str, dict[str, Any]]
+) -> dict[str, PortableSkill]:
+    """What `perfetto_skill.py run` accepts for every classified Skill, keyed by name."""
+    skills = {
+        str(entry["name"]): PortableSkill(
+            "product-only"
+            if entry["disposition"] == "product-only"
+            else runtime_status(raw_skills[str(entry["name"])]),
+            declared_input_names(raw_skills[str(entry["name"])]),
+        )
+        for entry in catalog["skills"]
+    }
+    for tool, equivalent in PORTABLE_TOOL_EQUIVALENTS.items():
+        unrunnable = [
+            name for name in equivalent.skills
+            if skills.get(name, PortableSkill("missing", frozenset())).status != "executable"
+        ]
+        if unrunnable:
+            raise ExportError(f"{tool} equivalent names no executable Skill: {unrunnable}")
+    return skills
+
+
+def object_keys(literal: str) -> set[str]:
+    """Top-level keys of a flat `{ key: value, shorthand }` argument literal."""
+    unquoted = re.sub(r'"[^"]*"|\'[^\']*\'', '""', literal)
+    return set(re.findall(r"[{,]\s*(\w+)\s*(?=[:,}])", unquoted))
+
+
+def skill_call_rejections(unit: str, skills: Mapping[str, PortableSkill]) -> list[str]:
+    """Skill calls in a unit that `perfetto_skill.py run` cannot reproduce."""
+    rejected: list[str] = []
+    for call in SKILL_CALL.finditer(unit):
+        name = call["name"]
+        if name not in skills:
+            raise ExportError(f"Strategy names an unclassified Skill: {name}")
+        skill = skills[name]
+        undeclared = sorted(object_keys(call["args"] or "") - skill.inputs)
+        if skill.status != "executable":
+            rejected.append(f"{name} ({skill.status})")
+        elif undeclared:
+            rejected.append(f"{name} (undeclared {', '.join(undeclared)})")
+    return rejected
+
+
+def needs_product_runtime(unit: str, skills: Mapping[str, PortableSkill]) -> tuple[bool, list[str]]:
+    """Whether a unit must be dropped, and the Skill calls that alone caused it."""
+    if not contains_product_runtime(unit):
+        return False, []
+    # Set aside only each call's head; its arguments still count.
+    rest = SKILL_CALL.sub(lambda call: call["args"] or "", unit)
+    if rest == unit or contains_product_runtime(rest):
+        return True, []
+    rejected = skill_call_rejections(unit, skills)
+    return bool(rejected), rejected
 
 
 def contains_product_runtime(value: str) -> bool:
@@ -2028,9 +2131,25 @@ def sanitize_strategy_metadata(value: Any) -> Any:
     return value
 
 
-def strip_product_runtime_content(body: str) -> tuple[str, int]:
-    kept: list[str] = []
+def strip_product_runtime_content(
+    body: str, skills: Mapping[str, PortableSkill]
+) -> tuple[str, int, list[str]]:
+    """Drop fenced blocks and paragraphs that need the product runtime.
+
+    Returns the portable text, the removed line count, and the Skill calls that
+    removed an otherwise portable unit.
+    """
     removed = 0
+    rejected_calls: set[str] = set()
+
+    def keep(unit: str) -> bool:
+        nonlocal removed
+        drop, rejected = needs_product_runtime(unit, skills)
+        rejected_calls.update(rejected)
+        removed += len(unit.splitlines()) if drop else 0
+        return not drop
+
+    kept: list[str] = []
     lines = body.splitlines()
     index = 0
     while index < len(lines):
@@ -2043,39 +2162,34 @@ def strip_product_runtime_content(body: str) -> tuple[str, int]:
                     index += 1
                     break
                 index += 1
-            if contains_product_runtime("\n".join(block)):
-                removed += len(block)
-            else:
+            if keep("\n".join(block)):
                 kept.extend(block)
             continue
         kept.append(lines[index])
         index += 1
-    portable: list[str] = []
-    for paragraph in "\n".join(kept).split("\n\n"):
-        if contains_product_runtime(paragraph):
-            removed += len(paragraph.splitlines())
-        else:
-            portable.append(paragraph)
-    return "\n\n".join(portable), removed
+    portable = [paragraph for paragraph in "\n".join(kept).split("\n\n") if keep(paragraph)]
+    return "\n\n".join(portable), removed, sorted(rejected_calls)
 
 
 def portable_strategy_content(
     content: str,
+    skills: Mapping[str, PortableSkill],
 ) -> tuple[str, list[dict[str, Any]], dict[str, Any] | None]:
     metadata, body = strategy_frontmatter(content)
     transformations: list[dict[str, Any]] = []
-    body, removed_lines = strip_product_runtime_content(body)
+    body, removed_lines, rejected_calls = strip_product_runtime_content(body, skills)
     body, host_count = re.subn(
         r"\bSmartPerfetto(?:\s+UI)?\b", "the portable runtime", body, flags=re.I
     )
     if removed_lines or host_count:
-        transformations.append(
-            {
-                "reason": "product runtime actions removed; concrete CLI contract added",
-                "removed_lines": removed_lines,
-                "replacements": host_count,
-            }
-        )
+        change: dict[str, Any] = {
+            "reason": "product runtime actions removed; concrete CLI contract added",
+            "removed_lines": removed_lines,
+            "replacements": host_count,
+        }
+        if rejected_calls:
+            change["rejected_skill_calls"] = rejected_calls
+        transformations.append(change)
     return body.strip() + "\n", transformations, sanitize_strategy_metadata(metadata)
 
 
@@ -2243,10 +2357,12 @@ def render_strategy_reference(
     source: Path,
     entry: dict[str, Any],
     commit: str,
+    *,
+    skills: Mapping[str, PortableSkill] = MappingProxyType({}),
 ) -> tuple[str, list[dict[str, Any]]]:
     content = source.read_text(encoding="utf-8")
     raw_metadata, _ = strategy_frontmatter(content)
-    portable, transformations, metadata = portable_strategy_content(content)
+    portable, transformations, metadata = portable_strategy_content(content, skills)
     if raw_metadata and "investigation_contract" in raw_metadata:
         # Validate the original contract before generic sanitization can drop fields.
         portable = render_investigation_contract(raw_metadata["investigation_contract"], source) + "\n" + portable
@@ -2266,7 +2382,7 @@ def render_strategy_reference(
         + "Portable methodology extracted from the SmartPerfetto strategy library.\n\n"
         + "`execute_sql(...)` examples mean to run the contained SQL through "
         "`perfetto_query.py`; they do not require a product tool.\n\n"
-        + portable_tool_notes(portable)
+        + portable_tool_notes(metadata_block + portable)
         + "## Portable execution commands\n\n"
         + "- List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.\n"
         + "- Run a Skill: `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill SKILL --output-dir DIR`.\n"
@@ -2315,6 +2431,11 @@ def generate_references(
     with tempfile.TemporaryDirectory(prefix=".generated-", dir=references_root) as temp:
         temporary_generated = Path(temp)
         commit = str(catalog["source"]["commit"])
+        raw_skills = {
+            str(entry["name"]): load_yaml(source / entry["source_path"])
+            for entry in catalog["skills"]
+        }
+        skills = portable_skill_runtime(catalog, raw_skills)
         for entry in catalog["skills"]:
             if entry["disposition"] not in {"exported", "merged"}:
                 continue
@@ -2328,9 +2449,8 @@ def generate_references(
                     }
                 )
             else:
-                raw = load_yaml(source / entry["source_path"])
                 content = render_skill_reference(
-                    raw,
+                    raw_skills[str(entry["name"])],
                     entry,
                     commit,
                     temporary_generated,
@@ -2344,7 +2464,7 @@ def generate_references(
             if entry["disposition"] not in {"exported", "merged"}:
                 continue
             content, changes = render_strategy_reference(
-                source / entry["source_path"], entry, commit
+                source / entry["source_path"], entry, commit, skills=skills
             )
             write_generated_text(
                 temporary_generated / destination_in_generated_root(entry["destination"]),

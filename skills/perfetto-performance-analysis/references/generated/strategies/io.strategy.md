@@ -11,6 +11,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `analyze_wait_chain(...)` steps mean: run the `process_thread_wait_sources_in_range` Skill for the same process and window, whose `wait_class` column uses the same labels as `wake_source_class`, and `blocking_chain_analysis` for the waker chain. The portable Skills aggregate waits by thread role; they do not return one thread's critical-path segments.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -257,6 +259,10 @@ Require IO-specific evidence before interpreting D/DK as disk latency. Correlate
 
 **Capabilities**: required=[none], optional=[disk_io, binder_ipc, cpu_scheduling]
 
+**Mandatory aspects**
+- io_evidence_ladder: I/O 场景必须先区分 block I/O、D-state、主线程文件 I/O、页缺失和外部存储/容量证据 (requires one of: invoke_skill(block_io_analysis), invoke_skill(io_pressure), invoke_skill(main_thread_file_io_in_range), invoke_skill(page_fault_in_range))
+- app_api_boundary: I/O 场景需要证明或明确缺失 SQLite/Room、SharedPreferences/QueuedWork、ContentProvider/CursorWindow 等 app API 边界 (requires one of: invoke_skill(main_thread_file_io_in_range), invoke_skill(blocking_chain_analysis))
+
 **Phase reminders**
 - io_evidence_ladder: 先区分 block I/O、D-state 等待、主线程文件 I/O、page fault、容量/损坏/外部存储线索。缺少路径、线程、栈或 block 层证据时只能写数据缺口，不能把系统 I/O 压力直接升级为业务根因。 工具: block_io_analysis, io_pressure, main_thread_file_io_in_range, page_fault_in_range
 - sqlite_sharedprefs_provider_boundary: SQLite/Room、SharedPreferences/QueuedWork、ContentProvider/CursorWindow/MediaProvider 是不同证明路径。必须有 slice/stack/Binder/provider-side evidence 才能命名；只有 D-state/fsync 时写成候选和补证建议。 工具: blocking_chain_analysis, main_thread_file_io_in_range, binder_analysis
@@ -280,9 +286,18 @@ I/O 场景的第一原则：先分证据类型，再命名根因。`D-state`、`
 
 **Phase 1 — I/O 证据类型门禁：**
 
+```
+invoke_skill("block_io_analysis")
+invoke_skill("io_pressure")
+```
 
 如果用户给出具体时间窗或主线程阻塞，需要补：
 
+```
+analyze_wait_chain({ process_name: "<包名>", main_thread: true, start_ts, end_ts })
+invoke_skill("main_thread_file_io_in_range", { start_ts, end_ts, package: "<包名>" })
+invoke_skill("page_fault_in_range", { start_ts, end_ts, package: "<包名>" })
+```
 
 输出时先写清楚证据属于哪一类：
 1. `block_io`: block 层请求排队、issue/complete 延迟、设备或文件系统压力。

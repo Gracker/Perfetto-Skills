@@ -1,7 +1,6 @@
 import hashlib
 import json
 from pathlib import Path
-import re
 import unittest
 
 import yaml
@@ -174,17 +173,48 @@ class V02ContractTest(unittest.TestCase):
         )
         self.assertIn("fixtures", fixture_manifest)
 
-    def test_portable_tool_equivalents_name_exported_skills(self) -> None:
+    def portable_skills(self) -> dict:
+        """The published runtime manifests, as the exporter's portable Skill view."""
         from tools import export_from_smartperfetto as exporter
 
-        exported = {path.stem for path in (GENERATED / "runtime/skills").glob("*.json")}
-        for tool, note in exporter.PORTABLE_TOOL_EQUIVALENTS.items():
-            named = set(re.findall(r"`([a-z0-9_]+)`", note)) & exported
-            self.assertTrue(named, f"{tool} note names no exported Skill")
-            for strategy in (GENERATED / "strategies").glob("*.md"):
-                text = strategy.read_text(encoding="utf-8")
-                if f"{tool}(" in text:
-                    self.assertIn(note, text, f"{strategy.name} names {tool} without its equivalent")
+        return {
+            path.stem: exporter.PortableSkill(
+                manifest["runtime_status"],
+                frozenset(item["name"] for item in manifest["inputs"]),
+            )
+            for path in (GENERATED / "runtime/skills").glob("*.json")
+            for manifest in [json.loads(path.read_text(encoding="utf-8"))]
+        }
+
+    def test_portable_tool_equivalents_name_executable_skills(self) -> None:
+        from tools import export_from_smartperfetto as exporter
+
+        skills = self.portable_skills()
+        for tool, equivalent in exporter.PORTABLE_TOOL_EQUIVALENTS.items():
+            for name in equivalent.skills:
+                self.assertEqual(skills[name].status, "executable", tool)
+                self.assertIn(f"`{name}`", equivalent.note, tool)
+        for strategy in (GENERATED / "strategies").glob("*.md"):
+            preamble, body = strategy.read_text(encoding="utf-8").split(
+                "## Portable execution commands", 1
+            )
+            for note in filter(None, exporter.portable_tool_notes(body).split("\n\n")):
+                self.assertIn(note, preamble, f"{strategy.name} lacks a portable tool note")
+
+    def test_kept_skill_calls_run_as_exported_skills(self) -> None:
+        """Every `invoke_skill(...)` left in a strategy is a real portable run."""
+        from tools import export_from_smartperfetto as exporter
+
+        skills = self.portable_skills()
+        calls = 0
+        for strategy in (GENERATED / "strategies").glob("*.md"):
+            text = strategy.read_text(encoding="utf-8")
+            calls += len(exporter.SKILL_CALL.findall(text))
+            self.assertEqual(exporter.skill_call_rejections(text, skills), [], strategy.name)
+        self.assertGreater(calls, 0)
+        general = (GENERATED / "strategies/general.strategy.md").read_text(encoding="utf-8")
+        self.assertIn("**决策树 — 按用户关注方向路由：**", general)
+        self.assertIn('`invoke_skill("cpu_analysis")`', general)
 
     def test_declared_modules_resolve_in_locked_official_index(self) -> None:
         runtime = GENERATED / "runtime"

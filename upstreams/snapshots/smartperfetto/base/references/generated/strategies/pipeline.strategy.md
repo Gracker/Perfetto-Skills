@@ -9,6 +9,10 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`detect_architecture` steps mean: run the `rendering_pipeline_detection` Skill; the product tool only executes that Skill and maps its pipeline result to an architecture type.
+
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -201,12 +205,14 @@ plan_template:
   mandatory_aspects:
   - id: architecture_detection
     match_keywords:
+    - detect_architecture
     - architecture
     - 架构
     - 检测
     - detection
+    suggestion: 管线识别场景建议包含架构自动检测阶段 (detect_architecture)
     required_expected_calls:
-    - {}
+    - tool: detect_architecture
   - id: pipeline_skill_invocation
     match_keywords:
     - pipeline
@@ -243,6 +249,10 @@ Distinguish GPU work/fence, transaction, latch, present and visibility. CPU slic
 
 **Capabilities**: required=[frame_rendering], optional=[surfaceflinger, gpu]
 
+**Mandatory aspects**
+- architecture_detection: 管线识别场景建议包含架构自动检测阶段 (detect_architecture) (required: detect_architecture)
+- pipeline_skill_invocation: 管线识别场景建议包含管线教学内容展示阶段 (pipeline skill invocation) (requires one of: invoke_skill(rendering_pipeline_detection), invoke_skill(render_pipeline_latency), invoke_skill(scene_reconstruction))
+
 **Phase reminders**
 - buffer_fence_lifecycle: BufferQueue/Fence 问题必须拆 producer queue/dequeue、BLAST transaction、SF acquire/latch、HWC present、release fence。queueBuffer 只证明 producer submission；HWC 不是 BufferQueue consumer，SF 才消费 buffer 后再交给 HWC/RenderEngine。 工具: buffer_transaction_lifecycle, fence_wait_decomposition, surfaceflinger_analysis, present_fence_timing
 - refresh_policy_boundary: 刷新率/ARR/VRR 是 policy/ranking 与设备能力问题。不要默认 16.6ms；先用 vsync_config / vsync_phase_alignment / FrameTimeline 识别实际 VSync 周期，再说明 setFrameRate/View.setRequestedFrameRate 只是 hint/vote。 工具: vsync_config, vsync_phase_alignment, surfaceflinger_analysis
@@ -272,6 +282,9 @@ feature，展示上游 Android 17 文章中的实际对象树，并路由到对�
    Producer、Surface/layer、BufferQueue 证据集。
 
 **Phase 1 — 自动检测：**
+```
+detect_architecture()
+```
 - 返回：architectureType（Standard/Flutter/Compose/WebView/Game 等）、confidence、metadata（engine、surfaceType 等）
 - 如果 confidence < 0.5：标注不确定性，进入 Phase 3 手动验证
 - 如果 confidence >= 0.5：直接进入 Phase 2

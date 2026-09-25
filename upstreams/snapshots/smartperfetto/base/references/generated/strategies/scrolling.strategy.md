@@ -9,6 +9,10 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`detect_architecture` steps mean: run the `rendering_pipeline_detection` Skill; the product tool only executes that Skill and maps its pipeline result to an architecture type.
+
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -427,6 +431,8 @@ plan_template:
     - mixed
     - 混合
     - 架构
+    suggestion: 非标准/混合渲染架构必须在 plan.expectedCalls 声明门禁返回的 requiredExpectedCalls。只声明当前 detect_architecture/triggerContext 已命中的架构
+      Skill；未命中的条件分支不得加入 plan。执行时拆 HWUI host 链路 + 当前 producer 链路，再按证据合并因果。
     conditional_required_expected_calls:
     - trigger_keywords:
       - Flutter
@@ -554,8 +560,20 @@ Apply when: Applies when citing input-frame association, input backlog or input-
 
 检查 `global_context` 数据源中的标志。在**结论概述段**（帧率/掉帧率数据紧后）用粗体标注，格式如下：
 
+| 标志 | 条件 | 在结论概述段标注 |
+|------|------|----------------|
+| `video_during_scroll = 1` | 滑动期间有视频解码活跃 | ⚠️ **视频播放并行**：滑动期间检测到视频解码活跃，workload_heavy 帧的负载归因不能全部归因于滑动渲染 |
+| `interpolation_active = 1` | 大量 frame_id=-1 的插帧 | ⚠️ **OEM 插帧模式活跃**：统计指标（帧率/掉帧率）可能受插帧影响失真 |
+| `thermal_trending = 1` | trace 尾部频率天花板明显低于峰值 | ⚠️ **持续限频**：先按系统侧限频标注；要判定是否真由热管理触发、以及限频前是谁在跑，用 `invoke_skill("cpu_frequency_limit_attribution")`，无 cooling/温度证据时不能写成热降频 |
+| `background_cpu_heavy = 1` | 非 App 大核占比 >60% | ⚠️ **后台 CPU 干扰**：{non_app_big_core_pct}% 的大核 CPU 被非前台进程占用。需用 `execute_sql` 查询 top 占用进程 |
+
 ⚠️ 全局上下文标志**不改变 reason_code 分类**，仅在结论概述段增加修饰标注。多个标志同时为 1 时全部标注。
 <!-- /strategy-detail -->
+
+<!-- strategy-detail id="architecture_branches" title="滑动混合架构和 producer 分支" keywords="Flutter,TextureView,WebView,React Native,GLSurfaceView,Compose,mixed,architecture" -->
+**Phase 1.5 — 架构感知分支（基于 detect_architecture 结果）：**
+
+`detect_architecture` 的 `primary_pipeline_id` 是当前选中的主 pipeline，也是初始 plan hard gate 的架构事实。`candidates_list` 是排序候选和检测审计证据：runner-up 单独出现不等于该链路已激活，不得因此自动加入对应专属 Skill。只有 selected pipeline 明确为 mixed、结构化架构字段或用户问题明确要求该链路，或执行阶段新增 direct evidence 确认第二 producer 时，才按 **multi-pipeline** 处理；后者通过 `revise_plan` 最小补充，不在初始 plan 预占所有候选。
 
 **混合出图规则：**
 1. **先分开看 HWUI host 链路**：始终调用 `scrolling_analysis` 获取宿主 App FrameTimeline、MainThread/RenderThread、SF 责任分布。
@@ -566,7 +584,24 @@ Apply when: Applies when citing input-frame association, input backlog or input-
 
 **输出必须分三段**：`HWUI host 证据`、`嵌入/独立 producer 证据`、`合并因果判断`。不能只说“这是 Flutter/WebView/RN 架构所以改用某一个 skill”，也不能只说“FrameTimeline 正常所以无卡顿”。
 
+| 架构 | 调整动作 |
+|------|---------|
+| **selected ANDROID_VIEW_MIXED / direct evidence 已确认多链路** | 先 `scrolling_analysis` 分析 HWUI host，再只对已确认激活的链路补 skill：Flutter → `flutter_scrolling_analysis`，WebView → `webview_drawfunctor_jank_chain`，TextureView → `textureview_producer_frame_timing`，RN → RN 专属 skill，GL/Game → GL/Game 专属 skill。最后检查 host/producer/SF 三者是否有依赖；不得把所有 runner-up 逐个执行一遍 |
+| **Flutter** | 不替代 host 分析。先用 `scrolling_analysis` 看宿主 HWUI/SF，再用 `invoke_skill("flutter_scrolling_analysis")` 看 1.ui/1.raster。Flutter TextureView 还要补 `textureview_producer_frame_timing` 或 `frame_production_gap` 看宿主 RT updateTexImage/帧吞噬。输入关联只能落到宿主 UI 线程的 doFrame，不是 Flutter raster 帧：Flutter SurfaceView 目标进程没有 app 层 FrameTimeline/present 链接时，输入到上屏延迟不可测量；TextureView 由推测关联推出的 e2e 只是候选值 |
+| **WebView GL Functor / TextureView** | 先用 `scrolling_analysis` 获取宿主帧概览，再调用 `invoke_skill("webview_drawfunctor_jank_chain", {process_name, start_ts, end_ts})` 关联 V8/Chromium/Functor 与宿主帧。若是 WebView SurfaceTexture/X5/UC 内核，补 `textureview_producer_frame_timing` 或 `frame_production_gap` 检查生产端帧吞噬 |
+| **SurfaceTexture / TextureView** | 先用 `scrolling_analysis` 看宿主 HWUI。SurfaceTexture 出图时注意**单 buffer 帧吞噬**：producer 写入新帧覆盖了 consumer 尚未读取的旧帧。表现为帧间 gap 但无 jank 标记。可调用 `invoke_skill("textureview_producer_frame_timing", {process_name, start_ts, end_ts})` 和 `invoke_skill("frame_production_gap")` 检测生产端帧间隔与宿主消费 gap |
+| **React Native Old Architecture** | 先用 `scrolling_analysis` 看 HWUI host，再调用 `invoke_skill("rn_bridge_to_frame_jank", {process_name, start_ts, end_ts})` 检查 JS/BatchedBridge/UIManager 工作是否与掉帧帧重叠 |
+| **React Native Fabric / JSI** | 先用 `scrolling_analysis` 看 HWUI host，再调用 `invoke_skill("rn_fabric_render_jank", {process_name, start_ts, end_ts})` 检查 Fabric commit、Mounting、JSI/TurboModule 同步工作是否拖慢帧 |
+| **GLSurfaceView / NativeActivity / OpenGL ES** | 先用 `scrolling_analysis` 看宿主/SF 消费端；再调用 `invoke_skill("gl_standalone_swap_jank", {process_name, start_ts, end_ts})` 检查应用自管 swap/present 间隔 |
+| **标准 HWUI** | 使用标准 `scrolling_analysis`。当 `type=STANDARD`、selected `primary_pipeline_id` 为 `ANDROID_VIEW_STANDARD_*`，且没有结构化字段、用户意图或 direct evidence 激活 producer/嵌入链路时，不要把 Flutter、TextureView、SurfaceView、WebView、RN、GL/Game 等架构专属 Skill 预先写入 `expectedCalls`；runner-up candidate 不改变这一点 |
+| **Compose** | 使用标准 `scrolling_analysis`。如果检测到 Compose 架构，注意 Recomposition* slices 可能是卡顿主因。LazyColumn/LazyRow 的 prefetch 和 compose 阶段如果超时会导致掉帧。可调用 `compose_recomposition_hotspot` 检测过度重组；新版会在 FrameTimeline 可用时输出 recomposition→frame 重叠证据 |
+
 **Phase 1.6 — 进程身份交叉确认（当 process_name 可能不可靠时）：**
+
+系统会在进程级 Skill 执行前自动做身份准入。满足任一条件时，若准入返回 ambiguous/blocked，调用 `invoke_skill("process_identity_resolver", { process_name, start_ts, end_ts })` 查看候选进程，再继续深钻：
+- `process_name` 来自自动焦点检测，而不是用户明确指定
+- 用户反馈 Perfetto UI 里进程名不对、线程名/layer 看起来对
+- `scrolling_analysis`、架构专属 Skill 或自定义 SQL 返回空结果，但 FrameTimeline/layer/线程名明显有目标应用信号
 
 处理规则：
 - 使用 resolver 第一名候选的 `recommended_process_name_param` 作为后续 `scrolling_analysis` / `jank_frame_detail` / `frame_blocking_calls` 的 `process_name`
@@ -592,6 +627,18 @@ Apply when: Applies when citing input-frame association, input backlog or input-
 **Phase 1.8 — 帧内指标 / GPU / CPU 利用率补充（按需执行）：**
 
 当用户追问"每帧 CPU/UI 时间"、"GPU work period"、"Mali power state"、"是 CPU 还是 GPU 限制"时，优先调用已落地的 B-tier atomic skill：
+
+| 问题 | 调用 | 说明 |
+|---|---|---|
+| 每帧 deadline overrun | `invoke_skill("frame_overrun_summary")` | 基于 `android.frames.per_frame_metrics`，列出 overrun 帧 |
+| 每帧 CPU 时间 | `invoke_skill("cpu_time_per_frame")` | 区分帧窗口内 CPU 消耗 |
+| UI thread 时间分解 | `invoke_skill("frame_ui_time_breakdown")` | 看 UI thread 在每帧的耗时分布 |
+| 每帧阻塞调用 | `invoke_skill("frame_blocking_calls")` | 将掉帧帧与 Binder/GC/锁竞争/futex/文件 IO 阻塞区间做重叠匹配 |
+| CPU process/thread 周期利用率 | `invoke_skill("cpu_process_utilization_period")` / `invoke_skill("cpu_thread_utilization_period")` | 用于 workload_heavy、后台抢占、线程归因 |
+| 进程 slice CPU 热点 | `invoke_skill("process_slice_cpu_hotspots", { process_name, start_ts, end_ts })` | 用 `thread_state=Running` 求交，确认掉帧窗口内真正消耗 CPU 的 named slice |
+| CPU cluster 拓扑 | `invoke_skill("cpu_cluster_mapping_view")` | 解释大小核分布，辅助 small_core_placement |
+| GPU work period | `invoke_skill("android_gpu_work_period_track")` | 只有 `gpu_work_period` capability 可用时才做 GPU active region 判断 |
+| Mali power state | `invoke_skill("mali_gpu_power_state")` | Mali 设备专用；无数据时标注设备/trace 不支持 |
 
 这些是补充证据，不替代 Phase 1.9 对可行动根因的按需深钻。`prediction_error`、`display_hal`、`app_jank_unattributed`、`frame_timeline_unattributed` 按下述 terminal-code 例外处理。若 Trace 数据完整度提示 `gpu_work_period` / `cpu_freq_idle` 缺失，结论中必须说明 GPU/CPU 供应侧判断的可信度下降。
 
@@ -645,6 +692,9 @@ Apply when: Applies when citing input-frame association, input backlog or input-
 
 本节只检查 FrameTimeline 区间的正间隙。它不等同于主线程两次 doFrame 之间的工作，不能覆盖所有未出帧时间，也不能代替前述主线程取证。
 
+```
+invoke_skill("frame_production_gap", { process_name: "<包名>", start_ts: "<滑动起始>", end_ts: "<滑动结束>" })
+```
 
 返回结果包含：
 - `gap_overview`：Gap 总数、观测统计（ui_no_frame / rt_no_drawframe / drawframe_observed）、最长 Gap
@@ -687,6 +737,15 @@ Phase 1 的 `batch_frame_root_cause` 已包含每个**已分析帧**的完整统
 
 `frame_blocking_calls` 是 Phase 1.9 的帧内阻塞证据补充，不占 `jank_frame_detail` 的 2 帧上限。遇到 Binder/IO/futex/锁相关根因时，优先用它确认阻塞调用是否真的与掉帧帧重叠。
 
+```
+invoke_skill("jank_frame_detail", {
+  start_ts: "<帧的start_ts>",
+  end_ts: "<帧的end_ts>",
+  jank_type: "<帧的jank_type>",
+  jank_responsibility: "<帧的jank_responsibility>",
+  package: "<包名>"
+})
+```
 
 **Phase 3 — 综合结论（全量掉帧类型统计 + 明示覆盖率的根因分析）：**
 
@@ -846,5 +905,8 @@ LIMIT 20
 - `prediction_error` / `Display HAL` 直接按 SF scheduler / HAL 呈现边界解释，不调用 App 帧内工具。Prediction Error 只允许带范围限定地说明“孤立错误通常不代表用户可感知 App 卡顿”；密集/连续样本、present gap 和 Dropped Frame 仍需分别报告，不能称为统计噪声。
 - `frame_timeline_unattributed` 直接报告 FrameTimeline 的 Unknown Jank 与当前证据边界；不能写成噪声、假帧或不可感知，也不因占比高自动追加逐帧工具。
 - `APP` / `HIDDEN` / `UNKNOWN` 只有在用户要求底层原因、trace 具备相应线程证据且当前 SQL 未能解释时，才选 1 个最严重代表帧调用：
+```
+invoke_skill("jank_frame_detail", { start_ts: "<帧的start_ts>", end_ts: "<帧的end_ts>", package: "<包名>" })
+```
 - 没有可补齐证据时直接说明边界，不得固定跑 top 5，也不得为了完成流程调用工具。
 <!-- /strategy-detail -->

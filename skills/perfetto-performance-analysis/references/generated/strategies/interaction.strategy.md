@@ -9,6 +9,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -250,6 +252,10 @@ Use Binder, lock, queue, input dispatch and display dependencies only where they
 
 **Capabilities**: required=[input_latency, frame_rendering], optional=[cpu_scheduling, binder_ipc, surfaceflinger]
 
+**Mandatory aspects**
+- input_latency_stage_breakdown: 交互输入场景必须拆分 dispatch、handling、ACK，并说明 total_latency_dur 是否只覆盖 dispatch-to-ACK (requires one of: invoke_skill(click_response_analysis), invoke_skill(input_events_in_range))
+- focus_stale_channel_boundary: 交互输入场景需要覆盖或明确缺失 stale、focus/window、InputChannel、iq/oq/wq 和 FINISHED ACK 证据边界 (requires one of: invoke_skill(click_response_detail), invoke_skill(input_events_in_range))
+
 **Phase reminders**
 - input_ack_queue_boundary: 先区分 completed android.input 事件的 dispatch/handling/ACK 总耗时与未完成 FINISHED 的队列背压。wq 增长只能说明目标连接尚未 ACK；必须结合 App 主线程、InputDispatcher、dumpsys/logcat 或窗口证据，不能直接命名 Binder、App 代码或 InputDispatcher 根因。 工具: click_response_analysis, click_response_detail, input_events_in_range
 - focus_window_stale_boundary: stale drop、no-focused-window、InputChannel 创建/断连和 target-window 选择是不同对象。trace 只含 completed input events 时要写成证据缺口；需要 WindowManager/InputDispatcher logcat、dumpsys input 或窗口拓扑证据才能定因。 工具: input_events_in_range
@@ -267,6 +273,18 @@ Use Binder, lock, queue, input dispatch and display dependencies only where they
 **Phase 2 — 逐事件深钻（最多 5 个慢事件）：**
 
 从 `slow_events` 中选取延迟最大的 5 个事件，对每个事件调用：
+```
+invoke_skill("click_response_detail", {
+  event_ts: "<事件的 event_ts>",
+  event_end_ts: "<事件的 event_end_ts>",
+  total_ms: <总延迟ms>,
+  dispatch_ms: <分发延迟ms>,
+  handling_ms: <处理延迟ms>,
+  event_type: "<事件类型>",
+  event_action: "<事件动作>",
+  process_name: "<进程名>"
+})
+```
 返回每个事件的：
 - `quadrant`：四象限分析（Q1 大核运行 / Q2 小核运行 / Q3 Runnable / Q4 Sleeping）
 - `cpu_core`：CPU 大小核占比

@@ -9,6 +9,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -262,6 +264,9 @@ Keep memory growth, leakage, OOM/LMK, reclaim and GC evidence distinct. A high a
 
 **Capabilities**: required=[gc_memory, memory_pressure], optional=[cpu_scheduling, binder_ipc, battery_counters]
 
+**Mandatory aspects**
+- memory_trend_and_gc: 内存场景建议包含内存使用趋势和 GC 分析阶段 (memory_analysis) (required: invoke_skill(memory_analysis))
+
 **Final report contract summary**
 - 内存证据范围
 - 内存类型拆分
@@ -289,17 +294,31 @@ Keep memory growth, leakage, OOM/LMK, reclaim and GC evidence distinct. A high a
 写 execute_sql 时优先使用（完整列表见方法论模板）：`android_garbage_collection_events`、`android_oom_adj_intervals`、`android_screen_state`
 
 **Phase 1 — 内存概览（1 次调用）：**
+```
+invoke_skill("memory_analysis")
+```
 返回：内存使用趋势、RSS/PSS 分布、内存分类统计。
 
 **Phase 2 — LMK 分析（如果有 LMK 事件）：**
+```
+invoke_skill("lmk_analysis")
+```
 返回：LMK 事件列表、被杀进程、OOM-adj 分布、重启循环检测。
 
 如果需要更轻量的事件/分数视图，或 `lmk_analysis` 结果为空但用户明确问 OOM/adj：
+```
+invoke_skill("lmk_kill_attribution")
+invoke_skill("oom_adjuster_score_timeline")
+invoke_skill("memory_rss_high_watermark")
+```
 - `lmk_kill_attribution`：LMK 事件、被杀进程、adj、oom_score_adj
 - `oom_adjuster_score_timeline`：进程 OOM adj 分数时间线
 - `memory_rss_high_watermark`：RSS high watermark，辅助识别增长型内存压力
 
 需要解释进程为什么被杀、在后台停留多久，或 adj 变化背后的 framework 角色时：
+```
+invoke_skill("android_process_state_residency", { process_name })
+```
 - `process_state_residency`：各 framework 进程状态（TOP、FOREGROUND_SERVICE、CACHED_* 等）在存活时间内的驻留时长和占比
 - `process_state_transitions`：状态切换序列、上一状态停留时长、OomAdjuster 原因
 - `process_state_last_observed`：每个进程最后一次观测到的状态；进程已结束时就是它结束前所处的状态

@@ -9,6 +9,10 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`detect_architecture` steps mean: run the `rendering_pipeline_detection` Skill; the product tool only executes that Skill and maps its pipeline result to an architecture type.
+
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -48,13 +52,15 @@ plan_template:
   mandatory_aspects:
   - id: architecture_detection
     match_keywords:
+    - detect_architecture
     - architecture
     - 架构
     - pipeline
     - 管线
     - 教学
+    suggestion: 教学场景建议包含架构检测阶段 (detect_architecture)
     required_expected_calls:
-    - {}
+    - tool: detect_architecture
   - id: pipeline_teaching
     match_keywords:
     - teach
@@ -114,6 +120,15 @@ Keep implementation/source explanations separate from proof that an event occurr
 | 通用概念 | 用户提到"VSync"、"Choreographer"、"SurfaceFlinger" 等术语 | 概念解释 → 在管线中的位置 → 与 trace 的关联 |
 
 **Phase 2 — 架构检测与 observed-flow 教学：**
+```
+invoke_skill('rendering_pipeline_detection', { package: <package hint> })
+# 读取 pipeline_bundle: detection + teachingContent + pinInstructions + activeRenderingProcesses
+# 再基于 selection / visible window / package hint 查询 observedFlow.lanes/events
+# 对关键 rendering event 追加 bounded scheduler 事实：
+#   - 唤醒行（Running 行之前、或睡眠之后的第一条 R/R+ 行）上的 waker_id -> direct_wakeup / wakes_to
+#     （Running 行本身不带 waker；前一条 R/R+ 没有 waker 表示被抢占而不是被唤醒）
+#   - sched.thread_executing_span_with_slice._critical_path_stack 合并后的其他线程段 -> critical_path_segment / critical_path_to
+```
 - 先展示当前 trace 中真实观测到的 lanes/events，再展示 Mermaid
 - `primary_pipeline_id` 只是入口，不是最终单选结论
 - 如果 candidates/features 暗示 WebView/Flutter/RN/GL/TextureView/SurfaceView 等混合出图，先分开展示 host HWUI 与 producer 链路
@@ -201,6 +216,14 @@ Android 12—17 差异。框架/engine/provider 版本必须单独记录。
 
 当你完成管线教学内容后，如果已检测到管线类型并获取了关键 Slice 列表，调用以下 skill 将关键 Slice 高亮为 Perfetto 时间线 overlay，帮助用户对照理论管线图与实际 trace。这个 overlay 结果应进入 observed-flow 语义：命中的 slice 是事实，未命中的 slice 是 warning，不是静态模板事实。
 
+```
+invoke_skill('pipeline_key_slices_overlay', {
+  slice_names: "'Choreographer#doFrame','DrawFrame','syncFrameState',...",
+  package: <package hint>,
+  start_ts: <分析区间起始>,
+  end_ts: <分析区间结束>
+})
+```
 
 注意：`slice_names` 参数使用 SQL IN 列表格式，每个名称用单引号包裹、逗号分隔。从管线教学的 `key_slices` 列表中提取名称。
 

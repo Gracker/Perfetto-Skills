@@ -9,6 +9,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -431,8 +433,16 @@ Apply when: Applies when the question concerns CPU frequency limits or caps, the
 **Phase 1 — Wattson rail/thread 归因（数据可用时）：**
 
 复杂功耗问题优先使用总览入口：
+```
+invoke_skill("power_consumption_overview", { package: "<包名>" })
+```
 
 需要拆开看时再调用：
+```
+invoke_skill("power_rails_energy_breakdown")
+invoke_skill("wattson_rails_power_breakdown")
+invoke_skill("wattson_thread_power_attribution", { process_name: "<包名>" })
+```
 
 分析顺序：
 1. 看 rail 总能耗排序：CPU/GPU/DDR/Modem 哪个是主耗能源
@@ -441,14 +451,39 @@ Apply when: Applies when the question concerns CPU frequency limits or caps, the
 
 **Phase 2 — 启动期功耗（用户提到启动耗电时）：**
 
+```
+invoke_skill("wattson_app_startup_power", { package: "<包名>" })
+invoke_skill("app_process_starts_summary")
+```
 
 把启动窗口能耗与启动类型、进程创建、CPU/DVFS 状态关联。不能只给总能耗，必须说明能耗集中在哪个阶段或线程。
 
 **Phase 3 — 电池/Doze/Wakelock fallback（Wattson 数据缺失或用户问待机耗电时）：**
 
 掉电/待机耗电优先使用组合入口：
+```
+invoke_skill("battery_drain_attribution", { package: "<包名>" })
+```
 
 需要拆开看时再调用：
+```
+invoke_skill("battery_drain_rate_summary")
+invoke_skill("battery_charge_timeline")
+invoke_skill("battery_doze_state_timeline")
+invoke_skill("wakeup_frequency_summary")
+invoke_skill("android_kernel_wakelock_summary")
+invoke_skill("suspend_wakeup_analysis")
+invoke_skill("screen_off_background_cpu_attribution", { package: "<包名>" })
+invoke_skill("modem_network_correlation_summary")
+invoke_skill("android_app_background_power_state", { package: "<包名>" })
+```
+
+`android_app_background_power_state`（也是 `battery_drain_attribution` 的 `app_background_power` 步骤）是应用级的三层可选证据，先读 `power_state_capability` 再解读：
+- App wakelock（`app_wakelock_summary`，或旧 trace processor 上的 `app_wakelock_summary_battery_stats`）是 PowerManager 持锁，按 uid + tag；它和 `android_kernel_wakelock_summary` 的 kernel wakeup source 是两层，一个应用 wakelock 可以不对应任何可见的 kernel wakelock，不要相加或互相替代。
+- Standby bucket（`standby_bucket_residency`）说明配额环境：长时间 RARE/RESTRICTED 能解释 job/alarm/网络被推迟或合并，ACTIVE/WORKING_SET 下仍频繁唤醒则更可能是应用自身行为。
+- Freezer（`freezer_summary` 或 `freezer_summary_slices`，按有数据的来源二选一）：冻结期间进程不执行代码，频繁解冻（binder、广播、服务绑定等原因）会把后台 CPU 和唤醒带回来；statsd 与 slice 两种来源的解冻原因写法不同（`UFR_BINDER_TXNS` 与 `binder_txns`），引用时保留原文。
+- 需要确认应用当时是否真在后台时，用 `invoke_skill("android_process_state_residency", { process_name: "<包名>" })` 看 framework 进程状态驻留（TOP、FOREGROUND_SERVICE、CACHED_* 等）：前台服务期间的持锁和唤醒与 cached 状态下的持锁是两类问题。
+- `runtime_lacks_*` 表示 trace 有数据但 trace processor 早于对应模块，只能写数据存在和版本缺口；`no_*_data` 表示没采集（statsd atom `app_standby_bucket_changed` / `app_freeze_changed`、atrace `power`/`am`），写成采集建议。
 
 输出要明确标注：这是状态/事件链证据，能说明“是否频繁唤醒、是否无法进入 Doze、是否有 wakelock”，但不是 rail 级功耗量化。
 
@@ -456,6 +491,13 @@ Apply when: Applies when the question concerns CPU frequency limits or caps, the
 
 当用户提到 JobScheduler、WorkManager、Foreground Service/FGS、UIDT、quota、pending reason、stop reason、AlarmManager、allow-while-idle、wakeup 或 Android vitals 时，在功耗归因前先做治理边界拆分：
 
+```
+invoke_skill("android_job_scheduler_events", { package: "<包名>" })
+invoke_skill("android_kernel_wakelock_summary")
+invoke_skill("wakeup_frequency_summary")
+invoke_skill("suspend_wakeup_analysis")
+invoke_skill("battery_doze_state_timeline")
+```
 
 报告必须分清这些证据面：
 
@@ -477,6 +519,9 @@ Apply when: Applies when the question concerns CPU frequency limits or caps, the
 **Phase 4 — 限频归因 / 温控 / 频率交叉验证（按需）：**
 
 用户问“谁把频率限住了”“限频之前跑了什么”“有没有异常线程”时，入口是：
+```
+invoke_skill("cpu_frequency_limit_attribution", { package: "<包名>", lookback_ms: 10000, who_window_ms: 2000, max_episodes: 3 })
+```
 一次返回：data_check、限频总览、cooling device 总览、按受限程度排序的 capped episodes，每个 episode 的 who_cooling / who_daemon / temperature_context / before_workload / before_anomalies / non_cpu_heat_context / who_verdict，以及 vendor_signal_discovery（候选 counter track、slice、进程及其计数与时间范围）。
 
 **(a) 先读共性证据（各平台通用）**

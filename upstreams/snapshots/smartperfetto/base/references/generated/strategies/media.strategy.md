@@ -9,6 +9,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -123,6 +125,10 @@ Follow buffer queue, service/Binder, GPU and display dependencies for underrun o
 
 **Capabilities**: required=[cpu_scheduling], optional=[frame_rendering, gpu, gpu_work_period, power_rails]
 
+**Mandatory aspects**
+- codec_activity: 媒体场景必须检查 codec/buffer 活动或明确说明 trace 缺少媒体信号 (required: invoke_skill(media_codec_activity))
+- render_or_power_context: 媒体卡顿/耗电问题需要补充渲染、GPU 或功耗上下文 (requires one of: invoke_skill(gl_standalone_swap_jank), invoke_skill(android_gpu_work_period_track), invoke_skill(power_consumption_overview))
+
 **Phase reminders**
 - codec_activity: 优先调用 media_codec_activity 检查 codec/buffer 事件。该 skill 基于 slice 信号；缺 codec trace 时必须标注数据不足。 工具: media_codec_activity
 - media_rendering_power: 视频/媒体卡顿需要结合 frame/GL/GPU/power 证据：必要时调用 scrolling_analysis、gl_standalone_swap_jank、android_gpu_work_period_track、power_consumption_overview。 工具: media_codec_activity, gl_standalone_swap_jank, android_gpu_work_period_track, power_consumption_overview
@@ -138,10 +144,19 @@ Follow buffer queue, service/Binder, GPU and display dependencies for underrun o
 
 **Phase 1 — Codec 活动与慢事件：**
 
+```
+invoke_skill("media_codec_activity", { package: "<包名>", start_ts: "<start>", end_ts: "<end>" })
+```
 
 重点看 `dequeueInputBuffer` / `queueInputBuffer` / `dequeueOutputBuffer` / `releaseOutputBuffer` 是否出现长耗时，以及 codec 线程是否集中在某个窗口。
 
 **Phase 2 — 渲染/GPU/功耗上下文：**
+
+| 问题 | 调用 |
+|---|---|
+| 视频掉帧但 codec 正常 | `invoke_skill("gl_standalone_swap_jank")` 或按场景切回 scrolling strategy |
+| GPU active region 连续或异常 | `invoke_skill("android_gpu_work_period_track")` |
+| 媒体播放耗电 | `invoke_skill("power_consumption_overview")` |
 
 输出时必须标注媒体 trace 信号来源。如果 codec slices 不存在，只能说明当前 trace 不支持媒体归因，并给出采集建议。
 <!-- /strategy-detail -->

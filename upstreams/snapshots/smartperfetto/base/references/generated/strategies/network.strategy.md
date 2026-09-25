@@ -11,6 +11,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `analyze_wait_chain(...)` steps mean: run the `process_thread_wait_sources_in_range` Skill for the same process and window, whose `wait_class` column uses the same labels as `wake_source_class`, and `blocking_chain_analysis` for the waker chain. The portable Skills aggregate waits by thread role; they do not return one thread's critical-path segments.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -268,6 +270,10 @@ Separate packet timing, retransmission, request queueing and app callback servic
 
 **Capabilities**: required=[none], optional=[network_packets, power_rails, battery_counters]
 
+**Mandatory aspects**
+- network_data: 网络场景必须先调用 network_analysis 或明确说明 network_packets 数据缺失 (required: invoke_skill(network_analysis))
+- network_power_context: 网络耗电/唤醒问题需要补充功耗或唤醒上下文 (requires one of: invoke_skill(battery_drain_attribution), invoke_skill(power_consumption_overview))
+
 **Final report contract summary**
 - 请求阶段证据边界
 - 网络栈/版本策略边界
@@ -282,6 +288,9 @@ Separate packet timing, retransmission, request queueing and app callback servic
 
 **Phase 1 — 网络流量/协议/接口总览：**
 
+```
+invoke_skill("network_analysis", { package: "<包名>" })
+```
 
 重点看接口分布、方向、协议、socket tag、活跃周期。如果用户关心具体时间段，必须传入 `start_ts` / `end_ts`。
 
@@ -320,9 +329,15 @@ Separate packet timing, retransmission, request queueing and app callback servic
 
 **Phase 2 — 网络耗电/唤醒链路：**
 
+```
+invoke_skill("battery_drain_attribution", { package: "<包名>", start_ts: "<start>", end_ts: "<end>" })
+```
 
 如果 power_rails 可用，再补：
 
+```
+invoke_skill("power_consumption_overview", { package: "<包名>", start_ts: "<start>", end_ts: "<end>" })
+```
 
 输出时明确区分：
 1. 网络包/活跃周期证据

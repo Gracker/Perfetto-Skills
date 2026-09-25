@@ -9,6 +9,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -464,6 +466,9 @@ Use launch phase, Binder, lock, GC, IO and render dependencies when supported. E
 写 execute_sql 时优先使用（完整列表见方法论模板）：`android_startup_opinionated_breakdown`、`android_garbage_collection_events`、`android_oom_adj_intervals`、`android_screen_state`、`slice_self_dur`、`cpu_process_utilization_in_interval(ts, dur)`、`cpu_frequency_counters`、`android_dvfs_counter_stats`
 
 **Phase 1 — 获取启动概览：**
+```
+invoke_skill("startup_analysis", { enable_startup_details: false })
+```
 返回：启动事件列表、延迟归因分析、主线程热点操作（含 self_dur_ms）、文件 IO、Binder 调用、**主线程状态分布（含 blocked_functions）**、GC 事件、数据质量检查、调度延迟。
 从结果中提取 startup_id、start_ts、end_ts、dur_ms、package、startup_type 参数。
 
@@ -487,6 +492,16 @@ Use launch phase, Binder, lock, GC, IO and render dependencies when supported. E
 - **禁止反向误判**：如果 `startup_analysis.get_startups` 显示 `type_display=冷启动`，且 `startup_breakdown` 包含 `bind_application` 耗时，后续任何 raw SQL 只有在使用 overlap/扩展窗口并命中同一进程主线程后，才允许挑战冷启动结论。窄窗口 0 行只能写成“该 SQL 口径未覆盖 bindApplication 起点”，不能写成“bindApplication 不存在”。
 
 **Phase 2 — 获取启动详情（需要传参）：**
+```
+invoke_skill("startup_detail", {
+  startup_id: <从 Phase 1 获取>,
+  start_ts: "<启动开始时间戳>",
+  end_ts: "<启动结束时间戳>",
+  dur_ms: <启动耗时ms>,
+  package: "<包名>",
+  startup_type: "<cold/warm/hot>"
+})
+```
 返回：四象限分析（Q1-Q4）、CPU 大小核占比、CPU 频率统计、可操作热点 Top5（含 self_ms）、**主线程状态分布（含 blocked_functions）**、**按窗口内裁剪时长选出的热点 Slice 样本及其逐原生 slice/thread 状态分布、覆盖率和采样规模**、**启动关键任务（全线程四象限+摆核）**、**线程等待与观测唤醒关系（并非已证实因果链）**、Binder/IO/调度延迟详情。
 
 **Phase 2.5 — 获取详细数据（必须执行，不可跳过）：**
@@ -571,6 +586,13 @@ Use launch phase, Binder, lock, GC, IO and render dependencies when supported. E
 
 ⚠️ **时序说明**：Phase 2.56 先于 `startup_slow_reasons`（Phase 2.6）执行，上述排除场景的信号（dex2oat/profile 等）在 Phase 2.56 执行时尚不可用。因此：先执行 `memory_pressure_in_range` 获取内存压力数据，在结论阶段（Phase 3）再与 Phase 2.6 信号联合解读。
 
+```
+invoke_skill("memory_pressure_in_range", {
+  start_ts: "<启动开始时间戳>",
+  end_ts: "<启动结束时间戳>",
+  package: "<包名>"
+})
+```
 
 **观测与归因边界**：
 
@@ -597,6 +619,19 @@ Use launch phase, Binder, lock, GC, IO and render dependencies when supported. E
 - `battery_counters` 可用 → 可以看启动前后电池采样趋势
 - 任一关键 capability 缺失 → 结论中加“数据采集建议”，不要把空表当成“启动不耗电”
 
+```
+invoke_skill("wattson_app_startup_power", { package: "<包名>" })
+invoke_skill("battery_charge_timeline", {
+  start_ts: "<启动开始时间戳>",
+  end_ts: "<启动结束时间戳>"
+})
+```
+
+交叉验证：
+- 若启动窗口能耗高，再调用 `app_process_starts_summary` 判断是否有进程反复拉起
+- 若 DVFS/温控相关，再调用 `thermal_throttling`；要判定“谁限的频、限频前跑了什么”用 `invoke_skill("cpu_frequency_limit_attribution")`（`android_dvfs_counter_stats` 只覆盖 Pixel/Tensor 的 counter 命名，其他平台通常为空）
+- 若 GPU 首帧渲染占比高且 `gpu_work_period` 可用，再调用 `android_gpu_work_period_track`
+
 输出必须标明可信度：Wattson 量化归因 / 电池采样趋势 / 数据不足。
 
 **冷启动专项诊断（冷启动必须执行 ⚠️）：**
@@ -608,6 +643,9 @@ Use launch phase, Binder, lock, GC, IO and render dependencies when supported. E
 3. **结论中必须提及**：JIT 和类加载的影响评估结果，作为冷启动特有的排除/确认因素
 
 **Phase 2.6 — 启动慢原因检测与交叉验证（冷启动必须执行 ⚠️）：**
+```
+invoke_skill("startup_slow_reasons")
+```
 检测 20 种已知启动慢原因（SR01-SR20），与自有分析交叉验证。
 
 **SR 分类概览**（v3.0）：

@@ -91,6 +91,119 @@ class PortableToolNotesTest(unittest.TestCase):
         )
         self.assertEqual(exporter.portable_tool_notes("run blocking_chain_analysis"), "")
         self.assertEqual(exporter.portable_tool_notes("analyze_wait_chains_later"), "")
+        self.assertIn(
+            "rendering_pipeline_detection", exporter.portable_tool_notes("先 `detect_architecture`")
+        )
+
+
+class PortableSkillCallTest(unittest.TestCase):
+    """Strategy text that routes through exported Skills stays readable."""
+
+    SKILLS = {
+        "cpu_analysis": exporter.PortableSkill("executable", frozenset({"package"})),
+        "process_slice_cpu_hotspots": exporter.PortableSkill(
+            "executable", frozenset({"process_name", "start_ts", "end_ts"})
+        ),
+        "pipeline_compose_standard": exporter.PortableSkill("knowledge_only", frozenset()),
+        "engine_only": exporter.PortableSkill("product-only", frozenset()),
+    }
+
+    def strip(self, body: str) -> tuple[str, int, list[str]]:
+        return exporter.strip_product_runtime_content(body, self.SKILLS)
+
+    def test_table_routing_only_through_exported_skills_is_kept(self) -> None:
+        table = (
+            "| 方向 | 路径 |\n|---|---|\n"
+            '| CPU | `invoke_skill("cpu_analysis")` → '
+            '`invoke_skill("process_slice_cpu_hotspots", { process_name: "<pkg:a,b>" })` |\n'
+            "| 区间 | `invoke_skill('process_slice_cpu_hotspots', {start_ts, end_ts})` |\n"
+            "| 阶段 | (required: invoke_skill(cpu_analysis)) |"
+        )
+        kept, removed, rejected = self.strip(f"intro\n\n{table}\n\ntail")
+        self.assertEqual((kept, removed, rejected), (f"intro\n\n{table}\n\ntail", 0, []))
+
+    def test_multiline_and_elided_arguments_are_kept(self) -> None:
+        paragraph = (
+            'invoke_skill("process_slice_cpu_hotspots", {\n  start_ts,\n  end_ts: "<end>"\n})'
+            ' then invoke_skill("cpu_analysis", { ... })'
+        )
+        self.assertEqual(self.strip(paragraph), (paragraph, 0, []))
+
+    def test_fenced_block_of_exported_skill_calls_is_kept(self) -> None:
+        block = '```text\ninvoke_skill("cpu_analysis")\n```'
+        self.assertEqual(self.strip(block), (block, 0, []))
+
+    def test_any_other_product_token_still_removes_the_paragraph(self) -> None:
+        for paragraph in (
+            '`invoke_skill("cpu_analysis")` then `fetch_artifact(id)`',
+            "detail cannot replace invoke_skill / execute_sql evidence",
+            'expectedCalls: [{ tool: "invoke_skill", skillId: "cpu_analysis" }]',
+            "invoke_skill(skill_id, params)",
+            '`invoke_skill("cpu_analysis", { package: fetch_artifact(id) })`',
+        ):
+            with self.subTest(paragraph=paragraph):
+                self.assertEqual(self.strip(f"keep\n\n{paragraph}"), ("keep", 1, []))
+
+    def test_skill_without_a_portable_run_is_removed_and_recorded(self) -> None:
+        for name, status in (("pipeline_compose_standard", "knowledge_only"), ("engine_only", "product-only")):
+            with self.subTest(name=name):
+                self.assertEqual(
+                    self.strip(f'keep\n\n`invoke_skill("{name}")`'),
+                    ("keep", 1, [f"{name} ({status})"]),
+                )
+
+    def test_argument_the_portable_skill_does_not_bind_removes_the_unit(self) -> None:
+        # The portable runner ignores undeclared parameters, so keeping this
+        # call would run cpu_analysis across every process.
+        self.assertEqual(
+            self.strip('keep\n\n`invoke_skill("cpu_analysis", { process_name: "<pkg>" })`'),
+            ("keep", 1, ["cpu_analysis (undeclared process_name)"]),
+        )
+
+    def test_unclassified_skill_name_fails_the_export(self) -> None:
+        with self.assertRaisesRegex(exporter.ExportError, "unclassified Skill.*cpu_analysys"):
+            self.strip('`invoke_skill("cpu_analysys")`')
+
+    def render(self, body: str) -> tuple[str, list[dict]]:
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "probe.strategy.md"
+            source.write_text(body, encoding="utf-8")
+            entry = {"source_path": "backend/strategies/probe.strategy.md",
+                     "source_sha256": exporter.sha256_file(source)}
+            return exporter.render_strategy_reference(source, entry, "a" * 40, skills=self.SKILLS)
+
+    def test_rendered_preamble_maps_kept_calls_to_the_portable_runner(self) -> None:
+        rendered, changes = self.render('# Probe\n\nRoute: `invoke_skill("cpu_analysis")`.\n')
+        note = exporter.SKILL_CALL_NOTE
+        self.assertIn('Route: `invoke_skill("cpu_analysis")`.', rendered)
+        self.assertLess(rendered.index(note), rendered.index("## Portable execution commands"))
+        self.assertEqual(changes, [])
+
+    def test_rejected_calls_are_recorded_in_the_transformation(self) -> None:
+        rendered, changes = self.render('# Probe\n\nRoute: `invoke_skill("engine_only")`.\n')
+        self.assertNotIn("engine_only", rendered)
+        self.assertNotIn(exporter.SKILL_CALL_NOTE, rendered)
+        self.assertEqual(changes[0]["removed_lines"], 1)
+        self.assertEqual(changes[0]["rejected_skill_calls"], ["engine_only (product-only)"])
+
+    def test_invoke_skill_note_needs_a_skill_call(self) -> None:
+        self.assertEqual(exporter.portable_tool_notes("no product call here"), "")
+        self.assertEqual(exporter.portable_tool_notes("invoke_skill_like_word"), "")
+        self.assertIn("--skill <name>", exporter.portable_tool_notes('invoke_skill("x")'))
+
+    def test_equivalent_tool_is_kept_but_its_skill_must_be_executable(self) -> None:
+        kept, removed, _ = self.strip("先 `detect_architecture`，再选择 producer Skill")
+        self.assertEqual(removed, 0)
+        catalog = {"skills": [
+            {"name": name, "disposition": "exported"}
+            for equivalent in exporter.PORTABLE_TOOL_EQUIVALENTS.values()
+            for name in equivalent.skills
+        ]}
+        raw = {entry["name"]: {"type": "composite"} for entry in catalog["skills"]}
+        exporter.portable_skill_runtime(catalog, raw)
+        raw["rendering_pipeline_detection"] = {"type": "pipeline_definition"}
+        with self.assertRaisesRegex(exporter.ExportError, "detect_architecture equivalent"):
+            exporter.portable_skill_runtime(catalog, raw)
 
 
 class ProductOnlySqlFragmentTest(unittest.TestCase):

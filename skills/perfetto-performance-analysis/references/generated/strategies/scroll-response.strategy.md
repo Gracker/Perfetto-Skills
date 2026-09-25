@@ -9,6 +9,8 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
 
+`invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
+
 ## Portable execution commands
 
 - List Skills: `python3 <skill-root>/scripts/perfetto_skill.py list`.
@@ -228,6 +230,11 @@ Without actual present evidence report a candidate response bound, not confirmed
 
 **Capabilities**: required=[frame_rendering, input_latency], optional=[cpu_scheduling, surfaceflinger]
 
+**Mandatory aspects**
+- input_event_detection: 滑动响应场景建议包含输入事件定位阶段 (input event detection) (requires one of: invoke_skill(click_response_analysis), invoke_skill(input_events_in_range))
+- latency_breakdown: 滑动响应场景建议包含响应延迟口径和帧/上屏证据边界 (latency scope + frame linkage) (requires one of: invoke_skill(scroll_response_latency), invoke_skill(touch_to_display_latency))
+- input_target_boundary: 滑动响应场景需要说明输入目标、stale、FINISHED ACK 和窗口/队列证据是否可用或缺失 (requires one of: invoke_skill(click_response_detail), invoke_skill(input_events_in_range))
+
 **Phase reminders**
 - scroll_latency_scope_boundary: 先声明响应口径：dispatch-to-ACK、ACTION_MOVE 到首帧候选、还是 input-to-present。scroll_response_latency 的默认输出不能在缺少 FrameTimeline/present 链接时被写成硬端到端上屏。 工具: input_events_in_range, scroll_response_latency
 - scroll_input_target_boundary: 滑动响应异常可能来自输入队列、窗口目标、stale drop 或未完成 ACK。若没有 dumpsys/logcat/WindowManager/InputDispatcher 证据，只能作为缺口，不要把它归因成 App 滑动代码。 工具: input_events_in_range
@@ -254,6 +261,9 @@ Without actual present evidence report a candidate response bound, not confirmed
 **Phase 1 — 输入事件定位：**
 
 首先定位滑动手势的起始输入事件：
+```
+invoke_skill("input_events_in_range", { event_type: "MOTION", event_action: "MOVE" })
+```
 
 如果该 Skill 不可用，使用 SQL 回退：
 ```sql
@@ -279,6 +289,9 @@ LIMIT 50
 **Phase 2 — 首帧关联：**
 
 找到手势启动后的第一帧：
+```
+invoke_skill("scroll_response_latency", { ... })
+```
 
 如果该 Skill 不可用，使用 SQL 回退：
 ```sql
@@ -393,6 +406,13 @@ LIMIT 20
 | SF composition | <4ms | GPU composition 慢、layer 数多、HWC 回退 |
 
 **深钻决策（基于瓶颈段）：**
+
+| 瓶颈段 | 深钻动作 |
+|-------|---------|
+| App frame build 超时 | `invoke_skill("jank_frame_detail", { start_ts, end_ts, package })` 查看主线程热点 |
+| Render thread 超时 | 检查 GPU 频率：`invoke_skill("gpu_analysis")` |
+| SF composition 超时 | `invoke_skill("surfaceflinger_analysis")` 查看合成策略和 layer 数 |
+| Input dispatch 超时 | 检查 system_server CPU 占用和 InputDispatcher 线程状态 |
 
 **输入目标与队列边界：**
 - `input_events_in_range` / `scroll_response_latency` 只覆盖完成 dispatch→receive→finish→ACK 的事件。没有结果不等于没有输入问题，可能是未完成 ACK、stale drop、focus/window 或 InputChannel 证据缺失。
