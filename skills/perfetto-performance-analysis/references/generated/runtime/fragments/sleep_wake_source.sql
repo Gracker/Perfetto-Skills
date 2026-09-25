@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/sleep_wake_source.sql
 -- Source SHA-256: 295fc90c1d1cbc5f87acda56779324a263e5589cdb97f3e0da3ae5a8548965b1
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)

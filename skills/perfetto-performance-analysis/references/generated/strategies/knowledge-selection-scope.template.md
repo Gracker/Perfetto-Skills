@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-selection-scope.template.md
-Source SHA-256: a8d55c6fce3dfe2d7cd64aac27b38a033fbf1b09f568927e07256467226a1e5f
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source SHA-256: ed1f850a10c1636dd9d1f71fca34afbad4d82de0f1d16e0aa24bdeeeea6326d9
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 # Knowledge Selection Scope Template
 
@@ -28,7 +28,8 @@ and time boundaries from permitted evidence. FrameTimeline IDs and ordinary
 slice IDs are different namespaces; ambiguous matches remain ambiguous.
 
 Follow the user's question and selected scope. Wider context can explain a
-dependency but cannot replace the selected target. Under existing-only access,
+dependency but cannot replace the selected target. That applies to a selection
+or user-named target, not to a runtime-inferred focus app. Under existing-only access,
 missing identity or measurements remain unknown; a selection grants no new read.
 
 Use half-open intervals and overlap-based clipping for duration attribution.
@@ -40,4 +41,5 @@ For frame questions, distinguish expected/actual app-frame timing from composito
 presentation, and bind frame tokens, layer and process before joining them. An
 absent jank flag or empty thread_state query does not by itself resolve every
 question about that frame. Explain the missing capture or unsupported mechanism
-without silently switching targets or broadening the measurement window.
+without silently switching the selected or user-named target or broadening the
+measurement window.

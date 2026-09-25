@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_thread_utilization_period.skill.yaml
 -- Source SHA-256: 44ae1627a2ce3cfe119c52b3ba5f960828012d37c7afe1688dbe547eb2419d67
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 WITH target_threads AS (
   SELECT t.utid, t.name AS thread_name, p.name AS process_name

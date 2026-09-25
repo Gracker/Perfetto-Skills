@@ -55,17 +55,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/check_input_data.sql",
-      "sha256": "8dd371da45053d4481e86f020c2a752b74088572d578a2bbfcef0e14c553deb4",
+      "sha256": "b500255f5a87c8389c0be626366733d79cbfe8d1236530d35a244504b3ba31a5",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -89,7 +89,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
           }
         ],
         "name_parameters": [],
@@ -165,17 +165,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/get_process.sql",
-      "sha256": "9680c0e765f15b39ae9a276dacf0b26cade2e99158799067704819d884061031",
+      "sha256": "f2682540bc897c539b2ed1489722351ee7f4223eff1833d296ed2bdad6779507",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -199,7 +199,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/android_input_delivery_roles.sql",
+            "source_sha256": "7d4c7c3d2b6db3841eba7a475daf3c4f52f7c6204c269117d03dca30dcbc034f"
           }
         ],
         "name_parameters": [],
@@ -275,16 +280,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_latency_overview.sql",
-      "sha256": "5e7b95e4e3ea9ab8bedca1b913ba07d75c0cab1058b860bd803aa8d890c9a151",
+      "sha256": "73119f88564abe1f2eb66e25d930fc56dbc7e3b2707caeb6534e9376c0db0df5",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -308,7 +313,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
           }
         ],
         "name_parameters": [],
@@ -387,16 +392,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/latency_by_event_type.sql",
-      "sha256": "d38043140a3445946d8e6e35f5bfe821b91641bb929af95a76d91b6ccc1ae06d",
+      "sha256": "2fc55199a5f06e4335ece331c8cb5cc6d1f8ebb92960af54f049ba9c2485e9c7",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -420,7 +425,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
           }
         ],
         "name_parameters": [],
@@ -498,16 +503,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/latency_by_window.sql",
-      "sha256": "da14bb525159bb2bf96cf73338f932c10115a1dd135b9a3966ea33ba35781b87",
+      "sha256": "6ba0a72a77ec2b3101130043ac8ec25506a898a7fee803835538766372e5e27a",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -531,7 +536,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
           }
         ],
         "name_parameters": [],
@@ -609,16 +614,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/slow_input_events.sql",
-      "sha256": "0a75a45140abb378cb8280c18e99a0861685c7b15bd637b15dd7aaa82565ca2e",
+      "sha256": "c711820741bdc1f20dae0c0a1334508d401900162e5c72069978b6fd03feb69e",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -642,7 +647,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
           }
         ],
         "name_parameters": [],
@@ -725,16 +730,16 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "765100137e80bdb3a2b6c6ec44ac462cc0fabb8a717500660c9c5610dd6e578b",
+      "sha256": "65d03dc942bbb479756a1b9b080bf9066d83a7250830d941218a102b0d69ac3d",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -758,17 +763,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "d76bab426eebfe5d0dedd8055f0c5530512f95bdfd9fd75c932d23d6c8807d71"
+            "source_sha256": "4992c4f38c759cdea0f0035847df8930ef83e49fe1f41938033c761d237380d2"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "4c75ca8cc874b92495fe3609214f306fb3271323d0aaf4398506351f318ca4b1"
+            "source_sha256": "da5aa1831bfac7e3148accdd97c96bef423d029d0e5ff14e7be5a99c88d92429"
           }
         ],
         "name_parameters": [],
@@ -848,16 +853,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_binder_calls.sql",
-      "sha256": "fc0cec2a89a21254623934fedb31b20d4c5e54e2fcd0d91b76df7f02d8fbe548",
+      "sha256": "1214fbd164666d4e88966c71f7f351ff8e8d0d4334f7211bee20cda144f9a50f",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -881,7 +886,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
           }
         ],
         "name_parameters": [],
@@ -959,16 +964,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_to_frame.sql",
-      "sha256": "bb9352407888fb1f0798fb71ab24ad7da965683d7263043a3a8b57105306e20e",
+      "sha256": "8b6bbac2d9af7954d65c1a6ce739804db298bfb0150e3fac7b2eac211aff6b36",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -992,7 +997,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
           }
         ],
         "name_parameters": [],
@@ -1072,16 +1077,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/latency_distribution.sql",
-      "sha256": "ba8696cf91462812e22feac57d88bb5671e50e08c279d44fc2c0dd2fe495f614",
+      "sha256": "a5b5b78c8d8073b9f622ebce62923cdcb491f71a4475f5ced57f10f35b3ae8ce",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
       "skill_id": "click_response_analysis",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6"
+        "sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1105,7 +1110,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "0ee195f759f696a72d06c154eb078b6d06d33b8642ef56463349ccddc55cb6cc"
+            "source_sha256": "9d4837ba06e5c0b93c8fd58ff4f2b8dedf6a6fde60b753012d679d7ecd7205a5"
           }
         ],
         "name_parameters": [],

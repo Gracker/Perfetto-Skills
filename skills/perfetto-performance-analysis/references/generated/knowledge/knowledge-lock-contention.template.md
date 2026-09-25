@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-lock-contention.template.md
 Source SHA-256: 6cfd4a03ea657ae1cc6ddee22f9dc76a3b4d4a2af314bc7454348ec22a46fc70
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 # Knowledge Lock Contention Template
 

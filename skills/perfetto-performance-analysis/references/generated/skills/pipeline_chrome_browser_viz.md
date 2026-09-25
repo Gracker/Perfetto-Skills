@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/chrome_browser_viz.skill.yaml
 Source SHA-256: 466d0a5cad5e8f40b35606a938cb63f3e17c75995c13f5df9629200c8d56b37b
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 # Chrome Browser (Viz)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

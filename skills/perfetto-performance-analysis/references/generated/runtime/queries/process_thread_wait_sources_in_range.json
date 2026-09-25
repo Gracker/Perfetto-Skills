@@ -66,14 +66,14 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "33dbc484eff27dd3df731013af86d61f1482aa1a27faaedfbf711731382afbd8",
+      "sha256": "0a38aff165115144c45805f2bb3f006f7c7fac8b2b86eee5f564e14c41b6b21b",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -185,7 +185,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "8b50a456fefc554d91e5e3c97fd6837ec6e1acb4cd5e2bfa4e220f6abfe41f82",
+      "sha256": "53fd94b0fbc97445537cea3a9ae420239f0e793538f4ec290799ff9fedcc4ffa",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -227,7 +227,7 @@
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -252,7 +252,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "a050e971a4e25ae007cbfca7fb78ccc56d2edb2875223aa0777c429e66d1d4b0"
+            "source_sha256": "361869f3cdf5e9f19bd95b9a744f9bfbbe9d4176ff99a3667c7df131daf30668"
           }
         ],
         "name_parameters": [
@@ -345,7 +345,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "06bd5c42024359c0d8a944c20790e6916b841fe775c21650f51d6bfa50070cbd",
+      "sha256": "776bc9e5c22e6b1c0a8e6853558f8905b1a8dc64f906b389efb2b7a34aae7591",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -394,7 +394,7 @@
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -419,17 +419,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "a050e971a4e25ae007cbfca7fb78ccc56d2edb2875223aa0777c429e66d1d4b0"
+            "source_sha256": "361869f3cdf5e9f19bd95b9a744f9bfbbe9d4176ff99a3667c7df131daf30668"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/sleep_wake_source.sql",
-            "source_sha256": "0d37e54602426f9c235f05eb480463bc3fac7374a02356137f515f40fec15661"
+            "source_sha256": "e27c1d5caa1f82b8d8aea9ec35783bc94b6a1dd42d76788d87c9e3ff4022b696"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/sleep_wake_source_labels.sql",
-            "source_sha256": "46136d4fac32c9a2d212857a0f4e2a45b7d3f09c9afe448a6cbe47236654f1c8"
+            "source_sha256": "f5e8f731dd3c8a1bf41c01964874cacbd6c6056c28df2f13728d58da6c4ef99e"
           }
         ],
         "name_parameters": [
@@ -523,7 +523,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "dda993194f2731fafeb81509f7a34e4af97d0c7202a5616bb5f9e4f444d78a54",
+      "sha256": "29c1619539bf47945b668b73372d6b8ee6b99b236ecff7341d182f68b42685ca",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -572,7 +572,7 @@
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -597,17 +597,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "a050e971a4e25ae007cbfca7fb78ccc56d2edb2875223aa0777c429e66d1d4b0"
+            "source_sha256": "361869f3cdf5e9f19bd95b9a744f9bfbbe9d4176ff99a3667c7df131daf30668"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/sleep_wake_source.sql",
-            "source_sha256": "0d37e54602426f9c235f05eb480463bc3fac7374a02356137f515f40fec15661"
+            "source_sha256": "e27c1d5caa1f82b8d8aea9ec35783bc94b6a1dd42d76788d87c9e3ff4022b696"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/sleep_wake_source_labels.sql",
-            "source_sha256": "46136d4fac32c9a2d212857a0f4e2a45b7d3f09c9afe448a6cbe47236654f1c8"
+            "source_sha256": "f5e8f731dd3c8a1bf41c01964874cacbd6c6056c28df2f13728d58da6c4ef99e"
           }
         ],
         "name_parameters": [
@@ -700,11 +700,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "43359a803a3e6fe702245fbc758701a4135d497bafceb267d5545b351c0bd51a",
+      "sha256": "32ac75a81eb986eb9227a9cee0d6958c33a799748ecebc7a7cef5b5d19aa5e07",
       "signal_patterns": [],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -812,7 +812,7 @@
         ],
         "role": "target"
       },
-      "sha256": "459cef133f906c7accd88819f9504fbb6dcb0f4bdf29e2bd21e76f0ae301894e",
+      "sha256": "8048df84362be696d272349ebb7b1364cfd70b81f3f62b0a41b33274cfdf3e07",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -861,7 +861,7 @@
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -886,17 +886,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "a050e971a4e25ae007cbfca7fb78ccc56d2edb2875223aa0777c429e66d1d4b0"
+            "source_sha256": "361869f3cdf5e9f19bd95b9a744f9bfbbe9d4176ff99a3667c7df131daf30668"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/sleep_wake_source.sql",
-            "source_sha256": "0d37e54602426f9c235f05eb480463bc3fac7374a02356137f515f40fec15661"
+            "source_sha256": "e27c1d5caa1f82b8d8aea9ec35783bc94b6a1dd42d76788d87c9e3ff4022b696"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/sleep_wake_source_labels.sql",
-            "source_sha256": "46136d4fac32c9a2d212857a0f4e2a45b7d3f09c9afe448a6cbe47236654f1c8"
+            "source_sha256": "f5e8f731dd3c8a1bf41c01964874cacbd6c6056c28df2f13728d58da6c4ef99e"
           }
         ],
         "name_parameters": [

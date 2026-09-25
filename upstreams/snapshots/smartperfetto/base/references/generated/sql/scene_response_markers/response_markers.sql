@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/scene_response_markers.skill.yaml
 -- Source SHA-256: ffba8ce063278ad7adf1117f3147088dbb88f6d85aff3296d7cba291e26b6d50
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

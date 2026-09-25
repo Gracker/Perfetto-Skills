@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/task_migration_in_range.skill.yaml
 -- Source SHA-256: 8b1703cdcf2d63f210900cbb978a2a645b9ca530a25e37a3a8fd946d20df39f0
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

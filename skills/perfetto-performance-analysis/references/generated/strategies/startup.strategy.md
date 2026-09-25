@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/startup.strategy.md
 Source SHA-256: 399f61a5c0bb1be037cfc976ad505c505cd6765f96f7285886baf94a67aebddb
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 # Startup Strategy
 

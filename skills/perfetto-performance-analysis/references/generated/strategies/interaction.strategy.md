@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/interaction.strategy.md
-Source SHA-256: b7532d4998c9e61738d7f89f4f427b05cd92530af4dccbd73379f268932d5e48
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source SHA-256: 74d8eae3a758711b2f3bdc77ed2ea521aa2af9d98a2b2ca53d992a58fdc89239
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 # Interaction Strategy
 
@@ -290,7 +290,7 @@ Use Binder, lock, queue, input dispatch and display dependencies only where they
 **帧关联与缺失值的读法：**
 - `is_speculative_frame=1` 的 `frame_id` 是同一 UI 线程上事件之后的下一个 `Choreographer#doFrame`，未经证实消费了该事件：该线程就是出图线程且间隔很短时可作候选帧，但不能单独证明帧链接、同帧堆积或上屏；由它推出的 `end_to_end_latency_dur` 只是候选值。DOWN/UP 常见推测关联，这不影响同一事件 dispatch/handling/ACK 的精确性。
 - `end_to_end_latency_dur` 为 NULL 表示未测量，不是 0ms 或“响应良好”；目标进程没有 app 层 FrameTimeline（Flutter SurfaceView、GL/游戏等）时，输入到上屏延迟在本 trace 中不可测量。
-- `event_action` 为 NULL 的行常是同一批物理触摸投递给 system_server/systemui 监听通道的副本，不是额外手势（可按共享的 `input_event_id` 核对），不计入目标应用的手势数或慢事件。未传 `package` 时，按事件数自动选出的目标进程可能是 systemui；先确认 `target_process` 是用户关心的应用。
+- `event_action` 为 NULL 的行常是同一批物理触摸投递给 system_server/systemui 监听通道的副本，不是额外手势（可按共享的 `input_event_id` 核对），不计入目标应用的手势数或慢事件。自动选出的目标进程按应用投递（有 action 的行）排序，仍要确认 `target_process` 是用户关心的应用。
 
 ### 输入队列、焦点和窗口边界（只在有证据时定因）
 

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/state_timeline.skill.yaml
 -- Source SHA-256: b623b459c65d02509ded27617664691fec7c3b8848ac371759151eb7064d489a
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 -- Summary: aggregate stats per lane
 -- This step always succeeds (uses slice table which always exists)

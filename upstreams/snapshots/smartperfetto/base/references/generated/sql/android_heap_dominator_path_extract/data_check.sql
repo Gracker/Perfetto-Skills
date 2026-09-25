@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/android_heap_dominator_path_extract.skill.yaml
 -- Source SHA-256: 79a6054d4d6744e18381baa97106c13e0a4e11f4c8655ba9ade28004904aab52
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

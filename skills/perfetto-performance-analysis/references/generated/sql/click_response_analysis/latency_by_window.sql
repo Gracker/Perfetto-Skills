@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
--- Source SHA-256: d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source SHA-256: ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

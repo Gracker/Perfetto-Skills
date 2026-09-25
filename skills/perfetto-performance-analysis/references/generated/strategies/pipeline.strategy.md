@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/pipeline.strategy.md
 Source SHA-256: 1e10561fa72092b93a666e2d5a21c45f230ac9774bbb894598ea42c20f2f1c18
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 # Pipeline Strategy
 

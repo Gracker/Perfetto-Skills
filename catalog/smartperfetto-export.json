@@ -588,7 +588,7 @@
       "name": "click_response_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/click_response_analysis.skill.yaml",
-      "source_sha256": "d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6",
+      "source_sha256": "ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18",
       "tier": "S",
       "version": "1.0",
       "workflow": "interaction"
@@ -2366,7 +2366,7 @@
       "name": "scrolling_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-      "source_sha256": "932de9b3d1c489168bad805861e11436f709ab3f63663add77ae3582aab383db",
+      "source_sha256": "b7ebca89bd8e31ada9de2d388e0e3cd9e257c8ef65e1c0e6862c167bc631da67",
       "tier": "S",
       "version": "2.2",
       "workflow": "scrolling"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+    "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "e147ee16d24e9392cb0841f4922cabb89a2b2d715e2eac3c5af2119ba11c316e",
+    "policy_sha256": "969f91bb3872e4998d5b2e92b9c3ceea2e78e4751bee90e5605badcf042a1572",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3086,6 +3086,12 @@
       "disposition": "exported",
       "source_path": "backend/skills/fragments/actor_class_labels.sql",
       "source_sha256": "3c425851e00996bd8471be41b1db1c5c813ba25c9fb1879f5803447988e2c252"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/android_input_delivery_roles.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/android_input_delivery_roles.sql",
+      "source_sha256": "301598150c37ec9f6b6dafb7ed38f22f5f2c8e9a856f8c9bcf4bb112bfd413e8"
     },
     {
       "destination": "references/generated/runtime/fragments/android_input_events_normalized.sql",
@@ -3427,7 +3433,7 @@
       "destination": "references/generated/strategies/interaction.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/interaction.strategy.md",
-      "source_sha256": "b7532d4998c9e61738d7f89f4f427b05cd92530af4dccbd73379f268932d5e48",
+      "source_sha256": "74d8eae3a758711b2f3bdc77ed2ea521aa2af9d98a2b2ca53d992a58fdc89239",
       "workflow": "interaction"
     },
     {
@@ -3471,6 +3477,12 @@
       "source_path": "backend/strategies/knowledge-evidence-provenance.template.md",
       "source_sha256": "78a4a2cad8088a577a3bcda968061077fc53847813730c439d43f6a753450c25",
       "workflow": "trace-overview"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "Interprets the runtime trace_context.focusApp hypothesis, package source and default Skill scoping",
+      "source_path": "backend/strategies/knowledge-focus-app-context.template.md",
+      "source_sha256": "6e1c46b74e0e004059f8bcc2c8ec4dfc959f9d00e7a553c4a033aaf067274017"
     },
     {
       "destination": "references/generated/knowledge/knowledge-gc-dynamics.template.md",
@@ -3546,7 +3558,7 @@
       "destination": "references/generated/strategies/knowledge-selection-scope.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-selection-scope.template.md",
-      "source_sha256": "a8d55c6fce3dfe2d7cd64aac27b38a033fbf1b09f568927e07256467226a1e5f",
+      "source_sha256": "ed1f850a10c1636dd9d1f71fca34afbad4d82de0f1d16e0aa24bdeeeea6326d9",
       "workflow": "trace-overview"
     },
     {
@@ -3567,7 +3579,7 @@
       "destination": "references/generated/knowledge/knowledge-thread-state-blocked-reason.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-thread-state-blocked-reason.template.md",
-      "source_sha256": "2765f8388c714fc05aaf7cac63dd2deffc819a50d7ab5e900667c3103da4f5a5",
+      "source_sha256": "0c0562e3618d430b7d4f1f9dbb32424cc56ebfe4a4e49e5d13c239c6a4f6667c",
       "workflow": "anr-blocking"
     },
     {
@@ -3662,7 +3674,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto analyze_wait_chain MCP tool contract",
       "source_path": "backend/strategies/prompt-analyze-wait-chain-tool-description.template.md",
-      "source_sha256": "79f3bef9466b0c9bdd17f84af502819d6f2c546cd3bc48c5d5a1fb0f6f2d9cc6"
+      "source_sha256": "7591c80ee9af4092b1b3d304076bb6972fe8c5a66bc952049494342eb299c9a7"
     },
     {
       "disposition": "product-only",
@@ -3710,13 +3722,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto critical-path route one-shot summary over its engine payload",
       "source_path": "backend/strategies/prompt-critical-path-summary-en.template.md",
-      "source_sha256": "52e4eedc2eeced6ed6da25cd32d714d645386a14d1f2548d37fac96457fbc9a6"
+      "source_sha256": "5e8f3d587de7f350d0f9d7e841be9f1d78a95a018a8c3d9f571c87af56c1933c"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto critical-path route one-shot summary over its engine payload",
       "source_path": "backend/strategies/prompt-critical-path-summary-zh.template.md",
-      "source_sha256": "8a8107befe9458284de0e4e47d6eaec8bdc9380ecbec13ea5d946c4ce4c24ce3"
+      "source_sha256": "8a261023e085aa74227f7b4bbe92fc88b2acd10c7cf615f6cc8cb881d38a550d"
     },
     {
       "disposition": "product-only",
@@ -3770,7 +3782,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto finalization semantic assessment protocol",
       "source_path": "backend/strategies/prompt-final-semantic-assessment.template.md",
-      "source_sha256": "ca218b97b33324078042a5a1da321776fb59220ac34f7253e40c4fb92d439b74"
+      "source_sha256": "1605979ac143fa11ab61f1267bfec844028c09043caa83f18b58bc64644e0b0c"
     },
     {
       "disposition": "product-only",
@@ -4023,7 +4035,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto resolved turn policy and source authorization",
       "source_path": "backend/strategies/prompt-turn-policy.template.md",
-      "source_sha256": "82c493a6eef61df84cd25d2745c3702ffdf2ba0240f628ac1e8b669210327ce0"
+      "source_sha256": "e9627bfae45b9eeb52dcce22bc05a005f2be16c0570d3f4f0ecfcfc9371df8dc"
     },
     {
       "disposition": "product-only",
@@ -4220,7 +4232,7 @@
       "destination": "references/generated/strategies/scrolling.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scrolling.strategy.md",
-      "source_sha256": "9f470b0813f6eee68671ae2ef9ff39bcaf9e7da1b5f9728aee88f0e7db88f40a",
+      "source_sha256": "e221f042034268b07cab2857bd4e58701f8455e7c335787b7045cd9141b90886",
       "workflow": "scrolling"
     },
     {
@@ -4273,11 +4285,11 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_sql_fragments": 36,
+    "exported_sql_fragments": 37,
     "exported_strategy_sources": 47,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 100,
+    "product_only_strategy_sources": 101,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4287,8 +4299,8 @@
       "pipeline_definition": 31
     },
     "skill_yaml_files": 257,
-    "sql_fragments": 43,
-    "strategy_sources": 147,
+    "sql_fragments": 44,
+    "strategy_sources": 148,
     "vendor_overrides": 8
   },
   "vendor_overrides": [

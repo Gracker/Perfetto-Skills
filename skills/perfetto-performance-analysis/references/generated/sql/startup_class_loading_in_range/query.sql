@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_class_loading_in_range.skill.yaml
 -- Source SHA-256: 664d113170724cd4624484f648f9f4570e1b77552d7e57bbb821ac28786465ea
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 SELECT
   cl.slice_name,

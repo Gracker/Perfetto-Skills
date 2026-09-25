@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_analysis.skill.yaml
-Source SHA-256: d239238edb11e6aaf345c18ec79d0113282a99855c089f8653a6ef42c93ddef6
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source SHA-256: ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 # 点击响应分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -170,6 +170,10 @@ display:
     label: 事件数
     type: number
     format: compact
+  - name: app_delivery_events
+    label: 应用投递
+    type: number
+    format: compact
   - name: max_total_ms
     label: 最大延迟
     type: duration
@@ -177,6 +181,7 @@ display:
     unit: ms
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
 save_as: target_process
 condition: input_check.data[0]?.status === 'available'
 ```

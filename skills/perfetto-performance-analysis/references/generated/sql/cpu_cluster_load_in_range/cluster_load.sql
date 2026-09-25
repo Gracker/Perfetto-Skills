@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml
 -- Source SHA-256: eb2b4612a94cf363df5045d9d2a8f55599a90a2533d2de33465aae42238aee58
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 WITH
 -- 分母 = 簇内全部核心 × 窗口内非挂起时长（与上游 7af4ec945c 同法）。

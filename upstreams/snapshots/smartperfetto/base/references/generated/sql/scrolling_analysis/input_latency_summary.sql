@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 932de9b3d1c489168bad805861e11436f709ab3f63663add77ae3582aab383db
--- Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+-- Source SHA-256: b7ebca89bd8e31ada9de2d388e0e3cd9e257c8ef65e1c0e6862c167bc631da67
+-- Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -26,6 +26,42 @@ android_input_events_normalized AS NOT MATERIALIZED (
     receive_ts, receive_dur, receive_track_id,
     frame_id, is_speculative_frame, event_time
   FROM android_input_events
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Which receiver of a physical input event is its application delivery.
+-- android_input_events has one row per receiving channel of the same physical
+-- event (input_event_id): the app window plus gesture monitors, the pointer
+-- dispatcher, wallpaper and navigation bar channels. The stdlib sets
+-- event_action only from app-side delivery evidence on a window the receiving
+-- process owns, so monitor channels never carry it; an app delivery can still
+-- lack it (no `view` atrace, no frame after the event).
+--   action       - event_action is known: an observed application delivery.
+--   monitor_copy - NULL action, and another row of the same input_event_id
+--                  carries one: a monitor observation, not the app's.
+--   unresolved   - NULL action on every receiver of the event (trace-edge
+--                  events, FOCUS, runtimes that resolve no action).
+-- unresolved_event_key identifies an unresolved event once per input_event_id,
+-- so counting it DISTINCT gives extra channels of one event no extra weight.
+-- Classified over the whole relation, never inside a caller's time window, so a
+-- window edge cannot separate a copy from its action-bearing sibling.
+-- scene_input_facts.sql applies the same "the action-bearing receiver is
+-- primary" rule per stream for scene reconstruction.
+-- Requires fragments/android_input_events_normalized.sql listed before it.
+android_input_action_event_ids AS (
+  SELECT DISTINCT input_event_id
+  FROM android_input_events_normalized
+  WHERE event_action IS NOT NULL AND input_event_id IS NOT NULL
+),
+android_input_event_deliveries AS NOT MATERIALIZED (
+  SELECT e.*,
+    CASE WHEN e.event_action IS NOT NULL THEN 'action'
+      WHEN a.input_event_id IS NOT NULL THEN 'monitor_copy'
+      ELSE 'unresolved' END AS delivery_role,
+    CASE WHEN e.event_action IS NULL AND a.input_event_id IS NULL
+      THEN COALESCE(e.input_event_id, 'dispatch:' || e.dispatch_ts) END AS unresolved_event_key
+  FROM android_input_events_normalized AS e
+  LEFT JOIN android_input_action_event_ids AS a ON a.input_event_id = e.input_event_id
 )
 ,
 vsync_intervals AS (
@@ -57,7 +93,7 @@ timing_config AS (
 ),
 scoped_events AS (
   SELECT *
-  FROM android_input_events_normalized
+  FROM android_input_event_deliveries
   WHERE (${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid})
     AND (
     ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
@@ -67,11 +103,14 @@ scoped_events AS (
     AND (${start_ts} IS NULL OR receive_ts + receive_dur > ${start_ts})
     AND (${end_ts} IS NULL OR dispatch_ts < ${end_ts})
 ),
+-- 同一物理事件的 monitor 副本不算应用投递；显式 upid/package 已在 scoped_events 收窄候选。
 ranked_processes AS (
   SELECT
     upid, process_name,
-    COUNT(*) as event_count,
-    ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC, MAX(total_latency_dur) DESC) as rn
+    ROW_NUMBER() OVER (ORDER BY
+      SUM(delivery_role = 'action') DESC,
+      COUNT(DISTINCT unresolved_event_key) DESC,
+      MAX(total_latency_dur) DESC, upid) as rn
   FROM scoped_events
   GROUP BY upid, process_name
 ),

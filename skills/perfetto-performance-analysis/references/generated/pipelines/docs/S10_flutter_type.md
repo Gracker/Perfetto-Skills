@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S10_flutter_type.md
 Source SHA-256: 1d342817546f98db9f328f8552f0ab2465db50f4d550b95212ac6b9cc39daacf
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 # Android Perfetto 系列 - App 出图类型 - Flutter 类型
 

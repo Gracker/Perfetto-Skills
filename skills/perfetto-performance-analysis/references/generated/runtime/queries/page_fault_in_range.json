@@ -63,7 +63,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "21a9ef40191f27cbbaca0b4daad5ba6bdbfc59ed402472fe86750d945ad319db",
+      "sha256": "fb21ccc15fa9b9326f47730f33221a87a211b00e1845f21023c1b043ff9b2957",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -72,7 +72,7 @@
       ],
       "skill_id": "page_fault_in_range",
       "source": {
-        "commit": "34565222fe4f57b64349758a76221c4144e5d09e",
+        "commit": "bff733ed648b8d4bddf352f235599cf6c069e0a5",
         "path": "backend/skills/atomic/page_fault_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b4cce90c4fa90dd7d599a0771b7109f4f799ba81b09a84ffd6fdacb42ba08b26"
@@ -91,7 +91,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "d76bab426eebfe5d0dedd8055f0c5530512f95bdfd9fd75c932d23d6c8807d71"
+            "source_sha256": "4992c4f38c759cdea0f0035847df8930ef83e49fe1f41938033c761d237380d2"
           }
         ],
         "name_parameters": [

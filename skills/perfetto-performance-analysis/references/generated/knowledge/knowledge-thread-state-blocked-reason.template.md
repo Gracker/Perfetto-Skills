@@ -1,13 +1,15 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-thread-state-blocked-reason.template.md
-Source SHA-256: 2765f8388c714fc05aaf7cac63dd2deffc819a50d7ab5e900667c3103da4f5a5
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source SHA-256: 0c0562e3618d430b7d4f1f9dbb32424cc56ebfe4a4e49e5d13c239c6a4f6667c
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 # Knowledge Thread State Blocked Reason Template
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
+
+`analyze_wait_chain(...)` steps mean: run the `process_thread_wait_sources_in_range` Skill for the same process and window, whose `wait_class` column uses the same labels as `wake_source_class`, and `blocking_chain_analysis` for the waker chain. The portable Skills aggregate waits by thread role; they do not return one thread's critical-path segments.
 
 ## Portable execution commands
 
@@ -57,6 +59,45 @@ Evidence strength:
 | `S` (any) | Interruptible wait: Looper/epoll, socket receive, lock or timed wait | No `blocked_function` exists; attribute by wake source, not by function name |
 | `S` + irq-context wake + network-role thread | A receive-side wake is plausible | Candidate only; a timer expiry looks identical |
 | `S` + irq-context wake + rx packet within the correlation window | Receive activity at the same moment | `trace_direct:packet_activity`; still not proof this wake carried that packet |
+
+### Java monitor contention names an `S` wait directly
+
+A Java `synchronized` block that cannot take its monitor parks the thread in
+`S`, so `blocked_function` is NULL, yet ART records the contention itself. An
+`S` row that overlaps a row of `android_monitor_contention` whose
+`blocked_utid` is that thread is that contention: the row names the owner
+thread (`blocking_thread_name`, `blocking_utid`) and both methods
+(`short_blocking_method`, `short_blocked_method`). Include the module first:
+
+```sql
+INCLUDE PERFETTO MODULE android.monitor_contention;
+SELECT ts, dur, blocking_thread_name, short_blocking_method, short_blocked_method
+FROM android_monitor_contention
+WHERE blocked_utid = <utid> AND ts < <wait_end> AND ts + dur > <wait_start>;
+```
+
+A stdlib view that is absent before its `INCLUDE` is not missing data. Without
+the module, the raw ART slices on the blocked thread's track carry the same
+facts: `monitor contention with owner <thread> (<tid>) at <owner method> ...
+blocking from <blocked method>`, and the shorter
+`Lock contention on a monitor lock (owner tid: <tid>)`; match both with
+`name GLOB 'monitor contention*' OR name GLOB 'Lock contention on a monitor lock*'`. `analyze_wait_chain` surfaces the same evidence as a
+`java_monitor` anomaly and the `inspect_locks` recommendation, from both the
+blocked side and the lock owner's side of the chain.
+
+### Wait-chain leaves: idle or a peer's blocker
+
+Perfetto's critical path ends at every `S`/`I`/`D` segment of another thread:
+that thread was woken from IRQ context, by the idle task or out of an
+`io_wait`, so no further waker exists. `analyze_wait_chain` therefore counts
+other threads' running, runnable and `D` time as attributable, and reports
+their `S`/`I` leaves separately as event waits. An event wait is not idleness
+by itself: a lock owner sleeping on a socket or a timer is the real blocker.
+Call the selected wait idle only when it sat between the thread's slices and
+little of the window is attributable (`idle_wait`). When the thread was inside
+a slice and the chain ends in a peer's event wait (`peer_event_wait`), report
+what that peer waited for — network receive, timer or device — using its wake
+source and its own slices.
 
 Rows grouped by `blocked_function` are flat aggregates. Multiple rows such as
 `filemap_read`, `io_schedule`, and `ext4_*` are sibling buckets, not a nested

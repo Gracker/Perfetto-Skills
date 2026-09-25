@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S14_react_native_type.md
 Source SHA-256: 2433ab817a1b7f5864cb6aa1e7ca5f9576efb3ceedbbbbaa921824cf0127e7be
-Source commit: 34565222fe4f57b64349758a76221c4144e5d09e
+Source commit: bff733ed648b8d4bddf352f235599cf6c069e0a5
 
 # Android Perfetto 系列 - App 出图类型 - React Native 类型
 
