@@ -57,7 +57,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/wms_module/window_animation_overview.sql",
-      "sha256": "1bd38060e85e61e7fc512e8d8fd2194b03fc7e5cdbd817915e7247607b9295ba",
+      "sha256": "3b97635944c962d556d68b1edbf68729629872828b44bf36ac70438465e684d6",
       "signal_patterns": [
         "%systemui%",
         "*AppTransition*",
@@ -70,10 +70,10 @@
       ],
       "skill_id": "wms_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/wms_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ec088f394851b6fb0426109a0105b0d0ae930adf759b15011ab45a18a1a5831f"
+        "sha256": "e66c60cde78f1ab8ef436f3656397aa27cad975f9c7708d388926ad8eba3010a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -161,7 +161,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/wms_module/activity_transitions.sql",
-      "sha256": "ebeb991153d1a485d8300ed6e39d086a93699aef167cb063d11b792beea15281",
+      "sha256": "c1a917031cf5f365eeab529bb65ef10ec39e8a1b6f2f827eed56e389341f9649",
       "signal_patterns": [
         "*AppTransition*",
         "*activityResume*",
@@ -171,10 +171,10 @@
       ],
       "skill_id": "wms_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/wms_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ec088f394851b6fb0426109a0105b0d0ae930adf759b15011ab45a18a1a5831f"
+        "sha256": "e66c60cde78f1ab8ef436f3656397aa27cad975f9c7708d388926ad8eba3010a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -262,7 +262,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/wms_module/window_state_changes.sql",
-      "sha256": "b9a7d3ba5ffdae3b0e4d76d18e859b745e49c2a3a0249fcf4b15e65a667c8a68",
+      "sha256": "bbe3e0531405833d92aeffbbca0c0996cc9c3ee189e5073d8f6810ff3f7d3060",
       "signal_patterns": [
         "*WindowState*",
         "*finishDrawing*",
@@ -273,10 +273,10 @@
       ],
       "skill_id": "wms_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/wms_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ec088f394851b6fb0426109a0105b0d0ae930adf759b15011ab45a18a1a5831f"
+        "sha256": "e66c60cde78f1ab8ef436f3656397aa27cad975f9c7708d388926ad8eba3010a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -364,7 +364,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/wms_module/slow_animations.sql",
-      "sha256": "b977d58613529ede06aaad96be3285e424a0821cbc39bb8f8cee5b256caed78b",
+      "sha256": "4e9d5a289d6c151519e04fbd8dc2c31d75ccbe8ed000702a915545ec3a0e8858",
       "signal_patterns": [
         "%systemui%",
         "*Animation*",
@@ -373,10 +373,10 @@
       ],
       "skill_id": "wms_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/wms_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ec088f394851b6fb0426109a0105b0d0ae930adf759b15011ab45a18a1a5831f"
+        "sha256": "e66c60cde78f1ab8ef436f3656397aa27cad975f9c7708d388926ad8eba3010a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -464,9 +464,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/wms_module/window_draw_latency.sql",
-      "sha256": "c07f2fb30e80fa659d1f24899f3b010896c2382264bb804d18a2de0a40650249",
+      "sha256": "f7ef741db0afad1cdeb26af06c3fb231f3a767dc682118c8d80c31fee07dd1d0",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "*draw*",
         "*finishDrawing*",
         "*hwuiDraw*",
@@ -474,10 +475,10 @@
       ],
       "skill_id": "wms_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/wms_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ec088f394851b6fb0426109a0105b0d0ae930adf759b15011ab45a18a1a5831f"
+        "sha256": "e66c60cde78f1ab8ef436f3656397aa27cad975f9c7708d388926ad8eba3010a"
       },
       "sql_dependencies": {
         "creates": [],

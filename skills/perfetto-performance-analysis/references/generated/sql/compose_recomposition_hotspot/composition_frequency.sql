@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/compose_recomposition_hotspot.skill.yaml
--- Source SHA-256: 7f426a90804f6efc3d8ec7d94af37a4b4879abfa2ff4c95cf6360b70d16ca06a
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: ba394bc6522c94269f377cc156491c1e086d8b56f93d0b139390c08f76100b3b
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH recomp_events AS (
   SELECT

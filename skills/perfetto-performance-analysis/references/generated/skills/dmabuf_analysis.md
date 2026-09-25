@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/dmabuf_analysis.skill.yaml
-Source SHA-256: 82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: 15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # DMA-BUF 内存分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -73,7 +73,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标应用包名（支持 GLOB），留空分析所有 DMA Buffer
+  description: 目标应用包名（精确匹配，含 name:* 子进程），留空分析所有 DMA Buffer
 - name: min_size_mb
   type: number
   required: false

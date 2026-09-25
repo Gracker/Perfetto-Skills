@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_sched_latency_in_range.skill.yaml
--- Source SHA-256: 63e24db148afece3081efeb7a7cf445aa6822776d4b377c8acb5537057d979e2
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 25796e77489a0150ba0ca1775de82f09af9d446077367211baa918f5bf225b1f
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

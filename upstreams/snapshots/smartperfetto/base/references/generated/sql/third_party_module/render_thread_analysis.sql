@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/app/third_party_module.skill.yaml
--- Source SHA-256: dacb92b3b21e6a6eb465c54481840390078de91ffe280ccb2ee14d978360ae96
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 2171f2d0270a73b925955d869ff6f79c58b686da28d2da8e6785423c1aa1aedb
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 SELECT
   state,
@@ -10,6 +10,6 @@ FROM thread_state
 JOIN thread USING (utid)
 JOIN process USING (upid)
 WHERE thread.name = 'RenderThread'
-  AND process.name LIKE '%${package}%'
+  AND ('${package}' = '' OR process.name = '${package}' OR process.name GLOB '${package}:*')
 GROUP BY state
 ORDER BY dur_ms DESC

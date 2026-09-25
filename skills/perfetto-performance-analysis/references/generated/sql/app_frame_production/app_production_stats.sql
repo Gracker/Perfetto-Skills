@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/app_frame_production.skill.yaml
 -- Source SHA-256: f7c24d6aa56cc29422e948867cc203415f06ff4182964dd3fc594aa23a3be29a
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

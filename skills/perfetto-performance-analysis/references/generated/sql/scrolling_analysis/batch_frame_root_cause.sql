@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: b7ebca89bd8e31ada9de2d388e0e3cd9e257c8ef65e1c0e6862c167bc631da67
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 使用相同优先级 CASE 树
@@ -16,6 +16,15 @@ WITH
 -- list is the set every supported runtime has (v58.2 lacks frame_event_time);
 -- keep it aligned with scrolling_analysis's input_data_fallback_view. NOT MATERIALIZED: consumers read it more than once
 -- under their own filters, so SQLite should inline it rather than copy the table.
+-- Frame association: the stdlib matches an event to the Choreographer#doFrame
+-- its delivery overlaps (exact) or else to the next doFrame on the receiving
+-- thread with no time bound (is_speculative_frame = 1), and derives
+-- end_to_end_latency_dur from that frame. A speculative frame is a candidate,
+-- not proof the event was consumed there, so frame linkage, presentation
+-- latency and per-frame attribution read exact_frame_id /
+-- exact_end_to_end_latency_dur. frame_association labels raw values for
+-- display: none, exact, speculative, or unknown (a frame with no flag, which
+-- is not treated as exact).
 android_input_events_normalized AS NOT MATERIALIZED (
   SELECT
     dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
@@ -27,7 +36,17 @@ android_input_events_normalized AS NOT MATERIALIZED (
     event_seq, event_channel, normalized_event_channel, input_event_id,
     read_time, dispatch_track_id, dispatch_ts, dispatch_dur,
     receive_ts, receive_dur, receive_track_id,
-    frame_id, is_speculative_frame, event_time
+    frame_id, is_speculative_frame, event_time,
+    CASE WHEN frame_id IS NOT NULL AND is_speculative_frame = 0
+      THEN frame_id END AS exact_frame_id,
+    CASE WHEN frame_id IS NOT NULL AND is_speculative_frame = 0
+      THEN end_to_end_latency_dur END AS exact_end_to_end_latency_dur,
+    CASE
+      WHEN frame_id IS NULL THEN 'none'
+      WHEN is_speculative_frame = 0 THEN 'exact'
+      WHEN is_speculative_frame = 1 THEN 'speculative'
+      ELSE 'unknown'
+    END AS frame_association
   FROM android_input_events
 )
 ,
@@ -1033,8 +1052,10 @@ per_frame_input_events AS (
     ROUND(MAX(ie.dispatch_latency_dur) / 1e6, 2) as input_dispatch_ms,
     ROUND(MAX(ie.ack_latency_dur) / 1e6, 2) as input_ack_ms,
     ROUND(MAX(ie.total_latency_dur) / 1e6, 2) as input_total_ms,
-    ROUND(MAX(ie.end_to_end_latency_dur) / 1e6, 2) as input_e2e_ms,
-    SUM(CASE WHEN ie.is_speculative_frame = 1 THEN 1 ELSE 0 END) as input_speculative_events
+    -- Input→Present: exact association only (see fragments/android_input_events_normalized.sql); NULL = unmeasured.
+    ROUND(MAX(ie.exact_end_to_end_latency_dur) / 1e6, 2) as input_e2e_ms,
+    SUM(CASE WHEN ie.frame_association = 'speculative' THEN 1 ELSE 0 END) as input_speculative_events,
+    COUNT(ie.exact_frame_id) as input_exact_events
   FROM jank_frame_list fl
   JOIN android_input_events_normalized ie ON ie.upid = fl.upid
     AND fl.timeline_frame_id IS NOT NULL
@@ -1116,8 +1137,8 @@ per_frame_input_detail AS (
       ROUND(ie.dispatch_latency_dur / 1e6, 2) as dispatch_ms,
       ROUND(ie.ack_latency_dur / 1e6, 2) as ack_ms,
       ROUND(ie.total_latency_dur / 1e6, 2) as total_ms,
-      ROUND(ie.end_to_end_latency_dur / 1e6, 2) as e2e_ms,
-      CASE WHEN ie.is_speculative_frame = 1 THEN 1 ELSE 0 END as speculative,
+      ROUND(ie.exact_end_to_end_latency_dur / 1e6, 2) as e2e_ms,
+      CASE WHEN ie.frame_association = 'speculative' THEN 1 ELSE 0 END as speculative,
       printf('%d', ie.dispatch_ts) as input_ts,
       ROW_NUMBER() OVER (PARTITION BY fl.frame_key ORDER BY ie.handling_latency_dur DESC) as rn
     FROM jank_frame_list fl
@@ -1227,8 +1248,9 @@ analysis AS (
     COALESCE(pfie.input_dispatch_ms, 0) as input_dispatch_ms,
     COALESCE(pfie.input_ack_ms, 0) as input_ack_ms,
     COALESCE(pfie.input_total_ms, 0) as input_total_ms,
-    COALESCE(pfie.input_e2e_ms, 0) as input_e2e_ms,
+    pfie.input_e2e_ms as input_e2e_ms,
     COALESCE(pfie.input_speculative_events, 0) as input_speculative_events,
+    COALESCE(pfie.input_exact_events, 0) as input_exact_events,
     COALESCE(pfis.input_slice_ms, 0) as input_slice_ms,
     COALESCE(pfis.input_slice_count, 0) as input_slice_count,
     COALESCE(pfis.input_slice_max_ms, 0) as input_slice_max_ms,
@@ -1297,14 +1319,14 @@ classified AS (
       WHEN gc_count >= 3 AND gc_overlap_ms > 0.5
         THEN 'gc_pressure_cascade'
       -- P1.7: App input stage 慢。只使用 App 责任/隐形掉帧帧；android.input
-      -- handling 或主线程 input slice 都可作为直接证据，同帧事件堆积只是辅助信号，
-      -- 且只计精确帧关联（推测关联只是接收线程的下一个 doFrame）。
+      -- handling 或主线程 input slice 都可作为直接证据，同帧事件堆积只是辅助信号
+      -- （只计精确帧关联）。
       WHEN jank_responsibility IN ('APP', 'HIDDEN')
         AND (
           input_handling_ms > frame_budget_ms * ${input_handling_budget_ratio|0.5}
           OR input_slice_ms > frame_budget_ms * ${input_handling_budget_ratio|0.5}
           OR (
-            input_event_count - input_speculative_events >= ${input_event_backlog_threshold|3}
+            input_exact_events >= ${input_event_backlog_threshold|3}
             AND input_handling_ms > frame_budget_ms * 0.25
           )
         )

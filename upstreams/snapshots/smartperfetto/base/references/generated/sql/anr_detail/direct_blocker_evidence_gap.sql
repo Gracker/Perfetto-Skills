@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
 -- Source SHA-256: 69869c165513d6e975cde75d83230b412b1276132fd888e9d2fbf6a898cc2db3
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 SELECT
   'evidence_unavailable' AS direct_blocker_type,

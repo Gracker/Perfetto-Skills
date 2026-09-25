@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/lmk_analysis.skill.yaml
-Source SHA-256: 4847d51840b9975df3dd72b632137f8edd23b91bf4ba70da3c27f6d86393eda0
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: 380a21355baca5f8e2d2d740174e6f6897b0150f4d792c53f3b0d42de71a0f1b
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # LMK 事件分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -72,7 +72,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标应用包名（支持 GLOB），留空分析所有 LMK 事件
+  description: 目标应用包名（精确匹配，含 name:* 子进程），留空分析所有 LMK 事件
 - name: oom_adj_threshold
   type: number
   required: false

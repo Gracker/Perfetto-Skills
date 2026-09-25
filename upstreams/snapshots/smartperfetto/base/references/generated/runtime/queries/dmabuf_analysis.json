@@ -55,14 +55,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/dmabuf_analysis/data_check.sql",
-      "sha256": "c557a2a02346dbfcc682e2ed9b896863dd7cb873a4acda58973d8fe70c54bf02",
+      "sha256": "61f6c442124cff935808886dd8000c21af9ccf4e941e515d36fb6fd571e8b76a",
       "signal_patterns": [],
       "skill_id": "dmabuf_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+        "sha256": "15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d"
       },
       "sql_dependencies": {
         "creates": [],
@@ -149,16 +149,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/dmabuf_analysis/dmabuf_overview.sql",
-      "sha256": "a73058ef8ba65b92613c4003ea27f590d7f68b593af6f5db3f0190e97ee9d512",
+      "sha256": "fb419250fc1135f8825c8a947d38a9b7237c1333634bb33ffaa7732ea4e92f1d",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "dmabuf_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+        "sha256": "15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d"
       },
       "sql_dependencies": {
         "creates": [],
@@ -246,16 +247,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/dmabuf_analysis/dmabuf_cumulative.sql",
-      "sha256": "495d8d20ba872c892e9cb69762210a17af1b02474a5b174b4b4ff17781eb30bd",
+      "sha256": "206af0cf3388539d92a48681b5d06ccb85d570c2c8cbce48ad00ed981a3b71e2",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "dmabuf_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+        "sha256": "15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d"
       },
       "sql_dependencies": {
         "creates": [],
@@ -343,16 +345,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/dmabuf_analysis/large_buffer_allocs.sql",
-      "sha256": "510f36ff96b8da514d5f31c7c2b1893ca558a58b5e31c5dae38207e62aa9ed73",
+      "sha256": "61a9023baac4fab9f2aa49db07b1ae5220e11d3bae47ae6427eac4d5265634ba",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "dmabuf_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+        "sha256": "15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d"
       },
       "sql_dependencies": {
         "creates": [],
@@ -441,16 +444,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/dmabuf_analysis/dmabuf_frequency.sql",
-      "sha256": "705ca516a90341a141c8b4e6c5c866858103b5718b54e3b9cb07c5d8d4459f48",
+      "sha256": "84e2bfcd4448ef69ab2fd79872e49f950fd09a84300a4930e7821397b0e9a24a",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "dmabuf_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+        "sha256": "15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d"
       },
       "sql_dependencies": {
         "creates": [],
@@ -538,16 +542,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/dmabuf_analysis/thread_alloc_stats.sql",
-      "sha256": "5874b1179cf443bb0ff11d496bd9516d22708fee655f837c477b5b6cf619d77b",
+      "sha256": "dbe7f034795f5db9dc2d4393d567acd4a94d9de73a87bb6f4a9d0ee5310a99cb",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "dmabuf_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+        "sha256": "15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d"
       },
       "sql_dependencies": {
         "creates": [],
@@ -635,16 +640,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/dmabuf_analysis/buffer_lifecycle.sql",
-      "sha256": "f2049e60579c289fa7fa8e7a7d58e195bcd7866db64f0161092dc0a32ee7cd8d",
+      "sha256": "c5011c672cfb84a92af4025909fd5930245cb1a46d90f3b7c491b9d7c0ca9586",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "dmabuf_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+        "sha256": "15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d"
       },
       "sql_dependencies": {
         "creates": [],
@@ -732,16 +738,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/dmabuf_analysis/root_cause_classification.sql",
-      "sha256": "34e21303c1766309043f4524b19965539077502e99bd130834087f79933621ca",
+      "sha256": "6901220a37f000f5dfd559bb78a6738756185620f875046ad390a81eaadb8d1e",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "dmabuf_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+        "sha256": "15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d"
       },
       "sql_dependencies": {
         "creates": [],

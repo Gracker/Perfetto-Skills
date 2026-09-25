@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_slow_reasons.skill.yaml
--- Source SHA-256: 7a8bee2b91eed7037b062e3f1c0fafd599488485f01bb4b2a90c1beb997cc573
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 8929370f6941627feb8bba36285975fa579cdb15a349fff36b2d4167f5bc133c
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH startup_type_signals AS (
   SELECT
@@ -58,7 +58,7 @@ validated AS (
     COALESCE(sp.upid, (
       SELECT p2.upid
       FROM process p2
-      WHERE p2.name GLOB s.package || '*'
+      WHERE (p2.name = s.package OR p2.name GLOB s.package || ':*')
       ORDER BY p2.start_ts DESC
       LIMIT 1
     )) as upid

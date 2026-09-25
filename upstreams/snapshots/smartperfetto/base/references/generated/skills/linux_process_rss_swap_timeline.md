@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/linux_process_rss_swap_timeline.skill.yaml
-Source SHA-256: 4e9734f2e05a2e53ac4713dd8f51e7c0c93911207208fa847a936c48930a2b27
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: fa2db2d7e72b53fb5ad2fd529a8be2e71817754cc77655a857181afb81023a04
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # Linux 进程 RSS/Swap 时间线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -65,7 +65,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标进程名（支持 GLOB）
+  description: 目标进程名（精确匹配，含 name:* 子进程）
 - name: process_name
   type: string
   required: false

@@ -55,7 +55,8 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "${process_name}*"
+    "${process_name}",
+    "${process_name}:*"
   ],
   "skill_id": "cpu_process_utilization_period",
   "steps": {

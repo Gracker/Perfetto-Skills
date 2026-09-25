@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/lock_contention_module.skill.yaml
--- Source SHA-256: ca7ca4c40df11df499646b86be5c03ffef35d88535d034948b362516f1509118
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 693f6663e128d50376bf9b5d140720a74789e0354b6c784ed0a7b1d8ddd85bd5
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 SELECT
   t.name AS thread_name,
@@ -14,7 +14,7 @@ SELECT
 FROM thread_state ts
 JOIN thread t USING (utid)
 JOIN process p USING (upid)
-WHERE p.name LIKE '%${package}%'
+WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
   AND ts.state IN ('D', 'S')  -- Blocked or sleeping (could be lock wait)
   AND ts.dur > 1000000  -- > 1ms
 GROUP BY t.utid, ts.state

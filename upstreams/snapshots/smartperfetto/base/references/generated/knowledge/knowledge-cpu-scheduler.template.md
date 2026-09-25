@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-cpu-scheduler.template.md
 Source SHA-256: 54160acf30404b210cd5b0b64d39c7dff7ca2fabe741db229e43c3aee6c42a5a
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 # Knowledge Cpu Scheduler Template
 

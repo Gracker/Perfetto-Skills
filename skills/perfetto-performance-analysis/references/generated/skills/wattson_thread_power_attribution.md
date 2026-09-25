@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/wattson_thread_power_attribution.skill.yaml
-Source SHA-256: 870e236f5b23da815f89f8d2d3ed6d5ca592a73f300afe43a5a1e077c7723685
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: 49ff2d97a1fea4715446fa98199ac53849fd826e1c0cacf1d8e85bf9700c1a30
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # 线程功耗归因
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -43,11 +43,11 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标包名或进程名前缀 GLOB（可选）
+  description: 目标包名（可选，精确匹配，含 name:* 子进程）
 - name: process_name
   type: string
   required: false
-  description: 目标进程名 GLOB（可选）
+  description: 目标进程名（可选，精确匹配，含 name:* 子进程）
 - name: start_ts
   type: timestamp
   required: false

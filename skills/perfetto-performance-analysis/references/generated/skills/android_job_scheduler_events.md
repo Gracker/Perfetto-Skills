@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/android_job_scheduler_events.skill.yaml
-Source SHA-256: 5ecc6d28e06d4f53bcf3bb646cda71bd7bd338db652a20a9638073fdade4c19b
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: ba9540e773bd4ae67b91b141674cfe0b66e89de879fc3d328ea0e98c480c110b
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # JobScheduler 事件
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -42,7 +42,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标包名 GLOB（可选）
+  description: 目标包名（可选，精确匹配，含 name:* 子进程）
 - name: start_ts
   type: timestamp
   required: false

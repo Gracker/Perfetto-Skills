@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_detail.skill.yaml
--- Source SHA-256: ea1dbfeefa7e520390871f47166afa3655d5c3c23bd962c9958c75ed6a1ba059
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 1985d22caae082895e3249e940e3e891a1296411bab5c6844647aee083f7a517
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 -- 父 Skill 直接传入 android_input_events 的精确事件边界；不猜测相邻事件。
 -- Frame 阶段自 Perfetto 7b573c1 起由 _android_input_frames 扩展提供。
@@ -15,6 +15,15 @@ WITH
 -- list is the set every supported runtime has (v58.2 lacks frame_event_time);
 -- keep it aligned with scrolling_analysis's input_data_fallback_view. NOT MATERIALIZED: consumers read it more than once
 -- under their own filters, so SQLite should inline it rather than copy the table.
+-- Frame association: the stdlib matches an event to the Choreographer#doFrame
+-- its delivery overlaps (exact) or else to the next doFrame on the receiving
+-- thread with no time bound (is_speculative_frame = 1), and derives
+-- end_to_end_latency_dur from that frame. A speculative frame is a candidate,
+-- not proof the event was consumed there, so frame linkage, presentation
+-- latency and per-frame attribution read exact_frame_id /
+-- exact_end_to_end_latency_dur. frame_association labels raw values for
+-- display: none, exact, speculative, or unknown (a frame with no flag, which
+-- is not treated as exact).
 android_input_events_normalized AS NOT MATERIALIZED (
   SELECT
     dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
@@ -26,7 +35,17 @@ android_input_events_normalized AS NOT MATERIALIZED (
     event_seq, event_channel, normalized_event_channel, input_event_id,
     read_time, dispatch_track_id, dispatch_ts, dispatch_dur,
     receive_ts, receive_dur, receive_track_id,
-    frame_id, is_speculative_frame, event_time
+    frame_id, is_speculative_frame, event_time,
+    CASE WHEN frame_id IS NOT NULL AND is_speculative_frame = 0
+      THEN frame_id END AS exact_frame_id,
+    CASE WHEN frame_id IS NOT NULL AND is_speculative_frame = 0
+      THEN end_to_end_latency_dur END AS exact_end_to_end_latency_dur,
+    CASE
+      WHEN frame_id IS NULL THEN 'none'
+      WHEN is_speculative_frame = 0 THEN 'exact'
+      WHEN is_speculative_frame = 1 THEN 'speculative'
+      ELSE 'unknown'
+    END AS frame_association
   FROM android_input_events
 )
 ,
@@ -42,7 +61,8 @@ target_event AS (
 SELECT
   e.input_event_id as input_id,
   e.event_channel as channel,
-  ROUND(e.end_to_end_latency_dur / 1e6, 2) as total_latency_ms,
+  -- dispatch-to-ACK，与列标签一致；end-to-end 上屏延迟不在这张表里。
+  ROUND(e.total_latency_dur / 1e6, 2) as total_latency_ms,
   CASE WHEN e.read_time IS NOT NULL THEN printf('%d', e.read_time) END as reader_ts,
   ROUND(s_read.dur / 1e6, 2) as reader_ms,
   CASE WHEN e.dispatch_ts IS NOT NULL THEN printf('%d', e.dispatch_ts) END as dispatch_ts,

@@ -1,12 +1,12 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/sf_layer_count_in_range.skill.yaml
--- Source SHA-256: 32c86a668275bbbc02ac545c67d1fef7366d86414bac478468751d7dde71027a
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: bd1dfbbd617cd15f656facb8bdab2c3253d3f40df6f7fd2413c8bd7fc9cea540
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 SELECT
   a.layer_name,
   CASE
-    WHEN '${process_name}' != '' AND a.layer_name GLOB '*${process_name}*' THEN 'app'
+    WHEN '${process_name}' != '' AND (a.layer_name GLOB '${process_name}[/#]*' OR a.layer_name GLOB '*[ [(/]${process_name}[/#]*') THEN 'app'
     WHEN a.layer_name GLOB '*StatusBar*' OR a.layer_name GLOB '*NavigationBar*'
       OR a.layer_name GLOB '*Wallpaper*' OR a.layer_name GLOB '*InputMethod*'
       OR a.layer_name GLOB '*SystemUI*' THEN 'system'

@@ -34,7 +34,7 @@
   },
   "inputs": [
     {
-      "description": "目标进程名（支持 GLOB）",
+      "description": "目标进程名（精确匹配，含 name:* 子进程）",
       "name": "package",
       "required": false,
       "type": "string"
@@ -80,9 +80,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/atomic/textureview_producer_frame_timing.skill.yaml",
-    "sha256": "a2c34451c741e02fc6d13ed92dc82fdb910606ab79c16c5996ce90becc55c588"
+    "sha256": "4490a66847c58ebcfbd4eac9ec761e073bf37e9440b421589ca6b1d739a66bd8"
   },
   "steps": [
     {

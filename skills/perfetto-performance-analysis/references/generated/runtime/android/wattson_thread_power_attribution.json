@@ -57,7 +57,8 @@
   "signal_patterns": [
     "${package}",
     "${package}:*",
-    "${process_name}*"
+    "${process_name}",
+    "${process_name}:*"
   ],
   "skill_id": "wattson_thread_power_attribution",
   "steps": {

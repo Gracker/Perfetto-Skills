@@ -63,14 +63,14 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "23a8da65d36c0552f4ae241a768e89a3c82e6d1c1b5385ba1bd60089c94ed870",
+      "sha256": "87f945660a3d5384177a2cbaed05a090262f590869f3b40e6ce72282e3323e07",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "thread_system_summary_in_range",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/thread_system_summary_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "31a123f185507ef4507eccba97c35989dc3ab7c66b25bc6a4547216964c5cd8a"
@@ -91,22 +91,22 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "789091cc4c46ff69693355013da16d01be6b6520fe11554e020a8a4f23ce49de"
+            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "2f54feab14aa57a949385f6dd65b1a2771c89a7af62f3e92edfbd45c05ef0f45"
+            "source_sha256": "51a67ca24f1329aa4f879324c205e0b0e9e1a88c0a24af08303dfd64ce511ccb"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "c6916211a5072c18855197208948769a8c541d9a16b5c103d2ea260ad37dc363"
+            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
           },
           {
             "order": 3,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "46306dfb87ad8b573fd39397b47c9fd5fef2340038d72c5c905396d8f4e85f95"
+            "source_sha256": "cb6d1d6b94c7bf380f13b60f9f3b91d8cea93b20ffddfd9d861a8ee478aa2b2a"
           }
         ],
         "name_parameters": [

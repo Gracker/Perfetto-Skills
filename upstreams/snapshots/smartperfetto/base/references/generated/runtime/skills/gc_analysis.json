@@ -18,7 +18,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "*${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "gc_analysis",
@@ -27,7 +28,7 @@
   },
   "inputs": [
     {
-      "description": "目标应用包名（支持 GLOB），留空分析所有 GC 事件",
+      "description": "目标应用包名（精确匹配，含 name:* 子进程），留空分析所有 GC 事件",
       "name": "package",
       "required": false,
       "type": "string"
@@ -64,9 +65,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/composite/gc_analysis.skill.yaml",
-    "sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366"
+    "sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b"
   },
   "steps": [
     {

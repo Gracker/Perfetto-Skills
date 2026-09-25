@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: b7ebca89bd8e31ada9de2d388e0e3cd9e257c8ef65e1c0e6862c167bc631da67
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -13,6 +13,15 @@ WITH
 -- list is the set every supported runtime has (v58.2 lacks frame_event_time);
 -- keep it aligned with scrolling_analysis's input_data_fallback_view. NOT MATERIALIZED: consumers read it more than once
 -- under their own filters, so SQLite should inline it rather than copy the table.
+-- Frame association: the stdlib matches an event to the Choreographer#doFrame
+-- its delivery overlaps (exact) or else to the next doFrame on the receiving
+-- thread with no time bound (is_speculative_frame = 1), and derives
+-- end_to_end_latency_dur from that frame. A speculative frame is a candidate,
+-- not proof the event was consumed there, so frame linkage, presentation
+-- latency and per-frame attribution read exact_frame_id /
+-- exact_end_to_end_latency_dur. frame_association labels raw values for
+-- display: none, exact, speculative, or unknown (a frame with no flag, which
+-- is not treated as exact).
 android_input_events_normalized AS NOT MATERIALIZED (
   SELECT
     dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
@@ -24,7 +33,17 @@ android_input_events_normalized AS NOT MATERIALIZED (
     event_seq, event_channel, normalized_event_channel, input_event_id,
     read_time, dispatch_track_id, dispatch_ts, dispatch_dur,
     receive_ts, receive_dur, receive_track_id,
-    frame_id, is_speculative_frame, event_time
+    frame_id, is_speculative_frame, event_time,
+    CASE WHEN frame_id IS NOT NULL AND is_speculative_frame = 0
+      THEN frame_id END AS exact_frame_id,
+    CASE WHEN frame_id IS NOT NULL AND is_speculative_frame = 0
+      THEN end_to_end_latency_dur END AS exact_end_to_end_latency_dur,
+    CASE
+      WHEN frame_id IS NULL THEN 'none'
+      WHEN is_speculative_frame = 0 THEN 'exact'
+      WHEN is_speculative_frame = 1 THEN 'speculative'
+      ELSE 'unknown'
+    END AS frame_association
   FROM android_input_events
 )
 ,
@@ -124,13 +143,12 @@ target_events AS (
   FROM scoped_events e
   JOIN target t ON e.upid = t.upid
 ),
--- A speculative association is only the next doFrame on the receiving
--- thread, not proof the frame consumed the event; backlog counts exact ones.
+-- Backlog: exact association only (see fragments/android_input_events_normalized.sql).
 frame_backlog AS (
-  SELECT frame_id, COUNT(*) as event_count
+  SELECT exact_frame_id, COUNT(*) as event_count
   FROM target_events
-  WHERE frame_id IS NOT NULL AND COALESCE(is_speculative_frame, 0) = 0
-  GROUP BY frame_id
+  WHERE exact_frame_id IS NOT NULL
+  GROUP BY exact_frame_id
 )
 SELECT
   (SELECT process_name FROM target) as target_process,
@@ -143,13 +161,13 @@ SELECT
   ROUND(MAX(handling_latency_dur) / 1e6, 2) as max_handling_ms,
   ROUND(AVG(ack_latency_dur) / 1e6, 2) as avg_ack_ms,
   ROUND(MAX(ack_latency_dur) / 1e6, 2) as max_ack_ms,
-  ROUND(AVG(end_to_end_latency_dur) / 1e6, 2) as avg_e2e_ms,
-  ROUND(MAX(end_to_end_latency_dur) / 1e6, 2) as max_e2e_ms,
+  ROUND(AVG(exact_end_to_end_latency_dur) / 1e6, 2) as avg_e2e_ms,
+  ROUND(MAX(exact_end_to_end_latency_dur) / 1e6, 2) as max_e2e_ms,
   SUM(CASE
     WHEN handling_latency_dur > (SELECT vsync_period_ns FROM timing_config) * ${input_handling_budget_ratio|0.5}
     THEN 1 ELSE 0 END) as slow_handling_events,
   (SELECT COUNT(*) FROM frame_backlog WHERE event_count >= ${input_event_backlog_threshold|3}) as input_backlog_frames,
-  SUM(CASE WHEN is_speculative_frame = 1 THEN 1 ELSE 0 END) as speculative_frame_matches,
+  SUM(CASE WHEN frame_association = 'speculative' THEN 1 ELSE 0 END) as speculative_frame_matches,
   ROUND((SELECT vsync_period_ns FROM timing_config) / 1e6, 2) as frame_budget_ms,
   CASE
     WHEN COUNT(*) = 0 THEN '无 input 事件'

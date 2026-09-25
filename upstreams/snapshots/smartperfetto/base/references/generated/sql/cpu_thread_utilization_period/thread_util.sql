@@ -1,14 +1,14 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_thread_utilization_period.skill.yaml
--- Source SHA-256: 44ae1627a2ce3cfe119c52b3ba5f960828012d37c7afe1688dbe547eb2419d67
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 33bc2d55f1090e9b8c58eff082eee8ef1ef9f3fe47d0299431a9fb1057af264b
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH target_threads AS (
   SELECT t.utid, t.name AS thread_name, p.name AS process_name
   FROM thread t
   LEFT JOIN process p USING (upid)
   WHERE t.utid IS NOT NULL
-    AND (p.name GLOB '${process_name}*' OR '${process_name}' = '')
+    AND ('${process_name}' = '' OR p.name = '${process_name}' OR p.name GLOB '${process_name}:*')
 ), samples AS (
   SELECT
     t.process_name,

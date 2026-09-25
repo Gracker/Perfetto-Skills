@@ -27,7 +27,7 @@
   },
   "inputs": [
     {
-      "description": "目标进程名（支持 GLOB）",
+      "description": "目标进程名（精确匹配，含 name:* 子进程）",
       "name": "package",
       "required": false,
       "type": "string"
@@ -61,9 +61,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/atomic/touch_to_display_latency.skill.yaml",
-    "sha256": "1fc1f7b408fd541ca0186fd2bbf779282392819e110e55e2026a0cd645a9700f"
+    "sha256": "d1fea5e199e2a054a27591dbe47d0f1b4cf80744bf184433084b87d7e3918a62"
   },
   "steps": [],
   "type": "atomic",

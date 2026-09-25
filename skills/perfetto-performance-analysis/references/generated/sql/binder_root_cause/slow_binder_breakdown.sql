@@ -1,14 +1,14 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_root_cause.skill.yaml
--- Source SHA-256: 9fb3e26f37f2a7dead03e0b85dda71300e9c3c216b4676072b9ef31385ea33ec
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: bbf84b8491afbaad8a2a80e57d0fba5940008d70944ce362ad6f03dcc476115d
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH slow_txns AS (
   SELECT binder_txn_id, binder_reply_id, client_ts, client_dur, server_dur,
          aidl_name, client_process, server_process
   FROM android_binder_txns
   WHERE is_sync = 1
-    AND (client_process GLOB '${process_name}*' OR '${process_name}' = '')
+    AND ('${process_name}' = '' OR client_process = '${process_name}' OR client_process GLOB '${process_name}:*')
     AND client_dur > ${min_dur_ms|1} * 1000000
     AND (${start_ts} IS NULL OR client_ts >= ${start_ts})
     AND (${end_ts} IS NULL OR client_ts < ${end_ts})

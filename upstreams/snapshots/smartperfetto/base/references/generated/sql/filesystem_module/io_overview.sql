@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/filesystem_module.skill.yaml
--- Source SHA-256: 374e420be6fc4ef20beaf8f62a49e88d1241daf9f337af2b57cc2689d9987ee8
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: bccf60688175843149ed487af73b20b0262476eef680d9ae13a75bd1ee234846
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 SELECT
   CASE
@@ -21,7 +21,7 @@ FROM slice s
 JOIN thread_track tt ON s.track_id = tt.id
 JOIN thread t ON tt.utid = t.utid
 JOIN process p ON t.upid = p.upid
-WHERE p.name LIKE '%${package}%'
+WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
   AND (s.name GLOB '*read*'
        OR s.name GLOB '*Read*'
        OR s.name GLOB '*write*'

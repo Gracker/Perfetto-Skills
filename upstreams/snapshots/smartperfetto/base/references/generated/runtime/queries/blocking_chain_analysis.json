@@ -63,17 +63,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/thread_state_distribution.sql",
-      "sha256": "50f47031d67cf2a71f8c35b2dc81d26eeb66554488afaf1f9347fae23440b5fd",
+      "sha256": "08e44da4910ddfa3ad3e081ed0f54cb8e8b4bb4c6a017a2df6ca90cfd9596eaa",
       "signal_patterns": [
         "${process_name}",
-        "${process_name}*"
+        "${process_name}:*"
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "3bf11270d8e25d4d0471955b857c8d086163252df80124bfb7e57983b0ee2574"
+        "sha256": "ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2"
       },
       "sql_dependencies": {
         "creates": [],
@@ -173,10 +173,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/waker_chain.sql",
-      "sha256": "74977dc63206778474b708daddfd0785b19c507e68901fe182977a8f4da3c14c",
+      "sha256": "261c49a919c0fb7d0327afdc30c14a8d619192c339b27bb5fd6365ab974140fd",
       "signal_patterns": [
         "${process_name}",
-        "${process_name}*",
+        "${process_name}:*",
         "*Decode*",
         "*Dispatcher*",
         "*Executor*",
@@ -222,10 +222,10 @@
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "3bf11270d8e25d4d0471955b857c8d086163252df80124bfb7e57983b0ee2574"
+        "sha256": "ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2"
       },
       "sql_dependencies": {
         "creates": [],
@@ -341,17 +341,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/wakeup_chain_trace.sql",
-      "sha256": "4f7ce72f01944dd2d04848acacc2fa125140ae29ca2ebc106b2fa878032d871b",
+      "sha256": "f4b107f42fda62a88275dc667f571b08b2f57afeec9c66a0734cfbcb2d5b0ea3",
       "signal_patterns": [
         "${process_name}",
-        "${process_name}*"
+        "${process_name}:*"
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "3bf11270d8e25d4d0471955b857c8d086163252df80124bfb7e57983b0ee2574"
+        "sha256": "ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2"
       },
       "sql_dependencies": {
         "creates": [],
@@ -454,17 +454,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/blocked_function_summary.sql",
-      "sha256": "f7a34234dfbb070e1b5179fc3137b537b881ae08b6ad5bab766be4ea67291fd8",
+      "sha256": "671b53837ae42569e1e886c874b8fea4c12c6922228e1c1548dd50053535828d",
       "signal_patterns": [
         "${process_name}",
-        "${process_name}*"
+        "${process_name}:*"
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "3bf11270d8e25d4d0471955b857c8d086163252df80124bfb7e57983b0ee2574"
+        "sha256": "ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2"
       },
       "sql_dependencies": {
         "creates": [],

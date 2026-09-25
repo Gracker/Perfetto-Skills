@@ -14,7 +14,7 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${process_name}*",
+      "${process_name}",
       "${process_name}:*",
       "*futex*"
     ]
@@ -83,9 +83,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
-    "sha256": "88ec9683e76751ade4cdc4a899a482dfba921d757006beab05b108b52ba9d299"
+    "sha256": "e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349"
   },
   "steps": [
     {

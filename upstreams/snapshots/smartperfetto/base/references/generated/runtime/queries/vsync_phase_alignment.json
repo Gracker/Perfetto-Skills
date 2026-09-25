@@ -55,16 +55,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_phase_alignment/vsync_timeline.sql",
-      "sha256": "6ba48cee134d2bc4041ebab88491beb574ba063c67a8a9483a2eff99e91217c3",
+      "sha256": "89c400d6718730be540bd13076cb36249d7d8bef61e4e9fb8f77c81fc6b5ce96",
       "signal_patterns": [
         "VSYNC-app"
       ],
       "skill_id": "vsync_phase_alignment",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "72caf1238bfbf0f4c1aa7d5644f91719be30535ea54bee340c89bc2827eb11ba"
+        "sha256": "afb3392a3d6d5a71d05ce84f94211a80757acc455aa358519c129b83436c9560"
       },
       "sql_dependencies": {
         "creates": [],
@@ -148,7 +148,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_phase_alignment/phase_analysis.sql",
-      "sha256": "5b9d1f65b675cd3d41f847f7016622475f844b8e4b34ebdfd5f04600c872ac1b",
+      "sha256": "3f2271f2c21d7e2f1b67fa624647d8c30b5998d3a0d72a20d8d366378f68bd69",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -156,10 +156,10 @@
       ],
       "skill_id": "vsync_phase_alignment",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "72caf1238bfbf0f4c1aa7d5644f91719be30535ea54bee340c89bc2827eb11ba"
+        "sha256": "afb3392a3d6d5a71d05ce84f94211a80757acc455aa358519c129b83436c9560"
       },
       "sql_dependencies": {
         "creates": [],
@@ -181,7 +181,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "115335ecf7a2cebd6c6ca34acc38d3f9c2b06a6737893da328859aee0072a415"
+            "source_sha256": "a08a5c3e47cf8e9d3d8ddd1be366cc6e9b78a77ed9e5fde1a5b099c4b5a722e2"
           }
         ],
         "name_parameters": [],
@@ -257,7 +257,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/vsync_phase_alignment/phase_distribution.sql",
-      "sha256": "2ee68ea835f28096406a4af2dd4c8e7f7444b9d8e422e478a7bcb76e3a1077f2",
+      "sha256": "22b972a40c8bda282aa4f352766b1c280eb5b175f664ac5ba687047f663b5307",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -265,10 +265,10 @@
       ],
       "skill_id": "vsync_phase_alignment",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/vsync_phase_alignment.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "72caf1238bfbf0f4c1aa7d5644f91719be30535ea54bee340c89bc2827eb11ba"
+        "sha256": "afb3392a3d6d5a71d05ce84f94211a80757acc455aa358519c129b83436c9560"
       },
       "sql_dependencies": {
         "creates": [],
@@ -290,7 +290,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "115335ecf7a2cebd6c6ca34acc38d3f9c2b06a6737893da328859aee0072a415"
+            "source_sha256": "a08a5c3e47cf8e9d3d8ddd1be366cc6e9b78a77ed9e5fde1a5b099c4b5a722e2"
           }
         ],
         "name_parameters": [],

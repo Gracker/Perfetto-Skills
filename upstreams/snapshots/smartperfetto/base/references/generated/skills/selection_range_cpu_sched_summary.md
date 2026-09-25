@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml
-Source SHA-256: 95df0f44514ceae080e9a7b042ac2b618628a1b74c44e9fc73fb1daa8fc9ad67
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: 732218147795f2a787f3c333faa8662f4e42e0defe9800548bc83d8299572018
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # 选区 CPU 调度与频率摘要
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -86,7 +86,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 可选进程名过滤，支持 GLOB 前缀匹配
+  description: 可选进程名过滤（精确匹配，含 name:* 子进程）
 - name: thread_name
   type: string
   required: false

@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${process_name}*"
+      "${process_name}",
+      "${process_name}:*"
     ]
   },
   "id": "cpu_process_utilization_period",
@@ -43,9 +44,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/atomic/cpu_process_utilization_period.skill.yaml",
-    "sha256": "7ab91a94b9e4a6be4e1b8224e9e1b993140280825cff454d6124a73e98b00ec8"
+    "sha256": "78a91e3d2a1f6e5640cfab917092a5c5463f08cb7051b7ab9d63f4f4e8258524"
   },
   "steps": [
     {

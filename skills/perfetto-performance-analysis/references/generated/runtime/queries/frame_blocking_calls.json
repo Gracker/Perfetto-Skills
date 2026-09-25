@@ -61,9 +61,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/frame_blocking_calls/query.sql",
-      "sha256": "98a1d5a5f6941192a44b4e8a912b4abe85f94a0e322fd8d23a5ff36d2aaf84c6",
+      "sha256": "fb5ce71541ee5069256564977ebe38ac44450d3186d7e6d0781a150c64dcc930",
       "signal_patterns": [
-        "${process_name}*",
+        "${process_name}",
+        "${process_name}:*",
         "*Binder*",
         "*RenderThread*",
         "Binder:*",
@@ -71,10 +72,10 @@
       ],
       "skill_id": "frame_blocking_calls",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/frame_blocking_calls.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ee76c4261a9a7084ff1f269894e9e029305381044bfc502210772faefaf06694"
+        "sha256": "f50aec9da16055b40141764cc3668c04f17cc70cceddcf65c2cff8c9ae89a062"
       },
       "sql_dependencies": {
         "creates": [],

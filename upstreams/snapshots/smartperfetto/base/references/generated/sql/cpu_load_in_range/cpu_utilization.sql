@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_load_in_range.skill.yaml
--- Source SHA-256: b24f5a2e47a5f0d7ae34fcfc86c1a7f58e53b09f13f6b5e6e36b5a998da2053c
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 1b8c48740c33db268d4dd30f2d4e9d0bdcb254f3439852bbaaec2ff0a373ba48
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/lock_contention_analysis.skill.yaml
--- Source SHA-256: 2218440cfc32dab82a764464dea62719d04148dbaff34657cbe3590d4a063523
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 6cc30df6302970712dcfa515969800f74b30e65154d9f53f2cfcb10587191188
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH holds AS (
   SELECT
@@ -17,7 +17,7 @@ WITH holds AS (
   LEFT JOIN process AS p USING (upid)
   WHERE
     CASE WHEN '${process_name}' != ''
-         THEN p.name GLOB '*${process_name}*'
+         THEN (p.name = '${process_name}' OR p.name GLOB '${process_name}:*')
          ELSE 1 END
     AND (${start_ts} IS NULL OR h.ts + h.dur > ${start_ts})
     AND (${end_ts} IS NULL OR h.ts < ${end_ts})

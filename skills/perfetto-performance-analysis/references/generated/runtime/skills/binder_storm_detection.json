@@ -16,7 +16,7 @@
   },
   "inputs": [
     {
-      "description": "目标进程名（支持 GLOB）",
+      "description": "目标进程名（精确匹配，含 name:* 子进程）",
       "name": "package",
       "required": false,
       "type": "string"
@@ -53,9 +53,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/atomic/binder_storm_detection.skill.yaml",
-    "sha256": "e9cfcc559910f308c54210ff966b733355adba117b92af97efceeca138104e48"
+    "sha256": "a412a8c95a1140cfb4eb8306d38fb6506c821a302636b302bb1f55f06821775d"
   },
   "steps": [
     {

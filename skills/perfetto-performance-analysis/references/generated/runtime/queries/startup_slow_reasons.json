@@ -63,7 +63,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_slow_reasons/startup_overview.sql",
-      "sha256": "712e0a415d1d8ee8b4b1bbd6bbfdcd0941295d93694b5efcfd8b8ea69f98ab57",
+      "sha256": "d76d9b437193903c0466cb4ef3e63c9dad006d7e6b5454e65942e0a597a2cef8",
       "signal_patterns": [
         "bindApplication",
         "handleRelaunchActivity*",
@@ -72,10 +72,10 @@
       ],
       "skill_id": "startup_slow_reasons",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7a8bee2b91eed7037b062e3f1c0fafd599488485f01bb4b2a90c1beb997cc573"
+        "sha256": "8929370f6941627feb8bba36285975fa579cdb15a349fff36b2d4167f5bc133c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -166,7 +166,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_slow_reasons/slow_reason_checks.sql",
-      "sha256": "0bd1c6e8dd3b637551bade21dbbfa76b1398f996a293400b0adb14d11cb4ea16",
+      "sha256": "ce4eca2fb872ee7adf9d254ef905e3bbce75cd93811a6884680f29eacab41679",
       "signal_patterns": [
         "*GC*",
         "*Lock contention*",
@@ -194,10 +194,10 @@
       ],
       "skill_id": "startup_slow_reasons",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "7a8bee2b91eed7037b062e3f1c0fafd599488485f01bb4b2a90c1beb997cc573"
+        "sha256": "8929370f6941627feb8bba36285975fa579cdb15a349fff36b2d4167f5bc133c"
       },
       "sql_dependencies": {
         "creates": [],

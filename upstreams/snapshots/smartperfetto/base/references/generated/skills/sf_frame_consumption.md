@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/sf_frame_consumption.skill.yaml
-Source SHA-256: 4c3292178277986593209bee8ad4583c853ee005e59e1b2ceb217fbae7701a3f
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: d9d6fa18825a0a3ea0776b5dec7a84068698de8832cfecc979234287383dacde
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # SurfaceFlinger 帧消费分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

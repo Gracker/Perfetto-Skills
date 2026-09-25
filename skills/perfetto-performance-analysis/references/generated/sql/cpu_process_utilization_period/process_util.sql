@@ -1,14 +1,14 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_process_utilization_period.skill.yaml
--- Source SHA-256: 7ab91a94b9e4a6be4e1b8224e9e1b993140280825cff454d6124a73e98b00ec8
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 78a91e3d2a1f6e5640cfab917092a5c5463f08cb7051b7ab9d63f4f4e8258524
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH target_processes AS (
   SELECT upid, name AS process_name
   FROM process
   WHERE upid IS NOT NULL
     AND name IS NOT NULL
-    AND (name GLOB '${process_name}*' OR '${process_name}' = '')
+    AND ('${process_name}' = '' OR name = '${process_name}' OR name GLOB '${process_name}:*')
 ), samples AS (
   SELECT
     p.process_name,

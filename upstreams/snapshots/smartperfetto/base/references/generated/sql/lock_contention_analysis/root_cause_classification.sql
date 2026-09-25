@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/lock_contention_analysis.skill.yaml
--- Source SHA-256: 2218440cfc32dab82a764464dea62719d04148dbaff34657cbe3590d4a063523
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 6cc30df6302970712dcfa515969800f74b30e65154d9f53f2cfcb10587191188
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 -- 主线程锁竞争统计
@@ -13,7 +13,7 @@ main_thread_stats AS (
   FROM android_monitor_contention
   WHERE is_blocked_thread_main = 1
     AND CASE WHEN '${process_name}' != ''
-             THEN process_name GLOB '*${process_name}*'
+             THEN (process_name = '${process_name}' OR process_name GLOB '${process_name}:*')
              ELSE 1 END
     AND dur / 1e6 >= COALESCE(${min_duration_ms|10}, 10)
     AND (${start_ts} IS NULL OR ts + dur > ${start_ts})
@@ -31,7 +31,7 @@ hotspot_stats AS (
       COUNT(DISTINCT blocked_utid) AS unique_waiters
     FROM android_monitor_contention
     WHERE CASE WHEN '${process_name}' != ''
-               THEN process_name GLOB '*${process_name}*'
+               THEN (process_name = '${process_name}' OR process_name GLOB '${process_name}:*')
                ELSE 1 END
       AND (${start_ts} IS NULL OR ts + dur > ${start_ts})
       AND (${end_ts} IS NULL OR ts < ${end_ts})
@@ -45,7 +45,7 @@ chain_stats AS (
   FROM android_monitor_contention_chain c
   WHERE (c.parent_id IS NOT NULL AND c.child_id IS NOT NULL)
     AND CASE WHEN '${process_name}' != ''
-             THEN c.process_name GLOB '*${process_name}*'
+             THEN (c.process_name = '${process_name}' OR c.process_name GLOB '${process_name}:*')
              ELSE 1 END
     AND (${start_ts} IS NULL OR c.ts + c.dur > ${start_ts})
     AND (${end_ts} IS NULL OR c.ts < ${end_ts})
@@ -58,7 +58,7 @@ binder_stats AS (
   FROM android_monitor_contention
   WHERE binder_reply_tid IS NOT NULL
     AND CASE WHEN '${process_name}' != ''
-             THEN process_name GLOB '*${process_name}*'
+             THEN (process_name = '${process_name}' OR process_name GLOB '${process_name}:*')
              ELSE 1 END
     AND dur / 1e6 >= COALESCE(${min_duration_ms|10}, 10)
     AND (${start_ts} IS NULL OR ts + dur > ${start_ts})
@@ -71,7 +71,7 @@ overall_stats AS (
     COALESCE(SUM(dur) / 1e6, 0) AS total_blocked_ms
   FROM android_monitor_contention
   WHERE CASE WHEN '${process_name}' != ''
-             THEN process_name GLOB '*${process_name}*'
+             THEN (process_name = '${process_name}' OR process_name GLOB '${process_name}:*')
              ELSE 1 END
     AND dur / 1e6 >= COALESCE(${min_duration_ms|10}, 10)
     AND (${start_ts} IS NULL OR ts + dur > ${start_ts})

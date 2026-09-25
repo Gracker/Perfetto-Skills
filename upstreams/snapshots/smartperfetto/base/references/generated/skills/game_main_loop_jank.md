@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/game_main_loop_jank.skill.yaml
-Source SHA-256: af3cf3d17241144bf6c76fedf398ba64afce96ad2290b098e3e7c9e628aa7d17
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: 8e8fd62e11d703c67848024b1e5c80932cb4722011d4c83a6dbaa99802082f55
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # 游戏主循环卡顿检测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -72,7 +72,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标进程名（支持 GLOB）
+  description: 目标进程名（精确匹配，含 name:* 子进程）
 - name: process_name
   type: string
   required: false

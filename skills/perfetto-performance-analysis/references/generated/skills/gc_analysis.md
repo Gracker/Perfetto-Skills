@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/gc_analysis.skill.yaml
-Source SHA-256: 9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: 7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # GC 行为分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -69,7 +69,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标应用包名（支持 GLOB），留空分析所有 GC 事件
+  description: 目标应用包名（精确匹配，含 name:* 子进程），留空分析所有 GC 事件
 - name: min_gc_dur_ms
   type: number
   required: false

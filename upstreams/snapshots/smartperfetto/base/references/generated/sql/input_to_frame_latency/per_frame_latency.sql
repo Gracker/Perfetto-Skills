@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/input_to_frame_latency.skill.yaml
--- Source SHA-256: 40aedd3e7920ed09d8db24bb531a0799836e04ad1f129ba0b23358230a4af76d
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 42ded4806d9a910a2d97e2c7894bbdc986e7195a4ed6d85a2ee0fa43c4ae4dfd
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -13,6 +13,15 @@ WITH
 -- list is the set every supported runtime has (v58.2 lacks frame_event_time);
 -- keep it aligned with scrolling_analysis's input_data_fallback_view. NOT MATERIALIZED: consumers read it more than once
 -- under their own filters, so SQLite should inline it rather than copy the table.
+-- Frame association: the stdlib matches an event to the Choreographer#doFrame
+-- its delivery overlaps (exact) or else to the next doFrame on the receiving
+-- thread with no time bound (is_speculative_frame = 1), and derives
+-- end_to_end_latency_dur from that frame. A speculative frame is a candidate,
+-- not proof the event was consumed there, so frame linkage, presentation
+-- latency and per-frame attribution read exact_frame_id /
+-- exact_end_to_end_latency_dur. frame_association labels raw values for
+-- display: none, exact, speculative, or unknown (a frame with no flag, which
+-- is not treated as exact).
 android_input_events_normalized AS NOT MATERIALIZED (
   SELECT
     dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
@@ -24,7 +33,17 @@ android_input_events_normalized AS NOT MATERIALIZED (
     event_seq, event_channel, normalized_event_channel, input_event_id,
     read_time, dispatch_track_id, dispatch_ts, dispatch_dur,
     receive_ts, receive_dur, receive_track_id,
-    frame_id, is_speculative_frame, event_time
+    frame_id, is_speculative_frame, event_time,
+    CASE WHEN frame_id IS NOT NULL AND is_speculative_frame = 0
+      THEN frame_id END AS exact_frame_id,
+    CASE WHEN frame_id IS NOT NULL AND is_speculative_frame = 0
+      THEN end_to_end_latency_dur END AS exact_end_to_end_latency_dur,
+    CASE
+      WHEN frame_id IS NULL THEN 'none'
+      WHEN is_speculative_frame = 0 THEN 'exact'
+      WHEN is_speculative_frame = 1 THEN 'speculative'
+      ELSE 'unknown'
+    END AS frame_association
   FROM android_input_events
 )
 ,
@@ -50,15 +69,14 @@ input_with_frame AS (
     ie.dispatch_latency_dur,
     ie.handling_latency_dur,
     ie.ack_latency_dur,
-    ie.end_to_end_latency_dur,
-    ie.is_speculative_frame,
-    -- 用 frame_id 精确 JOIN 帧表获取帧内分解
+    ie.exact_end_to_end_latency_dur,
+    -- exact association only (see fragments/android_input_events_normalized.sql)
     f.ts as frame_ts,
     f.dur as frame_dur,
     f.ts + f.dur as frame_present_ts
   FROM android_input_events_normalized ie
   LEFT JOIN actual_frame_timeline_slice f
-    ON ie.frame_id = f.surface_frame_token
+    ON ie.exact_frame_id = f.surface_frame_token
     AND ie.upid = f.upid
   WHERE (('${package}' = '' OR ie.process_name = '${package}' OR ie.process_name GLOB '${package}:*') OR '${package}' = '')
     AND (ie.event_action = 'MOVE'
@@ -66,13 +84,13 @@ input_with_frame AS (
     AND (${start_ts} IS NULL OR ie.dispatch_ts >= ${start_ts})
     AND (${end_ts} IS NULL OR ie.dispatch_ts <= ${end_ts})
 ),
--- 预计算 e2e 延迟，避免重复 COALESCE（优先用 stdlib 的 end_to_end，fallback 到手动计算）
+-- 预计算 e2e 延迟（优先用 stdlib 的 end_to_end，fallback 到精确关联帧的结束时间）
 with_latency AS (
   SELECT
     *,
-    COALESCE(end_to_end_latency_dur, frame_present_ts - input_ts) as e2e_ns
+    COALESCE(exact_end_to_end_latency_dur, frame_present_ts - input_ts) as e2e_ns
   FROM input_with_frame
-  WHERE (end_to_end_latency_dur IS NOT NULL OR frame_present_ts IS NOT NULL)
+  WHERE (exact_end_to_end_latency_dur IS NOT NULL OR frame_present_ts IS NOT NULL)
 )
 SELECT
   printf('%d', input_ts) as input_ts,
@@ -83,8 +101,6 @@ SELECT
   ROUND(handling_latency_dur / 1e6, 2) as handling_ms,
   ROUND(ack_latency_dur / 1e6, 2) as ack_ms,
   ROUND(frame_dur / 1e6, 2) as frame_dur_ms,
-  ROUND((frame_present_ts - frame_ts - COALESCE(frame_dur, 0)) / 1e6, 2) as frame_to_present_ms,
-  is_speculative_frame as is_speculative,
   CASE
     WHEN e2e_ns / 1e6 < 2 * (SELECT period_ns FROM vsync_cfg) / 1e6 THEN '优秀'
     WHEN e2e_ns / 1e6 < 3 * (SELECT period_ns FROM vsync_cfg) / 1e6 THEN '良好'

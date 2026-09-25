@@ -14,7 +14,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "%${package}%",
+      "${package}",
+      "${package}:*",
       "RenderThread",
       "main"
     ]
@@ -53,9 +54,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/modules/app/third_party_module.skill.yaml",
-    "sha256": "dacb92b3b21e6a6eb465c54481840390078de91ffe280ccb2ee14d978360ae96"
+    "sha256": "2171f2d0270a73b925955d869ff6f79c58b686da28d2da8e6785423c1aa1aedb"
   },
   "steps": [
     {

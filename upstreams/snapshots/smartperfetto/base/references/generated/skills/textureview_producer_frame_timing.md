@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/textureview_producer_frame_timing.skill.yaml
-Source SHA-256: a2c34451c741e02fc6d13ed92dc82fdb910606ab79c16c5996ce90becc55c588
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: 4490a66847c58ebcfbd4eac9ec761e073bf37e9440b421589ca6b1d739a66bd8
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # TextureView 生产端帧时序
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -72,7 +72,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标进程名（支持 GLOB）
+  description: 目标进程名（精确匹配，含 name:* 子进程）
 - name: process_name
   type: string
   required: false

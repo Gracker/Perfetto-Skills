@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "*${package}*"
+      "${package}",
+      "${package}:*"
     ]
   },
   "id": "dmabuf_analysis",
@@ -18,7 +19,7 @@
   },
   "inputs": [
     {
-      "description": "目标应用包名（支持 GLOB），留空分析所有 DMA Buffer",
+      "description": "目标应用包名（精确匹配，含 name:* 子进程），留空分析所有 DMA Buffer",
       "name": "package",
       "required": false,
       "type": "string"
@@ -53,9 +54,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/composite/dmabuf_analysis.skill.yaml",
-    "sha256": "82544957bb27c764d3304e2acc9a3306fa7fab10dc9b095bcfe0cae0798b53f6"
+    "sha256": "15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d"
   },
   "steps": [
     {

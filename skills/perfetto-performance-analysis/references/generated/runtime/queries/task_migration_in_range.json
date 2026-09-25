@@ -63,16 +63,16 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "e8ce32eea6466fb376a5a779b749d463802282710baafd5ab1943cdf69054727",
+      "sha256": "a5ff8ab8141a0b9b0cc1d19bd75c4c52ca9762741f53781cee458b8cfa73a905",
       "signal_patterns": [
         "${package}:*"
       ],
       "skill_id": "task_migration_in_range",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/task_migration_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8b1703cdcf2d63f210900cbb978a2a645b9ca530a25e37a3a8fd946d20df39f0"
+        "sha256": "72c986a740aab52bf0b4a6d844c34699b26678acb9fe56eeef0cfd3061fa13c1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -88,12 +88,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "789091cc4c46ff69693355013da16d01be6b6520fe11554e020a8a4f23ce49de"
+            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "c6916211a5072c18855197208948769a8c541d9a16b5c103d2ea260ad37dc363"
+            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
           }
         ],
         "name_parameters": [

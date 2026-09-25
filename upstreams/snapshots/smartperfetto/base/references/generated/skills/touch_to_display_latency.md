@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/touch_to_display_latency.skill.yaml
-Source SHA-256: 1fc1f7b408fd541ca0186fd2bbf779282392819e110e55e2026a0cd645a9700f
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: d1fea5e199e2a054a27591dbe47d0f1b4cf80744bf184433084b87d7e3918a62
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # 触摸到显示延迟 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -43,7 +43,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标进程名（支持 GLOB）
+  description: 目标进程名（精确匹配，含 name:* 子进程）
 - name: start_ts
   type: timestamp
   required: false

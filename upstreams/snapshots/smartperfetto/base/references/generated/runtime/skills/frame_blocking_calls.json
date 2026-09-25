@@ -18,7 +18,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${process_name}*",
+      "${process_name}",
+      "${process_name}:*",
       "*Binder*",
       "*RenderThread*",
       "Binder:*",
@@ -66,9 +67,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/atomic/frame_blocking_calls.skill.yaml",
-    "sha256": "ee76c4261a9a7084ff1f269894e9e029305381044bfc502210772faefaf06694"
+    "sha256": "f50aec9da16055b40141764cc3668c04f17cc70cceddcf65c2cff8c9ae89a062"
   },
   "steps": [],
   "type": "atomic",

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gc_analysis.skill.yaml
--- Source SHA-256: 9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 SELECT
   process.name AS process_name,
@@ -14,6 +14,6 @@ SELECT
 FROM _android_garbage_collection_process_stats s
 JOIN process ON s.upid = process.upid
 WHERE CASE WHEN '${package}' != ''
-           THEN process.name GLOB '*${package}*'
+           THEN (process.name = '${package}' OR process.name GLOB '${package}:*')
            ELSE 1 END
 ORDER BY gc_cpu_sec DESC

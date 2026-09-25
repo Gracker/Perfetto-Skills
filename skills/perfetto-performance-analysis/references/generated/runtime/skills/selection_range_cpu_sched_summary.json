@@ -35,7 +35,7 @@
       "type": "timestamp"
     },
     {
-      "description": "可选进程名过滤，支持 GLOB 前缀匹配",
+      "description": "可选进程名过滤（精确匹配，含 name:* 子进程）",
       "name": "package",
       "required": false,
       "type": "string"
@@ -73,9 +73,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
-    "sha256": "95df0f44514ceae080e9a7b042ac2b618628a1b74c44e9fc73fb1daa8fc9ad67"
+    "sha256": "732218147795f2a787f3c333faa8662f4e42e0defe9800548bc83d8299572018"
   },
   "steps": [
     {

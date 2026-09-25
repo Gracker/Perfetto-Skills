@@ -55,16 +55,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/lmk_kill_attribution/lmk_events.sql",
-      "sha256": "a913881539137962ee55cbe3e9f952b9c1a847505eaa3350b3bc9174a5555b6c",
+      "sha256": "a841e73c12d859d207e598b1ead6832a77e802a52843b1a3c2174416dc82b20f",
       "signal_patterns": [
-        "${process_name}*"
+        "${process_name}",
+        "${process_name}:*"
       ],
       "skill_id": "lmk_kill_attribution",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/atomic/lmk_kill_attribution.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4c299b78e625d37ee05fb8288a3b072ab6151ce29c5f98780a038913d06664ae"
+        "sha256": "1f267129dd343f4693338d1c7e4384b88c383313fe1b950339e31f9c9dfa8c85"
       },
       "sql_dependencies": {
         "creates": [],

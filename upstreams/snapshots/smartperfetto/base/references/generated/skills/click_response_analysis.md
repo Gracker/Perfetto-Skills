@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_analysis.skill.yaml
-Source SHA-256: ce6eab4ca8f6e37319dd89eb7e9063d577143f539fc1106875fe97f15999cb18
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: b4e342987eae11ebb02d0693221a0e10ba48572187f89156a889763249cd5cf8
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # 点击响应分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -266,6 +266,10 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+  - name: speculative_frame_events
+    label: 推测帧关联事件
+    type: number
+    format: compact
   - name: rating
     label: 评级
     type: string
@@ -465,6 +469,9 @@ display:
   - name: frame_id
     label: 帧 ID
     type: number
+  - name: frame_association
+    label: 帧关联
+    type: string
   - name: event_ts
     label: 事件时间
     type: timestamp

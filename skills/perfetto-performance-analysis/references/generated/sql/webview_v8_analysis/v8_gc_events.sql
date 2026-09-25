@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/webview_v8_analysis.skill.yaml
--- Source SHA-256: a542665b367b80c7ecf200ccc5ab2abe452baed0039e724d59ab30515c30b284
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 21b4aad17749f3d884e964c264f1cafceef566b01f105da76394c1ae7f0b20ca
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 SELECT
   CASE

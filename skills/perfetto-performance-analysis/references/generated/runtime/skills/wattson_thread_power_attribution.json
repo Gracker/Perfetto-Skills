@@ -11,7 +11,8 @@
     "signal_patterns": [
       "${package}",
       "${package}:*",
-      "${process_name}*"
+      "${process_name}",
+      "${process_name}:*"
     ]
   },
   "id": "wattson_thread_power_attribution",
@@ -20,13 +21,13 @@
   },
   "inputs": [
     {
-      "description": "目标包名或进程名前缀 GLOB（可选）",
+      "description": "目标包名（可选，精确匹配，含 name:* 子进程）",
       "name": "package",
       "required": false,
       "type": "string"
     },
     {
-      "description": "目标进程名 GLOB（可选）",
+      "description": "目标进程名（可选，精确匹配，含 name:* 子进程）",
       "name": "process_name",
       "required": false,
       "type": "string"
@@ -61,9 +62,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/atomic/wattson_thread_power_attribution.skill.yaml",
-    "sha256": "870e236f5b23da815f89f8d2d3ed6d5ca592a73f300afe43a5a1e077c7723685"
+    "sha256": "49ff2d97a1fea4715446fa98199ac53849fd826e1c0cacf1d8e85bf9700c1a30"
   },
   "steps": [
     {

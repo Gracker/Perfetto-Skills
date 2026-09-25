@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "%${package}%",
+      "${package}",
+      "${package}:*",
       "%Buffers%",
       "%Cached%",
       "%Mem%",
@@ -79,9 +80,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
-    "sha256": "4554575145483d31969e45a7f620e2babcd548a6287d30687a303389845885bd"
+    "sha256": "414d1472ca7ef5f999ad8066cb1322622316c622e4bb29e5d0ce7f7b0e4fad9b"
   },
   "steps": [
     {

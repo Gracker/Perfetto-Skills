@@ -14,7 +14,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${process_name}*"
+      "${process_name}",
+      "${process_name}:*"
     ]
   },
   "id": "binder_detail",
@@ -87,9 +88,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/composite/binder_detail.skill.yaml",
-    "sha256": "b21af48bb190aa382256c422c77267cce8f041f42257cbbd3a6f669e691f5bf9"
+    "sha256": "abd94ce08b891e6024eee4eb3ed9edc80baf296988105e6eebafe7e693921759"
   },
   "steps": [
     {

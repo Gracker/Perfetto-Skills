@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
--- Source SHA-256: 88ec9683e76751ade4cdc4a899a482dfba921d757006beab05b108b52ba9d299
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 -- 使用 stdlib android_binder_txns 替代手动 binder slice 解析
 WITH analysis_window AS (
@@ -27,7 +27,7 @@ WHERE bt.is_main_thread = 1
   AND bt.is_sync = 1
   AND bt.client_upid = (
     SELECT p.upid FROM process p
-    WHERE '${process_name}' != '' AND p.name GLOB '${process_name}*'
+    WHERE '${process_name}' != '' AND (p.name = '${process_name}' OR p.name GLOB '${process_name}:*')
     LIMIT 1
   )
   AND bt.client_ts >= aw.w_start

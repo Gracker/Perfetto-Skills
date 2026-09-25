@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/rn_fabric_render_jank.skill.yaml
-Source SHA-256: 8a15553a9c2c082197a2e71d1a5134684efba677cbc45dab9a717b2084ddaabe
-Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+Source SHA-256: 3db80f70cb79855ae72bfefc3e8d9937dff93e81daa6b2452aab13391ea03748
+Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 # RN Fabric/JSI 渲染卡顿
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -74,7 +74,7 @@ modules:
 - name: package
   type: string
   required: false
-  description: 目标进程名（支持 GLOB）
+  description: 目标进程名（精确匹配，含 name:* 子进程）
 - name: process_name
   type: string
   required: false

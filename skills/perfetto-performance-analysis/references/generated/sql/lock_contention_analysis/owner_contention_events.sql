@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/lock_contention_analysis.skill.yaml
--- Source SHA-256: 2218440cfc32dab82a764464dea62719d04148dbaff34657cbe3590d4a063523
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 6cc30df6302970712dcfa515969800f74b30e65154d9f53f2cfcb10587191188
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 raw_art_contentions AS (
@@ -104,7 +104,7 @@ LEFT JOIN ranked_owner_states AS ros
   ON ros.event_key = c.event_key
   AND ros.rn = 1
 WHERE CASE WHEN '${process_name}' != ''
-           THEN c.process_name GLOB '*${process_name}*'
+           THEN (c.process_name = '${process_name}' OR c.process_name GLOB '${process_name}:*')
            ELSE 1 END
   AND c.dur / 1e6 >= COALESCE(${min_duration_ms|10}, 10)
   AND (${start_ts} IS NULL OR c.ts + c.dur > ${start_ts})

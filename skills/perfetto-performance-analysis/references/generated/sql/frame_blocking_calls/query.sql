@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/frame_blocking_calls.skill.yaml
--- Source SHA-256: ee76c4261a9a7084ff1f269894e9e029305381044bfc502210772faefaf06694
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: f50aec9da16055b40141764cc3668c04f17cc70cceddcf65c2cff8c9ae89a062
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH jank_frames AS (
   SELECT
@@ -12,7 +12,7 @@ WITH jank_frames AS (
     a.jank_type
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
-  WHERE (p.name GLOB '${process_name}*' OR '${process_name}' = '')
+  WHERE ('${process_name}' = '' OR p.name = '${process_name}' OR p.name GLOB '${process_name}:*')
     AND COALESCE(a.jank_type, 'None') != 'None'
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
@@ -37,7 +37,7 @@ blocking AS (
   FROM _android_critical_blocking_calls bc
   LEFT JOIN thread t ON t.utid = bc.utid
   LEFT JOIN process p ON p.upid = bc.upid
-  WHERE (bc.process_name GLOB '${process_name}*' OR '${process_name}' = '')
+  WHERE ('${process_name}' = '' OR bc.process_name = '${process_name}' OR bc.process_name GLOB '${process_name}:*')
 )
 SELECT
   printf('%d', jf.frame_id) as frame_id,

@@ -1,10 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/actor_class_labels.sql
--- Source SHA-256: 3c425851e00996bd8471be41b1db1c5c813ba25c9fb1879f5803447988e2c252
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 9a412392d24ee1ebffa9ab8bbc1dc253cc38de25a683a63cc824aa1072d62bab
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
+-- process-identity: label-only
+-- (identityGate: its name comparisons label actors, they select no target
+-- process, so they do not make a consuming Skill verify process identity.)
 
 -- Inputs: ${package}, ${process_name} (string parameters; empty when no
 -- target process was selected). Requires the android.process_metadata

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/memory_growth_detector.skill.yaml
--- Source SHA-256: 2b08097c2ecf0e91bbf533df7818050073340606df64e9e4587fc5b6ddafa7bd
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: d2d0eb1ea2116db5a9fd472a64528119adcd7f007ee53fdc2d2eb53c778d9024
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 input AS (

@@ -1,13 +1,13 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/blocking_chain_analysis.skill.yaml
--- Source SHA-256: 3bf11270d8e25d4d0471955b857c8d086163252df80124bfb7e57983b0ee2574
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH main_thread AS ( -- 精确进程名优先（GLOB 前缀会带进 ${process_name}:subprocess）；存活线程优先；utid 兜底
   SELECT t.utid
   FROM thread t
   JOIN process p ON t.upid = p.upid
-  WHERE (p.name = '${process_name}' OR p.name GLOB '${process_name}*')
+  WHERE (p.name = '${process_name}' OR p.name GLOB '${process_name}:*')
     AND (t.is_main_thread = 1 OR t.tid = p.pid)
   ORDER BY
     (p.name = '${process_name}') DESC,

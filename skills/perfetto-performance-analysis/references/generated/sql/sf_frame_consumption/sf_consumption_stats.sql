@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/sf_frame_consumption.skill.yaml
--- Source SHA-256: 4c3292178277986593209bee8ad4583c853ee005e59e1b2ceb217fbae7701a3f
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: d9d6fa18825a0a3ea0776b5dec7a84068698de8832cfecc979234287383dacde
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 time_bounds AS (
@@ -25,7 +25,7 @@ sf_frames AS (
   FROM actual_frame_timeline_slice a
   LEFT JOIN process p ON a.upid = p.upid
   WHERE a.surface_frame_token IS NOT NULL
-    AND (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '' OR a.layer_name GLOB '*${package}*')
+    AND ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*' OR (a.layer_name GLOB '${package}[/#]*' OR a.layer_name GLOB '*[ [(/]${package}[/#]*'))
     AND a.ts >= (SELECT start_ts FROM time_bounds)
     AND a.ts <= (SELECT end_ts FROM time_bounds)
 ),

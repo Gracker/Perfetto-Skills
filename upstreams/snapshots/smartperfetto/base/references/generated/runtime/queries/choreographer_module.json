@@ -57,19 +57,20 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/doframe_overview.sql",
-      "sha256": "9c061f9e1e2b8acdcf20d27702c806a0a062b34ed350a9051172c431f58accf3",
+      "sha256": "01a6869e2426046b445896bda5acbf6cdd2d2d621c84c34b9c7db13d4fde65a9",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "*Choreographer#doFrame*",
         "*Choreographer*",
         "*doFrame*"
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
+        "sha256": "89db8f840e3ef0967b9ba9b94d1588c0479509358a203e9b2a8eb37910fc7509"
       },
       "sql_dependencies": {
         "creates": [],
@@ -160,18 +161,19 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/doframe_timeline.sql",
-      "sha256": "b9e7ef14cb75326a940ebcca85aa2bd90d531d011f83901ac697446567b5b4d8",
+      "sha256": "411c383d790bb39013b58f9273fa6d65383d4ecf7422942060d6f89380f72b8d",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "*Choreographer#doFrame*",
         "*doFrame*"
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
+        "sha256": "89db8f840e3ef0967b9ba9b94d1588c0479509358a203e9b2a8eb37910fc7509"
       },
       "sql_dependencies": {
         "creates": [],
@@ -262,9 +264,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/callback_breakdown.sql",
-      "sha256": "c57bfb51c1c93c81cab5e9c8ec7ca0b948f30682f9b22090494023b46fa9a137",
+      "sha256": "67adbf0d0236cc03b1161101eeea921321af868a65ed2c8a21c156aa25e8ce44",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "*Animation*",
         "*Input*",
         "*Traversal*",
@@ -277,10 +280,10 @@
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
+        "sha256": "89db8f840e3ef0967b9ba9b94d1588c0479509358a203e9b2a8eb37910fc7509"
       },
       "sql_dependencies": {
         "creates": [],
@@ -370,18 +373,19 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/long_frames.sql",
-      "sha256": "c2739eb6591744120a5c6507e3ddda613b4c71dd68d0c944821c1bb32ac74cc6",
+      "sha256": "2bcb80f1c817a0ced5c790ee24d4cd61fcb6613413408c4148c1bebca2b566c5",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "*Choreographer#doFrame*",
         "*doFrame*"
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
+        "sha256": "89db8f840e3ef0967b9ba9b94d1588c0479509358a203e9b2a8eb37910fc7509"
       },
       "sql_dependencies": {
         "creates": [],
@@ -472,9 +476,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/view_traversal.sql",
-      "sha256": "83c4721731a9bee2757cfaad333776424a49b223a57382fe159a13f170b63443",
+      "sha256": "1f84710cee2f3b677efab38ffd89e19526d2300631e5db2271e5aef846b06d0c",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "*Draw*",
         "*Layout*",
         "*Measure*",
@@ -484,10 +489,10 @@
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
+        "sha256": "89db8f840e3ef0967b9ba9b94d1588c0479509358a203e9b2a8eb37910fc7509"
       },
       "sql_dependencies": {
         "creates": [],
@@ -577,9 +582,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/choreographer_module/frame_pipeline.sql",
-      "sha256": "bf25f70dc07002b6a0b0d393d2077d5ae92bf0c212d2dc3205d04660202f45c6",
+      "sha256": "2546ed1df7b2309100662f4909cc293c629fc0a0c27ca419c7038cd080290d6e",
       "signal_patterns": [
-        "%${package}%",
+        "${package}",
+        "${package}:*",
         "*DrawFrame*",
         "*acquireBuffer*",
         "*dequeueBuffer*",
@@ -589,10 +595,10 @@
       ],
       "skill_id": "choreographer_module",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "4a35f45abe4b7e038dbbcded10d22da6cb28b79dbd7a66e0e9d83452c778e916"
+        "sha256": "89db8f840e3ef0967b9ba9b94d1588c0479509358a203e9b2a8eb37910fc7509"
       },
       "sql_dependencies": {
         "creates": [],

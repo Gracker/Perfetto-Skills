@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_anomalous_threads_in_range.skill.yaml
 -- Source SHA-256: ebd323de6763d2610995f371f900c448a892c16151ffa0bec43f440e1c702042
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -60,6 +60,9 @@ system_sched_spans AS (
 ,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
+-- process-identity: label-only
+-- (identityGate: its name comparisons label actors, they select no target
+-- process, so they do not make a consuming Skill verify process identity.)
 
 -- Inputs: ${package}, ${process_name} (string parameters; empty when no
 -- target process was selected). Requires the android.process_metadata

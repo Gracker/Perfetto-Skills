@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/lock_contention_analysis.skill.yaml
--- Source SHA-256: 2218440cfc32dab82a764464dea62719d04148dbaff34657cbe3590d4a063523
--- Source commit: 459063305709d69ae0a322371bba3f506c41c62c
+-- Source SHA-256: 6cc30df6302970712dcfa515969800f74b30e65154d9f53f2cfcb10587191188
+-- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
 
 -- Lock holds are traced in the process that owns the lock (usually
 -- system_server), so a process_name filter can leave none in scope even
@@ -14,7 +14,7 @@ facts AS (
     (SELECT COUNT(*) FROM held) AS lock_held_slice_count,
     (
       SELECT COUNT(*) FROM held
-      WHERE '${process_name}' = '' OR process_name GLOB '*${process_name}*'
+      WHERE '${process_name}' = '' OR (process_name = '${process_name}' OR process_name GLOB '${process_name}:*')
     ) AS lock_held_slice_count_in_scope,
     EXISTS (
       SELECT 1 FROM sqlite_master WHERE name = 'android_lock_held'

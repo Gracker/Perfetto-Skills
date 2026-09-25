@@ -9,7 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${process_name}*"
+      "${process_name}",
+      "${process_name}:*"
     ]
   },
   "id": "lmk_kill_attribution",
@@ -18,7 +19,7 @@
   },
   "inputs": [
     {
-      "description": "目标进程名 GLOB（可选）",
+      "description": "目标进程名（可选，精确匹配，含 name:* 子进程）",
       "name": "process_name",
       "required": false,
       "type": "string"
@@ -44,9 +45,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
     "path": "backend/skills/atomic/lmk_kill_attribution.skill.yaml",
-    "sha256": "4c299b78e625d37ee05fb8288a3b072ab6151ce29c5f98780a038913d06664ae"
+    "sha256": "1f267129dd343f4693338d1c7e4384b88c383313fe1b950339e31f9c9dfa8c85"
   },
   "steps": [
     {

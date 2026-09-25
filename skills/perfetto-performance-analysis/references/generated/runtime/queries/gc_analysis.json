@@ -57,16 +57,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gc_analysis/data_check.sql",
-      "sha256": "b6dbe1ec8c461a77f34d809f8acc03f4d39b0e4102bf986a6ef834f0fc5752bc",
+      "sha256": "42bd3d69932b9155683ceb7cda53f66f4f12152331a1fc42b502bd6d1a9813a8",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "gc_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/gc_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366"
+        "sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b"
       },
       "sql_dependencies": {
         "creates": [],
@@ -159,16 +160,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gc_analysis/gc_overview.sql",
-      "sha256": "fc076df94c7fa32365f55e262a0fdeeac30a1468b0366cc5395b2f58e992efdc",
+      "sha256": "7fc2aa1eb7409970d6dcef5c714c0374f1fbd3981776ee4a977e2064c68178e4",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "gc_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/gc_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366"
+        "sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b"
       },
       "sql_dependencies": {
         "creates": [],
@@ -261,16 +263,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gc_analysis/gc_time_breakdown.sql",
-      "sha256": "2dd0982acdfe0879ccf8b20c2c8f23b6d9f86dc7bd7e588a567e2d2e399fd242",
+      "sha256": "a0f996f38e5187b827581f16b25c8969f0a41de941f433bbc9c26f3be59d2ff7",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "gc_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/gc_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366"
+        "sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b"
       },
       "sql_dependencies": {
         "creates": [],
@@ -362,16 +365,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gc_analysis/long_gc_events.sql",
-      "sha256": "c694eca7b15397d5ff91ef4698175f790d9782d8d4cf309ef5ad2bf1726a9df0",
+      "sha256": "81e6ec49f81df2cdf482cba5730c7eae516e55d612cd616b84996ca253fc7c70",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "gc_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/gc_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366"
+        "sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b"
       },
       "sql_dependencies": {
         "creates": [],
@@ -464,16 +468,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gc_analysis/gc_frame_impact.sql",
-      "sha256": "4742c6d2c57ce847a52f15e4b3f66aa556b21565beafd088fb21fd8c5a6eb023",
+      "sha256": "ee335092fa9d52ef3f13a438ec8bf48b96cf9dbd570598a2d297856a392851ff",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "gc_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/gc_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366"
+        "sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b"
       },
       "sql_dependencies": {
         "creates": [],
@@ -565,16 +570,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gc_analysis/process_gc_stats.sql",
-      "sha256": "5a410f75959f67147fc244540d347a1c8390c40970ea4544272194e940c385e0",
+      "sha256": "839e8f1ca16a2ecde018b74562d0ffae90a46a71dce28e2fdf1e670da2b15ae0",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "gc_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/gc_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366"
+        "sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b"
       },
       "sql_dependencies": {
         "creates": [],
@@ -664,16 +670,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gc_analysis/gc_frequency.sql",
-      "sha256": "fac2c8996a719b185e1cd6470afa538adc884fd7af835ac005b914a9c7e65556",
+      "sha256": "a95e051dc8d63d4df03708d3b04c6fa31d44dd7a4ec4c78dd62b6c61d0411ca0",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "gc_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/gc_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366"
+        "sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b"
       },
       "sql_dependencies": {
         "creates": [],
@@ -765,16 +772,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gc_analysis/root_cause_classification.sql",
-      "sha256": "1e9d475cc96e81099a9d8f769d4389a48c1aaba0ee8e1d3865e4b714e8823400",
+      "sha256": "9fdbcffdb19fc63f7b75efec9deaca0b2a66c033a7f42c8a2323f9d37a2433db",
       "signal_patterns": [
-        "*${package}*"
+        "${package}",
+        "${package}:*"
       ],
       "skill_id": "gc_analysis",
       "source": {
-        "commit": "459063305709d69ae0a322371bba3f506c41c62c",
+        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
         "path": "backend/skills/composite/gc_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9953952ad063229e1a5f04d58a41962bce74d74d1c303ca177cb7055c0afb366"
+        "sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b"
       },
       "sql_dependencies": {
         "creates": [],
