@@ -64,11 +64,11 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "05dff556be5c349f4a76fcf1df0bc965119062a959525bcedc36ff7041bb6197",
+      "sha256": "76c603d3c433ef3d361b8d6c248a46b8ff5763a7272d84604b1842b4c4e24a85",
       "signal_patterns": [],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -173,7 +173,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "29505b2ac5446e65acd472a8340f29501623aab1c6b47dc07b11b45555ff1d68",
+      "sha256": "2a8bc58b5e8b4d79ba1879eedacf060a3314a8e6d831fffb74930a5e1525aea6",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -182,7 +182,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -208,12 +208,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/main_thread_work.sql",
-            "source_sha256": "05120fa44381352af5ef08f6ea4a4ee271d780936d46ce6b08943a3dacdd8cbc"
+            "source_sha256": "796b1dfdca5c798b08a173dcf31e5c967c04f60cf46518787d27d9bc99fa6d51"
           }
         ],
         "name_parameters": [
@@ -304,7 +304,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "3b90436a8f389088e39e7f01ebd2417b2dff3a9c0a77e467c6d1042481b8a009",
+      "sha256": "fff6f10d31082d7a33b0aff06431c4d1b7d3cd91974d9efc95727ef177d8c08c",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -313,7 +313,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -339,17 +339,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/main_thread_work.sql",
-            "source_sha256": "05120fa44381352af5ef08f6ea4a4ee271d780936d46ce6b08943a3dacdd8cbc"
+            "source_sha256": "796b1dfdca5c798b08a173dcf31e5c967c04f60cf46518787d27d9bc99fa6d51"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/main_thread_work_tasks.sql",
-            "source_sha256": "6b5ee0de889c2fd98f32e32b09c2fc7a9d7fe85d1239ff841d8d52dd119524ba"
+            "source_sha256": "8fc64abc85331c3edaa05d7c12106fadedc5bf557874f980c4467523f8a5fb26"
           }
         ],
         "name_parameters": [
@@ -440,7 +440,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "38a477192ce626e7f54c37edde94cf0f9c64a80c1604c7a31ba61a93d9105f13",
+      "sha256": "04f6c9a9c268c3bb9cc92c2b635164fa9e5fa14a825104d4ca0d6a0e962349a3",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -449,7 +449,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -475,17 +475,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/main_thread_work.sql",
-            "source_sha256": "05120fa44381352af5ef08f6ea4a4ee271d780936d46ce6b08943a3dacdd8cbc"
+            "source_sha256": "796b1dfdca5c798b08a173dcf31e5c967c04f60cf46518787d27d9bc99fa6d51"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/main_thread_work_tasks.sql",
-            "source_sha256": "6b5ee0de889c2fd98f32e32b09c2fc7a9d7fe85d1239ff841d8d52dd119524ba"
+            "source_sha256": "8fc64abc85331c3edaa05d7c12106fadedc5bf557874f980c4467523f8a5fb26"
           }
         ],
         "name_parameters": [
@@ -576,7 +576,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "0a4e064f5c8a473f91bf31dff7f4268d439ae9ba9fc5a190c7568e8479a48417",
+      "sha256": "a0ac93d48c161eabece44e95714199095462821d7cd3675d4d2b1569dd848bab",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -585,7 +585,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -611,17 +611,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/main_thread_work.sql",
-            "source_sha256": "05120fa44381352af5ef08f6ea4a4ee271d780936d46ce6b08943a3dacdd8cbc"
+            "source_sha256": "796b1dfdca5c798b08a173dcf31e5c967c04f60cf46518787d27d9bc99fa6d51"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/main_thread_work_cadence.sql",
-            "source_sha256": "b9c1ac273ee06ea61e07e6b213673aa3fabb7d379245b2828703171cb6456343"
+            "source_sha256": "9138fd24db91033af1bc424c0c5a0b598c8121cb79f8f7ab75a2dff993185199"
           }
         ],
         "name_parameters": [
@@ -713,13 +713,13 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "7bd28a9ceee7f1d3bd9f3781dd57566dc30658b259fd018746fef0f8826c2950",
+      "sha256": "4d393d0836d131aea48cdf282ab317d8e97c59ecc9a41dd0b7f860c29383ad5c",
       "signal_patterns": [
         "actual_frame_timeline_slice"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -831,7 +831,7 @@
         },
         "role": "target"
       },
-      "sha256": "b439b3be95cd901d4536827c46b3427695799266f5be818e6109affcd4a626a1",
+      "sha256": "9e80aef1d6cca55f29871a401a7546724bc2efab6085648bfd6ca1381e1f41e2",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -839,7 +839,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -865,12 +865,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/vsync_config.sql",
-            "source_sha256": "82669fb3b7ca320a6a67ae4411fe0bd53da04687f50271b50e4344a4ec0f9994"
+            "source_sha256": "44998ca9a1d3bb8b096c27ae1984cfc570b9c78ffccf6272c2fdc852e45f3332"
           }
         ],
         "name_parameters": [
@@ -964,7 +964,7 @@
         "exact_unavailable": "BufferTX track names do not identify a unique UPID; exact process evidence uses FrameTimeline only.",
         "role": "target"
       },
-      "sha256": "8a30e23d1062243a90d7bdf91aa51e1984599887ec94486424630b5b5996cf93",
+      "sha256": "336d20646f9934f950a84560ccd65d4f899f9b9f10d1398b1878217b57929b63",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -973,7 +973,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -999,12 +999,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/vsync_config.sql",
-            "source_sha256": "82669fb3b7ca320a6a67ae4411fe0bd53da04687f50271b50e4344a4ec0f9994"
+            "source_sha256": "44998ca9a1d3bb8b096c27ae1984cfc570b9c78ffccf6272c2fdc852e45f3332"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/buffer_tx_frame_production.sql",
-            "source_sha256": "4fda3ae670cc662648002d94fc947e64ceefff11a9293582ed7b99f7af98bee0"
+            "source_sha256": "8c7a432a5fc8460d513d2a6bb2d54b4a9624343e27c7a8c0fd6f9af438c8f048"
           }
         ],
         "name_parameters": [
@@ -1099,7 +1099,7 @@
         },
         "role": "target"
       },
-      "sha256": "56531d6cca464ba1e0f3f570c6fb458ad18da832925f5e022a0308db986ea74a",
+      "sha256": "119fac52a9a3f46573a5d7d9e2134e0fa1ca18fdcc85deef5e802c0becd029ce",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1107,7 +1107,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -1133,7 +1133,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -1227,7 +1227,7 @@
         "exact_unavailable": "BufferTX track names do not identify a unique UPID; exact process evidence uses FrameTimeline only.",
         "role": "target"
       },
-      "sha256": "c3b26f718a19df274f92a2865488fbc6231bd6c0614b649fda4ca9a1f5f087ef",
+      "sha256": "3659168ec131a3f9c6b62cdcdb7da5115b683a8d6925a8861aa4425f1d63fdfa",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1236,7 +1236,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -1262,12 +1262,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/vsync_config.sql",
-            "source_sha256": "82669fb3b7ca320a6a67ae4411fe0bd53da04687f50271b50e4344a4ec0f9994"
+            "source_sha256": "44998ca9a1d3bb8b096c27ae1984cfc570b9c78ffccf6272c2fdc852e45f3332"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/buffer_tx_frame_production.sql",
-            "source_sha256": "4fda3ae670cc662648002d94fc947e64ceefff11a9293582ed7b99f7af98bee0"
+            "source_sha256": "8c7a432a5fc8460d513d2a6bb2d54b4a9624343e27c7a8c0fd6f9af438c8f048"
           }
         ],
         "name_parameters": [
@@ -1354,11 +1354,11 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "acdf303ae052e56701ef14d89c13a86067ffa1075460db4899dd7531c66a76fd",
+      "sha256": "0bbf42c3fe9dd0ab38dc508c1cecc0074724f6dfcbed9de3c0aa5090e18ebe22",
       "signal_patterns": [],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -1465,14 +1465,14 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "421a49da7c2aab57a9a034c8f37c068ce0bb3c2c2522b63392e5306c92a5ddd5",
+      "sha256": "8422512175d19db5aa76de1d219226b1ec06d5501e9a5e7ba547beabd000df93",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -1502,7 +1502,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "70a5b82fea3edfaec164e3579604fa3b57fbc3dc861cb53db34b474f4f7aeb88"
+            "source_sha256": "1c577e6fa4a0437b7da4a1fad0b9e1e3efaf98b1ddb6fc58e2b78e33dd37be50"
           }
         ],
         "name_parameters": [
@@ -1597,7 +1597,7 @@
         },
         "role": "target"
       },
-      "sha256": "5653180d5a0c4aaf6fa1a9fc3134ed17291079382e057569bd584f78c68614fe",
+      "sha256": "d3acc44b0b8a7419857c9e797e6206a79364c943e9e8d3fc52d2c3568296e21f",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1605,7 +1605,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -1635,12 +1635,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "70a5b82fea3edfaec164e3579604fa3b57fbc3dc861cb53db34b474f4f7aeb88"
+            "source_sha256": "1c577e6fa4a0437b7da4a1fad0b9e1e3efaf98b1ddb6fc58e2b78e33dd37be50"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/android_input_delivery_roles.sql",
-            "source_sha256": "66739f3790930ff436ea50ad062ab387be243bebe960550466e3d2ca8cb5aff7"
+            "source_sha256": "a3a9851221191e13964ab2d0448aa0bcb38bf1f8433db0f70c8f88bed8e60efe"
           }
         ],
         "name_parameters": [
@@ -1732,14 +1732,14 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "93b59ac9938227f983369f1795b1781107bfe115092ad5a02a0c82d8c08c49f7",
+      "sha256": "f6da450632468a154fca61ff39e1554d3fdf6671eab21992556f5556b4759dd0",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -1767,7 +1767,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -1857,7 +1857,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "f71c16629068971d896cd54224795444b140c702d383e8b608dba33664f9f126",
+      "sha256": "9664c911f187603226f0ce5ca92036e12a40379561271e96ade92cf9c9cdbb79",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1865,7 +1865,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -1893,7 +1893,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -1985,7 +1985,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "597ae70b9ca8f038e1a0b79ea6108ff25d338c2e53946fee606c490a557665ab",
+      "sha256": "e4d3f9f495a10cf2ee86e00cbf2a48c8ecbaea0e2ada4a294a986bfd8d690ca9",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1993,7 +1993,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -2021,7 +2021,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -2116,7 +2116,7 @@
         },
         "role": "target"
       },
-      "sha256": "c950aa79bf66f38715cd2efbebc9c79bb5e9eefe6232d1894a73aff67fca8f74",
+      "sha256": "1054bc7f00e7f9b2bb494032a5654bbdc2d4e0d23b35c0d34b2582def91a0186",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -2124,7 +2124,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -2152,22 +2152,22 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "cb6d1d6b94c7bf380f13b60f9f3b91d8cea93b20ffddfd9d861a8ee478aa2b2a"
+            "source_sha256": "eb51fefa0ea34e62b03297e8e2a89604f580427014cf336e409a940f3cccdbca"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
+            "source_sha256": "380ecd4ec8080324dc5e03495ecd0f0512fd6c2ac5ec589c27eccf5548aea66e"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "51a67ca24f1329aa4f879324c205e0b0e9e1a88c0a24af08303dfd64ce511ccb"
+            "source_sha256": "ef5f9e0664c4614b063d0c5cfc7a441e202e372268fffab6c3a9d99e79147302"
           },
           {
             "order": 3,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -2257,7 +2257,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "eb3b2c0d5480750a56982ad7f6020f91c3c3406c67d1b2bfcd66a2b2ab3f1fcb",
+      "sha256": "9bf12473b3560401e2cca96cb7aa99e11ad703868410b7babeee2b7e86802613",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -2265,7 +2265,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -2293,7 +2293,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -2383,7 +2383,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "7bbe819e80a5925db484fe668e0e294b8a506e1cd78053f84a91a146657018d6",
+      "sha256": "5fdaf96fb096a7e0926f292fcc9b8822b51cff8f0d08fb59b75d712b91c43b42",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -2395,7 +2395,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -2423,12 +2423,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/root_cause_sample_cap.sql",
-            "source_sha256": "e835cf5c3ee96c7cf2de1f7b6daa5b5b2b9684d9d722d9c04e69ab4094da1321"
+            "source_sha256": "418d832d89d23d5def4d2c2bd12103d807dec4f0e1d70d9e4aea9e7cfbe5ea2c"
           }
         ],
         "name_parameters": [
@@ -2534,7 +2534,7 @@
         },
         "role": "target"
       },
-      "sha256": "39eb0efb5c698899010534613e735c475c039057d2f81b36b9d26efe4308aa19",
+      "sha256": "9d77e21d45ab554737be47843574fea0af73685d7ed61a6c2ce0168a762d565f",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -2578,7 +2578,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -2610,37 +2610,37 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "70a5b82fea3edfaec164e3579604fa3b57fbc3dc861cb53db34b474f4f7aeb88"
+            "source_sha256": "1c577e6fa4a0437b7da4a1fad0b9e1e3efaf98b1ddb6fc58e2b78e33dd37be50"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "cb6d1d6b94c7bf380f13b60f9f3b91d8cea93b20ffddfd9d861a8ee478aa2b2a"
+            "source_sha256": "eb51fefa0ea34e62b03297e8e2a89604f580427014cf336e409a940f3cccdbca"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
+            "source_sha256": "380ecd4ec8080324dc5e03495ecd0f0512fd6c2ac5ec589c27eccf5548aea66e"
           },
           {
             "order": 3,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "51a67ca24f1329aa4f879324c205e0b0e9e1a88c0a24af08303dfd64ce511ccb"
+            "source_sha256": "ef5f9e0664c4614b063d0c5cfc7a441e202e372268fffab6c3a9d99e79147302"
           },
           {
             "order": 4,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           },
           {
             "order": 5,
             "source_path": "backend/skills/fragments/vsync_config.sql",
-            "source_sha256": "82669fb3b7ca320a6a67ae4411fe0bd53da04687f50271b50e4344a4ec0f9994"
+            "source_sha256": "44998ca9a1d3bb8b096c27ae1984cfc570b9c78ffccf6272c2fdc852e45f3332"
           },
           {
             "order": 6,
             "source_path": "backend/skills/fragments/root_cause_sample_cap.sql",
-            "source_sha256": "e835cf5c3ee96c7cf2de1f7b6daa5b5b2b9684d9d722d9c04e69ab4094da1321"
+            "source_sha256": "418d832d89d23d5def4d2c2bd12103d807dec4f0e1d70d9e4aea9e7cfbe5ea2c"
           }
         ],
         "name_parameters": [
@@ -2750,7 +2750,7 @@
         },
         "role": "target"
       },
-      "sha256": "2ee625b993db0b432c7dc11f2fc02085cc4a2f7a14949284651e43adc48a0ab7",
+      "sha256": "6858486478001a8e2ef88ec5b1e8feba2bea543512acb7c3de14eb4e76089ef5",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -2763,7 +2763,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -2791,17 +2791,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "cb6d1d6b94c7bf380f13b60f9f3b91d8cea93b20ffddfd9d861a8ee478aa2b2a"
+            "source_sha256": "eb51fefa0ea34e62b03297e8e2a89604f580427014cf336e409a940f3cccdbca"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
+            "source_sha256": "380ecd4ec8080324dc5e03495ecd0f0512fd6c2ac5ec589c27eccf5548aea66e"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -2891,14 +2891,14 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "b9aa70953292dd42faf195d76db6d04162fac2372b0df46f999162a74117b959",
+      "sha256": "f109ff5c55baccb241533e772d2e35011fd9ec2d13fe01a9e1ba78e84b18e670",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -2926,17 +2926,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
+            "source_sha256": "380ecd4ec8080324dc5e03495ecd0f0512fd6c2ac5ec589c27eccf5548aea66e"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "51a67ca24f1329aa4f879324c205e0b0e9e1a88c0a24af08303dfd64ce511ccb"
+            "source_sha256": "ef5f9e0664c4614b063d0c5cfc7a441e202e372268fffab6c3a9d99e79147302"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -3025,11 +3025,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "a3096d56e5ceb1ef3f92b84247755ebf94a3f96ce1249b3d307c5c8b4a9e2ed1",
+      "sha256": "ec4a19e0c3e266226a73cc19c2046fb819afda85fdc6977c41f27865b52e2081",
       "signal_patterns": [],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -3057,12 +3057,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
+            "source_sha256": "380ecd4ec8080324dc5e03495ecd0f0512fd6c2ac5ec589c27eccf5548aea66e"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "cb6d1d6b94c7bf380f13b60f9f3b91d8cea93b20ffddfd9d861a8ee478aa2b2a"
+            "source_sha256": "eb51fefa0ea34e62b03297e8e2a89604f580427014cf336e409a940f3cccdbca"
           }
         ],
         "name_parameters": [],
@@ -3147,14 +3147,14 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "e5703a80bd37ee6764c40927f8e5155e393250445934fadb69a191d6149f7793",
+      "sha256": "ebab7fe94ea0c0ef3a20c22dc53a942b516f91dc3d166a49b60f9ce5b60570c4",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -3182,17 +3182,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
+            "source_sha256": "380ecd4ec8080324dc5e03495ecd0f0512fd6c2ac5ec589c27eccf5548aea66e"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "51a67ca24f1329aa4f879324c205e0b0e9e1a88c0a24af08303dfd64ce511ccb"
+            "source_sha256": "ef5f9e0664c4614b063d0c5cfc7a441e202e372268fffab6c3a9d99e79147302"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -3282,7 +3282,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "b0edfd2c601f98e896328a91ff4d580ccbc6a35141b59432d1247269a54b730b",
+      "sha256": "d8ee58fbc39bfe3f61efddd3747be592a0114615a67b6eb74ba9b41fd760b65d",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -3299,7 +3299,7 @@
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"
@@ -3327,17 +3327,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
+            "source_sha256": "380ecd4ec8080324dc5e03495ecd0f0512fd6c2ac5ec589c27eccf5548aea66e"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "51a67ca24f1329aa4f879324c205e0b0e9e1a88c0a24af08303dfd64ce511ccb"
+            "source_sha256": "ef5f9e0664c4614b063d0c5cfc7a441e202e372268fffab6c3a9d99e79147302"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           }
         ],
         "name_parameters": [
@@ -3432,14 +3432,14 @@
         "exact_unavailable": "No FrameTimeline evidence is available for this UPID; BufferTX names cannot establish exact frame rate or jank.",
         "role": "identity_metadata"
       },
-      "sha256": "32cf1cf8270aac50e698e53876015a6ed536d9999a2ab11172e24a40f7f83a1d",
+      "sha256": "855531c18412fb68e617e64d56478137faf527b8a735dc67945625034af1a2d0",
       "signal_patterns": [
         "actual_frame_timeline_slice",
         "frame_slice"
       ],
       "skill_id": "scrolling_analysis",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94"

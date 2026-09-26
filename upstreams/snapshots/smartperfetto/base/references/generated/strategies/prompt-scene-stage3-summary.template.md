@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/prompt-scene-stage3-summary.template.md
 Source SHA-256: 9df5009730c6fe906516e24d05da602e533e81e10713b7d93e28c6daf5016b7d
-Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 # Prompt Scene Stage3 Summary Template
 

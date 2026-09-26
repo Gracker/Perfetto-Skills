@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_kernel_wakelock_summary.skill.yaml
 -- Source SHA-256: b87beb54fd7e610df76952ec79d79249a37e510e08dd650fae66893a20e4af63
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 WITH window_bounds AS (
   SELECT

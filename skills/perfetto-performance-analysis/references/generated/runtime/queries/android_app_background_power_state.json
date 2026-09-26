@@ -55,7 +55,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_app_background_power_state/power_state_capability.sql",
-      "sha256": "8e90b296bba2507d5d739f5d7548438b235a58f85dcc6c8705d9774c6d08e1c9",
+      "sha256": "55e8f38fb1610706249c85bca56ece0ac203cfeb7e850e77d3793e629c186e02",
       "signal_patterns": [
         "Freeze *:*",
         "android_app_wakelocks",
@@ -68,7 +68,7 @@
       ],
       "skill_id": "android_app_background_power_state",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/atomic/android_app_background_power_state.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4ce3166f6ef8db3eca68f7a14cb6d6164abb3f15de2db690e545acc15ef4ff86"
@@ -158,14 +158,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_app_background_power_state/app_wakelock_summary.sql",
-      "sha256": "c4291d86b8cb63579a32dffcd8d7008b6ffe198bb5a85528bcbe48f77c165bd8",
+      "sha256": "6743f3aec7dbc535cba031d8c50c16ab75d484d8e866bac6d926772a5674242a",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "android_app_background_power_state",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/atomic/android_app_background_power_state.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4ce3166f6ef8db3eca68f7a14cb6d6164abb3f15de2db690e545acc15ef4ff86"
@@ -259,7 +259,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_app_background_power_state/app_wakelock_summary_battery_stats.sql",
-      "sha256": "3402e24ab1387900272ff2c0b3d41e1b60c10c77062cd05837bb75de858f833c",
+      "sha256": "528dfd81a493c878add2d9012dcac231f976a8662d244c310a039b7e26626b2b",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -267,7 +267,7 @@
       ],
       "skill_id": "android_app_background_power_state",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/atomic/android_app_background_power_state.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4ce3166f6ef8db3eca68f7a14cb6d6164abb3f15de2db690e545acc15ef4ff86"
@@ -361,11 +361,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_app_background_power_state/standby_bucket_residency.sql",
-      "sha256": "e11a36ee61b8964a2bb5e8883869a94cc90ade5faa1f491b5b3674c2c1fff45e",
+      "sha256": "94b7bd14c326282b168cc140bfb6b7d4d31fb31901e621f6b53e50f054daea9d",
       "signal_patterns": [],
       "skill_id": "android_app_background_power_state",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/atomic/android_app_background_power_state.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4ce3166f6ef8db3eca68f7a14cb6d6164abb3f15de2db690e545acc15ef4ff86"
@@ -459,14 +459,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_app_background_power_state/freezer_summary.sql",
-      "sha256": "2b5c907ac3e989fdf414447e8698716c03dd9701d52295827bc50b2823c3822c",
+      "sha256": "1b8bf3586c111fbf62179c73b19edc262e12da1c1c8103c3d243c7e3c5799a5a",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "android_app_background_power_state",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/atomic/android_app_background_power_state.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4ce3166f6ef8db3eca68f7a14cb6d6164abb3f15de2db690e545acc15ef4ff86"
@@ -560,14 +560,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_app_background_power_state/freezer_summary_slices.sql",
-      "sha256": "434a9bef54a2e2b824212143dc82a5d54e833ce99492939e601b30761996328e",
+      "sha256": "f9c5917c73584a2d2a6f8f7a1b44c886b8c05b07c1d94ab650365f07311ca7eb",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "android_app_background_power_state",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/atomic/android_app_background_power_state.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "4ce3166f6ef8db3eca68f7a14cb6d6164abb3f15de2db690e545acc15ef4ff86"

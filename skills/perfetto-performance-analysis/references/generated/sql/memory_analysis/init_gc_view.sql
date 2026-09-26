@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/memory_analysis.skill.yaml
 -- Source SHA-256: cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 DROP VIEW IF EXISTS _gc_events;
 CREATE VIEW _gc_events AS

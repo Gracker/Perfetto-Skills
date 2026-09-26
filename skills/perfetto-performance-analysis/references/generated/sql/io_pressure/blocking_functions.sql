@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/io_pressure.skill.yaml
 -- Source SHA-256: 376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

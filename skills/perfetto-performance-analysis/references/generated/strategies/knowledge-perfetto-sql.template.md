@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-perfetto-sql.template.md
 Source SHA-256: eacb05011e18376a86667f44c168cd1de900b897605a50fe9a4d91447ac799f9
-Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 # Knowledge Perfetto Sql Template
 

@@ -9,6 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
+      "${package}",
+      "${package}:*",
       "*Choreographer#doFrame*",
       "*DrawFrame*",
       "*doFrame*"
@@ -19,6 +21,12 @@
     "policy": "none"
   },
   "inputs": [
+    {
+      "description": "目标应用包名（精确匹配，含 name:* 子进程）；为空且无进程作用域时统计所有进程",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
     {
       "name": "session_id",
       "required": true,
@@ -88,9 +96,9 @@
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
-    "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+    "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
     "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
-    "sha256": "ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0"
+    "sha256": "59e06a212efc4660c3d1eb10335f4fc1f33c7120448effb115823ec96915d9b5"
   },
   "steps": [
     {
@@ -145,6 +153,10 @@
     {
       "id": "full_session_stats",
       "name": "完整区间统计",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
       "query_id": "scroll_session_analysis/full_session_stats",
       "result_dependencies": [],
       "save_as": "full_stats",
@@ -154,6 +166,10 @@
       "condition": "touch_start_ts != null",
       "id": "touch_phase_stats",
       "name": "按压滑动阶段统计",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
       "query_id": "scroll_session_analysis/touch_phase_stats",
       "result_dependencies": [],
       "save_as": "touch_stats",
@@ -163,6 +179,10 @@
       "condition": "has_fling == 1",
       "id": "fling_phase_stats",
       "name": "Fling 阶段统计",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
       "query_id": "scroll_session_analysis/fling_phase_stats",
       "result_dependencies": [],
       "save_as": "fling_stats",
@@ -171,6 +191,10 @@
     {
       "id": "identify_janky_frames",
       "name": "识别掉帧",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
       "query_id": "scroll_session_analysis/identify_janky_frames",
       "result_dependencies": [],
       "save_as": "janky_frames",

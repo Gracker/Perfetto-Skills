@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scroll_session_analysis.skill.yaml
--- Source SHA-256: ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source SHA-256: 59e06a212efc4660c3d1eb10335f4fc1f33c7120448effb115823ec96915d9b5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 WITH fling_frames AS (
   SELECT
@@ -18,6 +18,9 @@ WITH fling_frames AS (
   JOIN process p ON t.upid = p.upid
   WHERE (s.name GLOB '*doFrame*' OR s.name GLOB '*Choreographer#doFrame*')
     AND t.tid = p.pid
+    AND (${__process_scope.upid} IS NULL OR p.upid = ${__process_scope.upid})
+    AND (${__process_scope.upid} IS NOT NULL OR '${package}' = ''
+      OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND s.ts >= ${fling_start_ts}
     AND s.ts <= ${fling_end_ts}
 )

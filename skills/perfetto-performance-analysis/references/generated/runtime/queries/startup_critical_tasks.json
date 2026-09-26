@@ -63,7 +63,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "c9f52c1bb86e0d25a41a661680e633ffe119dcdb3b1db1b0b0bf2f606c7bd9ad",
+      "sha256": "6116fa37290932a74901c9d6ff1b44930acbfaafe3bf5dfd2b3fa539cd2fe33c",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -105,7 +105,7 @@
       ],
       "skill_id": "startup_critical_tasks",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "7d1fb6e3724c17a9610aa5aa28d054f13a96c7a2ee6e955ac720bfcaee25de9f"
@@ -126,22 +126,22 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "4e81bb95f9c2399c05ee371a626bebab37596777abaca2610247485e1500d2ea"
+            "source_sha256": "3dc4f50060bf29ed85b1b04d0a33f8c577cc9262be5d3fdb68212d2a2da5977a"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "76e6c692fdef1b7897e6ec0937e9402700bcacb178ea131cf7bdacd4d083878e"
+            "source_sha256": "ff2851f88c9ef75b2d5a112e07e1fe6397a121ecf812a3b791f7c29c769a3406"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "51a67ca24f1329aa4f879324c205e0b0e9e1a88c0a24af08303dfd64ce511ccb"
+            "source_sha256": "ef5f9e0664c4614b063d0c5cfc7a441e202e372268fffab6c3a9d99e79147302"
           },
           {
             "order": 3,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "ea86e6deb4afa9efc62d28c867b5ad03406cb5d4d1668cfae71fa25a7580fd2a"
+            "source_sha256": "380ecd4ec8080324dc5e03495ecd0f0512fd6c2ac5ec589c27eccf5548aea66e"
           }
         ],
         "name_parameters": [

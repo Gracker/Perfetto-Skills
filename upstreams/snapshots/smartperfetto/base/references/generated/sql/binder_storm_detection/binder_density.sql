@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_storm_detection.skill.yaml
 -- Source SHA-256: a412a8c95a1140cfb4eb8306d38fb6506c821a302636b302bb1f55f06821775d
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 WITH binder_txns AS (
   SELECT

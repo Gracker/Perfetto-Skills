@@ -1,22 +1,28 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scroll_session_analysis.skill.yaml
--- Source SHA-256: ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source SHA-256: 59e06a212efc4660c3d1eb10335f4fc1f33c7120448effb115823ec96915d9b5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 WITH frames AS (
   SELECT
-    ts,
-    dur,
-    dur / 1e6 AS dur_ms,
+    s.ts,
+    s.dur,
+    s.dur / 1e6 AS dur_ms,
     CASE
-      WHEN ts < ${touch_end_ts} THEN 'touch'
+      WHEN s.ts < ${touch_end_ts} THEN 'touch'
       ELSE 'fling'
     END AS phase,
-    ROW_NUMBER() OVER (ORDER BY ts) AS frame_number
-  FROM slice
-  WHERE (name GLOB '*doFrame*' OR name GLOB '*Choreographer#doFrame*' OR name GLOB '*DrawFrame*')
-    AND ts >= ${start_ts}
-    AND ts <= ${end_ts}
+    ROW_NUMBER() OVER (ORDER BY s.ts) AS frame_number
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN thread t ON tt.utid = t.utid
+  JOIN process p ON t.upid = p.upid
+  WHERE (s.name GLOB '*doFrame*' OR s.name GLOB '*Choreographer#doFrame*' OR s.name GLOB '*DrawFrame*')
+    AND s.ts >= ${start_ts}
+    AND s.ts <= ${end_ts}
+    AND (${__process_scope.upid} IS NULL OR p.upid = ${__process_scope.upid})
+    AND (${__process_scope.upid} IS NOT NULL OR '${package}' = ''
+      OR p.name = '${package}' OR p.name GLOB '${package}:*')
 )
 SELECT
   frame_number,

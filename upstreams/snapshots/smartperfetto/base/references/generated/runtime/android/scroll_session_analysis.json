@@ -53,6 +53,8 @@
     "api_hint"
   ],
   "signal_patterns": [
+    "${package}",
+    "${package}:*",
     "*Choreographer#doFrame*",
     "*DrawFrame*",
     "*doFrame*"

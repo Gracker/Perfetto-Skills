@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/webview_drawfunctor_jank_chain.skill.yaml
 -- Source SHA-256: 23169f041556c7bfe0b33f5a86d7248694d522332bcb1e0db972702d7f68e337
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 WITH
 input AS (

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/binder_detail.skill.yaml
 -- Source SHA-256: abd94ce08b891e6024eee4eb3ed9edc80baf296988105e6eebafe7e693921759
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 WITH main_thread AS (
   SELECT t.utid, t.tid, p.pid

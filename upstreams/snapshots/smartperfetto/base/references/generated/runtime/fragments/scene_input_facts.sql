@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/scene_input_facts.sql
 -- Source SHA-256: 4634ff33d5ba31bf1949dbc9337c5f3e8a7c75d83de57341233910e465fb4fe8
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Shared input observation contract. Legacy android_input_events contains only

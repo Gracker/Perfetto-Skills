@@ -55,14 +55,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cpu_thread_utilization_period/thread_util.sql",
-      "sha256": "71dec56652dfe9e3f83fc719ad0ef8f6568ce3258324cc0903b271023da7268d",
+      "sha256": "b58881ee4baaa48bf357c13bfb11f70a171f5da4edab9959a72b8013c6466ba8",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*"
       ],
       "skill_id": "cpu_thread_utilization_period",
       "source": {
-        "commit": "d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5",
+        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
         "path": "backend/skills/atomic/cpu_thread_utilization_period.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "33bc2d55f1090e9b8c58eff082eee8ef1ef9f3fe47d0299431a9fb1057af264b"

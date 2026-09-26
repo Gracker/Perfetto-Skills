@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scroll_session_analysis.skill.yaml
--- Source SHA-256: ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source SHA-256: 59e06a212efc4660c3d1eb10335f4fc1f33c7120448effb115823ec96915d9b5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 SELECT ${start_ts} AS start_ts, ${end_ts} AS end_ts

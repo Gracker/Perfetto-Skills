@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_main_thread_file_io_in_range.skill.yaml
 -- Source SHA-256: 9778e081f1ab5672f1368b855233c8da09ec995a7321b0154566169a4874b212
--- Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+-- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 
 SELECT
   ts.slice_name as io_slice,

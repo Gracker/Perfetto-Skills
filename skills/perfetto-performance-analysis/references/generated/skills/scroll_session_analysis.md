@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scroll_session_analysis.skill.yaml
-Source SHA-256: ee8dd5501b67dd983a45315eb6795d6e310ec096bd9ba54329dab5b58ff08fc0
-Source commit: d00e17d1ea0f0fe6fea8fe9981d173169cc6c9c5
+Source SHA-256: 59e06a212efc4660c3d1eb10335f4fc1f33c7120448effb115823ec96915d9b5
+Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
 # 滑动会话分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -32,6 +32,10 @@ tags:
 ## Inputs
 
 ```yaml
+- name: package
+  type: string
+  required: false
+  description: 目标应用包名（精确匹配，含 name:* 子进程）；为空且无进程作用域时统计所有进程
 - name: session_id
   type: number
   required: true
@@ -73,7 +77,6 @@ tags:
 ## Context requirements
 
 ```yaml
-- package
 - vsync_period_ns
 - refresh_rate_hz
 ```
@@ -159,6 +162,9 @@ display:
 ```yaml
 id: full_session_stats
 type: atomic
+process_scope:
+  role: target
+  binding: native_upid
 display:
   level: summary
   layer: session
@@ -213,6 +219,9 @@ save_as: full_stats
 ```yaml
 id: touch_phase_stats
 type: atomic
+process_scope:
+  role: target
+  binding: native_upid
 display:
   level: detail
   layer: session
@@ -263,6 +272,9 @@ condition: touch_start_ts != null
 ```yaml
 id: fling_phase_stats
 type: atomic
+process_scope:
+  role: target
+  binding: native_upid
 display:
   level: detail
   layer: session
@@ -313,6 +325,9 @@ condition: has_fling == 1
 ```yaml
 id: identify_janky_frames
 type: atomic
+process_scope:
+  role: target
+  binding: native_upid
 display:
   level: detail
   layer: list
