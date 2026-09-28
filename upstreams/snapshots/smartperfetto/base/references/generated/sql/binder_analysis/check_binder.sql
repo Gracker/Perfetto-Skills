@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/binder_analysis.skill.yaml
 -- Source SHA-256: f90f3f0875d47fdf3dce00d1d5bae735bddb20bd28a917de579b22e5e2c3afd5
--- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
+-- Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
 
 SELECT
   COUNT(*) as txn_count,

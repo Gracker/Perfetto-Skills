@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
--- Source SHA-256: b4e342987eae11ebb02d0693221a0e10ba48572187f89156a889763249cd5cf8
--- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
+-- Source SHA-256: 4cbe4f3a61a108fb5514ab66e9310908ea1565738a2f4b96f4420061ce51f24a
+-- Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -62,10 +62,20 @@ android_input_events_normalized AS NOT MATERIALIZED (
 --                  events, FOCUS, runtimes that resolve no action).
 -- unresolved_event_key identifies an unresolved event once per input_event_id,
 -- so counting it DISTINCT gives extra channels of one event no extra weight.
+-- window_owner is the stdlib's owner of the receiving channel,
+-- str_split(str_split(event_channel, ' ', 1), '/', 0), spelled portably: the
+-- package of a '<hash> <package>/<component>' window. Monitor, dispatcher,
+-- navigation-bar and wallpaper channels never yield their receiver's name; nor
+-- do app windows titled without '/' (PopupWindow:..), which keep plain counts.
+-- unresolved_window_event_key keeps an unresolved event only on a window its
+-- receiver owns: the exact name, or the name before ':' for multi-process apps,
+-- whose delivery the stdlib cannot resolve (substr, not GLOB: the owner is
+-- channel text). Rankers read it right after the action count, because a
+-- monitor sees touches aimed at every window and can out-count the app.
 -- Classified over the whole relation, never inside a caller's time window, so a
 -- window edge cannot separate a copy from its action-bearing sibling.
 -- scene_input_facts.sql applies the same "the action-bearing receiver is
--- primary" rule per stream for scene reconstruction.
+-- primary" rule per stream for scene reconstruction, without window ownership.
 -- Requires fragments/android_input_events_normalized.sql listed before it.
 android_input_action_event_ids AS (
   SELECT DISTINCT input_event_id
@@ -73,14 +83,25 @@ android_input_action_event_ids AS (
   WHERE event_action IS NOT NULL AND input_event_id IS NOT NULL
 ),
 android_input_event_deliveries AS NOT MATERIALIZED (
-  SELECT e.*,
-    CASE WHEN e.event_action IS NOT NULL THEN 'action'
-      WHEN a.input_event_id IS NOT NULL THEN 'monitor_copy'
-      ELSE 'unresolved' END AS delivery_role,
-    CASE WHEN e.event_action IS NULL AND a.input_event_id IS NULL
-      THEN COALESCE(e.input_event_id, 'dispatch:' || e.dispatch_ts) END AS unresolved_event_key
-  FROM android_input_events_normalized AS e
-  LEFT JOIN android_input_action_event_ids AS a ON a.input_event_id = e.input_event_id
+  SELECT d.*,
+    CASE WHEN d.window_owner != ''
+      AND substr(d.process_name || ':', 1, length(d.window_owner) + 1) = d.window_owner || ':'
+      THEN d.unresolved_event_key END AS unresolved_window_event_key
+  FROM (
+    SELECT e.*,
+      CASE WHEN e.event_action IS NOT NULL THEN 'action'
+        WHEN a.input_event_id IS NOT NULL THEN 'monitor_copy'
+        ELSE 'unresolved' END AS delivery_role,
+      CASE WHEN e.event_action IS NULL AND a.input_event_id IS NULL
+        THEN COALESCE(e.input_event_id, 'dispatch:' || e.dispatch_ts) END AS unresolved_event_key,
+      -- Second word of the channel, cut at its first '/'.
+      CASE WHEN instr(e.event_channel, ' ') > 0 THEN substr(
+        replace(substr(e.event_channel, instr(e.event_channel, ' ') + 1), '/', ' '), 1,
+        instr(replace(substr(e.event_channel, instr(e.event_channel, ' ') + 1), '/', ' ') || ' ', ' ') - 1)
+      END AS window_owner
+    FROM android_input_events_normalized AS e
+    LEFT JOIN android_input_action_event_ids AS a ON a.input_event_id = e.input_event_id
+  ) AS d
 )
 SELECT
   process_name,
@@ -93,6 +114,7 @@ WHERE (('${package}' = '' OR process_name = '${package}' OR process_name GLOB '$
   AND (${end_ts} IS NULL OR dispatch_ts < ${end_ts})
 GROUP BY process_name
 ORDER BY app_delivery_events DESC,
+  COUNT(DISTINCT unresolved_window_event_key) DESC,
   COUNT(DISTINCT unresolved_event_key) DESC,
   MAX(total_latency_dur) DESC, process_name
 LIMIT 1

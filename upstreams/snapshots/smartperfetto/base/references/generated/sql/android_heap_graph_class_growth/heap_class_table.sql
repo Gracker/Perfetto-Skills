@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_heap_graph_class_growth.skill.yaml
 -- Source SHA-256: 7f3005702a7a0b160c86748bb1b535119fb9647f5d1bfa60496bf33c11551a55
--- Source commit: 72ae55e84a6cac2d2c62b14cc31c5d0165232799
+-- Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
 
 -- One table for every step below, one row per (process, dump, class
 -- name). Counts and shallow sizes come from real objects only; the

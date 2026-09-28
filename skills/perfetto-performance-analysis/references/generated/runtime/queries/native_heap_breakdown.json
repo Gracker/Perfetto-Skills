@@ -55,14 +55,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/native_heap_breakdown/heap_profile_inventory.sql",
-      "sha256": "55fd113482618fdc68cdd885ebed977eac5030835c0b8cd8e359632ae50f5d8f",
+      "sha256": "3bc673f4db7b81b888096396c17a8ad364b18880506932266ac01d7e9a33bdc7",
       "signal_patterns": [
         "heapprofd*",
         "heapprofd_malformed_packet"
       ],
       "skill_id": "native_heap_breakdown",
       "source": {
-        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
+        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
         "path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c60782edef05f79ebd9a79e7f0f8f3f2dfec35cd35c839c661f0f34a68681fff"
@@ -83,12 +83,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/heap_target_process.sql",
-            "source_sha256": "0ea04f16d4cb64eca3a5185b03c58915d85679996ed2e3a480fb94b579e792d5"
+            "source_sha256": "0dec5263f10fd1aaf02a0b55fd565c4896b3f3115b30bbafe99089eafde97129"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/heap_profile_scope.sql",
-            "source_sha256": "5ad19965ee2a1be9f2baf8d32f4c1458a35679ee62ed27abf1c7bc57744a26ff"
+            "source_sha256": "d3d46393a8968fb1cb463146b8a6bfcab71c30575641245f4fbdeef836825379"
           }
         ],
         "name_parameters": [],
@@ -164,7 +164,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/native_heap_breakdown/native_heap_hotspots.sql",
-      "sha256": "4931f34bcc8c7802f2dec3d1101a7323d80e5fbe2b76388f8d679185d462b057",
+      "sha256": "dbb589423630cda5f36f6e411b458ab6e2d3c3833561c2ef4bd764db71ad8864",
       "signal_patterns": [
         "/[[]anon_shmem:dalvik-jit-code-cache]*",
         "/apex/com.android.art/*",
@@ -175,7 +175,7 @@
       ],
       "skill_id": "native_heap_breakdown",
       "source": {
-        "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
+        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
         "path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c60782edef05f79ebd9a79e7f0f8f3f2dfec35cd35c839c661f0f34a68681fff"
@@ -196,12 +196,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/heap_target_process.sql",
-            "source_sha256": "0ea04f16d4cb64eca3a5185b03c58915d85679996ed2e3a480fb94b579e792d5"
+            "source_sha256": "0dec5263f10fd1aaf02a0b55fd565c4896b3f3115b30bbafe99089eafde97129"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/heap_profile_scope.sql",
-            "source_sha256": "5ad19965ee2a1be9f2baf8d32f4c1458a35679ee62ed27abf1c7bc57744a26ff"
+            "source_sha256": "d3d46393a8968fb1cb463146b8a6bfcab71c30575641245f4fbdeef836825379"
           }
         ],
         "name_parameters": [],

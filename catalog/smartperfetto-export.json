@@ -588,7 +588,7 @@
       "name": "click_response_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/click_response_analysis.skill.yaml",
-      "source_sha256": "b4e342987eae11ebb02d0693221a0e10ba48572187f89156a889763249cd5cf8",
+      "source_sha256": "4cbe4f3a61a108fb5514ab66e9310908ea1565738a2f4b96f4420061ce51f24a",
       "tier": "S",
       "version": "1.0",
       "workflow": "interaction"
@@ -2366,7 +2366,7 @@
       "name": "scrolling_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-      "source_sha256": "48777e583cbb4e8676c824e1eca1b0473ff21ee250b4f74cf0afbce1ace62e94",
+      "source_sha256": "0c491f4640947a77746c9299ed721693f8e5109a88b8371db4e965d2b4c84a94",
       "tier": "S",
       "version": "2.2",
       "workflow": "scrolling"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "72ae55e84a6cac2d2c62b14cc31c5d0165232799",
+    "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "d10007c0d879637082ae4b10d610850cf8fbec367049f333edf11b1abd73798c",
+    "policy_sha256": "60c02604213aef09d5bd0024331595d599b9a3adeff7f39e893794cc6d3ecbad",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3091,7 +3091,7 @@
       "destination": "references/generated/runtime/fragments/android_input_delivery_roles.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/android_input_delivery_roles.sql",
-      "source_sha256": "301598150c37ec9f6b6dafb7ed38f22f5f2c8e9a856f8c9bcf4bb112bfd413e8"
+      "source_sha256": "0d43abd4e6d87d66627a3746abe74ba2784375a9bf88db0a8f05d48e32aeb3fe"
     },
     {
       "destination": "references/generated/runtime/fragments/android_input_events_normalized.sql",
@@ -3710,7 +3710,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto conclusion declarations and captured evidence identifiers",
       "source_path": "backend/strategies/prompt-conclusion-contract-schema.template.md",
-      "source_sha256": "d6469f79833027471b785f307649b73cd19b520b5c91199fbfa0a769cf539347"
+      "source_sha256": "8ee0dfc036d61dd8a3c18ccc8a5ff1433dae07fdeaceac25e823ce2464a590c2"
     },
     {
       "disposition": "product-only",
@@ -3824,13 +3824,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
       "source_path": "backend/strategies/prompt-native-declaration-completion-en.template.md",
-      "source_sha256": "ee58ffd4b67848797101ccdf1c37dd4f23957190c99fb7282f9d37ad2253d338"
+      "source_sha256": "3f912ebe3bfa98139092d19a579121378606e125f8a6cc23ac2e99bc1b432ced"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
       "source_path": "backend/strategies/prompt-native-declaration-completion-zh.template.md",
-      "source_sha256": "2b2f9c0d126ec1bd1c758b9828f03e45787ebc5479383699a7ef4aa388a9eb0c"
+      "source_sha256": "a26a93a6cac579b1c95000b2378f59cc92999d76dc3cf9303ef2f47a8f123541"
     },
     {
       "disposition": "product-only",
@@ -3843,18 +3843,6 @@
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-openai-final-report-continuation-zh.template.md",
       "source_sha256": "1ea0c868d1fa19a2fa968687363df47b0b1f83463aee09e3dc7ef6f3bd95ed91"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto runtime plan-completion orchestration",
-      "source_path": "backend/strategies/prompt-plan-completion-continuation-en.template.md",
-      "source_sha256": "a78e422dcaa009129468c01278903353fb560c83959b92e697f3bedffacc9f44"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto runtime plan-completion orchestration",
-      "source_path": "backend/strategies/prompt-plan-completion-continuation-zh.template.md",
-      "source_sha256": "623494e0592a61690202984204da6c57c14af65c1c714129826839d6fb7e6507"
     },
     {
       "disposition": "product-only",
@@ -4219,13 +4207,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto issued scene-run proposal and verification lifecycle",
       "source_path": "backend/strategies/scene-reconstruction.strategy.md",
-      "source_sha256": "c3efe8a3b61a7e523fbe9799a5d2cacca9c8d2d60a0405323d32349ee07f64a9"
+      "source_sha256": "1d200378d091899cdcd4229384adcff41c4c2e31d2f5e47cb1e4c4bfe47a7bf5"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto structured scene proposal protocol",
       "source_path": "backend/strategies/scene-tool-guidance.template.md",
-      "source_sha256": "94eef2906ecdc285f2ca584660faf6f59ce7c9de97e1259ab76e4932af3f1cdc"
+      "source_sha256": "f0acdc0602368fd85d60233d7f4b590b7c997c33a159103111bad64ec2b742a6"
     },
     {
       "destination": "references/generated/strategies/scroll-response.strategy.md",
@@ -4295,7 +4283,7 @@
     "exported_strategy_sources": 47,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 101,
+    "product_only_strategy_sources": 99,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4306,7 +4294,7 @@
     },
     "skill_yaml_files": 257,
     "sql_fragments": 45,
-    "strategy_sources": 148,
+    "strategy_sources": 146,
     "vendor_overrides": 8
   },
   "vendor_overrides": [
