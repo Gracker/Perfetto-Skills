@@ -14,6 +14,7 @@ from _common import (
     DEFAULT_MAX_OUTPUT_BYTES,
     RuntimeProcessScope,
     bind_runtime_process_scope,
+    include_modules_sql,
     parse_csv_output,
     render_sql_template,
     reject_process_scope_names,
@@ -22,6 +23,7 @@ from _common import (
     run_query,
     sha256_file,
     sql_template_names,
+    table_access_sql,
     validate_process_scope_declaration,
     write_text_atomic,
 )
@@ -174,9 +176,7 @@ def prepare_manifest_query(
     if binding_entries is not None:
         binding_entries.append((entry, sql))
     modules = entry["sql_dependencies"].get("declared_modules", [])
-    includes = "\n".join(
-        f"INCLUDE PERFETTO MODULE {module};" for module in modules
-    )
+    includes = include_modules_sql(modules)
     return "\n".join(value for value in (includes, *setup_sql, sql) if value)
 
 
@@ -285,28 +285,20 @@ def verify_manifest_schema(
 ) -> set[str]:
     dependencies = entry["sql_dependencies"]
     modules = dependencies.get("declared_modules", [])
-    includes = "\n".join(
-        f"INCLUDE PERFETTO MODULE {module};" for module in modules
+    includes = include_modules_sql(modules)
+    tables = [str(table) for table in dependencies.get("required_tables", [])]
+    if not modules and not tables:
+        return set()
+    # One invocation: trace_processor_shell stops at the first failing statement.
+    ready = "SELECT 1 AS module_schema_ready;" if modules else ""
+    run_query(
+        trace,
+        sql=f"{includes}\n{ready}\n{table_access_sql(tables)}",
+        trace_processor=trace_processor,
+        timeout=timeout,
+        max_output_bytes=max_output_bytes,
     )
-    verified: set[str] = set()
-    if modules:
-        run_query(
-            trace,
-            sql=f"{includes}\nSELECT 1 AS module_schema_ready;",
-            trace_processor=trace_processor,
-            timeout=timeout,
-            max_output_bytes=max_output_bytes,
-        )
-    for table in dependencies.get("required_tables", []):
-        run_query(
-            trace,
-            sql=f'{includes}\nSELECT * FROM "{table}" LIMIT 0;',
-            trace_processor=trace_processor,
-            timeout=timeout,
-            max_output_bytes=max_output_bytes,
-        )
-        verified.add(str(table))
-    return verified
+    return set(tables)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -375,10 +367,7 @@ def main(argv: list[str] | None = None) -> int:
             process_scope=scope, trace_sha256=trace_sha256, trace_side=args.trace_side,
         )
         if args.module:
-            includes = "\n".join(
-                f"INCLUDE PERFETTO MODULE {module};" for module in args.module
-            )
-            sql = includes + "\n" + sql
+            sql = include_modules_sql(args.module) + "\n" + sql
         result = run_query(
             args.trace,
             sql=sql,

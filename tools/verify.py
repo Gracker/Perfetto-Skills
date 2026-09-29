@@ -30,7 +30,9 @@ def build_commands(smartperfetto: Path | None = None) -> list[list[str]]:
     commands = [
         [sys.executable, "tools/upstream_locks.py"],
         [sys.executable, "tools/compile_skill.py", "--check"],
-        [sys.executable, "tools/validate_all_queries.py", "--execute"],
+        # Static only: FixtureManifestTest executes the same owned assertions
+        # against the same processor, and each costs full trace parses.
+        [sys.executable, "tools/validate_all_queries.py"],
         [
             sys.executable,
             "-m",

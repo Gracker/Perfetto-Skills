@@ -6,9 +6,9 @@ import sys
 import tempfile
 import unittest
 
-from tests.integration.test_fixture_manifest import assert_semantic_assertion
 from tests.support import SCRIPTS, fixture_path, trace_processor
 from tools.overlays import load_overlays
+from tools.validate_all_queries import assert_rows
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -95,8 +95,7 @@ class LocalSqlOverlayRegressionTest(unittest.TestCase):
                         timeout=60,
                     )
                     self.assertEqual(compiled.returncode, 0, compiled.stderr)
-                    assert_semantic_assertion(
-                        self,
+                    assert_rows(
                         json.loads(compiled_output.read_text(encoding="utf-8")),
                         assertion,
                     )
@@ -128,8 +127,7 @@ class LocalSqlOverlayRegressionTest(unittest.TestCase):
                     failure = base_run.stderr
                     if base_run.returncode == 0:
                         try:
-                            assert_semantic_assertion(
-                                self,
+                            assert_rows(
                                 json.loads(base_output.read_text(encoding="utf-8")),
                                 assertion,
                             )

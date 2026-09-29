@@ -53,6 +53,12 @@ class VerifyCommandTest(unittest.TestCase):
             any("--smartperfetto" in command for command in commands)
         )
 
+    def test_owned_semantic_assertions_execute_once_per_gate(self) -> None:
+        # FixtureManifestTest (unittest discover) owns their execution.
+        commands = verify.build_commands()
+        self.assertIn([verify.sys.executable, "tools/validate_all_queries.py"], commands)
+        self.assertFalse(any("--execute" in command for command in commands))
+
     def test_build_commands_adds_catalog_checks_for_smartperfetto(self) -> None:
         source = Path("/tmp/SmartPerfetto")
         commands = verify.build_commands(source)

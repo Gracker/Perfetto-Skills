@@ -285,7 +285,7 @@ def validate_query(
     }
 
 
-def _assert_rows(rows: list[dict[str, object]], assertion: dict[str, object]) -> None:
+def assert_rows(rows: list[dict[str, object]], assertion: dict[str, object]) -> None:
     if not rows:
         raise AssertionError("query returned no rows")
     field = assertion.get("field")
@@ -354,7 +354,7 @@ def execute_assertions(
                 if output.stat().st_size > 10 * 1024 * 1024:
                     raise RuntimeError(f"semantic assertion output too large: {assertion['id']}")
                 rows = json.loads(output.read_text(encoding="utf-8"))
-                _assert_rows(rows, assertion)
+                assert_rows(rows, assertion)
                 results[assertion["id"]] = {
                     "query_id": assertion["query_id"],
                     "fixture_id": fixture["id"],

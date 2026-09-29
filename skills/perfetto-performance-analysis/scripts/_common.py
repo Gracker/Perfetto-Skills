@@ -16,8 +16,8 @@ import subprocess
 import tempfile
 import time
 import weakref
-from collections.abc import Callable, Mapping
-from typing import Any
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from typing import Any, TypeVar
 
 
 DEFAULT_PERFETTO_VERSION = "v57.2"
@@ -447,6 +447,65 @@ def run_query(
             f"trace_processor_shell exited with {returncode}: {detail}"
         )
     return result
+
+
+def include_modules_sql(modules: Iterable[str]) -> str:
+    return "\n".join(f"INCLUDE PERFETTO MODULE {module};" for module in modules)
+
+
+def table_access_sql(tables: Iterable[str]) -> str:
+    return "\n".join(f"SELECT * FROM {quote_identifier(table)} LIMIT 0;" for table in tables)
+
+
+T = TypeVar("T")
+R = TypeVar("R")
+
+
+def run_batch_or_each(items: Sequence[T], attempt: Callable[[Sequence[T]], R]) -> tuple[list[R], list[T]]:
+    """Run `attempt` on all items at once, splitting only when the batch fails.
+
+    Every trace_processor_shell invocation re-parses the whole trace, so the
+    common all-readable case costs one invocation; a failed batch is retried
+    per item to name the failures. Returns (results, failed items).
+    """
+    try:
+        return [attempt(items)], []
+    except RuntimeError:
+        pass
+    results: list[R] = []
+    failed: list[T] = []
+    for item in items:
+        try:
+            results.append(attempt([item]))
+        except RuntimeError:
+            failed.append(item)
+    return results, failed
+
+
+def missing_tables(
+    trace_path: str | Path,
+    tables: Sequence[str],
+    *,
+    modules: Iterable[str] = (),
+    trace_processor: str | None = None,
+    timeout: float = 120.0,
+    max_output_bytes: int = DEFAULT_MAX_OUTPUT_BYTES,
+) -> list[str]:
+    """Return the tables the trace cannot read after including `modules`."""
+    if not tables:
+        return []
+    includes = include_modules_sql(modules)
+    _results, missing = run_batch_or_each(
+        tables,
+        lambda batch: run_query(
+            trace_path,
+            sql=f"{includes}\n{table_access_sql(batch)}",
+            trace_processor=trace_processor,
+            timeout=timeout,
+            max_output_bytes=max_output_bytes,
+        ),
+    )
+    return missing
 
 
 def sql_literal(value: object) -> str:

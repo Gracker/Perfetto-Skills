@@ -1,11 +1,16 @@
 import json
 from pathlib import Path
-import subprocess
 import sys
 import tempfile
 import unittest
 
-from tests.support import SCRIPTS, fixture_available, fixture_path, trace_processor
+from tests.support import (
+    SCRIPTS,
+    fixture_available,
+    fixture_path,
+    run_commands_concurrently,
+    trace_processor,
+)
 
 
 RUNNER_FIXTURES = (
@@ -72,10 +77,10 @@ class SkillRunnerIntegrationTest(unittest.TestCase):
             ),
         ]
         with tempfile.TemporaryDirectory() as temporary:
-            for skill_id, filename, extra in cases:
-                with self.subTest(skill=skill_id):
-                    output = Path(temporary) / skill_id
-                    command = [
+            outputs = [Path(temporary) / skill_id for skill_id, _filename, _extra in cases]
+            completions = run_commands_concurrently(
+                [
+                    [
                         sys.executable,
                         str(SCRIPTS / "perfetto_skill.py"),
                         "run",
@@ -88,9 +93,11 @@ class SkillRunnerIntegrationTest(unittest.TestCase):
                         str(output),
                         *extra,
                     ]
-                    completed = subprocess.run(
-                        command, check=False, capture_output=True, text=True
-                    )
+                    for (skill_id, filename, extra), output in zip(cases, outputs)
+                ]
+            )
+            for (skill_id, _filename, _extra), output, completed in zip(cases, outputs, completions):
+                with self.subTest(skill=skill_id):
                     self.assertEqual(completed.returncode, 0, completed.stderr)
                     result = json.loads((output / "result.json").read_text(encoding="utf-8"))
                     self.assertTrue(result["success"], result)

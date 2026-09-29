@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 from importlib.util import module_from_spec, spec_from_file_location
 import hashlib
 import json
@@ -90,14 +91,33 @@ def trace_processor() -> str:
     return str(path)
 
 
+def real_trace_jobs() -> int:
+    """Concurrent trace_processor processes for real-trace tests.
+
+    Each process parses a whole trace on one core; PERFETTO_TEST_JOBS=1
+    restores serial execution on a constrained machine.
+    """
+    configured = os.environ.get("PERFETTO_TEST_JOBS")
+    if configured:
+        return max(1, int(configured))
+    return max(1, min(8, (os.cpu_count() or 2) // 2))
+
+
+def run_commands_concurrently(
+    commands: list[list[str]],
+) -> list[subprocess.CompletedProcess[str]]:
+    """Run independent commands in parallel and return results in input order."""
+
+    with ThreadPoolExecutor(max_workers=real_trace_jobs()) as pool:
+        return list(pool.map(run_command, commands))
+
+
+def run_command(command: list[str]) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(command, cwd=ROOT, check=False, capture_output=True, text=True)
+
+
 def run_json_command(command: list[str]) -> dict[str, object]:
-    completed = subprocess.run(
-        command,
-        cwd=ROOT,
-        check=False,
-        capture_output=True,
-        text=True,
-    )
+    completed = run_command(command)
     if completed.returncode != 0:
         return {
             "status": "unavailable",

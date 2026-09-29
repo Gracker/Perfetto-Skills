@@ -10,6 +10,7 @@ from typing import Any, Mapping
 
 from _common import (
     DEFAULT_MAX_OUTPUT_BYTES,
+    missing_tables,
     parse_csv_output,
     render_sql_template,
     resolve_identity,
@@ -90,19 +91,14 @@ def build_runtime_runner(
         cache_key = (modules, tables)
         if cache_key in prerequisite_cache:
             return prerequisite_cache[cache_key]
-        includes = "\n".join(f"INCLUDE PERFETTO MODULE {module};" for module in modules)
-        missing: list[str] = []
-        for table in tables:
-            try:
-                run_query(
-                    trace,
-                    sql=f'{includes}\nSELECT * FROM "{table}" LIMIT 0;',
-                    trace_processor=trace_processor,
-                    timeout=timeout,
-                    max_output_bytes=max_output_bytes,
-                )
-            except RuntimeError:
-                missing.append(table)
+        missing = missing_tables(
+            trace,
+            tables,
+            modules=modules,
+            trace_processor=trace_processor,
+            timeout=timeout,
+            max_output_bytes=max_output_bytes,
+        )
         result = {
             "status": "satisfied" if not missing else "missing_evidence",
             "modules": list(modules),

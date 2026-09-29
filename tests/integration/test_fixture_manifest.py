@@ -1,33 +1,21 @@
 import json
 import os
 from pathlib import Path
-import subprocess
 import sys
 import tempfile
 import unittest
 
-from tests.support import SCRIPTS, fixture_path, fixture_root, trace_processor
+from tests.support import (
+    SCRIPTS,
+    fixture_path,
+    fixture_root,
+    run_commands_concurrently,
+    trace_processor,
+)
+from tools.validate_all_queries import assert_rows
 
 
 ROOT = Path(__file__).resolve().parents[2]
-
-
-def assert_semantic_assertion(
-    testcase: unittest.TestCase,
-    rows: list[dict[str, object]],
-    assertion: dict[str, object],
-) -> None:
-    testcase.assertTrue(rows, assertion)
-    field = assertion.get("field")
-    if assertion["kind"] == "field_equals":
-        testcase.assertEqual(rows[0].get(field), assertion["value"])
-    elif assertion["kind"] == "field_positive":
-        testcase.assertGreater(rows[0].get(field, 0), 0)
-    elif assertion["kind"] == "non_empty":
-        testcase.assertIn(field, rows[0])
-        testcase.assertNotIn(rows[0][field], (None, "", [], {}))
-    else:
-        testcase.fail(f"unknown assertion kind: {assertion['kind']}")
 
 
 @unittest.skipUnless(fixture_root(), "PERFETTO_FIXTURE_ROOT not configured")
@@ -36,6 +24,8 @@ class FixtureManifestTest(unittest.TestCase):
         manifest = json.loads((ROOT / "fixtures/manifest.json").read_text(encoding="utf-8"))
         executed = 0
         with tempfile.TemporaryDirectory() as temporary:
+            jobs = []
+            commands = []
             for fixture in manifest["fixtures"]:
                 if not fixture.get("assertions"):
                     continue
@@ -46,31 +36,31 @@ class FixtureManifestTest(unittest.TestCase):
                         continue
                     raise
                 for assertion_index, assertion in enumerate(fixture["assertions"]):
-                    with self.subTest(fixture=fixture["id"], query=assertion["query_id"]):
-                        output = Path(temporary) / f"{fixture['id']}-{assertion_index}.json"
-                        command = [
-                                sys.executable,
-                                str(SCRIPTS / "perfetto_query.py"),
-                                str(trace),
-                                "--query-id",
-                                assertion["query_id"],
-                                "--trace-processor",
-                                trace_processor(),
-                                "--output",
-                                str(output),
-                            ]
-                        for name, value in sorted(assertion.get("params", {}).items()):
-                            command.extend(("--param", f"{name}={json.dumps(value)}"))
-                        completed = subprocess.run(
-                            command,
-                            check=False,
-                            capture_output=True,
-                            text=True,
-                        )
-                        self.assertEqual(completed.returncode, 0, completed.stderr)
-                        rows = json.loads(output.read_text(encoding="utf-8"))
-                        assert_semantic_assertion(self, rows, assertion)
-                        executed += 1
+                    output = Path(temporary) / f"{fixture['id']}-{assertion_index}.json"
+                    command = [
+                        sys.executable,
+                        str(SCRIPTS / "perfetto_query.py"),
+                        str(trace),
+                        "--query-id",
+                        assertion["query_id"],
+                        "--trace-processor",
+                        trace_processor(),
+                        "--output",
+                        str(output),
+                    ]
+                    for name, value in sorted(assertion.get("params", {}).items()):
+                        command.extend(("--param", f"{name}={json.dumps(value)}"))
+                    jobs.append((fixture, assertion, output))
+                    commands.append(command)
+            # Each query is an independent trace_processor process, so they run
+            # concurrently; results are still asserted in manifest order.
+            completions = run_commands_concurrently(commands)
+            for (fixture, assertion, output), completed in zip(jobs, completions):
+                with self.subTest(fixture=fixture["id"], query=assertion["query_id"]):
+                    self.assertEqual(completed.returncode, 0, completed.stderr)
+                    rows = json.loads(output.read_text(encoding="utf-8"))
+                    assert_rows(rows, assertion)
+                    executed += 1
         offline = os.environ.get("PERFETTO_FIXTURE_TIER") == "offline"
         expected = sum(
             len(fixture.get("assertions", []))
@@ -87,7 +77,7 @@ class FixtureAssertionSemanticsTest(unittest.TestCase):
         for value in (None, ""):
             with self.subTest(value=value):
                 with self.assertRaises(AssertionError):
-                    assert_semantic_assertion(self, [{"value": value}], assertion)
+                    assert_rows([{"value": value}], assertion)
 
 
 if __name__ == "__main__":

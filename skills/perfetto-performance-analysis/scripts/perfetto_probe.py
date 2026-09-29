@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Sequence
 import json
 from pathlib import Path
 import sys
@@ -10,8 +11,11 @@ from _common import (
     DEFAULT_MAX_OUTPUT_BYTES,
     parse_csv_output,
     parse_scalar,
+    quote_identifier,
+    run_batch_or_each,
     run_query,
     sha256_file,
+    sql_literal,
     write_text_atomic,
 )
 
@@ -197,22 +201,48 @@ def probe_trace(
         for row in rows
         if row.get("section") == "table" and isinstance(row.get("key"), str)
     }
-    row_counts: dict[str, int] = {}
-    for table in sorted(set().union(*CAPABILITY_TABLES.values()) & tables):
-        try:
-            count_result = run_query(
-                trace,
-                sql=f'SELECT COUNT(*) AS row_count FROM "{table}";',
-                trace_processor=trace_processor,
-                timeout=timeout,
-                max_output_bytes=max_output_bytes,
-            )
-            count_rows = parse_csv_output(count_result.stdout)
-            if count_rows and isinstance(count_rows[0].get("row_count"), int):
-                row_counts[table] = int(count_rows[0]["row_count"])
-        except RuntimeError:
-            continue
+    row_counts = count_capability_rows(
+        trace,
+        sorted(set().union(*CAPABILITY_TABLES.values()) & tables),
+        trace_processor=trace_processor,
+        timeout=timeout,
+        max_output_bytes=max_output_bytes,
+    )
     return build_probe(trace, rows, row_counts=row_counts)
+
+
+def count_capability_rows(
+    trace: Path,
+    tables: list[str],
+    *,
+    trace_processor: str | None,
+    timeout: float,
+    max_output_bytes: int,
+) -> dict[str, int]:
+    """Count rows per table; a table that cannot be counted is left out."""
+
+    def count(batch: Sequence[str]) -> dict[str, int]:
+        sql = "\nUNION ALL\n".join(
+            f"SELECT {sql_literal(table)} AS table_name, COUNT(*) AS row_count FROM {quote_identifier(table)}"
+            for table in batch
+        )
+        output = run_query(
+            trace,
+            sql=sql + ";",
+            trace_processor=trace_processor,
+            timeout=timeout,
+            max_output_bytes=max_output_bytes,
+        )
+        return {
+            str(row["table_name"]): row["row_count"]
+            for row in parse_csv_output(output.stdout)
+            if isinstance(row.get("row_count"), int)
+        }
+
+    if not tables:
+        return {}
+    counts, _unreadable = run_batch_or_each(tables, count)
+    return {table: rows for batch in counts for table, rows in batch.items()}
 
 
 def build_parser() -> argparse.ArgumentParser:
