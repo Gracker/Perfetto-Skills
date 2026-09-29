@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/surfaceflinger_module.skill.yaml
 -- Source SHA-256: a56ccb9b89cffa35d9a98573a6b43fbcaf3fba59658a7a74b91d4676d6947e05
--- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+-- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 SELECT
   'MainThread' AS thread,

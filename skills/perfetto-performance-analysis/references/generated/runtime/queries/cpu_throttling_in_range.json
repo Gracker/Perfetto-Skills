@@ -58,11 +58,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "9607b652b7c1b175f12baffdebd1f31e6ad77ce27e641aed169a5dbe861d803a",
+      "sha256": "65cb8f6730226cc101c548d11377376ddd684e574e8f111d76f5fabcb9b9318a",
       "signal_patterns": [],
       "skill_id": "cpu_throttling_in_range",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/cpu_throttling_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39"
@@ -81,17 +81,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "6e399e204d46ea1544f4f714577631cc421b113b52bbfdeb1bc7667b57235988"
+            "source_sha256": "2f8477cabca9a64b0f090891d69f73d82bc28bbca0f73a4694485187a1d25f8c"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
-            "source_sha256": "000a2565ea2ecb435799a58f096404cf6fc8d5b22373ca7e6ba6b7d17ccc7144"
+            "source_sha256": "768da68c1b975c58b8810bc8de5da4eca03cfc7dc79b826d307014627ada24d2"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_episodes.sql",
-            "source_sha256": "10aae842872d9d10691584d28756b28ba3d1762eacf31026d14047abff06f513"
+            "source_sha256": "d8ca59c65c38d9e54cfec21530c1755008a8bd1dae691c3c2c9e4bb5f4e2f293"
           }
         ],
         "name_parameters": [],
@@ -171,13 +171,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "fd3bb5ddfd301b35a4d1c1b7ff37bc459b3351b2d3715169a904ce5294412e66",
+      "sha256": "40c96e4d52b31382bee5c02b1d1af43e4ac5d93a1d218372b8e2fc46d4303373",
       "signal_patterns": [
         "cpufreq"
       ],
       "skill_id": "cpu_throttling_in_range",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/cpu_throttling_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39"

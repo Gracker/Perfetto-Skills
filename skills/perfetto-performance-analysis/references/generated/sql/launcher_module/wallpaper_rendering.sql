@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/app/launcher_module.skill.yaml
 -- Source SHA-256: 09423f22ca1cc723d498d6e9ecfbfb935d5cf177154c5eab813f3bf7d0bcef40
--- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+-- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 SELECT
   s.name AS wallpaper_event,

@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/game.strategy.md
 Source SHA-256: 4859330a4aee5a85c744963b24d1d03ce91ead4814d1b94a01387fbd10e0c13a
-Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 # Game Strategy
 

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/frame_blocking_calls.skill.yaml
 -- Source SHA-256: f50aec9da16055b40141764cc3668c04f17cc70cceddcf65c2cff8c9ae89a062
--- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+-- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH jank_frames AS (
   SELECT

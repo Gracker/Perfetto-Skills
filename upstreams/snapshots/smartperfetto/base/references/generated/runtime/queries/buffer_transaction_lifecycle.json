@@ -57,7 +57,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/buffer_transaction_lifecycle/apply_transaction_summary.sql",
-      "sha256": "8a513f9486c5463c6ac366622db4be09922e5746d4164041489ef814e6f0f155",
+      "sha256": "ab0ac21bbdc57203ca24a121e4c91cd24ccc16b195cb49b1d3640130da279dbd",
       "signal_patterns": [
         "*BLASTBufferQueue*",
         "*acquireBuffer*",
@@ -69,7 +69,7 @@
       ],
       "skill_id": "buffer_transaction_lifecycle",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9bd45c1ab88d6a908b1cc3212e0851489d75932736c4544a9bec8983237545b2"
@@ -163,7 +163,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/buffer_transaction_lifecycle/queue_to_transaction_delay.sql",
-      "sha256": "a6fda9294b6826546ef8aa2fc5a3102790239ddd3ec0f59ee9f6ed1e6551b2a7",
+      "sha256": "c9cb0a8b67e4b03ec269edfa7d3366bf0cd4ca985b73ac816bb7a47f5a5c85f2",
       "signal_patterns": [
         "*applyTransaction*",
         "*queueBuffer*",
@@ -171,7 +171,7 @@
       ],
       "skill_id": "buffer_transaction_lifecycle",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9bd45c1ab88d6a908b1cc3212e0851489d75932736c4544a9bec8983237545b2"
@@ -265,11 +265,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/buffer_transaction_lifecycle/per_layer_transactions.sql",
-      "sha256": "4570a1568051a8c40194948a12dee79b9822c40fd8cbc403172f19ab35b0f8e5",
+      "sha256": "22fbc960890af84b9710d422b1696a22fef251b38a1002c487247561a519a3e4",
       "signal_patterns": [],
       "skill_id": "buffer_transaction_lifecycle",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "9bd45c1ab88d6a908b1cc3212e0851489d75932736c4544a9bec8983237545b2"

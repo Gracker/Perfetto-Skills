@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_in_range.skill.yaml
 -- Source SHA-256: 88af485b52bd4fc3a754df61300a43d34daf1c875e9870312a031e7e3595670b
--- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+-- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

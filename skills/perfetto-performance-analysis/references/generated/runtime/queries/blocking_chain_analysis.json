@@ -63,14 +63,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/thread_state_distribution.sql",
-      "sha256": "3f6e3aef1044f8506ac403f3af414cfeff101464c50283c9e9504b72cf359c8f",
+      "sha256": "4a80168340d69f75a1ba8b3e32931af08e14c56f9ddbe83a4d50d67233a1b076",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*"
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2"
@@ -173,7 +173,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/waker_chain.sql",
-      "sha256": "9c8eb8938a9dc6e2f4dcb01c7a07c6468b3a0a98228a1c0d39ca13b061928a61",
+      "sha256": "cac028b59bdd46df747af834fe917e3b8e1914f7a62f1f2a3c35e81e61881228",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*",
@@ -222,7 +222,7 @@
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2"
@@ -245,17 +245,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "d19d3264d8948509020d34f2f702bd2b1c8c215f74506b749dc526790603d6c1"
+            "source_sha256": "47c03ebd5daf054c69f3e357bfcfc14ee451d682a6de747ceb3f80a86fab9927"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/sleep_wake_source.sql",
-            "source_sha256": "f86728087883e9db3421812a060d977c8715ec21699459aec1daf9eca18be939"
+            "source_sha256": "483ca315437eb7cf6d3640658fd97224eba9111cca1fb6b57d8b85136c841691"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/sleep_wake_source_labels.sql",
-            "source_sha256": "5fd4ee085b0e1db2e706265c5d354ee94817caaf0d2371a97d29b1372679e47c"
+            "source_sha256": "c72d2a321376cce4bc6006876575f35c0511b139ed1bca982deaa9d6c9bdbb99"
           }
         ],
         "name_parameters": [
@@ -341,14 +341,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/wakeup_chain_trace.sql",
-      "sha256": "e623f260d42d885d01539e806a953c91497b8f1bd503804374f5e12bd045e62f",
+      "sha256": "1fd691637ca8faecb25a9d8db4cabc788eb7fdbd20339c38253cfd0a7a652e56",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*"
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2"
@@ -454,14 +454,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/blocking_chain_analysis/blocked_function_summary.sql",
-      "sha256": "3a4bcc2490b8b06de369b453f8a51a18170cde084130ce49010755a98d1bf9fa",
+      "sha256": "4fba0506f01c5c1bea70c7a348deaeb1a2b6c8f0fbdb8a22d0091a75e7f7e586",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*"
       ],
       "skill_id": "blocking_chain_analysis",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/blocking_chain_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2"

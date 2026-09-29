@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml
 -- Source SHA-256: 732218147795f2a787f3c333faa8662f4e42e0defe9800548bc83d8299572018
--- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+-- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

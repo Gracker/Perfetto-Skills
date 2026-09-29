@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/buffer_tx_frame_production.sql
 -- Source SHA-256: 9aecf87a50b14e951568c87371924350b4bead0c88070104108ef4ae1a706c31
--- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+-- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 -- BufferTX frame production evidence for one package.
 -- Counts only positive per-track queue-depth deltas, then selects one primary

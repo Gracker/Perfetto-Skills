@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S02_aosp_standard_type.md
 Source SHA-256: ea3bcea43c3548a97e11c2f062e93b1e8d1b0954cd9b207287d2abed903e1153
-Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 # Android Perfetto 系列 - App 出图类型 - AOSP 标准类型
 

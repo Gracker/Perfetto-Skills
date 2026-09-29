@@ -55,14 +55,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_rss_high_watermark/rss_peaks.sql",
-      "sha256": "1f898a68f862dd14a183434192188c937ab6f2565560083035bffc90d60184fa",
+      "sha256": "74eb502afc3238af4e43ff5ff0ebd9b5cc853ed75e7693062c4ad4e84ca50c52",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*"
       ],
       "skill_id": "memory_rss_high_watermark",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/memory_rss_high_watermark.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "37166099200b6eb3dfaa4d62fc6e08bb63e5baa6671f7d1a9dc8530a3a6a36b9"

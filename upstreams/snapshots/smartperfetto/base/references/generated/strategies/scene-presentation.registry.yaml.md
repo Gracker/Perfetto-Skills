@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scene-presentation.registry.yaml
 Source SHA-256: fb3a53c4d0824edec666f7555b5b25fd2228be50a439713d2719f9f9d467e28a
-Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 # Scene Presentation Registry Yaml
 

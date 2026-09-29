@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 4007035c487eb410a43fdb6bf3aae3bc1b3bad006e40395f80a69f43bd269da5
-Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+Source SHA-256: f0cb2ea3933bc319a9d98df1da466ba9e0fb54d39ba84dee41dfeff891fd009a
+Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1142,6 +1142,8 @@ process_scope:
   binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: input_data
 ```
 ### Input 延迟概览

@@ -55,17 +55,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_events_in_range/query.sql",
-      "sha256": "ec9d4828822b7f9a074f43caeaca9dbec623049cb5986dac37804a48cf625f4b",
+      "sha256": "6b8da4b67dac24891e2fa44ff6da01e3a7638e30e6f9386805b52877660a320d",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "input_events_in_range",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/input_events_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8d69c78ca616cb5d1dce61d9d7aaf473ba7afa36926088825211515c49d4898a"
+        "sha256": "2f7e2106533b513cd6e2c45f1e181159a07dfaa498feec67768c5d49595baec0"
       },
       "sql_dependencies": {
         "creates": [],
@@ -88,6 +88,16 @@
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
             "source_sha256": "a08a5c3e47cf8e9d3d8ddd1be366cc6e9b78a77ed9e5fde1a5b099c4b5a722e2"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/android_input_delivery_roles.sql",
+            "source_sha256": "829aa8c47857377d030ad3720f3dbbedab0a5bc7baef27fa9280a0685e645988"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
+            "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
           }
         ],
         "name_parameters": [],

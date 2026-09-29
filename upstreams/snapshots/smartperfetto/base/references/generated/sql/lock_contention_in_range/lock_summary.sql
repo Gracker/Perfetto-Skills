@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/lock_contention_in_range.skill.yaml
 -- Source SHA-256: 660f675d614aec2af8885125bcb62d2a5410b5318a01e545990ff3642f53a566
--- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
+-- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH
 monitor_stats AS (

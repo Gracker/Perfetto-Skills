@@ -55,14 +55,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/native_heap_breakdown/heap_profile_inventory.sql",
-      "sha256": "e524d45d5897aa016db0a2b0e14527bb9a950bb328236bd63f84540192c7736f",
+      "sha256": "e01d7d896246d6b029016ed6661ae23aa6806f76d4fdc77f493f662377e3452c",
       "signal_patterns": [
         "heapprofd*",
         "heapprofd_malformed_packet"
       ],
       "skill_id": "native_heap_breakdown",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c60782edef05f79ebd9a79e7f0f8f3f2dfec35cd35c839c661f0f34a68681fff"
@@ -164,7 +164,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/native_heap_breakdown/native_heap_hotspots.sql",
-      "sha256": "3f87fb2dd1af884111e4ac150dd1ee88f7d761d181ca4b70f355f77ae7921753",
+      "sha256": "eb91f9ca70a4f1067cea94ac0134c502bee605a8659d4034396548bd19806f74",
       "signal_patterns": [
         "/[[]anon_shmem:dalvik-jit-code-cache]*",
         "/apex/com.android.art/*",
@@ -175,7 +175,7 @@
       ],
       "skill_id": "native_heap_breakdown",
       "source": {
-        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
+        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "c60782edef05f79ebd9a79e7f0f8f3f2dfec35cd35c839c661f0f34a68681fff"
