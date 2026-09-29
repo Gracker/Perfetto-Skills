@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/android_input_events_normalized.sql
--- Source SHA-256: a08a5c3e47cf8e9d3d8ddd1be366cc6e9b78a77ed9e5fde1a5b099c4b5a722e2
+-- Source SHA-256: 8cf98355a5e54d927fcf200111666c3da884681d14746be7ac663461f5c30b63
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- The single read path for stdlib android_input_events. Skill contract:
@@ -20,6 +20,13 @@
 -- exact_end_to_end_latency_dur. frame_association labels raw values for
 -- display: none, exact, speculative, or unknown (a frame with no flag, which
 -- is not treated as exact).
+-- physical_event_key names the physical event a row delivers: every receiving
+-- channel of one event shares it, so COUNT(DISTINCT physical_event_key) counts
+-- events however many channels (app window, gesture monitors, dispatcher,
+-- navigation bar) received each. Without an input_event_id the dispatch
+-- timestamp stands in, which identifies only that one delivery. (The
+-- physical_event_key of scene_input_facts.sql is a different, scene-local key
+-- that also spans native motion/key events.)
 android_input_events_normalized AS NOT MATERIALIZED (
   SELECT
     dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
@@ -41,6 +48,7 @@ android_input_events_normalized AS NOT MATERIALIZED (
       WHEN is_speculative_frame = 0 THEN 'exact'
       WHEN is_speculative_frame = 1 THEN 'speculative'
       ELSE 'unknown'
-    END AS frame_association
+    END AS frame_association,
+    COALESCE(input_event_id, 'dispatch:' || dispatch_ts) AS physical_event_key
   FROM android_input_events
 )

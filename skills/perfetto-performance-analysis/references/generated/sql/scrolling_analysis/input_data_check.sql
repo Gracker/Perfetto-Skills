@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: f0cb2ea3933bc319a9d98df1da466ba9e0fb54d39ba84dee41dfeff891fd009a
+-- Source SHA-256: 5984bc47a21ebaac70c6e183b813c2ad0178f194fb364e371b2ea9154144efbb
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -21,6 +21,13 @@ WITH
 -- exact_end_to_end_latency_dur. frame_association labels raw values for
 -- display: none, exact, speculative, or unknown (a frame with no flag, which
 -- is not treated as exact).
+-- physical_event_key names the physical event a row delivers: every receiving
+-- channel of one event shares it, so COUNT(DISTINCT physical_event_key) counts
+-- events however many channels (app window, gesture monitors, dispatcher,
+-- navigation bar) received each. Without an input_event_id the dispatch
+-- timestamp stands in, which identifies only that one delivery. (The
+-- physical_event_key of scene_input_facts.sql is a different, scene-local key
+-- that also spans native motion/key events.)
 android_input_events_normalized AS NOT MATERIALIZED (
   SELECT
     dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
@@ -42,7 +49,8 @@ android_input_events_normalized AS NOT MATERIALIZED (
       WHEN is_speculative_frame = 0 THEN 'exact'
       WHEN is_speculative_frame = 1 THEN 'speculative'
       ELSE 'unknown'
-    END AS frame_association
+    END AS frame_association,
+    COALESCE(input_event_id, 'dispatch:' || dispatch_ts) AS physical_event_key
   FROM android_input_events
 )
 ,
@@ -59,8 +67,8 @@ android_input_events_normalized AS NOT MATERIALIZED (
 --                  carries one: a monitor observation, not the app's.
 --   unresolved   - NULL action on every receiver of the event (trace-edge
 --                  events, FOCUS, runtimes that resolve no action).
--- unresolved_event_key identifies an unresolved event once per input_event_id,
--- so counting it DISTINCT gives extra channels of one event no extra weight.
+-- unresolved_event_key is the physical_event_key of an unresolved row, so
+-- counting it DISTINCT gives extra channels of one event no extra weight.
 -- window_owner is the stdlib's owner of the receiving channel,
 -- str_split(str_split(event_channel, ' ', 1), '/', 0), spelled portably: the
 -- package of a '<hash> <package>/<component>' window. Monitor, dispatcher,
@@ -109,7 +117,7 @@ android_input_event_deliveries AS NOT MATERIALIZED (
         WHEN a.input_event_id IS NOT NULL THEN 'monitor_copy'
         ELSE 'unresolved' END AS delivery_role,
       CASE WHEN e.event_action IS NULL AND a.input_event_id IS NULL
-        THEN COALESCE(e.input_event_id, 'dispatch:' || e.dispatch_ts) END AS unresolved_event_key,
+        THEN e.physical_event_key END AS unresolved_event_key,
       (e.event_action IS NULL
         AND (a.input_event_id IS NOT NULL OR m.upid IS NOT NULL)) AS monitor_observation,
       -- Second word of the channel, cut at its first '/'.
@@ -151,18 +159,6 @@ android_input_scoped_deliveries AS NOT MATERIALIZED (
   WHERE (${start_ts} IS NULL OR d.receive_ts + d.receive_dur > ${start_ts})
     AND (${end_ts} IS NULL OR d.dispatch_ts < ${end_ts})
 )
-,
-scoped_events AS (
-  SELECT *, COALESCE(input_event_id, 'dispatch:' || dispatch_ts) AS event_key
-  FROM android_input_scoped_deliveries
-  WHERE analyzed_for_upid
-    AND (${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid})
-    AND (
-    ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
-    OR process_name = '${package}'
-    OR process_name GLOB '${package}:*'
-  )
-)
 SELECT
   -- frame_matched_events: exact association only (see fragments/android_input_events_normalized.sql); speculative_only = frames matched only speculatively.
   CASE
@@ -171,10 +167,17 @@ SELECT
     WHEN COUNT(frame_id) > 0 THEN 'speculative_only'
     ELSE 'no_frame_match'
   END as input_data_status,
-  COUNT(DISTINCT event_key) as total_input_events,
-  COUNT(DISTINCT CASE WHEN event_action = 'MOVE' THEN event_key END) as move_events,
-  COUNT(DISTINCT CASE WHEN exact_frame_id IS NOT NULL THEN event_key END) as frame_matched_events,
+  COUNT(DISTINCT physical_event_key) as total_input_events,
+  COUNT(DISTINCT CASE WHEN event_action = 'MOVE' THEN physical_event_key END) as move_events,
+  COUNT(DISTINCT CASE WHEN exact_frame_id IS NOT NULL THEN physical_event_key END) as frame_matched_events,
   COALESCE(
     NULLIF(COUNT(DISTINCT CASE WHEN monitor_observation = 0 THEN upid END), 0),
     COUNT(DISTINCT upid)) as target_processes
-FROM scoped_events
+FROM android_input_scoped_deliveries
+WHERE analyzed_for_upid
+  AND (${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid})
+  AND (
+    ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
+    OR process_name = '${package}'
+    OR process_name GLOB '${package}:*'
+  )

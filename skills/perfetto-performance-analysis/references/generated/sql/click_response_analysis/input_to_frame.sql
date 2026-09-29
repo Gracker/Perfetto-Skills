@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
--- Source SHA-256: c89499ee0cfd1d669e64f88b7039cb117fc446de2af81bdf5db473e3f44f50ee
+-- Source SHA-256: 6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -21,6 +21,13 @@ WITH
 -- exact_end_to_end_latency_dur. frame_association labels raw values for
 -- display: none, exact, speculative, or unknown (a frame with no flag, which
 -- is not treated as exact).
+-- physical_event_key names the physical event a row delivers: every receiving
+-- channel of one event shares it, so COUNT(DISTINCT physical_event_key) counts
+-- events however many channels (app window, gesture monitors, dispatcher,
+-- navigation bar) received each. Without an input_event_id the dispatch
+-- timestamp stands in, which identifies only that one delivery. (The
+-- physical_event_key of scene_input_facts.sql is a different, scene-local key
+-- that also spans native motion/key events.)
 android_input_events_normalized AS NOT MATERIALIZED (
   SELECT
     dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
@@ -42,7 +49,8 @@ android_input_events_normalized AS NOT MATERIALIZED (
       WHEN is_speculative_frame = 0 THEN 'exact'
       WHEN is_speculative_frame = 1 THEN 'speculative'
       ELSE 'unknown'
-    END AS frame_association
+    END AS frame_association,
+    COALESCE(input_event_id, 'dispatch:' || dispatch_ts) AS physical_event_key
   FROM android_input_events
 )
 ,
@@ -59,8 +67,8 @@ android_input_events_normalized AS NOT MATERIALIZED (
 --                  carries one: a monitor observation, not the app's.
 --   unresolved   - NULL action on every receiver of the event (trace-edge
 --                  events, FOCUS, runtimes that resolve no action).
--- unresolved_event_key identifies an unresolved event once per input_event_id,
--- so counting it DISTINCT gives extra channels of one event no extra weight.
+-- unresolved_event_key is the physical_event_key of an unresolved row, so
+-- counting it DISTINCT gives extra channels of one event no extra weight.
 -- window_owner is the stdlib's owner of the receiving channel,
 -- str_split(str_split(event_channel, ' ', 1), '/', 0), spelled portably: the
 -- package of a '<hash> <package>/<component>' window. Monitor, dispatcher,
@@ -109,7 +117,7 @@ android_input_event_deliveries AS NOT MATERIALIZED (
         WHEN a.input_event_id IS NOT NULL THEN 'monitor_copy'
         ELSE 'unresolved' END AS delivery_role,
       CASE WHEN e.event_action IS NULL AND a.input_event_id IS NULL
-        THEN COALESCE(e.input_event_id, 'dispatch:' || e.dispatch_ts) END AS unresolved_event_key,
+        THEN e.physical_event_key END AS unresolved_event_key,
       (e.event_action IS NULL
         AND (a.input_event_id IS NOT NULL OR m.upid IS NOT NULL)) AS monitor_observation,
       -- Second word of the channel, cut at its first '/'.

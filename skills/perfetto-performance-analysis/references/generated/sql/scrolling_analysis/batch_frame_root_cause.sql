@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: f0cb2ea3933bc319a9d98df1da466ba9e0fb54d39ba84dee41dfeff891fd009a
+-- Source SHA-256: 5984bc47a21ebaac70c6e183b813c2ad0178f194fb364e371b2ea9154144efbb
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 使用相同优先级 CASE 树
@@ -24,6 +24,13 @@ WITH
 -- exact_end_to_end_latency_dur. frame_association labels raw values for
 -- display: none, exact, speculative, or unknown (a frame with no flag, which
 -- is not treated as exact).
+-- physical_event_key names the physical event a row delivers: every receiving
+-- channel of one event shares it, so COUNT(DISTINCT physical_event_key) counts
+-- events however many channels (app window, gesture monitors, dispatcher,
+-- navigation bar) received each. Without an input_event_id the dispatch
+-- timestamp stands in, which identifies only that one delivery. (The
+-- physical_event_key of scene_input_facts.sql is a different, scene-local key
+-- that also spans native motion/key events.)
 android_input_events_normalized AS NOT MATERIALIZED (
   SELECT
     dispatch_latency_dur, handling_latency_dur, ack_latency_dur,
@@ -45,7 +52,8 @@ android_input_events_normalized AS NOT MATERIALIZED (
       WHEN is_speculative_frame = 0 THEN 'exact'
       WHEN is_speculative_frame = 1 THEN 'speculative'
       ELSE 'unknown'
-    END AS frame_association
+    END AS frame_association,
+    COALESCE(input_event_id, 'dispatch:' || dispatch_ts) AS physical_event_key
   FROM android_input_events
 )
 ,

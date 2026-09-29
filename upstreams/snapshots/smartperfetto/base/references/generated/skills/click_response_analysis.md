@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_analysis.skill.yaml
-Source SHA-256: c89499ee0cfd1d669e64f88b7039cb117fc446de2af81bdf5db473e3f44f50ee
+Source SHA-256: 6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68
 # 点击响应分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -146,6 +146,8 @@ display:
     type: string
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: input_check
 ```
 ### 选择目标进程

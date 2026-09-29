@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/android_input_delivery_roles.sql
--- Source SHA-256: 829aa8c47857377d030ad3720f3dbbedab0a5bc7baef27fa9280a0685e645988
+-- Source SHA-256: 1fd770917bc77c70b61f3946fcc56b277f6a6eb8ac235372ce532d85f93d5ae7
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Which receiver of a physical input event is its application delivery.
@@ -15,8 +15,8 @@
 --                  carries one: a monitor observation, not the app's.
 --   unresolved   - NULL action on every receiver of the event (trace-edge
 --                  events, FOCUS, runtimes that resolve no action).
--- unresolved_event_key identifies an unresolved event once per input_event_id,
--- so counting it DISTINCT gives extra channels of one event no extra weight.
+-- unresolved_event_key is the physical_event_key of an unresolved row, so
+-- counting it DISTINCT gives extra channels of one event no extra weight.
 -- window_owner is the stdlib's owner of the receiving channel,
 -- str_split(str_split(event_channel, ' ', 1), '/', 0), spelled portably: the
 -- package of a '<hash> <package>/<component>' window. Monitor, dispatcher,
@@ -65,7 +65,7 @@ android_input_event_deliveries AS NOT MATERIALIZED (
         WHEN a.input_event_id IS NOT NULL THEN 'monitor_copy'
         ELSE 'unresolved' END AS delivery_role,
       CASE WHEN e.event_action IS NULL AND a.input_event_id IS NULL
-        THEN COALESCE(e.input_event_id, 'dispatch:' || e.dispatch_ts) END AS unresolved_event_key,
+        THEN e.physical_event_key END AS unresolved_event_key,
       (e.event_action IS NULL
         AND (a.input_event_id IS NOT NULL OR m.upid IS NOT NULL)) AS monitor_observation,
       -- Second word of the channel, cut at its first '/'.

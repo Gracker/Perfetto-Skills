@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: f0cb2ea3933bc319a9d98df1da466ba9e0fb54d39ba84dee41dfeff891fd009a
+Source SHA-256: 5984bc47a21ebaac70c6e183b813c2ad0178f194fb364e371b2ea9154144efbb
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
