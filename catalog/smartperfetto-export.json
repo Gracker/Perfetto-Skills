@@ -588,7 +588,7 @@
       "name": "click_response_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/click_response_analysis.skill.yaml",
-      "source_sha256": "4cbe4f3a61a108fb5514ab66e9310908ea1565738a2f4b96f4420061ce51f24a",
+      "source_sha256": "c89499ee0cfd1d669e64f88b7039cb117fc446de2af81bdf5db473e3f44f50ee",
       "tier": "S",
       "version": "1.0",
       "workflow": "interaction"
@@ -2366,7 +2366,7 @@
       "name": "scrolling_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-      "source_sha256": "0c491f4640947a77746c9299ed721693f8e5109a88b8371db4e965d2b4c84a94",
+      "source_sha256": "4007035c487eb410a43fdb6bf3aae3bc1b3bad006e40395f80a69f43bd269da5",
       "tier": "S",
       "version": "2.2",
       "workflow": "scrolling"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+    "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "60c02604213aef09d5bd0024331595d599b9a3adeff7f39e893794cc6d3ecbad",
+    "policy_sha256": "1fb93580e7f2526500a635bc069788dc565c15e33464b217a2f1722f47b2852b",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3091,13 +3091,19 @@
       "destination": "references/generated/runtime/fragments/android_input_delivery_roles.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/android_input_delivery_roles.sql",
-      "source_sha256": "0d43abd4e6d87d66627a3746abe74ba2784375a9bf88db0a8f05d48e32aeb3fe"
+      "source_sha256": "829aa8c47857377d030ad3720f3dbbedab0a5bc7baef27fa9280a0685e645988"
     },
     {
       "destination": "references/generated/runtime/fragments/android_input_events_normalized.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
       "source_sha256": "a08a5c3e47cf8e9d3d8ddd1be366cc6e9b78a77ed9e5fde1a5b099c4b5a722e2"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/android_input_scoped_deliveries.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
+      "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
     },
     {
       "destination": "references/generated/runtime/fragments/buffer_tx_frame_production.sql",
@@ -4279,7 +4285,7 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_sql_fragments": 38,
+    "exported_sql_fragments": 39,
     "exported_strategy_sources": 47,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
@@ -4293,7 +4299,7 @@
       "pipeline_definition": 31
     },
     "skill_yaml_files": 257,
-    "sql_fragments": 45,
+    "sql_fragments": 46,
     "strategy_sources": 146,
     "vendor_overrides": 8
   },

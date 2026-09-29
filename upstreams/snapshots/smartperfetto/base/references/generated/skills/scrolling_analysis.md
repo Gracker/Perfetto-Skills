@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 0c491f4640947a77746c9299ed721693f8e5109a88b8371db4e965d2b4c84a94
-Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
+Source SHA-256: 4007035c487eb410a43fdb6bf3aae3bc1b3bad006e40395f80a69f43bd269da5
+Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1236,6 +1236,7 @@ process_scope:
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: input_latency
 condition: input_data.data[0]?.total_input_events > 0
 ```

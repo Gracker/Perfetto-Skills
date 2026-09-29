@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 0c491f4640947a77746c9299ed721693f8e5109a88b8371db4e965d2b4c84a94
--- Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
+-- Source SHA-256: 4007035c487eb410a43fdb6bf3aae3bc1b3bad006e40395f80a69f43bd269da5
+-- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 使用相同优先级 CASE 树

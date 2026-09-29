@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/fence_wait_decomposition.skill.yaml
 Source SHA-256: 75f359793eed661eb1be28d6514d7eca7a9defec4fa11b309b3166f25d9ee94a
-Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
+Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
 # Fence 等待分解（acquire/present/release）
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

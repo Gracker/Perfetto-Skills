@@ -57,11 +57,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_summary/heap_graph_dump_sizes.sql",
-      "sha256": "d76389bdeda02066b2830d54d6b911ad42109d985c6c6a088f486f169810b455",
+      "sha256": "127421e1abd045ab7f53925244b16a6d6a5770869ad1711e0e28b3246561435d",
       "signal_patterns": [],
       "skill_id": "android_heap_graph_summary",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/android_heap_graph_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "de6251b10137d1d773f7eef2c440c14fbe12fc4312d3dee7872e20ec632eb0e8"
@@ -156,7 +156,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_summary/heap_graph_availability.sql",
-      "sha256": "83c1f49512fe25f5722dad97c696217eef37e3a6843dceb532e5d0e4420c57dd",
+      "sha256": "202e8205e2886d256585b4e5de95caf8e2558ab49b3720a8724caa0d3f8250e9",
       "signal_patterns": [
         "heap_graph*",
         "hprof*",
@@ -164,7 +164,7 @@
       ],
       "skill_id": "android_heap_graph_summary",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/android_heap_graph_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "de6251b10137d1d773f7eef2c440c14fbe12fc4312d3dee7872e20ec632eb0e8"
@@ -190,12 +190,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/heap_target_process.sql",
-            "source_sha256": "0dec5263f10fd1aaf02a0b55fd565c4896b3f3115b30bbafe99089eafde97129"
+            "source_sha256": "78f6385d16feb3d3b0bbbe305f7d38f509d6566eeb2ddfdb3146ceb24975f73e"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/heap_graph_dump_scope.sql",
-            "source_sha256": "6dd23a61d4f164351cf9f6f0f73a75d39851a12d6ea86b8d50c06a97b683cacc"
+            "source_sha256": "1c0edbd266eb6679e2cda8bd3c44579221ec056b7e0eabea562dc85e43d9540e"
           }
         ],
         "name_parameters": [],
@@ -274,14 +274,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_summary/heap_graph_samples.sql",
-      "sha256": "cc2ddf12ee3b7a264a7a134bbc13f3114790dad9da2608f2b6a00e702474eb35",
+      "sha256": "e527364657fdab8acb12efb9366bfc8975627867427e2ea45ed8bee4d32292c4",
       "signal_patterns": [
         "heap_graph*",
         "hprof*"
       ],
       "skill_id": "android_heap_graph_summary",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/android_heap_graph_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "de6251b10137d1d773f7eef2c440c14fbe12fc4312d3dee7872e20ec632eb0e8"
@@ -307,12 +307,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/heap_target_process.sql",
-            "source_sha256": "0dec5263f10fd1aaf02a0b55fd565c4896b3f3115b30bbafe99089eafde97129"
+            "source_sha256": "78f6385d16feb3d3b0bbbe305f7d38f509d6566eeb2ddfdb3146ceb24975f73e"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/heap_graph_dump_scope.sql",
-            "source_sha256": "6dd23a61d4f164351cf9f6f0f73a75d39851a12d6ea86b8d50c06a97b683cacc"
+            "source_sha256": "1c0edbd266eb6679e2cda8bd3c44579221ec056b7e0eabea562dc85e43d9540e"
           }
         ],
         "name_parameters": [],
@@ -391,14 +391,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_summary/heap_graph_truncation.sql",
-      "sha256": "6495f391b871d2398e8e11f24bb0f788ce614a8b76e946fd73b23852a660f07e",
+      "sha256": "cee408b9fd5f12b1b52176346f547b01c084f322ae503b372e071a979503a516",
       "signal_patterns": [
         "heap_graph*",
         "hprof*"
       ],
       "skill_id": "android_heap_graph_summary",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/android_heap_graph_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "de6251b10137d1d773f7eef2c440c14fbe12fc4312d3dee7872e20ec632eb0e8"
@@ -422,12 +422,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/heap_target_process.sql",
-            "source_sha256": "0dec5263f10fd1aaf02a0b55fd565c4896b3f3115b30bbafe99089eafde97129"
+            "source_sha256": "78f6385d16feb3d3b0bbbe305f7d38f509d6566eeb2ddfdb3146ceb24975f73e"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/heap_graph_dump_scope.sql",
-            "source_sha256": "6dd23a61d4f164351cf9f6f0f73a75d39851a12d6ea86b8d50c06a97b683cacc"
+            "source_sha256": "1c0edbd266eb6679e2cda8bd3c44579221ec056b7e0eabea562dc85e43d9540e"
           }
         ],
         "name_parameters": [],
@@ -506,7 +506,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_heap_graph_summary/top_retained_classes.sql",
-      "sha256": "7bbd1de761cbfc90b948127d0c4e7fdac3051caa0c14abbcd792f1e10e909d9a",
+      "sha256": "e831289c2176b12837c67ae05562755126a2f52dd5f8cb93190dd64b462f8e03",
       "signal_patterns": [
         "*Activity*",
         "*Fragment*",
@@ -515,7 +515,7 @@
       ],
       "skill_id": "android_heap_graph_summary",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/android_heap_graph_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "de6251b10137d1d773f7eef2c440c14fbe12fc4312d3dee7872e20ec632eb0e8"
@@ -541,12 +541,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/heap_target_process.sql",
-            "source_sha256": "0dec5263f10fd1aaf02a0b55fd565c4896b3f3115b30bbafe99089eafde97129"
+            "source_sha256": "78f6385d16feb3d3b0bbbe305f7d38f509d6566eeb2ddfdb3146ceb24975f73e"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/heap_graph_dump_scope.sql",
-            "source_sha256": "6dd23a61d4f164351cf9f6f0f73a75d39851a12d6ea86b8d50c06a97b683cacc"
+            "source_sha256": "1c0edbd266eb6679e2cda8bd3c44579221ec056b7e0eabea562dc85e43d9540e"
           }
         ],
         "name_parameters": [],

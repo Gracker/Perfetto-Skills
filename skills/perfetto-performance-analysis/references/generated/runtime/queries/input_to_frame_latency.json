@@ -55,13 +55,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/vsync_period.sql",
-      "sha256": "c35e4b789359c400c28543459bab17ea9f9d9676bf4eca126e4daf4a86aa42e9",
+      "sha256": "0d103382219a7df21ce1e87ecb76cdfac30188ee3038e82bf7a001e6d8ce722d",
       "signal_patterns": [
         "VSYNC-app"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42ded4806d9a910a2d97e2c7894bbdc986e7195a4ed6d85a2ee0fa43c4ae4dfd"
@@ -148,14 +148,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/input_sampling_rate.sql",
-      "sha256": "16306fac9077336ba8cfc2b339e884153f07ae33cd2c1c72d0a7f081d5387d66",
+      "sha256": "367fd1070d6fd6f99c3fa5fa27b21c059339d9dc392f313035927eb26b3b4acc",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42ded4806d9a910a2d97e2c7894bbdc986e7195a4ed6d85a2ee0fa43c4ae4dfd"
@@ -180,7 +180,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "4a82bb3b631de61f96a8d6a83bb3afdaa76dc76ff053bfc623b66debf7482acf"
+            "source_sha256": "905bddcd6835e3cf4a8755bf3ba6c49991453a7e042d258240c6c0ed0d33ff9e"
           }
         ],
         "name_parameters": [],
@@ -256,7 +256,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/per_frame_latency.sql",
-      "sha256": "45660e04497407942bc25fbe7287390c49783167f952b98b2a5592acc0b9b239",
+      "sha256": "799587c2719b48fb491b9b8d68e4917ec27d24f45cb6ec7642658cec84bfaeb5",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -264,7 +264,7 @@
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42ded4806d9a910a2d97e2c7894bbdc986e7195a4ed6d85a2ee0fa43c4ae4dfd"
@@ -289,7 +289,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "4a82bb3b631de61f96a8d6a83bb3afdaa76dc76ff053bfc623b66debf7482acf"
+            "source_sha256": "905bddcd6835e3cf4a8755bf3ba6c49991453a7e042d258240c6c0ed0d33ff9e"
           }
         ],
         "name_parameters": [],
@@ -366,7 +366,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/latency_statistics.sql",
-      "sha256": "c52e7c67e12d6e63da6df388b4191a32414dd9b897bef42107f5ced017d470cd",
+      "sha256": "03be5000836b5e0059084e1412d9113e70aaf0fc7f998448ac5a76e30f270353",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -374,7 +374,7 @@
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42ded4806d9a910a2d97e2c7894bbdc986e7195a4ed6d85a2ee0fa43c4ae4dfd"
@@ -399,7 +399,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "4a82bb3b631de61f96a8d6a83bb3afdaa76dc76ff053bfc623b66debf7482acf"
+            "source_sha256": "905bddcd6835e3cf4a8755bf3ba6c49991453a7e042d258240c6c0ed0d33ff9e"
           }
         ],
         "name_parameters": [],
@@ -475,14 +475,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/input_to_frame_latency/latency_spikes.sql",
-      "sha256": "bc2859cbd56c215171d27b3448cd945bfcfab72dce8f367b2e1e7085c2391d40",
+      "sha256": "fd5678f5b0a12912f45cfcbab918dd08c33e9f99aba8a999df2f2e9d3e3f8c91",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "input_to_frame_latency",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/input_to_frame_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "42ded4806d9a910a2d97e2c7894bbdc986e7195a4ed6d85a2ee0fa43c4ae4dfd"
@@ -507,7 +507,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "4a82bb3b631de61f96a8d6a83bb3afdaa76dc76ff053bfc623b66debf7482acf"
+            "source_sha256": "905bddcd6835e3cf4a8755bf3ba6c49991453a7e042d258240c6c0ed0d33ff9e"
           }
         ],
         "name_parameters": [],

@@ -63,13 +63,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "9200c8554716c61cdb84c430cbfa8129886cddc00b5605aa79ae3425fb491628",
+      "sha256": "8cf782bdf09c984b9102ee6f43e48da9a94cd686b0fbc856bbd0351638c091b2",
       "signal_patterns": [
         "${package}:*"
       ],
       "skill_id": "sched_latency_in_range",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/atomic/sched_latency_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "435cf3da6812b27da4eebfbc371fa38f8eea4c782432e273941531a293bc0a62"
@@ -88,12 +88,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "f0c5595b2ec362f6607786fe38be05c6fc053f3bf60375f1828c156cdf51de49"
+            "source_sha256": "3311339f5b6533c296849c6f2d62d651238b23baac8f2c63320b1611f274fb25"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "20ff38f13b39e4776ea5122c5ebb712b030bae3b747c57fd53fd65a96bff32ec"
+            "source_sha256": "be456eeb0c1e28c20f391618e94b30dbc2da1e331c228fa6948581eb5106dffd"
           }
         ],
         "name_parameters": [

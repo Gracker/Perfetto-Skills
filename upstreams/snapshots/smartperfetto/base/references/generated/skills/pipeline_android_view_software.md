@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_software.skill.yaml
 Source SHA-256: 5de7469c18f360c86b277d6c21f8979afdb2885745cb8dad15682a2469eb44bd
-Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
+Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
 # Android View 软件渲染
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
--- Source SHA-256: 4cbe4f3a61a108fb5514ab66e9310908ea1565738a2f4b96f4420061ce51f24a
--- Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
+-- Source SHA-256: c89499ee0cfd1d669e64f88b7039cb117fc446de2af81bdf5db473e3f44f50ee
+-- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -47,7 +47,7 @@ android_input_events_normalized AS NOT MATERIALIZED (
   FROM android_input_events
 )
 SELECT
-  COUNT(*) as event_count,
+  COUNT(DISTINCT COALESCE(input_event_id, 'dispatch:' || dispatch_ts)) as event_count,
   CASE WHEN COUNT(*) > 0 THEN 'available' ELSE 'unavailable' END as status
 FROM android_input_events_normalized
 WHERE (('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*') OR '${package}' = '')

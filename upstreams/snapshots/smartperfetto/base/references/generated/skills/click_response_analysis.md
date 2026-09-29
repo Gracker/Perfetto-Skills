@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_analysis.skill.yaml
-Source SHA-256: 4cbe4f3a61a108fb5514ab66e9310908ea1565738a2f4b96f4420061ce51f24a
-Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
+Source SHA-256: c89499ee0cfd1d669e64f88b7039cb117fc446de2af81bdf5db473e3f44f50ee
+Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
 # 点击响应分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -182,6 +182,7 @@ display:
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: target_process
 condition: input_check.data[0]?.status === 'available'
 ```
@@ -275,6 +276,8 @@ display:
     type: string
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: latency_overview
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -335,6 +338,8 @@ display:
     type: number
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: latency_by_type
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -391,6 +396,8 @@ display:
     type: number
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: latency_by_window
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -500,6 +507,8 @@ display:
     type: string
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: slow_events
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -517,6 +526,8 @@ process_scope:
   binding: effective_target_processes
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 - fragments/effective_target_processes.sql
 - fragments/system_thread_state_spans.sql
 optional: true
@@ -606,6 +617,8 @@ display:
     type: number
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: input_binder
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -653,6 +666,8 @@ display:
     type: enum
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: input_to_frame
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -693,6 +708,8 @@ display:
     format: percentage
 sql_fragments:
 - fragments/android_input_events_normalized.sql
+- fragments/android_input_delivery_roles.sql
+- fragments/android_input_scoped_deliveries.sql
 save_as: latency_distribution
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```

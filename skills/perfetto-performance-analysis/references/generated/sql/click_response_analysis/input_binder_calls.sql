@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
--- Source SHA-256: 4cbe4f3a61a108fb5514ab66e9310908ea1565738a2f4b96f4420061ce51f24a
--- Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
+-- Source SHA-256: c89499ee0cfd1d669e64f88b7039cb117fc446de2af81bdf5db473e3f44f50ee
+-- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -47,15 +47,120 @@ android_input_events_normalized AS NOT MATERIALIZED (
   FROM android_input_events
 )
 ,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Which receiver of a physical input event is its application delivery.
+-- android_input_events has one row per receiving channel of the same physical
+-- event (input_event_id): the app window plus gesture monitors, the pointer
+-- dispatcher, wallpaper and navigation bar channels. The stdlib sets
+-- event_action only from app-side delivery evidence on a window the receiving
+-- process owns, so monitor channels never carry it; an app delivery can still
+-- lack it (no `view` atrace, no frame after the event).
+--   action       - event_action is known: an observed application delivery.
+--   monitor_copy - NULL action, and another row of the same input_event_id
+--                  carries one: a monitor observation, not the app's.
+--   unresolved   - NULL action on every receiver of the event (trace-edge
+--                  events, FOCUS, runtimes that resolve no action).
+-- unresolved_event_key identifies an unresolved event once per input_event_id,
+-- so counting it DISTINCT gives extra channels of one event no extra weight.
+-- window_owner is the stdlib's owner of the receiving channel,
+-- str_split(str_split(event_channel, ' ', 1), '/', 0), spelled portably: the
+-- package of a '<hash> <package>/<component>' window. Monitor, dispatcher,
+-- navigation-bar and wallpaper channels never yield their receiver's name; nor
+-- do app windows titled without '/' (PopupWindow:..), which keep plain counts.
+-- unresolved_window_event_key keeps an unresolved event only on a window its
+-- receiver owns: the exact name, or the name before ':' for multi-process apps,
+-- whose delivery the stdlib cannot resolve (substr, not GLOB: the owner is
+-- channel text). Rankers read it right after the action count, because a
+-- monitor sees touches aimed at every window and can out-count the app.
+-- monitor_observation marks rows that observe an event rather than deliver it
+-- to the application: every monitor_copy, and an unresolved row on a receiving
+-- channel (upid + event_channel) that never carries an action but does carry
+-- monitor copies. A process can own both its app window and a gesture monitor
+-- (a launcher's "[Gesture Monitor] swipe-up"); when an event's action is
+-- unresolved on every receiver, the channel's history is what still separates
+-- the monitor's row from the window's. Channels are judged from data, never
+-- from their names. fragments/android_input_scoped_deliveries.sql turns this
+-- into the rows a caller analyzes inside its window.
+-- Classified over the whole relation, never inside a caller's time window, so a
+-- window edge cannot separate a copy from its action-bearing sibling.
+-- scene_input_facts.sql applies the same "the action-bearing receiver is
+-- primary" rule per stream for scene reconstruction, without window ownership.
+-- Requires fragments/android_input_events_normalized.sql listed before it.
+android_input_action_event_ids AS (
+  SELECT DISTINCT input_event_id
+  FROM android_input_events_normalized
+  WHERE event_action IS NOT NULL AND input_event_id IS NOT NULL
+),
+android_input_monitor_channels AS (
+  SELECT e.upid, e.event_channel
+  FROM android_input_events_normalized AS e
+  LEFT JOIN android_input_action_event_ids AS a ON a.input_event_id = e.input_event_id
+  WHERE e.event_channel IS NOT NULL
+  GROUP BY e.upid, e.event_channel
+  HAVING COUNT(e.event_action) = 0 AND COUNT(a.input_event_id) > 0
+),
+android_input_event_deliveries AS NOT MATERIALIZED (
+  SELECT d.*,
+    CASE WHEN d.window_owner != ''
+      AND substr(d.process_name || ':', 1, length(d.window_owner) + 1) = d.window_owner || ':'
+      THEN d.unresolved_event_key END AS unresolved_window_event_key
+  FROM (
+    SELECT e.*,
+      CASE WHEN e.event_action IS NOT NULL THEN 'action'
+        WHEN a.input_event_id IS NOT NULL THEN 'monitor_copy'
+        ELSE 'unresolved' END AS delivery_role,
+      CASE WHEN e.event_action IS NULL AND a.input_event_id IS NULL
+        THEN COALESCE(e.input_event_id, 'dispatch:' || e.dispatch_ts) END AS unresolved_event_key,
+      (e.event_action IS NULL
+        AND (a.input_event_id IS NOT NULL OR m.upid IS NOT NULL)) AS monitor_observation,
+      -- Second word of the channel, cut at its first '/'.
+      CASE WHEN instr(e.event_channel, ' ') > 0 THEN substr(
+        replace(substr(e.event_channel, instr(e.event_channel, ' ') + 1), '/', ' '), 1,
+        instr(replace(substr(e.event_channel, instr(e.event_channel, ' ') + 1), '/', ' ') || ' ', ' ') - 1)
+      END AS window_owner
+    FROM android_input_events_normalized AS e
+    LEFT JOIN android_input_action_event_ids AS a ON a.input_event_id = e.input_event_id
+    LEFT JOIN android_input_monitor_channels AS m
+      ON m.upid = e.upid AND m.event_channel = e.event_channel
+  ) AS d
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- The input deliveries a caller analyzes inside its time window. A process
+-- keeps its application rows (monitor_observation = 0) when it has any in the
+-- window, and every row otherwise, so a process that owns both an app window
+-- and a gesture monitor is measured by its window alone, while an explicitly
+-- chosen process that only observes input still returns its observations.
+-- Read the column that matches how the caller identifies its target:
+--   analyzed_for_name - judged per process name, so an instance that only
+--                       observed input does not rejoin a same-named instance
+--                       that received the app deliveries.
+--   analyzed_for_upid - judged per upid, so a caller pinned to one instance is
+--                       never emptied by a same-named sibling.
+-- Roles and monitor channels come from the whole relation (see
+-- fragments/android_input_delivery_roles.sql); only this choice depends on the
+-- window. Without action evidence anywhere in the trace no channel can be told
+-- to be a monitor, so every row stays analyzed rather than guessing by name.
+-- Requires fragments/android_input_delivery_roles.sql listed before it.
+android_input_scoped_deliveries AS NOT MATERIALIZED (
+  SELECT d.*,
+    (d.monitor_observation = 0
+      OR SUM(d.monitor_observation = 0) OVER (PARTITION BY d.process_name) = 0) AS analyzed_for_name,
+    (d.monitor_observation = 0
+      OR SUM(d.monitor_observation = 0) OVER (PARTITION BY d.upid) = 0) AS analyzed_for_upid
+  FROM android_input_event_deliveries AS d
+  WHERE (${start_ts} IS NULL OR d.receive_ts + d.receive_dur > ${start_ts})
+    AND (${end_ts} IS NULL OR d.dispatch_ts < ${end_ts})
+)
+,
 slow_inputs AS (
   SELECT
     dispatch_ts as input_ts,
     receive_ts + receive_dur as input_end_ts,
     total_latency_dur
-  FROM android_input_events_normalized
+  FROM android_input_scoped_deliveries
   WHERE process_name = '${target_process.data[0].process_name}'
-    AND (${start_ts} IS NULL OR receive_ts + receive_dur > ${start_ts})
-    AND (${end_ts} IS NULL OR dispatch_ts < ${end_ts})
+    AND analyzed_for_name
     AND total_latency_dur > ${thread_state_min_dur_ms|50} * 1000000
   ORDER BY total_latency_dur DESC
   LIMIT 10

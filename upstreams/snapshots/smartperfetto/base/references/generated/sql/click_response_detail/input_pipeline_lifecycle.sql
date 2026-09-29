@@ -1,7 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_detail.skill.yaml
 -- Source SHA-256: 1985d22caae082895e3249e940e3e891a1296411bab5c6844647aee083f7a517
--- Source commit: 42ef4dd2878646bf238a54d53c934d4d4f3e4b3f
+-- Source commit: 12f4004d5cdc2aeac76d3afce68ef2e3e87d500f
 
 -- 父 Skill 直接传入 android_input_events 的精确事件边界；不猜测相邻事件。
 -- Frame 阶段自 Perfetto 7b573c1 起由 _android_input_frames 扩展提供。

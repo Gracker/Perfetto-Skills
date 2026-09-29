@@ -61,13 +61,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "2d289f4a3eead9e01c3c251b88f3abfe4e0eb5ed4bfc4e50b3cf22fca0ccc95a",
+      "sha256": "dc3e615a99082c35f441a4f5be4a082f5046c6d2146495daa2c4fa124a711326",
       "signal_patterns": [
         "${package|}:*"
       ],
       "skill_id": "selection_range_cpu_sched_summary",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "732218147795f2a787f3c333faa8662f4e42e0defe9800548bc83d8299572018"
@@ -92,17 +92,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "f0c5595b2ec362f6607786fe38be05c6fc053f3bf60375f1828c156cdf51de49"
+            "source_sha256": "3311339f5b6533c296849c6f2d62d651238b23baac8f2c63320b1611f274fb25"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "20ff38f13b39e4776ea5122c5ebb712b030bae3b747c57fd53fd65a96bff32ec"
+            "source_sha256": "be456eeb0c1e28c20f391618e94b30dbc2da1e331c228fa6948581eb5106dffd"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "eb7a2b5e96ffc4aa2a3a926697644e1d7dace0c03a3d6ba8476b6a936cadf352"
+            "source_sha256": "6e399e204d46ea1544f4f714577631cc421b113b52bbfdeb1bc7667b57235988"
           }
         ],
         "name_parameters": [],
@@ -188,13 +188,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "b662e06bacdb282661e63c3406e2dab628f72272f0f241c9ffe1afb49e8f8546",
+      "sha256": "67f9c655b029952d06ebbeff3d35de8528f1b3445a2f3aeee0d263e772336fc8",
       "signal_patterns": [
         "${package|}:*"
       ],
       "skill_id": "selection_range_cpu_sched_summary",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "732218147795f2a787f3c333faa8662f4e42e0defe9800548bc83d8299572018"
@@ -219,12 +219,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "f0c5595b2ec362f6607786fe38be05c6fc053f3bf60375f1828c156cdf51de49"
+            "source_sha256": "3311339f5b6533c296849c6f2d62d651238b23baac8f2c63320b1611f274fb25"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "20ff38f13b39e4776ea5122c5ebb712b030bae3b747c57fd53fd65a96bff32ec"
+            "source_sha256": "be456eeb0c1e28c20f391618e94b30dbc2da1e331c228fa6948581eb5106dffd"
           }
         ],
         "name_parameters": [],
@@ -309,11 +309,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "89ea2505b43de958bbe06179298169904c5e7c6ce67eff509f5accc8b664aa38",
+      "sha256": "71b4403d0329c9ed2a7e43e47b0d202b11570409e9366d244f87a848d243ef0c",
       "signal_patterns": [],
       "skill_id": "selection_range_cpu_sched_summary",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "732218147795f2a787f3c333faa8662f4e42e0defe9800548bc83d8299572018"
@@ -338,12 +338,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "eb7a2b5e96ffc4aa2a3a926697644e1d7dace0c03a3d6ba8476b6a936cadf352"
+            "source_sha256": "6e399e204d46ea1544f4f714577631cc421b113b52bbfdeb1bc7667b57235988"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "050c0b784cd9aa79937072133515548daa20592df7893f74e8f28643af0dd746"
+            "source_sha256": "bf396df5d71b3751dbe99871c1c5c5cb79b276e01e6db22dfe342323d7b64d20"
           }
         ],
         "name_parameters": [],
@@ -423,11 +423,11 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "76307080743d130e1830efc8ee8405b514c9381888574ea288c21c2907d10928",
+      "sha256": "f7c9830ab39bad6d8e9a14ca30879226492f8b51c90e4aeb41a01fc6c3e27e10",
       "signal_patterns": [],
       "skill_id": "selection_range_cpu_sched_summary",
       "source": {
-        "commit": "42ef4dd2878646bf238a54d53c934d4d4f3e4b3f",
+        "commit": "12f4004d5cdc2aeac76d3afce68ef2e3e87d500f",
         "path": "backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "732218147795f2a787f3c333faa8662f4e42e0defe9800548bc83d8299572018"
@@ -452,12 +452,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "eb7a2b5e96ffc4aa2a3a926697644e1d7dace0c03a3d6ba8476b6a936cadf352"
+            "source_sha256": "6e399e204d46ea1544f4f714577631cc421b113b52bbfdeb1bc7667b57235988"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "050c0b784cd9aa79937072133515548daa20592df7893f74e8f28643af0dd746"
+            "source_sha256": "bf396df5d71b3751dbe99871c1c5c5cb79b276e01e6db22dfe342323d7b64d20"
           }
         ],
         "name_parameters": [],
