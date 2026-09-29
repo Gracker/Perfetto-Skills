@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/network.strategy.md
-Source SHA-256: 5fa5a230f3c2fe82209c82c61187ab0cedcdfe128c3920f3ee4c74f3262e0790
+Source SHA-256: 8001ee76f059bc8bf0f3cbf99545625b6e7e44843ad385849c86e3989d7a4b5f
 
 # Network Strategy
 
@@ -312,7 +312,7 @@ invoke_skill("network_analysis", { package: "<包名>" })
 3. `log_or_snapshot`: 接入层日志、客户端错误码、`NetworkCallback` 状态、`dumpsys connectivity` 可提供语义和网络状态，但必须和当前 trace 时间窗对齐。
 4. `external_aggregate`: APM、服务端指标、线上弱网统计只能作为背景，不能替代当前 trace 证据。
 
-缺少 request-level telemetry 时，结论必须写成 `missing_evidence`：当前只能证明网络活动/流量候选，不能直接把根因定为 DNS、TLS、首包、服务端处理或解码慢。需要机制背景时调用：
+缺少 request-level telemetry 时，结论必须写成 `missing_evidence`：当前只能证明网络活动/流量候选，不能直接把根因定为 DNS、TLS、首包、服务端处理或解码慢。需要机制背景（含链式请求与客户端排队的判断）时调用：
 
 
 **Phase 1.6 — 网络栈/版本策略边界（按需）：**
