@@ -59,13 +59,12 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "d7edaced0541c3b40ed859a9a30f759234bf66d45b15e81169f5c2e3b7a5e702",
+      "sha256": "dae7cbcd6d242187b35427eb0d3f0819c8a16387dc3a3b44f9d4572a2aab4370",
       "signal_patterns": [
         "${package}:*"
       ],
       "skill_id": "scheduling_analysis",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/scheduling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b31cc396cd518f4b46e71db1d3f0fde3f4eec0116380fc97e47ca43bf7c5bc93"
@@ -86,12 +85,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "74047a93e64bb935b829afc1b5e9480c95eb8c414c398f9ae82918394f9c5ca1"
+            "source_sha256": "3176b87558e516c66bdca036137bb4b0782c6a6972a6924d7f22b10b9829a5fa"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "db89789476663d7cea8b772ed475afe2f26f351fae9bc579befcfc1e99a62c50"
+            "source_sha256": "40a17843f23e9cd7a249735450ff58accb11c2ecb13ac8c22f3f9ff31bcadaa1"
           }
         ],
         "name_parameters": [],

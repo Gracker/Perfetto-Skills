@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/dmabuf_analysis.skill.yaml
 -- Source SHA-256: 15c7918ef202638b9eb23a3c1e4d1b3f3ab1e091ae7c43784b1858386b89227d
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 SELECT
   printf('%d', ts) AS ts,

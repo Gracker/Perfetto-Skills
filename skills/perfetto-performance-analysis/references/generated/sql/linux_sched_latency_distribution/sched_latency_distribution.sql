@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/linux_sched_latency_distribution.skill.yaml
 -- Source SHA-256: 6f1048ef8b33cde78b99d15f65295b15df07e2eb984f3b82147d6d8196ed480d
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH
 input AS (

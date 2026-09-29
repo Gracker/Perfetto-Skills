@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/selection_range_cpu_sched_summary.skill.yaml
 Source SHA-256: 732218147795f2a787f3c333faa8662f4e42e0defe9800548bc83d8299572018
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # 选区 CPU 调度与频率摘要
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

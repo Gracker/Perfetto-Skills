@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/app_process_starts_summary.skill.yaml
 Source SHA-256: b6c52e29a1056ff902bdfb67ff8c9e187457aea4660d8ac95764a4b4c8907df4
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # 应用进程启动汇总
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

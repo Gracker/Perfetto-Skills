@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/native_heap_breakdown.skill.yaml
 -- Source SHA-256: c60782edef05f79ebd9a79e7f0f8f3f2dfec35cd35c839c661f0f34a68681fff
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH RECURSIVE
 -- SPDX-License-Identifier: AGPL-3.0-or-later

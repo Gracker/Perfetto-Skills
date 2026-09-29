@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/code_pinpoint.skill.yaml
 Source SHA-256: c2560c8a63a870cc090ef0176632c2c572fd52bb4301adaa16342cbb651204ce
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 Perfetto-Skills native overlay: deterministic trace-to-source anchors with owned fixture regressions.
 # Deterministic code pinpoint anchors
 

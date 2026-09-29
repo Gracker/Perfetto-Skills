@@ -810,13 +810,14 @@ def render_migration_coverage(catalog: dict[str, Any]) -> str:
     )
 
 
-def generated_header(entry: dict[str, Any], commit: str, comment: str = "") -> str:
+def generated_header(entry: dict[str, Any], comment: str = "") -> str:
+    # The source commit is recorded once in catalog.json. Stamping it into every
+    # file would make each sync rewrite the whole tree and every content hash.
     prefix = f"{comment} " if comment else ""
     return (
         f"{prefix}GENERATED FILE - DO NOT EDIT.\n"
         f"{prefix}Source: {entry['source_path']}\n"
         f"{prefix}Source SHA-256: {entry['source_sha256']}\n"
-        f"{prefix}Source commit: {commit}\n"
     )
 
 
@@ -880,7 +881,6 @@ def render_step(
     step: dict[str, Any],
     skill_name: str,
     source_entry: dict[str, Any],
-    commit: str,
     generated_root: Path,
     sql_destinations: set[str],
 ) -> str:
@@ -906,7 +906,7 @@ def render_step(
             "source_path": source_entry["source_path"],
             "source_sha256": source_entry["source_sha256"],
         }
-        sql_content = generated_header(sql_entry, commit, "--") + "\n" + sql.strip() + "\n"
+        sql_content = generated_header(sql_entry, "--") + "\n" + sql.strip() + "\n"
         write_generated_text(generated_root / relative, sql_content)
         lines.append(f"- SQL: [`../{relative.as_posix()}`](../{relative.as_posix()})")
     lines.extend(["", yaml_block(details), ""])
@@ -916,14 +916,13 @@ def render_step(
 def render_skill_reference(
     raw: dict[str, Any],
     entry: dict[str, Any],
-    commit: str,
     generated_root: Path,
     sql_destinations: set[str],
 ) -> str:
     name = str(entry["name"])
     meta = raw.get("meta") if isinstance(raw.get("meta"), dict) else {}
     title = str(meta.get("display_name") or raw.get("description") or name).splitlines()[0]
-    parts = [generated_header(entry, commit), f"# {title}\n\n"]
+    parts = [generated_header(entry), f"# {title}\n\n"]
     parts.append(
         "This reference is the portable Agent Skill projection of the source definition. "
         "Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array "
@@ -967,7 +966,7 @@ def render_skill_reference(
         sql_destinations.add(destination_key)
         write_generated_text(
             generated_root / relative,
-            generated_header(entry, commit, "--") + "\n" + root_sql.strip() + "\n",
+            generated_header(entry, "--") + "\n" + root_sql.strip() + "\n",
         )
         parts.append(
             "## Query\n\n"
@@ -987,7 +986,6 @@ def render_skill_reference(
                     step,
                     name,
                     entry,
-                    commit,
                     generated_root,
                     sql_destinations,
                 )
@@ -1435,7 +1433,6 @@ def normalize_step(
     source: Path,
     generated_root: Path,
     source_entry: dict[str, Any],
-    commit: str,
     modules: list[str],
     input_names: set[str],
     result_names: set[str],
@@ -1468,7 +1465,7 @@ def normalize_step(
     relative = Path("sql") / safe_component(skill_id, "Skill") / f"{step_id}.sql"
     write_generated_text(
         generated_root / relative,
-        generated_header(source_entry, commit, "--") + "\n" + expanded + "\n",
+        generated_header(source_entry, "--") + "\n" + expanded + "\n",
     )
     query_id = f"{skill_id}/{step_id}"
     kept["query_id"] = query_id
@@ -1500,7 +1497,6 @@ def normalize_step(
         "sha256": sha256_file(generated_root / relative),
         "source": {
             "repository": "https://github.com/Gracker/SmartPerfetto",
-            "commit": commit,
             "path": source_entry["source_path"],
             "sha256": source_entry["source_sha256"],
         },
@@ -1614,7 +1610,6 @@ def build_runtime_assets(
     total_step_conditions = 0
     execution_verified_queries: list[str] = []
     semantic_verified_queries: list[str] = []
-    commit = str(catalog["source"]["commit"])
     object_producers: dict[str, str] = {}
     for source_entry in catalog["skills"]:
         producer_skill_id = str(source_entry["name"])
@@ -1674,7 +1669,7 @@ def build_runtime_assets(
                 **{key: raw[key] for key in ("sql_fragments", "process_scope", "exact_sql") if key in raw},
             }
             normalized_root, query = normalize_step(
-                root_step, skill_id, source, generated_root, entry, commit, modules,
+                root_step, skill_id, source, generated_root, entry, modules,
                 input_names, result_names, setup_queries, fixture_assertions,
                 object_producers, identity,
             )
@@ -1691,7 +1686,7 @@ def build_runtime_assets(
             if not isinstance(raw_step, dict):
                 raise ExportError(f"Step must be an object in {skill_id}")
             normalized, query = normalize_step(
-                raw_step, skill_id, source, generated_root, entry, commit, modules,
+                raw_step, skill_id, source, generated_root, entry, modules,
                 input_names, result_names, setup_queries, fixture_assertions,
                 object_producers, identity,
             )
@@ -1734,7 +1729,6 @@ def build_runtime_assets(
             "source": {
                 "path": entry["source_path"],
                 "sha256": entry["source_sha256"],
-                "commit": commit,
             },
             "inputs": input_list,
             "prerequisites": {"modules": modules, "required_tables": required_tables},
@@ -1814,7 +1808,6 @@ def build_runtime_assets(
         runtime_root / "skill-index.json",
         {
             "schema_version": 1,
-            "source_commit": commit,
             "summary": {
                 "skills": len(skills_index),
                 "executable": runtime_counts["executable"],
@@ -1830,7 +1823,6 @@ def build_runtime_assets(
         runtime_root / "sql-index.json",
         {
             "schema_version": 1,
-            "source_commit": commit,
             "summary": {"queries": total_queries, "shards": len(sql_shards)},
             "shards": sorted(sql_shards),
         },
@@ -1839,7 +1831,6 @@ def build_runtime_assets(
         runtime_root / "sql-validation-report.json",
         {
             "schema_version": 1,
-            "source_commit": commit,
             "perfetto": source_lock["runtime"],
             "summary": {
                 "queries": total_queries,
@@ -1904,7 +1895,7 @@ def build_runtime_assets(
         source_path = source / entry["source_path"]
         write_generated_text(
             generated_root / destination_in_generated_root(entry["destination"]),
-            generated_header(entry, commit, "--") + "\n" + source_path.read_text(encoding="utf-8"),
+            generated_header(entry, "--") + "\n" + source_path.read_text(encoding="utf-8"),
         )
     for entry in catalog["vendor_overrides"]:
         raw = load_yaml(source / entry["source_path"])
@@ -1916,7 +1907,6 @@ def build_runtime_assets(
                 "source": {
                     "path": entry["source_path"],
                     "sha256": entry["source_sha256"],
-                    "commit": commit,
                 },
                 "definition": raw,
             },
@@ -1928,9 +1918,9 @@ def build_runtime_assets(
     }
 
 
-def render_comparison_reference(entry: dict[str, Any], commit: str) -> str:
+def render_comparison_reference(entry: dict[str, Any]) -> str:
     return (
-        generated_header(entry, commit)
+        generated_header(entry)
         + "\n# File-based trace comparison\n\n"
         + "The SmartPerfetto source definition uses product snapshot services. The portable "
         "projection replaces that boundary with local JSON files and "
@@ -2356,7 +2346,6 @@ def render_investigation_contract(value: Any, source: Path) -> str:
 def render_strategy_reference(
     source: Path,
     entry: dict[str, Any],
-    commit: str,
     *,
     skills: Mapping[str, PortableSkill] = MappingProxyType({}),
 ) -> tuple[str, list[dict[str, Any]]]:
@@ -2377,7 +2366,7 @@ def render_strategy_reference(
         portable = f"```yaml\n{portable.rstrip()}\n```\n"
     metadata_block = yaml_block(metadata) if metadata else ""
     rendered = (
-        generated_header(entry, commit)
+        generated_header(entry)
         + f"\n# {title}\n\n"
         + "Portable methodology extracted from the SmartPerfetto strategy library.\n\n"
         + "`execute_sql(...)` examples mean to run the contained SQL through "
@@ -2401,9 +2390,9 @@ def render_strategy_reference(
     return rendered, transformations
 
 
-def render_pipeline_doc(source: Path, entry: dict[str, Any], commit: str) -> str:
+def render_pipeline_doc(source: Path, entry: dict[str, Any]) -> str:
     content, _ = strip_frontmatter(source.read_text(encoding="utf-8"))
-    return generated_header(entry, commit) + "\n" + content.lstrip()
+    return generated_header(entry) + "\n" + content.lstrip()
 
 
 def directory_manifest(root: Path) -> dict[str, str]:
@@ -2440,7 +2429,7 @@ def generate_references(
             if entry["disposition"] not in {"exported", "merged"}:
                 continue
             if entry["name"] == "multi_trace_result_comparison":
-                content = render_comparison_reference(entry, commit)
+                content = render_comparison_reference(entry)
                 transformations.append(
                     {
                         "source_path": entry["source_path"],
@@ -2452,7 +2441,6 @@ def generate_references(
                 content = render_skill_reference(
                     raw_skills[str(entry["name"])],
                     entry,
-                    commit,
                     temporary_generated,
                     sql_destinations,
                 )
@@ -2464,7 +2452,7 @@ def generate_references(
             if entry["disposition"] not in {"exported", "merged"}:
                 continue
             content, changes = render_strategy_reference(
-                source / entry["source_path"], entry, commit, skills=skills
+                source / entry["source_path"], entry, skills=skills
             )
             write_generated_text(
                 temporary_generated / destination_in_generated_root(entry["destination"]),
@@ -2473,7 +2461,7 @@ def generate_references(
             for change in changes:
                 transformations.append({"source_path": entry["source_path"], **change})
         for entry in catalog["pipeline_docs"]:
-            content = render_pipeline_doc(source / entry["source_path"], entry, commit)
+            content = render_pipeline_doc(source / entry["source_path"], entry)
             write_generated_text(
                 temporary_generated / destination_in_generated_root(entry["destination"]),
                 content,
@@ -2484,9 +2472,6 @@ def generate_references(
         generated_catalog = {
             "schema_version": 2,
             "source_commit": commit,
-            "source_catalog_sha256": hashlib.sha256(
-                serialize_catalog(catalog).encode("utf-8")
-            ).hexdigest(),
             "generated_files": len(directory_manifest(temporary_generated)) + 1,
             "sql_files": len(sql_destinations),
             **runtime_summary,

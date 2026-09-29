@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/webview_v8_analysis.skill.yaml
 -- Source SHA-256: 21b4aad17749f3d884e964c264f1cafceef566b01f105da76394c1ae7f0b20ca
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 SELECT
   printf('%d', gc.ts) as gc_ts,

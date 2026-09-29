@@ -73,6 +73,17 @@ class GeneratedReferenceTest(unittest.TestCase):
         self.assertEqual(generated_catalog["schema_version"], 2)
         self.assertIn("transformations", generated_catalog)
 
+    def test_source_commit_is_recorded_only_in_the_generated_catalog(self) -> None:
+        # A per-file commit stamp turns every sync into a whole-tree diff and
+        # invalidates every content hash; content hashes carry file identity.
+        commit = self.load_catalog()["source"]["commit"]
+        holders = sorted(
+            path.relative_to(GENERATED).as_posix()
+            for path in GENERATED.rglob("*")
+            if path.is_file() and commit in path.read_text(encoding="utf-8")
+        )
+        self.assertEqual(holders, ["catalog.json"])
+
     def test_strategy_frontmatter_is_preserved_as_portable_metadata(self) -> None:
         startup = (
             GENERATED / "strategies" / "startup.strategy.md"

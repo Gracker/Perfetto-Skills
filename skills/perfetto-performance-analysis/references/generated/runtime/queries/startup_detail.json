@@ -61,11 +61,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/startup_info.sql",
-      "sha256": "23ac4f2f6b1478dd36e5eedc16a3dc2db24e3c42d3e9ca66bc7249fee98bef85",
+      "sha256": "700cea249abdffbf8947dde52dca40f98a64448d0e945ccd34a082524aad4b2a",
       "signal_patterns": [],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
@@ -179,14 +178,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "88fc61fe46baaa3bccfb504c9c7caec37b860f345a5ae8a2859fd9600bfa25f4",
+      "sha256": "b9da3901ebaf4d5ee99e105fe5209e564570c968ef1144093b868bbe4b058ba0",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
@@ -211,12 +209,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "74047a93e64bb935b829afc1b5e9480c95eb8c414c398f9ae82918394f9c5ca1"
+            "source_sha256": "3176b87558e516c66bdca036137bb4b0782c6a6972a6924d7f22b10b9829a5fa"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "2f8477cabca9a64b0f090891d69f73d82bc28bbca0f73a4694485187a1d25f8c"
+            "source_sha256": "af55e63b44392d90e0194e7b78ecc7b0dad6fe2baed36a4c0031894b4ef60274"
           }
         ],
         "name_parameters": [
@@ -306,14 +304,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "9f6f1adde2dac71cd9708da3f21dd399c6aa15576ae7866b30246c12feeb8762",
+      "sha256": "94c65608620bafb855e1dc7ff7f55f949b9da90136c2b38e7f4b0645e7fa1735",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
@@ -338,17 +335,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "74047a93e64bb935b829afc1b5e9480c95eb8c414c398f9ae82918394f9c5ca1"
+            "source_sha256": "3176b87558e516c66bdca036137bb4b0782c6a6972a6924d7f22b10b9829a5fa"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "2f8477cabca9a64b0f090891d69f73d82bc28bbca0f73a4694485187a1d25f8c"
+            "source_sha256": "af55e63b44392d90e0194e7b78ecc7b0dad6fe2baed36a4c0031894b4ef60274"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "6b451f89884d352c099de84839bfcaee5b486b51bb3396e6f958a834b5cb8b98"
+            "source_sha256": "b874887b2a598182d29b088ea7b350d89687142dc07e8fb1c9dbc771c54b48b1"
           }
         ],
         "name_parameters": [
@@ -461,13 +458,12 @@
         },
         "role": "target"
       },
-      "sha256": "22df1b05a0d93576782a1ee61979cc8632c078e524a06f79524a3b6846ea9547",
+      "sha256": "d4e617c0aba33637a796fcb4631430e992d097fea971cde232333f02c8625755",
       "signal_patterns": [
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
@@ -492,17 +488,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "74047a93e64bb935b829afc1b5e9480c95eb8c414c398f9ae82918394f9c5ca1"
+            "source_sha256": "3176b87558e516c66bdca036137bb4b0782c6a6972a6924d7f22b10b9829a5fa"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "2f8477cabca9a64b0f090891d69f73d82bc28bbca0f73a4694485187a1d25f8c"
+            "source_sha256": "af55e63b44392d90e0194e7b78ecc7b0dad6fe2baed36a4c0031894b4ef60274"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
-            "source_sha256": "6b451f89884d352c099de84839bfcaee5b486b51bb3396e6f958a834b5cb8b98"
+            "source_sha256": "b874887b2a598182d29b088ea7b350d89687142dc07e8fb1c9dbc771c54b48b1"
           }
         ],
         "name_parameters": [
@@ -606,14 +602,13 @@
         },
         "role": "target"
       },
-      "sha256": "1da8ce4a81db61488b072452b30a96303e07babe70108a567f75843c05ff18a9",
+      "sha256": "751f022bf1fe2a2cd10e0c395503001e2b68bc2083b9497b981d1cb793e24161",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
@@ -638,7 +633,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "74047a93e64bb935b829afc1b5e9480c95eb8c414c398f9ae82918394f9c5ca1"
+            "source_sha256": "3176b87558e516c66bdca036137bb4b0782c6a6972a6924d7f22b10b9829a5fa"
           }
         ],
         "name_parameters": [
@@ -728,14 +723,13 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "d20deb5bef4f4b84c6b0b22ca53e6094ab7a928d576e524fcae742535742b90d",
+      "sha256": "18d2df5fdfb547dcf7f96461eff9339e8b49405c3d6007b1a69e6a9bf5f4c662",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
@@ -760,17 +754,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
-            "source_sha256": "74047a93e64bb935b829afc1b5e9480c95eb8c414c398f9ae82918394f9c5ca1"
+            "source_sha256": "3176b87558e516c66bdca036137bb4b0782c6a6972a6924d7f22b10b9829a5fa"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
-            "source_sha256": "2f8477cabca9a64b0f090891d69f73d82bc28bbca0f73a4694485187a1d25f8c"
+            "source_sha256": "af55e63b44392d90e0194e7b78ecc7b0dad6fe2baed36a4c0031894b4ef60274"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "db89789476663d7cea8b772ed475afe2f26f351fae9bc579befcfc1e99a62c50"
+            "source_sha256": "40a17843f23e9cd7a249735450ff58accb11c2ecb13ac8c22f3f9ff31bcadaa1"
           }
         ],
         "name_parameters": [
@@ -856,14 +850,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/actionable_main_thread_slices.sql",
-      "sha256": "d6f5118c65f47834fd1029ab4959319694ca5b327e811c23412ea275609062ba",
+      "sha256": "d280050613569d17eb4e05bd1cc6bd75bd4bbedb99c0a0a113a693360c373cba",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "startup_detail",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"

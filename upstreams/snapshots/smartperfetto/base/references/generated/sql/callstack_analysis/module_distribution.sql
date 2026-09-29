@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/deep/callstack_analysis.skill.yaml
 -- Source SHA-256: fc08d54c591a45a1488f7d1064504f08f7d3d2fa95b42eec2a1c6da725ec5f08
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH
 frame_modules AS (

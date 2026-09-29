@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/media.strategy.md
 Source SHA-256: d71f3076a5e368b276aa2c86623230749c5de77a141c6f9ddeab722402f94411
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 # Media Strategy
 

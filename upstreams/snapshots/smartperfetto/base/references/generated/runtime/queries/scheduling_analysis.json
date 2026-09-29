@@ -59,13 +59,12 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "d7edaced0541c3b40ed859a9a30f759234bf66d45b15e81169f5c2e3b7a5e702",
+      "sha256": "dae7cbcd6d242187b35427eb0d3f0819c8a16387dc3a3b44f9d4572a2aab4370",
       "signal_patterns": [
         "${package}:*"
       ],
       "skill_id": "scheduling_analysis",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/scheduling_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "b31cc396cd518f4b46e71db1d3f0fde3f4eec0116380fc97e47ca43bf7c5bc93"

@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/camera_pipeline.skill.yaml
 Source SHA-256: 71e8231904220fd671deda7e3eee30333fcfc609394f91dc11f4e400127739af
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # 相机管线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

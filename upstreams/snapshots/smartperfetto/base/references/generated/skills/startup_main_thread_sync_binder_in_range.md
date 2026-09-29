@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_main_thread_sync_binder_in_range.skill.yaml
 Source SHA-256: 08633a0a57e4feffd73443330239d89629196c1da5987db8cbe7cc02074561e2
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # 启动主线程同步 Binder (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

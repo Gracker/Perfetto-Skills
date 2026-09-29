@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
 Source SHA-256: f5a9a812f223b0db19cab510c3fc64ccbb2236a1a0a442efd5f745e5e028f722
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 # Memory Strategy
 

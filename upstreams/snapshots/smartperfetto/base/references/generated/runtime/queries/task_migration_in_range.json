@@ -63,13 +63,12 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "a4e6f24a94602dd104fd393ce480b043601a5152aef347d1545b66432a6d6d00",
+      "sha256": "d6f4665d5c69b49c7676443ff632755ceb14e4d247b08598899bc29eec716490",
       "signal_patterns": [
         "${package}:*"
       ],
       "skill_id": "task_migration_in_range",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/task_migration_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "72c986a740aab52bf0b4a6d844c34699b26678acb9fe56eeef0cfd3061fa13c1"

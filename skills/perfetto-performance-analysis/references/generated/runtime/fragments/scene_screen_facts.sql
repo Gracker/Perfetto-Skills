@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/scene_screen_facts.sql
 -- Source SHA-256: e064d74cd1501151bf0dadebddabc3ac0ca8868f0ecf6677e10fa74e418bf866
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- The pinned stdlib exposes TEXT, not Display.STATE_* numeric enum values.

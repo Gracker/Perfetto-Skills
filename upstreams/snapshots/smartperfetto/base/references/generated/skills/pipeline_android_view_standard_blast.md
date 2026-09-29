@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_standard_blast.skill.yaml
 Source SHA-256: 78d0c2c42588b16a4a9fd020bd57a3ab3dd13c448ab9e726b3878ae30427e6b0
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # 标准 Android View (BLAST)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

@@ -57,11 +57,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/data_check.sql",
-      "sha256": "0f14331a87d4540d2693323cb9965b03acce0a849e93721cb3acdb192660c717",
+      "sha256": "be8c0221e1f6d29e040e3fc053276af39adc01e43132b618d9ab6605c5d64ad8",
       "signal_patterns": [],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb"
@@ -84,7 +83,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
-            "source_sha256": "d27937eb5118a16d15d885c442b82cb9406dd4d1686c5e1577935068bb30297c"
+            "source_sha256": "8d45506b0b20c30c432f555da5a21e293f3d290c55059f1cd3f508f77df72bb0"
           }
         ],
         "name_parameters": [],
@@ -163,11 +162,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/io_wait_overview.sql",
-      "sha256": "ade831809107a32a6ef7537cb8c5c67caa070a7618f05b093ff8b0040285a369",
+      "sha256": "399d25130369f95557c3bc4057cbac4ec884b12fc67b6eb3494964d92337a46f",
       "signal_patterns": [],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb"
@@ -190,7 +188,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
-            "source_sha256": "d27937eb5118a16d15d885c442b82cb9406dd4d1686c5e1577935068bb30297c"
+            "source_sha256": "8d45506b0b20c30c432f555da5a21e293f3d290c55059f1cd3f508f77df72bb0"
           }
         ],
         "name_parameters": [],
@@ -270,14 +268,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/process_io_distribution.sql",
-      "sha256": "8a7945b546a9ee30ee90753b8021e95200ec368bea3f4285a5576110f965c516",
+      "sha256": "98eb13b344acf335962dde01f8ac31c99e982b91570f6aa84d0de663c0c6ed28",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb"
@@ -300,7 +297,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
-            "source_sha256": "d27937eb5118a16d15d885c442b82cb9406dd4d1686c5e1577935068bb30297c"
+            "source_sha256": "8d45506b0b20c30c432f555da5a21e293f3d290c55059f1cd3f508f77df72bb0"
           }
         ],
         "name_parameters": [],
@@ -380,11 +377,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/blocking_functions.sql",
-      "sha256": "23073596932a61c0d9f58fcf79c26376a3f308a71cddbdc12db8572157ce58fa",
+      "sha256": "ee145642164296d2b7da8394ea42e1ff12f635219afede3c4e756ee3ca03e5a7",
       "signal_patterns": [],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb"
@@ -407,7 +403,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
-            "source_sha256": "d27937eb5118a16d15d885c442b82cb9406dd4d1686c5e1577935068bb30297c"
+            "source_sha256": "8d45506b0b20c30c432f555da5a21e293f3d290c55059f1cd3f508f77df72bb0"
           }
         ],
         "name_parameters": [],
@@ -486,14 +482,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/thread_io_details.sql",
-      "sha256": "b7c9679574b55827fecf30c10e3c088a0a948fff6b87b8b6459ba11dfe8816d9",
+      "sha256": "b431d8d4beffc74e06797aedacfde77efe4a0bf0c8c19fadb7a9b909125fd227",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb"
@@ -516,7 +511,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
-            "source_sha256": "d27937eb5118a16d15d885c442b82cb9406dd4d1686c5e1577935068bb30297c"
+            "source_sha256": "8d45506b0b20c30c432f555da5a21e293f3d290c55059f1cd3f508f77df72bb0"
           }
         ],
         "name_parameters": [],
@@ -596,14 +591,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/long_io_events.sql",
-      "sha256": "fc2af151cfaeac3befb141843ef9918c27c6780c737a1351d1b0ed9572150eec",
+      "sha256": "fba235b1a572036db6389b9a5bf48aa18b0d423cc3dbb5b56deeabcb5944e3e7",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb"
@@ -626,7 +620,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
-            "source_sha256": "d27937eb5118a16d15d885c442b82cb9406dd4d1686c5e1577935068bb30297c"
+            "source_sha256": "8d45506b0b20c30c432f555da5a21e293f3d290c55059f1cd3f508f77df72bb0"
           }
         ],
         "name_parameters": [],
@@ -706,11 +700,10 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/io_pressure/root_cause_classification.sql",
-      "sha256": "b06b025acc721f564ec72ab548a9280f89fd65338c3e0ddc715df16c7409487a",
+      "sha256": "cd7a3e6b41bc76bcceb26ab08ba795b8c4182c077e8a29bb9eb62a0d8c9886cf",
       "signal_patterns": [],
       "skill_id": "io_pressure",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/composite/io_pressure.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb"
@@ -733,7 +726,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/io_blocked_function_families.sql",
-            "source_sha256": "d27937eb5118a16d15d885c442b82cb9406dd4d1686c5e1577935068bb30297c"
+            "source_sha256": "8d45506b0b20c30c432f555da5a21e293f3d290c55059f1cd3f508f77df72bb0"
           }
         ],
         "name_parameters": [],

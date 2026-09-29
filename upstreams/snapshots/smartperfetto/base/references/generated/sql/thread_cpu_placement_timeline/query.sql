@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thread_cpu_placement_timeline.skill.yaml
 -- Source SHA-256: 34281aa6d8fb63c02afd70d429360ea02b61774c67d9a554d7a96c0ec77facfc
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

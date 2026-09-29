@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/game_fps_analysis.skill.yaml
 -- Source SHA-256: b1c2c2f4499e3075a69a03b7dbde88b4145a3b8dea465d645cd175f697d90442
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH
 time_bounds AS (

@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/render_pipeline_latency.skill.yaml
 -- Source SHA-256: 083dd8e100c7544a385b5a41805a1f5b771860f75816ed12b02f7f14768c0231
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH timing AS (
   SELECT

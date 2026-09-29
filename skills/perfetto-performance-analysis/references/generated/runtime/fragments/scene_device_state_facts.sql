@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/scene_device_state_facts.sql
 -- Source SHA-256: 41d1ae85cd57990943466e1d1590e4e6e30013f8a2c4e18409775cd71885ce45
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Shared exact scan/count and fact-output population; state semantics remain in the Skill.

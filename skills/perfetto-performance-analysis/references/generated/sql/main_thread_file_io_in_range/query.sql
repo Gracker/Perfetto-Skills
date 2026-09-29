@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_file_io_in_range.skill.yaml
 -- Source SHA-256: 6af76f29db034ff131210ae7fa8c46e353eb6bf0bbe2337e3981767cef8dff16
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH main_thread AS (
   SELECT t.utid

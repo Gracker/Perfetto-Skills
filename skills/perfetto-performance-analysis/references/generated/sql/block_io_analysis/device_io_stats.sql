@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/block_io_analysis.skill.yaml
 -- Source SHA-256: 6694949cda0a83aa4448782fcdc7b6b7fb8c62134598018d5f702eb571a23985
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH io_slices AS (
   SELECT

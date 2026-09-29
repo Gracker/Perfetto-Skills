@@ -55,14 +55,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/touch_to_display_latency/query.sql",
-      "sha256": "497b763b1bdadbeddbe25ab0e32aa743a148142afb8b8deed86ca8bcabc7869b",
+      "sha256": "0fe6c2e7dc0deb0672f6975597e25e0bf063557fbe7342d3118c9ee5089ab195",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "touch_to_display_latency",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/touch_to_display_latency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "822099f1eb3c021524a9a45eabbd7b0d605776476aff9718bd7aeeae18667465"
@@ -87,17 +86,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "269177d621e06e279fccfe65ca91135c397f2b059abbe3893f28b8c883667cf1"
+            "source_sha256": "17879dc7c1bd1fed94679be9dbe61a89250571988624f0de5be858f8c3f8bfc1"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/android_input_delivery_roles.sql",
-            "source_sha256": "9419c441337a9c58a8182e09f0de8b11c2613dcebde272f0344a7e75eb7c72da"
+            "source_sha256": "32adc4d5ac84861cb02c418b6c45c22216b2ce263ab8f571274bf556dbe075a8"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
-            "source_sha256": "a7504fc41ba71fe64ea39ba8b3e5d0a63ce5cbcf89b5dc332ab33fe592b23034"
+            "source_sha256": "d714ec458a5ed924aa621caa3404b7580e066e6180e755a34236488b01944d72"
           }
         ],
         "name_parameters": [],

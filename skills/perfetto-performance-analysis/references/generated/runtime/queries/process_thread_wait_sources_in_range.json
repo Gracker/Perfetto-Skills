@@ -66,14 +66,13 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "4acde76852b2b463753bd509c7547ca480ae1ec4ecfdb02ad177dee563f4283d",
+      "sha256": "94f639861f7dbcc8a1374d79da7e49a50aa593fec0067ac518ebe15fc32ff312",
       "signal_patterns": [
         "${package}",
         "${package}:*"
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -185,7 +184,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "8389eaacd1316cb4901042b707315faf8a9b033e0b8ce409f6d51a67c87575ea",
+      "sha256": "0040d07e711949de33aaf976e0c9163722ddccad8d304137d917a6bbf452de80",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -227,7 +226,6 @@
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -252,7 +250,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "47c03ebd5daf054c69f3e357bfcfc14ee451d682a6de747ceb3f80a86fab9927"
+            "source_sha256": "8e6239fd0742fc970ad20fcf7b8586fed7f684f6dc227516b5fdfae5f47944fa"
           }
         ],
         "name_parameters": [
@@ -345,7 +343,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "5ca763eb3df79df916a225980103caf769e91cc39f634d46a7104b9b4859e473",
+      "sha256": "3710b048d1ab3982caa397730941095bc32c63f62f4c69b1e97b5098124bd990",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -394,7 +392,6 @@
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -419,17 +416,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "47c03ebd5daf054c69f3e357bfcfc14ee451d682a6de747ceb3f80a86fab9927"
+            "source_sha256": "8e6239fd0742fc970ad20fcf7b8586fed7f684f6dc227516b5fdfae5f47944fa"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/sleep_wake_source.sql",
-            "source_sha256": "483ca315437eb7cf6d3640658fd97224eba9111cca1fb6b57d8b85136c841691"
+            "source_sha256": "6d03353d2ae3fad6663a5cc89c2e8e5c93396a561d94b7024240fcb657f34536"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/sleep_wake_source_labels.sql",
-            "source_sha256": "c72d2a321376cce4bc6006876575f35c0511b139ed1bca982deaa9d6c9bdbb99"
+            "source_sha256": "7a69e442e55ca34f719c45c80f7982a46097b63e5164e482fbb191db8e7059d4"
           }
         ],
         "name_parameters": [
@@ -523,7 +520,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "9d32f6546a3198a0fe5357fb359909986af70532fe11bc73b50ca991c6e38d88",
+      "sha256": "44a71aea1cb7a989cea5a80e21875c6a5aec7d02a3d6c955ee09077e5a873850",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -572,7 +569,6 @@
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -597,17 +593,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "47c03ebd5daf054c69f3e357bfcfc14ee451d682a6de747ceb3f80a86fab9927"
+            "source_sha256": "8e6239fd0742fc970ad20fcf7b8586fed7f684f6dc227516b5fdfae5f47944fa"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/sleep_wake_source.sql",
-            "source_sha256": "483ca315437eb7cf6d3640658fd97224eba9111cca1fb6b57d8b85136c841691"
+            "source_sha256": "6d03353d2ae3fad6663a5cc89c2e8e5c93396a561d94b7024240fcb657f34536"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/sleep_wake_source_labels.sql",
-            "source_sha256": "c72d2a321376cce4bc6006876575f35c0511b139ed1bca982deaa9d6c9bdbb99"
+            "source_sha256": "7a69e442e55ca34f719c45c80f7982a46097b63e5164e482fbb191db8e7059d4"
           }
         ],
         "name_parameters": [
@@ -700,11 +696,10 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "6def423e2a02bb472ed0e91c88c314397ef51b0135510015b092df7f352873c8",
+      "sha256": "e8ae0009c272641a9a76af7752090240a555d2dc4fec2a0b62441bc99a9445b2",
       "signal_patterns": [],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -812,7 +807,7 @@
         ],
         "role": "target"
       },
-      "sha256": "241304e95a541c82fa4a4eb25ca3b5674851e9af4256d8e7080a7587ed0baf5c",
+      "sha256": "e7ac9b4145736c2c0cd56f1c8f8fd5f8241387732a04df5ec3b06a36f26bb050",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -861,7 +856,6 @@
       ],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
@@ -886,17 +880,17 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/thread_role.sql",
-            "source_sha256": "47c03ebd5daf054c69f3e357bfcfc14ee451d682a6de747ceb3f80a86fab9927"
+            "source_sha256": "8e6239fd0742fc970ad20fcf7b8586fed7f684f6dc227516b5fdfae5f47944fa"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/sleep_wake_source.sql",
-            "source_sha256": "483ca315437eb7cf6d3640658fd97224eba9111cca1fb6b57d8b85136c841691"
+            "source_sha256": "6d03353d2ae3fad6663a5cc89c2e8e5c93396a561d94b7024240fcb657f34536"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/sleep_wake_source_labels.sql",
-            "source_sha256": "c72d2a321376cce4bc6006876575f35c0511b139ed1bca982deaa9d6c9bdbb99"
+            "source_sha256": "7a69e442e55ca34f719c45c80f7982a46097b63e5164e482fbb191db8e7059d4"
           }
         ],
         "name_parameters": [

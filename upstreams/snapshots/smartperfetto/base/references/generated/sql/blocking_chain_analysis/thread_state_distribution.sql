@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/blocking_chain_analysis.skill.yaml
 -- Source SHA-256: ec3db5b12031c8cedf7480f0e7496dd03c5a0e7ecad513cc72cd26cf8e68c0a2
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH main_thread AS ( -- 精确进程名优先（GLOB 前缀会带进 ${process_name}:subprocess）；存活线程优先；utid 兜底
   SELECT t.utid

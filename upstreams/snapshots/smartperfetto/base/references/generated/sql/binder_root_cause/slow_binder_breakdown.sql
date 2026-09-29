@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/binder_root_cause.skill.yaml
 -- Source SHA-256: bbf84b8491afbaad8a2a80e57d0fba5940008d70944ce362ad6f03dcc476115d
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH slow_txns AS (
   SELECT binder_txn_id, binder_reply_id, client_ts, client_dur, server_dur,

@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_anomalous_threads_in_range.skill.yaml
 -- Source SHA-256: ebd323de6763d2610995f371f900c448a892c16151ffa0bec43f440e1c702042
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

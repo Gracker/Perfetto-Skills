@@ -57,6 +57,10 @@ snapshots, and frontend behavior remain in the product repository.
 refuses unclassified sources, stale policy entries, duplicate names/paths,
 unsafe destinations, unsupported step types, and SQL filename collisions. The
 catalog records the source commit, policy hash, and every source file hash.
+The source commit is recorded only in the catalogs; generated files and their
+manifests carry content hashes. A sync therefore changes only files whose
+content changed, and an overlay base hash goes stale only on a real upstream
+change.
 
 Normal generation writes into a temporary directory, normalizes text, and
 atomically replaces `references/generated/` only after every entry renders.

@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/binder_root_cause.skill.yaml
 Source SHA-256: bbf84b8491afbaad8a2a80e57d0fba5940008d70944ce362ad6f03dcc476115d
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # Binder 根因归因
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

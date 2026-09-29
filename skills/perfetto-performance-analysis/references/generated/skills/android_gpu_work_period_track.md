@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/android_gpu_work_period_track.skill.yaml
 Source SHA-256: dad0f300552c8a78618be018d8930c345109988d414c37fcef819ee4752758f5
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # GPU Work Period
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

@@ -55,14 +55,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/oom_adjuster_score_timeline/oom_intervals.sql",
-      "sha256": "1db5b3fdfb6f3a80856f0dba17da68b0f00d826bf6c8511fd642b7c2453044e8",
+      "sha256": "e2af22f26323966091aff3f26f1c43d118fbc1d9db93d3530e39bcdb23bfb034",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*"
       ],
       "skill_id": "oom_adjuster_score_timeline",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/oom_adjuster_score_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "ff973a5e2e8c49d1bd0d2464554603f3db5abd2068e48b2f2205d8f34559dce3"

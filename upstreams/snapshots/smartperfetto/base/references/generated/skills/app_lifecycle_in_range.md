@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/app_lifecycle_in_range.skill.yaml
 Source SHA-256: 7ffba4598c01c6d56288d957575a0473a0d5fc051662a7adacae279e95b9b694
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # 应用生命周期事件 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

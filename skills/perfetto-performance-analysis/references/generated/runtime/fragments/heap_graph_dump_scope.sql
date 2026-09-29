@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/heap_graph_dump_scope.sql
 -- Source SHA-256: 248e8d24e4d4a4a59af389667aeebb9ce641f23bbd4974544c09a2826ce5fee2
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)

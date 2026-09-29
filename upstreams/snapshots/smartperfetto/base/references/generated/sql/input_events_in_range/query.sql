@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/input_events_in_range.skill.yaml
 -- Source SHA-256: 2f7e2106533b513cd6e2c45f1e181159a07dfaa498feec67768c5d49595baec0
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

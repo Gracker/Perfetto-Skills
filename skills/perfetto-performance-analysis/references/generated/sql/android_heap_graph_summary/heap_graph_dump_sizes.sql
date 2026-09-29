@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_heap_graph_summary.skill.yaml
 -- Source SHA-256: de6251b10137d1d773f7eef2c440c14fbe12fc4312d3dee7872e20ec632eb0e8
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 -- One scan of the object table for every step below; placeholder
 -- objects (self_size = -1) are not real objects and are excluded.

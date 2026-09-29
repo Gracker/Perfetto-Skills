@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/linux_perf_counter_hotspots.skill.yaml
 Source SHA-256: af7bb5a650cb5630f9a7660853cbc71766190fc42683c59a3cbdd8625d24f3aa
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # Linux Perf Counter Hotspots
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

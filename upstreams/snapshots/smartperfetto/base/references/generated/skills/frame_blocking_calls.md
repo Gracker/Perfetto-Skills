@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/frame_blocking_calls.skill.yaml
 Source SHA-256: f50aec9da16055b40141764cc3668c04f17cc70cceddcf65c2cff8c9ae89a062
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 # 帧阻塞调用分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

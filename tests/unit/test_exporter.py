@@ -170,7 +170,7 @@ class PortableSkillCallTest(unittest.TestCase):
             source.write_text(body, encoding="utf-8")
             entry = {"source_path": "backend/strategies/probe.strategy.md",
                      "source_sha256": exporter.sha256_file(source)}
-            return exporter.render_strategy_reference(source, entry, "a" * 40, skills=self.SKILLS)
+            return exporter.render_strategy_reference(source, entry, skills=self.SKILLS)
 
     def test_rendered_preamble_maps_kept_calls_to_the_portable_runner(self) -> None:
         rendered, changes = self.render('# Probe\n\nRoute: `invoke_skill("cpu_analysis")`.\n')
@@ -294,7 +294,7 @@ class PortableStepMetadataTest(unittest.TestCase):
             result = exporter.render_step(step, "scene_device_state_changes", {
                 "source_path": "backend/skills/atomic/scene_device_state_changes.skill.yaml",
                 "source_sha256": "a" * 64,
-            }, "b" * 40, root, set())
+            }, root, set())
             details = exporter.yaml.safe_load(result.split("```yaml\n", 1)[1].split("```", 1)[0])
             self.assertNotIn("investigation_evidence", details)
             for key in ("condition", "save_as", "sql_fragments", "output", "display"):
@@ -558,7 +558,7 @@ class InvestigationMethodologyExportTest(unittest.TestCase):
             return exporter.render_strategy_reference(source, {
                 "source_path": f"backend/strategies/{name}",
                 "source_sha256": exporter.sha256_file(source),
-            }, "a" * 40)[0]
+            })[0]
 
     def profile(self):
         return {"schema_version": 1, "profiles": {"system_execution": {
@@ -829,7 +829,10 @@ class ProcessScopeExportTest(unittest.TestCase):
         self.assertIn("effective_target_processes AS (", sql)
         self.assertIn("${__process_scope.upid}", sql)
         self.assertEqual(entry["sha256"], exporter.sha256_file(sql_path))
-        self.assertEqual(entry["source"]["commit"], self.commit)
+        # The source commit lives once in the catalog; per-file copies made every
+        # content hash change on each sync even when the file itself did not.
+        self.assertNotIn("commit", entry["source"])
+        self.assertNotIn(self.commit, sql)
         self.assertFalse(entry["validation"]["execution_verified"])
         self.assertFalse(entry["validation"]["semantic_verified"])
 

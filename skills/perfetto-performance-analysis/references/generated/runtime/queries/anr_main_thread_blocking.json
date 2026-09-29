@@ -57,14 +57,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/main_thread_state.sql",
-      "sha256": "621278c87bd94c78f39565b33460221cffc3931a3ef7a2a8dc9a9d9c7840391d",
+      "sha256": "3e19e0a76a9246b255e8b083150849a8a56455062d7cec2c07c6a1b753aa42b4",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349"
@@ -163,14 +162,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/blocked_functions.sql",
-      "sha256": "8cb46cdd241812f5ef88b63719f509fa6e0c6ddd4f78bf2f2b33f9bb11480608",
+      "sha256": "44619c236275a08934a4021c5a543e8e5af917b0edf4a8f5dc52167ffb8eb7fd",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349"
@@ -269,13 +267,12 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/wakeup_chain.sql",
-      "sha256": "5dce13b1faaa8cb546fe20132167f746c444d7fe05dbe35a2d60b268d5ecd52a",
+      "sha256": "d7346611457d58e43c5ef0f810b345a22256a435111c13b14e5b71916b280460",
       "signal_patterns": [
         "${process_name}:*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349"
@@ -301,7 +298,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
-            "source_sha256": "db89789476663d7cea8b772ed475afe2f26f351fae9bc579befcfc1e99a62c50"
+            "source_sha256": "40a17843f23e9cd7a249735450ff58accb11c2ecb13ac8c22f3f9ff31bcadaa1"
           }
         ],
         "name_parameters": [],
@@ -383,14 +380,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/binder_blocking.sql",
-      "sha256": "93c92ea06f9f6fa0bd640b0bfd0dfa4b0c387dd199fcd88f264e1f210b9716db",
+      "sha256": "6c3bd9d0c3c9af072070d91a9d5def03719ea2afffff4bebd0f2d2082f7a03a9",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*"
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349"
@@ -489,7 +485,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_main_thread_blocking/lock_contention.sql",
-      "sha256": "8460f8bb82f8929a6c5c35a9e16512b20a713030c36ecc469c933f334b60dfdb",
+      "sha256": "4d73c25d95657c7ee4a3e11b690f9eef8ea958d5ea6f29d743cc7a8a53cd35d6",
       "signal_patterns": [
         "${process_name}",
         "${process_name}:*",
@@ -497,7 +493,6 @@
       ],
       "skill_id": "anr_main_thread_blocking",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349"

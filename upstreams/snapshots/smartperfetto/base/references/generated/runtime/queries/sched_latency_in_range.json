@@ -63,13 +63,12 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "513f9ebd214d850f72677383b4b0cff6a3f8f25928c70691d62172d0d35ec702",
+      "sha256": "cd407a1fef6493bf1fb1f3e2da9c7a0b37462f0d60818eb3d40d0ac0cbbd16b9",
       "signal_patterns": [
         "${package}:*"
       ],
       "skill_id": "sched_latency_in_range",
       "source": {
-        "commit": "d14f5cd1b769001e6f8bb35d3e7f90238af75884",
         "path": "backend/skills/atomic/sched_latency_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
         "sha256": "435cf3da6812b27da4eebfbc371fa38f8eea4c782432e273941531a293bc0a62"

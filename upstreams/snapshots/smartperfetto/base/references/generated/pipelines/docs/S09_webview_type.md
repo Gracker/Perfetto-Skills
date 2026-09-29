@@ -1,7 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: docs/rendering_pipelines/S09_webview_type.md
 Source SHA-256: f1e5a808491594eb73e542aea5d6a2709fa3b375f01d72c4620b9181e5f4cdae
-Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 # Android Perfetto 系列 - App 出图类型 - WebView 类型
 

@@ -1,7 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml
 -- Source SHA-256: a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1
--- Source commit: d14f5cd1b769001e6f8bb35d3e7f90238af75884
 
 -- wait_class 是候选标签，不是根因：timer_or_device_wake 与
 -- network_receive_candidate 共享同一个 irq_context=1 信号，只靠线程角色区分。
