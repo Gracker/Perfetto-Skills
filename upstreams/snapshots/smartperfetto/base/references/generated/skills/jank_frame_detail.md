@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: 960209f7b80fdced155eebd63d089f78ed033bbbb671d3a56279b95f8f92fc2b
+Source SHA-256: 7bb9136db66c910c46597ede1fb01aaef36a58999fdd36e002e6bb90132e5550
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -912,7 +912,8 @@ skill: cpu_throttling_in_range
 params:
   start_ts: ${start_ts}
   end_ts: ${end_ts}
-save_as: throttling_data
+save_as: freq_limit_evidence
+save_from: limit_evidence
 optional: true
 ```
 ### cpu_cluster_load
@@ -1129,7 +1130,7 @@ inputs:
 - migration_data
 - gpu_data
 - binder_blocking_data
-- throttling_data
+- freq_limit_evidence
 - cluster_load_data
 - page_fault_data
 - sf_data
@@ -1253,24 +1254,59 @@ rules:
   suggestions:
   - 减少帧期间的 Binder 调用次数
   - 考虑批量处理或缓存
-- condition: Boolean(throttling_data?.data?.find(t => t.core_type === 'big' && t.throttle_detected === 1 && (t.freq_drop_pct
-    || 0) > 20 && (t.max_freq_mhz || 0) > (t.min_freq_mhz || 0)))
-  severity: critical
-  diagnosis: '检测到 CPU 限频: 大核最低 ${throttling_data.data.find(t => t.core_type === ''big'' && t.throttle_detected === 1)?.min_freq_mhz}MHz（峰值
-    ${throttling_data.data.find(t => t.core_type === ''big'' && t.throttle_detected === 1)?.max_freq_mhz}MHz，降幅 ${throttling_data.data.find(t
-    => t.core_type === ''big'' && t.throttle_detected === 1)?.freq_drop_pct}%）'
-  confidence: high
-  suggestions:
-  - 设备温度过高触发限频
-  - 减少持续高负载任务
-  - 检查散热状况
-- condition: Boolean(throttling_data?.data?.find(t => t.core_type === 'big' && (t.freq_drop_pct || 0) > 20))
+- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed'
   severity: warning
-  diagnosis: 帧期间大核降频 ${throttling_data.data.find(t => t.core_type === 'big')?.freq_drop_pct}%
+  diagnosis: 帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count}
+    个 cpufreq policy，最大限频深度 ${freq_limit_evidence.data[0].deepest_depth_pct}%（相对该 policy 在本 trace 内观测到的最高上限，非硬件最大频率；最低上限 ${freq_limit_evidence.data[0].min_limit_khz}
+    kHz）
   confidence: high
   suggestions:
-  - CPU 频率不稳定影响性能
-  - 检查功耗管理策略
+  - 限频已发生，但由温控还是功耗/厂商策略触发尚未判定：用 cpu_frequency_limit_attribution 判断触发方与限频前负载
+  - 限频是否约束了本帧关键线程尚未判定：对照关键线程运行所在 CPU/policy 与运行时长，不能直接把卡顿归因于限频
+- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'no_limit_episode_in_range' && Boolean(freq_data?.data?.find(f
+    => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz))
+  severity: info
+  diagnosis: 帧窗口内 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz
+    - f.min_freq_mhz > 0.2 * f.max_freq_mhz).core_type} 核组频率最高 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type)
+    && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz).max_freq_mhz} MHz、最低 ${freq_data.data.find(f
+    => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz).min_freq_mhz}
+    MHz（组内各 CPU 与时间合计，跨度超过 20%）；trace 有有效 cpufreq 上限样本，本帧窗口未检测到限频区段（窗口覆盖未确认，不能据此排除限频）。仅为频率观测，不能据此判定限频或温控
+  confidence: medium
+  suggestions:
+  - 频率变化原因（负载、调速器、空闲 DVFS）需结合调度数据排查
+- condition: freq_limit_evidence?.data?.[0]?.limit_evidence_missing_reason === 'max_limit_not_captured' && Boolean(freq_data?.data?.find(f
+    => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz))
+  severity: info
+  diagnosis: 帧窗口内 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz
+    - f.min_freq_mhz > 0.2 * f.max_freq_mhz).core_type} 核组频率最高 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type)
+    && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz).max_freq_mhz} MHz、最低 ${freq_data.data.find(f
+    => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz).min_freq_mhz}
+    MHz（组内各 CPU 与时间合计，跨度超过 20%）；trace 未采集 cpufreq 上限轨道。仅为频率观测，不能据此判定限频或温控
+  confidence: medium
+  suggestions:
+  - 采集 power/cpu_frequency_limits（及 thermal 事件）后才能判断是否限频
+- condition: freq_limit_evidence?.data?.[0]?.limit_evidence_missing_reason === 'max_limit_samples_missing' && Boolean(freq_data?.data?.find(f
+    => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz))
+  severity: info
+  diagnosis: 帧窗口内 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz
+    - f.min_freq_mhz > 0.2 * f.max_freq_mhz).core_type} 核组频率最高 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type)
+    && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz).max_freq_mhz} MHz、最低 ${freq_data.data.find(f
+    => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz).min_freq_mhz}
+    MHz（组内各 CPU 与时间合计，跨度超过 20%）；cpufreq 上限轨道无有效样本。仅为频率观测，不能据此判定限频或温控
+  confidence: medium
+  suggestions:
+  - 检查 cpufreq 上限轨道的采集与解析，缺少有效样本时无法判断是否限频
+- condition: '!freq_limit_evidence?.data?.[0] && Boolean(freq_data?.data?.find(f => [''prime'', ''big'', ''medium''].includes(f.core_type)
+    && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz))'
+  severity: info
+  diagnosis: 帧窗口内 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz
+    - f.min_freq_mhz > 0.2 * f.max_freq_mhz).core_type} 核组频率最高 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type)
+    && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz).max_freq_mhz} MHz、最低 ${freq_data.data.find(f
+    => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz).min_freq_mhz}
+    MHz（组内各 CPU 与时间合计，跨度超过 20%）；限频证据未取得（证据查询未产出结果）。仅为频率观测，不能据此判定限频或温控
+  confidence: medium
+  suggestions:
+  - 检查 cpu_throttling_in_range 的 limit_evidence 步骤为何未产出结果
 - condition: cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.load_pct > 90
   severity: critical
   diagnosis: 大核簇负载 ${cluster_load_data.data.find(c => c.cluster === '大核簇')?.load_pct}%，接近跑满
@@ -1416,14 +1452,14 @@ rules:
   confidence: medium
   suggestions:
   - 系统可能处于省电模式
-  - 检查温控策略
+  - 是否限频以本帧的 CPU 限频证据为准；频率偏低先从负载与调速器策略排查
 - condition: freq_timeline?.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length > 2
   severity: info
   diagnosis: 大核频率降频 ${freq_timeline.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length || 0}次
   confidence: medium
   suggestions:
-  - 可能触发了温控降频
-  - 检查系统负载和温度
+  - 降频次数本身不能说明温控或限频，是否限频以本帧的 CPU 限频证据为准
+  - 检查系统负载与调速器策略
 - condition: ${vsync_missed} >= 3
   severity: critical
   diagnosis: '严重卡顿: SF 跳过 ${vsync_missed} 帧 VSync (约 ${vsync_missed} 个 VSync 周期)'

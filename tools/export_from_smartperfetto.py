@@ -1448,7 +1448,7 @@ def normalize_step(
         if key
         in {
             "id", "name", "description", "optional", "on_empty", "condition",
-            "save_as", "skill", "params", "source", "item_skill", "item_params",
+            "save_as", "save_from", "skill", "params", "source", "item_skill", "item_params",
             "max_items", "filter", "inputs", "rules", "ai_assist", "fallback",
             "prompt", "for_each", "process_scope",
         }

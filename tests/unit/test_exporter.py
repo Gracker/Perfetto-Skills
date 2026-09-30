@@ -883,6 +883,18 @@ class ProcessScopeExportTest(unittest.TestCase):
         manifest = json.loads((self.generated / "runtime/skills/composite.json").read_text())
         self.assertEqual(manifest["steps"][1].get("process_scope"), self.scope)
 
+    def test_skill_reference_keeps_the_child_step_it_binds(self) -> None:
+        self.add_skill("child", {"type": "composite", "steps": [
+            {"id": "overview", "type": "atomic", "sql": "SELECT 1 AS value"},
+            {"id": "detail", "type": "atomic", "sql": "SELECT 2 AS value"},
+        ]})
+        self.add_skill("parent", {"type": "composite", "steps": [
+            {"id": "ref", "skill": "child", "save_as": "rows", "save_from": "detail"},
+        ]})
+        self.export()
+        manifest = json.loads((self.generated / "runtime/skills/parent.json").read_text())
+        self.assertEqual(manifest["steps"][0].get("save_from"), "detail")
+
     def test_identity_metadata_fallback_exports_its_actual_role_and_exact_unavailable(self) -> None:
         declaration = {
             "role": "identity_metadata",

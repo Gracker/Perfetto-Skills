@@ -1325,7 +1325,7 @@
       "name": "jank_frame_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-      "source_sha256": "960209f7b80fdced155eebd63d089f78ed033bbbb671d3a56279b95f8f92fc2b",
+      "source_sha256": "7bb9136db66c910c46597ede1fb01aaef36a58999fdd36e002e6bb90132e5550",
       "tier": "S",
       "version": "2.1",
       "workflow": "scrolling"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "9c7ad9bf6c641d86edbb04f6c8c858bcbcc7c6fa",
+    "commit": "07b8f65ca8944a70c94622f2e9e3dc70744b766e",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "a6b158dde21986bc95002dcdd8e1fee69e8185edb51c341e6c0123f01be1f465",
+    "policy_sha256": "eb6867b0f4617a3e39560bb2e2954b4f3daac014d8d5ee617313385b9d333c27",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3996,12 +3996,6 @@
     },
     {
       "disposition": "product-only",
-      "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
-      "source_path": "backend/strategies/prompt-session-continuity-break.template.md",
-      "source_sha256": "117516a891ac96b782abe2c27ea11f87f641afdbdc115d38aa47ebc63197dc7f"
-    },
-    {
-      "disposition": "product-only",
       "reason": "SmartPerfetto provider session reset after private source activation changes",
       "source_path": "backend/strategies/prompt-source-activation-reset.template.md",
       "source_sha256": "f1320506205898fd20b32fc52dd44ac693d9c1c038a78aba233609c72e11999b"
@@ -4294,7 +4288,7 @@
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 99,
+    "product_only_strategy_sources": 98,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4305,7 +4299,7 @@
     },
     "skill_yaml_files": 257,
     "sql_fragments": 48,
-    "strategy_sources": 145,
+    "strategy_sources": 144,
     "vendor_overrides": 8
   },
   "vendor_overrides": [

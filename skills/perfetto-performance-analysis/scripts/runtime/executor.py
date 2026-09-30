@@ -135,6 +135,24 @@ class SkillRunner:
                 return rows
         return []
 
+    @staticmethod
+    def _named_child_rows(result: Mapping[str, Any], step_id: str) -> list[dict[str, Any]] | None:
+        """Rows of one named child step, or None when that step observed nothing.
+
+        A nested Skill that failed after returning some rows is marked observed;
+        its partial rows are not a result of the named step.
+        """
+        for step in result.get("steps", []):
+            rows = step.get("rows")
+            if (
+                step.get("step_id") == step_id
+                and step.get("status") in {"observed", "empty"}
+                and (step.get("child") or {}).get("success") is not False
+                and isinstance(rows, list)
+            ):
+                return rows
+        return None
+
     def _resolve_param(self, value: Any, context: Mapping[str, Any]) -> Any:
         if isinstance(value, str) and value.startswith("${") and value.endswith("}"):
             return evaluate(value, context)
@@ -300,7 +318,15 @@ class SkillRunner:
                     required_error = True
                 variables[step_id] = {"data": rows}
                 if step.get("save_as"):
-                    variables[str(step["save_as"])] = {"data": rows}
+                    # save_from binds exactly one child step; when that step
+                    # observed nothing the variable is unbound, never another
+                    # step's rows or an earlier value.
+                    saved = rows if "save_from" not in step else self._named_child_rows(child, str(step["save_from"]))
+                    if saved is None:
+                        variables.pop(str(step["save_as"]), None)
+                        context.pop(str(step["save_as"]), None)
+                    else:
+                        variables[str(step["save_as"])] = {"data": saved}
                 context.update(variables)
                 output_steps.append(result)
                 evidence.extend(child.get("evidence", []))

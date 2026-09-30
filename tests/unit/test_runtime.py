@@ -520,5 +520,104 @@ class SkillInputContractTest(unittest.TestCase):
         self.assertEqual(calls[1], ("fps/root", {"package": "com.example", "start_ts": None}))
 
 
+class SkillReferenceSaveFromTest(unittest.TestCase):
+    """`save_from` binds one named child step; it never falls back to another."""
+
+    CHILD = {
+        "id": "child", "runtime_status": "executable", "type": "composite",
+        "identity": {"policy": "none"}, "inputs": [],
+        "steps": [
+            {"id": "overview", "type": "atomic", "query_id": "child/overview"},
+            {"id": "detail", "type": "atomic", "query_id": "child/detail", "optional": True},
+        ],
+    }
+
+    def run_parent(self, detail, **ref):
+        from runtime.executor import SkillRunner
+
+        seen = {}
+
+        def query(query_id, **kwargs):
+            if query_id == "parent/stale":
+                return [{"source": "stale"}]
+            if query_id == "parent/probe":
+                seen.update(kwargs["results"])
+                return []
+            if query_id == "child/overview":
+                return [{"source": "overview"}]
+            if isinstance(detail, Exception):
+                raise detail
+            return detail
+
+        skills = {
+            "child": self.CHILD,
+            "parent": {
+                "id": "parent", "runtime_status": "executable", "type": "composite",
+                "identity": {"policy": "none"}, "inputs": [],
+                "steps": [
+                    {"id": "stale", "type": "atomic", "query_id": "parent/stale", "save_as": "picked"},
+                    {"id": "ref", "type": "skill", "skill": "child", "save_as": "picked", **ref},
+                    {"id": "probe", "type": "atomic", "query_id": "parent/probe"},
+                ],
+            },
+        }
+        result = SkillRunner({"skills": skills}, query).run("parent")
+        self.assertTrue(result["success"])
+        return seen
+
+    def test_without_save_from_the_first_observed_step_is_bound(self) -> None:
+        self.assertEqual(self.run_parent([{"source": "detail"}])["picked"], {"data": [{"source": "overview"}]})
+
+    def test_save_from_binds_the_named_step(self) -> None:
+        seen = self.run_parent([{"source": "detail"}], save_from="detail")
+        self.assertEqual(seen["picked"], {"data": [{"source": "detail"}]})
+
+    def test_save_from_binds_a_genuinely_empty_step_as_empty(self) -> None:
+        self.assertEqual(self.run_parent([], save_from="detail")["picked"], {"data": []})
+
+    def test_save_from_leaves_the_variable_unbound_when_the_step_did_not_observe(self) -> None:
+        for detail, save_from in ((RuntimeError("detail failed"), "detail"), ([{"source": "detail"}], "missing")):
+            with self.subTest(save_from=save_from):
+                self.assertNotIn("picked", self.run_parent(detail, save_from=save_from))
+
+    def test_save_from_does_not_bind_a_failed_nested_skill_that_kept_partial_rows(self) -> None:
+        from runtime.executor import SkillRunner
+
+        seen = {}
+
+        def query(query_id, **kwargs):
+            if query_id == "partial/rows":
+                return [{"source": "partial"}]
+            if query_id == "partial/broken":
+                raise RuntimeError("required query failed")
+            if query_id == "parent/probe":
+                seen.update(kwargs["results"])
+            return []
+
+        skills = {
+            "partial": {
+                "id": "partial", "runtime_status": "executable", "type": "composite",
+                "identity": {"policy": "none"}, "inputs": [],
+                "steps": [
+                    {"id": "rows", "type": "atomic", "query_id": "partial/rows"},
+                    {"id": "broken", "type": "atomic", "query_id": "partial/broken"},
+                ],
+            },
+            "child": {**self.CHILD, "steps": [
+                {"id": "nested", "type": "skill", "skill": "partial", "optional": True},
+            ]},
+            "parent": {
+                "id": "parent", "runtime_status": "executable", "type": "composite",
+                "identity": {"policy": "none"}, "inputs": [],
+                "steps": [
+                    {"id": "ref", "type": "skill", "skill": "child", "save_as": "picked", "save_from": "nested"},
+                    {"id": "probe", "type": "atomic", "query_id": "parent/probe"},
+                ],
+            },
+        }
+        SkillRunner({"skills": skills}, query).run("parent")
+        self.assertNotIn("picked", seen)
+
+
 if __name__ == "__main__":
     unittest.main()
