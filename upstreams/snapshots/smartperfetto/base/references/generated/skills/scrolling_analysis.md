@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 5984bc47a21ebaac70c6e183b813c2ad0178f194fb364e371b2ea9154144efbb
+Source SHA-256: 5ccc021f52a3eb02b5b70c6c432632454f8748fd408f3ec53da01f1408d8ffbc
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1560,6 +1560,13 @@ sql_fragments:
 - fragments/effective_target_processes.sql
 - fragments/vsync_config.sql
 - fragments/root_cause_sample_cap.sql
+- fragments/system_cpu_freq_limit_spans.sql
+- fragments/system_cpu_freq_limit_episodes.sql
+- fragments/thermal_cooling_spans.sql
+- fragments/thermal_cdev_policy_association.sql
+- fragments/thermal_signal_signatures.sql
+- fragments/system_cpu_freq_limit_episode_verdicts.sql
+- fragments/system_cpu_freq_limit_frame_binding.sql
 synthesize:
   role: list
   groupBy:
@@ -1825,6 +1832,81 @@ display:
     label: 设备峰值频率
     type: number
     hidden: true
+  - name: freq_ceiling_ratio_pct
+    label: 大核峰频/设备峰值
+    type: percentage
+    format: percentage
+    hidden: true
+  - name: freq_limit_state
+    label: 主线程限频状态
+    type: string
+    hidden: true
+  - name: freq_limit_basis
+    label: 限频触发依据
+    type: string
+    hidden: true
+  - name: freq_limit_onset_confirmed
+    label: 热控施加已确认
+    type: number
+    hidden: true
+  - name: freq_limit_onset_ts
+    label: 上限值写入时间
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: freq_limit_cooling_basis
+    label: 散热设备关联
+    type: string
+    hidden: true
+  - name: freq_limit_policy_cpu
+    label: 限频 policy
+    type: number
+    hidden: true
+  - name: freq_limit_mhz
+    label: 频率上限
+    type: number
+    hidden: true
+  - name: freq_limit_depth_pct
+    label: 上限低于观测最高上限
+    type: percentage
+    format: percentage
+    hidden: true
+  - name: freq_limit_binding_ratio
+    label: 运行频率/上限
+    type: number
+    hidden: true
+  - name: freq_limit_onset_binding_ns
+    label: 该上限值约束运行时长
+    type: duration
+    unit: ns
+    hidden: true
+  - name: freq_limit_binding_ns
+    label: 跨上限值约束运行时长
+    type: duration
+    unit: ns
+    hidden: true
+  - name: freq_limit_run_ns
+    label: 关键操作运行时长
+    type: duration
+    unit: ns
+    hidden: true
+  - name: freq_limit_trace_episode_id
+    label: 限频区段
+    type: string
+    hidden: true
+  - name: rt_freq_limit_state
+    label: RenderThread 限频状态
+    type: string
+    hidden: true
+  - name: rt_freq_limit_binding_ns
+    label: RenderThread 上限约束运行时长
+    type: duration
+    unit: ns
+    hidden: true
+  - name: rt_freq_limit_policy_cpu
+    label: RenderThread 限频 policy
+    type: number
+    hidden: true
   - name: file_io_overlap_ms
     label: 文件IO重叠
     type: duration
@@ -1942,6 +2024,12 @@ sql_fragments:
 - fragments/system_cpu_frequency_spans.sql
 - fragments/system_sched_spans.sql
 - fragments/effective_target_processes.sql
+- fragments/system_cpu_freq_limit_spans.sql
+- fragments/system_cpu_freq_limit_episodes.sql
+- fragments/thermal_cooling_spans.sql
+- fragments/thermal_cdev_policy_association.sql
+- fragments/thermal_signal_signatures.sql
+- fragments/system_cpu_freq_limit_episode_verdicts.sql
 process_scope:
   role: target
   binding: effective_target_processes
@@ -1954,6 +2042,10 @@ process_scope:
     - thermal_trending
     - frequency_decline_observed
     - thermal_evidence
+    - freq_limit_classification
+    - freq_limit_episode_count
+    - freq_limit_confirmed_episode_count
+    - freq_limit_trace_summary
     peer_context:
     - non_app_big_core_pct
     - background_cpu_heavy

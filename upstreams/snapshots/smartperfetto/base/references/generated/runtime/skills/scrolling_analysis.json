@@ -182,7 +182,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-    "sha256": "5984bc47a21ebaac70c6e183b813c2ad0178f194fb364e371b2ea9154144efbb"
+    "sha256": "5ccc021f52a3eb02b5b70c6c432632454f8748fd408f3ec53da01f1408d8ffbc"
   },
   "steps": [
     {
@@ -559,7 +559,11 @@
             "tail_min_freq_mhz",
             "thermal_trending",
             "frequency_decline_observed",
-            "thermal_evidence"
+            "thermal_evidence",
+            "freq_limit_classification",
+            "freq_limit_episode_count",
+            "freq_limit_confirmed_episode_count",
+            "freq_limit_trace_summary"
           ],
           "peer_context": [
             "non_app_big_core_pct",

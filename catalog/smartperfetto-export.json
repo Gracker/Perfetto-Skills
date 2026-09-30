@@ -2366,7 +2366,7 @@
       "name": "scrolling_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-      "source_sha256": "5984bc47a21ebaac70c6e183b813c2ad0178f194fb364e371b2ea9154144efbb",
+      "source_sha256": "5ccc021f52a3eb02b5b70c6c432632454f8748fd408f3ec53da01f1408d8ffbc",
       "tier": "S",
       "version": "2.2",
       "workflow": "scrolling"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "2026592333e7e3a4deaa5f3f00288b5b5edd7f46",
+    "commit": "9c7ad9bf6c641d86edbb04f6c8c858bcbcc7c6fa",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "27666ca0461aeebe6c94d766a0381792072d44ceb622b5de08705eeb2eb516ea",
+    "policy_sha256": "a6b158dde21986bc95002dcdd8e1fee69e8185edb51c341e6c0123f01be1f465",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3292,6 +3292,12 @@
       "source_sha256": "ea808da6c7536e55002c314111fc2cc4a37b90c0dc597d1364dee21c60f127f3"
     },
     {
+      "destination": "references/generated/runtime/fragments/system_cpu_freq_limit_frame_binding.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/system_cpu_freq_limit_frame_binding.sql",
+      "source_sha256": "591ff80b60d46cea8de51eefaaffcefa04438ba7c1ffab3285b628a1e54adf44"
+    },
+    {
       "destination": "references/generated/runtime/fragments/system_cpu_freq_limit_spans.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
@@ -3445,7 +3451,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto golden trace evaluation corpus and gated overlay lifecycle",
       "source_path": "backend/strategies/golden-trace-eval.registry.json",
-      "source_sha256": "0f0124010347619f022f46280e2efbd834eae307869be6e4de241b1763189acd"
+      "source_sha256": "e069390e83bde27224d7e675595498383856286e2867b97867959a2729d96d65"
     },
     {
       "destination": "references/generated/strategies/interaction.strategy.md",
@@ -3793,7 +3799,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto finalization semantic assessment protocol",
       "source_path": "backend/strategies/prompt-final-semantic-assessment.template.md",
-      "source_sha256": "1605979ac143fa11ab61f1267bfec844028c09043caa83f18b58bc64644e0b0c"
+      "source_sha256": "602b711ba2db6c8272eb080630cf10e0c900116f7aa94c7d955a728f33863f62"
     },
     {
       "disposition": "product-only",
@@ -4231,7 +4237,7 @@
       "destination": "references/generated/strategies/scrolling.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scrolling.strategy.md",
-      "source_sha256": "f476d862ac67d23219a5f22ed2b0a26f960165c7f135cc10d6998baa9b6d98ec",
+      "source_sha256": "6ed2e1da834968a843d8c3157cbcd1982d0b36e1dd63e63b4aaaa3d70ced16d7",
       "workflow": "scrolling"
     },
     {
@@ -4284,7 +4290,7 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_sql_fragments": 40,
+    "exported_sql_fragments": 41,
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
@@ -4298,7 +4304,7 @@
       "pipeline_definition": 31
     },
     "skill_yaml_files": 257,
-    "sql_fragments": 47,
+    "sql_fragments": 48,
     "strategy_sources": 145,
     "vendor_overrides": 8
   },

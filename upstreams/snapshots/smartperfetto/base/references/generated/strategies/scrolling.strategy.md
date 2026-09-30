@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: f476d862ac67d23219a5f22ed2b0a26f960165c7f135cc10d6998baa9b6d98ec
+Source SHA-256: 6ed2e1da834968a843d8c3157cbcd1982d0b36e1dd63e63b4aaaa3d70ced16d7
 
 # Scrolling Strategy
 
@@ -35,6 +35,7 @@ optional_capabilities:
 - binder_ipc
 - gpu
 - thermal_throttling
+- cpu_freq_limits
 - input_latency
 - lock_contention
 - gpu_work_period
@@ -563,7 +564,7 @@ Apply when: Applies when citing input-frame association, input backlog or input-
 |------|------|----------------|
 | `video_during_scroll = 1` | 滑动期间有视频解码活跃 | ⚠️ **视频播放并行**：滑动期间检测到视频解码活跃，workload_heavy 帧的负载归因不能全部归因于滑动渲染 |
 | `interpolation_active = 1` | 大量 frame_id=-1 的插帧 | ⚠️ **OEM 插帧模式活跃**：统计指标（帧率/掉帧率）可能受插帧影响失真 |
-| `thermal_trending = 1` | trace 尾部频率天花板明显低于峰值 | ⚠️ **持续限频**：先按系统侧限频标注；要判定是否真由热管理触发、以及限频前是谁在跑，用 `invoke_skill("cpu_frequency_limit_attribution")`，无 cooling/温度证据时不能写成热降频 |
+| `freq_limit_classification`（本窗口） | 共享限频判定层对本分析窗口的分类；`thermal_trending = 1` 即其为 `THERMAL_LIMIT_CONFIRMED` | ⚠️ **窗口内限频**：`THERMAL_LIMIT_CONFIRMED` 表示窗口内有上限值由与该 policy 时序关联的散热设备升档写入；`THERMAL_DAEMON_SUSPECTED` 等其余类别只是候选触发方，含义是“限频生效、触发方未确认”；`NO_LIMIT_EPISODE` 表示窗口内未观测到超过阈值的限频；`LIMIT_EVIDENCE_MISSING` 是采集缺口（未采到有效最大上限样本），不是“没有限频”，也不是温控。`freq_limit_trace_summary` 是全 trace 范围的分类，只作背景，不是本窗口发生限频的证据。触发方与限频前负载由 `invoke_skill("cpu_frequency_limit_attribution")` 给出 |
 | `background_cpu_heavy = 1` | 非 App 大核占比 >60% | ⚠️ **后台 CPU 干扰**：{non_app_big_core_pct}% 的大核 CPU 被非前台进程占用。需用 `execute_sql` 查询 top 占用进程 |
 
 ⚠️ 全局上下文标志**不改变 reason_code 分类**，仅在结论概述段增加修饰标注。多个标志同时为 1 时全部标注。
