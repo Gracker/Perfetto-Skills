@@ -58,6 +58,21 @@ add its native tests, then regenerate the public projection if appropriate.
 5. Run the complete independent gate and the explicit pinned upstream gate.
    Record the cross-repository impact decision and paired commit when required.
 
+The portable executor evaluates step `condition`, iterator `filter`, Skill
+`params` whose whole value is one `${...}`, and diagnostic rule `condition`,
+`diagnosis` and `suggestions` with `runtime/expressions.py`. The exporter parses
+each of them with that same parser, so a construct outside the subset (ternary,
+direct calls other than `Boolean()`, unsupported methods or arguments, nested
+placeholders) fails the import instead of a public run. SmartPerfetto `AND`/`OR`
+in step conditions and filters are normalized first; one inside a string literal
+fails the import, because SmartPerfetto rewrites it there too. A rule
+`confidence` must be `high`, `medium`, `low` or a number: the executor raises when
+a rule with any other value fires (as it does for an unsupported template), so a
+hand-written or overlay Skill fails fast instead of publishing text.
+Fix a rejected template at its SmartPerfetto source, normally by computing the
+value in SQL; data-dependent failures such as strict placeholder arithmetic on a
+null value remain runtime errors.
+
 Only files marked `GENERATED FILE` or listed in the generated-base manifest are
 compiler output. The portable runtime under `scripts/` is native
 Perfetto-Skills source. Modify generated assets through the exporter, imported

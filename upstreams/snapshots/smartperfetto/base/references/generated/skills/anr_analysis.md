@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/anr_analysis.skill.yaml
-Source SHA-256: b4477788d50246d11d2483cd0837b27f8088afd90565197ab4f32613a52e680d
+Source SHA-256: 5b3df6636aa845fd7e5a72bd067025fd3ae618c026113c370b10c97284bdf3b2
 # ANR 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -389,8 +389,7 @@ type: skill
 skill: futex_wait_distribution
 params:
   package: ${package || process_name || anr_ctx.data?.[0]?.process_name || ''}
-  start_ts: '${anr_ctx.data?.[0]?.anr_ts != null && anr_ctx.data?.[0]?.timeout_ns != null ? (Number(anr_ctx.data[0].anr_ts)
-    - Number(anr_ctx.data[0].timeout_ns)) : null}'
+  start_ts: ${anr_ctx.data?.[0]?.window_start_ts ?? null}
   end_ts: ${anr_ctx.data?.[0]?.anr_ts ?? null}
 display:
   level: detail

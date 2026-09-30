@@ -47,7 +47,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
-    "sha256": "2f54cfccbd022dbaa54f4d3683d1c300b0a952423028ac7bef0dba6334b85994"
+    "sha256": "8c83bc8520dbf3876468ade4e67ed590a9be89022763464315e08cd82452b23a"
   },
   "steps": [
     {
@@ -112,12 +112,13 @@
       "rules": [
         {
           "condition": "temp_overview.data.filter(t => t.status === 'critical').length > 0",
-          "confidence": "critical",
+          "confidence": "high",
           "diagnosis": "检测到严重高温: ${temp_overview.data.filter(t => t.status === 'critical')[0]?.sensor_name} 最高 ${temp_overview.data.filter(t => t.status === 'critical')[0]?.max_temp}°C",
           "evidence_fields": [
             "temp_overview.data[0]?.sensor_name",
             "temp_overview.data[0]?.max_temp"
           ],
+          "severity": "critical",
           "suggestions": [
             "检查设备散热条件",
             "减少 CPU/GPU 密集型操作",

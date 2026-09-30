@@ -47,6 +47,7 @@ SKILL_SCRIPTS = SKILL_ROOT / "scripts"
 if str(SKILL_SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SKILL_SCRIPTS))
 
+from runtime.executor import step_expressions  # noqa: E402
 from runtime.expressions import validate as validate_expression  # noqa: E402
 from _common import (  # noqa: E402
     is_process_scope_name, reject_process_scope_names, runtime_sql_bindings,
@@ -1064,8 +1065,19 @@ def write_json(path: Path, value: object) -> None:
     )
 
 
+_BOOLEAN_WORD = re.compile(r"\b(AND|OR)\b", re.I)
+_STRING_LITERAL = re.compile(r"'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"")
+
+
 def normalize_condition(condition: str) -> str:
-    return re.sub(r"\bOR\b", "||", re.sub(r"\bAND\b", "&&", condition, flags=re.I), flags=re.I)
+    """Rewrite SmartPerfetto's AND/OR as && / ||.
+
+    SmartPerfetto rewrites every match, quoted text included, so an AND/OR
+    inside a string literal already means something else there; refuse it.
+    """
+    if any(_BOOLEAN_WORD.search(literal) for literal in _STRING_LITERAL.findall(condition)):
+        raise ExportError(f"AND/OR inside a string literal is rewritten by SmartPerfetto: {condition!r}")
+    return _BOOLEAN_WORD.sub(lambda match: "&&" if match.group(1).lower() == "and" else "||", condition)
 
 
 def validate_conditions(value: object, label: str) -> int:
@@ -1083,6 +1095,16 @@ def validate_conditions(value: object, label: str) -> int:
         for nested in value:
             count += validate_conditions(nested, label)
     return count
+
+
+def validate_runtime_expressions(step: dict[str, Any], label: str) -> None:
+    """Check the published step with the portable runtime's own list of what it
+    evaluates, so an unsupported construct fails the export, not a public run."""
+    for field, value, check in step_expressions(step):
+        try:
+            check(value)
+        except ValueError as exc:
+            raise ExportError(f"Unsupported {field} in {label}: {value!r}: {exc}") from exc
 
 
 def referenced_sql_fragments(value: Any) -> set[str]:
@@ -1454,9 +1476,11 @@ def normalize_step(
         }
     }
     kept["type"] = step_type
-    if isinstance(kept.get("condition"), str):
-        kept["condition"] = normalize_condition(str(kept["condition"]))
-    validate_conditions(kept, f"{skill_id}.{step_id}")
+    # SmartPerfetto accepts AND/OR in step conditions and iterator filters.
+    for key in ("condition", "filter"):
+        if isinstance(kept.get(key), str):
+            kept[key] = normalize_condition(str(kept[key]))
+    validate_runtime_expressions(kept, f"{skill_id}.{step_id}")
     if "sql" not in step:
         return kept, None
     fragment_paths = [str(value) for value in step.get("sql_fragments", []) or []]

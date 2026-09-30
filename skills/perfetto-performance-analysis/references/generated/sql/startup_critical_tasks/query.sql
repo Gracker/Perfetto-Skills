@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_critical_tasks.skill.yaml
--- Source SHA-256: 7d1fb6e3724c17a9610aa5aa28d054f13a96c7a2ee6e955ac720bfcaee25de9f
+-- Source SHA-256: 6d2a85573dfd730c95ae1db602444517d81d127c25e2c1c67015020fab6905d6
 
 -- Step 1: 识别目标进程的所有线程并自动分配角色
 WITH
@@ -299,8 +299,9 @@ observed_preemptions AS (
   WHERE ss.dur > 0 AND ss.end_state = 'R+'
     AND ss.ts + ss.dur >= ${start_ts} AND ss.ts + ss.dur < ${end_ts}
   GROUP BY ss.utid
-)
+),
 -- Final: 合并四象限 + 摆核数据
+returned AS (
 SELECT
   (SELECT window_start_ts FROM system_windows) AS window_start_ts,
   (SELECT window_end_ts FROM system_windows) AS window_end_ts,
@@ -349,3 +350,9 @@ ORDER BY
   CASE tq.role WHEN 'main' THEN 0 ELSE 1 END,
   tq.total_cpu_ms DESC
 LIMIT ${top_k|15}
+)
+-- CPU time of the returned threads, summed once so a caller can cite it
+-- without template arithmetic.
+SELECT returned.*, ROUND(SUM(total_cpu_ms) OVER (), 2) AS returned_total_cpu_ms
+FROM returned
+ORDER BY CASE role WHEN 'main' THEN 0 ELSE 1 END, total_cpu_ms DESC

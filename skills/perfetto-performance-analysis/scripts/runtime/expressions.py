@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import json
 import math
 import re
-from typing import Any, Mapping
+from typing import Any, Iterator, Mapping
 
 
 @dataclass(frozen=True)
@@ -17,6 +17,24 @@ _OPERATORS = (
     "===", "!==", "?.", "??", "=>", ">=", "<=", "==", "!=", "&&", "||",
     "(", ")", "[", "]", ",", ".", "!", ">", "<", "+", "-", "*", "/", "%",
 )
+# The methods the evaluator implements and the argument shapes it accepts for
+# each: "value" is a plain argument, a number a callback of that many parameters.
+_METHOD_SHAPES: dict[str, tuple[tuple[Any, ...], ...]] = {
+    "includes": (("value",),),
+    "startsWith": (("value",),),
+    "find": ((1,),),
+    "filter": ((1,),),
+    "some": ((1,),),
+    "reduce": ((2,), (2, "value")),
+}
+_BOOLEAN_SHAPES: tuple[tuple[Any, ...], ...] = (("value",),)
+
+
+def _check_call(name: str, arguments: tuple[tuple[Any, ...], ...], shapes: tuple[tuple[Any, ...], ...]) -> None:
+    """Reject a call whose arguments the evaluator would misread or crash on."""
+    shape = tuple(len(argument[1]) if argument[0] == "lambda" else "value" for argument in arguments)
+    if shape not in shapes:
+        raise ValueError(f"unsupported arguments for {name}(): expected {' or '.join(map(str, shapes))}")
 _IDENTIFIER = re.compile(r"[A-Za-z_$][A-Za-z0-9_$]*")
 _NUMBER = re.compile(r"(?:\d+\.\d*|\.\d+|\d+)(?:[eE][+-]?\d+)?")
 
@@ -287,6 +305,7 @@ class Parser:
                     while self.accept(","):
                         arguments.append(self.parse_argument())
                 self.expect(")")
+                _check_call("Boolean", tuple(arguments), _BOOLEAN_SHAPES)
                 node = ("function_call", "Boolean", tuple(arguments))
                 continue
             optional = bool(self.accept("?."))
@@ -298,12 +317,17 @@ class Parser:
                     continue
                 name = self.expect("identifier").value
                 if self.accept("("):
+                    # Rejected while parsing, so validation catches a call a
+                    # short-circuit would otherwise leave unevaluated.
+                    if name not in _METHOD_SHAPES:
+                        raise ValueError(f"unsupported expression method: {name}")
                     args: list[tuple[Any, ...]] = []
                     if not self.current(")"):
                         args.append(self.parse_argument())
                         while self.accept(","):
                             args.append(self.parse_argument())
                     self.expect(")")
+                    _check_call(name, tuple(args), _METHOD_SHAPES[name])
                     node = ("call", node, name, tuple(args), optional)
                 else:
                     node = ("get", node, ("literal", name), optional)
@@ -325,7 +349,8 @@ class Parser:
             return ("var", token.value)
         token = self.accept("placeholder")
         if token:
-            return ("placeholder", token.value)
+            # Parsed now, so validation covers the body and evaluation reuses it.
+            return ("placeholder", _compile_placeholder(token.value))
         if self.accept("["):
             items: list[tuple[Any, ...]] = []
             if not self.current("]"):
@@ -364,9 +389,14 @@ def _get(value: Any, key: Any) -> Any:
     return getattr(value, str(key), None)
 
 
-def _placeholder(raw: str, context: Mapping[str, Any]) -> Any:
+def _compile_placeholder(raw: str) -> tuple[tuple[Any, ...], str | None]:
     body, default = _split_placeholder_default(raw)
-    value = _evaluate(compile_expression(body), context, strict_arithmetic=True)
+    return compile_expression(body), default
+
+
+def _placeholder(compiled: tuple[tuple[Any, ...], str | None], context: Mapping[str, Any]) -> Any:
+    node, default = compiled
+    value = _evaluate(node, context, strict_arithmetic=True)
     if value is not None or default is None:
         return value
     try:
@@ -374,8 +404,6 @@ def _placeholder(raw: str, context: Mapping[str, Any]) -> Any:
     except json.JSONDecodeError:
         return default
 
-
-_ALLOWED_METHODS = {"includes", "startsWith", "find", "filter", "some", "reduce"}
 
 
 def _finite_number(value: Any) -> int | float:
@@ -455,8 +483,6 @@ def _evaluate(node: tuple[Any, ...], context: Mapping[str, Any], *, strict_arith
     if kind == "call":
         receiver = run(node[1])
         method = node[2]
-        if method not in _ALLOWED_METHODS:
-            raise ValueError(f"unsupported expression method: {method}")
         arguments = node[3]
         if method == "includes":
             needle = run(arguments[0])
@@ -464,7 +490,7 @@ def _evaluate(node: tuple[Any, ...], context: Mapping[str, Any], *, strict_arith
         if method == "startsWith":
             prefix = run(arguments[0])
             return isinstance(receiver, str) and receiver.startswith(str(prefix))
-        if not isinstance(receiver, (list, tuple)) or not arguments or arguments[0][0] != "lambda":
+        if not isinstance(receiver, (list, tuple)):
             return None if method in {"find", "reduce"} else [] if method == "filter" else False
         lambda_node = arguments[0]
 
@@ -488,8 +514,6 @@ def _evaluate(node: tuple[Any, ...], context: Mapping[str, Any], *, strict_arith
                 accumulator = invoke(accumulator, item)
             return accumulator
     if kind == "function_call":
-        if node[1] != "Boolean" or len(node[2]) != 1:
-            raise ValueError("unsupported expression function")
         return _truthy(run(node[2][0]))
     raise ValueError(f"unsupported expression node: {kind}")
 
@@ -506,13 +530,33 @@ def evaluate(source: str, context: Mapping[str, Any]) -> Any:
     return _evaluate(compile_expression(source), context)
 
 
-def interpolate(source: str, context: Mapping[str, Any]) -> str:
-    output: list[str] = []
+def is_expression_param(value: Any) -> bool:
+    """A Skill parameter is evaluated only when the whole value is one placeholder."""
+    return isinstance(value, str) and value.startswith("${") and value.endswith("}")
+
+
+def _template_parts(source: str) -> Iterator[tuple[str, str | None]]:
+    """Split a template into (literal text, placeholder body or None) pairs."""
     cursor = 0
     while (start := source.find("${", cursor)) >= 0:
-        output.append(source[cursor:start])
-        body, cursor = _read_placeholder(source, start)
-        value = _placeholder(body, context)
-        output.append("" if value is None else str(value))
-    output.append(source[cursor:])
+        body, end = _read_placeholder(source, start)
+        yield source[cursor:start], body
+        cursor = end
+    yield source[cursor:], None
+
+
+def validate_template(source: str) -> None:
+    """Reject a template that `interpolate` would fail to parse, whatever the data."""
+    for _, body in _template_parts(source):
+        if body is not None:
+            _compile_placeholder(body)
+
+
+def interpolate(source: str, context: Mapping[str, Any]) -> str:
+    output: list[str] = []
+    for text, body in _template_parts(source):
+        output.append(text)
+        if body is not None:
+            value = _placeholder(_compile_placeholder(body), context)
+            output.append("" if value is None else str(value))
     return "".join(output)

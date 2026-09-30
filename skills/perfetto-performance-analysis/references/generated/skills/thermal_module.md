@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/thermal_module.skill.yaml
-Source SHA-256: 2f54cfccbd022dbaa54f4d3683d1c300b0a952423028ac7bef0dba6334b85994
+Source SHA-256: 8c83bc8520dbf3876468ade4e67ed590a9be89022763464315e08cd82452b23a
 # 热管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -186,7 +186,8 @@ rules:
 - condition: temp_overview.data.filter(t => t.status === 'critical').length > 0
   diagnosis: '检测到严重高温: ${temp_overview.data.filter(t => t.status === ''critical'')[0]?.sensor_name} 最高 ${temp_overview.data.filter(t
     => t.status === ''critical'')[0]?.max_temp}°C'
-  confidence: critical
+  severity: critical
+  confidence: high
   suggestions:
   - 检查设备散热条件
   - 减少 CPU/GPU 密集型操作

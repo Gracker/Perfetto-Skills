@@ -200,7 +200,7 @@
       "type": "atomic"
     },
     {
-      "filter": "jank_level == 'severe' OR jank_level == 'bad'",
+      "filter": "jank_level == 'severe' || jank_level == 'bad'",
       "id": "analyze_janky_frames",
       "item_params": {
         "dur_ms": "dur_ms",

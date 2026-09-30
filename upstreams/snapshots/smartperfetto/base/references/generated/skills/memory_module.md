@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/memory_module.skill.yaml
-Source SHA-256: c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b
+Source SHA-256: b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff
 # 内存分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -221,7 +221,8 @@ inputs:
 rules:
 - condition: lmk_events.data.length > 0
   diagnosis: 检测到 ${lmk_events.data.length} 个 LMK 事件，系统内存压力大
-  confidence: critical
+  severity: critical
+  confidence: high
   suggestions:
   - 检查内存泄漏
   - 减少后台进程内存使用

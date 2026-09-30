@@ -65,7 +65,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
-    "sha256": "ebd766c3504a076486e35acf0be4a4a550371776192149f325b20df6219eb790"
+    "sha256": "50ab26350db4695faed48050143b69a472c511af5a36fcc610e6e6b192860e66"
   },
   "steps": [
     {
@@ -135,13 +135,14 @@
       "rules": [
         {
           "condition": "doframe_overview.data[0]?.jank_rate_pct > 10",
-          "confidence": "critical",
+          "confidence": "high",
           "diagnosis": "卡顿率 ${doframe_overview.data[0]?.jank_rate_pct}%，超过 10% 阈值",
           "evidence_fields": [
             "doframe_overview.data[0]?.jank_rate_pct",
             "doframe_overview.data[0]?.jank_frames",
             "doframe_overview.data[0]?.total_frames"
           ],
+          "severity": "critical",
           "suggestions": [
             "分析卡顿帧的具体原因",
             "优化主线程耗时操作",
@@ -150,11 +151,12 @@
         },
         {
           "condition": "doframe_overview.data[0]?.max_dur_ms > 100",
-          "confidence": "critical",
+          "confidence": "high",
           "diagnosis": "最长帧时间 ${doframe_overview.data[0]?.max_dur_ms}ms，严重影响体验",
           "evidence_fields": [
             "doframe_overview.data[0]?.max_dur_ms"
           ],
+          "severity": "critical",
           "suggestions": [
             "分析该帧的详细调用栈",
             "检查是否有 ANR 风险"
@@ -187,11 +189,12 @@
         },
         {
           "condition": "long_frames.data.filter(f => f.jank_severity === 'jank_5plus_frames').length > 0",
-          "confidence": "critical",
+          "confidence": "high",
           "diagnosis": "检测到 ${long_frames.data.filter(f => f.jank_severity === 'jank_5plus_frames').length} 个严重卡顿帧 (丢失 5+ 帧)",
           "evidence_fields": [
             "long_frames.data.filter(f => f.jank_severity === 'jank_5plus_frames').length"
           ],
+          "severity": "critical",
           "suggestions": [
             "这些帧可能导致明显卡顿感知",
             "需要重点分析这些时间点"

@@ -3,10 +3,11 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 import hashlib
 import json
+import math
 from typing import Any
 from _common import reject_process_scope_names
 
-from .expressions import evaluate, interpolate
+from .expressions import evaluate, interpolate, is_expression_param, validate, validate_template
 
 
 QueryExecutor = Callable[..., list[dict[str, Any]]]
@@ -89,6 +90,39 @@ def _meaningful(value: Any) -> bool:
     return True
 
 
+_RULE_CONFIDENCE = {"high": 0.9, "medium": 0.7, "low": 0.5}
+
+
+def rule_confidence(value: Any) -> float:
+    """A diagnostic rule's confidence; it is published as authored, never interpolated."""
+    if isinstance(value, str) and value in _RULE_CONFIDENCE:
+        return _RULE_CONFIDENCE[value]
+    if isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value):
+        return value
+    raise ValueError(f"unsupported rule confidence {value!r}: expected high, medium, low or a number")
+
+
+def step_expressions(step: Mapping[str, Any]) -> list[tuple[str, Any, Callable[[Any], Any]]]:
+    """Every value `SkillRunner.run` evaluates or interpolates for this step, as
+    (field, value, check): each check raises ValueError where the run would."""
+    checks: list[tuple[str, Any, Callable[[Any], Any]]] = []
+    if isinstance(step.get("condition"), str):
+        checks.append(("condition", step["condition"], validate))
+    if isinstance(step.get("filter"), str):
+        checks.append(("filter", step["filter"], validate))
+    for name, value in (step.get("params") or {}).items():
+        if is_expression_param(value):
+            checks.append((f"params.{name}", value, validate))
+    for index, rule in enumerate(step.get("rules") or []):
+        field = f"rules[{index}]"
+        checks.append((f"{field}.condition", str(rule.get("condition", "")), validate))
+        checks.append((f"{field}.diagnosis", str(rule.get("diagnosis", "")), validate_template))
+        for position, suggestion in enumerate(rule.get("suggestions") or []):
+            checks.append((f"{field}.suggestions[{position}]", str(suggestion), validate_template))
+        checks.append((f"{field}.confidence", rule.get("confidence", "medium"), rule_confidence))
+    return checks
+
+
 class SkillRunner:
     def __init__(
         self,
@@ -154,7 +188,7 @@ class SkillRunner:
         return None
 
     def _resolve_param(self, value: Any, context: Mapping[str, Any]) -> Any:
-        if isinstance(value, str) and value.startswith("${") and value.endswith("}"):
+        if is_expression_param(value):
             return evaluate(value, context)
         return value
 
@@ -386,8 +420,7 @@ class SkillRunner:
                 diagnostics = []
                 for rule in step.get("rules", []) or []:
                     if bool(evaluate(str(rule["condition"]), context)):
-                        confidence = rule.get("confidence", "medium")
-                        confidence = {"high": 0.9, "medium": 0.7, "low": 0.5}.get(confidence, confidence)
+                        confidence = rule_confidence(rule.get("confidence", "medium"))
                         diagnostics.append(
                             {
                                 "diagnosis": interpolate(str(rule["diagnosis"]), context),

@@ -81,7 +81,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
-    "sha256": "c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b"
+    "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
   },
   "steps": [
     {
@@ -164,12 +164,13 @@
       "rules": [
         {
           "condition": "lmk_events.data.length > 0",
-          "confidence": "critical",
+          "confidence": "high",
           "diagnosis": "检测到 ${lmk_events.data.length} 个 LMK 事件，系统内存压力大",
           "evidence_fields": [
             "lmk_events.data.length",
             "lmk_events.data[0]?.lmk_event"
           ],
+          "severity": "critical",
           "suggestions": [
             "检查内存泄漏",
             "减少后台进程内存使用",

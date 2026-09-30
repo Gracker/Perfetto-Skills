@@ -192,7 +192,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-    "sha256": "7bb9136db66c910c46597ede1fb01aaef36a58999fdd36e002e6bb90132e5550"
+    "sha256": "cced6c93210b61438758674b332449deb566899b3e32c59c4d2a95616c6ff9b3"
   },
   "steps": [
     {
@@ -580,8 +580,26 @@
       "name": "帧诊断",
       "rules": [
         {
-          "condition": "root_cause?.data?.[0]?.primary_cause",
-          "confidence": "${root_cause.data[0].confidence === '高' ? 'high' : root_cause.data[0].confidence === '中' ? 'medium' : 'low'}",
+          "condition": "root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence === '高'",
+          "confidence": "high",
+          "diagnosis": "${root_cause.data[0].primary_cause}",
+          "severity": "critical",
+          "suggestions": [
+            "${root_cause.data[0].secondary_info || '查看下方详细数据分析具体原因'}"
+          ]
+        },
+        {
+          "condition": "root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence === '中'",
+          "confidence": "medium",
+          "diagnosis": "${root_cause.data[0].primary_cause}",
+          "severity": "critical",
+          "suggestions": [
+            "${root_cause.data[0].secondary_info || '查看下方详细数据分析具体原因'}"
+          ]
+        },
+        {
+          "condition": "root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence !== '高' && root_cause.data[0].confidence !== '中'",
+          "confidence": "low",
           "diagnosis": "${root_cause.data[0].primary_cause}",
           "severity": "critical",
           "suggestions": [
@@ -639,9 +657,9 @@
           ]
         },
         {
-          "condition": "gc_data?.data?.length > 0 && gc_data.data.reduce((s, g) => s + (g.overlap_ms || 0), 0) > 3",
+          "condition": "(gc_data?.data?.[0]?.total_overlap_ms || 0) > 3",
           "confidence": "high",
-          "diagnosis": "GC 严重影响帧渲染：总重叠 ${gc_data.data.reduce((s, g) => s + (g.overlap_ms || 0), 0).toFixed(1)}ms",
+          "diagnosis": "GC 严重影响帧渲染：总重叠 ${gc_data.data[0].total_overlap_ms}ms",
           "severity": "critical",
           "suggestions": [
             "减少帧期间的对象分配",

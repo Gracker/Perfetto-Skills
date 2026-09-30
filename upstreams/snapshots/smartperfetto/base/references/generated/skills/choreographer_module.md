@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/choreographer_module.skill.yaml
-Source SHA-256: ebd766c3504a076486e35acf0be4a4a550371776192149f325b20df6219eb790
+Source SHA-256: 50ab26350db4695faed48050143b69a472c511af5a36fcc610e6e6b192860e66
 # Choreographer 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -200,7 +200,8 @@ inputs:
 rules:
 - condition: doframe_overview.data[0]?.jank_rate_pct > 10
   diagnosis: 卡顿率 ${doframe_overview.data[0]?.jank_rate_pct}%，超过 10% 阈值
-  confidence: critical
+  severity: critical
+  confidence: high
   suggestions:
   - 分析卡顿帧的具体原因
   - 优化主线程耗时操作
@@ -211,7 +212,8 @@ rules:
   - doframe_overview.data[0]?.total_frames
 - condition: doframe_overview.data[0]?.max_dur_ms > 100
   diagnosis: 最长帧时间 ${doframe_overview.data[0]?.max_dur_ms}ms，严重影响体验
-  confidence: critical
+  severity: critical
+  confidence: high
   suggestions:
   - 分析该帧的详细调用栈
   - 检查是否有 ANR 风险
@@ -236,7 +238,8 @@ rules:
   - view_traversal.data.find(v => v.traversal_phase === 'measure')?.max_ms
 - condition: long_frames.data.filter(f => f.jank_severity === 'jank_5plus_frames').length > 0
   diagnosis: 检测到 ${long_frames.data.filter(f => f.jank_severity === 'jank_5plus_frames').length} 个严重卡顿帧 (丢失 5+ 帧)
-  confidence: critical
+  severity: critical
+  confidence: high
   suggestions:
   - 这些帧可能导致明显卡顿感知
   - 需要重点分析这些时间点

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: 7bb9136db66c910c46597ede1fb01aaef36a58999fdd36e002e6bb90132e5550
+-- Source SHA-256: cced6c93210b61438758674b332449deb566899b3e32c59c4d2a95616c6ff9b3
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -28,14 +28,20 @@ gc_events AS (
   WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND gc.gc_ts < ${end_ts}
     AND gc.gc_ts + gc.gc_dur > ${start_ts}
+),
+gc_by_type AS (
+  SELECT
+    gc_type,
+    COUNT(*) as gc_count,
+    ROUND(SUM(gc_dur) / 1e6, 2) as total_dur_ms,
+    ROUND(SUM(CASE WHEN overlap_end > overlap_start THEN overlap_end - overlap_start ELSE 0 END) / 1e6, 2) as overlap_ms,
+    ROUND(MAX(gc_dur) / 1e6, 2) as max_dur_ms
+  FROM gc_events
+  GROUP BY gc_type
+  HAVING overlap_ms > 0
 )
-SELECT
-  gc_type,
-  COUNT(*) as gc_count,
-  ROUND(SUM(gc_dur) / 1e6, 2) as total_dur_ms,
-  ROUND(SUM(CASE WHEN overlap_end > overlap_start THEN overlap_end - overlap_start ELSE 0 END) / 1e6, 2) as overlap_ms,
-  ROUND(MAX(gc_dur) / 1e6, 2) as max_dur_ms
-FROM gc_events
-GROUP BY gc_type
-HAVING overlap_ms > 0
+-- The frame-window total is the sum of the per-type values shown above,
+-- so the diagnosis cites one number computed here, not in its template.
+SELECT *, ROUND(SUM(overlap_ms) OVER (), 2) as total_overlap_ms
+FROM gc_by_type
 ORDER BY overlap_ms DESC

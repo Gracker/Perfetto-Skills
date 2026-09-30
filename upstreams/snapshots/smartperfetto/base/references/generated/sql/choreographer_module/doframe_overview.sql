@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/choreographer_module.skill.yaml
--- Source SHA-256: ebd766c3504a076486e35acf0be4a4a550371776192149f325b20df6219eb790
+-- Source SHA-256: 50ab26350db4695faed48050143b69a472c511af5a36fcc610e6e6b192860e66
 
 SELECT
   COUNT(*) AS total_frames,

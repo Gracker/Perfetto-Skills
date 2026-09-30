@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/lock_contention_module.skill.yaml
--- Source SHA-256: d15f42c14eb71e09519f090b9772b4fbb26420601c470115a36e8ce058c804e3
+-- Source SHA-256: bf6c73b0c93093c4aeb7accec76145b98122bfe7a5dd171dac407ff4f7f808d9
 
 SELECT
   t.name AS thread_name,

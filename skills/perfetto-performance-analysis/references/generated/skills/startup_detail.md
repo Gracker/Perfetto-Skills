@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_detail.skill.yaml
-Source SHA-256: 33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287
+Source SHA-256: d8bd7e2e4f7cdef9dee9189f5a8055152f373d9c0c73ac25d7b272e3e81d290e
 # 启动详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1220,6 +1220,12 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+  - name: returned_total_cpu_ms
+    label: 返回线程 CPU 时间合计
+    type: duration
+    format: duration_ms
+    unit: ms
+    hidden: true
   - name: q1_big_running_ms
     label: Q1 大核运行
     type: duration
@@ -1822,11 +1828,9 @@ rules:
   suggestions:
   - 对照真实 cluster 拓扑、迁移时间与关键任务区间，必要时补充缓存/PMU 证据
   - 检查是否有其他线程/进程在启动期间与主线程争抢 CPU
-- condition: critical_tasks?.data?.length > 0 && critical_tasks.data.reduce((sum, t) => sum + (t.total_cpu_ms || 0), 0) >
-    ${dur_ms} * 2
+- condition: (critical_tasks?.data?.[0]?.returned_total_cpu_ms || 0) > ${dur_ms} * 2
   severity: info
-  diagnosis: 返回的关键线程 CPU 时间合计 ${Math.round(critical_tasks.data.reduce((sum, t) => sum + (t.total_cpu_ms || 0), 0))}ms，是启动墙钟时间
-    ${dur_ms}ms 的 ${(critical_tasks.data.reduce((sum, t) => sum + (t.total_cpu_ms || 0), 0) / ${dur_ms}).toFixed(1)} 倍，表明存在多核并行工作；是否竞争需检查实际
+  diagnosis: 返回的关键线程 CPU 时间合计 ${critical_tasks.data[0].returned_total_cpu_ms}ms，超过启动墙钟时间 ${dur_ms}ms 的 2 倍，表明存在多核并行工作；是否竞争需检查实际
     Runnable 与抢占区间
   confidence: medium
   suggestions:

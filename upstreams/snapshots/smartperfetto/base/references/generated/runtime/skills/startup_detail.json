@@ -120,7 +120,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/startup_detail.skill.yaml",
-    "sha256": "33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287"
+    "sha256": "d8bd7e2e4f7cdef9dee9189f5a8055152f373d9c0c73ac25d7b272e3e81d290e"
   },
   "steps": [
     {
@@ -610,9 +610,9 @@
           ]
         },
         {
-          "condition": "critical_tasks?.data?.length > 0 && critical_tasks.data.reduce((sum, t) => sum + (t.total_cpu_ms || 0), 0) > ${dur_ms} * 2",
+          "condition": "(critical_tasks?.data?.[0]?.returned_total_cpu_ms || 0) > ${dur_ms} * 2",
           "confidence": "medium",
-          "diagnosis": "返回的关键线程 CPU 时间合计 ${Math.round(critical_tasks.data.reduce((sum, t) => sum + (t.total_cpu_ms || 0), 0))}ms，是启动墙钟时间 ${dur_ms}ms 的 ${(critical_tasks.data.reduce((sum, t) => sum + (t.total_cpu_ms || 0), 0) / ${dur_ms}).toFixed(1)} 倍，表明存在多核并行工作；是否竞争需检查实际 Runnable 与抢占区间",
+          "diagnosis": "返回的关键线程 CPU 时间合计 ${critical_tasks.data[0].returned_total_cpu_ms}ms，超过启动墙钟时间 ${dur_ms}ms 的 2 倍，表明存在多核并行工作；是否竞争需检查实际 Runnable 与抢占区间",
           "severity": "info",
           "suggestions": [
             "结合逐核系统负载、关键线程 Runnable 和 R+ 交接，确认并行工作是否挤占关键路径",

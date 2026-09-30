@@ -305,6 +305,76 @@ class PortableStepMetadataTest(unittest.TestCase):
         self.assertEqual(step, original)
 
 
+class RuntimeExpressionExportTest(unittest.TestCase):
+    """Every string the portable executor evaluates is parsed by its own parser at export."""
+
+    def normalize(self, step: dict[str, object]) -> dict[str, object]:
+        kept, query = exporter.normalize_step(
+            step, "under_test", Path("."), Path("."), {}, [], set(), set(), [], {}, {},
+        )
+        self.assertIsNone(query)
+        return kept
+
+    def diagnostic(self, **rule: object) -> dict[str, object]:
+        return {"id": "verdict", "type": "diagnostic", "inputs": [], "rules": [
+            {"condition": "rows?.data?.length > 0", "diagnosis": "ok", "confidence": "high", **rule},
+        ]}
+
+    def test_portable_rule_templates_and_literal_confidence_are_kept(self) -> None:
+        for rule in (
+            {"diagnosis": "total ${rows.data[0].total_ms}ms", "suggestions": ["check ${rows.data[0].name || 'it'}"]},
+            {"confidence": 0.8}, {"confidence": "low"}, {"diagnosis": '${missing|"n/a"} rows'},
+        ):
+            with self.subTest(rule=rule):
+                kept = self.normalize(self.diagnostic(**rule))
+                self.assertEqual(kept["rules"][0], {**self.diagnostic()["rules"][0], **rule})
+        rules = self.normalize({"id": "verdict", "type": "diagnostic", "rules": [
+            {"condition": "true", "diagnosis": "no confidence"}]})["rules"]
+        self.assertNotIn("confidence", rules[0])
+
+    def test_rule_template_outside_the_runtime_subset_fails_the_export(self) -> None:
+        cases = (
+            ({"diagnosis": "total ${rows.data.reduce((s, r) => s + r.ms, 0).toFixed(1)}ms"}, "diagnosis", "toFixed"),
+            ({"diagnosis": "ratio ${(a / ${b})}"}, "diagnosis", "nested"),
+            ({"suggestions": ["fine", "${a ? 'x' : 'y'}"]}, r"suggestions\[1\]", "token"),
+            ({"suggestions": ["${Math.round(a)}"]}, r"suggestions\[0\]", "round"),
+            ({"confidence": "${a === 1 ? 'high' : 'low'}"}, "confidence", "expected high"),
+            ({"confidence": True}, "confidence", "expected high"),
+            ({"confidence": "certain"}, "confidence", "expected high"),
+            # Published as written: the runtime does not rewrite a rule condition's AND.
+            ({"condition": "a > 1 AND b > 1"}, "condition", "expected 'eof'"),
+        )
+        for rule, field, detail in cases:
+            with self.subTest(rule=rule):
+                pattern = rf"Unsupported rules\[0\]\.{field} in under_test\.verdict: .*{detail}"
+                with self.assertRaisesRegex(exporter.ExportError, pattern):
+                    self.normalize(self.diagnostic(**rule))
+
+    def test_iterator_filter_uses_source_boolean_words_and_is_validated(self) -> None:
+        step = {"id": "each", "type": "iterator", "source": "rows", "item_skill": "child",
+                "filter": "level == 'severe' OR level == 'bad' AND count > 1"}
+        kept = self.normalize(step)
+        self.assertEqual(kept["filter"], "level == 'severe' || level == 'bad' && count > 1")
+        with self.assertRaisesRegex(exporter.ExportError, r"Unsupported filter in under_test\.each: .*toUpperCase"):
+            self.normalize({**step, "filter": "level.toUpperCase() == 'BAD'"})
+        # SmartPerfetto rewrites AND/OR even inside quotes; such a filter means
+        # something else in both runtimes, so the export refuses it.
+        for text in ("name == 'AND' OR name == 'b'", 'name == "x or y"', r"name == 'it\'s AND'"):
+            with self.subTest(filter=text):
+                with self.assertRaisesRegex(exporter.ExportError, "inside a string literal"):
+                    self.normalize({**step, "filter": text})
+        self.assertEqual(self.normalize({**step, "filter": "name == 'ANDROID' AND brand != 'oracle'"})["filter"],
+                         "name == 'ANDROID' && brand != 'oracle'")
+
+    def test_only_evaluated_parameters_are_parsed(self) -> None:
+        step = {"id": "probe", "type": "skill", "skill": "child", "params": {
+            "start_ts": "${ctx.data?.[0]?.window_start_ts ?? null}", "label": "a ? b : c", "top_k": 5}}
+        self.assertEqual(self.normalize(step)["params"], step["params"])
+        bad = {**step, "params": {"start_ts": "${ctx.data?.[0]?.a != null ? Number(ctx.data[0].a) : null}"}}
+        with self.assertRaisesRegex(exporter.ExportError, r"Unsupported params\.start_ts in under_test\.probe: "):
+            self.normalize(bad)
+
+
 class ExporterTest(unittest.TestCase):
     def setUp(self) -> None:
         self.assertTrue(EXPORTER.is_file(), "tools/export_from_smartperfetto.py")

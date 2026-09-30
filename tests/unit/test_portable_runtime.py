@@ -132,6 +132,92 @@ class PortableExpressionTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     self.evaluate(expression, self.context)
 
+    def test_validation_rejects_every_method_evaluation_would_reject(self) -> None:
+        # Methods are checked when parsing, so a guarded call cannot hide one.
+        for expression in (
+            "x.toFixed(1)", "Math.round(x)", "rows && rows.data.map(r => r.value)",
+            "${x.toFixed(1)}", "false && x.toString()",
+        ):
+            with self.subTest(expression=expression):
+                with self.assertRaisesRegex(ValueError, "unsupported expression method"):
+                    self.validate(expression)
+        for expression in (
+            "rows.data.find(r => r.value > 1)", "(name || '').startsWith('a')",
+            "rows.data.reduce((s, r) => s + (r.value || 0), 0) > 1",
+        ):
+            with self.subTest(expression=expression):
+                self.validate(expression)
+
+    def test_validation_rejects_arguments_the_evaluator_cannot_honour(self) -> None:
+        for expression in (
+            "name.includes()", "name.startsWith('a', 1)", "Boolean()", "Boolean(a, b)",
+            "rows.data.find()", "rows.data.find(1)", "rows.data.filter((r, i) => i > 0)",
+            "rows.data.some(r => r, 1)", "rows.data.reduce(r => r)", "rows.data.reduce((s, r) => s, 0, 1)",
+            "name.includes(r => r)",
+        ):
+            with self.subTest(expression=expression):
+                with self.assertRaisesRegex(ValueError, "unsupported arguments"):
+                    self.validate(expression)
+        for expression in (
+            "Boolean(rows)", "rows.data.reduce((s, r) => s + 1)", "rows.data.reduce((s, r) => s + 1, 0)",
+            "rows.data.some(r => r.value)", "name.includes('x')",
+        ):
+            with self.subTest(expression=expression):
+                self.validate(expression)
+
+    def test_template_validation_follows_interpolation(self) -> None:
+        from runtime.expressions import validate_template
+
+        for template in (
+            "plain text", "value ${rows.data[0].value}ms", '${missing|"${not code}"} and ${threshold}',
+            "${rows.data.filter(r => r.value > 1).length} rows", "total ${(a || 0) + (b || 0)}",
+            "${missing|raw + default}",
+        ):
+            with self.subTest(template=template):
+                validate_template(template)
+        for template in (
+            "${a ? 'x' : 'y'}", "${Math.round(a)}", "${a.toFixed(1)}", "${Number(a)}",
+            "ratio ${(a / ${b})}", "open ${a", "${a +}",
+        ):
+            with self.subTest(template=template):
+                with self.assertRaises(ValueError):
+                    validate_template(template)
+
+    def test_only_a_whole_placeholder_parameter_is_evaluated(self) -> None:
+        from runtime.expressions import is_expression_param
+
+        self.assertTrue(is_expression_param("${anr_ctx.data?.[0]?.window_start_ts ?? null}"))
+        for value in ("literal", "prefix ${a}", "${a} suffix", 15, None, "${a"):
+            with self.subTest(value=value):
+                self.assertFalse(is_expression_param(value))
+
+
+class RuleConfidenceTest(unittest.TestCase):
+    def test_confidence_is_a_level_or_a_number_never_text(self) -> None:
+        from runtime.executor import rule_confidence
+
+        self.assertEqual([rule_confidence(v) for v in ("high", "medium", "low", 0.8, 1)], [0.9, 0.7, 0.5, 0.8, 1])
+        for value in ("${a ? 'high' : 'low'}", "certain", True, None, float("nan")):
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ValueError, "unsupported rule confidence"):
+                    rule_confidence(value)
+
+
+class DiagnosticConfidenceRunTest(unittest.TestCase):
+    def test_a_fired_rule_with_text_confidence_fails_the_run(self) -> None:
+        # Fail-fast like an unsupported template: the text would otherwise be published as a confidence.
+        from runtime.executor import SkillRunner
+
+        def skill(confidence: object) -> dict[str, object]:
+            return {"skills": {"verdict_only": {"id": "verdict_only", "type": "composite", "steps": [
+                {"id": "verdict", "type": "diagnostic", "rules": [
+                    {"condition": "true", "diagnosis": "seen", "confidence": confidence}]}]}}}
+
+        result = SkillRunner(skill("low"), mock.Mock(return_value=[])).run("verdict_only", {})
+        self.assertEqual(result["steps"][0]["diagnostics"][0]["confidence"], 0.5)
+        with self.assertRaisesRegex(ValueError, "unsupported rule confidence 'critical'"):
+            SkillRunner(skill("critical"), mock.Mock(return_value=[])).run("verdict_only", {})
+
 
 class ManifestPlaceholderParameterTest(unittest.TestCase):
     """Check real ANR parameter declarations at the runner's child-query boundary."""

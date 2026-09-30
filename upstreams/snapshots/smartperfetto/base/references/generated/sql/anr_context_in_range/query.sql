@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_context_in_range.skill.yaml
--- Source SHA-256: 72ffcd16110748ddcd1ef5a9dc9ebaa508eac40ffac9571fe7a25a4eefe3000c
+-- Source SHA-256: 7c9ec89363efbcc8cf06e19419b124493c853f7620a9d8a53c357812159edc8e
 
 WITH anr_events AS (
   SELECT
@@ -47,6 +47,7 @@ normalized AS (
 SELECT
   printf('%d', ts) as anr_ts,
   printf('%d', CAST(timeout_ms * 1e6 AS INTEGER)) as timeout_ns,
+  printf('%d', ts - CAST(timeout_ms * 1e6 AS INTEGER)) as window_start_ts,
   ROUND(timeout_ms, 2) as timeout_ms,
   timeout_source,
   process_name,

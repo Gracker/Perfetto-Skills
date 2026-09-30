@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: 7bb9136db66c910c46597ede1fb01aaef36a58999fdd36e002e6bb90132e5550
+Source SHA-256: cced6c93210b61438758674b332449deb566899b3e32c59c4d2a95616c6ff9b3
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -765,6 +765,11 @@ display:
     label: 最大单次
     type: duration
     format: duration_ms
+  - name: total_overlap_ms
+    label: 总重叠
+    type: duration
+    format: duration_ms
+    hidden: true
 save_as: gc_data
 optional: true
 condition: gc_availability?.data?.[0]?.has_gc_table === 1
@@ -1138,11 +1143,23 @@ inputs:
 - vsync_data
 - pipeline_data
 rules:
-- condition: root_cause?.data?.[0]?.primary_cause
+- condition: root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence === '高'
   severity: critical
   diagnosis: ${root_cause.data[0].primary_cause}
-  confidence: '${root_cause.data[0].confidence === ''高'' ? ''high'' : root_cause.data[0].confidence === ''中'' ? ''medium''
-    : ''low''}'
+  confidence: high
+  suggestions:
+  - ${root_cause.data[0].secondary_info || '查看下方详细数据分析具体原因'}
+- condition: root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence === '中'
+  severity: critical
+  diagnosis: ${root_cause.data[0].primary_cause}
+  confidence: medium
+  suggestions:
+  - ${root_cause.data[0].secondary_info || '查看下方详细数据分析具体原因'}
+- condition: root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence !== '高' && root_cause.data[0].confidence
+    !== '中'
+  severity: critical
+  diagnosis: ${root_cause.data[0].primary_cause}
+  confidence: low
   suggestions:
   - ${root_cause.data[0].secondary_info || '查看下方详细数据分析具体原因'}
 - condition: resync_markers?.data?.length > 0
@@ -1180,9 +1197,9 @@ rules:
   suggestions:
   - 检查帧期间是否有文件/数据库 slice、page fault 或 block I/O 证据
   - 证据闭环后再考虑内存映射、预加载或异步化
-- condition: gc_data?.data?.length > 0 && gc_data.data.reduce((s, g) => s + (g.overlap_ms || 0), 0) > 3
+- condition: (gc_data?.data?.[0]?.total_overlap_ms || 0) > 3
   severity: critical
-  diagnosis: GC 严重影响帧渲染：总重叠 ${gc_data.data.reduce((s, g) => s + (g.overlap_ms || 0), 0).toFixed(1)}ms
+  diagnosis: GC 严重影响帧渲染：总重叠 ${gc_data.data[0].total_overlap_ms}ms
   confidence: high
   suggestions:
   - 减少帧期间的对象分配

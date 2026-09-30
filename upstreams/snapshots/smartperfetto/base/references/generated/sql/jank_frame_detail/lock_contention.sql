@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: 7bb9136db66c910c46597ede1fb01aaef36a58999fdd36e002e6bb90132e5550
+-- Source SHA-256: cced6c93210b61438758674b332449deb566899b3e32c59c4d2a95616c6ff9b3
 
 SELECT
   short_blocking_method as blocking_method,

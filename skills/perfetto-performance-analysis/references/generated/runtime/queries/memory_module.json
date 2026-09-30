@@ -57,7 +57,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/memory_overview.sql",
-      "sha256": "582397887da7f37f2899302983adfa6ee6af3d5e05b11889faaea35233ef6645",
+      "sha256": "d19298a56ba2ffdab978868269aec35d69122c0ab054d5e2256f2698f4310447",
       "signal_patterns": [
         "%Buffers%",
         "%Cached%",
@@ -73,7 +73,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b"
+        "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
       },
       "sql_dependencies": {
         "creates": [],
@@ -160,7 +160,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/lmk_events.sql",
-      "sha256": "70479789327568a2ea1ce1ae6e47ae6e2ac54ce6b3fe88d56f1c5de3d10c297b",
+      "sha256": "7d29e92edb5686c3ac64bd9cccbd61cd6c826f2291997a8c40128054da9192f2",
       "signal_patterns": [
         "*LMK*",
         "*OOM*",
@@ -173,7 +173,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b"
+        "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
       },
       "sql_dependencies": {
         "creates": [],
@@ -260,7 +260,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/dmabuf_usage.sql",
-      "sha256": "741afaa31671c8cb2a7e630c8bcf1aa36e8eceb571882978733c1b0df601fc39",
+      "sha256": "858675b4cc60e9521f604cfa5ae78da49eed401b25231bdb0613e90b7eac8bdc",
       "signal_patterns": [
         "*dmabuf*",
         "*gpu*mem*",
@@ -271,7 +271,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b"
+        "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
       },
       "sql_dependencies": {
         "creates": [],
@@ -358,7 +358,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/memory_psi.sql",
-      "sha256": "233312bedaa46efae5f31c777d3214151bfeb3affe320753d381100272e9b18b",
+      "sha256": "8b274dfedabe4de817b887f4a593fa15efb409bfc691662f161492317669b012",
       "signal_patterns": [
         "*PSI*",
         "*pressure*",
@@ -368,7 +368,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b"
+        "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
       },
       "sql_dependencies": {
         "creates": [],
@@ -455,7 +455,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/process_memory.sql",
-      "sha256": "4f0f4b793d43aa2502c8590c8bcda0590313e40d3cd5a121d12c6587747fb186",
+      "sha256": "e25aa9e5f2a7055e44b7180befbf5a22940d5d006d9d8667290bc1580acb4410",
       "signal_patterns": [
         "%RSS%",
         "%heap%",
@@ -466,7 +466,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b"
+        "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
       },
       "sql_dependencies": {
         "creates": [],
@@ -553,7 +553,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/memory_timeline.sql",
-      "sha256": "adf3033c9e368760d597bcb0ed351846fbe5f624fd796eac1754222a88958374",
+      "sha256": "748f47fa664c2e09ce38ef45cab008a858e6cd2a056252fe2e1bff9da281afa6",
       "signal_patterns": [
         "%MemAvailable%",
         "%MemFree%"
@@ -562,7 +562,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b"
+        "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
       },
       "sql_dependencies": {
         "creates": [],
@@ -649,7 +649,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/page_fault_analysis.sql",
-      "sha256": "a42e34341606e2890adfc450c3dd564865397b1e1e911d93bab5cc4d4ef44ca9",
+      "sha256": "5f0ef537b4d5df01cec1953072936d5361a0af19998264bf020e30317117d16b",
       "signal_patterns": [
         "*fault*",
         "*page*fault*",
@@ -659,7 +659,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b"
+        "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
       },
       "sql_dependencies": {
         "creates": [],
@@ -746,7 +746,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_module/allocation_events.sql",
-      "sha256": "d26dd689089e8447f6471a0de16f0feda2c81d3c59558fb1035404aa5c9811c3",
+      "sha256": "c9eaa7ea1a3058400b4599c16f1e2719af8d7266b03258ede6267e853571d9e9",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -759,7 +759,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b"
+        "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
       },
       "sql_dependencies": {
         "creates": [],

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/startup_detail.skill.yaml
--- Source SHA-256: 33481081237e74c06b4dc8d1d96123519db58062a3214483d83a5ab46c43d287
+-- Source SHA-256: d8bd7e2e4f7cdef9dee9189f5a8055152f373d9c0c73ac25d7b272e3e81d290e
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

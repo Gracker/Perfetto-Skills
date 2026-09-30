@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/anr_context_in_range.skill.yaml
-Source SHA-256: 72ffcd16110748ddcd1ef5a9dc9ebaa508eac40ffac9571fe7a25a4eefe3000c
+Source SHA-256: 7c9ec89363efbcc8cf06e19419b124493c853f7620a9d8a53c357812159edc8e
 # ANR 上下文提取
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -71,6 +71,10 @@ title: ANR 上下文
 columns:
 - name: anr_ts
   label: ANR 时间
+  type: timestamp
+  clickAction: navigate_timeline
+- name: window_start_ts
+  label: 窗口起点
   type: timestamp
   clickAction: navigate_timeline
 - name: timeout_ns
