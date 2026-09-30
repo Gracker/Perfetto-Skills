@@ -1,9 +1,10 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 5ccc021f52a3eb02b5b70c6c432632454f8748fd408f3ec53da01f1408d8ffbc
+-- Source SHA-256: e3956999bf44d54c8dac9bfa601d821973787904fa3ec95eacf3d31b20eabd4c
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
--- 与 jank_frame_detail 的 root_cause_summary 使用相同优先级 CASE 树
+-- 与 jank_frame_detail 的 root_cause_summary 对齐的只有 direct-evidence（锁 / RT 同步）
+-- 与限频（P4.5/P4.6，同一 frame binding fragment）两族，其余优先级各自不同
 -- 区别：jank_frame_detail 是单帧深钻，此步骤是带覆盖率的批量分类
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -2584,7 +2585,7 @@ analysis AS (
   LEFT JOIN per_frame_input_detail pfid ON pfid.frame_key = fl.frame_key
   LEFT JOIN per_frame_input_slice_detail pfisd ON pfisd.frame_key = fl.frame_key
 ),
--- ========== 11. 根因分类（与 jank_frame_detail 相同优先级 CASE 树） ==========
+-- ========== 11. 根因分类（direct-evidence 与限频两族与 jank_frame_detail 对齐） ==========
 classified AS (
   SELECT *,
     CASE

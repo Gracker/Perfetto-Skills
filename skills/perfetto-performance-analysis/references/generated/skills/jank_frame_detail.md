@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: cced6c93210b61438758674b332449deb566899b3e32c59c4d2a95616c6ff9b3
+Source SHA-256: 606707114b38750e9172c348cd727f2f00231b5a7b6ee521915247b5d62fe233
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -9,7 +9,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: jank_frame_detail
-version: '2.1'
+version: '2.2'
 type: composite
 category: rendering
 tier: S
@@ -1036,6 +1036,13 @@ sql_fragments:
 - fragments/system_thread_state_spans.sql
 - fragments/system_cpu_frequency_spans.sql
 - fragments/system_sched_spans.sql
+- fragments/system_cpu_freq_limit_spans.sql
+- fragments/system_cpu_freq_limit_episodes.sql
+- fragments/thermal_cooling_spans.sql
+- fragments/thermal_cdev_policy_association.sql
+- fragments/thermal_signal_signatures.sql
+- fragments/system_cpu_freq_limit_episode_verdicts.sql
+- fragments/system_cpu_freq_limit_frame_binding.sql
 - fragments/effective_target_processes.sql
 - fragments/vsync_config.sql
 - fragments/target_threads.sql
@@ -1103,6 +1110,76 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+    hidden: true
+  - name: freq_limit_state
+    label: 主线程限频状态
+    type: string
+    hidden: true
+  - name: freq_limit_basis
+    label: 限频触发依据
+    type: string
+    hidden: true
+  - name: freq_limit_onset_confirmed
+    label: 热控施加已确认
+    type: number
+    hidden: true
+  - name: freq_limit_onset_ts
+    label: 上限值写入时间
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: freq_limit_cooling_basis
+    label: 散热设备关联
+    type: string
+    hidden: true
+  - name: freq_limit_policy_cpu
+    label: 限频 policy
+    type: number
+    hidden: true
+  - name: freq_limit_mhz
+    label: 频率上限
+    type: number
+    hidden: true
+  - name: freq_limit_depth_pct
+    label: 上限低于观测最高上限
+    type: percentage
+    format: percentage
+    hidden: true
+  - name: freq_limit_binding_ratio
+    label: 运行频率/上限
+    type: number
+    hidden: true
+  - name: freq_limit_onset_binding_ns
+    label: 该上限值约束运行时长
+    type: duration
+    unit: ns
+    hidden: true
+  - name: freq_limit_binding_ns
+    label: 跨上限值约束运行时长
+    type: duration
+    unit: ns
+    hidden: true
+  - name: freq_limit_run_ns
+    label: 关键操作运行时长
+    type: duration
+    unit: ns
+    hidden: true
+  - name: freq_limit_trace_episode_id
+    label: 限频区段
+    type: string
+    hidden: true
+  - name: rt_freq_limit_state
+    label: RenderThread 限频状态
+    type: string
+    hidden: true
+  - name: rt_freq_limit_binding_ns
+    label: RenderThread 上限约束运行时长
+    type: duration
+    unit: ns
+    hidden: true
+  - name: rt_freq_limit_policy_cpu
+    label: RenderThread 限频 policy
+    type: number
     hidden: true
 save_as: root_cause
 optional: true
@@ -1271,7 +1348,26 @@ rules:
   suggestions:
   - 减少帧期间的 Binder 调用次数
   - 考虑批量处理或缓存
-- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed'
+- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code
+    === 'thermal_throttling'
+  severity: warning
+  diagnosis: 帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count}
+    个 cpufreq policy，最大限频深度 ${freq_limit_evidence.data[0].deepest_depth_pct}%（相对该 policy 在本 trace 内观测到的最高上限，非硬件最大频率；最低上限 ${freq_limit_evidence.data[0].min_limit_khz}
+    kHz）
+  confidence: high
+  suggestions:
+  - 本帧主线程关键工作所在 policy 受限且约束了它（binding），该上限值的写入与温控冷却设备升档配对确认；见根因分析的 freq_limit_* 列
+- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code
+    === 'cpu_max_limited'
+  severity: warning
+  diagnosis: 帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count}
+    个 cpufreq policy，最大限频深度 ${freq_limit_evidence.data[0].deepest_depth_pct}%（相对该 policy 在本 trace 内观测到的最高上限，非硬件最大频率；最低上限 ${freq_limit_evidence.data[0].min_limit_khz}
+    kHz）
+  confidence: high
+  suggestions:
+  - 限频约束了本帧关键线程（binding）；由温控还是功耗/厂商策略触发尚未确认：用 cpu_frequency_limit_attribution 判断触发方与限频前负载
+- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code
+    !== 'thermal_throttling' && root_cause?.data?.[0]?.reason_code !== 'cpu_max_limited'
   severity: warning
   diagnosis: 帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count}
     个 cpufreq policy，最大限频深度 ${freq_limit_evidence.data[0].deepest_depth_pct}%（相对该 policy 在本 trace 内观测到的最高上限，非硬件最大频率；最低上限 ${freq_limit_evidence.data[0].min_limit_khz}

@@ -192,7 +192,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-    "sha256": "cced6c93210b61438758674b332449deb566899b3e32c59c4d2a95616c6ff9b3"
+    "sha256": "606707114b38750e9172c348cd727f2f00231b5a7b6ee521915247b5d62fe233"
   },
   "steps": [
     {
@@ -761,7 +761,25 @@
           ]
         },
         {
-          "condition": "freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed'",
+          "condition": "freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code === 'thermal_throttling'",
+          "confidence": "high",
+          "diagnosis": "帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count} 个 cpufreq policy，最大限频深度 ${freq_limit_evidence.data[0].deepest_depth_pct}%（相对该 policy 在本 trace 内观测到的最高上限，非硬件最大频率；最低上限 ${freq_limit_evidence.data[0].min_limit_khz} kHz）",
+          "severity": "warning",
+          "suggestions": [
+            "本帧主线程关键工作所在 policy 受限且约束了它（binding），该上限值的写入与温控冷却设备升档配对确认；见根因分析的 freq_limit_* 列"
+          ]
+        },
+        {
+          "condition": "freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code === 'cpu_max_limited'",
+          "confidence": "high",
+          "diagnosis": "帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count} 个 cpufreq policy，最大限频深度 ${freq_limit_evidence.data[0].deepest_depth_pct}%（相对该 policy 在本 trace 内观测到的最高上限，非硬件最大频率；最低上限 ${freq_limit_evidence.data[0].min_limit_khz} kHz）",
+          "severity": "warning",
+          "suggestions": [
+            "限频约束了本帧关键线程（binding）；由温控还是功耗/厂商策略触发尚未确认：用 cpu_frequency_limit_attribution 判断触发方与限频前负载"
+          ]
+        },
+        {
+          "condition": "freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code !== 'thermal_throttling' && root_cause?.data?.[0]?.reason_code !== 'cpu_max_limited'",
           "confidence": "high",
           "diagnosis": "帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count} 个 cpufreq policy，最大限频深度 ${freq_limit_evidence.data[0].deepest_depth_pct}%（相对该 policy 在本 trace 内观测到的最高上限，非硬件最大频率；最低上限 ${freq_limit_evidence.data[0].min_limit_khz} kHz）",
           "severity": "warning",
@@ -1042,6 +1060,6 @@
     }
   ],
   "type": "composite",
-  "version": "2.1",
+  "version": "2.2",
   "workflow": "scrolling"
 }
