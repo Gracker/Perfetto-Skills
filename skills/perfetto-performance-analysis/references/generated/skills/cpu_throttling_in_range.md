@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
-Source SHA-256: 641d91822d47cea4b6c50e9bd80f1dade183e8816cd0edf9fcd83de5f5110c9d
+Source SHA-256: 05526dca03c6ffb8591b9ad7e6a6edd303221425e1e6e72589a289e0fd909505
 # CPU 限频检测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -9,7 +9,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: cpu_throttling_in_range
-version: '2.0'
+version: '2.1'
 type: composite
 category: thermal
 tier: B
@@ -132,26 +132,26 @@ display:
   title: 热控限频
   columns:
   - name: core_type
-    label: 核心类型
+    label: 核心类别
     type: string
   - name: start_freq_mhz
-    label: 起始频率
+    label: 窗口内首采样均值
     type: number
   - name: end_freq_mhz
-    label: 结束频率
+    label: 窗口内末采样均值
     type: number
   - name: min_freq_mhz
-    label: 最低频率
+    label: 类别最低频率
     type: number
   - name: max_freq_mhz
-    label: 最高频率
+    label: 类别最高频率
     type: number
   - name: freq_drop_pct
-    label: 降幅
+    label: 单轨最大频率跨度
     type: percentage
     format: percentage
   - name: frequency_variation_detected
-    label: 观测到频率变化
+    label: 单轨跨度超 30%
     type: boolean
   - name: evidence_status
     label: 热原因证据
