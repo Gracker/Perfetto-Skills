@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
-Source SHA-256: 66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39
+Source SHA-256: 641d91822d47cea4b6c50e9bd80f1dade183e8816cd0edf9fcd83de5f5110c9d
 # CPU 限频检测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -67,6 +67,9 @@ display:
   - name: has_limit_track
     label: 有限频轨道
     type: boolean
+  - name: has_max_limit_data
+    label: 有有效上限样本
+    type: boolean
   - name: episode_count
     label: 限频区段数
     type: number
@@ -87,6 +90,9 @@ display:
     type: string
   - name: evidence_status
     label: 证据状态
+    type: string
+  - name: limit_evidence_missing_reason
+    label: 缺失原因
     type: string
   - name: next_step
     label: 下一步

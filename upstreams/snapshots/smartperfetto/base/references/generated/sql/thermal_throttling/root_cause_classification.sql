@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/thermal_throttling.skill.yaml
--- Source SHA-256: 5fad39740c373b463c8080622927249e67de2e731ea1cf79253d443663541c7e
+-- Source SHA-256: 41d4a62770191724931a4ad34d2575966bc0c65d2bb1d9259adec77825b6b34b
 
 WITH
 -- Quality gates apply per track, not per sensor name or individual value.
@@ -65,8 +65,13 @@ thermal_valid_samples AS (
   WHERE q.sample_quality = 'accepted'
 )
 ,
+-- The limit side comes from the shared verdict fragment through
+-- direct_limit_evidence: its window classification, `is_confirmed` and
+-- class note. No class is mapped or restated here.
 limit_facts AS (
-  SELECT ${direct_limit_evidence.data[0].cooling_confirmed_episodes|0} AS cooling_confirmed_episodes,
+  SELECT ${direct_limit_evidence.data[0].is_confirmed|0} AS is_confirmed,
+    '${direct_limit_evidence.data[0].freq_limit_classification}' AS freq_limit_classification,
+    '${direct_limit_evidence.data[0].class_note}' AS class_note,
     ${direct_limit_evidence.data[0].episode_count|0} AS episode_count
 ),
 thermal_peak AS (
@@ -112,10 +117,11 @@ freq_drops AS (
   WHERE prev_freq IS NOT NULL AND freq_mhz < prev_freq * 0.7
 )
 SELECT
-  -- THERMAL_LIMIT_CONFIRMED requires a limit episode that overlaps an
-  -- active cooling device. Temperature alone never reaches this branch.
-  CASE WHEN (SELECT cooling_confirmed_episodes FROM limit_facts) > 0
-      THEN 'THERMAL_LIMIT_CONFIRMED'
+  -- A confirmed limit class comes only from the shared verdict fragment
+  -- (a limit write applied by a tied cooling device). Temperature alone
+  -- never reaches this branch.
+  CASE WHEN (SELECT is_confirmed FROM limit_facts) = 1
+      THEN (SELECT freq_limit_classification FROM limit_facts)
     WHEN (SELECT rejected_tracks FROM thermal_quality) > 0
       OR (SELECT sensor_spread_c FROM thermal_quality) > 30 THEN 'DATA_SUSPECT'
     WHEN (SELECT peak_temp_c FROM thermal_peak) IS NULL THEN 'THERMAL_DATA_UNAVAILABLE'
@@ -128,15 +134,15 @@ SELECT
   (SELECT cnt FROM freq_drops) AS severe_drop_count,
   (SELECT rejected_tracks FROM thermal_quality) AS rejected_temperature_tracks,
   ROUND((SELECT sensor_spread_c FROM thermal_quality), 1) AS sensor_spread_c,
-  CASE WHEN (SELECT cooling_confirmed_episodes FROM limit_facts) > 0
+  CASE WHEN (SELECT is_confirmed FROM limit_facts) = 1
       THEN 'confirmed_by_cooling_device'
     WHEN (SELECT episode_count FROM limit_facts) > 0
       THEN 'limit_observed_cause_unverified'
     ELSE 'not_established' END AS thermal_throttling_evidence,
   (SELECT episode_count FROM limit_facts) AS limit_episode_count,
   '用 cpu_frequency_limit_attribution 查看谁触发了限频、限频前的负载归因与异常线程' AS next_step,
-  CASE WHEN (SELECT cooling_confirmed_episodes FROM limit_facts) > 0
-    THEN '限频区段与内核散热设备的非零档位同时存在：热控框架确实在同期抑温。该事件不声明散热设备治理哪个 cpufreq policy。'
+  CASE WHEN (SELECT is_confirmed FROM limit_facts) = 1
+    THEN (SELECT class_note FROM limit_facts)
     WHEN (SELECT rejected_tracks FROM thermal_quality) > 0
     THEN '温度数据可疑：已排除低质量轨道；峰值仅代表有效传感器，不代表 CPU 结温。'
     WHEN (SELECT sensor_spread_c FROM thermal_quality) > 30

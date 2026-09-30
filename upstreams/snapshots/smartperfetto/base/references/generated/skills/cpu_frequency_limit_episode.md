@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/cpu_frequency_limit_episode.skill.yaml
-Source SHA-256: b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd
+Source SHA-256: 3ce0ca099f41594d791d6342c7ec947589a9245eacb379deabcee87ac49ee859
 # 限频区段归因详情
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -50,14 +50,26 @@ modules:
   type: string
   required: false
   description: 区段标识（由上层传入）
+- name: trace_episode_id
+  type: string
+  required: false
+  description: 全 trace 区段标识（policy%d-tep%d，由上层传入）；缺省时按 policy_cpu 与 episode_start_ts 定位
 - name: episode_start_ts
   type: timestamp
   required: true
-  description: 区段开始时间戳(ns)
+  description: 限频起点时间戳(ns)：上层传入全 trace 区段的起点，不是窗口裁剪后的开始
 - name: episode_end_ts
   type: timestamp
   required: true
   description: 区段结束时间戳(ns)
+- name: window_start_ts
+  type: timestamp
+  required: false
+  description: 上层分析窗口起点(ns)；判定只使用在该窗口内生效的限频写入。缺省使用 episode_start_ts
+- name: window_end_ts
+  type: timestamp
+  required: false
+  description: 上层分析窗口终点(ns)；缺省使用 episode_end_ts
 - name: policy_cpu
   type: number
   required: false
@@ -66,11 +78,6 @@ modules:
   type: string
   required: false
   description: 核心类型（可能为 unknown）
-- name: starts_at_data_start
-  type: number
-  required: false
-  default: 0
-  description: 区段首个样本即轨道首样本时为 1，表示起点在数据之外、不可知
 - name: lookback_ms
   type: number
   required: false
@@ -86,6 +93,31 @@ modules:
   required: false
   default: 50
   description: 散热设备档位变更与限频时刻的重合容差(ms)；重合才视为该次限频由内核热控直接施加
+- name: episode_drop_pct
+  type: number
+  required: false
+  default: 10
+  description: 判定限频区段的降幅阈值（相对本 trace 观测到的最大上限，%）；须与定位 trace_episode_id 的父级一致
+- name: merge_gap_ms
+  type: number
+  required: false
+  default: 500
+  description: 限频区段合并间隔(ms)；须与定位 trace_episode_id 的父级一致
+- name: cdev_policy_pair_ms
+  type: number
+  required: false
+  default: 1
+  description: 散热设备档位变更与其后 policy 上限变更的前向配对窗口(ms)
+- name: cdev_policy_min_transitions
+  type: number
+  required: false
+  default: 3
+  description: 判定散热设备与 policy 关联所需的最少档位变更次数
+- name: cdev_policy_min_pair_pct
+  type: number
+  required: false
+  default: 80
+  description: 判定关联所需的配对占比与同向占比下限(%)
 - name: package
   type: string
   required: false
@@ -195,9 +227,6 @@ display:
   - name: who_window_clipped
     label: 归因窗口被数据边界裁剪
     type: boolean
-  - name: starts_at_data_start
-    label: 起点未知
-    type: boolean
   - name: data_start_ts
     label: 数据起点
     type: timestamp
@@ -226,7 +255,10 @@ optional: true
 process_scope:
   role: global_context
 sql_fragments:
+- fragments/system_cpu_freq_limit_spans.sql
+- fragments/system_cpu_freq_limit_episodes.sql
 - fragments/thermal_cooling_spans.sql
+- fragments/thermal_cdev_policy_association.sql
 display:
   level: summary
   layer: list
@@ -245,11 +277,20 @@ display:
     label: 散热设备
     type: string
   - name: cdev_kind_hint
-    label: 疑似作用域
+    label: 名称提示
     type: string
   - name: cdev_kind_basis
-    label: 判定依据
+    label: 提示依据
     type: string
+  - name: association_status
+    label: 与 policy 的时序关联
+    type: string
+  - name: associated_policy_cpu
+    label: 关联 policy 首核
+    type: number
+  - name: tied_to_this_policy
+    label: 关联本 policy
+    type: boolean
   - name: prev_state
     label: 变更前
     type: number
@@ -520,8 +561,13 @@ type: atomic
 process_scope:
   role: global_context
 sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_freq_limit_spans.sql
+- fragments/system_cpu_freq_limit_episodes.sql
 - fragments/thermal_cooling_spans.sql
+- fragments/thermal_cdev_policy_association.sql
 - fragments/thermal_signal_signatures.sql
+- fragments/system_cpu_freq_limit_episode_verdicts.sql
 display:
   level: key
   layer: overview
@@ -529,6 +575,9 @@ display:
   columns:
   - name: episode_id
     label: 区段
+    type: string
+  - name: trace_episode_id
+    label: 全 trace 区段
     type: string
   - name: policy_cpu
     label: policy 首核
@@ -539,46 +588,49 @@ display:
   - name: who_verdict
     label: 判定
     type: string
-  - name: cooling_transition_coincident
-    label: 档位变更与限频时刻重合
-    type: boolean
-  - name: cooling_nearest_transition_ns
-    label: 最近档位变更时间差
-    type: duration
-    unit: ns
-  - name: cooling_nearest_transition_ts
-    label: 最近档位变更时刻
+  - name: trigger_class
+    label: 触发分类
+    type: string
+  - name: trigger_class_rank
+    label: 分类等级
+    type: number
+  - name: onset_trigger_mix
+    label: 逐次写入分类
+    type: string
+  - name: onset_count
+    label: 窗口内限频写入次数
+    type: number
+  - name: confirmed_onset_count
+    label: 由关联散热设备施加的写入
+    type: number
+  - name: causal_onset_count
+    label: 收紧或起点未知的写入
+    type: number
+  - name: onset_ts
+    label: 限频起点
     type: timestamp
     unit: ns
     clickAction: navigate_timeline
-  - name: cooling_active_ns
-    label: 区段内散热设备生效时长
-    type: duration
-    unit: ns
-  - name: cooling_devices_active
-    label: 生效散热设备数
-    type: number
-  - name: cooling_transitions_in_who_window
-    label: 归因窗口内散热档位变更
-    type: number
-  - name: daemon_ran_before_limit_ns
-    label: 限频前守护进程运行
-    type: duration
-    unit: ns
-  - name: daemon_threads_before_limit
-    label: 限频前活跃守护线程数
-    type: number
   - name: onset_observed
     label: 起点可观测
     type: boolean
   - name: onset_note
     label: 起点说明
     type: string
+  - name: paired_cooling_device
+    label: 配对散热设备
+    type: string
+  - name: cooling_policy_association
+    label: 散热设备关联
+    type: string
+  - name: tied_cooling_device
+    label: 关联散热设备
+    type: string
   - name: thresholds
     label: 阈值
     type: string
-  - name: verdict_basis
-    label: 判定依据
+  - name: verdict_scope
+    label: 判定范围
     type: string
   - name: interpretation
     label: 解释边界
@@ -588,12 +640,86 @@ display:
     type: string
 save_as: who_verdict
 ```
+### 逐次限频写入判定
+
+- ID: `limit_onsets`
+- Type: `atomic`
+- SQL: [`../sql/cpu_frequency_limit_episode/limit_onsets.sql`](../sql/cpu_frequency_limit_episode/limit_onsets.sql)
+
+```yaml
+id: limit_onsets
+type: atomic
+optional: true
+condition: who_verdict.data?.length > 0
+process_scope:
+  role: global_context
+sql_fragments:
+- fragments/system_sched_spans.sql
+- fragments/system_cpu_freq_limit_spans.sql
+- fragments/system_cpu_freq_limit_episodes.sql
+- fragments/thermal_cooling_spans.sql
+- fragments/thermal_cdev_policy_association.sql
+- fragments/thermal_signal_signatures.sql
+- fragments/system_cpu_freq_limit_episode_verdicts.sql
+display:
+  level: detail
+  layer: list
+  title: 本区段在分析窗口内生效的每次限频写入
+  columns:
+  - name: onset_ts
+    label: 写入时刻
+    type: timestamp
+    unit: ns
+    clickAction: navigate_timeline
+  - name: value_end_ts
+    label: 该值失效
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: prev_valid_limit_khz
+    label: 写入前上限
+    type: number
+  - name: limit_khz
+    label: 写入后上限
+    type: number
+  - name: direction
+    label: 方向
+    type: string
+  - name: direction_basis
+    label: 方向依据
+    type: string
+  - name: onset_verdict
+    label: 写入判定
+    type: string
+  - name: trigger_class
+    label: 触发分类
+    type: string
+  - name: cooling_basis
+    label: 散热设备依据
+    type: string
+  - name: paired_cdev_name
+    label: 配对散热设备
+    type: string
+  - name: pair_lead_ns
+    label: 档位变更领先
+    type: duration
+    unit: ns
+  - name: daemon_slices
+    label: 写入前守护进程调度片
+    type: number
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+on_empty: 该区段在分析窗口内没有可判定的限频写入。
+save_as: limit_onsets
+```
 ## Output and evidence contract
 
 ```yaml
 format: layered
 default_expanded:
 - who_verdict
+- limit_onsets
 - who_cooling
 - who_daemon
 ```

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
--- Source: backend/skills/composite/thermal_throttling.skill.yaml
--- Source SHA-256: 41d4a62770191724931a4ad34d2575966bc0c65d2bb1d9259adec77825b6b34b
+-- Source: backend/skills/composite/cpu_frequency_limit_episode.skill.yaml
+-- Source SHA-256: 3ce0ca099f41594d791d6342c7ec947589a9245eacb379deabcee87ac49ee859
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -1077,24 +1077,13 @@ system_cpu_freq_limit_trace_summary AS (
 ,
 system_windows AS (
   SELECT 0 AS window_id,
-    COALESCE(${start_ts}, (SELECT MIN(ts) FROM sched_slice), (SELECT start_ts FROM trace_bounds)) AS window_start_ts,
-    COALESCE(${end_ts}, (SELECT end_ts FROM trace_bounds)) AS window_end_ts
+    COALESCE(${window_start_ts}, ${episode_start_ts}) AS window_start_ts,
+    COALESCE(${window_end_ts}, ${episode_end_ts}) AS window_end_ts
 )
-SELECT
-  ws.episode_count,
-  ws.policy_count,
-  ws.deepest_depth_pct,
-  ws.longest_episode_ns,
-  ws.confirmed_episode_count AS cooling_confirmed_episodes,
-  ws.onset_unknown_episode_count AS onset_unknown_episodes,
-  ws.cooling_transition_coverage AS has_cdev_data,
-  ws.freq_limit_classification,
-  ws.is_confirmed,
-  ws.onset_trigger_mix,
-  CASE WHEN ws.is_confirmed = 1 THEN 'confirmed_by_cooling_device'
-    ELSE 'limit_observed_cause_unverified' END AS thermal_throttling_evidence,
-  ws.class_note,
-  '用 cpu_frequency_limit_attribution 查看谁触发了限频、限频前的负载归因与异常线程' AS next_step,
-  'observation_not_causal' AS evidence_scope
-FROM system_cpu_freq_limit_window_summary ws
-WHERE ws.window_id = 0
+SELECT o.onset_ts, o.value_end_ts, o.prev_valid_limit_khz, o.limit_khz,
+  o.direction, o.direction_basis, o.onset_verdict, o.trigger_class, o.cooling_basis,
+  o.paired_cdev_name, o.pair_lead_ns, o.daemon_slices, o.evidence_scope
+FROM system_cpu_freq_limit_window_onset_verdicts o
+WHERE o.window_id = 0 AND o.scope_key = '${who_verdict.data[0].episode_id}'
+ORDER BY o.onset_ts
+LIMIT 100

@@ -27,7 +27,13 @@
       "type": "string"
     },
     {
-      "description": "区段开始时间戳(ns)",
+      "description": "全 trace 区段标识（policy%d-tep%d，由上层传入）；缺省时按 policy_cpu 与 episode_start_ts 定位",
+      "name": "trace_episode_id",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "限频起点时间戳(ns)：上层传入全 trace 区段的起点，不是窗口裁剪后的开始",
       "name": "episode_start_ts",
       "required": true,
       "type": "timestamp"
@@ -36,6 +42,18 @@
       "description": "区段结束时间戳(ns)",
       "name": "episode_end_ts",
       "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "上层分析窗口起点(ns)；判定只使用在该窗口内生效的限频写入。缺省使用 episode_start_ts",
+      "name": "window_start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "上层分析窗口终点(ns)；缺省使用 episode_end_ts",
+      "name": "window_end_ts",
+      "required": false,
       "type": "timestamp"
     },
     {
@@ -49,13 +67,6 @@
       "name": "core_type",
       "required": false,
       "type": "string"
-    },
-    {
-      "default": 0,
-      "description": "区段首个样本即轨道首样本时为 1，表示起点在数据之外、不可知",
-      "name": "starts_at_data_start",
-      "required": false,
-      "type": "number"
     },
     {
       "default": 10000,
@@ -75,6 +86,41 @@
       "default": 50,
       "description": "散热设备档位变更与限频时刻的重合容差(ms)；重合才视为该次限频由内核热控直接施加",
       "name": "cooling_coincidence_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 10,
+      "description": "判定限频区段的降幅阈值（相对本 trace 观测到的最大上限，%）；须与定位 trace_episode_id 的父级一致",
+      "name": "episode_drop_pct",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 500,
+      "description": "限频区段合并间隔(ms)；须与定位 trace_episode_id 的父级一致",
+      "name": "merge_gap_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 1,
+      "description": "散热设备档位变更与其后 policy 上限变更的前向配对窗口(ms)",
+      "name": "cdev_policy_pair_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 3,
+      "description": "判定散热设备与 policy 关联所需的最少档位变更次数",
+      "name": "cdev_policy_min_transitions",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 80,
+      "description": "判定关联所需的配对占比与同向占比下限(%)",
+      "name": "cdev_policy_min_pair_pct",
       "required": false,
       "type": "number"
     },
@@ -152,7 +198,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
-    "sha256": "b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd"
+    "sha256": "3ce0ca099f41594d791d6342c7ec947589a9245eacb379deabcee87ac49ee859"
   },
   "steps": [
     {
@@ -268,10 +314,24 @@
         "role": "global_context"
       },
       "query_id": "cpu_frequency_limit_episode/who_verdict",
-      "result_dependencies": [
-        "episode_windows"
-      ],
+      "result_dependencies": [],
       "save_as": "who_verdict",
+      "type": "atomic"
+    },
+    {
+      "condition": "who_verdict.data?.length > 0",
+      "id": "limit_onsets",
+      "name": "逐次限频写入判定",
+      "on_empty": "该区段在分析窗口内没有可判定的限频写入。",
+      "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "cpu_frequency_limit_episode/limit_onsets",
+      "result_dependencies": [
+        "who_verdict"
+      ],
+      "save_as": "limit_onsets",
       "type": "atomic"
     }
   ],

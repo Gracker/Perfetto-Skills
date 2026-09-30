@@ -695,7 +695,7 @@
       "name": "cpu_freq_limit_timeline",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml",
-      "source_sha256": "9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b",
+      "source_sha256": "352702371456ef9840b8601360663914d0190087759e74f94650be5ffdea8483",
       "tier": "B",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -731,7 +731,7 @@
       "name": "cpu_frequency_limit_attribution",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
-      "source_sha256": "9b27b3315b361c5cd21809d36d2415240a89ae8baf023b849ee3a4a8ba068888",
+      "source_sha256": "f5beaea78119cdb6f540a97c523e8d6f627f979431d0ad46b2e438ba486fe56c",
       "tier": "S",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -743,7 +743,7 @@
       "name": "cpu_frequency_limit_episode",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
-      "source_sha256": "b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd",
+      "source_sha256": "3ce0ca099f41594d791d6342c7ec947589a9245eacb379deabcee87ac49ee859",
       "tier": "A",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -862,7 +862,7 @@
       "name": "cpu_throttling_in_range",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_throttling_in_range.skill.yaml",
-      "source_sha256": "66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39",
+      "source_sha256": "641d91822d47cea4b6c50e9bd80f1dade183e8816cd0edf9fcd83de5f5110c9d",
       "tier": "B",
       "version": "2.0",
       "workflow": "cpu-scheduling"
@@ -2805,7 +2805,7 @@
       "name": "thermal_throttling",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/thermal_throttling.skill.yaml",
-      "source_sha256": "5fad39740c373b463c8080622927249e67de2e731ea1cf79253d443663541c7e",
+      "source_sha256": "41d4a62770191724931a4ad34d2575966bc0c65d2bb1d9259adec77825b6b34b",
       "tier": "S",
       "version": "3.0",
       "workflow": "power-thermal"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "65e20ce28ea12abe6178c7e2543fc4940f93f658",
+    "commit": "2026592333e7e3a4deaa5f3f00288b5b5edd7f46",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "3734b6ab1a9e56583639d280dfc1fa3cc959d6499e174c7ac84991e88aff6139",
+    "policy_sha256": "27666ca0461aeebe6c94d766a0381792072d44ceb622b5de08705eeb2eb516ea",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3283,19 +3283,19 @@
       "destination": "references/generated/runtime/fragments/system_cpu_freq_limit_episode_verdicts.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/system_cpu_freq_limit_episode_verdicts.sql",
-      "source_sha256": "8212cb7e87c9c19b5eae2fc7b6273d6ab2f19a4b4fa4588ecd4510a3a75ea71b"
+      "source_sha256": "420b96d5b103be0fdbc6d945b1e0838fb7c95ec5e62e566bf8c1b031d5e51738"
     },
     {
       "destination": "references/generated/runtime/fragments/system_cpu_freq_limit_episodes.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/system_cpu_freq_limit_episodes.sql",
-      "source_sha256": "1982e5efbe0a9f772b45bbc48a9a30fa7d79d56eb1270a14af757d8132f4e5a3"
+      "source_sha256": "ea808da6c7536e55002c314111fc2cc4a37b90c0dc597d1364dee21c60f127f3"
     },
     {
       "destination": "references/generated/runtime/fragments/system_cpu_freq_limit_spans.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
-      "source_sha256": "f450e0e8409525a535050150f123a25f4f2dc2577ef7941ce180f1360c0a9244"
+      "source_sha256": "9e4a4b58bc5e0fc0deeca08c0192b1e41b3397498189e33ef8e924a0ae2073ff"
     },
     {
       "destination": "references/generated/runtime/fragments/system_cpu_frequency_spans.sql",
@@ -3322,10 +3322,16 @@
       "source_sha256": "9ac867ea21f7e28e03b1d606f8598ecc222479a870a220a87e94eecbed7566fe"
     },
     {
+      "destination": "references/generated/runtime/fragments/thermal_cdev_policy_association.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/thermal_cdev_policy_association.sql",
+      "source_sha256": "35b1bf24f3c51c63697e5bbc766e5e719e88929cf94249f1e86bbbded9c7ee7c"
+    },
+    {
       "destination": "references/generated/runtime/fragments/thermal_cooling_spans.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/thermal_cooling_spans.sql",
-      "source_sha256": "eade250ec22acef9e23ebe05b7f0990c23820236cdbd661b59da9d9d886b22d7"
+      "source_sha256": "98251374883a42398597a608a70c343bd08146747bb2d44da9e79e5ceeceb01b"
     },
     {
       "destination": "references/generated/runtime/fragments/thermal_sample_quality.sql",
@@ -3584,7 +3590,7 @@
       "destination": "references/generated/knowledge/knowledge-thermal-throttling.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-thermal-throttling.template.md",
-      "source_sha256": "b307e550df669fabb58ce24e4d6a6464b33cca716a3b7347205a42e3eb424dff",
+      "source_sha256": "a92a7fe823ea7914698e3c643b0dbbb0d1aedd019180f406ca67c3845ed72f1a",
       "workflow": "power-thermal"
     },
     {
@@ -3654,7 +3660,7 @@
       "destination": "references/generated/strategies/power.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/power.strategy.md",
-      "source_sha256": "557a33b448ea86f2798374e1de9eee07d2234b97c18bc1e23461eeab04df4ec6",
+      "source_sha256": "688812402e6539a836ce1f00eba98ac1b72207ff8c0a1b5389afc18c52cbe1e3",
       "workflow": "power-thermal"
     },
     {
@@ -4278,7 +4284,7 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_sql_fragments": 39,
+    "exported_sql_fragments": 40,
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
@@ -4292,7 +4298,7 @@
       "pipeline_definition": 31
     },
     "skill_yaml_files": 257,
-    "sql_fragments": 46,
+    "sql_fragments": 47,
     "strategy_sources": 145,
     "vendor_overrides": 8
   },

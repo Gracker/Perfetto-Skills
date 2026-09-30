@@ -58,13 +58,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "be6e40b1fec56a94c4aae5a7d30d12498c2d7c02b3fe75dcccb3dcb9305eb4d3",
+      "sha256": "09ff7cfbc94066cada3d53b8a5f5beb35a12e02d8c549162e98f262471e3e47c",
       "signal_patterns": [],
       "skill_id": "cpu_throttling_in_range",
       "source": {
         "path": "backend/skills/atomic/cpu_throttling_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39"
+        "sha256": "641d91822d47cea4b6c50e9bd80f1dade183e8816cd0edf9fcd83de5f5110c9d"
       },
       "sql_dependencies": {
         "creates": [],
@@ -85,12 +85,12 @@
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
-            "source_sha256": "f450e0e8409525a535050150f123a25f4f2dc2577ef7941ce180f1360c0a9244"
+            "source_sha256": "9e4a4b58bc5e0fc0deeca08c0192b1e41b3397498189e33ef8e924a0ae2073ff"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_episodes.sql",
-            "source_sha256": "1982e5efbe0a9f772b45bbc48a9a30fa7d79d56eb1270a14af757d8132f4e5a3"
+            "source_sha256": "ea808da6c7536e55002c314111fc2cc4a37b90c0dc597d1364dee21c60f127f3"
           }
         ],
         "name_parameters": [],
@@ -170,7 +170,7 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "0be099b61c44bee7ba4d68fc5e21f6acb74f0c2b84b0d8f45d1a3056d4f0180a",
+      "sha256": "bf1d643274d4cd5c0d7bb7344543e4907b112fb1ed453dba58b477f2c3482b7c",
       "signal_patterns": [
         "cpufreq"
       ],
@@ -178,7 +178,7 @@
       "source": {
         "path": "backend/skills/atomic/cpu_throttling_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "66ed6bab7c1a8f9703f90d803207fe45d9ff00e880e15bea97c75600f0568c39"
+        "sha256": "641d91822d47cea4b6c50e9bd80f1dade183e8816cd0edf9fcd83de5f5110c9d"
       },
       "sql_dependencies": {
         "creates": [],

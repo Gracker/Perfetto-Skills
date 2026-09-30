@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml
-Source SHA-256: 9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b
+Source SHA-256: 352702371456ef9840b8601360663914d0190087759e74f94650be5ffdea8483
 # CPU 限频时间线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -95,6 +95,8 @@ type: atomic
 process_scope:
   role: global_context
 display: false
+sql_fragments:
+- fragments/system_cpu_freq_limit_spans.sql
 save_as: limit_data_check
 ```
 ### 限频概览
@@ -106,7 +108,7 @@ save_as: limit_data_check
 ```yaml
 id: limit_summary
 type: atomic
-condition: limit_data_check.data?.[0]?.has_max_limit_track === 1 || limit_data_check.data?.[0]?.has_min_limit_track === 1
+condition: limit_data_check.data?.[0]?.has_max_limit_data === 1
 optional: true
 process_scope:
   role: global_context
@@ -198,6 +200,16 @@ display:
   - name: limit_evidence
     label: 限频证据
     type: string
+  - name: invalid_sample_count
+    label: 无效样本数
+    type: number
+  - name: invalid_limit_ns
+    label: 无效样本时长
+    type: duration
+    unit: ns
+  - name: data_quality_note
+    label: 数据质量
+    type: string
   - name: limit_source
     label: 数据来源
     type: string
@@ -215,7 +227,7 @@ save_as: limit_summary
 ```yaml
 id: limit_episodes
 type: atomic
-condition: limit_data_check.data?.[0]?.has_max_limit_track === 1
+condition: limit_data_check.data?.[0]?.has_max_limit_data === 1
 optional: true
 process_scope:
   role: global_context
@@ -230,6 +242,9 @@ display:
   columns:
   - name: episode_id
     label: 区段
+    type: string
+  - name: trace_episode_id
+    label: 全 trace 区段
     type: string
   - name: policy_cpu
     label: policy 首核
@@ -254,6 +269,14 @@ display:
     label: 持续
     type: duration
     unit: ns
+  - name: onset_ts
+    label: 限频起点
+    type: timestamp
+    unit: ns
+    clickAction: navigate_timeline
+  - name: onset_observed
+    label: 起点可观测
+    type: boolean
   - name: min_limit_khz
     label: 最低上限
     type: number
@@ -267,7 +290,7 @@ display:
     label: 合并变更数
     type: number
   - name: starts_at_data_start
-    label: 起点未知
+    label: 区段含轨道首样本
     type: boolean
   - name: ends_at_data_end
     label: 终点未知
@@ -296,13 +319,14 @@ save_as: limit_episodes
 ```yaml
 id: limit_events
 type: atomic
-condition: limit_data_check.data?.[0]?.has_max_limit_track === 1 || limit_data_check.data?.[0]?.has_min_limit_track === 1
+condition: limit_data_check.data?.[0]?.has_any_limit_sample === 1
 optional: true
 process_scope:
   role: global_context
 sql_fragments:
 - fragments/system_sched_spans.sql
 - fragments/system_cpu_freq_limit_spans.sql
+- fragments/system_cpu_freq_limit_episodes.sql
 display:
   level: detail
   layer: list
@@ -334,6 +358,18 @@ display:
   - name: direction
     label: 方向
     type: string
+  - name: direction_basis
+    label: 方向依据
+    type: string
+  - name: limit_value_valid
+    label: 有效样本
+    type: boolean
+  - name: event_role
+    label: 事件角色
+    type: string
+  - name: trace_episode_id
+    label: 所属全 trace 区段
+    type: string
   - name: dur_ns
     label: 保持时长
     type: duration
@@ -359,9 +395,11 @@ save_as: limit_events
 ```yaml
 id: limit_unavailable
 type: atomic
-condition: limit_data_check.data?.[0]?.has_max_limit_track !== 1 && limit_data_check.data?.[0]?.has_min_limit_track !== 1
+condition: limit_data_check.data?.[0]?.has_max_limit_data !== 1
 process_scope:
   role: global_context
+sql_fragments:
+- fragments/system_cpu_freq_limit_spans.sql
 display:
   level: summary
   layer: overview
@@ -369,6 +407,12 @@ display:
   columns:
   - name: limit_evidence
     label: 限频证据
+    type: string
+  - name: limit_classification
+    label: 分类
+    type: string
+  - name: limit_evidence_missing_reason
+    label: 缺失原因
     type: string
   - name: required_ftrace_event
     label: 需要采集的 ftrace 事件

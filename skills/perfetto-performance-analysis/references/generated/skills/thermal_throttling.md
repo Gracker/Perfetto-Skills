@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling.skill.yaml
-Source SHA-256: 5fad39740c373b463c8080622927249e67de2e731ea1cf79253d443663541c7e
+Source SHA-256: 41d4a62770191724931a4ad34d2575966bc0c65d2bb1d9259adec77825b6b34b
 # 热节流分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -135,6 +135,8 @@ modules: []
 id: data_check
 type: atomic
 display: false
+sql_fragments:
+- fragments/system_cpu_freq_limit_spans.sql
 save_as: data_check
 ```
 ### 热分析窗口
@@ -212,21 +214,21 @@ optional: true
 id: direct_limit_evidence
 type: atomic
 optional: true
-condition: data_check.data?.[0]?.has_limit_data === 1
+condition: data_check.data?.[0]?.has_max_limit_data === 1
 process_scope:
   role: global_context
 sql_fragments:
-- fragments/observed_data_bounds.sql
 - fragments/system_sched_spans.sql
 - fragments/system_cpu_freq_limit_spans.sql
 - fragments/system_cpu_freq_limit_episodes.sql
 - fragments/thermal_cooling_spans.sql
+- fragments/thermal_cdev_policy_association.sql
 - fragments/thermal_signal_signatures.sql
 - fragments/system_cpu_freq_limit_episode_verdicts.sql
 display:
   level: summary
   layer: overview
-  title: 直接限频证据（限频区段 x 散热设备）
+  title: 直接限频证据（限频区段 x 关联散热设备）
   columns:
   - name: episode_count
     label: 限频区段数
@@ -242,16 +244,28 @@ display:
     type: duration
     unit: ns
   - name: cooling_confirmed_episodes
-    label: 与散热设备同期的区段
+    label: 由关联散热设备施加的区段
     type: number
   - name: onset_unknown_episodes
     label: 起点不可观测的区段
     type: number
   - name: has_cdev_data
-    label: 有内核散热设备数据
+    label: 采集到散热设备档位变化
     type: boolean
+  - name: freq_limit_classification
+    label: 限频触发分类
+    type: string
+  - name: is_confirmed
+    label: 已核验由内核热控施加
+    type: boolean
+  - name: onset_trigger_mix
+    label: 逐次限频写入分类
+    type: string
   - name: thermal_throttling_evidence
     label: 热节流证据
+    type: string
+  - name: class_note
+    label: 分类说明
     type: string
   - name: next_step
     label: 下一步
@@ -725,14 +739,15 @@ inputs:
 rules:
 - condition: root_cause.data[0]?.classification === 'THERMAL_LIMIT_CONFIRMED'
   severity: warning
-  diagnosis: 已核验热限频：${direct_limit_evidence.data[0].cooling_confirmed_episodes} 段限频区段与内核散热设备的非零档位同时存在（最大深度 ${direct_limit_evidence.data[0].deepest_depth_pct}%）
+  diagnosis: 已核验热限频：${direct_limit_evidence.data[0].cooling_confirmed_episodes} 段限频区段中有限频写入紧跟在与该 policy 时序关联的内核散热设备升档之后（最大深度
+    ${direct_limit_evidence.data[0].deepest_depth_pct}%；逐次写入分类 ${direct_limit_evidence.data[0].onset_trigger_mix}）
   confidence: high
   suggestions:
   - 用 cpu_frequency_limit_attribution 查看谁触发了限频、限频前的负载归因与异常线程
-  - 核对该散热设备治理的 cpufreq policy 与触发它的热区阈值；cdev_update 事件本身不声明作用对象
+  - 散热设备与 policy 的对应关系来自档位变更与上限变更的时序配对，不来自设备名；核对触发它的热区阈值
 - condition: root_cause.data[0]?.thermal_throttling_evidence === 'limit_observed_cause_unverified'
   severity: info
-  diagnosis: 观测到 ${direct_limit_evidence.data[0].episode_count} 段限频区段，但没有同期的内核散热设备活动；限频原因未核验
+  diagnosis: 观测到 ${direct_limit_evidence.data[0].episode_count} 段限频区段，但没有一次限频写入由关联散热设备施加（分类 ${direct_limit_evidence.data[0].freq_limit_classification}）；限频原因未核验
   confidence: medium
   suggestions:
   - 用 cpu_frequency_limit_attribution 判断是用户态温控守护进程、非热策略限频，还是采集缺少 thermal/cdev_update

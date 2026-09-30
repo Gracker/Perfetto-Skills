@@ -114,7 +114,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/thermal_throttling.skill.yaml",
-    "sha256": "5fad39740c373b463c8080622927249e67de2e731ea1cf79253d443663541c7e"
+    "sha256": "41d4a62770191724931a4ad34d2575966bc0c65d2bb1d9259adec77825b6b34b"
   },
   "steps": [
     {
@@ -154,7 +154,7 @@
       "type": "skill"
     },
     {
-      "condition": "data_check.data?.[0]?.has_limit_data === 1",
+      "condition": "data_check.data?.[0]?.has_max_limit_data === 1",
       "id": "direct_limit_evidence",
       "name": "直接限频证据",
       "on_empty": "窗口内没有超过阈值的限频区段。",
@@ -163,9 +163,7 @@
         "role": "global_context"
       },
       "query_id": "thermal_throttling/direct_limit_evidence",
-      "result_dependencies": [
-        "data_check"
-      ],
+      "result_dependencies": [],
       "save_as": "direct_limit_evidence",
       "type": "atomic"
     },
@@ -271,17 +269,17 @@
         {
           "condition": "root_cause.data[0]?.classification === 'THERMAL_LIMIT_CONFIRMED'",
           "confidence": "high",
-          "diagnosis": "已核验热限频：${direct_limit_evidence.data[0].cooling_confirmed_episodes} 段限频区段与内核散热设备的非零档位同时存在（最大深度 ${direct_limit_evidence.data[0].deepest_depth_pct}%）",
+          "diagnosis": "已核验热限频：${direct_limit_evidence.data[0].cooling_confirmed_episodes} 段限频区段中有限频写入紧跟在与该 policy 时序关联的内核散热设备升档之后（最大深度 ${direct_limit_evidence.data[0].deepest_depth_pct}%；逐次写入分类 ${direct_limit_evidence.data[0].onset_trigger_mix}）",
           "severity": "warning",
           "suggestions": [
             "用 cpu_frequency_limit_attribution 查看谁触发了限频、限频前的负载归因与异常线程",
-            "核对该散热设备治理的 cpufreq policy 与触发它的热区阈值；cdev_update 事件本身不声明作用对象"
+            "散热设备与 policy 的对应关系来自档位变更与上限变更的时序配对，不来自设备名；核对触发它的热区阈值"
           ]
         },
         {
           "condition": "root_cause.data[0]?.thermal_throttling_evidence === 'limit_observed_cause_unverified'",
           "confidence": "medium",
-          "diagnosis": "观测到 ${direct_limit_evidence.data[0].episode_count} 段限频区段，但没有同期的内核散热设备活动；限频原因未核验",
+          "diagnosis": "观测到 ${direct_limit_evidence.data[0].episode_count} 段限频区段，但没有一次限频写入由关联散热设备施加（分类 ${direct_limit_evidence.data[0].freq_limit_classification}）；限频原因未核验",
           "severity": "info",
           "suggestions": [
             "用 cpu_frequency_limit_attribution 判断是用户态温控守护进程、非热策略限频，还是采集缺少 thermal/cdev_update"

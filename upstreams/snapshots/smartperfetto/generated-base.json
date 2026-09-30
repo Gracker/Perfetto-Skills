@@ -1,7 +1,7 @@
 {
   "files": {
     "catalog.json": {
-      "sha256": "ff4eda0f8868041ee85263fdd4d87abcb884b6bf06b791b931b16280e042cc71",
+      "sha256": "d430f957866c744e2223cbc5dd1665729245aba9fc5b7eeb10bcca06571aae3d",
       "size": 13174
     },
     "knowledge/knowledge-binder-ipc.template.md": {
@@ -61,8 +61,8 @@
       "size": 45700
     },
     "knowledge/knowledge-thermal-throttling.template.md": {
-      "sha256": "4b4de95d9a2efa0c9a7c3442a53aac9fea55fc636ba1ebcec797611f68ed0e58",
-      "size": 8790
+      "sha256": "4309dc6af0f1cb83c972ad63582b69bb4f00f2326cbd37250caaf1a57dd2a50b",
+      "size": 9517
     },
     "knowledge/knowledge-thread-state-blocked-reason.template.md": {
       "sha256": "eaca420501ac4c99b80c04ea30642c86fde4141d50889c04366900e505118839",
@@ -341,8 +341,8 @@
       "size": 15772
     },
     "runtime/android/cpu_frequency_limit_episode.json": {
-      "sha256": "4dd05c08f484a60ecc98c69d9cd22e7f30eb9953aa1ee50f1cc158ab973eb7b4",
-      "size": 13491
+      "sha256": "c67b66ba5850e194f4fe07e4f3505512ecc709f04432e5c4cdea8410654818b2",
+      "size": 15144
     },
     "runtime/android/cpu_idle_analysis.json": {
       "sha256": "c44300371c6cead58dff1f0e48fc2fd9c378ce7a63592b9c999f7d37e5b01aa0",
@@ -1245,16 +1245,16 @@
       "size": 3960
     },
     "runtime/fragments/system_cpu_freq_limit_episode_verdicts.sql": {
-      "sha256": "4fd23a8e46b9eaf543819cf04f6a992c18b516712f2f551f1cfc27c419cc8c44",
-      "size": 3648
+      "sha256": "5953d349d849c13b220d38a3e101f0001030bcaa844c2066cff7061e1dda6d59",
+      "size": 23315
     },
     "runtime/fragments/system_cpu_freq_limit_episodes.sql": {
-      "sha256": "8f04ecac81364e152a5880ff4faad75173035ab1f983ac6a4fe081cff1fce8c3",
-      "size": 3820
+      "sha256": "22fe16eba8f34aa4be55db1b7d3ed1b3c3802147d3817cc667575dc7dcdce83c",
+      "size": 10656
     },
     "runtime/fragments/system_cpu_freq_limit_spans.sql": {
-      "sha256": "69630af42cff6bda8268659c9ff768bc29f950c0ab69f3a0cdb18f0c039de0f8",
-      "size": 3757
+      "sha256": "3689906e3930685041f01a527cb96dbc2f01af2f2791cf8bd3cafe7246b124c5",
+      "size": 7358
     },
     "runtime/fragments/system_cpu_frequency_spans.sql": {
       "sha256": "b874887b2a598182d29b088ea7b350d89687142dc07e8fb1c9dbc771c54b48b1",
@@ -1272,9 +1272,13 @@
       "sha256": "27897663141fd7d0e5e3e3ae9bdd5165b31fcacf58e50ee1deb1f68ad7f0617e",
       "size": 1973
     },
+    "runtime/fragments/thermal_cdev_policy_association.sql": {
+      "sha256": "a7f0ae1eeb10af4c06192c284698f2c040677ccb834f82241cfb8959ab643ea2",
+      "size": 5820
+    },
     "runtime/fragments/thermal_cooling_spans.sql": {
-      "sha256": "97190cbd6512ed34b395109efb97d91245336e2ca01236ed91b72d115512fad3",
-      "size": 3359
+      "sha256": "69300310fc849f085be328db556111a8f5062ed79194b21bfe7884f56ea1d273",
+      "size": 3691
     },
     "runtime/fragments/thermal_sample_quality.sql": {
       "sha256": "6ff64e0064debba52261d28e441265e5227603078075781213a721d327ea889d",
@@ -1497,8 +1501,8 @@
       "size": 3211
     },
     "runtime/queries/cpu_freq_limit_timeline.json": {
-      "sha256": "4ac117fb6dc734a0aa0ae77ef3e81022a033353db86f19c184a0556bf1cf6c0c",
-      "size": 18267
+      "sha256": "df8bf4946af55496527dc1ea7a87055e16e4da83da0d09766aa0bd1ef9ca8626",
+      "size": 19038
     },
     "runtime/queries/cpu_freq_residency_summary.json": {
       "sha256": "b4ddf40d05a15fc171d9cc90ea482327b70e5129dc6a2d39f8245d6e8355ab25",
@@ -1509,12 +1513,12 @@
       "size": 6706
     },
     "runtime/queries/cpu_frequency_limit_attribution.json": {
-      "sha256": "1797dec63499b843a9fc739964fbb7482d86e88edecb9be51ff8965bd35ae360",
-      "size": 24262
+      "sha256": "57d5c470954cc2d8941d970b32fc82dd65a9639d7dfae6acd5c708dae020fc96",
+      "size": 25559
     },
     "runtime/queries/cpu_frequency_limit_episode.json": {
-      "sha256": "222d523b6c020dc00e36f210ce09c589198f379c0588782ab1a8601546c8b85e",
-      "size": 22588
+      "sha256": "4cca461359ac9aaee33c04533e969c854184fa671701e7a5574ec67f1937990e",
+      "size": 30114
     },
     "runtime/queries/cpu_idle_analysis.json": {
       "sha256": "f9099d6f5c8ad6b9882baa6e341bd2a9133f341ce57d116883c023a609fd96a0",
@@ -1553,7 +1557,7 @@
       "size": 3385
     },
     "runtime/queries/cpu_throttling_in_range.json": {
-      "sha256": "a9a0c483afcb31b6be4a96e32569a1c98f9b9503a69519d876ed24d8bfba728c",
+      "sha256": "2b6e5c1877c15ba00360083f324cc04a439fa8c3dbe07c81f58ce6680d1fed34",
       "size": 7384
     },
     "runtime/queries/cpu_time_per_frame.json": {
@@ -2205,7 +2209,7 @@
       "size": 7711
     },
     "runtime/queries/thermal_cooling_device_timeline.json": {
-      "sha256": "db3dd8e1e66f7fcac4fd442a748041eb4bca739949c10c34c4722d0b8e05c33a",
+      "sha256": "2485564b59107efd631cf17e1da994a212fb5b6016ae2acc063edea4e058a889",
       "size": 13924
     },
     "runtime/queries/thermal_module.json": {
@@ -2217,8 +2221,8 @@
       "size": 3464
     },
     "runtime/queries/thermal_throttling.json": {
-      "sha256": "e4e207f85658f3992e4d1f5ec706f74be030fc576114cb9841ac2a701314ca1a",
-      "size": 38351
+      "sha256": "5f538c154c681c0485d1990437c3a783e6eaa5f2c6f08124a9f216de6d01d38f",
+      "size": 38682
     },
     "runtime/queries/thermal_throttling_chain.json": {
       "sha256": "c2aab335e12a297d8094a0903023601e6e4b0fce7dfa49f84da4a501d6b80772",
@@ -2309,7 +2313,7 @@
       "size": 16582
     },
     "runtime/skill-index.json": {
-      "sha256": "5af98b84b611ab6d9d25b4c04f3865204dde07f6de4c42f31e9ac667bb27fea9",
+      "sha256": "111cc5345dd0c36c91ed6df65273c429b4ccba3d2bafa1f22a0f6ceeb03fca3a",
       "size": 18012
     },
     "runtime/skills/ams_module.json": {
@@ -2509,8 +2513,8 @@
       "size": 993
     },
     "runtime/skills/cpu_freq_limit_timeline.json": {
-      "sha256": "80522352871b73658b02313ff4af9276ae6029a05f7f01ac300d868857b9cba5",
-      "size": 4045
+      "sha256": "6172637e0b9f15a07ec9e50b5e188de22167edee8b3c082bffb7175107de6b17",
+      "size": 3872
     },
     "runtime/skills/cpu_freq_residency_summary.json": {
       "sha256": "4a6b791106a36a314be73d33701a93f4988b935cce867fe615ce2bb3edf54f21",
@@ -2521,12 +2525,12 @@
       "size": 1705
     },
     "runtime/skills/cpu_frequency_limit_attribution.json": {
-      "sha256": "226474391e080e9c156c03dd34e30c77f7e220b04d7dfc5ed9c20c888ee562c3",
-      "size": 14349
+      "sha256": "d8d67487f08608dc85b48d65a4c7d7496865367e69a09858f9409bd7b4ef1352",
+      "size": 19444
     },
     "runtime/skills/cpu_frequency_limit_episode.json": {
-      "sha256": "6bcbbbee4aab662f5b3db7e63296a7f9f76689acda92cd96ebea50c8d77b4de3",
-      "size": 7972
+      "sha256": "352e144f775717d9b0cd39b79cfae80912377b2035d033d2d616078fa0c98945",
+      "size": 10049
     },
     "runtime/skills/cpu_idle_analysis.json": {
       "sha256": "297206d9e45dee03c24712f1924267fab102709fccb49a9c564479b43a9cd30b",
@@ -2565,7 +2569,7 @@
       "size": 1438
     },
     "runtime/skills/cpu_throttling_in_range.json": {
-      "sha256": "db87104db42f09e1c5c26e0109b133f615deb0aa004333f1e6382c83a845f5e6",
+      "sha256": "3a792282f7a00aa74d0509a2dbdb626054f0645c1bf8c67b77615322760c15cc",
       "size": 2017
     },
     "runtime/skills/cpu_time_per_frame.json": {
@@ -3229,8 +3233,8 @@
       "size": 2051
     },
     "runtime/skills/thermal_throttling.json": {
-      "sha256": "26a14f2925611272875dbb771e2e1f7ce521034165dd191ec219b120efc6864f",
-      "size": 12016
+      "sha256": "0843632c4e44e30209984dcbfcd46fd18e2d5e3c1b7601ab20c1c182b9035bf1",
+      "size": 12204
     },
     "runtime/skills/thermal_throttling_chain.json": {
       "sha256": "bd2b9fa1cb2a16116f972309f4b1c1a8397cca7f5668f76887203465430d0f07",
@@ -3321,11 +3325,11 @@
       "size": 5364
     },
     "runtime/sql-index.json": {
-      "sha256": "1f2d4786825659106c2917193ffdf83dab6d116248a77254d64aa271490b3096",
+      "sha256": "35ec884a819f293916251615e9f7b9ba4a07050608734724ce6d3c2aa8acb68d",
       "size": 11276
     },
     "runtime/sql-validation-report.json": {
-      "sha256": "d0e85f3d6f02055e965f45733d4b570358bc659aa6c6ca7bc2d79e64c59a43d8",
+      "sha256": "9390b8a3ec1f9390bf1038f25eab81831c1e9e72a2aee30c5b59940575f89fb4",
       "size": 1281
     },
     "runtime/stdlib-symbols.json": {
@@ -3333,7 +3337,7 @@
       "size": 33491
     },
     "runtime/strategy-index.json": {
-      "sha256": "75f59a8a35a5dfa3108af306287568218ca35a8e6f009693cb56d1418b1d20b2",
+      "sha256": "172b6c04ae4fe98e315f6f197b98a48037768a0d4aaf5f64c681cb4cdb65cada",
       "size": 54920
     },
     "runtime/vendor-overrides/honor-startup.json": {
@@ -3565,8 +3569,8 @@
       "size": 1410
     },
     "skills/cpu_freq_limit_timeline.md": {
-      "sha256": "a003df9e745f253384c1422ab26715f22be9e323e58833a3fb94d1b4bbf2f554",
-      "size": 8940
+      "sha256": "c37762dda8981bbb8a3562c04f3c2a7b24b5440ce3392bc21df121e61c8f4632",
+      "size": 9854
     },
     "skills/cpu_freq_residency_summary.md": {
       "sha256": "2a5db0f0acd8d127ca88addc762385e6815abcf606ae5f1ad6a0fe2a7aac23a4",
@@ -3577,12 +3581,12 @@
       "size": 2498
     },
     "skills/cpu_frequency_limit_attribution.md": {
-      "sha256": "7c146fc8d5ea1430050471adc1c3432a94726b3d50b3a0df1b8afaf0b77d2d4d",
-      "size": 20347
+      "sha256": "33ab1cc62ccd88a1d4ce2e5662441d962755e6b223fdeaeefdb8b881f991a795",
+      "size": 26514
     },
     "skills/cpu_frequency_limit_episode.md": {
-      "sha256": "e5e8aa0a931885cf927f55d6e1b089584e5f5da895ca7e4059795bbb5b0e46d5",
-      "size": 14439
+      "sha256": "5f815e85b9c76105f35f060a6101ce1e71e011639bd95980983df36b35317117",
+      "size": 18128
     },
     "skills/cpu_idle_analysis.md": {
       "sha256": "a78647d0cef43079358fd9cddc2cc9da580e6ec2a06f56d0e1dcabd4d6d29b05",
@@ -3621,8 +3625,8 @@
       "size": 1782
     },
     "skills/cpu_throttling_in_range.md": {
-      "sha256": "fd670a654843bfbd362f4ab3d7e1e03b6016b369d9851042380c1c6c45c8e37e",
-      "size": 3697
+      "sha256": "e6485c2ac40d05b1949461e81cc467447969f9d65898913eb182bb8b8f9e4017",
+      "size": 3858
     },
     "skills/cpu_time_per_frame.md": {
       "sha256": "961d0418a1493e9a92000138f50ce9aaee84c299625eee2ca2a4265bb7a66a5b",
@@ -4285,8 +4289,8 @@
       "size": 2926
     },
     "skills/thermal_throttling.md": {
-      "sha256": "dc0fa648e9f3c643a3063f7a1ce24180f69bdd59cd78639f0eeb83174de5af08",
-      "size": 20624
+      "sha256": "e3fafbf8a6df70777532b040bb76786abfad60569496c738b9f97bb02eb83be8",
+      "size": 21241
     },
     "skills/thermal_throttling_chain.md": {
       "sha256": "05c8b3403d371e646743adec0feb6694e44c065a5829e2b9fe535edcb6a6e4c3",
@@ -5121,24 +5125,24 @@
       "size": 262
     },
     "sql/cpu_freq_limit_timeline/limit_data_check.sql": {
-      "sha256": "8ebfed67f70f600e010f0df69530ebb7aeba9397edaf15729db27aa29dde4f9c",
-      "size": 614
+      "sha256": "e57fa61e3686a2586f92f386873e0df15e1ceebd5db3f5a25e898dff5fb432e2",
+      "size": 7832
     },
     "sql/cpu_freq_limit_timeline/limit_episodes.sql": {
-      "sha256": "aa31e8d3d5d2b4e7b54c427c602001fa5a4650f37a42aba75bc132c61ab72676",
-      "size": 11292
+      "sha256": "c7baab4ea3db25f921005e41be4ad453f0f0ff93cacad64e1e9e2af9d1b7d308",
+      "size": 21781
     },
     "sql/cpu_freq_limit_timeline/limit_events.sql": {
-      "sha256": "c29c7169244a64ed2660f4e548eec304e4deee06a5e248188cf7014c3d7eb271",
-      "size": 7948
+      "sha256": "b006344fb6440a256efd126f80e88554cc75743094fd742f5eafb5cec7a911eb",
+      "size": 21960
     },
     "sql/cpu_freq_limit_timeline/limit_summary.sql": {
-      "sha256": "774e2d82ed0d343a366ef06dc2baa6a34c8291a78cb9fd9131c0c0cf0296e2b2",
-      "size": 8528
+      "sha256": "e58472cc415efc013cf36060184961fc797ac385b81fd741a4345d2279f70ff1",
+      "size": 13293
     },
     "sql/cpu_freq_limit_timeline/limit_unavailable.sql": {
-      "sha256": "1f7906c8d31ff84f3e7d1271e28d3b859834fd8c46b69713a3289122b293db9d",
-      "size": 601
+      "sha256": "396e15affb5fb0c95e3233cac56ba364f462cdd186d3fbadd764cb46c7f642f2",
+      "size": 7644
     },
     "sql/cpu_freq_residency_summary/freq_residency.sql": {
       "sha256": "4a722ca6acbd56495e620bea43f66eabff1627d6a1174e2c9cd6558605da076d",
@@ -5153,52 +5157,56 @@
       "size": 1024
     },
     "sql/cpu_frequency_limit_attribution/analysis_window.sql": {
-      "sha256": "2c0da011550ae60a9f2e11629997dc38474d28f8ed0c3cb3163c8c38f30f4e5c",
+      "sha256": "251266a751ea84757ce6f3b17c59985955dfcceb0053586d4dadc30df24aa3b6",
       "size": 1092
     },
     "sql/cpu_frequency_limit_attribution/attribution_summary.sql": {
-      "sha256": "e673a810955dfb507acd3db5cc0729a752cbcd20fb05c5fc348bfb3709d28339",
-      "size": 30328
+      "sha256": "fb4933e9efd29122345672060e6f0b6a6bb32465d5b45c8acc5cfde2f7d70c1e",
+      "size": 63928
     },
     "sql/cpu_frequency_limit_attribution/data_check.sql": {
-      "sha256": "b24d64905fea2f3777985b66071877b98f31738b64576b21896bea4a8ee275d0",
-      "size": 837
+      "sha256": "472436093190cfd3fe97cbdc8a2dc6886eadc620bb21328e6d3a930fff27f05c",
+      "size": 17125
     },
     "sql/cpu_frequency_limit_attribution/episodes.sql": {
-      "sha256": "1b7457e68f32bb153f65413fb017e14019cc8998702585b6d44560cb91f2bc74",
-      "size": 12761
+      "sha256": "c06a3b9a154afeceb94f76ef63c1b51cb3c7bb84b0338d759ed3d2ed90eab5a6",
+      "size": 24101
     },
     "sql/cpu_frequency_limit_attribution/no_limit_capture_advice.sql": {
-      "sha256": "3d2b3cd1de051f396ed441373f5e809117dd69fef38dbc4a49959a356347dbfd",
-      "size": 838
+      "sha256": "04c561dc796acc169e5193838176ba1e3432a5e9826ad1c71c42f509a2c9fb5a",
+      "size": 7785
     },
     "sql/cpu_frequency_limit_attribution/vendor_signal_discovery.sql": {
-      "sha256": "6003097f63864fde7f292424c963e9c4607c4e150d3ae21f4af7dbeb7992549b",
+      "sha256": "e752f67dbd98a8a7d910bc0b8e36a659214123a12bbc603a0fe020d241f5e600",
       "size": 12499
     },
     "sql/cpu_frequency_limit_episode/episode_windows.sql": {
-      "sha256": "0b4a64cb628c203314840a8efc62705026ec1630caaa3eb4061759e21528ba97",
-      "size": 2180
+      "sha256": "f8799534a9c887f44428f95a1349cc97f6f8c8fcc134beb4ebb89e4678cc5d2c",
+      "size": 2127
+    },
+    "sql/cpu_frequency_limit_episode/limit_onsets.sql": {
+      "sha256": "4e3d290ced8fbb4c9957f7cae7f8ed52b72f940ded8f7d4223f24f66e0c53ff4",
+      "size": 60758
     },
     "sql/cpu_frequency_limit_episode/non_cpu_heat_context.sql": {
-      "sha256": "13085b8d3b9b0e050598d5fefcedf61a891e12901750faed003fd538d1130827",
+      "sha256": "959e1a63fc2e0b403558b02b4694294a7f113030d587ca7834dc41ad8cb6f165",
       "size": 9593
     },
     "sql/cpu_frequency_limit_episode/temperature_context.sql": {
-      "sha256": "8df353b48469d16640912a42fe905412451792c215efdcd87eee14057127c298",
+      "sha256": "078863da9850c1447ca89da316d5560b493da08ab96ec6386a5531d5173baa77",
       "size": 5505
     },
     "sql/cpu_frequency_limit_episode/who_cooling.sql": {
-      "sha256": "9a9c6b8e407c93c74b2b0f35630c127e4fe048c39ea392ededcf70ecd7c4ae4d",
-      "size": 3968
+      "sha256": "b4b8100ef5d74ff776933775f97343cf01776df3797a41cad0fa82c080a1e545",
+      "size": 27799
     },
     "sql/cpu_frequency_limit_episode/who_daemon.sql": {
-      "sha256": "b702794fa4e1f8abd4e6d0de933c524c0d9a309792059f9b72c630b8fe51e494",
+      "sha256": "6173614c5f19b7b1cb3e69b303abb4470a393c9a81445498e1e42d96caf1b6a8",
       "size": 9682
     },
     "sql/cpu_frequency_limit_episode/who_verdict.sql": {
-      "sha256": "c3e12ed73b0a9144b7adc1293564b19b75ca6df83991b40494007ead8c313c40",
-      "size": 16116
+      "sha256": "8fc43000cc9678c4e07f3c94df90da7579ff7c5731d341392ed01597cb783b21",
+      "size": 61801
     },
     "sql/cpu_idle_analysis/query.sql": {
       "sha256": "adf8cd130c5b501a3ed45f95b147edd3089a837171ae3c82b647b6a72f3c25c2",
@@ -5285,11 +5293,11 @@
       "size": 883
     },
     "sql/cpu_throttling_in_range/limit_evidence.sql": {
-      "sha256": "be6e40b1fec56a94c4aae5a7d30d12498c2d7c02b3fe75dcccb3dcb9305eb4d3",
-      "size": 11215
+      "sha256": "09ff7cfbc94066cada3d53b8a5f5beb35a12e02d8c549162e98f262471e3e47c",
+      "size": 21963
     },
     "sql/cpu_throttling_in_range/throttle_detection.sql": {
-      "sha256": "0be099b61c44bee7ba4d68fc5e21f6acb74f0c2b84b0d8f45d1a3056d4f0180a",
+      "sha256": "bf1d643274d4cd5c0d7bb7344543e4907b112fb1ed453dba58b477f2c3482b7c",
       "size": 2773
     },
     "sql/cpu_time_per_frame/cpu_time.sql": {
@@ -7085,12 +7093,12 @@
       "size": 429
     },
     "sql/thermal_cooling_device_timeline/cooling_summary.sql": {
-      "sha256": "06f66ea2bdbc93620ffb5885d31b230b531fc0c4de9dd05e93b8c041b5d5673d",
-      "size": 5041
+      "sha256": "2c28b73bdc0ecec5c7daa543066872c23ffee2967059b65e42c7caf9b98758fc",
+      "size": 5373
     },
     "sql/thermal_cooling_device_timeline/cooling_transitions.sql": {
-      "sha256": "4c04760e9de6e59b70aa4ee6dc47f2cb38b6ab7846995a50e7147ed0fb9b291f",
-      "size": 4249
+      "sha256": "3f232edc96c86d28055aa6c849e6794ffcf7eba754c312159c6d557eb5951f2b",
+      "size": 4581
     },
     "sql/thermal_cooling_device_timeline/cooling_unavailable.sql": {
       "sha256": "2dbc5f03498b1626224096e5ee5244e749338dbdd04c27cf96b4668ea058f92e",
@@ -7125,47 +7133,47 @@
       "size": 3594
     },
     "sql/thermal_throttling/cpu_freq_overview.sql": {
-      "sha256": "e892b0b9d083532961555f65cb8d0f989d53521e06f262440756bd3b3d37b34e",
+      "sha256": "ae7c1c8ed8821306d596c40ec99ba40383cb59c6f3a2ad6d5ddcc50e469098e2",
       "size": 1059
     },
     "sql/thermal_throttling/data_check.sql": {
-      "sha256": "ea9d73bbafc28d59e866b131da171aeb9569bd2aa2aadc2ac5617c367b3c3f6b",
-      "size": 1142
+      "sha256": "42a91fbe4972ff5266771e0a445caab3026dbc012c8f2686cfce1d575fb41fca",
+      "size": 8276
     },
     "sql/thermal_throttling/direct_limit_evidence.sql": {
-      "sha256": "443722f3a520b8a0dccd2d5dee7d65b78d75eb399e0850332cb658a640f97548",
-      "size": 25985
+      "sha256": "46e233a1af2f90399dcfc2b72fc585c1e701c161739b45e0b88ac761d07b030e",
+      "size": 61154
     },
     "sql/thermal_throttling/expert_analysis_window.sql": {
-      "sha256": "920a0c529c7fec813e11c5c34585953d191e5f1423e17be1649eb27f8ec0998a",
+      "sha256": "0e317a70c74e50496a17946afe1178e0799ebca4cf4c8347d9e7d6c424301f24",
       "size": 1459
     },
     "sql/thermal_throttling/frequency_drop_events.sql": {
-      "sha256": "943cf4499ffb1f84e7d0979930ecf91a91ccbba1ffd58d7bd9694c7319013152",
+      "sha256": "78c1c95e48ddebd7189b6fd91580ab3c67259292dca72d07c1bed646ff01baf7",
       "size": 1183
     },
     "sql/thermal_throttling/high_temp_periods.sql": {
-      "sha256": "6e62c4423df47a0bb8141ab37a0299945c9beb4161c937c9cd2c86b56fce8396",
+      "sha256": "6bcc3d6b7691bfe58c45ce7fe73602c2fef579d5b1947e043735fa6e687fce08",
       "size": 3888
     },
     "sql/thermal_throttling/no_data_fallback.sql": {
-      "sha256": "95b3592a8835283c4f555a0db4978afeccd3ce85885fcfe258298d4ade8bd2ac",
+      "sha256": "2a0c2a589347a9680b035c04e752008ae9bc709a511ed2d91ff06ca90f90544b",
       "size": 388
     },
     "sql/thermal_throttling/root_cause_classification.sql": {
-      "sha256": "fef92264f3256e17ea534e2a2d51eb88b67eccd8ebd407bee39b9828f978267b",
-      "size": 7323
+      "sha256": "1be74a85781bcf135f9f6a2f01f184da853ea4adb85dd8b6c87d7e64d2b84cc5",
+      "size": 7537
     },
     "sql/thermal_throttling/thermal_freq_correlation.sql": {
-      "sha256": "8b4954288c0f2cdf52dee0cafbc4de3267f23741b2df963a5863c7e0bc602e2d",
+      "sha256": "6205b3320474400d7ee28feecf3fc00c7a42d32fd3e44316102c0094f44ed25e",
       "size": 4837
     },
     "sql/thermal_throttling/thermal_overview.sql": {
-      "sha256": "02d6ea86e65f205ebcc3f23773f31e552c3cd43db3b5c02432a0ec788d4bf239",
+      "sha256": "793e366e9accd6935b4a74d7a2878af80ea17613e84975ad7f6be031d3de3e36",
       "size": 4114
     },
     "sql/thermal_throttling/thermal_timeline.sql": {
-      "sha256": "ac6d632627d93de5191ef19d8f4a34613fa3ec4bf228d5bceed432456d2dbf74",
+      "sha256": "7cb9d5e0fa8b24685bae8317af726ee97e119a3c0f6a92757fe86e5735fdfbfb",
       "size": 3874
     },
     "sql/third_party_module/long_main_thread_slices.sql": {
@@ -7393,8 +7401,8 @@
       "size": 18933
     },
     "strategies/power.strategy.md": {
-      "sha256": "f247be465b3cba63851636591c7dde755c79e54e9f9aba25c4016d881ad7879c",
-      "size": 31549
+      "sha256": "2ee7867c95b58d9d169247beeaa9b7e4a1efb56f0f9997433ca727c44f87e2b5",
+      "size": 32524
     },
     "strategies/prompt-scene-stage3-summary.template.md": {
       "sha256": "53cefd9ee37eb5721078185288ddebf9c6aa023bfcd06a66c079c33206f41c20",
@@ -7446,5 +7454,5 @@
     }
   },
   "schema_version": 1,
-  "source_commit": "65e20ce28ea12abe6178c7e2543fc4940f93f658"
+  "source_commit": "2026592333e7e3a4deaa5f3f00288b5b5edd7f46"
 }

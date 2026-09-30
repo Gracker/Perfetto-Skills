@@ -60,13 +60,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "8ebfed67f70f600e010f0df69530ebb7aeba9397edaf15729db27aa29dde4f9c",
+      "sha256": "e57fa61e3686a2586f92f386873e0df15e1ceebd5db3f5a25e898dff5fb432e2",
       "signal_patterns": [],
       "skill_id": "cpu_freq_limit_timeline",
       "source": {
         "path": "backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b"
+        "sha256": "352702371456ef9840b8601360663914d0190087759e74f94650be5ffdea8483"
       },
       "sql_dependencies": {
         "creates": [],
@@ -83,7 +83,13 @@
       },
       "step_id": "limit_data_check",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
+            "source_sha256": "3689906e3930685041f01a527cb96dbc2f01af2f2791cf8bd3cafe7246b124c5"
+          }
+        ],
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [],
@@ -158,13 +164,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "774e2d82ed0d343a366ef06dc2baa6a34c8291a78cb9fd9131c0c0cf0296e2b2",
+      "sha256": "e58472cc415efc013cf36060184961fc797ac385b81fd741a4345d2279f70ff1",
       "signal_patterns": [],
       "skill_id": "cpu_freq_limit_timeline",
       "source": {
         "path": "backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b"
+        "sha256": "352702371456ef9840b8601360663914d0190087759e74f94650be5ffdea8483"
       },
       "sql_dependencies": {
         "creates": [],
@@ -190,7 +196,7 @@
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
-            "source_sha256": "69630af42cff6bda8268659c9ff768bc29f950c0ab69f3a0cdb18f0c039de0f8"
+            "source_sha256": "3689906e3930685041f01a527cb96dbc2f01af2f2791cf8bd3cafe7246b124c5"
           }
         ],
         "name_parameters": [],
@@ -270,13 +276,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "aa31e8d3d5d2b4e7b54c427c602001fa5a4650f37a42aba75bc132c61ab72676",
+      "sha256": "c7baab4ea3db25f921005e41be4ad453f0f0ff93cacad64e1e9e2af9d1b7d308",
       "signal_patterns": [],
       "skill_id": "cpu_freq_limit_timeline",
       "source": {
         "path": "backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b"
+        "sha256": "352702371456ef9840b8601360663914d0190087759e74f94650be5ffdea8483"
       },
       "sql_dependencies": {
         "creates": [],
@@ -302,12 +308,12 @@
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
-            "source_sha256": "69630af42cff6bda8268659c9ff768bc29f950c0ab69f3a0cdb18f0c039de0f8"
+            "source_sha256": "3689906e3930685041f01a527cb96dbc2f01af2f2791cf8bd3cafe7246b124c5"
           },
           {
             "order": 2,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_episodes.sql",
-            "source_sha256": "8f04ecac81364e152a5880ff4faad75173035ab1f983ac6a4fe081cff1fce8c3"
+            "source_sha256": "22fe16eba8f34aa4be55db1b7d3ed1b3c3802147d3817cc667575dc7dcdce83c"
           }
         ],
         "name_parameters": [],
@@ -389,13 +395,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "c29c7169244a64ed2660f4e548eec304e4deee06a5e248188cf7014c3d7eb271",
+      "sha256": "b006344fb6440a256efd126f80e88554cc75743094fd742f5eafb5cec7a911eb",
       "signal_patterns": [],
       "skill_id": "cpu_freq_limit_timeline",
       "source": {
         "path": "backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b"
+        "sha256": "352702371456ef9840b8601360663914d0190087759e74f94650be5ffdea8483"
       },
       "sql_dependencies": {
         "creates": [],
@@ -421,12 +427,19 @@
           {
             "order": 1,
             "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
-            "source_sha256": "69630af42cff6bda8268659c9ff768bc29f950c0ab69f3a0cdb18f0c039de0f8"
+            "source_sha256": "3689906e3930685041f01a527cb96dbc2f01af2f2791cf8bd3cafe7246b124c5"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/system_cpu_freq_limit_episodes.sql",
+            "source_sha256": "22fe16eba8f34aa4be55db1b7d3ed1b3c3802147d3817cc667575dc7dcdce83c"
           }
         ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
+          "episode_drop_pct",
+          "merge_gap_ms",
           "start_ts"
         ],
         "result_dependencies": [],
@@ -501,13 +514,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "1f7906c8d31ff84f3e7d1271e28d3b859834fd8c46b69713a3289122b293db9d",
+      "sha256": "396e15affb5fb0c95e3233cac56ba364f462cdd186d3fbadd764cb46c7f642f2",
       "signal_patterns": [],
       "skill_id": "cpu_freq_limit_timeline",
       "source": {
         "path": "backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b"
+        "sha256": "352702371456ef9840b8601360663914d0190087759e74f94650be5ffdea8483"
       },
       "sql_dependencies": {
         "creates": [],
@@ -524,7 +537,13 @@
       },
       "step_id": "limit_unavailable",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/system_cpu_freq_limit_spans.sql",
+            "source_sha256": "3689906e3930685041f01a527cb96dbc2f01af2f2791cf8bd3cafe7246b124c5"
+          }
+        ],
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [],

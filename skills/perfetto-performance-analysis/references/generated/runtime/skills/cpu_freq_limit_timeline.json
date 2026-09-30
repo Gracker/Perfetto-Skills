@@ -64,7 +64,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/cpu_freq_limit_timeline.skill.yaml",
-    "sha256": "9ca20ae0bd75e18a790d8f725bc86549da9ef82647525a0180194ab11908877b"
+    "sha256": "352702371456ef9840b8601360663914d0190087759e74f94650be5ffdea8483"
   },
   "steps": [
     {
@@ -79,7 +79,7 @@
       "type": "atomic"
     },
     {
-      "condition": "limit_data_check.data?.[0]?.has_max_limit_track === 1 || limit_data_check.data?.[0]?.has_min_limit_track === 1",
+      "condition": "limit_data_check.data?.[0]?.has_max_limit_data === 1",
       "id": "limit_summary",
       "name": "限频概览",
       "optional": true,
@@ -92,7 +92,7 @@
       "type": "atomic"
     },
     {
-      "condition": "limit_data_check.data?.[0]?.has_max_limit_track === 1",
+      "condition": "limit_data_check.data?.[0]?.has_max_limit_data === 1",
       "id": "limit_episodes",
       "name": "限频区段",
       "on_empty": "窗口内没有超过阈值的限频区段；可调低 episode_drop_pct 复查更浅的限频。",
@@ -106,7 +106,7 @@
       "type": "atomic"
     },
     {
-      "condition": "limit_data_check.data?.[0]?.has_max_limit_track === 1 || limit_data_check.data?.[0]?.has_min_limit_track === 1",
+      "condition": "limit_data_check.data?.[0]?.has_any_limit_sample === 1",
       "id": "limit_events",
       "name": "限频变更事件",
       "on_empty": "窗口内没有限频变更事件。",
@@ -120,7 +120,7 @@
       "type": "atomic"
     },
     {
-      "condition": "limit_data_check.data?.[0]?.has_max_limit_track !== 1 && limit_data_check.data?.[0]?.has_min_limit_track !== 1",
+      "condition": "limit_data_check.data?.[0]?.has_max_limit_data !== 1",
       "id": "limit_unavailable",
       "name": "限频数据不可用",
       "process_scope": {

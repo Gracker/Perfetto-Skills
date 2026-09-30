@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml
--- Source SHA-256: 9b27b3315b361c5cd21809d36d2415240a89ae8baf023b849ee3a4a8ba068888
+-- Source SHA-256: f5beaea78119cdb6f540a97c523e8d6f627f979431d0ad46b2e438ba486fe56c
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

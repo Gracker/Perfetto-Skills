@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_frequency_limit_episode.skill.yaml
--- Source SHA-256: b02b4e752ee6809352b02fbf8267c6cd3900768a842fe46ba886cfc61a79bbbd
+-- Source SHA-256: 3ce0ca099f41594d791d6342c7ec947589a9245eacb379deabcee87ac49ee859
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -32,7 +32,6 @@ SELECT
   CASE WHEN ${episode_start_ts} - CAST(${who_window_ms|2000} * 1000000 AS INTEGER) < db.data_start_ts
     OR ${episode_start_ts} + CAST(${who_window_ms|2000} * 1000000 AS INTEGER) > db.data_end_ts
     THEN 1 ELSE 0 END AS who_window_clipped,
-  ${starts_at_data_start|0} AS starts_at_data_start,
   db.data_start_ts, db.data_end_ts,
   printf('lookback_ms=%s;who_window_ms=%s;clipped_to_observed_data_bounds',
     ${lookback_ms|10000}, ${who_window_ms|2000}) AS window_basis
