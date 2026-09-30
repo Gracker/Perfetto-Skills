@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/lock_contention_module.skill.yaml
-Source SHA-256: 693f6663e128d50376bf9b5d140720a74789e0354b6c784ed0a7b1d8ddd85bd5
+Source SHA-256: d15f42c14eb71e09519f090b9772b4fbb26420601c470115a36e8ce058c804e3
 # 锁竞争分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -69,98 +69,6 @@ subsystems:
 - futex
 - monitor
 - rwlock
-relatedModules:
-- kernel_scheduler
-- framework_art
-- app_third_party
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: lock_contention_overview
-  questionTemplate: What lock contention exists for package {package}?
-  requiredParams:
-  - package
-  description: Overview of lock contention issues
-- id: monitor_contention
-  questionTemplate: What Java monitor contention exists for package {package}?
-  requiredParams:
-  - package
-  description: Analyze synchronized block contention
-- id: mutex_wait_analysis
-  questionTemplate: What mutex waits happened for thread {tid}?
-  requiredParams:
-  - tid
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze specific thread's mutex waits
-- id: lock_holder_analysis
-  questionTemplate: Who is holding the lock that thread {tid} is waiting for?
-  requiredParams:
-  - tid
-  description: Find lock holder causing contention
-findingsSchema:
-- id: high_lock_contention
-  severity: critical
-  titleTemplate: 'High lock contention: {wait_ms}ms total wait'
-  descriptionTemplate: Thread spent {wait_ms}ms waiting for locks
-  evidenceFields:
-  - wait_ms
-  - lock_name
-  - waiting_thread
-  - holder_thread
-- id: monitor_contention_detected
-  severity: warning
-  titleTemplate: 'Monitor contention: {contention_count} waits on {monitor}'
-  descriptionTemplate: Java synchronized block causing contention
-  evidenceFields:
-  - monitor
-  - contention_count
-  - total_wait_ms
-  - avg_wait_ms
-- id: potential_deadlock
-  severity: critical
-  titleTemplate: Potential deadlock between {thread1} and {thread2}
-  descriptionTemplate: Circular lock dependency detected
-  evidenceFields:
-  - thread1
-  - thread2
-  - lock1
-  - lock2
-- id: priority_inversion
-  severity: warning
-  titleTemplate: 'Priority inversion: high priority thread waiting'
-  descriptionTemplate: High priority thread {high_thread} waiting for low priority {low_thread}
-  evidenceFields:
-  - high_thread
-  - low_thread
-  - wait_ms
-- id: long_lock_hold
-  severity: warning
-  titleTemplate: 'Long lock hold: {hold_ms}ms'
-  descriptionTemplate: Lock held for {hold_ms}ms, causing others to wait
-  evidenceFields:
-  - hold_ms
-  - holder_thread
-  - lock_name
-suggestionsSchema:
-- id: check_thread_state
-  condition: wait_ms > 50
-  targetModule: scheduler_module
-  questionTemplate: What is the lock holder thread doing?
-  paramsMapping:
-    tid: holder_tid
-  priority: 1
-- id: check_gc_holding_lock
-  condition: holder_thread contains 'GC'
-  targetModule: art_module
-  questionTemplate: Is GC holding locks during collection?
-  paramsMapping:
-    package: package
-  priority: 1
 ```
 
 ## Ordered execution

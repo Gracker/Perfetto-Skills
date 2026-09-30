@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/filesystem_module.skill.yaml
--- Source SHA-256: bccf60688175843149ed487af73b20b0262476eef680d9ae13a75bd1ee234846
+-- Source SHA-256: e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719
 
 SELECT
   CASE

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/app/systemui_module.skill.yaml
-Source SHA-256: 8fefc68721ff7d5c29a0efbcda086e11d9c62e892c17a37f39604b26b1729566
+Source SHA-256: 878a322c6ecb8d008c5c1eb3a818f63e55dfb38cdd5a00236fef47da90c6bd0a
 # SystemUI 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -49,89 +49,6 @@ subsystems:
 - navigation_bar
 - lock_screen
 - volume_dialog
-relatedModules:
-- framework_wms
-- framework_input
-- framework_surfaceflinger
-- app_launcher
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: systemui_performance
-  questionTemplate: What is the SystemUI performance?
-  requiredParams: []
-  description: Analyze overall SystemUI performance
-- id: notification_shade_analysis
-  questionTemplate: Is notification shade expand/collapse smooth?
-  requiredParams: []
-  description: Analyze notification shade animation
-- id: quick_settings_analysis
-  questionTemplate: Are quick settings tiles responsive?
-  requiredParams: []
-  description: Analyze quick settings performance
-- id: statusbar_update_analysis
-  questionTemplate: Are status bar updates causing performance issues?
-  requiredParams: []
-  description: Analyze status bar update frequency
-findingsSchema:
-- id: systemui_startup_slow
-  severity: warning
-  titleTemplate: 'Slow SystemUI startup: {startup_ms}ms'
-  descriptionTemplate: SystemUI took {startup_ms}ms to fully initialize
-  evidenceFields:
-  - startup_ms
-  - blocking_component
-- id: shade_animation_jank
-  severity: warning
-  titleTemplate: 'Notification shade jank: {jank_frames} frames dropped'
-  descriptionTemplate: Shade expand/collapse animation is not smooth
-  evidenceFields:
-  - jank_frames
-  - total_frames
-  - avg_frame_ms
-- id: quick_settings_slow
-  severity: warning
-  titleTemplate: 'Slow quick settings: {tile_name} took {response_ms}ms'
-  descriptionTemplate: Quick settings tile response time exceeded threshold
-  evidenceFields:
-  - tile_name
-  - response_ms
-- id: statusbar_update_frequent
-  severity: info
-  titleTemplate: 'Frequent status bar updates: {update_count} times'
-  descriptionTemplate: Status bar updating frequently, may impact battery
-  evidenceFields:
-  - update_count
-  - update_source
-- id: navbar_gesture_slow
-  severity: warning
-  titleTemplate: 'Slow navigation gesture: {gesture_ms}ms'
-  descriptionTemplate: Navigation gesture response exceeded threshold
-  evidenceFields:
-  - gesture_ms
-  - gesture_type
-suggestionsSchema:
-- id: check_wms_for_shade
-  condition: shade_animation_jank == true
-  targetModule: wms_module
-  questionTemplate: What window animations were happening during shade animation?
-  paramsMapping: {}
-  priority: 1
-- id: check_surfaceflinger_for_jank
-  condition: shade_animation_jank == true
-  targetModule: surfaceflinger_module
-  questionTemplate: Was SurfaceFlinger causing the shade animation jank?
-  paramsMapping: {}
-  priority: 2
-- id: check_input_for_gesture
-  condition: navbar_gesture_slow == true
-  targetModule: input_module
-  questionTemplate: What was the input dispatch latency for the gesture?
-  paramsMapping: {}
-  priority: 1
 ```
 
 ## Ordered execution

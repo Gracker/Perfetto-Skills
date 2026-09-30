@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/gpu_module.skill.yaml
-Source SHA-256: 6dd740df9f3de46527f96908cf6ac30d71767e6f61d2bc2d6544f825cbbc3551
+Source SHA-256: 192990c452ad55ead1e017ec97c29c577f607f5717020867e352b598e36abbce
 # GPU 硬件分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -45,67 +45,6 @@ subsystems:
 - frequency
 - rendering
 - memory
-relatedModules:
-- framework_surfaceflinger
-- hardware_cpu
-- hardware_memory
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: gpu_rendering_analysis
-  questionTemplate: How is GPU rendering performing for package {package}?
-  requiredParams:
-  - package
-  description: Analyze GPU rendering performance
-- id: gpu_frequency_analysis
-  questionTemplate: What is the GPU frequency during the trace?
-  requiredParams: []
-  description: Analyze GPU frequency and utilization
-- id: gpu_memory_analysis
-  questionTemplate: What is the GPU memory usage?
-  requiredParams: []
-  optionalParams:
-  - package
-  description: Analyze GPU memory allocation
-findingsSchema:
-- id: gpu_bottleneck
-  severity: critical
-  titleTemplate: 'GPU bottleneck: render time {render_ms}ms exceeds frame budget'
-  descriptionTemplate: GPU rendering taking {render_ms}ms, causing frame drops
-  evidenceFields:
-  - render_ms
-  - frame_budget_ms
-  - gpu_util_pct
-- id: gpu_frequency_low
-  severity: warning
-  titleTemplate: 'GPU frequency low: {avg_freq_mhz}MHz'
-  descriptionTemplate: GPU running at reduced frequency, possible thermal throttling
-  evidenceFields:
-  - avg_freq_mhz
-  - max_freq_mhz
-- id: high_overdraw
-  severity: warning
-  titleTemplate: 'High overdraw detected: {overdraw_ratio}x'
-  descriptionTemplate: Screen pixels being drawn {overdraw_ratio} times on average
-  evidenceFields:
-  - overdraw_ratio
-suggestionsSchema:
-- id: check_thermal_for_gpu
-  condition: gpu_freq_low == true
-  targetModule: thermal_module
-  questionTemplate: Is thermal throttling affecting GPU?
-  paramsMapping: {}
-  priority: 1
-- id: check_surfaceflinger
-  condition: composition_slow == true
-  targetModule: surfaceflinger_module
-  questionTemplate: What is causing slow GPU composition?
-  paramsMapping:
-    package: package
-  priority: 1
 ```
 
 ## Ordered execution

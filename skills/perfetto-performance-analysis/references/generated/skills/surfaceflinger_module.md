@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/surfaceflinger_module.skill.yaml
-Source SHA-256: a56ccb9b89cffa35d9a98573a6b43fbcaf3fba59658a7a74b91d4676d6947e05
+Source SHA-256: e3f857a0ef0e7ea322a5a6f0f6e2f13149fe4684ded79833c5a1421a53b93124
 # SurfaceFlinger 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -65,81 +65,6 @@ subsystems:
 - vsync
 - composition
 - layer
-relatedModules:
-- hardware_gpu
-- framework_wms
-- app_third_party
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: frame_jank_analysis
-  questionTemplate: Why did frame {frame_id} jank for package {package}?
-  requiredParams:
-  - frame_id
-  - package
-  description: Analyze the root cause of a specific janky frame
-- id: scroll_performance
-  questionTemplate: What is the scroll performance for package {package}?
-  requiredParams:
-  - package
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze scrolling smoothness and frame drops
-- id: composition_time
-  questionTemplate: How long did GPU composition take for {layer}?
-  requiredParams:
-  - layer
-  description: Analyze GPU composition timing
-findingsSchema:
-- id: high_jank_rate
-  severity: critical
-  titleTemplate: 'High jank rate: {jank_rate}% ({jank_count}/{total_frames} frames)'
-  descriptionTemplate: Frame drop rate of {jank_rate}% exceeds acceptable threshold
-  evidenceFields:
-  - jank_rate
-  - jank_count
-  - total_frames
-  - avg_fps
-- id: main_thread_delay
-  severity: warning
-  titleTemplate: Main thread caused {main_thread_jank} frame drops
-  descriptionTemplate: Main thread work exceeded frame budget {main_thread_jank} times
-  evidenceFields:
-  - main_thread_jank
-  - avg_main_ms
-- id: render_thread_delay
-  severity: warning
-  titleTemplate: Render thread caused {render_thread_jank} frame drops
-  descriptionTemplate: GPU rendering exceeded budget {render_thread_jank} times
-  evidenceFields:
-  - render_thread_jank
-  - avg_render_ms
-suggestionsSchema:
-- id: check_main_thread
-  condition: main_thread_jank > render_thread_jank
-  targetModule: scheduler_module
-  questionTemplate: Why was main thread slow during frames?
-  paramsMapping:
-    tid: main_tid
-  priority: 1
-- id: check_gpu
-  condition: render_thread_jank > main_thread_jank
-  targetModule: hardware_gpu_module
-  questionTemplate: Why was GPU rendering slow?
-  paramsMapping:
-    package: package
-  priority: 1
-- id: check_binder_in_frame
-  condition: binder_during_frame > 0
-  targetModule: binder_module
-  questionTemplate: What Binder calls happened during frame rendering?
-  paramsMapping:
-    package: package
-  priority: 2
 ```
 
 ## Ordered execution

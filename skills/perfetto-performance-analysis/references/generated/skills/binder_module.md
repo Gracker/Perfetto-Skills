@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/binder_module.skill.yaml
-Source SHA-256: 39cf89a226f58bb4fcafd742d990b0c443ee3aae24681b02e3b3d065080fbf32
+Source SHA-256: e374d828a42b45b2f0c2de0b02ca10fd40049073b3e8b52aedb4724592469f73
 # Binder IPC 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -63,68 +63,6 @@ subsystems:
 - transaction
 - reply
 - async
-relatedModules:
-- framework_ams
-- framework_wms
-- kernel_scheduler
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: binder_blocking_calls
-  questionTemplate: What Binder calls blocked thread {tid}?
-  requiredParams:
-  - tid
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Find blocking Binder transactions for a thread
-- id: binder_latency
-  questionTemplate: What is the Binder latency between {caller} and {callee}?
-  requiredParams:
-  - caller
-  - callee
-  description: Analyze Binder transaction latency between processes
-- id: heavy_binder_users
-  questionTemplate: What are the heaviest Binder users for package {package}?
-  requiredParams:
-  - package
-  description: Find processes making many Binder calls
-findingsSchema:
-- id: long_binder_transaction
-  severity: critical
-  titleTemplate: 'Long Binder transaction: {interface} took {dur_ms}ms'
-  descriptionTemplate: Synchronous Binder call to {interface} blocked for {dur_ms}ms
-  evidenceFields:
-  - interface
-  - dur_ms
-  - caller_process
-  - server_process
-- id: excessive_binder_calls
-  severity: warning
-  titleTemplate: 'Excessive Binder calls: {call_count} calls to {interface}'
-  descriptionTemplate: Process made {call_count} Binder calls totaling {total_ms}ms
-  evidenceFields:
-  - interface
-  - call_count
-  - total_ms
-suggestionsSchema:
-- id: check_server_process
-  condition: server_process != package
-  targetModule: scheduler_module
-  questionTemplate: Why was server process {server_process} slow?
-  paramsMapping:
-    package: server_process
-  priority: 1
-- id: check_gc_during_binder
-  condition: dur_ms > 10
-  targetModule: art_module
-  questionTemplate: Was there GC during Binder call at {ts}?
-  paramsMapping:
-    ts: start_ts
-  priority: 2
 ```
 
 ## Ordered execution

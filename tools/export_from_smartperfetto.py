@@ -949,7 +949,6 @@ def render_skill_reference(
         ("Detection", "detection"),
         ("Teaching model", "teaching"),
         ("Analysis guidance", "analysis"),
-        ("Dialogue guidance", "dialogue"),
         ("Comparison contract", "comparison"),
     ):
         value = portable_inputs(raw) if key == "inputs" else raw.get(key)

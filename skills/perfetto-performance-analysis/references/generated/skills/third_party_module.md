@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/app/third_party_module.skill.yaml
-Source SHA-256: 2171f2d0270a73b925955d869ff6f79c58b686da28d2da8e6785423c1aa1aedb
+Source SHA-256: 187161c0bb28c5b2c3fc7793981fd519e399d3a17ee5a07d05ea9d64daf388b5
 # 应用分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -59,92 +59,6 @@ subsystems:
 - main_thread
 - render_thread
 - background_threads
-relatedModules:
-- framework_surfaceflinger
-- framework_ams
-- kernel_scheduler
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: app_jank_analysis
-  questionTemplate: What is causing jank in package {package}?
-  requiredParams:
-  - package
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze app-level jank causes
-- id: main_thread_analysis
-  questionTemplate: What is the main thread doing for package {package}?
-  requiredParams:
-  - package
-  description: Analyze main thread work breakdown
-- id: thread_overview
-  questionTemplate: What threads are active for package {package}?
-  requiredParams:
-  - package
-  description: Get overview of app thread activity
-- id: resource_usage
-  questionTemplate: What resources is package {package} using?
-  requiredParams:
-  - package
-  description: Analyze CPU/memory resource usage
-findingsSchema:
-- id: main_thread_busy
-  severity: critical
-  titleTemplate: 'Main thread overloaded: {busy_pct}% busy'
-  descriptionTemplate: Main thread spending {busy_pct}% time in running state
-  evidenceFields:
-  - busy_pct
-  - total_ms
-  - runnable_ms
-- id: long_main_thread_task
-  severity: warning
-  titleTemplate: 'Long main thread task: {task_name} ({dur_ms}ms)'
-  descriptionTemplate: Task {task_name} blocked main thread for {dur_ms}ms
-  evidenceFields:
-  - task_name
-  - dur_ms
-  - ts
-- id: excessive_background_work
-  severity: warning
-  titleTemplate: 'Excessive background threads: {thread_count} active'
-  descriptionTemplate: App running {thread_count} background threads consuming CPU
-  evidenceFields:
-  - thread_count
-  - total_cpu_ms
-- id: high_cpu_usage
-  severity: warning
-  titleTemplate: 'High CPU usage: {cpu_pct}% of trace duration'
-  descriptionTemplate: Package consuming {cpu_pct}% CPU resources
-  evidenceFields:
-  - cpu_pct
-  - total_cpu_ms
-suggestionsSchema:
-- id: check_scheduler
-  condition: runnable_pct > 10
-  targetModule: scheduler_module
-  questionTemplate: Why was {package} main thread waiting in runnable state?
-  paramsMapping:
-    package: package
-  priority: 1
-- id: check_binder
-  condition: binder_during_main_thread > 0
-  targetModule: binder_module
-  questionTemplate: What Binder calls blocked main thread for {package}?
-  paramsMapping:
-    package: package
-  priority: 1
-- id: check_gc
-  condition: gc_pause_ms > 10
-  targetModule: art_module
-  questionTemplate: Is GC causing main thread stalls for {package}?
-  paramsMapping:
-    package: package
-  priority: 2
 ```
 
 ## Ordered execution

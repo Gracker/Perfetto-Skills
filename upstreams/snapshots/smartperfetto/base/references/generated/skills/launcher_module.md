@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/app/launcher_module.skill.yaml
-Source SHA-256: 09423f22ca1cc723d498d6e9ecfbfb935d5cf177154c5eab813f3bf7d0bcef40
+Source SHA-256: 4c0d82a72e79c8ac5f42f5c57ff618e5bc0211d2d8f4c88c79642fbddd4ac263
 # Launcher 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -56,95 +56,6 @@ subsystems:
 - widgets
 - wallpaper
 - app_launch
-relatedModules:
-- framework_ams
-- framework_wms
-- framework_surfaceflinger
-- app_systemui
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: launcher_performance
-  questionTemplate: What is the Launcher performance?
-  requiredParams: []
-  description: Analyze overall launcher performance
-- id: app_launch_from_launcher
-  questionTemplate: How long did it take to launch {target_package} from launcher?
-  requiredParams:
-  - target_package
-  description: Analyze app launch timing from home screen
-- id: widget_update_analysis
-  questionTemplate: Are widgets causing performance issues?
-  requiredParams: []
-  description: Analyze widget update performance
-- id: launcher_frame_analysis
-  questionTemplate: Is launcher rendering smoothly?
-  requiredParams: []
-  description: Analyze launcher frame rendering
-findingsSchema:
-- id: slow_launcher_startup
-  severity: warning
-  titleTemplate: 'Slow launcher startup: {startup_ms}ms'
-  descriptionTemplate: Launcher took {startup_ms}ms to become interactive
-  evidenceFields:
-  - startup_ms
-  - cold_or_warm
-  - blocking_component
-- id: slow_app_launch
-  severity: warning
-  titleTemplate: 'Slow app launch from launcher: {launch_ms}ms'
-  descriptionTemplate: Launching {target_package} took {launch_ms}ms
-  evidenceFields:
-  - target_package
-  - launch_ms
-  - icon_tap_ts
-  - app_visible_ts
-- id: widget_update_slow
-  severity: warning
-  titleTemplate: 'Slow widget update: {widget_name} took {update_ms}ms'
-  descriptionTemplate: Widget update blocking main thread
-  evidenceFields:
-  - widget_name
-  - update_ms
-  - update_count
-- id: launcher_jank
-  severity: warning
-  titleTemplate: 'Launcher jank: {jank_count} frames dropped'
-  descriptionTemplate: Home screen rendering has {jank_count} janky frames
-  evidenceFields:
-  - jank_count
-  - total_frames
-  - jank_rate_pct
-- id: wallpaper_rendering_slow
-  severity: info
-  titleTemplate: 'Wallpaper rendering slow: {render_ms}ms'
-  descriptionTemplate: Live wallpaper or wallpaper transition taking too long
-  evidenceFields:
-  - render_ms
-  - wallpaper_type
-suggestionsSchema:
-- id: check_ams_for_launch
-  condition: slow_app_launch == true
-  targetModule: ams_module
-  questionTemplate: What is the startup timing breakdown for {target_package}?
-  paramsMapping:
-    package: target_package
-  priority: 1
-- id: check_wms_for_transition
-  condition: slow_app_launch == true
-  targetModule: wms_module
-  questionTemplate: What was the window transition timing?
-  paramsMapping: {}
-  priority: 2
-- id: check_scheduler_for_launcher
-  condition: launcher_jank == true
-  targetModule: scheduler_module
-  questionTemplate: Was launcher main thread getting enough CPU time?
-  paramsMapping: {}
-  priority: 1
 ```
 
 ## Ordered execution

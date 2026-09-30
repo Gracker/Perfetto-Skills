@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/thermal_module.skill.yaml
-Source SHA-256: 6125d0a80aa8a0085e13bd9dde675dcd250b22db719a7359f4c54c3503a4fd33
+Source SHA-256: 2f54cfccbd022dbaa54f4d3683d1c300b0a952423028ac7bef0dba6334b85994
 # 热管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -58,83 +58,6 @@ subsystems:
 - thermal_throttling
 - cooling_device
 - thermal_zone
-relatedModules:
-- hardware_cpu
-- hardware_gpu
-- kernel_scheduler
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: thermal_overview
-  questionTemplate: What is the thermal state during the trace?
-  requiredParams: []
-  description: Get overall thermal status
-- id: thermal_throttling_analysis
-  questionTemplate: Is there thermal throttling affecting performance?
-  requiredParams: []
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Detect and analyze thermal throttling
-- id: temperature_timeline
-  questionTemplate: How did temperature change over time?
-  requiredParams: []
-  description: Track temperature changes throughout trace
-- id: thermal_correlation
-  questionTemplate: Is temperature affecting CPU/GPU performance?
-  requiredParams: []
-  description: Correlate thermal state with performance metrics
-findingsSchema:
-- id: thermal_throttling_detected
-  severity: critical
-  titleTemplate: 'Thermal throttling detected: {throttle_level}'
-  descriptionTemplate: CPU/GPU throttled due to temperature ({temp}°C exceeds {threshold}°C)
-  evidenceFields:
-  - throttle_level
-  - temp
-  - threshold
-  - affected_component
-- id: high_temperature
-  severity: warning
-  titleTemplate: 'High temperature: {zone_name} at {temp}°C'
-  descriptionTemplate: Thermal zone {zone_name} reached {temp}°C, approaching threshold
-  evidenceFields:
-  - zone_name
-  - temp
-  - threshold
-- id: temperature_spike
-  severity: warning
-  titleTemplate: 'Temperature spike: +{delta}°C in {duration_sec}s'
-  descriptionTemplate: Rapid temperature increase detected
-  evidenceFields:
-  - delta
-  - duration_sec
-  - peak_temp
-  - zone_name
-- id: sustained_high_temp
-  severity: critical
-  titleTemplate: 'Sustained high temperature: {avg_temp}°C for {duration_sec}s'
-  descriptionTemplate: Temperature remained high for extended period
-  evidenceFields:
-  - avg_temp
-  - duration_sec
-  - zone_name
-suggestionsSchema:
-- id: check_cpu_frequency
-  condition: throttling_detected == true
-  targetModule: cpu_module
-  questionTemplate: How did thermal throttling affect CPU frequency?
-  paramsMapping: {}
-  priority: 1
-- id: check_gpu_during_thermal
-  condition: gpu_temp_high == true
-  targetModule: gpu_module
-  questionTemplate: How did thermal state affect GPU performance?
-  paramsMapping: {}
-  priority: 1
 ```
 
 ## Ordered execution

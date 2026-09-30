@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/memory_module.skill.yaml
-Source SHA-256: 414d1472ca7ef5f999ad8066cb1322622316c622e4bb29e5d0ce7f7b0e4fad9b
+Source SHA-256: c4d29f5ee21c06081cc03ddeefcc79718e488db294e4623000e124ce9c292f0b
 # 内存分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -66,97 +66,6 @@ subsystems:
 - dmabuf
 - psi
 - page_cache
-relatedModules:
-- framework_art
-- kernel_scheduler
-- hardware_cpu
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: memory_pressure_analysis
-  questionTemplate: What is the memory pressure during {start_ts} to {end_ts}?
-  requiredParams: []
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze system memory pressure
-- id: lmk_events
-  questionTemplate: Were there any LMK events affecting {package}?
-  requiredParams:
-  - package
-  description: Check for Low Memory Killer events
-- id: dmabuf_analysis
-  questionTemplate: What is the dmabuf usage for package {package}?
-  requiredParams:
-  - package
-  description: Analyze dmabuf/graphics memory allocation
-- id: allocation_rate
-  questionTemplate: What is the memory allocation rate for package {package}?
-  requiredParams:
-  - package
-  description: Analyze memory allocation patterns
-- id: memory_usage_timeline
-  questionTemplate: How did memory usage change over time?
-  requiredParams: []
-  description: Track memory usage timeline
-findingsSchema:
-- id: lmk_kill
-  severity: critical
-  titleTemplate: 'LMK killed process: {process_name} (oom_adj={oom_adj})'
-  descriptionTemplate: Low Memory Killer terminated process due to memory pressure
-  evidenceFields:
-  - process_name
-  - oom_adj
-  - memory_mb
-  - timestamp
-- id: high_memory_pressure
-  severity: warning
-  titleTemplate: 'High memory pressure: PSI {psi_level}%'
-  descriptionTemplate: System experiencing memory pressure, may affect performance
-  evidenceFields:
-  - psi_level
-  - free_memory_mb
-  - cache_memory_mb
-- id: dmabuf_leak
-  severity: warning
-  titleTemplate: 'Potential dmabuf leak: {growth_mb}MB growth'
-  descriptionTemplate: dmabuf memory grew by {growth_mb}MB during trace
-  evidenceFields:
-  - growth_mb
-  - start_mb
-  - end_mb
-- id: high_allocation_rate
-  severity: warning
-  titleTemplate: 'High allocation rate: {alloc_rate_mb_s}MB/s'
-  descriptionTemplate: Memory allocation rate may cause GC pressure
-  evidenceFields:
-  - alloc_rate_mb_s
-  - total_alloc_mb
-- id: memory_approaching_limit
-  severity: critical
-  titleTemplate: 'Memory approaching limit: {usage_pct}% used'
-  descriptionTemplate: Process memory near limit, risk of OOM
-  evidenceFields:
-  - usage_pct
-  - used_mb
-  - limit_mb
-suggestionsSchema:
-- id: check_gc_activity
-  condition: high_allocation_rate == true
-  targetModule: art_module
-  questionTemplate: Is GC activity high due to allocation rate?
-  paramsMapping:
-    package: package
-  priority: 1
-- id: check_cpu_during_pressure
-  condition: psi_level > 50
-  targetModule: scheduler_module
-  questionTemplate: How is CPU scheduling affected by memory pressure?
-  paramsMapping: {}
-  priority: 2
 ```
 
 ## Ordered execution

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/art_module.skill.yaml
-Source SHA-256: ae5d2db90bbb80ca10096056d71b8feb7cde4b2284fdcbe629a2acb1abd990c1
+Source SHA-256: e7d524de05ca91174a9bf283192a02d3dfab1324753b0b8ebfaaa259379d9e8a
 # ART 运行时分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -53,85 +53,6 @@ subsystems:
 - gc
 - jit
 - allocation
-relatedModules:
-- app_third_party
-- kernel_scheduler
-- hardware_memory
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: gc_analysis
-  questionTemplate: What GC activity happened for package {package}?
-  requiredParams:
-  - package
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze garbage collection events
-- id: gc_during_frame
-  questionTemplate: Was there GC during frame rendering for {package}?
-  requiredParams:
-  - package
-  description: Check for GC during critical rendering
-- id: jit_analysis
-  questionTemplate: What JIT compilation happened for package {package}?
-  requiredParams:
-  - package
-  description: Analyze JIT compilation activity
-- id: allocation_analysis
-  questionTemplate: What are the allocation patterns for package {package}?
-  requiredParams:
-  - package
-  description: Analyze memory allocation patterns
-findingsSchema:
-- id: gc_during_animation
-  severity: critical
-  titleTemplate: 'GC during animation: {gc_count} GCs totaling {gc_ms}ms'
-  descriptionTemplate: Garbage collection happened during animation, causing jank
-  evidenceFields:
-  - gc_count
-  - gc_ms
-  - gc_type
-- id: high_gc_frequency
-  severity: warning
-  titleTemplate: 'High GC frequency: {gc_per_sec} GCs/second'
-  descriptionTemplate: Excessive GC activity indicates high allocation rate
-  evidenceFields:
-  - gc_per_sec
-  - total_gc_count
-  - avg_gc_ms
-- id: long_gc_pause
-  severity: warning
-  titleTemplate: 'Long GC pause: {max_gc_ms}ms'
-  descriptionTemplate: GC pause exceeded 10ms threshold
-  evidenceFields:
-  - max_gc_ms
-  - gc_type
-- id: jit_compilation_blocking
-  severity: warning
-  titleTemplate: 'JIT compilation blocking: {jit_ms}ms'
-  descriptionTemplate: JIT compilation blocked main thread
-  evidenceFields:
-  - jit_ms
-  - method_count
-suggestionsSchema:
-- id: check_allocation_rate
-  condition: gc_per_sec > 2
-  targetModule: memory_module
-  questionTemplate: What is causing high allocation rate for {package}?
-  paramsMapping:
-    package: package
-  priority: 1
-- id: check_heap_size
-  condition: heap_near_limit == true
-  targetModule: memory_module
-  questionTemplate: Is heap size limit affecting {package}?
-  paramsMapping:
-    package: package
-  priority: 2
 ```
 
 ## Ordered execution

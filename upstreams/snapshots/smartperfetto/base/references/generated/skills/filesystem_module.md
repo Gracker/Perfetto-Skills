@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/filesystem_module.skill.yaml
-Source SHA-256: bccf60688175843149ed487af73b20b0262476eef680d9ae13a75bd1ee234846
+Source SHA-256: e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719
 # 文件系统 I/O 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -67,93 +67,6 @@ subsystems:
 - file_operations
 - database
 - shared_preferences
-relatedModules:
-- kernel_scheduler
-- framework_ams
-- app_third_party
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: io_during_startup
-  questionTemplate: What IO operations delayed startup for package {package}?
-  requiredParams:
-  - package
-  description: Analyze IO operations during app startup
-- id: main_thread_io
-  questionTemplate: What IO operations happened on main thread for package {package}?
-  requiredParams:
-  - package
-  description: Find synchronous IO on main thread
-- id: database_operations
-  questionTemplate: What database operations happened for package {package}?
-  requiredParams:
-  - package
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze SQLite/Room database operations
-- id: io_latency_analysis
-  questionTemplate: What is the IO latency distribution for package {package}?
-  requiredParams:
-  - package
-  description: Analyze IO latency patterns
-- id: block_io_summary
-  questionTemplate: What is the block IO activity during {start_ts} to {end_ts}?
-  requiredParams:
-  - start_ts
-  - end_ts
-  description: Summarize block IO activity in time range
-findingsSchema:
-- id: main_thread_io
-  severity: critical
-  titleTemplate: 'Main thread IO: {io_type} took {dur_ms}ms'
-  descriptionTemplate: Synchronous IO on main thread blocked UI for {dur_ms}ms
-  evidenceFields:
-  - io_type
-  - dur_ms
-  - file_path
-  - thread_name
-- id: slow_database_query
-  severity: warning
-  titleTemplate: 'Slow database query: {query_ms}ms'
-  descriptionTemplate: Database query took {query_ms}ms, consider optimization
-  evidenceFields:
-  - query_ms
-  - table_name
-  - operation_type
-- id: excessive_io_operations
-  severity: warning
-  titleTemplate: 'Excessive IO: {io_count} operations totaling {total_ms}ms'
-  descriptionTemplate: High number of IO operations may cause performance issues
-  evidenceFields:
-  - io_count
-  - total_ms
-  - avg_ms
-- id: io_wait_causing_delay
-  severity: critical
-  titleTemplate: 'IO wait causing delay: {wait_ms}ms'
-  descriptionTemplate: Thread spent {wait_ms}ms waiting for IO operations
-  evidenceFields:
-  - wait_ms
-  - thread_name
-  - io_type
-suggestionsSchema:
-- id: check_scheduler_during_io
-  condition: io_wait_ms > 50
-  targetModule: scheduler_module
-  questionTemplate: Why was thread blocked during IO at {ts}?
-  paramsMapping:
-    ts: io_start_ts
-  priority: 1
-- id: check_memory_pressure
-  condition: io_type == 'page_fault'
-  targetModule: memory_module
-  questionTemplate: Is memory pressure causing page faults?
-  paramsMapping: {}
-  priority: 2
 ```
 
 ## Ordered execution

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/power_module.skill.yaml
-Source SHA-256: c78783057846e5a5481c15de86a5cfb018687fc79c03c89f11364a34bf005634
+Source SHA-256: b1684cac1874ae453391ccfe88614289405b052dad8ab7ec594255347bb37acb
 # 电源管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -58,82 +58,6 @@ subsystems:
 - cpu_idle
 - power_mode
 - suspend_resume
-relatedModules:
-- hardware_cpu
-- kernel_scheduler
-- framework_ams
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: wakelock_analysis
-  questionTemplate: What wakelocks are held by package {package}?
-  requiredParams: []
-  optionalParams:
-  - package
-  description: Analyze wakelock usage patterns
-- id: cpu_idle_analysis
-  questionTemplate: What CPU idle states are being used?
-  requiredParams: []
-  description: Analyze CPU C-state transitions
-- id: power_mode_changes
-  questionTemplate: Were there any power mode changes during the trace?
-  requiredParams: []
-  description: Detect power/battery mode changes
-- id: suspend_resume_timing
-  questionTemplate: What are the suspend/resume timings?
-  requiredParams: []
-  description: Analyze device suspend/resume behavior
-- id: power_efficiency
-  questionTemplate: Is the power usage efficient?
-  requiredParams: []
-  description: Assess overall power efficiency
-findingsSchema:
-- id: long_wakelock
-  severity: warning
-  titleTemplate: 'Long wakelock: {wakelock_name} held for {duration_ms}ms'
-  descriptionTemplate: Wakelock preventing device sleep
-  evidenceFields:
-  - wakelock_name
-  - duration_ms
-  - holder_process
-- id: cpu_never_idle
-  severity: warning
-  titleTemplate: CPU {cpu_id} never reached deep idle
-  descriptionTemplate: CPU not entering power-saving states
-  evidenceFields:
-  - cpu_id
-  - shallow_idle_pct
-  - deep_idle_pct
-- id: frequent_wakeups
-  severity: warning
-  titleTemplate: 'Frequent wakeups: {wakeup_count} times'
-  descriptionTemplate: Device waking frequently, impacting battery
-  evidenceFields:
-  - wakeup_count
-  - avg_sleep_duration_ms
-- id: inefficient_power_usage
-  severity: info
-  titleTemplate: Inefficient power pattern detected
-  descriptionTemplate: Power usage could be optimized
-  evidenceFields:
-  - issue_type
-  - recommendation
-suggestionsSchema:
-- id: check_cpu_frequency
-  condition: cpu_not_idle == true
-  targetModule: cpu_module
-  questionTemplate: Why is CPU not entering idle state?
-  paramsMapping: {}
-  priority: 1
-- id: check_scheduler
-  condition: frequent_wakeups > 10
-  targetModule: scheduler_module
-  questionTemplate: What is waking up the CPU?
-  paramsMapping: {}
-  priority: 1
 ```
 
 ## Ordered execution

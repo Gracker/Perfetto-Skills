@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/choreographer_module.skill.yaml
--- Source SHA-256: 89db8f840e3ef0967b9ba9b94d1588c0479509358a203e9b2a8eb37910fc7509
+-- Source SHA-256: ebd766c3504a076486e35acf0be4a4a550371776192149f325b20df6219eb790
 
 SELECT
   CASE

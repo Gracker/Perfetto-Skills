@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/wms_module.skill.yaml
-Source SHA-256: e66c60cde78f1ab8ef436f3656397aa27cad975f9c7708d388926ad8eba3010a
+Source SHA-256: 4bd2c147a32250b3c3ae71af00fb8bbfb8b99256c68cc8fa44a0131ebe25d794
 # WMS 窗口管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -69,96 +69,6 @@ subsystems:
 - activity_transition
 - window_state
 - display_management
-relatedModules:
-- framework_ams
-- framework_surfaceflinger
-- framework_input
-- app_third_party
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: window_animation_analysis
-  questionTemplate: What window animations happened for package {package}?
-  requiredParams:
-  - package
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze window open/close/transition animations
-- id: activity_transition_timing
-  questionTemplate: What is the activity transition timing for package {package}?
-  requiredParams:
-  - package
-  description: Analyze activity transition animation duration
-- id: window_state_changes
-  questionTemplate: What window state changes happened at timestamp {ts}?
-  requiredParams:
-  - ts
-  optionalParams:
-  - package
-  description: Track window visibility and focus changes
-- id: slow_window_animation
-  questionTemplate: Why was window animation slow for package {package}?
-  requiredParams:
-  - package
-  description: Diagnose slow window animations
-findingsSchema:
-- id: slow_window_animation
-  severity: warning
-  titleTemplate: 'Slow window animation: {animation_type} took {dur_ms}ms'
-  descriptionTemplate: Window animation exceeded smooth threshold ({dur_ms}ms > 300ms)
-  evidenceFields:
-  - animation_type
-  - dur_ms
-  - window_name
-  - expected_ms
-- id: animation_frame_drop
-  severity: critical
-  titleTemplate: 'Animation frame drop: {dropped_frames} frames during {animation_type}'
-  descriptionTemplate: Window animation dropped {dropped_frames} frames causing jank
-  evidenceFields:
-  - animation_type
-  - dropped_frames
-  - total_frames
-- id: window_focus_delay
-  severity: warning
-  titleTemplate: 'Window focus delay: {delay_ms}ms'
-  descriptionTemplate: Window took {delay_ms}ms to gain focus after request
-  evidenceFields:
-  - delay_ms
-  - window_name
-- id: transition_overlap
-  severity: info
-  titleTemplate: Transition overlap detected
-  descriptionTemplate: Multiple window transitions happening simultaneously
-  evidenceFields:
-  - transition_count
-  - overlap_duration_ms
-suggestionsSchema:
-- id: check_surfaceflinger
-  condition: animation_frame_drop > 0
-  targetModule: surfaceflinger_module
-  questionTemplate: What caused frame drops during window animation?
-  paramsMapping:
-    start_ts: animation_start_ts
-    end_ts: animation_end_ts
-  priority: 1
-- id: check_main_thread
-  condition: dur_ms > 300
-  targetModule: scheduler_module
-  questionTemplate: Why was main thread slow during window animation for {package}?
-  paramsMapping:
-    package: package
-  priority: 1
-- id: check_gpu_during_animation
-  condition: animation_type contains 'transition'
-  targetModule: gpu_module
-  questionTemplate: What was GPU utilization during window transition?
-  paramsMapping: {}
-  priority: 2
 ```
 
 ## Ordered execution

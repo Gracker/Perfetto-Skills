@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/ams_module.skill.yaml
-Source SHA-256: b7456b08a71144dfea211e1e651da605e3683fe7e4512fb761c7ae45b55d2074
+Source SHA-256: bfd2cd1f208acc814f9da8ed0ec0b02c0d5fd7226da25bec898e8de516e315cd
 # AMS 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -59,96 +59,6 @@ subsystems:
 - process_management
 - broadcast
 - service
-relatedModules:
-- kernel_scheduler
-- framework_wms
-- app_third_party
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: startup_timing
-  questionTemplate: What is the startup timing breakdown for package {package}?
-  requiredParams:
-  - package
-  optionalParams:
-  - launch_type
-  description: Analyze cold/warm/hot startup timing
-- id: activity_lifecycle
-  questionTemplate: What activity transitions happened for package {package}?
-  requiredParams:
-  - package
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze activity lifecycle events
-- id: process_start
-  questionTemplate: Why was process {package} slow to start?
-  requiredParams:
-  - package
-  description: Analyze process creation delays
-- id: anr_analysis
-  questionTemplate: Why did package {package} ANR?
-  requiredParams:
-  - package
-  description: Analyze ANR root cause
-findingsSchema:
-- id: slow_startup
-  severity: critical
-  titleTemplate: 'Slow startup: {launch_type} took {total_ms}ms'
-  descriptionTemplate: App startup exceeded threshold ({total_ms}ms > {threshold_ms}ms)
-  evidenceFields:
-  - launch_type
-  - total_ms
-  - ttid_ms
-  - ttfd_ms
-  - threshold_ms
-- id: broadcast_delay
-  severity: warning
-  titleTemplate: Broadcast receiver delayed startup by {delay_ms}ms
-  descriptionTemplate: Broadcast {broadcast_action} blocked startup
-  evidenceFields:
-  - broadcast_action
-  - delay_ms
-- id: content_provider_slow
-  severity: warning
-  titleTemplate: 'ContentProvider initialization slow: {provider_ms}ms'
-  descriptionTemplate: ContentProvider {provider_name} took {provider_ms}ms to initialize
-  evidenceFields:
-  - provider_name
-  - provider_ms
-- id: anr_detected
-  severity: critical
-  titleTemplate: 'ANR detected: {anr_type}'
-  descriptionTemplate: Application Not Responding due to {anr_cause}
-  evidenceFields:
-  - anr_type
-  - anr_cause
-  - blocked_ms
-suggestionsSchema:
-- id: check_gc_during_startup
-  condition: gc_during_startup > 0
-  targetModule: art_module
-  questionTemplate: Was GC causing startup delay for {package}?
-  paramsMapping:
-    package: package
-  priority: 1
-- id: check_binder_during_startup
-  condition: binder_during_startup_ms > 50
-  targetModule: binder_module
-  questionTemplate: What Binder calls delayed startup for {package}?
-  paramsMapping:
-    package: package
-  priority: 1
-- id: check_io_during_startup
-  condition: io_wait_ms > 100
-  targetModule: filesystem_module
-  questionTemplate: What IO operations delayed startup?
-  paramsMapping:
-    package: package
-  priority: 2
 ```
 
 ## Ordered execution

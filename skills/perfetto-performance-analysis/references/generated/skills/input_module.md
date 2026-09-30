@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/input_module.skill.yaml
-Source SHA-256: 77e992fb9b0d483e4e6c1956dd1023052e4c345a03137e372448ad8c22892918
+Source SHA-256: e514d3ba027d776732f4f451e54e709f259d7b79e371ab403971fb4925dfa977
 # Input 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -56,72 +56,6 @@ subsystems:
 - input_reader
 - input_dispatcher
 - input_consumer
-relatedModules:
-- framework_wms
-- framework_surfaceflinger
-- app_third_party
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: click_response_analysis
-  questionTemplate: What is the click response time for package {package}?
-  requiredParams:
-  - package
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze touch-to-response latency
-- id: input_dispatch_latency
-  questionTemplate: Why was input dispatch slow at timestamp {ts}?
-  requiredParams:
-  - ts
-  description: Analyze input dispatch delays
-- id: touch_event_flow
-  questionTemplate: What happened to touch event at {ts}?
-  requiredParams:
-  - ts
-  description: Trace touch event through the system
-findingsSchema:
-- id: high_input_latency
-  severity: critical
-  titleTemplate: 'High input latency: {latency_ms}ms'
-  descriptionTemplate: Touch-to-response exceeded threshold ({latency_ms}ms > 100ms)
-  evidenceFields:
-  - latency_ms
-  - dispatch_ms
-  - app_handling_ms
-- id: input_dispatch_delay
-  severity: warning
-  titleTemplate: Input dispatch delayed by {dispatch_ms}ms
-  descriptionTemplate: InputDispatcher took {dispatch_ms}ms to dispatch event
-  evidenceFields:
-  - dispatch_ms
-  - queue_depth
-- id: app_input_handling_slow
-  severity: warning
-  titleTemplate: 'App input handling slow: {app_handling_ms}ms'
-  descriptionTemplate: App took {app_handling_ms}ms to handle input event
-  evidenceFields:
-  - app_handling_ms
-  - main_thread_state
-suggestionsSchema:
-- id: check_main_thread
-  condition: app_handling_ms > 50
-  targetModule: scheduler_module
-  questionTemplate: Why was main thread slow during input handling?
-  paramsMapping:
-    package: package
-  priority: 1
-- id: check_binder_during_input
-  condition: binder_during_input > 0
-  targetModule: binder_module
-  questionTemplate: What Binder calls happened during input handling?
-  paramsMapping:
-    package: package
-  priority: 2
 ```
 
 ## Ordered execution

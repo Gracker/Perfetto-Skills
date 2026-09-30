@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/scheduler_module.skill.yaml
-Source SHA-256: 8a8766ab483cb11df87f4263431bba840d057a3ef4a846e42cbf605a76e2062c
+Source SHA-256: d508d8d5d6b1e22d71b7222adc022483ea3e1f52c9093f402a1188b8baeaf32d
 # 内核调度分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -63,77 +63,6 @@ subsystems:
 - runqueue
 - cfs
 - core_affinity
-relatedModules:
-- hardware_cpu
-- framework_ams
-```
-
-## Dialogue guidance
-
-```yaml
-capabilities:
-- id: thread_scheduling_delay
-  questionTemplate: Why was thread {tid} delayed between {start_ts} and {end_ts}?
-  requiredParams:
-  - tid
-  - start_ts
-  - end_ts
-  description: Analyze why a specific thread had scheduling delays
-- id: cpu_utilization
-  questionTemplate: What is the CPU utilization for package {package}?
-  requiredParams:
-  - package
-  optionalParams:
-  - start_ts
-  - end_ts
-  description: Analyze CPU usage patterns
-- id: runnable_analysis
-  questionTemplate: What threads are in runnable state competing with {tid}?
-  requiredParams:
-  - tid
-  description: Analyze runnable queue contention
-findingsSchema:
-- id: high_runnable_time
-  severity: warning
-  titleTemplate: 'Thread scheduling delay: {delay_ms}ms in runnable state'
-  descriptionTemplate: Thread {tid} waited {delay_ms}ms in runnable state with cause requiring direct contention evidence
-  evidenceFields:
-  - tid
-  - delay_ms
-  - core_type
-  - waker_thread
-- id: cpu_throttling
-  severity: critical
-  titleTemplate: 'Observed CPU frequency: avg {avg_freq_mhz}MHz'
-  descriptionTemplate: Time-weighted CPU frequency is {avg_freq_mhz}MHz; thermal or policy limitation requires direct evidence
-  evidenceFields:
-  - avg_freq_mhz
-  - max_freq_mhz
-  - throttle_reason
-- id: small_core_bound
-  severity: warning
-  titleTemplate: Observed small-core residency
-  descriptionTemplate: Thread {tid} running on small cores ({small_core_pct}%)
-  evidenceFields:
-  - tid
-  - small_core_pct
-  - big_core_pct
-suggestionsSchema:
-- id: check_binder_waker
-  condition: waker_process != package
-  targetModule: binder_module
-  questionTemplate: What Binder calls did {waker_process} make to {package}?
-  paramsMapping:
-    caller: waker_process
-    callee: package
-  priority: 1
-- id: check_cpu_frequency
-  condition: avg_freq_mhz < max_freq_mhz * 0.7
-  targetModule: hardware_cpu_module
-  questionTemplate: Why is CPU frequency low for core {core_id}?
-  paramsMapping:
-    core_id: core_id
-  priority: 2
 ```
 
 ## Ordered execution

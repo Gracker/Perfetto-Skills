@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/thermal_module.skill.yaml
--- Source SHA-256: 6125d0a80aa8a0085e13bd9dde675dcd250b22db719a7359f4c54c3503a4fd33
+-- Source SHA-256: 2f54cfccbd022dbaa54f4d3683d1c300b0a952423028ac7bef0dba6334b85994
 
 SELECT
   ct.id AS sensor_track_id,
