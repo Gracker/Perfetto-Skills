@@ -122,7 +122,9 @@ arrays (rendered as SQL literal lists for `IN (...)`),
 `--module android.example.module` loads declared prerequisites, and
 `--result NAME=/path/prior.json` exposes a non-empty saved row array as a
 relation for a dependent step. Pipeline expressions such as
-`${prior_step.data[0].upid}` select a scalar field from those rows:
+`${prior_step.data[0].upid}` select a scalar field from those rows. A
+placeholder `${name|default}` uses its default when `name` is omitted or
+resolves to JSON `null`:
 
 ```bash
 python3 <skill-root>/scripts/perfetto_query.py /absolute/trace.pftrace \

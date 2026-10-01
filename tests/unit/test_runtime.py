@@ -163,6 +163,30 @@ class RuntimeTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "missing SQL template value"):
             self.common.render_sql_template("SELECT ${missing}", {}, {})
 
+    def test_sql_template_null_parameter_takes_its_explicit_default(self) -> None:
+        # SmartPerfetto skill-system.md §5: a name that resolves to null uses
+        # `|default`, then NULL outside quotes and '' inside them.
+        rendered = self.common.render_sql_template(
+            "WHERE name GLOB '${package|com.*}' AND dur > ${min_dur_ms|1} * 1000000 "
+            "AND ts >= ${start_ts} AND tag = '${tag}' AND upid = ${upid|NULL} LIMIT ${top_n|30}",
+            {"package": None, "min_dur_ms": None, "start_ts": None, "tag": None, "upid": None, "top_n": None},
+            {},
+        )
+        self.assertEqual(
+            rendered,
+            "WHERE name GLOB 'com.*' AND dur > 1 * 1000000 "
+            "AND ts >= NULL AND tag = '' AND upid = NULL LIMIT 30",
+        )
+
+    def test_sql_template_null_saved_result_takes_its_explicit_default(self) -> None:
+        rendered = self.common.render_sql_template(
+            "SELECT ${r.data[0].x|5}, ${r.data[0].x}, ${gone|7}, ${gone}",
+            {"gone": 3},
+            {"r": [{"x": None}], "gone": None},
+        )
+        # A null saved result is still bound: it shadows the same-name input.
+        self.assertEqual(rendered, "SELECT 5, NULL, 7, NULL")
+
     def test_query_output_is_bounded_before_loading_into_memory(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -437,6 +461,20 @@ class SkillInputContractTest(unittest.TestCase):
             {"id": "items", "type": "atomic", "query_id": "parent/items", "save_as": "items"},
             {"id": "iter", "type": "iterator", "source": "items", "item_skill": item_skill, **step},
         ])
+
+    def test_unset_optional_input_renders_its_sql_default(self) -> None:
+        common = load_skill_script("_common")
+        rendered = []
+
+        def query(query_id, *, params, results, **_kwargs):
+            rendered.append(common.render_sql_template(
+                "WHERE ts >= ${start_ts|0} AND name = '${package}'", params, results,
+            ))
+            return [{"value": 1}]
+
+        result = self.runner(self.skills, query).run("fps")
+        self.assertTrue(result["success"])
+        self.assertEqual(rendered, ["WHERE ts >= 0 AND name = ''"])
 
     def test_undeclared_parameter_is_rejected_before_any_trace_work(self) -> None:
         query = mock.Mock(return_value=[{"value": 1}])

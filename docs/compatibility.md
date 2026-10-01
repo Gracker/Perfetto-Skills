@@ -21,9 +21,10 @@ Generated SQL retains source placeholders. Execute it through
 become SQL literal lists for `IN (...)`), `--module` for declared stdlib
 prerequisites, and `--result` for a non-empty JSON row array from a prior step.
 Dotted fields and numeric indexes resolve pipeline expressions such as
-`${step.data[0].upid}`. Direct text substitution is unsupported. Query output
-is bounded to 16 MiB per stream unless an explicit reviewed override is
-supplied.
+`${step.data[0].upid}`. A `${name|default}` placeholder uses its default when
+`name` is omitted or resolves to `null`, as in SmartPerfetto. Direct text
+substitution is unsupported. Query output is bounded to 16 MiB per stream
+unless an explicit reviewed override is supplied.
 
 ## Trace processor
 

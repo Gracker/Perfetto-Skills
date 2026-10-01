@@ -605,7 +605,9 @@ def resolve_result_expression(
     if root is None:
         return False, False, None
     if expression == root:
-        return True, True, results[root]
+        # A null saved result is bound (it shadows a same-name input) but holds
+        # no rows, so it reads as a scalar null.
+        return True, results[root] is not None, results[root]
 
     value = results[root]
     offset = len(root)
@@ -706,29 +708,22 @@ def render_sql_template(
                 )))
                 index = end + 1
                 continue
-            matched_result, is_relation, result_value = resolve_result_expression(
-                name, results
-            )
-            if matched_result:
-                if is_relation:
-                    if state == "string":
-                        raise ValueError(
-                            f"saved result {name!r} cannot be used inside a string"
-                        )
-                    replacement = result_rows_to_relation(result_value, name)
-                else:
-                    replacement = (
-                        sql_string_fragment(result_value)
-                        if state == "string"
-                        else sql_literal(result_value)
-                    )
-            else:
-                if name in parameters:
-                    value = parameters[name]
-                elif separator:
-                    value = default_template_value(raw_default)
-                else:
+            matched_result, is_relation, value = resolve_result_expression(name, results)
+            if not matched_result:
+                if name not in parameters and not separator:
                     raise ValueError(f"missing SQL template value: {name}")
+                value = parameters.get(name)
+            # SmartPerfetto: a bound name whose value is null (an unset optional
+            # input, a null field) still takes its `|default`.
+            if value is None and separator:
+                value = default_template_value(raw_default)
+            if is_relation:
+                if state == "string":
+                    raise ValueError(
+                        f"saved result {name!r} cannot be used inside a string"
+                    )
+                replacement = result_rows_to_relation(value, name)
+            else:
                 replacement = (
                     sql_string_fragment(value) if state == "string" else sql_literal(value)
                 )

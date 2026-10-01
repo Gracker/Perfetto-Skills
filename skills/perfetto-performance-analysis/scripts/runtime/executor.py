@@ -66,8 +66,8 @@ def _resolve_inputs(
 ) -> tuple[dict[str, Any], set[str]]:
     """The resolved inputs and the optional ones the caller left unset.
 
-    An unset optional input reads as None in SQL but binds no name, so it does
-    not hide a value the caller passed down.
+    An unset optional input reads as null in SQL (its `|default`, else NULL)
+    but binds no name, so it does not hide a value the caller passed down.
     """
     unset: set[str] = set()
     declared = _declared_inputs(skill)
