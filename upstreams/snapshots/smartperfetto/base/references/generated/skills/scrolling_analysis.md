@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 8900b9c6333a65acb3b9589b7f6af5a23a09d3514f5d60a1a86113392d570c4b
+Source SHA-256: 0d32b714099786b1f04373b24b023fe8d99c6ce586baf33b2d38df56751b1044
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -869,6 +869,59 @@ process_scope:
     - vsync_period_ms
     - vsync_source
 save_as: environment
+condition: frame_timeline.data[0]?.has_frame_timeline === 1
+```
+### 整个 Trace 的 FrameTimeline 帧总体
+
+- ID: `frame_timeline_population`
+- Type: `atomic`
+- SQL: [`../sql/scrolling_analysis/frame_timeline_population.sql`](../sql/scrolling_analysis/frame_timeline_population.sql)
+
+```yaml
+id: frame_timeline_population
+type: atomic
+display:
+  level: summary
+  layer: overview
+  title: 整个 Trace · 所有进程 · FrameTimeline 原始标签
+  title_i18n:
+    en: Whole trace · all processes · raw FrameTimeline tags (jank tags include Buffer Stuffing)
+  columns:
+  - name: total_frames
+    label: FrameTimeline 帧数（全部进程）
+    type: number
+    format: compact
+  - name: jank_frames
+    label: 带 jank 标签的帧（含 Buffer Stuffing，非感知掉帧）
+    type: number
+    format: compact
+  - name: process_count
+    label: 有帧的进程数
+    type: number
+  - name: unattributed_frames
+    label: 无进程归属的帧
+    type: number
+    format: compact
+  - name: evidence_scope
+    label: 证据范围
+    type: string
+  - name: trace_start_ts
+    label: Trace 起点
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: trace_end_ts
+    label: Trace 终点
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: frame_population_evidence
+    label: 证据状态
+    type: string
+    hidden: true
+process_scope:
+  role: global_context
+save_as: frame_timeline_population
 condition: frame_timeline.data[0]?.has_frame_timeline === 1
 ```
 ### BufferTX / FrameTimeline 覆盖探针

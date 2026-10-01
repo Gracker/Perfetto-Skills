@@ -182,7 +182,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-    "sha256": "8900b9c6333a65acb3b9589b7f6af5a23a09d3514f5d60a1a86113392d570c4b"
+    "sha256": "0d32b714099786b1f04373b24b023fe8d99c6ce586baf33b2d38df56751b1044"
   },
   "steps": [
     {
@@ -328,6 +328,19 @@
       "query_id": "scrolling_analysis/vsync_config",
       "result_dependencies": [],
       "save_as": "environment",
+      "type": "atomic"
+    },
+    {
+      "condition": "frame_timeline.data[0]?.has_frame_timeline === 1",
+      "displayed": true,
+      "id": "frame_timeline_population",
+      "name": "整个 Trace 的 FrameTimeline 帧总体",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "query_id": "scrolling_analysis/frame_timeline_population",
+      "result_dependencies": [],
+      "save_as": "frame_timeline_population",
       "type": "atomic"
     },
     {
