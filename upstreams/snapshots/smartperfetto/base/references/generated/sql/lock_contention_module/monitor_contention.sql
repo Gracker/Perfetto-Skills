@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/lock_contention_module.skill.yaml
--- Source SHA-256: bf6c73b0c93093c4aeb7accec76145b98122bfe7a5dd171dac407ff4f7f808d9
+-- Source SHA-256: 106819ab92ac89738c756cd296dd1da8aac142910477fdb313a8dc616a50bd08
 
 SELECT
   s.ts,

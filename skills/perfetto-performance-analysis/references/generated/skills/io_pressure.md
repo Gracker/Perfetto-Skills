@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/io_pressure.skill.yaml
-Source SHA-256: 376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb
+Source SHA-256: f93c2eaa02bdce4ad3a29f012310549c505a8b764145b270e2d45073116e6774
 # IO 压力分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -454,6 +454,9 @@ save_as: root_cause
 ```yaml
 id: io_diagnostic
 type: diagnostic
+inputs:
+- io_overview
+- root_cause
 rules:
 - condition: (io_overview?.data?.[0]?.severity) === 'critical'
   severity: critical

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/network_analysis.skill.yaml
--- Source SHA-256: 42f8702c1c1ee5326dedc0ff19beacffefd3055ddb59008ef90b81049c3c5d1e
+-- Source SHA-256: b0d6f1c51fe5e8687db9cc5ec9b1df231029151ee389c92bfb42f096e1ac13e0
 
 SELECT
   COUNT(*) as slice_count,

@@ -176,7 +176,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
-    "sha256": "f5beaea78119cdb6f540a97c523e8d6f627f979431d0ad46b2e438ba486fe56c"
+    "sha256": "65ee4648b54179625a86ee7e925f360104fabf5b5d4f4d9f929a120177022005"
   },
   "steps": [
     {
@@ -367,7 +367,7 @@
           ]
         },
         {
-          "condition": "data_check.data?.[0]?.has_max_limit_data === 1 && !(episodes.data?.length > 0)",
+          "condition": "data_check.data?.[0]?.has_max_limit_data === 1 && !(episode_rows.data?.length > 0)",
           "confidence": "medium",
           "diagnosis": "NO_LIMIT_EPISODE：窗口内存在有效的上限样本，但没有超过 ${episode_drop_pct|10}% 阈值的限频区段；未观测到显著限频",
           "id": "no_episode",

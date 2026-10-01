@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml
--- Source SHA-256: f5beaea78119cdb6f540a97c523e8d6f627f979431d0ad46b2e438ba486fe56c
+-- Source SHA-256: 65ee4648b54179625a86ee7e925f360104fabf5b5d4f4d9f929a120177022005
 
 WITH data_bounds AS (
   SELECT

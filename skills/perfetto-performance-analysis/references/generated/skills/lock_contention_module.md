@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/lock_contention_module.skill.yaml
-Source SHA-256: bf6c73b0c93093c4aeb7accec76145b98122bfe7a5dd171dac407ff4f7f808d9
+Source SHA-256: 106819ab92ac89738c756cd296dd1da8aac142910477fdb313a8dc616a50bd08
 # 锁竞争分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -204,6 +204,7 @@ inputs:
 - monitor_contention
 - blocked_threads
 - main_thread_locks
+- thread_contention_pairs
 rules:
 - condition: main_thread_locks.data.length > 0
   diagnosis: 主线程检测到 ${main_thread_locks.data.length} 次锁等待，最长 ${main_thread_locks.data[0]?.wait_ms}ms

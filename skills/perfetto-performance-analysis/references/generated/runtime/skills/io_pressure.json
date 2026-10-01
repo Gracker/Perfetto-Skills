@@ -85,7 +85,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/io_pressure.skill.yaml",
-    "sha256": "376ae3d00765275d36e436290949e64c85af55dccfe476e25630487f4b50c2bb"
+    "sha256": "f93c2eaa02bdce4ad3a29f012310549c505a8b764145b270e2d45073116e6774"
   },
   "steps": [
     {
@@ -164,6 +164,10 @@
     },
     {
       "id": "io_diagnostic",
+      "inputs": [
+        "io_overview",
+        "root_cause"
+      ],
       "name": "IO 诊断",
       "rules": [
         {

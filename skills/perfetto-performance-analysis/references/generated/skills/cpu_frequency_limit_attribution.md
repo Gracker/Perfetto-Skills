@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml
-Source SHA-256: f5beaea78119cdb6f540a97c523e8d6f627f979431d0ad46b2e438ba486fe56c
+Source SHA-256: 65ee4648b54179625a86ee7e925f360104fabf5b5d4f4d9f929a120177022005
 # CPU 限频归因
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -775,7 +775,7 @@ rules:
   - 系统侧：在采集配置中加入 ftrace 事件 power/cpu_frequency_limits，并尽量同时加入 thermal/cdev_update 与 thermal/thermal_temperature
   - App 侧：在拿到限频证据之前，不要把性能下降归因于温控；先用同窗口负载数据判断是否是自身工作量导致
 - id: no_episode
-  condition: data_check.data?.[0]?.has_max_limit_data === 1 && !(episodes.data?.length > 0)
+  condition: data_check.data?.[0]?.has_max_limit_data === 1 && !(episode_rows.data?.length > 0)
   severity: info
   diagnosis: NO_LIMIT_EPISODE：窗口内存在有效的上限样本，但没有超过 ${episode_drop_pct|10}% 阈值的限频区段；未观测到显著限频
   confidence: medium
