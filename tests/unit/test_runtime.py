@@ -619,5 +619,86 @@ class SkillReferenceSaveFromTest(unittest.TestCase):
         self.assertNotIn("picked", seen)
 
 
+class InheritedBindingPrecedenceTest(unittest.TestCase):
+    """A name resolves to the Skill's own bindings, then its inputs, then the caller's."""
+
+    def run_child(self, child_inputs, child_params, child_steps):
+        from runtime.executor import SkillRunner
+
+        seen = {}
+
+        def query(query_id, **kwargs):
+            if query_id.startswith("parent/"):
+                return [{"source": "caller"}]
+            if query_id == "child/probe":
+                seen.update(kwargs["results"])
+            return [{"source": query_id}]
+
+        skills = {
+            "child": {
+                "id": "child", "runtime_status": "executable", "type": "composite",
+                "identity": {"policy": "none"}, "inputs": child_inputs, "steps": child_steps,
+            },
+            "parent": {
+                "id": "parent", "runtime_status": "executable", "type": "composite",
+                "identity": {"policy": "none"}, "inputs": [],
+                "steps": [
+                    {"id": "x", "type": "atomic", "query_id": "parent/x"},
+                    {"id": "y", "type": "atomic", "query_id": "parent/y"},
+                    {"id": "call", "type": "skill", "skill": "child", "params": child_params},
+                ],
+            },
+        }
+        result = SkillRunner({"skills": skills}, query).run("parent")
+        self.assertTrue(result["success"])
+        child_steps_out = {step["step_id"]: step for step in result["steps"][-1]["child"]["steps"]}
+        return child_steps_out, seen
+
+    def test_inherited_value_never_overwrites_an_input_after_a_step_runs(self) -> None:
+        steps, seen = self.run_child(
+            [{"name": "x", "type": "string"}],
+            {"x": "own"},
+            [
+                {"id": "first", "type": "atomic", "query_id": "child/first"},
+                {"id": "probe", "type": "atomic", "query_id": "child/probe", "condition": "x === 'own'"},
+                {"id": "explain", "type": "diagnostic", "rules": [{"condition": "true", "diagnosis": "x=${x}"}]},
+            ],
+        )
+        self.assertEqual(steps["probe"]["status"], "observed")
+        self.assertEqual(steps["explain"]["diagnostics"][0]["diagnosis"], "x=own")
+        # SQL binds results ahead of inputs, so the shadowed caller value must not be offered.
+        self.assertNotIn("x", seen)
+        self.assertIn("y", seen)
+
+    def test_own_step_and_save_as_bindings_still_shadow_an_input(self) -> None:
+        steps, seen = self.run_child(
+            [{"name": "x", "type": "string"}],
+            {"x": "own"},
+            [
+                {"id": "first", "type": "atomic", "query_id": "child/first", "save_as": "x"},
+                {"id": "probe", "type": "atomic", "query_id": "child/probe", "condition": "x.data[0].source === 'child/first'"},
+            ],
+        )
+        self.assertEqual(steps["probe"]["status"], "observed")
+        self.assertEqual(seen["x"], {"data": [{"source": "child/first"}]})
+
+    def test_unset_optional_input_does_not_hide_the_caller_value_but_a_default_does(self) -> None:
+        steps, seen = self.run_child(
+            [{"name": "x", "type": "string"}, {"name": "y", "type": "string", "default": "fallback"}],
+            {},
+            [
+                {"id": "caller_x", "type": "diagnostic", "rules": [
+                    {"condition": "x.data[0].source === 'caller'", "diagnosis": "x from caller"},
+                ]},
+                {"id": "first", "type": "atomic", "query_id": "child/first"},
+                {"id": "probe", "type": "atomic", "query_id": "child/probe", "condition": "y === 'fallback'"},
+            ],
+        )
+        self.assertEqual(steps["caller_x"]["status"], "observed")
+        self.assertEqual(steps["probe"]["status"], "observed")
+        self.assertEqual(seen["x"], {"data": [{"source": "caller"}]})
+        self.assertNotIn("y", seen)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -58,6 +58,18 @@ def _reject_undeclared(skill_id: str, skill: Mapping[str, Any], declared: list[s
 
 def resolve_inputs(skill_id: str, skill: Mapping[str, Any], supplied: Mapping[str, Any]) -> dict[str, Any]:
     """Apply the Skill's input contract; a supplied name it does not declare is never ignored."""
+    return _resolve_inputs(skill_id, skill, supplied)[0]
+
+
+def _resolve_inputs(
+    skill_id: str, skill: Mapping[str, Any], supplied: Mapping[str, Any]
+) -> tuple[dict[str, Any], set[str]]:
+    """The resolved inputs and the optional ones the caller left unset.
+
+    An unset optional input reads as None in SQL but binds no name, so it does
+    not hide a value the caller passed down.
+    """
+    unset: set[str] = set()
     declared = _declared_inputs(skill)
     undeclared = sorted(set(supplied) - set(declared))
     if undeclared:
@@ -71,6 +83,7 @@ def resolve_inputs(skill_id: str, skill: Mapping[str, Any], supplied: Mapping[st
             raise SkillInputError(f"{skill_id} missing required input: {name}")
         if name not in result and not spec.get("required"):
             result[name] = None
+            unset.add(name)
         if name in result and spec.get("type") in _EXPECTED_TYPES:
             value = result[name]
             if value is None and not spec.get("required"):
@@ -79,7 +92,7 @@ def resolve_inputs(skill_id: str, skill: Mapping[str, Any], supplied: Mapping[st
                 value, _EXPECTED_TYPES[spec["type"]]
             ):
                 raise SkillInputError(f"{skill_id} invalid {spec['type']} input: {name}")
-    return result
+    return result, unset
 
 
 def _meaningful(value: Any) -> bool:
@@ -222,7 +235,7 @@ class SkillRunner:
         reject_process_scope_names(_inherited or {})
         for step in skill.get("steps", []) or []:
             reject_process_scope_names({name: None for name in (step.get("id"), step.get("save_as")) if name is not None})
-        inputs = resolve_inputs(skill_id, skill, params or {})
+        inputs, unset_inputs = _resolve_inputs(skill_id, skill, params or {})
         prerequisite = (
             dict(self.prerequisite_checker(skill))
             if self.prerequisite_checker is not None
@@ -256,8 +269,25 @@ class SkillRunner:
                 "steps": [],
                 "evidence": [],
             }
-        variables: dict[str, Any] = dict(_inherited or {})
-        context: dict[str, Any] = {**variables, **inputs, "inputs": inputs}
+        # A name resolves to this Skill's own step results and save_as bindings,
+        # then its bound inputs, then what the caller passed down. `variables`
+        # is what children inherit, so it keeps every caller value; `results`
+        # (SQL, dependencies, iterator sources) and `context` (expressions)
+        # drop the caller values a bound input shadows. Steps bind only their
+        # own names, never the inherited ones again.
+        inherited = _inherited or {}
+        bound_inputs = inputs.keys() - unset_inputs
+        variables: dict[str, Any] = dict(inherited)
+        results: dict[str, Any] = {name: value for name, value in inherited.items() if name not in bound_inputs}
+        context: dict[str, Any] = {**inputs, **results, "inputs": inputs}
+
+        def bind(name: str, value: Any) -> None:
+            variables[name] = context[name] = results[name] = value
+
+        def unbind(name: str) -> None:
+            for scope in (variables, context, results):
+                scope.pop(name, None)
+
         steps = list(skill.get("steps", []) or [])
         if skill.get("type") == "atomic" and skill.get("query_id"):
             steps = [{"id": "root", "type": "atomic", "query_id": skill["query_id"]}]
@@ -277,8 +307,8 @@ class SkillRunner:
                 empty_dependencies = [
                     dependency
                     for dependency in step.get("result_dependencies", [])
-                    if not isinstance(variables.get(str(dependency)), Mapping)
-                    or not variables[str(dependency)].get("data")
+                    if not isinstance(results.get(str(dependency)), Mapping)
+                    or not results[str(dependency)].get("data")
                 ]
                 if empty_dependencies:
                     output_steps.append(
@@ -299,7 +329,7 @@ class SkillRunner:
                     query_output = self.query_executor(
                         query_id,
                         params=inputs,
-                        results=variables,
+                        results=results,
                         prelude=step.get("setup_queries", []),
                         **scope_context,
                     )
@@ -313,10 +343,9 @@ class SkillRunner:
                     result = {"step_id": step_id, "type": step_type, "status": status, "rows": rows}
                     if not rows and step.get("on_empty"):
                         result["message"] = step["on_empty"]
-                    variables[step_id] = {"data": rows}
+                    bind(step_id, {"data": rows})
                     if step.get("save_as"):
-                        variables[str(step["save_as"])] = {"data": rows}
-                    context.update(variables)
+                        bind(str(step["save_as"]), {"data": rows})
                     item = self._evidence(skill_id, step_id, str(query_id), inputs, status, rows)
                     item.update(metadata)
                     item.setdefault("identity", identity)
@@ -350,23 +379,21 @@ class SkillRunner:
                     result["message"] = step["on_empty"]
                 if status == "error" and not optional:
                     required_error = True
-                variables[step_id] = {"data": rows}
+                bind(step_id, {"data": rows})
                 if step.get("save_as"):
                     # save_from binds exactly one child step; when that step
                     # observed nothing the variable is unbound, never another
                     # step's rows or an earlier value.
                     saved = rows if "save_from" not in step else self._named_child_rows(child, str(step["save_from"]))
                     if saved is None:
-                        variables.pop(str(step["save_as"]), None)
-                        context.pop(str(step["save_as"]), None)
+                        unbind(str(step["save_as"]))
                     else:
-                        variables[str(step["save_as"])] = {"data": saved}
-                context.update(variables)
+                        bind(str(step["save_as"]), {"data": saved})
                 output_steps.append(result)
                 evidence.extend(child.get("evidence", []))
                 continue
             if step_type == "iterator":
-                source = variables.get(str(step.get("source")), {})
+                source = results.get(str(step.get("source")), {})
                 items = source.get("data", []) if isinstance(source, Mapping) else []
                 filter_expression = step.get("filter")
                 if isinstance(filter_expression, str):
