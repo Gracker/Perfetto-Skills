@@ -50,6 +50,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "check_samples",
       "name": "检查采样数据",
       "on_empty": "未找到 CPU 采样数据，请确保 trace 包含 simpleperf/perf 数据",
@@ -60,6 +61,7 @@
     },
     {
       "condition": "sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0",
+      "displayed": true,
       "id": "hot_functions",
       "name": "热点函数 Top 20",
       "optional": true,
@@ -72,6 +74,7 @@
     },
     {
       "condition": "sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0",
+      "displayed": true,
       "id": "module_distribution",
       "name": "模块采样分布",
       "optional": true,
@@ -82,6 +85,7 @@
     },
     {
       "condition": "sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0",
+      "displayed": true,
       "id": "thread_hotspots",
       "name": "线程采样分布",
       "optional": true,
@@ -92,6 +96,7 @@
     },
     {
       "condition": "(hot_functions?.data?.length || 0) > 0",
+      "displayed": true,
       "id": "caller_analysis",
       "name": "热点函数调用者分析",
       "optional": true,
@@ -104,6 +109,7 @@
     },
     {
       "condition": "sample_stats.data.length > 0 && sample_stats.data[0]?.total_samples > 0",
+      "displayed": true,
       "id": "analysis_conclusion",
       "name": "分析结论",
       "optional": true,

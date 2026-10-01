@@ -191,6 +191,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "analysis_window",
       "name": "分析窗口",
       "process_scope": {
@@ -202,6 +203,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "limit_overview",
       "name": "限频概览",
       "optional": true,
@@ -217,6 +219,7 @@
     },
     {
       "condition": "data_check.data?.[0]?.cooling_track_count > 0",
+      "displayed": true,
       "id": "cooling_overview",
       "name": "散热设备概览",
       "optional": true,
@@ -230,6 +233,7 @@
     },
     {
       "condition": "data_check.data?.[0]?.has_max_limit_data === 1",
+      "displayed": true,
       "id": "episodes",
       "name": "限频区段（按影响排序）",
       "on_empty": "分析窗口内没有超过阈值的限频区段。可降低 episode_drop_pct 复查更浅的限频，或确认窗口是否覆盖限频时刻。",
@@ -245,6 +249,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "episode_drilldown",
       "item_params": {
         "cdev_policy_min_pair_pct": "cdev_policy_min_pair_pct",
@@ -280,6 +285,7 @@
     },
     {
       "condition": "episodes.data?.length > 0",
+      "displayed": true,
       "id": "attribution_summary",
       "name": "归因汇总",
       "optional": true,
@@ -295,6 +301,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "vendor_signal_discovery",
       "name": "厂商温控信号候选",
       "on_empty": "分析窗口内没有名字匹配温控/性能策略签名的计数器、slice 或线程。",
@@ -311,6 +318,7 @@
     },
     {
       "condition": "data_check.data?.[0]?.has_max_limit_data !== 1 && data_check.data?.[0]?.has_cpufreq_data === 1",
+      "displayed": true,
       "id": "no_limit_throttle_observation",
       "name": "无限频数据时的频率观测",
       "optional": true,
@@ -324,6 +332,7 @@
     },
     {
       "condition": "data_check.data?.[0]?.has_max_limit_data !== 1",
+      "displayed": true,
       "id": "no_limit_capture_advice",
       "name": "限频数据缺失说明",
       "process_scope": {
@@ -335,6 +344,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "diagnosis",
       "inputs": [
         "data_check",

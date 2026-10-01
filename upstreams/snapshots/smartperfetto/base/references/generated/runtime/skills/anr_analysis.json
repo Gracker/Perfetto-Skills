@@ -119,6 +119,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
       "optional": true,
@@ -126,6 +127,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "get_anr_context",
       "name": "提取 ANR 上下文",
       "optional": true,
@@ -139,6 +141,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "anr_detection",
       "name": "ANR 检测",
       "on_empty": "未检测到 ANR 事件。请确认 Trace 包含 ANR 数据。",
@@ -150,6 +153,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0",
+      "displayed": true,
       "id": "trigger_classification",
       "name": "ANR 触发类型分类",
       "query_id": "anr_analysis/trigger_classification",
@@ -159,6 +163,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0",
+      "displayed": true,
       "id": "system_cpu_health",
       "name": "系统 CPU 健康状况",
       "optional": true,
@@ -174,6 +179,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0",
+      "displayed": true,
       "id": "memory_pressure",
       "name": "内存压力检测",
       "optional": true,
@@ -186,6 +192,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0",
+      "displayed": true,
       "id": "io_load",
       "name": "不可中断等待基线",
       "optional": true,
@@ -198,6 +205,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0 && enable_lock_probe !== false",
+      "displayed": true,
       "id": "futex_wait_probe",
       "name": "ANR 锁等待探针",
       "optional": true,
@@ -212,6 +220,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0",
+      "displayed": true,
       "id": "system_freeze_check",
       "name": "系统冻结检测",
       "optional": true,
@@ -224,6 +233,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0",
+      "displayed": true,
       "id": "anr_overview",
       "name": "ANR 概览统计",
       "query_id": "anr_analysis/anr_overview",
@@ -233,6 +243,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0",
+      "displayed": true,
       "id": "get_anr_events",
       "name": "获取 ANR 事件列表",
       "query_id": "anr_analysis/get_anr_events",
@@ -242,6 +253,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0",
+      "displayed": true,
       "id": "top_cpu_processes",
       "name": "Top CPU 进程",
       "optional": true,
@@ -254,6 +266,7 @@
     },
     {
       "condition": "detection.data[0]?.total_anr_count > 0 && enable_detail_analysis !== false",
+      "displayed": true,
       "id": "analyze_anr_events",
       "item_params": {
         "anr_dur_ms": "anr_dur_ms",
@@ -275,6 +288,7 @@
       "type": "iterator"
     },
     {
+      "displayed": true,
       "id": "anr_diagnosis",
       "inputs": [
         "detection",

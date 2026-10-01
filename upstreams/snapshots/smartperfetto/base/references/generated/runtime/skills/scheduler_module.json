@@ -62,6 +62,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
       "optional": true,
@@ -69,6 +70,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "runnable_analysis",
       "name": "Runnable 状态分析",
       "process_scope": {
@@ -81,6 +83,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_frequency",
       "name": "CPU 频率分析",
       "process_scope": {
@@ -92,6 +95,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "core_distribution",
       "name": "大小核分布",
       "process_scope": {
@@ -104,6 +108,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "scheduling_diagnosis",
       "inputs": [
         "runnable_data",

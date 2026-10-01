@@ -124,6 +124,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
       "optional": true,
@@ -131,6 +132,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "startup_info",
       "name": "启动基本信息",
       "query_id": "startup_detail/startup_info",
@@ -139,6 +141,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_core_analysis",
       "name": "大小核占比分析",
       "process_scope": {
@@ -151,6 +154,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_freq_analysis",
       "name": "CPU 频率分析",
       "process_scope": {
@@ -163,6 +167,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "per_cpu_system_context",
       "name": "逐核频率与系统负载上下文",
       "optional": true,
@@ -199,6 +204,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "preemption",
       "name": "目标线程抢占切换证据",
       "optional": true,
@@ -226,6 +232,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "freq_rampup",
       "name": "CPU 频率阶段对比",
       "optional": true,
@@ -238,6 +245,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "quadrant_analysis",
       "name": "四大象限分析",
       "optional": true,
@@ -251,6 +259,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_placement_timeline",
       "name": "摆核时序分析",
       "optional": true,
@@ -279,6 +288,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "actionable_main_thread_slices",
       "name": "主线程可操作热点",
       "query_id": "startup_detail/actionable_main_thread_slices",
@@ -325,6 +335,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "binder_pool",
       "name": "Binder 线程池分析",
       "optional": true,
@@ -364,6 +375,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "critical_tasks",
       "name": "启动关键任务",
       "optional": true,
@@ -378,6 +390,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "critical_task_system_evidence",
       "name": "关键任务系统证据与覆盖",
       "optional": true,
@@ -391,6 +404,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "thread_blocking_graph",
       "name": "线程阻塞关系",
       "optional": true,
@@ -407,6 +421,7 @@
     },
     {
       "condition": "'${startup_type}' === 'cold'",
+      "displayed": true,
       "id": "jit_analysis",
       "name": "JIT 影响分析",
       "optional": true,
@@ -420,6 +435,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "hot_slice_states",
       "name": "热点 Slice 线程状态",
       "optional": true,
@@ -434,6 +450,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "startup_diagnosis",
       "inputs": [
         "startup_basic",

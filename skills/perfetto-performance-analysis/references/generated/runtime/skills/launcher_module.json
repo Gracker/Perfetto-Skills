@@ -69,6 +69,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "launcher_process",
       "name": "Launcher 进程识别",
       "query_id": "launcher_module/launcher_process",
@@ -77,6 +78,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "launcher_main_thread",
       "name": "Launcher 主线程概览",
       "on_empty": "未找到 Launcher 进程或主线程数据",
@@ -86,6 +88,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "launcher_frames",
       "name": "Launcher 帧渲染",
       "query_id": "launcher_module/launcher_frames",
@@ -94,6 +97,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "widget_activities",
       "name": "Widget 活动",
       "query_id": "launcher_module/widget_activities",
@@ -102,6 +106,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "app_launch_events",
       "name": "应用启动事件",
       "query_id": "launcher_module/app_launch_events",
@@ -110,6 +115,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "wallpaper_rendering",
       "name": "壁纸渲染",
       "optional": true,
@@ -119,6 +125,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "all_apps_drawer",
       "name": "All Apps 抽屉",
       "query_id": "launcher_module/all_apps_drawer",
@@ -127,6 +134,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "launcher_binder_calls",
       "name": "Launcher Binder 调用",
       "query_id": "launcher_module/launcher_binder_calls",
@@ -135,6 +143,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "launcher_diagnosis",
       "inputs": [
         "launcher_frames",

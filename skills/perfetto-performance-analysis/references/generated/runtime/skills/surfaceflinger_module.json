@@ -68,6 +68,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "frame_overview",
       "name": "帧统计概览",
       "query_id": "surfaceflinger_module/frame_overview",
@@ -76,6 +77,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "jank_breakdown",
       "name": "卡顿类型分布",
       "query_id": "surfaceflinger_module/jank_breakdown",
@@ -84,6 +86,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "thread_timing",
       "name": "线程耗时分布",
       "query_id": "surfaceflinger_module/thread_timing",
@@ -92,6 +95,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "worst_frames",
       "name": "最差帧列表",
       "query_id": "surfaceflinger_module/worst_frames",
@@ -100,6 +104,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "frame_diagnosis",
       "inputs": [
         "frame_stats",

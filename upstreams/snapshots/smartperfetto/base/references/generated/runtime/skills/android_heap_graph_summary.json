@@ -61,6 +61,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "heap_graph_dump_sizes",
       "name": "Heap Graph dump 大小",
       "query_id": "android_heap_graph_summary/heap_graph_dump_sizes",
@@ -69,6 +70,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "heap_graph_availability",
       "name": "Heap Graph 数据可用性",
       "query_id": "android_heap_graph_summary/heap_graph_availability",
@@ -77,6 +79,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "heap_graph_samples",
       "name": "Heap Graph Samples",
       "optional": true,
@@ -87,6 +90,7 @@
     },
     {
       "condition": "heap_graph_availability.data[0]?.has_truncated_column === 1",
+      "displayed": true,
       "id": "heap_graph_truncation",
       "name": "Heap Dump 截断标记",
       "optional": true,
@@ -96,6 +100,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "top_retained_classes",
       "name": "Top Retained Classes",
       "optional": true,

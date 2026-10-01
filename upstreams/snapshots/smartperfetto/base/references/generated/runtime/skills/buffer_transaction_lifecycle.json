@@ -68,6 +68,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "apply_transaction_summary",
       "name": "SF applyTransaction 概览",
       "query_id": "buffer_transaction_lifecycle/apply_transaction_summary",
@@ -76,6 +77,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "queue_to_transaction_delay",
       "name": "queueBuffer → Transaction 到达延迟",
       "query_id": "buffer_transaction_lifecycle/queue_to_transaction_delay",
@@ -84,6 +86,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "per_layer_transactions",
       "name": "按 Layer 分组的 Transaction 计数",
       "query_id": "buffer_transaction_lifecycle/per_layer_transactions",

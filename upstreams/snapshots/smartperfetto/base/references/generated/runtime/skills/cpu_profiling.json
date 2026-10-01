@@ -52,6 +52,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
       "optional": true,
@@ -59,6 +60,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "cpu_usage_overview",
       "name": "CPU 使用概览",
       "optional": true,
@@ -68,6 +70,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "process_cpu_time",
       "name": "进程 CPU 时间",
       "query_id": "cpu_profiling/process_cpu_time",
@@ -76,6 +79,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "thread_cpu_time",
       "name": "线程 CPU 时间",
       "query_id": "cpu_profiling/thread_cpu_time",
@@ -84,6 +88,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "core_distribution",
       "name": "大小核分布",
       "optional": true,
@@ -93,6 +98,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "scheduling_latency",
       "name": "调度延迟",
       "optional": true,
@@ -102,6 +108,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "context_switches",
       "name": "上下文切换",
       "query_id": "cpu_profiling/context_switches",
@@ -110,6 +117,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_timeline",
       "name": "CPU 使用时间线",
       "query_id": "cpu_profiling/cpu_timeline",
@@ -118,6 +126,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "profiling_conclusion",
       "name": "CPU 剖析结论",
       "optional": true,

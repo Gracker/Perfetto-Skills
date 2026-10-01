@@ -59,6 +59,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "acquire_fence_wait",
       "name": "Acquire Fence 等待（SF latch）",
       "query_id": "fence_wait_decomposition/acquire_fence_wait",
@@ -67,6 +68,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "present_fence_timing",
       "name": "Present Fence 时机（HWC presentDisplay）",
       "query_id": "fence_wait_decomposition/present_fence_timing",
@@ -75,6 +77,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "release_fence_impact",
       "name": "Release Fence 影响（App dequeueBuffer 等待）",
       "query_id": "fence_wait_decomposition/release_fence_impact",
@@ -83,6 +86,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "fence_attribution_hint",
       "name": "Fence 三分归因提示",
       "query_id": "fence_wait_decomposition/fence_attribution_hint",

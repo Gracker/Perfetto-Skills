@@ -202,6 +202,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "episode_windows",
       "name": "区段分析窗口",
       "process_scope": {
@@ -213,6 +214,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "who_cooling",
       "name": "归因窗口内散热设备活动",
       "on_empty": "归因窗口内没有内核散热设备事件。该平台可能没有 cdev_update，或热控由用户态守护进程直接写 sysfs 完成。",
@@ -228,6 +230,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "who_daemon",
       "name": "归因窗口内温控/性能策略守护进程活动",
       "on_empty": "归因窗口内没有名字匹配温控/性能策略签名的线程在运行。",
@@ -243,6 +246,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "temperature_context",
       "name": "限频前温度上下文",
       "on_empty": "回溯窗口内没有温度采样。部分平台温度上报非常稀疏（每分钟数次），窗口内无样本不代表温度未变化。",
@@ -258,6 +262,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "before_workload",
       "name": "限频前负载归因",
       "optional": true,
@@ -273,6 +278,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "before_anomalies",
       "name": "限频前异常线程",
       "optional": true,
@@ -293,6 +299,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "non_cpu_heat_context",
       "name": "限频前非 CPU 热源上下文",
       "on_empty": "回溯窗口内没有观测到非 CPU 热源相关的计数器或进程活动。",
@@ -308,6 +315,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "who_verdict",
       "name": "触发方判定",
       "process_scope": {
@@ -320,6 +328,7 @@
     },
     {
       "condition": "who_verdict.data?.length > 0",
+      "displayed": true,
       "id": "limit_onsets",
       "name": "逐次限频写入判定",
       "on_empty": "该区段在分析窗口内没有可判定的限频写入。",

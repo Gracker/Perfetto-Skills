@@ -98,6 +98,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "io_wait_overview",
       "name": "IO Wait 总览",
       "optional": true,
@@ -108,6 +109,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "process_io_distribution",
       "name": "进程 IO Wait 分布",
       "optional": true,
@@ -118,6 +120,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_blocked_functions === 1",
+      "displayed": true,
       "id": "blocking_functions",
       "name": "阻塞函数热点",
       "optional": true,
@@ -128,6 +131,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "thread_io_details",
       "name": "线程 IO Wait 详情",
       "optional": true,
@@ -138,6 +142,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_long_io === 1",
+      "displayed": true,
       "id": "long_io_events",
       "name": "长 IO Wait 事件",
       "optional": true,
@@ -148,6 +153,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "root_cause_classification",
       "name": "IO 根因分类",
       "optional": true,

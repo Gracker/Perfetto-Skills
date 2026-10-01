@@ -91,6 +91,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "check_binder",
       "name": "检查 Binder 数据",
       "optional": true,
@@ -101,6 +102,7 @@
     },
     {
       "condition": "binder_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "get_process",
       "name": "选择目标进程",
       "query_id": "binder_analysis/get_process",
@@ -110,6 +112,7 @@
     },
     {
       "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "binder_overview",
       "name": "Binder 概览",
       "query_id": "binder_analysis/binder_overview",
@@ -121,6 +124,7 @@
     },
     {
       "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "outgoing_by_interface",
       "name": "发出的调用（按接口）",
       "query_id": "binder_analysis/outgoing_by_interface",
@@ -132,6 +136,7 @@
     },
     {
       "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "main_thread_sync_binder",
       "name": "主线程同步 Binder",
       "query_id": "binder_analysis/main_thread_sync_binder",
@@ -143,6 +148,7 @@
     },
     {
       "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "binder_blocking_analysis",
       "name": "Binder 阻塞分析",
       "optional": true,
@@ -155,6 +161,7 @@
     },
     {
       "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "server_response_analysis",
       "name": "服务端响应分析",
       "query_id": "binder_analysis/server_response_analysis",
@@ -166,6 +173,7 @@
     },
     {
       "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "binder_frame_correlation",
       "name": "Binder 与帧关联",
       "optional": true,
@@ -178,6 +186,7 @@
     },
     {
       "condition": "binder_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "incoming_calls",
       "name": "接收的调用",
       "query_id": "binder_analysis/incoming_calls",
@@ -189,6 +198,7 @@
     },
     {
       "condition": "main_thread_binder.data.length > 0",
+      "displayed": true,
       "id": "analyze_slow_binder",
       "item_params": {
         "aidl_name": "aidl_name",
@@ -207,6 +217,7 @@
       "type": "iterator"
     },
     {
+      "displayed": true,
       "id": "binder_diagnosis",
       "inputs": [
         "binder_overview",

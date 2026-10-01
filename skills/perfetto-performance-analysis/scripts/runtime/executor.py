@@ -95,12 +95,48 @@ def _resolve_inputs(
     return result, unset
 
 
-def _meaningful(value: Any) -> bool:
-    if value is None:
+def _child_failed(step: Mapping[str, Any]) -> bool:
+    """Whether a Skill reference step ran a child Skill that failed."""
+    return (step.get("child") or {}).get("success") is False
+
+
+def _stops_skill(step: Mapping[str, Any]) -> bool:
+    """A required query or Skill reference that failed; SmartPerfetto runs no later step."""
+    if step.get("optional"):
         return False
-    if isinstance(value, (str, list, tuple, dict)):
-        return bool(value)
-    return True
+    if step.get("type") == "atomic":
+        return step.get("status") == "error"
+    return step.get("type") == "skill" and _child_failed(step)
+
+
+def _has_meaningful_data(step: Mapping[str, Any]) -> bool:
+    """Whether SmartPerfetto counts the step's result as data when selecting a child step.
+
+    A Skill reference's result is the child's run, not rows: it counts only
+    when the child emitted diagnostics, which an identity-blocked run does.
+    """
+    step_type = step.get("type")
+    if step_type == "atomic":
+        return step.get("status") == "observed"
+    if step_type == "skill":
+        child = step.get("child") or {}
+        return child.get("status") == "identity_blocked" or any(item.get("diagnostics") for item in child.get("steps", []))
+    return bool(step.get("diagnostics") or step.get("items"))
+
+
+def _holds_data(step: Mapping[str, Any], spec: Mapping[str, Any]) -> bool:
+    """Whether SmartPerfetto records a result value for the step, even an empty one.
+
+    A step skipped by its condition, and a failed query, hold `[]` only when
+    optional; a skipped empty dependency is the empty result SmartPerfetto's
+    lenient rendering would return.
+    """
+    status = step.get("status")
+    if status == "skipped_condition":
+        return bool(spec.get("optional"))
+    if step.get("type") == "atomic":
+        return status != "error" or bool(spec.get("optional"))
+    return step.get("type") in {"skill", "diagnostic", "iterator"}
 
 
 _RULE_CONFIDENCE = {"high": 0.9, "medium": 0.7, "low": 0.5}
@@ -175,12 +211,34 @@ class SkillRunner:
             "row_count": len(rows) if isinstance(rows, list) else None,
         }
 
-    def _extract_child_rows(self, result: Mapping[str, Any]) -> list[dict[str, Any]]:
+    def _default_child_rows(self, result: Mapping[str, Any]) -> list[dict[str, Any]]:
+        """Rows of the child step a Skill reference exposes without `save_from`.
+
+        SmartPerfetto's selection, over the steps that ran up to the first
+        required failure (where SmartPerfetto stops): the root step, else the
+        first displayed step with meaningful data, else the first step with
+        meaningful data, else the last step holding data. A nested Skill
+        reference is meaningful only through its child's diagnostics, never its
+        rows, so a setup reference such as cpu_topology_view never hides the
+        read step; once selected it reads as its own default rows. A selected
+        diagnostic or iterator step has no rows.
+        """
+        specs = {str(spec["id"]): spec for spec in self.skills.get(str(result.get("skill_id")), {}).get("steps", []) or []}
+        ran: list[tuple[Mapping[str, Any], Mapping[str, Any]]] = []
         for step in result.get("steps", []):
-            rows = step.get("rows")
-            if step.get("status") == "observed" and _meaningful(rows):
-                return rows
-        return []
+            ran.append((step, specs.get(str(step.get("step_id")), {})))
+            if _stops_skill(step):
+                break
+        selected = (
+            next((step for step, spec in ran if step.get("step_id") == "root" and _holds_data(step, spec)), None)
+            or next((
+                step for step, spec in ran
+                if spec.get("displayed") and _has_meaningful_data(step) and not _child_failed(step)
+            ), None)
+            or next((step for step, _ in ran if _has_meaningful_data(step)), None)
+            or next((step for step, spec in reversed(ran) if _holds_data(step, spec)), None)
+        )
+        return selected.get("rows", []) if selected else []
 
     @staticmethod
     def _named_child_rows(result: Mapping[str, Any], step_id: str) -> list[dict[str, Any]] | None:
@@ -194,7 +252,7 @@ class SkillRunner:
             if (
                 step.get("step_id") == step_id
                 and step.get("status") in {"observed", "empty"}
-                and (step.get("child") or {}).get("success") is not False
+                and not _child_failed(step)
                 and isinstance(rows, list)
             ):
                 return rows
@@ -388,7 +446,7 @@ class SkillRunner:
                     for key, value in (step.get("params", {}) or {}).items()
                 }
                 child = self._run_child(str(step["skill"]), child_params, depth=_depth + 1, inherited=variables)
-                rows = self._extract_child_rows(child)
+                rows = self._default_child_rows(child)
                 status = "observed" if rows else ("empty" if child.get("success") else "error")
                 optional = bool(step.get("optional"))
                 result = {

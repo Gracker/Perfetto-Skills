@@ -106,6 +106,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "evidence_scope",
       "name": "证据范围说明",
       "optional": true,
@@ -116,6 +117,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "network_overview",
       "name": "网络流量概览",
       "optional": true,
@@ -126,6 +128,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "traffic_by_interface",
       "name": "按接口流量分布",
       "optional": true,
@@ -136,6 +139,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "app_traffic_ranking",
       "name": "应用流量排行",
       "optional": true,
@@ -146,6 +150,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "transport_distribution",
       "name": "传输协议分布",
       "optional": true,
@@ -156,6 +161,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "port_analysis",
       "name": "端口使用分析",
       "optional": true,
@@ -166,6 +172,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "traffic_timeline",
       "name": "流量时间分布",
       "optional": true,
@@ -176,6 +183,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "large_transfers",
       "name": "大流量传输事件",
       "optional": true,
@@ -186,6 +194,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "network_power_cost",
       "name": "网络功耗影响",
       "optional": true,
@@ -196,6 +205,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'unavailable' && network_slice_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "network_slice_overview",
       "name": "网络相关 Slice 概览",
       "query_id": "network_analysis/network_slice_overview",
@@ -204,6 +214,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "network_diagnosis",
       "inputs": [
         "network_overview",
@@ -270,6 +281,7 @@
     },
     {
       "condition": "network_check.data[0]?.status === 'unavailable'",
+      "displayed": true,
       "id": "fallback_diagnosis",
       "inputs": [
         "network_check",

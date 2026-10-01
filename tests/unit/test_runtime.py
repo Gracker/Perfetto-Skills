@@ -668,7 +668,7 @@ class SkillReferenceSaveFromTest(unittest.TestCase):
         self.assertTrue(result["success"])
         return seen
 
-    def test_without_save_from_the_first_observed_step_is_bound(self) -> None:
+    def test_without_save_from_the_default_step_is_bound(self) -> None:
         self.assertEqual(self.run_parent([{"source": "detail"}])["picked"], {"data": [{"source": "overview"}]})
 
     def test_save_from_binds_the_named_step(self) -> None:
@@ -726,8 +726,9 @@ class JankTopologyBackedBindingTest(unittest.TestCase):
     """jank_frame_detail binds the read step of children that begin with cpu_topology_view.
 
     The generated definitions run as shipped: the topology reference returns
-    rows, as on any real trace, and is the first observed child step, so only
-    `save_from` keeps its rows out of migration_data and cluster_load_data.
+    rows, as on any real trace. The default selection already skips it (see
+    GeneratedDefaultChildSelectionTest); `save_from` also leaves the binding
+    unbound when the read step failed, where the default would bind `[]`.
     """
 
     READ_QUERIES = {
@@ -786,6 +787,200 @@ class JankTopologyBackedBindingTest(unittest.TestCase):
         seen = self.bindings(RuntimeError("read step failed"))
         for name in self.READ_QUERIES:
             self.assertNotIn(name, seen)
+
+
+def _skill(skill_id, steps, **extra):
+    return {
+        "id": skill_id, "runtime_status": "executable", "type": "composite",
+        "identity": {"policy": "none"}, "inputs": [], "steps": steps, **extra,
+    }
+
+
+def _run_reference(skills, child_id, answers, *, ref=None, **runner):
+    """Run a parent whose `ref` step references `child_id`, then a probe step.
+
+    Returns what the probe sees (the parent's bindings) and the `ref` step record.
+    """
+    from runtime.executor import SkillRunner
+
+    seen = {}
+
+    def query(query_id, **kwargs):
+        if query_id == "parent/probe":
+            seen.update(kwargs["results"])
+            return []
+        answer = answers.get(query_id, [])
+        if isinstance(answer, Exception):
+            raise answer
+        return answer
+
+    parent = _skill("parent", [
+        {"id": "ref", "type": "skill", "skill": child_id, **(ref if ref is not None else {"save_as": "picked"})},
+        {"id": "probe", "type": "atomic", "query_id": "parent/probe"},
+    ])
+    result = SkillRunner({"skills": {**skills, "parent": parent}}, query, **runner).run("parent")
+    return seen, result["steps"][0]
+
+
+class DefaultChildSelectionTest(unittest.TestCase):
+    """A Skill reference read by default exposes the child step SmartPerfetto selects.
+
+    Root, else the first displayed step with meaningful data, else the first
+    step with meaningful data, else the last step holding data, among the steps
+    that ran before the first required failure. A nested Skill reference is
+    meaningful only through its child's diagnostics, never its rows.
+    """
+
+    GRANDCHILD = _skill("grandchild", [{"id": "rows", "type": "atomic", "query_id": "grandchild/rows", "displayed": True}])
+
+    def run_parent(self, child_steps, answers, *, skills=(), **runner):
+        """The parent's default binding of the child (None when unbound) and its reference step."""
+        manifest = {"child": _skill("child", child_steps), "grandchild": self.GRANDCHILD}
+        manifest.update({item["id"]: item for item in skills})
+        seen, step = _run_reference(manifest, "child", answers, **runner)
+        return (seen["picked"]["data"] if "picked" in seen else None), step
+
+    def test_a_displayed_step_wins_over_an_earlier_undisplayed_one(self) -> None:
+        picked, _ = self.run_parent(
+            [{"id": "check", "type": "atomic", "query_id": "child/check"},
+             {"id": "read", "type": "atomic", "query_id": "child/read", "displayed": True}],
+            {"child/check": [{"source": "check"}], "child/read": [{"source": "read"}]},
+        )
+        self.assertEqual(picked, [{"source": "read"}])
+
+    def test_without_displayed_data_the_first_step_with_data_wins(self) -> None:
+        picked, _ = self.run_parent(
+            [{"id": "check", "type": "atomic", "query_id": "child/check"},
+             {"id": "read", "type": "atomic", "query_id": "child/read", "displayed": True}],
+            {"child/check": [{"source": "check"}]},
+        )
+        self.assertEqual(picked, [{"source": "check"}])
+
+    def test_a_root_step_wins_even_when_empty(self) -> None:
+        picked, _ = self.run_parent(
+            [{"id": "read", "type": "atomic", "query_id": "child/read", "displayed": True},
+             {"id": "root", "type": "atomic", "query_id": "child/root"}],
+            {"child/read": [{"source": "read"}]},
+        )
+        self.assertEqual(picked, [])
+
+    def test_a_nested_skill_never_wins_by_its_rows(self) -> None:
+        steps = [
+            {"id": "setup", "type": "skill", "skill": "grandchild", "displayed": True},
+            {"id": "read", "type": "atomic", "query_id": "child/read", "displayed": True, "optional": True},
+        ]
+        for read, expected in (([{"source": "read"}], [{"source": "read"}]), ([], []), (RuntimeError("read failed"), [])):
+            with self.subTest(read=read):
+                picked, step = self.run_parent(steps, {"grandchild/rows": [{"source": "setup"}], "child/read": read})
+                self.assertEqual(picked, expected)
+                self.assertEqual(step["rows"], expected)
+
+    def test_a_nested_skill_with_diagnostics_reads_as_its_own_default_rows(self) -> None:
+        diagnosing = _skill("grandchild", [
+            *self.GRANDCHILD["steps"],
+            {"id": "verdict", "type": "diagnostic",
+             "rules": [{"condition": "true", "diagnosis": "found", "confidence": "high"}]},
+        ])
+        picked, _ = self.run_parent(
+            [{"id": "nested", "type": "skill", "skill": "grandchild", "displayed": True},
+             {"id": "read", "type": "atomic", "query_id": "child/read", "displayed": True}],
+            {"grandchild/rows": [{"source": "nested"}], "child/read": [{"source": "read"}]},
+            skills=[diagnosing],
+        )
+        self.assertEqual(picked, [{"source": "nested"}])
+
+    def test_an_identity_blocked_nested_skill_is_selected_without_rows(self) -> None:
+        blocked = {**self.GRANDCHILD, "identity": {"policy": "required", "scope": "process"}}
+        picked, _ = self.run_parent(
+            [{"id": "nested", "type": "skill", "skill": "grandchild", "optional": True},
+             {"id": "read", "type": "atomic", "query_id": "child/read"}],
+            {"grandchild/rows": [{"source": "nested"}], "child/read": [{"source": "read"}]},
+            skills=[blocked], identity_resolver=lambda _skill, _inputs: {"status": "blocked"},
+        )
+        self.assertEqual(picked, [])
+
+    def test_a_displayed_iterator_with_a_failed_item_is_still_selected_without_rows(self) -> None:
+        picked, _ = self.run_parent(
+            [{"id": "items", "type": "atomic", "query_id": "child/items", "save_as": "items"},
+             {"id": "each", "type": "iterator", "source": "items", "item_skill": "grandchild",
+              "optional": True, "displayed": True},
+             {"id": "read", "type": "atomic", "query_id": "child/read", "displayed": True}],
+            {"child/items": [{"name": "a"}], "grandchild/rows": RuntimeError("item failed"),
+             "child/read": [{"source": "read"}]},
+        )
+        self.assertEqual(picked, [])
+
+    def test_selection_ignores_steps_after_the_first_required_failure(self) -> None:
+        picked, step = self.run_parent(
+            [{"id": "check", "type": "atomic", "query_id": "child/check"},
+             {"id": "broken", "type": "atomic", "query_id": "child/broken"},
+             {"id": "read", "type": "atomic", "query_id": "child/read", "displayed": True}],
+            {"child/check": [{"source": "check"}], "child/broken": RuntimeError("required failed"),
+             "child/read": [{"source": "read"}]},
+        )
+        self.assertIsNone(picked)
+        self.assertEqual(step["rows"], [{"source": "check"}])
+
+    def test_without_meaningful_data_the_last_step_holding_data_is_read(self) -> None:
+        # A required step skipped by its condition holds no data, so the nested
+        # reference before it is the last step that does and reads as its rows.
+        picked, _ = self.run_parent(
+            [{"id": "setup", "type": "skill", "skill": "grandchild"},
+             {"id": "read", "type": "atomic", "query_id": "child/read", "condition": "false"}],
+            {"grandchild/rows": [{"source": "setup"}]},
+        )
+        self.assertEqual(picked, [{"source": "setup"}])
+
+    def test_a_step_id_read_sees_the_default_step(self) -> None:
+        child = _skill("child", [
+            {"id": "setup", "type": "skill", "skill": "grandchild", "displayed": True},
+            {"id": "read", "type": "atomic", "query_id": "child/read", "displayed": True},
+        ])
+        seen, _ = _run_reference(
+            {"child": child, "grandchild": self.GRANDCHILD}, "child",
+            {"grandchild/rows": [{"source": "setup"}], "child/read": [{"source": "read"}]}, ref={},
+        )
+        self.assertEqual(seen["ref"], {"data": [{"source": "read"}]})
+
+
+class GeneratedDefaultChildSelectionTest(unittest.TestCase):
+    """Generated definitions read by default expose their read step, as SmartPerfetto does."""
+
+    TOPOLOGY = [{"cpu_id": 0, "core_type": "little"}, {"cpu_id": 4, "core_type": "big"}]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.catalog = load_skill_script("perfetto_skill").ManifestCatalog()
+
+    def bound(self, child_id, inputs, answers):
+        seen, step = _run_reference(
+            self.catalog.graph(child_id), child_id, answers, ref={"save_as": "picked", "params": inputs},
+        )
+        self.assertTrue(step["child"]["success"])
+        return seen["picked"]["data"]
+
+    def test_topology_backed_children_expose_their_read_step_not_topology_rows(self) -> None:
+        reads = {
+            "task_migration_in_range": "task_migration_in_range/migration_analysis",
+            "cpu_cluster_load_in_range": "cpu_cluster_load_in_range/cluster_load",
+        }
+        for child_id, read_query in reads.items():
+            self.assertEqual(self.catalog.load(child_id)["steps"][0]["skill"], "cpu_topology_view")
+            for read, expected in (([{"source": "read"}], [{"source": "read"}]), ([], []), (RuntimeError("read failed"), [])):
+                with self.subTest(child=child_id, read=read):
+                    picked = self.bound(child_id, {"start_ts": 1, "end_ts": 2}, {
+                        "cpu_topology_view/read_topology": self.TOPOLOGY, read_query: read,
+                    })
+                    self.assertEqual(picked, expected)
+
+    def test_a_displayed_overview_wins_over_the_undisplayed_availability_check(self) -> None:
+        available = [{"status": "available"}]
+        picked = self.bound("suspend_wakeup_analysis", {}, {
+            "suspend_wakeup_analysis/check_suspend_data": available,
+            "suspend_wakeup_analysis/check_wakeup_data": available,
+            "suspend_wakeup_analysis/suspend_overview": [{"source": "overview"}],
+        })
+        self.assertEqual(picked, [{"source": "overview"}])
 
 
 class InheritedBindingPrecedenceTest(unittest.TestCase):

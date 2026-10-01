@@ -59,6 +59,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "data_check",
       "name": "GPU compute data availability",
       "query_id": "gpu_compute_kernel_analysis/data_check",
@@ -68,6 +69,7 @@
     },
     {
       "condition": "data_check.data[0]?.compute_rows > 0",
+      "displayed": true,
       "id": "kernel_summary",
       "name": "GPU compute kernel timing",
       "query_id": "gpu_compute_kernel_analysis/kernel_summary",
@@ -77,6 +79,7 @@
     },
     {
       "condition": "data_check.data[0]?.launch_arg_rows > 0",
+      "displayed": true,
       "id": "launch_configuration",
       "name": "Producer-provided compute launch configuration",
       "optional": true,
@@ -87,6 +90,7 @@
     },
     {
       "condition": "data_check.data[0]?.compute_rows === 0",
+      "displayed": true,
       "id": "no_compute_contract",
       "name": "No GPU compute kernels",
       "optional": true,
@@ -97,6 +101,7 @@
     },
     {
       "condition": "data_check.data[0]?.compute_rows > 0 && data_check.data[0]?.launch_arg_rows === 0",
+      "displayed": true,
       "id": "missing_launch_args_contract",
       "name": "Compute launch arguments unavailable",
       "optional": true,

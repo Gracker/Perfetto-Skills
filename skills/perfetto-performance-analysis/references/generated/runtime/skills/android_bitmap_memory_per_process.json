@@ -52,6 +52,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "bitmap_memory",
       "name": "Bitmap 内存按进程",
       "query_id": "android_bitmap_memory_per_process/bitmap_memory",
@@ -68,6 +69,7 @@
     },
     {
       "condition": "heap_bitmap_availability.data[0]?.has_heap_graph_bitmaps == 1",
+      "displayed": true,
       "id": "heap_bitmap_metadata",
       "name": "Heap Graph Bitmap 元数据",
       "optional": true,
@@ -77,6 +79,7 @@
     },
     {
       "condition": "heap_bitmap_availability.data[0]?.has_heap_graph_bitmaps == 1",
+      "displayed": true,
       "id": "heap_bitmap_sender_attribution",
       "name": "跨进程 Bitmap 来源归因",
       "optional": true,

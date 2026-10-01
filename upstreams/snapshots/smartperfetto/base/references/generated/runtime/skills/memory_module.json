@@ -85,6 +85,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "memory_overview",
       "name": "系统内存概览",
       "query_id": "memory_module/memory_overview",
@@ -93,6 +94,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "lmk_events",
       "name": "LMK 事件",
       "on_empty": "未检测到 LMK 事件",
@@ -102,6 +104,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "dmabuf_usage",
       "name": "dmabuf 内存使用",
       "query_id": "memory_module/dmabuf_usage",
@@ -110,6 +113,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "memory_psi",
       "name": "内存压力指标",
       "query_id": "memory_module/memory_psi",
@@ -118,6 +122,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "process_memory",
       "name": "进程内存",
       "optional": true,
@@ -127,6 +132,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "memory_timeline",
       "name": "内存时间线",
       "query_id": "memory_module/memory_timeline",
@@ -135,6 +141,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "page_fault_analysis",
       "name": "页面错误分析",
       "optional": true,
@@ -144,6 +151,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "allocation_events",
       "name": "内存分配事件",
       "query_id": "memory_module/allocation_events",
@@ -152,6 +160,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "memory_diagnosis",
       "inputs": [
         "memory_overview",

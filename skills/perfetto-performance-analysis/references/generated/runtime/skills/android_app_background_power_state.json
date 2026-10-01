@@ -64,6 +64,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "power_state_capability",
       "name": "后台功耗证据能力检查",
       "query_id": "android_app_background_power_state/power_state_capability",
@@ -73,6 +74,7 @@
     },
     {
       "condition": "power_state_capability.data[0]?.wakelock_status === 'available'",
+      "displayed": true,
       "id": "app_wakelock_summary",
       "name": "App wakelock 汇总",
       "optional": true,
@@ -83,6 +85,7 @@
     },
     {
       "condition": "power_state_capability.data[0]?.wakelock_status === 'available_via_battery_stats'",
+      "displayed": true,
       "id": "app_wakelock_summary_battery_stats",
       "name": "App wakelock 汇总（BatteryStats 回退）",
       "optional": true,
@@ -93,6 +96,7 @@
     },
     {
       "condition": "power_state_capability.data[0]?.standby_bucket_status === 'available'",
+      "displayed": true,
       "id": "standby_bucket_residency",
       "name": "Standby bucket 驻留",
       "optional": true,
@@ -103,6 +107,7 @@
     },
     {
       "condition": "power_state_capability.data[0]?.freezer_status === 'available_statsd'",
+      "displayed": true,
       "id": "freezer_summary",
       "name": "Freezer 冻结汇总",
       "optional": true,
@@ -113,6 +118,7 @@
     },
     {
       "condition": "power_state_capability.data[0]?.freezer_status === 'available_slices'",
+      "displayed": true,
       "id": "freezer_summary_slices",
       "name": "Freezer 冻结汇总（slice 来源）",
       "optional": true,

@@ -112,6 +112,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "system_cpu_context",
       "name": "窗口 CPU 系统上下文",
       "optional": true,
@@ -124,6 +125,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "system_task_summary",
       "name": "目标任务系统状态",
       "optional": true,
@@ -137,6 +139,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "system_task_handoffs",
       "name": "目标任务调度交接",
       "optional": true,
@@ -150,6 +153,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "full_session_stats",
       "name": "完整区间统计",
       "process_scope": {
@@ -163,6 +167,7 @@
     },
     {
       "condition": "touch_start_ts != null",
+      "displayed": true,
       "id": "touch_phase_stats",
       "name": "按压滑动阶段统计",
       "process_scope": {
@@ -176,6 +181,7 @@
     },
     {
       "condition": "has_fling == 1",
+      "displayed": true,
       "id": "fling_phase_stats",
       "name": "Fling 阶段统计",
       "process_scope": {
@@ -188,6 +194,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "identify_janky_frames",
       "name": "识别掉帧",
       "process_scope": {
@@ -200,6 +207,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "filter": "jank_level == 'severe' || jank_level == 'bad'",
       "id": "analyze_janky_frames",
       "item_params": {
@@ -215,6 +223,7 @@
       "type": "iterator"
     },
     {
+      "displayed": true,
       "id": "session_diagnosis",
       "inputs": [
         "full_stats",

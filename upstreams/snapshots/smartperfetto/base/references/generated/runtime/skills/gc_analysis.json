@@ -80,6 +80,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "gc_overview",
       "name": "GC 概览",
       "query_id": "gc_analysis/gc_overview",
@@ -89,6 +90,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "gc_time_breakdown",
       "name": "GC 耗时分解",
       "query_id": "gc_analysis/gc_time_breakdown",
@@ -98,6 +100,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_long_gc === 1",
+      "displayed": true,
       "id": "long_gc_events",
       "name": "长耗时 GC 事件",
       "query_id": "gc_analysis/long_gc_events",
@@ -107,6 +110,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "gc_frame_impact",
       "name": "GC 对帧的影响",
       "optional": true,
@@ -117,6 +121,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_process_stats === 1",
+      "displayed": true,
       "id": "process_gc_stats",
       "name": "进程 GC 统计",
       "optional": true,
@@ -127,6 +132,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "gc_frequency",
       "name": "GC 频率分析",
       "query_id": "gc_analysis/gc_frequency",
@@ -136,6 +142,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "root_cause_classification",
       "name": "根因分类",
       "optional": true,

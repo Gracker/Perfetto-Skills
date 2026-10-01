@@ -2,9 +2,9 @@
   "schema_version": 1,
   "target": "runtime/skills/code_pinpoint.json",
   "kind": "skill",
-  "expected_base_sha256": "9bf52aae6e4fb4424223969f9c3a83381ad62d2ef19cb761d3190105950ebeda",
+  "expected_base_sha256": "0f748afc53d320d81b843dadf65cac8353615a02efef7acaf9355e474150a6f9",
   "replacement": "code_pinpoint.runtime.json",
-  "replacement_sha256": "26fd77447c2ecdfa70ea4c95df4424e0a736ade603819e9cdf0b1ed6464b02bc",
+  "replacement_sha256": "3c287a5b958c53b5035922402a1070fbf0c55e5f2ee6ce447421396c8238c77f",
   "reason": "Keep the public projection portable: English anchor wording and no SmartPerfetto ${package} signal patterns. The deterministic native-symbol query itself was upstreamed and is now taken from the base.",
   "regression_ids": [
     "startup-heavy-code-pinpoint-anchor-kind",

@@ -89,6 +89,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "score_pipelines",
       "name": "计算管线类型评分 (YAML 驱动)",
       "query_id": "rendering_pipeline_detection/score_pipelines",
@@ -97,6 +98,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "determine_pipeline",
       "name": "确定主管线 (YAML 驱动)",
       "query_id": "rendering_pipeline_detection/determine_pipeline",
@@ -107,6 +109,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "subvariants",
       "name": "确定子变体",
       "query_id": "rendering_pipeline_detection/subvariants",
@@ -115,6 +118,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "trace_requirements",
       "name": "检查采集完整性",
       "query_id": "rendering_pipeline_detection/trace_requirements",
@@ -123,6 +127,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "active_rendering_processes",
       "name": "识别活跃渲染进程",
       "query_id": "rendering_pipeline_detection/active_rendering_processes",
@@ -131,6 +136,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "layer_signals",
       "name": "SF Layer 数与名字模式 (辅助证据)",
       "query_id": "rendering_pipeline_detection/layer_signals",
@@ -139,6 +145,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "extra_rhythm_signals",
       "name": "额外节奏源 (辅助证据)",
       "query_id": "rendering_pipeline_detection/extra_rhythm_signals",
@@ -147,6 +154,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "bufferqueue_path_signals",
       "name": "BufferQueue 路径证据",
       "query_id": "rendering_pipeline_detection/bufferqueue_path_signals",

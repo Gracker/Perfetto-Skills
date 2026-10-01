@@ -137,6 +137,7 @@
     },
     {
       "condition": "enable_expert_probes !== false && data_check.data[0]?.has_freq_data === 1 && analysis_window.data?.[0]?.window_start_ts != null && analysis_window.data?.[0]?.window_end_ts != null",
+      "displayed": true,
       "id": "thermal_predictor_probe",
       "name": "热风险预测",
       "optional": true,
@@ -155,6 +156,7 @@
     },
     {
       "condition": "data_check.data?.[0]?.has_max_limit_data === 1",
+      "displayed": true,
       "id": "direct_limit_evidence",
       "name": "直接限频证据",
       "on_empty": "窗口内没有超过阈值的限频区段。",
@@ -169,6 +171,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_thermal_data === 1",
+      "displayed": true,
       "id": "thermal_overview",
       "name": "温度传感器概览",
       "optional": true,
@@ -179,6 +182,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_freq_data === 1",
+      "displayed": true,
       "id": "cpu_freq_overview",
       "name": "CPU 频率概览",
       "optional": true,
@@ -189,6 +193,7 @@
     },
     {
       "condition": "enable_expert_probes !== false && data_check.data[0]?.has_gpu_freq_data === 1 && analysis_window.data?.[0]?.window_start_ts != null && analysis_window.data?.[0]?.window_end_ts != null",
+      "displayed": true,
       "id": "gpu_power_probe",
       "name": "GPU DVFS 探针",
       "optional": true,
@@ -203,6 +208,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_thermal_data === 1",
+      "displayed": true,
       "id": "thermal_timeline",
       "name": "温度变化时间线",
       "optional": true,
@@ -213,6 +219,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_freq_data === 1",
+      "displayed": true,
       "id": "frequency_drop_events",
       "name": "频率骤降事件",
       "optional": true,
@@ -223,6 +230,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_thermal_data === 1 && data_check.data[0]?.has_freq_data === 1",
+      "displayed": true,
       "id": "thermal_freq_correlation",
       "name": "温度-频率相关性",
       "optional": true,
@@ -233,6 +241,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_thermal_data === 1",
+      "displayed": true,
       "id": "high_temp_periods",
       "name": "高温时段",
       "optional": true,
@@ -243,6 +252,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_thermal_data === 1 || data_check.data[0]?.has_freq_data === 1",
+      "displayed": true,
       "id": "root_cause_classification",
       "name": "根因分类",
       "query_id": "thermal_throttling/root_cause_classification",
@@ -253,6 +263,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "thermal_diagnosis",
       "inputs": [
         "thermal_overview",
@@ -323,6 +334,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_thermal_data !== 1 && data_check.data[0]?.has_freq_data !== 1 && data_check.data[0]?.has_gpu_freq_data !== 1",
+      "displayed": true,
       "id": "no_data_fallback",
       "name": "无温度数据",
       "query_id": "thermal_throttling/no_data_fallback",

@@ -127,6 +127,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "check_input_data",
       "name": "检查输入事件数据",
       "optional": true,
@@ -137,6 +138,7 @@
     },
     {
       "condition": "input_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "get_process",
       "name": "选择目标进程",
       "query_id": "click_response_analysis/get_process",
@@ -146,6 +148,7 @@
     },
     {
       "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "input_latency_overview",
       "name": "输入延迟概览",
       "query_id": "click_response_analysis/input_latency_overview",
@@ -157,6 +160,7 @@
     },
     {
       "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "latency_by_event_type",
       "name": "按事件类型分析",
       "query_id": "click_response_analysis/latency_by_event_type",
@@ -168,6 +172,7 @@
     },
     {
       "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "latency_by_window",
       "name": "按窗口分析",
       "optional": true,
@@ -180,6 +185,7 @@
     },
     {
       "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "slow_input_events",
       "name": "慢输入事件",
       "query_id": "click_response_analysis/slow_input_events",
@@ -191,6 +197,7 @@
     },
     {
       "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "input_thread_state",
       "name": "输入期间主线程状态",
       "optional": true,
@@ -207,6 +214,7 @@
     },
     {
       "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "input_binder_calls",
       "name": "输入期间 Binder",
       "query_id": "click_response_analysis/input_binder_calls",
@@ -218,6 +226,7 @@
     },
     {
       "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "input_to_frame",
       "name": "输入到帧关联",
       "optional": true,
@@ -230,6 +239,7 @@
     },
     {
       "condition": "input_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "latency_distribution",
       "name": "延迟分布",
       "query_id": "click_response_analysis/latency_distribution",
@@ -241,6 +251,7 @@
     },
     {
       "condition": "slow_events.data.length > 0 && '${enable_per_event_detail|true}' !== 'false'",
+      "displayed": true,
       "id": "analyze_slow_events",
       "item_params": {
         "dispatch_ms": "dispatch_ms",
@@ -260,6 +271,7 @@
       "type": "iterator"
     },
     {
+      "displayed": true,
       "id": "click_diagnosis",
       "inputs": [
         "latency_overview",

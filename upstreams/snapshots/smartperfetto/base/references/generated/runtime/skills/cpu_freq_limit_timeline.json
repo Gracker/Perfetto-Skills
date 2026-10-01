@@ -80,6 +80,7 @@
     },
     {
       "condition": "limit_data_check.data?.[0]?.has_max_limit_data === 1",
+      "displayed": true,
       "id": "limit_summary",
       "name": "限频概览",
       "optional": true,
@@ -93,6 +94,7 @@
     },
     {
       "condition": "limit_data_check.data?.[0]?.has_max_limit_data === 1",
+      "displayed": true,
       "id": "limit_episodes",
       "name": "限频区段",
       "on_empty": "窗口内没有超过阈值的限频区段；可调低 episode_drop_pct 复查更浅的限频。",
@@ -107,6 +109,7 @@
     },
     {
       "condition": "limit_data_check.data?.[0]?.has_any_limit_sample === 1",
+      "displayed": true,
       "id": "limit_events",
       "name": "限频变更事件",
       "on_empty": "窗口内没有限频变更事件。",
@@ -121,6 +124,7 @@
     },
     {
       "condition": "limit_data_check.data?.[0]?.has_max_limit_data !== 1",
+      "displayed": true,
       "id": "limit_unavailable",
       "name": "限频数据不可用",
       "process_scope": {

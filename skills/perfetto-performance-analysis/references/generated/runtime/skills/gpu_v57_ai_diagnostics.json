@@ -80,6 +80,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "data_check",
       "name": "GPU v57 data availability",
       "query_id": "gpu_v57_ai_diagnostics/data_check",
@@ -89,6 +90,7 @@
     },
     {
       "condition": "data_check.data[0]?.gpu_rows > 0 && data_check.data[0]?.has_gpu_machine_id === 1 && data_check.data[0]?.has_gpu_architecture === 1",
+      "displayed": true,
       "id": "gpu_inventory",
       "name": "GPU inventory",
       "optional": true,
@@ -99,6 +101,7 @@
     },
     {
       "condition": "data_check.data[0]?.gpu_activity_rows > 0 && data_check.data[0]?.has_gpu_track_dimensions === 1",
+      "displayed": true,
       "id": "timeline_occupancy",
       "name": "GPU timeline occupancy",
       "optional": true,
@@ -109,6 +112,7 @@
     },
     {
       "condition": "timeline_occupancy.data?.length > 0",
+      "displayed": true,
       "id": "idle_gaps",
       "name": "Largest GPU idle gaps",
       "optional": true,
@@ -119,6 +123,7 @@
     },
     {
       "condition": "data_check.data[0]?.gpufreq_tracks > 0 && data_check.data[0]?.has_gpu_counter_ugpu === 1 && timeline_occupancy.data?.length > 0",
+      "displayed": true,
       "id": "frequency_residency",
       "name": "GPU frequency residency while busy",
       "optional": true,
@@ -129,6 +134,7 @@
     },
     {
       "condition": "frequency_residency.data?.length > 0",
+      "displayed": true,
       "id": "dvfs_ramp_events",
       "name": "GPU DVFS ramp events",
       "optional": true,
@@ -139,6 +145,7 @@
     },
     {
       "condition": "frequency_residency.data?.length > 0",
+      "displayed": true,
       "id": "sustained_throttle_events",
       "name": "Sustained GPU throttle events",
       "optional": true,
@@ -149,6 +156,7 @@
     },
     {
       "condition": "data_check.data[0]?.gpu_activity_rows === 0 && data_check.data[0]?.gpufreq_tracks === 0",
+      "displayed": true,
       "id": "no_data_contract",
       "name": "GPU v57 no-data contract",
       "optional": true,

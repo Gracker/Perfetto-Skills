@@ -59,6 +59,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "limit_attribution",
       "name": "限频归因（谁触发 / 限频前负载 / 异常线程）",
       "optional": true,
@@ -72,6 +73,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "thermal",
       "name": "温度/热节流分析",
       "optional": true,
@@ -85,6 +87,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "dvfs",
       "name": "DVFS 频率统计",
       "optional": true,
@@ -97,6 +100,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "cpu_idle",
       "name": "CPU Idle Residency",
       "optional": true,
@@ -110,6 +114,7 @@
     },
     {
       "condition": "Boolean(package || process_name)",
+      "displayed": true,
       "id": "process_util",
       "name": "进程 CPU 利用率",
       "optional": true,
@@ -124,6 +129,7 @@
     },
     {
       "condition": "Boolean(package || process_name)",
+      "displayed": true,
       "id": "thread_util",
       "name": "线程 CPU 利用率",
       "optional": true,
@@ -137,6 +143,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "gpu_work_period",
       "name": "GPU Work Period",
       "optional": true,
@@ -150,6 +157,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "mali_state",
       "name": "Mali Power State",
       "optional": true,

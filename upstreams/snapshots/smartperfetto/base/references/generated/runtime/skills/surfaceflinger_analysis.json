@@ -157,6 +157,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_sf_process === 1",
+      "displayed": true,
       "id": "vsync_config",
       "name": "VSync 配置",
       "query_id": "surfaceflinger_analysis/vsync_config",
@@ -166,6 +167,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_composition_data === 1",
+      "displayed": true,
       "id": "composition_overview",
       "name": "合成概览",
       "query_id": "surfaceflinger_analysis/composition_overview",
@@ -177,6 +179,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_composition_data === 1",
+      "displayed": true,
       "id": "gpu_hwc_stats",
       "name": "GPU/HWC 合成统计",
       "optional": true,
@@ -187,6 +190,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_composition_data === 1",
+      "displayed": true,
       "id": "slow_compositions",
       "name": "慢合成列表",
       "query_id": "surfaceflinger_analysis/slow_compositions",
@@ -198,6 +202,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_sf_process === 1",
+      "displayed": true,
       "id": "fence_analysis",
       "name": "Fence 等待分析",
       "optional": true,
@@ -208,6 +213,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_composition_data === 1",
+      "displayed": true,
       "id": "composition_phases",
       "name": "合成阶段分布",
       "optional": true,
@@ -218,6 +224,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_sf_process === 1",
+      "displayed": true,
       "id": "layer_stats",
       "name": "Layer 统计",
       "optional": true,
@@ -228,6 +235,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_composition_data === 1",
+      "displayed": true,
       "id": "root_cause_classification",
       "name": "SF 根因分类",
       "query_id": "surfaceflinger_analysis/root_cause_classification",
@@ -239,6 +247,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_sf_process === 0",
+      "displayed": true,
       "id": "fallback_no_sf_data",
       "name": "SF 数据不可用",
       "query_id": "surfaceflinger_analysis/fallback_no_sf_data",
