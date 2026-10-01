@@ -310,7 +310,7 @@ class RuntimeExpressionExportTest(unittest.TestCase):
 
     def normalize(self, step: dict[str, object]) -> dict[str, object]:
         kept, query = exporter.normalize_step(
-            step, "under_test", Path("."), Path("."), {}, [], set(), set(), [], {}, {},
+            step, "under_test", Path("."), Path("."), {}, [], set(), [], {}, {},
         )
         self.assertIsNone(query)
         return kept
@@ -952,6 +952,26 @@ class ProcessScopeExportTest(unittest.TestCase):
         self.assertEqual(queries["composite/setup"]["template"].get("runtime_bindings"), [])
         manifest = json.loads((self.generated / "runtime/skills/composite.json").read_text())
         self.assertEqual(manifest["steps"][1].get("process_scope"), self.scope)
+
+    def test_only_references_without_a_default_gate_a_step_on_its_saved_result(self) -> None:
+        self.add_skill("memory", {"type": "composite", "steps": [
+            {"id": "vsync", "type": "atomic", "save_as": "vsync_info", "sql": "SELECT 1 AS period"},
+            {"id": "gc", "type": "atomic",
+             "sql": "SELECT dur / ${vsync_info.data[0].period|16666667} FROM slice"},
+            {"id": "strict", "type": "atomic",
+             "sql": "SELECT ${vsync_info.data[0].period|1}, '${vsync_info.data[0].status}'"},
+        ]})
+        self.export()
+        queries = self.queries("memory")
+        manifest = json.loads((self.generated / "runtime/skills/memory.json").read_text())
+        steps = {step["id"]: step for step in manifest["steps"]}
+        for step_id, dependencies in (("gc", []), ("strict", ["vsync_info"])):
+            with self.subTest(step=step_id):
+                template = queries[f"memory/{step_id}"]["template"]
+                self.assertEqual(template["result_references"], ["vsync_info"])
+                self.assertEqual(template["result_dependencies"], dependencies)
+                self.assertEqual(template["parameters"], [])
+                self.assertEqual(steps[step_id]["result_dependencies"], dependencies)
 
     def test_skill_reference_keeps_the_child_step_it_binds(self) -> None:
         self.add_skill("child", {"type": "composite", "steps": [

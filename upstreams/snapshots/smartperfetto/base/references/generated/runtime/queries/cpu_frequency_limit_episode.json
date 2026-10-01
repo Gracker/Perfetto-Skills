@@ -103,6 +103,7 @@
           "who_window_ms"
         ],
         "result_dependencies": [],
+        "result_references": [],
         "runtime_bindings": []
       },
       "validation": {
@@ -234,6 +235,9 @@
         "result_dependencies": [
           "episode_windows"
         ],
+        "result_references": [
+          "episode_windows"
+        ],
         "runtime_bindings": []
       },
       "validation": {
@@ -342,6 +346,9 @@
           "episode_start_ts"
         ],
         "result_dependencies": [
+          "episode_windows"
+        ],
+        "result_references": [
           "episode_windows"
         ],
         "runtime_bindings": []
@@ -455,6 +462,9 @@
         "result_dependencies": [
           "episode_windows"
         ],
+        "result_references": [
+          "episode_windows"
+        ],
         "runtime_bindings": []
       },
       "validation": {
@@ -561,6 +571,9 @@
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [
+          "episode_windows"
+        ],
+        "result_references": [
           "episode_windows"
         ],
         "runtime_bindings": []
@@ -713,6 +726,7 @@
           "window_start_ts"
         ],
         "result_dependencies": [],
+        "result_references": [],
         "runtime_bindings": []
       },
       "validation": {
@@ -861,6 +875,9 @@
           "window_start_ts"
         ],
         "result_dependencies": [
+          "who_verdict"
+        ],
+        "result_references": [
           "who_verdict"
         ],
         "runtime_bindings": []

@@ -187,6 +187,45 @@ class RuntimeTest(unittest.TestCase):
         # A null saved result is still bound: it shadows the same-name input.
         self.assertEqual(rendered, "SELECT 5, NULL, 7, NULL")
 
+    def test_sql_template_empty_saved_result_path_takes_its_explicit_default(self) -> None:
+        # SmartPerfetto resolvePath: `data[0]` of an empty result is undefined,
+        # so the placeholder takes its `|default` and the step still runs.
+        rendered = self.common.render_sql_template(
+            "SELECT ${r.data[0].period|16666667}, '${r.data[0].status|}', ${r.data[1].x|0}, ${gone.data[0].x|3}",
+            {},
+            {"r": {"data": [{"period": 8333333, "status": "ok"}]}},
+        )
+        self.assertEqual(rendered, "SELECT 8333333, 'ok', 0, 3")
+        rendered = self.common.render_sql_template(
+            "SELECT ${r.data[0].period|16666667}, ${n.data[0].x|2}", {}, {"r": {"data": []}, "n": None},
+        )
+        self.assertEqual(rendered, "SELECT 16666667, 2")
+
+    def test_sql_template_unresolvable_saved_result_path_stays_strict(self) -> None:
+        cases = (
+            ("SELECT ${r.data[0].period}", {"r": {"data": []}}, "out of range"),
+            ("SELECT ${r.data[0].typo|0}", {"r": {"data": [{"period": 1}]}}, "no field"),
+            ("SELECT ${r.data[0][0]|0}", {"r": {"data": [{"period": 1}]}}, "non-array"),
+            ("SELECT ${r.data[0]..x|0}", {"r": {"data": []}}, "invalid saved result path"),
+            ("SELECT ${r.data[0]|0}", {"r": {"data": [{"period": 1}]}}, "scalar"),
+        )
+        for template, results, message in cases:
+            with self.subTest(template=template):
+                with self.assertRaisesRegex(ValueError, message):
+                    self.common.render_sql_template(template, {}, results)
+
+    def test_sql_template_roots_gate_only_on_rows_the_template_cannot_default(self) -> None:
+        parameters, references, dependencies = self.common.sql_template_roots(
+            "SELECT ${vsync.data[0].period|16666667}, '${strict.data[0].status}', "
+            "${mixed.data[0].a|0}, ${mixed.data[0].b}, '${package}', ${__process_scope.upid} "
+            "FROM ${relation} JOIN ${relation_default|x} -- ${commented.data[0].x} ${note}\n",
+            {"vsync", "relation", "relation_default", "strict", "mixed", "commented", "unused"},
+        )
+        self.assertEqual(parameters, ["package"])
+        self.assertEqual(references, ["mixed", "relation", "relation_default", "strict", "vsync"])
+        # A bare relation cannot render without rows, default or not.
+        self.assertEqual(dependencies, ["mixed", "relation", "relation_default", "strict"])
+
     def test_query_output_is_bounded_before_loading_into_memory(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -475,6 +514,32 @@ class SkillInputContractTest(unittest.TestCase):
         result = self.runner(self.skills, query).run("fps")
         self.assertTrue(result["success"])
         self.assertEqual(rendered, ["WHERE ts >= 0 AND name = ''"])
+
+    def test_empty_saved_result_gates_only_the_steps_that_need_its_rows(self) -> None:
+        # memory_analysis/main_thread_gc: a defaulted path to an empty
+        # vsync_info runs with its default, as in SmartPerfetto.
+        common = load_skill_script("_common")
+        templates = {
+            "parent/gc": "SELECT dur / ${vsync_info.data[0].period|16666667}",
+            "parent/strict": "SELECT '${vsync_info.data[0].status}'",
+        }
+        rendered = []
+
+        def query(query_id, *, results, **_kwargs):
+            if query_id == "parent/vsync":
+                return []
+            rendered.append(common.render_sql_template(templates[query_id], {}, results))
+            return [{"value": 1}]
+
+        skills = self.with_parent([
+            {"id": "vsync", "type": "atomic", "query_id": "parent/vsync", "save_as": "vsync_info"},
+            {"id": "gc", "type": "atomic", "query_id": "parent/gc", "result_dependencies": []},
+            {"id": "strict", "type": "atomic", "query_id": "parent/strict", "result_dependencies": ["vsync_info"]},
+        ])
+        result = self.runner(skills, query).run("parent")
+        self.assertTrue(result["success"])
+        self.assertEqual([step["status"] for step in result["steps"]], ["empty", "observed", "skipped_empty_dependency"])
+        self.assertEqual(rendered, ["SELECT dur / 16666667"])
 
     def test_undeclared_parameter_is_rejected_before_any_trace_work(self) -> None:
         query = mock.Mock(return_value=[{"value": 1}])

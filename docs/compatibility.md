@@ -22,7 +22,11 @@ become SQL literal lists for `IN (...)`), `--module` for declared stdlib
 prerequisites, and `--result` for a non-empty JSON row array from a prior step.
 Dotted fields and numeric indexes resolve pipeline expressions such as
 `${step.data[0].upid}`. A `${name|default}` placeholder uses its default when
-`name` is omitted or resolves to `null`, as in SmartPerfetto. Direct text
+`name` is omitted, resolves to `null`, or indexes past the rows of a saved
+result (`data[0]` of an empty step), as in SmartPerfetto. A missing field or
+a path without `|default` is still an error, so `SkillRunner` skips a step as
+`skipped_empty_dependency` only when a saved result it reads as a relation or
+through such a path is empty. Direct text
 substitution is unsupported. Query output is bounded to 16 MiB per stream
 unless an explicit reviewed override is supplied.
 

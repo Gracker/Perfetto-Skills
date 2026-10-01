@@ -250,6 +250,50 @@ class AllQueryValidationTest(unittest.TestCase):
             self.assertTrue(any("hash" in error for error in result["errors"]))
             self.assertTrue(any("module" in error for error in result["errors"]))
 
+    def test_result_dependencies_are_the_references_that_cannot_default(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / "query.sql"
+            path.write_text(
+                "SELECT dur / ${vsync.data[0].period|16666667}, '${coverage.data[0].status}' "
+                "FROM slice WHERE name = '${package}';",
+                encoding="utf-8",
+            )
+            query = {
+                "id": "skill/step", "path": "query.sql",
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                "sql_dependencies": {"declared_modules": [], "required_tables": [], "setup_queries": []},
+                "template": {
+                    "parameters": ["package"], "fragments": [], "runtime_bindings": [],
+                    "result_references": ["coverage", "vsync"], "result_dependencies": ["coverage"],
+                },
+                "compatibility": {"android": {
+                    str(api): {"status": "capability_gated"} for api in range(28, 38)
+                }},
+                "validation": {},
+            }
+
+            def validate(candidate, step_dependencies=None):
+                return validate_query(
+                    candidate, root, stdlib_modules=set(), fixtures=set(), semantic_queries=set(),
+                    query_ids={"skill/step"}, result_names={"coverage", "vsync"},
+                    step_result_dependencies=step_dependencies,
+                )
+
+            self.assertTrue(validate(query, ["coverage"])["static_valid"], validate(query))
+            # SkillRunner gates on the step's copy, which must match the template.
+            self.assertFalse(validate(query, ["coverage", "vsync"])["static_valid"])
+            for field, value in (
+                ("result_dependencies", ["coverage", "vsync"]),
+                ("result_dependencies", []),
+                ("result_references", ["coverage"]),
+                ("result_references", ["coverage", "vsync", "package"]),
+            ):
+                with self.subTest(field=field, value=value):
+                    candidate = copy.deepcopy(query)
+                    candidate["template"][field] = value
+                    self.assertFalse(validate(candidate)["static_valid"])
+
     def test_rejects_placeholder_fragment_dependency_and_compatibility_drift(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -267,7 +311,8 @@ class AllQueryValidationTest(unittest.TestCase):
                 "template": {
                     "parameters": [],
                     "fragments": [{"source_path": "source/missing.sql", "source_sha256": "0" * 64}],
-                    "result_dependencies": ["missing_result"],
+                    "result_references": ["missing_result"],
+                    "result_dependencies": [],
                 },
                 "compatibility": {"android": {}},
                 "validation": {},
@@ -287,7 +332,7 @@ class AllQueryValidationTest(unittest.TestCase):
                 "parameters",
                 "fragment",
                 "setup query",
-                "result dependency",
+                "result reference",
                 "compatibility",
                 "required table",
             ):

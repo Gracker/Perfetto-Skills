@@ -51,7 +51,7 @@ from runtime.executor import step_expressions  # noqa: E402
 from runtime.expressions import validate as validate_expression  # noqa: E402
 from _common import (  # noqa: E402
     is_process_scope_name, reject_process_scope_names, runtime_sql_bindings,
-    sql_template_names, validate_process_scope_declaration,
+    sql_template_names, sql_template_roots, validate_process_scope_declaration,
 )
 SUPPORTED_STEP_TYPES = {
     "atomic",
@@ -1050,7 +1050,6 @@ def portable_inputs(raw: dict[str, Any]) -> object:
     return rendered
 
 
-_PLACEHOLDER = re.compile(r"\$\{([^}]+)\}")
 _SIGNAL_PATTERN = re.compile(
     r"\b(?:name|track_name|thread_name|process_name)\s+"
     r"(?:GLOB|LIKE|=)\s*'([^']+)'",
@@ -1367,22 +1366,6 @@ def persistent_objects(sql: str) -> tuple[list[dict[str, str]], list[dict[str, s
     return created, dropped
 
 
-def query_parameters(sql: str, input_names: set[str], result_names: set[str]) -> tuple[list[str], list[str]]:
-    parameters: set[str] = set()
-    results: set[str] = set()
-    for expression in _PLACEHOLDER.findall(sql):
-        if is_process_scope_name(expression):
-            continue
-        root = re.split(r"[.|\[]", expression.partition("|")[0], maxsplit=1)[0]
-        if root in result_names:
-            results.add(root)
-        elif root in input_names or root == "item":
-            parameters.add(root)
-        else:
-            parameters.add(root)
-    return sorted(parameters), sorted(results)
-
-
 def android_adapters(modules: list[str], sql_text: str) -> list[dict[str, Any]]:
     adapters: list[dict[str, Any]] = []
     joined = " ".join(modules) + " " + sql_text
@@ -1455,7 +1438,6 @@ def normalize_step(
     generated_root: Path,
     source_entry: dict[str, Any],
     modules: list[str],
-    input_names: set[str],
     result_names: set[str],
     setup_queries: list[str],
     fixture_assertions: dict[str, list[dict[str, Any]]],
@@ -1500,7 +1482,7 @@ def normalize_step(
         if name not in created_names and re.search(rf"\b{re.escape(name)}\b", expanded)
     )
     dependency_setups = [object_producers[name] for name in required_objects]
-    parameters, results = query_parameters(expanded, input_names, result_names)
+    parameters, result_references, result_dependencies = sql_template_roots(expanded, result_names)
     scope = step.get("process_scope")
     try:
         runtime_bindings = runtime_sql_bindings(expanded)
@@ -1511,7 +1493,7 @@ def normalize_step(
     except ValueError as error:
         raise ExportError(f"Invalid process scope in {query_id}: {error}") from error
     identity = identity if identity is not None else {"policy": "none"}
-    kept["result_dependencies"] = results
+    kept["result_dependencies"] = result_dependencies
     query = {
         "id": query_id,
         "skill_id": skill_id,
@@ -1525,7 +1507,8 @@ def normalize_step(
         },
         "template": {
             "parameters": parameters,
-            "result_dependencies": results,
+            "result_references": result_references,
+            "result_dependencies": result_dependencies,
             "fragments": fragment_metadata,
             "runtime_bindings": runtime_bindings,
             "name_parameters": sorted(sql_template_names(expanded) & set(identity.get("aliases", []))),
@@ -1665,8 +1648,7 @@ def build_runtime_assets(
             raise ExportError(f"Unknown official modules in {skill_id}: {unknown_modules}")
         inputs = portable_inputs(raw)
         input_list = inputs if isinstance(inputs, list) else []
-        input_names = declared_input_names(raw)
-        reject_process_scope_names({name: None for name in input_names})
+        reject_process_scope_names({name: None for name in declared_input_names(raw)})
         raw_steps = raw.get("steps", []) or []
         if not isinstance(raw_steps, list):
             raise ExportError(f"Steps must be an array in {skill_id}")
@@ -1693,7 +1675,7 @@ def build_runtime_assets(
             }
             normalized_root, query = normalize_step(
                 root_step, skill_id, source, generated_root, entry, modules,
-                input_names, result_names, setup_queries, fixture_assertions,
+                result_names, setup_queries, fixture_assertions,
                 object_producers, identity,
             )
             root_query_id = normalized_root["query_id"]
@@ -1710,7 +1692,7 @@ def build_runtime_assets(
                 raise ExportError(f"Step must be an object in {skill_id}")
             normalized, query = normalize_step(
                 raw_step, skill_id, source, generated_root, entry, modules,
-                input_names, result_names, setup_queries, fixture_assertions,
+                result_names, setup_queries, fixture_assertions,
                 object_producers, identity,
             )
             normalized_steps.append(normalized)

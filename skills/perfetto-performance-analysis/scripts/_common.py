@@ -89,8 +89,13 @@ def validate_process_scope_declaration(declaration: object) -> str:
     return role
 
 
+def template_root(name: str) -> str:
+    """The variable a placeholder name reads: `step` in `step.data[0].x`."""
+    return re.split(r"[.\[]", name, maxsplit=1)[0]
+
+
 def is_process_scope_name(name: object) -> bool:
-    return isinstance(name, str) and name.split(".", 1)[0].split("[", 1)[0] == "__process_scope"
+    return isinstance(name, str) and template_root(name) == "__process_scope"
 
 
 def reject_process_scope_names(values: Mapping[str, object]) -> None:
@@ -578,19 +583,22 @@ def result_rows_to_relation(value: object, name: str) -> str:
     return "(" + " UNION ALL ".join(selects) + ")"
 
 
-_RESULT_FIELD = re.compile(r"\.([A-Za-z_][A-Za-z0-9_]*)")
-_RESULT_INDEX = re.compile(r"\[(0|[1-9][0-9]*)\]")
+_RESULT_STEP = re.compile(r"\.([A-Za-z_][A-Za-z0-9_]*)|\[(0|[1-9][0-9]*)\]")
+_RESULT_PATH = re.compile(rf"(?:{_RESULT_STEP.pattern})*")
 
 
 def resolve_result_expression(
-    expression: str, results: Mapping[str, object]
+    expression: str, results: Mapping[str, object], *, allow_missing: bool = False
 ) -> tuple[bool, bool, object]:
     """Resolve a pipeline-style result path.
 
     Returns ``(matched, is_relation, value)``. A bare result name denotes the
     complete row relation; dotted fields and numeric indexes select a scalar.
     ``data`` and ``rows`` are accepted as aliases for a top-level row array so
-    exported SmartPerfetto expressions keep their documented shape.
+    exported SmartPerfetto expressions keep their documented shape. With
+    ``allow_missing`` an index past the end (``data[0]`` of an empty result)
+    or a null value along the path resolves to None; a missing field or a
+    non-array index is still an error.
     """
     root = next(
         (
@@ -609,44 +617,68 @@ def resolve_result_expression(
         # no rows, so it reads as a scalar null.
         return True, results[root] is not None, results[root]
 
+    if not _RESULT_PATH.fullmatch(expression, len(root)):
+        raise ValueError(f"invalid saved result path: {expression!r}")
     value = results[root]
-    offset = len(root)
-    while offset < len(expression):
-        field_match = _RESULT_FIELD.match(expression, offset)
-        if field_match:
-            field = field_match.group(1)
-            if isinstance(value, list) and field in {"data", "rows"}:
-                pass
-            elif isinstance(value, dict) and field in value:
-                value = value[field]
-            elif isinstance(value, dict) and field == "data" and "rows" in value:
-                value = value["rows"]
-            else:
-                raise ValueError(
-                    f"saved result path {expression!r} has no field {field!r}"
-                )
-            offset = field_match.end()
-            continue
-
-        index_match = _RESULT_INDEX.match(expression, offset)
-        if index_match:
-            index = int(index_match.group(1))
+    for field, index in _RESULT_STEP.findall(expression, len(root)):
+        if allow_missing and value is None:
+            return True, False, None
+        if index:
             if not isinstance(value, list):
                 raise ValueError(
                     f"saved result path {expression!r} indexes a non-array value"
                 )
-            if index >= len(value):
+            if int(index) < len(value):
+                value = value[int(index)]
+            elif allow_missing:
+                return True, False, None
+            else:
                 raise ValueError(
                     f"saved result path {expression!r} index {index} is out of range"
                 )
-            value = value[index]
-            offset = index_match.end()
-            continue
-
-        raise ValueError(f"invalid saved result path: {expression!r}")
+        elif isinstance(value, list) and field in {"data", "rows"}:
+            pass
+        elif isinstance(value, dict) and field in value:
+            value = value[field]
+        elif isinstance(value, dict) and field == "data" and "rows" in value:
+            value = value["rows"]
+        else:
+            raise ValueError(
+                f"saved result path {expression!r} has no field {field!r}"
+            )
     if isinstance(value, (dict, list, tuple)):
         raise ValueError(f"saved result path {expression!r} does not resolve to a scalar")
     return True, False, value
+
+
+def sql_template_roots(
+    template: str, result_names: Iterable[str]
+) -> tuple[list[str], list[str], list[str]]:
+    """Split the variables a template renders into parameters, the saved
+    results it reads, and the dependencies among those it cannot render
+    without rows.
+
+    A bare relation always needs rows. A path with `|default` renders the
+    default when the result is unbound or has fewer rows than it indexes, so
+    only a path without one is a dependency. Comments are never rendered and
+    do not count.
+    """
+    names = set(result_names)
+    parameters: set[str] = set()
+    references: set[str] = set()
+    dependencies: set[str] = set()
+    for expression in sql_template_expressions(template):
+        name, separator, _default = expression.partition("|")
+        root = template_root(name)
+        if root == "__process_scope":
+            continue
+        if root not in names:
+            parameters.add(root)
+            continue
+        references.add(root)
+        if name == root or not separator:
+            dependencies.add(root)
+    return sorted(parameters), sorted(references), sorted(dependencies)
 
 
 def render_sql_template(
@@ -708,13 +740,16 @@ def render_sql_template(
                 )))
                 index = end + 1
                 continue
-            matched_result, is_relation, value = resolve_result_expression(name, results)
+            matched_result, is_relation, value = resolve_result_expression(
+                name, results, allow_missing=bool(separator)
+            )
             if not matched_result:
                 if name not in parameters and not separator:
                     raise ValueError(f"missing SQL template value: {name}")
                 value = parameters.get(name)
             # SmartPerfetto: a bound name whose value is null (an unset optional
-            # input, a null field) still takes its `|default`.
+            # input, a null field, a row an empty result lacks) still takes its
+            # `|default`.
             if value is None and separator:
                 value = default_template_value(raw_default)
             if is_relation:

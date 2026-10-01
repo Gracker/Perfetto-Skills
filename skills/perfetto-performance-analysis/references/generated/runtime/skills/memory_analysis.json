@@ -246,9 +246,7 @@
       "name": "GC 与帧关联",
       "optional": true,
       "query_id": "memory_analysis/gc_frame_impact",
-      "result_dependencies": [
-        "vsync_info"
-      ],
+      "result_dependencies": [],
       "save_as": "gc_frame_impact",
       "type": "atomic"
     },
@@ -257,9 +255,7 @@
       "id": "main_thread_gc",
       "name": "主线程 GC",
       "query_id": "memory_analysis/main_thread_gc",
-      "result_dependencies": [
-        "vsync_info"
-      ],
+      "result_dependencies": [],
       "save_as": "main_thread_gc",
       "type": "atomic"
     },

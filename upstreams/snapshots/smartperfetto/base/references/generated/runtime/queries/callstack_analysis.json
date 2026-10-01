@@ -77,6 +77,7 @@
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [],
+        "result_references": [],
         "runtime_bindings": []
       },
       "validation": {
@@ -169,6 +170,9 @@
           "min_samples"
         ],
         "result_dependencies": [
+          "sample_stats"
+        ],
+        "result_references": [
           "sample_stats"
         ],
         "runtime_bindings": []
@@ -265,6 +269,7 @@
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [],
+        "result_references": [],
         "runtime_bindings": []
       },
       "validation": {
@@ -358,6 +363,7 @@
           "package"
         ],
         "result_dependencies": [],
+        "result_references": [],
         "runtime_bindings": []
       },
       "validation": {
@@ -448,6 +454,9 @@
         "result_dependencies": [
           "hot_functions"
         ],
+        "result_references": [
+          "hot_functions"
+        ],
         "runtime_bindings": []
       },
       "validation": {
@@ -536,6 +545,11 @@
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [
+          "hot_functions",
+          "module_distribution",
+          "sample_stats"
+        ],
+        "result_references": [
           "hot_functions",
           "module_distribution",
           "sample_stats"
