@@ -923,7 +923,7 @@ class UnobservedStepBindingTest(unittest.TestCase):
         },
     }
 
-    def test_failed_child_skill_binds_no_save_as_even_with_partial_rows(self) -> None:
+    def test_failed_child_skill_exposes_no_rows_even_partial_ones(self) -> None:
         for ref in ({}, {"save_from": "rows"}):
             for optional in (True, False):
                 with self.subTest(ref=ref, optional=optional):
@@ -932,8 +932,10 @@ class UnobservedStepBindingTest(unittest.TestCase):
                           "optional": optional, **ref}],
                         extra_skills=self.PARTIAL, fail=("partial/broken",),
                     )
-                    # The step id keeps the partial rows; the output record keeps the child.
-                    self.assertEqual(seen["ref"], {"data": [{"source": "local"}]})
+                    # Neither the step id nor save_as exposes the partial rows; the
+                    # output record keeps them with the failed child.
+                    self.assertNotIn("ref", seen)
+                    self.assertEqual(steps["ref"]["rows"], [{"source": "local"}])
                     self.assertFalse(steps["ref"]["child"]["success"])
 
     def test_failed_child_skill_named_like_its_save_as_leaves_the_name_unbound(self) -> None:

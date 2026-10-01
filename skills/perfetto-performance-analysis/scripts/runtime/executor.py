@@ -403,15 +403,19 @@ class SkillRunner:
                     result["message"] = step["on_empty"]
                 if status == "error" and not optional:
                     required_error = True
-                bind(step_id, {"data": rows})
+                # A failed child exposes no data through the step id or save_as,
+                # even with partial rows or an observed save_from step; they stay
+                # in the output step record. save_from otherwise binds exactly
+                # one child step. Nothing falls back to another step's rows, an
+                # earlier value, an input or a caller value.
+                failed = not child.get("success")
+                if failed:
+                    bind_no_data(step_id)
+                else:
+                    bind(step_id, {"data": rows})
                 if step.get("save_as"):
-                    # A failed child binds no save_as, even with partial rows or
-                    # an observed save_from step; save_from otherwise binds
-                    # exactly one child step. Neither falls back to another
-                    # step's rows, an earlier value, an input or a caller value.
-                    # Bound after the step id, so a same-named save_as wins.
                     saved = (
-                        None if not child.get("success")
+                        None if failed
                         else rows if "save_from" not in step
                         else self._named_child_rows(child, str(step["save_from"]))
                     )
