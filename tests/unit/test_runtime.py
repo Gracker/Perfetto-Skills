@@ -741,6 +741,7 @@ class JankTopologyBackedBindingTest(unittest.TestCase):
         load = lambda skill_id: json.loads((manifests / f"{skill_id}.json").read_text(encoding="utf-8"))
         jank = load("jank_frame_detail")
         steps = [copy.deepcopy(step) for step in jank["steps"] if step["id"] in ("task_migration", "cpu_cluster_load")]
+        self.frame_diagnosis = next(step for step in jank["steps"] if step["id"] == "frame_diagnosis")
         self.skills = {skill_id: load(skill_id) for skill_id in (
             "task_migration_in_range", "cpu_cluster_load_in_range", "cpu_topology_view")}
         self.skills["parent"] = {
@@ -786,6 +787,50 @@ class JankTopologyBackedBindingTest(unittest.TestCase):
         seen = self.bindings(RuntimeError("read step failed"))
         for name in self.READ_QUERIES:
             self.assertNotIn(name, seen)
+
+    def diagnose(self, migration_rows, cluster_rows):
+        """Renders the generated frame_diagnosis rules that read these bindings."""
+        from runtime.executor import SkillRunner
+
+        rules = [rule for rule in self.frame_diagnosis["rules"]
+                 if any(name in rule["condition"] for name in self.READ_QUERIES)]
+        skills = copy.deepcopy(self.skills)
+        skills["parent"]["steps"][-1] = {"id": "diagnose", "type": "diagnostic", "rules": rules}
+        answers = {self.READ_QUERIES["migration_data"]: migration_rows,
+                   self.READ_QUERIES["cluster_load_data"]: cluster_rows}
+
+        def query(query_id, **kwargs):
+            if query_id == "cpu_topology_view/read_topology":
+                return self.TOPOLOGY
+            return answers.get(query_id, [])
+
+        result = SkillRunner({"skills": skills}, query).run("parent", {"start_ts": 1, "end_ts": 2})
+        self.assertTrue(result["success"])
+        return next(step for step in result["steps"] if step["step_id"] == "diagnose")["diagnostics"]
+
+    def test_migration_and_cluster_hints_render_without_an_unevidenced_cause(self) -> None:
+        # The thread with the most migrations is not the UI thread, and every tier is saturated.
+        migration = [{"thread_name": "Thread-7", "migration_count": 9, "big_to_little": 5, "little_to_big": 4,
+                      "big_core_pct": 20, "unknown_core_ns": 0, "unique_cpus": 6}]
+        cluster = [{"cluster": name, "core_count": 2, "load_pct": load, "max_single_core_pct": single}
+                   for name, load, single in (("超大核簇", 95, 80), ("大核簇", 95, 99), ("中核簇", 95, 80), ("小核簇", 96, 80))]
+        diagnostics = self.diagnose(migration, cluster)
+        self.assertEqual([d["diagnosis"] for d in diagnostics], [
+            "Thread-7 从大核组（超大/大/中核）迁移到小核 5 次，小核迁回大核组 4 次（迁移次数最多的线程）",
+            "Thread-7 大核组（超大/大/中核）运行占比仅 20%",
+            "大核簇负载 95%，接近跑满",
+            "超大核簇负载 95%，接近跑满",
+            "中核簇负载 95%，接近跑满",
+            "小核簇负载 96%，几乎跑满",
+            "大核簇与小核簇负载均高于 70%: 大核簇 95%, 小核簇 96%",
+            "大核簇中有核心接近 100% (99%)",
+        ])
+        for text in (text for d in diagnostics for text in (d["diagnosis"], *d["suggestions"])):
+            self.assertNotRegex(text, r"温控降频|温控策略|温度|过热|散热|UI 线程|资源严重不足|导致调度延迟|整体负载")
+        # The migration rules and the big-tier saturation rules defer a frequency cause to the limit evidence.
+        deferring = [d["diagnosis"] for d in diagnostics
+                     if any("是否限频以本帧的 CPU 限频证据为准" in text for text in d["suggestions"])]
+        self.assertEqual(deferring, [diagnostics[index]["diagnosis"] for index in range(5)])
 
 
 class InheritedBindingPrecedenceTest(unittest.TestCase):
