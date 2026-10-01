@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/system_sched_spans.sql
--- Source SHA-256: 78e59040294b58d96a54449102109fd8536434ea1b93435f88eb700c612784d9
+-- Source SHA-256: 06777e61237b61b3318f9fa40c2714e1b08648d6773844d8ab6c4f1d12ee9184
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
@@ -10,6 +10,8 @@
 -- explicitly; no global process-table replacement or synthetic switch boundary.
 -- Capacity extrema require a complete machine population. A missing capacity
 -- on any CPU prevents certifying which recorded CPU is fastest or smallest.
+-- Big/little rollups over core_type follow the contract in
+-- atomic/cpu_topology_view.skill.yaml (big group = prime/big/medium).
 system_cpu_topology AS (
   SELECT c.id AS ucpu,c.cpu,c.machine_id,c.cluster_id,c.capacity,
     CASE WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'unknown'

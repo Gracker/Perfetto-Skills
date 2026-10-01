@@ -192,7 +192,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-    "sha256": "606707114b38750e9172c348cd727f2f00231b5a7b6ee521915247b5d62fe233"
+    "sha256": "62ecf72c4ed2df7a881eeff7e7c601aa36f9ea52c63236624afde55dbcd63ec5"
   },
   "steps": [
     {
@@ -709,9 +709,9 @@
           ]
         },
         {
-          "condition": "migration_data?.data?.length > 0 && migration_data.data[0]?.big_core_pct < 30",
+          "condition": "migration_data?.data?.length > 0 && migration_data.data[0]?.unknown_core_ns === 0 && migration_data.data[0]?.big_core_pct < 30",
           "confidence": "high",
-          "diagnosis": "${migration_data.data[0].thread_name} 大核运行占比仅 ${migration_data.data[0].big_core_pct}%",
+          "diagnosis": "${migration_data.data[0].thread_name} 大核组（超大/大/中核）运行占比仅 ${migration_data.data[0].big_core_pct}%",
           "severity": "warning",
           "suggestions": [
             "UI 线程未能获得足够大核资源",

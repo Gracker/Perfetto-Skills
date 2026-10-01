@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/task_migration_in_range.skill.yaml
--- Source SHA-256: 72c986a740aab52bf0b4a6d844c34699b26678acb9fe56eeef0cfd3061fa13c1
+-- Source SHA-256: 945999d90e633d652a979f3d0d4e74b2940c60ed1ab512858532afba2c310b4b
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -22,6 +22,8 @@ effective_target_processes AS (
 -- explicitly; no global process-table replacement or synthetic switch boundary.
 -- Capacity extrema require a complete machine population. A missing capacity
 -- on any CPU prevents certifying which recorded CPU is fastest or smallest.
+-- Big/little rollups over core_type follow the contract in
+-- atomic/cpu_topology_view.skill.yaml (big group = prime/big/medium).
 system_cpu_topology AS (
   SELECT c.id AS ucpu,c.cpu,c.machine_id,c.cluster_id,c.capacity,
     CASE WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'unknown'
@@ -88,6 +90,7 @@ SELECT window_id,window_start_ts,window_end_ts,upid,utid,tid,thread_name,
  SUM(CASE WHEN prev_core_type IN ('prime','big','medium') AND core_type='little' THEN 1 ELSE 0 END) AS big_to_little,
  SUM(CASE WHEN prev_core_type='little' AND core_type IN ('prime','big','medium') THEN 1 ELSE 0 END) AS little_to_big,
  SUM(CASE WHEN core_type IN ('prime','big','medium') THEN dur_ns ELSE 0 END)*100.0/SUM(dur_ns) AS big_core_pct,
+ SUM(CASE WHEN core_type NOT IN ('prime','big','medium','little') THEN dur_ns ELSE 0 END) AS unknown_core_ns,
  COUNT(DISTINCT ucpu) AS unique_cpus,
  'migration_observation_not_cache_miss_or_affinity_proof' AS migration_evidence
 FROM runs GROUP BY window_id,utid ORDER BY migration_count DESC

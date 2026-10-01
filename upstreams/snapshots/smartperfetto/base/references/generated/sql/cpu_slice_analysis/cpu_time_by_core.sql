@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_slice_analysis.skill.yaml
--- Source SHA-256: 1bd7040a3223370ecf29a5a3df06150037eae83b5c3497e0b64cd983f2117cb2
+-- Source SHA-256: f7ca8aba38689433e1c2b672a706b0a6a761e7ca0186bbc2280ed92591369b4d
 
 WITH
 target_threads AS (
@@ -25,8 +25,9 @@ SELECT
   tt.thread_name,
   tt.process_name,
   SUM(cs.dur) / 1e6 as total_cpu_ms,
-  SUM(CASE WHEN cs.core_type IN ('prime', 'big') THEN cs.dur ELSE 0 END) / 1e6 as big_core_ms,
-  SUM(CASE WHEN cs.core_type IN ('medium', 'little') THEN cs.dur ELSE 0 END) / 1e6 as little_core_ms,
+  SUM(CASE WHEN cs.core_type IN ('prime', 'big', 'medium') THEN cs.dur ELSE 0 END) / 1e6 as big_core_ms,
+  SUM(CASE WHEN cs.core_type = 'little' THEN cs.dur ELSE 0 END) / 1e6 as little_core_ms,
+  SUM(CASE WHEN cs.core_type NOT IN ('prime', 'big', 'medium', 'little') THEN cs.dur ELSE 0 END) / 1e6 as unknown_core_ms,
   COUNT(*) as slice_count,
   AVG(cs.dur) / 1e6 as avg_slice_ms
 FROM target_threads tt

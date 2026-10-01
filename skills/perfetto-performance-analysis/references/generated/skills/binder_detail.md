@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/binder_detail.skill.yaml
-Source SHA-256: abd94ce08b891e6024eee4eb3ed9edc80baf296988105e6eebafe7e693921759
+Source SHA-256: eeadbc879f3b3e4118c66913d5a022ebec45f310e3ea34a03306d58cb80b9141
 # Binder 详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -158,12 +158,17 @@ display:
     label: 线程
     type: string
   - name: big_core_ms
-    label: 大核运行
+    label: 大核组运行（超大/大/中核）
     type: duration
     format: duration_ms
     unit: ms
   - name: little_core_ms
     label: 小核运行
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: unknown_core_ms
+    label: 未知核类型运行
     type: duration
     format: duration_ms
     unit: ms
@@ -203,6 +208,11 @@ display:
     unit: ms
   - name: q2_little_running_ms
     label: Q2 小核 Running
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: unknown_running_ms
+    label: 未知核类型 Running
     type: duration
     format: duration_ms
     unit: ms

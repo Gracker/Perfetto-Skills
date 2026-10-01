@@ -117,7 +117,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/cpu_analysis.skill.yaml",
-    "sha256": "2af64b097eb6ef55456b39938820e6bc4ae09d23ff1331109751e7499b6603f3"
+    "sha256": "8b7cc6a037d9d5830182a4fd784d3aa536310fa9616c8b5e4397c1538b549ceb"
   },
   "steps": [
     {
@@ -331,9 +331,9 @@
           ]
         },
         {
-          "condition": "(core_stats?.data?.length || 0) > 0 &&\n((core_stats.data.find(c => (c.core_type || '').includes('big') || (c.core_type || '').includes('prime'))?.percent) || 0) < (big_core_threshold_pct || 30)\n",
+          "condition": "(core_stats?.data?.length || 0) > 0 &&\ncore_stats.data[0].unknown_time_ns === 0 &&\ncore_stats.data[0].big_group_percent < (big_core_threshold_pct || 30)\n",
           "confidence": "medium",
-          "diagnosis": "大核使用率偏低 (<${big_core_threshold_pct || 30}%)",
+          "diagnosis": "大核组（超大/大/中核）使用率 ${core_stats.data[0].big_group_percent}% 偏低 (<${big_core_threshold_pct || 30}%)",
           "evidence_fields": [
             "core_stats.data"
           ],
@@ -341,7 +341,7 @@
           "suggestions": [
             "[Owner] Runtime/App | [Priority] P1 | [Action] 检查关键线程优先级与调度组",
             "[Owner] System | [Priority] P1 | [Action] 评估 PowerHint/调频策略对关键线程的影响",
-            "[Verify] 对比优化前后 big/prime 核占比与帧稳定性"
+            "[Verify] 对比优化前后大核组（超大/大/中核）占比与帧稳定性"
           ]
         },
         {

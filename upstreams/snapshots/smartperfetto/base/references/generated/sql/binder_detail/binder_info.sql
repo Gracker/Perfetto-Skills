@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/binder_detail.skill.yaml
--- Source SHA-256: abd94ce08b891e6024eee4eb3ed9edc80baf296988105e6eebafe7e693921759
+-- Source SHA-256: eeadbc879f3b3e4118c66913d5a022ebec45f310e3ea34a03306d58cb80b9141
 
 SELECT
   '${server_process}' as server_process,

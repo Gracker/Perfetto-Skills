@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: 606707114b38750e9172c348cd727f2f00231b5a7b6ee521915247b5d62fe233
+Source SHA-256: 62ecf72c4ed2df7a881eeff7e7c601aa36f9ea52c63236624afde55dbcd63ec5
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1311,9 +1311,10 @@ rules:
   suggestions:
   - 检查系统温控策略是否过于激进
   - 考虑绑定 UI 线程到大核
-- condition: migration_data?.data?.length > 0 && migration_data.data[0]?.big_core_pct < 30
+- condition: migration_data?.data?.length > 0 && migration_data.data[0]?.unknown_core_ns === 0 && migration_data.data[0]?.big_core_pct
+    < 30
   severity: warning
-  diagnosis: ${migration_data.data[0].thread_name} 大核运行占比仅 ${migration_data.data[0].big_core_pct}%
+  diagnosis: ${migration_data.data[0].thread_name} 大核组（超大/大/中核）运行占比仅 ${migration_data.data[0].big_core_pct}%
   confidence: high
   suggestions:
   - UI 线程未能获得足够大核资源

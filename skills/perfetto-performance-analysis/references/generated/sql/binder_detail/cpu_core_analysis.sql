@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/binder_detail.skill.yaml
--- Source SHA-256: abd94ce08b891e6024eee4eb3ed9edc80baf296988105e6eebafe7e693921759
+-- Source SHA-256: eeadbc879f3b3e4118c66913d5a022ebec45f310e3ea34a03306d58cb80b9141
 
 WITH main_thread AS (
   SELECT t.utid, t.tid, p.pid
@@ -25,8 +25,9 @@ cpu_time AS (
 )
 SELECT
   'MainThread' as thread_type,
-  ROUND(SUM(CASE WHEN core_type IN ('prime', 'big') THEN dur_ms ELSE 0 END), 2) as big_core_ms,
-  ROUND(SUM(CASE WHEN core_type IN ('medium', 'little') THEN dur_ms ELSE 0 END), 2) as little_core_ms,
+  ROUND(SUM(CASE WHEN core_type IN ('prime', 'big', 'medium') THEN dur_ms ELSE 0 END), 2) as big_core_ms,
+  ROUND(SUM(CASE WHEN core_type = 'little' THEN dur_ms ELSE 0 END), 2) as little_core_ms,
+  ROUND(SUM(CASE WHEN core_type NOT IN ('prime', 'big', 'medium', 'little') THEN dur_ms ELSE 0 END), 2) as unknown_core_ms,
   ROUND(SUM(dur_ms), 2) as total_running_ms,
   ROUND(100.0 * SUM(dur_ms) / ${dur_ms}, 1) as running_pct
 FROM cpu_time

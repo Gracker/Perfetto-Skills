@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_slice_analysis.skill.yaml
-Source SHA-256: 1bd7040a3223370ecf29a5a3df06150037eae83b5c3497e0b64cd983f2117cb2
+Source SHA-256: f7ca8aba38689433e1c2b672a706b0a6a761e7ca0186bbc2280ed92591369b4d
 # CPU Slice 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -91,11 +91,15 @@ display:
     type: duration
     format: duration_ms
   - name: big_core_ms
-    label: 大核时间
+    label: 大核组时间（超大/大/中核）
     type: duration
     format: duration_ms
   - name: little_core_ms
     label: 小核时间
+    type: duration
+    format: duration_ms
+  - name: unknown_core_ms
+    label: 未知核类型时间
     type: duration
     format: duration_ms
   - name: slice_count

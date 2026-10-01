@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_workload_attribution_in_range.skill.yaml
--- Source SHA-256: deda79ad447ced6323b09d92a57c1031fe27378e197e1e8cb0845a30efca29e8
+-- Source SHA-256: 7e150bf0fccbde7798b1ea3fa0202056b1f528b993c25a86be0fa41fff44308b
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -11,6 +11,8 @@ WITH
 -- explicitly; no global process-table replacement or synthetic switch boundary.
 -- Capacity extrema require a complete machine population. A missing capacity
 -- on any CPU prevents certifying which recorded CPU is fastest or smallest.
+-- Big/little rollups over core_type follow the contract in
+-- atomic/cpu_topology_view.skill.yaml (big group = prime/big/medium).
 system_cpu_topology AS (
   SELECT c.id AS ucpu,c.cpu,c.machine_id,c.cluster_id,c.capacity,
     CASE WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'unknown'

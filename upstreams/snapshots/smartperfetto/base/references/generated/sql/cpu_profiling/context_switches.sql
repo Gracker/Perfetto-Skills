@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/deep/cpu_profiling.skill.yaml
--- Source SHA-256: 55ba35f956b88823c9a3ffe665eaf555f382cf899a866b669ae5a7011ec4c639
+-- Source SHA-256: 699bfcd94061182a739f66e7415ec83128b5f61d0efaa9893dacf2f69442f699
 
 WITH
 context_switch_count AS (

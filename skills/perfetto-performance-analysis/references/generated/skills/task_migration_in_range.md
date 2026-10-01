@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/task_migration_in_range.skill.yaml
-Source SHA-256: 72c986a740aab52bf0b4a6d844c34699b26678acb9fe56eeef0cfd3061fa13c1
+Source SHA-256: 945999d90e633d652a979f3d0d4e74b2940c60ed1ab512858532afba2c310b4b
 # 任务迁移分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -127,9 +127,14 @@ display:
     label: 小→大
     type: number
   - name: big_core_pct
-    label: 大核占比
+    label: 大核组占比（超大/大/中核）
     type: percentage
     format: percentage
+  - name: unknown_core_ns
+    label: 未知核类型运行
+    type: duration
+    unit: ns
+    hidden: true
   - name: unique_cpus
     label: 使用核心数
     type: number

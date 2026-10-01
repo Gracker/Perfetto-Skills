@@ -434,7 +434,7 @@
       "name": "binder_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/binder_detail.skill.yaml",
-      "source_sha256": "abd94ce08b891e6024eee4eb3ed9edc80baf296988105e6eebafe7e693921759",
+      "source_sha256": "eeadbc879f3b3e4118c66913d5a022ebec45f310e3ea34a03306d58cb80b9141",
       "tier": "S",
       "version": "2.0",
       "workflow": "anr-blocking"
@@ -647,7 +647,7 @@
       "name": "cpu_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_analysis.skill.yaml",
-      "source_sha256": "2af64b097eb6ef55456b39938820e6bc4ae09d23ff1331109751e7499b6603f3",
+      "source_sha256": "8b7cc6a037d9d5830182a4fd784d3aa536310fa9616c8b5e4397c1538b549ceb",
       "tier": "S",
       "version": "1.0",
       "workflow": "cpu-scheduling"
@@ -814,7 +814,7 @@
       "name": "cpu_profiling",
       "runtime_type": "deep",
       "source_path": "backend/skills/deep/cpu_profiling.skill.yaml",
-      "source_sha256": "55ba35f956b88823c9a3ffe665eaf555f382cf899a866b669ae5a7011ec4c639",
+      "source_sha256": "699bfcd94061182a739f66e7415ec83128b5f61d0efaa9893dacf2f69442f699",
       "tier": "S",
       "version": "3.0",
       "workflow": "cpu-scheduling"
@@ -826,7 +826,7 @@
       "name": "cpu_slice_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_slice_analysis.skill.yaml",
-      "source_sha256": "1bd7040a3223370ecf29a5a3df06150037eae83b5c3497e0b64cd983f2117cb2",
+      "source_sha256": "f7ca8aba38689433e1c2b672a706b0a6a761e7ca0186bbc2280ed92591369b4d",
       "tier": "B",
       "version": "2.0",
       "workflow": "cpu-scheduling"
@@ -898,7 +898,7 @@
       "name": "cpu_topology_view",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_topology_view.skill.yaml",
-      "source_sha256": "0e28eae312bbe09e5c3cc1e661392ed9e5814768117dbea99569f35bd3565dc6",
+      "source_sha256": "086a8545ddc5bcf0ee1995f225cbd566b7cab5b0c699ad7a3132adb660209dfb",
       "tier": "B",
       "version": "1.0",
       "workflow": "cpu-scheduling"
@@ -922,7 +922,7 @@
       "name": "cpu_workload_attribution_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/cpu_workload_attribution_in_range.skill.yaml",
-      "source_sha256": "deda79ad447ced6323b09d92a57c1031fe27378e197e1e8cb0845a30efca29e8",
+      "source_sha256": "7e150bf0fccbde7798b1ea3fa0202056b1f528b993c25a86be0fa41fff44308b",
       "tier": "A",
       "version": "1.0",
       "workflow": "cpu-scheduling"
@@ -1325,7 +1325,7 @@
       "name": "jank_frame_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-      "source_sha256": "606707114b38750e9172c348cd727f2f00231b5a7b6ee521915247b5d62fe233",
+      "source_sha256": "62ecf72c4ed2df7a881eeff7e7c601aa36f9ea52c63236624afde55dbcd63ec5",
       "tier": "S",
       "version": "2.2",
       "workflow": "scrolling"
@@ -2747,7 +2747,7 @@
       "name": "task_migration_in_range",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/task_migration_in_range.skill.yaml",
-      "source_sha256": "72c986a740aab52bf0b4a6d844c34699b26678acb9fe56eeef0cfd3061fa13c1",
+      "source_sha256": "945999d90e633d652a979f3d0d4e74b2940c60ed1ab512858532afba2c310b4b",
       "tier": "B",
       "version": "2.0",
       "workflow": "cpu-scheduling"
@@ -3074,7 +3074,7 @@
     }
   ],
   "source": {
-    "commit": "3fc5e9d9c7d738263741ab5ea178cf536fb98736",
+    "commit": "2be66911d424eb8602daf8af3395c812843401d5",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
     "policy_sha256": "eb6867b0f4617a3e39560bb2e2954b4f3daac014d8d5ee617313385b9d333c27",
@@ -3313,7 +3313,7 @@
       "destination": "references/generated/runtime/fragments/system_sched_spans.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/system_sched_spans.sql",
-      "source_sha256": "78e59040294b58d96a54449102109fd8536434ea1b93435f88eb700c612784d9"
+      "source_sha256": "06777e61237b61b3318f9fa40c2714e1b08648d6773844d8ab6c4f1d12ee9184"
     },
     {
       "destination": "references/generated/runtime/fragments/system_thread_state_spans.sql",

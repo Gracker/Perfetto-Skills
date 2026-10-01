@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_analysis.skill.yaml
--- Source SHA-256: 2af64b097eb6ef55456b39938820e6bc4ae09d23ff1331109751e7499b6603f3
+-- Source SHA-256: 8b7cc6a037d9d5830182a4fd784d3aa536310fa9616c8b5e4397c1538b549ceb
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

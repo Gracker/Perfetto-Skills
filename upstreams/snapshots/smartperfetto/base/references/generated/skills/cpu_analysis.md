@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/cpu_analysis.skill.yaml
-Source SHA-256: 2af64b097eb6ef55456b39938820e6bc4ae09d23ff1331109751e7499b6603f3
+Source SHA-256: 8b7cc6a037d9d5830182a4fd784d3aa536310fa9616c8b5e4397c1538b549ceb
 # CPU 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -193,8 +193,8 @@ synthesize:
   - key: core_count
     label: 核心数
   insights:
-  - condition: core_type.includes('big') && percent < (big_core_threshold_pct || 30)
-    template: 大核使用率仅 {{percent}}%，建议优化调度策略
+  - condition: tier === 'big' && unknown_time_ns === 0 && big_group_percent < (big_core_threshold_pct || 30)
+    template: 大核组（超大/大/中核）使用率仅 {{big_group_percent}}%，建议优化调度策略
 display:
   level: key
   layer: overview
@@ -237,6 +237,19 @@ display:
   - name: core_count
     label: 核心数
     type: number
+  - name: tier
+    label: tier
+    type: string
+    hidden: true
+  - name: big_group_percent
+    label: 大核组（超大/大/中核）占比
+    type: percentage
+    hidden: true
+  - name: unknown_time_ns
+    label: 未知核类型运行
+    type: duration
+    unit: ns
+    hidden: true
 process_scope:
   role: target
   binding: effective_target_processes
@@ -316,7 +329,11 @@ display:
     label: 线程类型
     type: string
   - name: big_core_percent
-    label: 大核占比
+    label: 大核组占比（超大/大/中核）
+    type: percentage
+    format: percentage
+  - name: unknown_core_percent
+    label: 未知核类型占比
     type: percentage
     format: percentage
 process_scope:
@@ -908,17 +925,18 @@ rules:
   - blocked_functions.data
 - condition: '(core_stats?.data?.length || 0) > 0 &&
 
-    ((core_stats.data.find(c => (c.core_type || '''').includes(''big'') || (c.core_type || '''').includes(''prime''))?.percent)
-    || 0) < (big_core_threshold_pct || 30)
+    core_stats.data[0].unknown_time_ns === 0 &&
+
+    core_stats.data[0].big_group_percent < (big_core_threshold_pct || 30)
 
     '
   severity: warning
-  diagnosis: 大核使用率偏低 (<${big_core_threshold_pct || 30}%)
+  diagnosis: 大核组（超大/大/中核）使用率 ${core_stats.data[0].big_group_percent}% 偏低 (<${big_core_threshold_pct || 30}%)
   confidence: medium
   suggestions:
   - '[Owner] Runtime/App | [Priority] P1 | [Action] 检查关键线程优先级与调度组'
   - '[Owner] System | [Priority] P1 | [Action] 评估 PowerHint/调频策略对关键线程的影响'
-  - '[Verify] 对比优化前后 big/prime 核占比与帧稳定性'
+  - '[Verify] 对比优化前后大核组（超大/大/中核）占比与帧稳定性'
   evidence_fields:
   - core_stats.data
 - condition: '(main_thread_states?.data?.length || 0) > 0 &&

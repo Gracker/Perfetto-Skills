@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/deep/cpu_profiling.skill.yaml
-Source SHA-256: 55ba35f956b88823c9a3ffe665eaf555f382cf899a866b669ae5a7011ec4c639
+Source SHA-256: 699bfcd94061182a739f66e7415ec83128b5f61d0efaa9893dacf2f69442f699
 # CPU 深度调优
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -244,17 +244,31 @@ display:
     format: duration_ms
     unit: ms
   - name: big_core_pct
-    label: 大核占比
+    label: 大核组占比（超大/大/中核）
     type: percentage
     format: percentage
   - name: medium_core_pct
-    label: 中核占比
+    label: 其中中核占比
     type: percentage
     format: percentage
   - name: little_core_pct
     label: 小核占比
     type: percentage
     format: percentage
+  - name: unknown_core_pct
+    label: 未知核类型占比
+    type: percentage
+    format: percentage
+  - name: unknown_core_ms
+    label: 未知核类型运行时间
+    type: duration
+    format: duration_ms
+    unit: ms
+    hidden: true
+  - name: big_core_pct_definition
+    label: 大核组口径
+    type: string
+    hidden: true
 save_as: core_distribution
 ```
 ### 调度延迟
@@ -420,9 +434,15 @@ display:
     format: duration_ms
     unit: ms
   - name: avg_big_core_usage_pct
-    label: 大核使用率
+    label: 样本线程平均大核组占比
     type: percentage
     format: percentage
+  - name: big_core_sample_threads
+    label: 大小核样本线程数
+    type: number
+  - name: classified_sample_threads
+    label: 拓扑已分类样本线程数
+    type: number
   - name: latency_severity
     label: 延迟评级
     type: string

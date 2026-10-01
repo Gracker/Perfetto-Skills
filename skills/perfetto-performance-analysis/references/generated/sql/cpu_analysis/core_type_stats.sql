@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_analysis.skill.yaml
--- Source SHA-256: 2af64b097eb6ef55456b39938820e6bc4ae09d23ff1331109751e7499b6603f3
+-- Source SHA-256: 8b7cc6a037d9d5830182a4fd784d3aa536310fa9616c8b5e4397c1538b549ceb
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -22,6 +22,8 @@ effective_target_processes AS (
 -- explicitly; no global process-table replacement or synthetic switch boundary.
 -- Capacity extrema require a complete machine population. A missing capacity
 -- on any CPU prevents certifying which recorded CPU is fastest or smallest.
+-- Big/little rollups over core_type follow the contract in
+-- atomic/cpu_topology_view.skill.yaml (big group = prime/big/medium).
 system_cpu_topology AS (
   SELECT c.id AS ucpu,c.cpu,c.machine_id,c.cluster_id,c.capacity,
     CASE WHEN c.recorded_capacity_count<c.machine_cpu_count THEN 'unknown'
@@ -83,16 +85,15 @@ SELECT
   END as core_type,
   ct.capacity,
   SUM(ss.dur) / 1e6 as total_time_ms,
-  ROUND(100.0 * SUM(ss.dur) / (
-    SELECT SUM(dur) FROM clipped_sched ss2
-    JOIN thread t2 ON ss2.utid = t2.utid
-    JOIN effective_target_processes p2 ON t2.upid = p2.upid
-    WHERE p2.upid = ${target_process.data[0].upid}
-      AND (${start_ts} IS NULL OR ss2.ts + ss2.dur > ${start_ts})
-      AND (${end_ts} IS NULL OR ss2.ts < ${end_ts})
-  ), 1) as percent,
+  ROUND(100.0 * SUM(ss.dur) / NULLIF(SUM(SUM(ss.dur)) OVER (), 0), 1) as percent,
   COUNT(*) as slice_count,
-  COUNT(DISTINCT ss.cpu) as core_count
+  COUNT(DISTINCT ss.cpu) as core_count,
+  COALESCE(ct.core_type, 'unknown') as tier,
+  -- Process-wide rollup repeated on every tier row; unknown time is
+  -- unrounded so rules can require a fully classified process.
+  ROUND(100.0 * SUM(SUM(CASE WHEN ct.core_type IN ('prime', 'big', 'medium') THEN ss.dur ELSE 0 END)) OVER ()
+    / NULLIF(SUM(SUM(ss.dur)) OVER (), 0), 1) as big_group_percent,
+  SUM(SUM(CASE WHEN COALESCE(ct.core_type, 'unknown') NOT IN ('prime', 'big', 'medium', 'little') THEN ss.dur ELSE 0 END)) OVER () as unknown_time_ns
 FROM clipped_sched ss
 JOIN thread t ON ss.utid = t.utid
 JOIN effective_target_processes p ON t.upid = p.upid
