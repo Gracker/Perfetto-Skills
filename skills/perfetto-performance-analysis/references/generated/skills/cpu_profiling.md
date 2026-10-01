@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/deep/cpu_profiling.skill.yaml
-Source SHA-256: 699bfcd94061182a739f66e7415ec83128b5f61d0efaa9893dacf2f69442f699
+Source SHA-256: dce6ebab0c0096f73bc2707459de6af2cb7fefc55f171def6d1303d371c504ae
 # CPU 深度调优
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -264,10 +264,6 @@ display:
     type: duration
     format: duration_ms
     unit: ms
-    hidden: true
-  - name: big_core_pct_definition
-    label: 大核组口径
-    type: string
     hidden: true
 save_as: core_distribution
 ```

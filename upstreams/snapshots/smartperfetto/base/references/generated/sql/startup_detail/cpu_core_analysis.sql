@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/startup_detail.skill.yaml
--- Source SHA-256: d8bd7e2e4f7cdef9dee9189f5a8055152f373d9c0c73ac25d7b272e3e81d290e
+-- Source SHA-256: 186d36d138d9b1f73f761df5c6f70901a1657693238ff523a7f897435e762cc4
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -92,6 +92,9 @@ cpu_time AS (
     ss.cpu,
     SUM(
       MIN(ss.ts + ss.dur, ${end_ts}) - MAX(ss.ts, ${start_ts})
+    ) as dur_ns,
+    SUM(
+      MIN(ss.ts + ss.dur, ${end_ts}) - MAX(ss.ts, ${start_ts})
     ) / 1e6 as dur_ms,
     COALESCE(ct.core_type, 'unknown') as core_type,
     COALESCE(ct.topology_source, 'unavailable') as topology_source
@@ -116,6 +119,11 @@ SELECT
   GROUP_CONCAT(DISTINCT topology_source) as classify_method,
   ROUND(SUM(CASE WHEN core_type NOT IN ('prime', 'big', 'medium', 'little') THEN dur_ms ELSE 0 END), 2) as unknown_core_ms,
   ROUND(100.0 * SUM(CASE WHEN core_type NOT IN ('prime', 'big', 'medium', 'little') THEN dur_ms ELSE 0 END) /
-    NULLIF(SUM(dur_ms), 0), 1) as unknown_core_pct
+    NULLIF(SUM(dur_ms), 0), 1) as unknown_core_pct,
+  -- Comparison producer contract for cpu.big_core_pct (comparisonMetricProducerContract.ts):
+  -- unrounded unknown time, the main threads merged into this row, and the declared definition.
+  SUM(CASE WHEN core_type NOT IN ('prime', 'big', 'medium', 'little') THEN dur_ns ELSE 0 END) as unknown_core_ns,
+  COUNT(DISTINCT utid) as main_thread_count,
+  'main_thread_running:core_tier_group:prime+big+medium@3' as big_core_pct_definition
 FROM cpu_time
 GROUP BY 1

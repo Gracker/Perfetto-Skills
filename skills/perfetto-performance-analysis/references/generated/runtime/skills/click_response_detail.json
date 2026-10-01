@@ -118,7 +118,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/click_response_detail.skill.yaml",
-    "sha256": "1985d22caae082895e3249e940e3e891a1296411bab5c6844647aee083f7a517"
+    "sha256": "8b72b8641a859755014ddf9f6e540699d2560660bd13ffbd1cf2e6881f7dfeec"
   },
   "steps": [
     {
@@ -325,7 +325,7 @@
           ]
         },
         {
-          "condition": "cpu_core.data[0]?.unknown_running_ms === 0 && cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms > 20 && quadrant.data[0]?.q3_runnable_ms > 20 && (sched_delay.data[0]?.severe_count || 0) > 0 && !(cpu_core.data[0]?.classify_method || '').includes('cpu_id_fallback')",
+          "condition": "cpu_core.data[0]?.unknown_core_ns === 0 && cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms > 20 && quadrant.data[0]?.q3_runnable_ms > 20 && (sched_delay.data[0]?.severe_count || 0) > 0 && !(cpu_core.data[0]?.classify_method || '').includes('cpu_id_fallback')",
           "confidence": "medium",
           "diagnosis": "主线程大核占比偏低（${cpu_core.data[0].big_core_pct}%）且 Runnable 等待 ${quadrant.data[0].q3_runnable_ms}ms，存在调度供给不足迹象",
           "severity": "warning",

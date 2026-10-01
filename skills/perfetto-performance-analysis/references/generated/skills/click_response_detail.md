@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_detail.skill.yaml
-Source SHA-256: 1985d22caae082895e3249e940e3e891a1296411bab5c6844647aee083f7a517
+Source SHA-256: 8b72b8641a859755014ddf9f6e540699d2560660bd13ffbd1cf2e6881f7dfeec
 # 点击详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -420,6 +420,18 @@ display:
   - name: classify_method
     label: 核判定来源
     type: string
+  - name: unknown_core_ns
+    label: 未知核运行(ns)
+    type: number
+    hidden: true
+  - name: main_thread_count
+    label: 主线程数
+    type: number
+    hidden: true
+  - name: big_core_pct_definition
+    label: 大核占比口径
+    type: string
+    hidden: true
 save_as: cpu_core
 ```
 ### 四大象限分析
@@ -757,7 +769,7 @@ rules:
   suggestions:
   - 检查主线程阻塞原因
   - 将阻塞操作移到后台线程
-- condition: cpu_core.data[0]?.unknown_running_ms === 0 && cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms
+- condition: cpu_core.data[0]?.unknown_core_ns === 0 && cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms
     > 20 && quadrant.data[0]?.q3_runnable_ms > 20 && (sched_delay.data[0]?.severe_count || 0) > 0 && !(cpu_core.data[0]?.classify_method
     || '').includes('cpu_id_fallback')
   severity: warning

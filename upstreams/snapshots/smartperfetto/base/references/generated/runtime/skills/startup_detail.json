@@ -120,7 +120,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/startup_detail.skill.yaml",
-    "sha256": "d8bd7e2e4f7cdef9dee9189f5a8055152f373d9c0c73ac25d7b272e3e81d290e"
+    "sha256": "186d36d138d9b1f73f761df5c6f70901a1657693238ff523a7f897435e762cc4"
   },
   "steps": [
     {
@@ -460,7 +460,7 @@
       "name": "启动诊断",
       "rules": [
         {
-          "condition": "cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.unknown_core_pct === 0 && quadrant.data[0]?.q3_runnable_ms > 50",
+          "condition": "cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.unknown_core_ns === 0 && quadrant.data[0]?.q3_runnable_ms > 50",
           "confidence": "medium",
           "diagnosis": "主线程大核占比偏低（${cpu_core.data[0].big_core_pct}%）且 Runnable 排队明显（${quadrant.data[0].q3_runnable_ms}ms），可能存在调度供给不足",
           "severity": "warning",
@@ -470,9 +470,9 @@
           ]
         },
         {
-          "condition": "cpu_core.data[0]?.unknown_core_pct > 0",
+          "condition": "cpu_core.data[0]?.unknown_core_ns > 0",
           "confidence": "medium",
-          "diagnosis": "主线程运行时间中 ${cpu_core.data[0].unknown_core_pct}% 的核类型未知，不能把未知部分计为小核或据此认定摆核不足",
+          "diagnosis": "主线程有 ${cpu_core.data[0].unknown_core_ms}ms（${cpu_core.data[0].unknown_core_pct}%）运行时间的核类型未知，不能把未知部分计为小核或据此认定摆核不足",
           "severity": "info",
           "suggestions": [
             "补充或检查 cpu_frequency/cpu capacity 数据后再判断大小核调度问题"

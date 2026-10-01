@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/deep/cpu_profiling.skill.yaml
--- Source SHA-256: 699bfcd94061182a739f66e7415ec83128b5f61d0efaa9893dacf2f69442f699
+-- Source SHA-256: dce6ebab0c0096f73bc2707459de6af2cb7fefc55f171def6d1303d371c504ae
 
 WITH
 cpu_info AS (
@@ -46,9 +46,7 @@ SELECT
   ROUND(little_core_ms * 100.0 / total_runtime_ms, 1) as little_core_pct,
   ROUND(unknown_core_ms * 100.0 / total_runtime_ms, 1) as unknown_core_pct,
   -- Unrounded: the conclusion admits a thread only when none of its time is unclassified.
-  unknown_core_ms,
-  -- Declares the rollup to snapshot comparison (prime+big-only before @2).
-  'core_tier_group:prime+big+medium@2' as big_core_pct_definition
+  unknown_core_ms
 FROM thread_totals
 WHERE total_runtime_ms > 10  -- 至少 10ms 运行时间
 ORDER BY total_runtime_ms DESC

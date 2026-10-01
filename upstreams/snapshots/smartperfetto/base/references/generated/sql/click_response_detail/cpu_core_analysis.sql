@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_detail.skill.yaml
--- Source SHA-256: 1985d22caae082895e3249e940e3e891a1296411bab5c6844647aee083f7a517
+-- Source SHA-256: 8b72b8641a859755014ddf9f6e540699d2560660bd13ffbd1cf2e6881f7dfeec
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -89,5 +89,10 @@ SELECT upid,utid,'MainThread' AS thread_type,
   ROUND(100.0*SUM(CASE WHEN core_type='little' THEN dur_ns ELSE 0 END)/NULLIF(SUM(dur_ns),0),1) AS little_core_pct,
   ROUND(100.0*SUM(dur_ns)/NULLIF(MAX(window_end_ts-window_start_ts),0),1) AS running_pct,
   GROUP_CONCAT(DISTINCT cpu) AS used_cpus,GROUP_CONCAT(DISTINCT ucpu) AS used_ucpus,GROUP_CONCAT(DISTINCT topology_source) AS classify_method,
-  MIN(priority) AS priority_min,MAX(priority) AS priority_max,'not_recorded_in_sched_slice' AS scheduling_policy_evidence
+  MIN(priority) AS priority_min,MAX(priority) AS priority_max,'not_recorded_in_sched_slice' AS scheduling_policy_evidence,
+  -- Comparison producer contract for cpu.big_core_pct (comparisonMetricProducerContract.ts):
+  -- unrounded unknown time, the main threads merged into this row, and the declared definition.
+  SUM(CASE WHEN core_type NOT IN ('prime','big','medium','little') THEN dur_ns ELSE 0 END) AS unknown_core_ns,
+  COUNT(DISTINCT utid) AS main_thread_count,
+  'main_thread_running:core_tier_group:prime+big+medium@3' AS big_core_pct_definition
 FROM scene_sched GROUP BY window_id,upid,utid
