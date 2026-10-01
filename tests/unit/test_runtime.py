@@ -657,6 +657,72 @@ class SkillReferenceSaveFromTest(unittest.TestCase):
         self.assertNotIn("picked", seen)
 
 
+class JankTopologyBackedBindingTest(unittest.TestCase):
+    """jank_frame_detail binds the read step of children that begin with cpu_topology_view.
+
+    The generated definitions run as shipped: the topology reference returns
+    rows, as on any real trace, and is the first observed child step, so only
+    `save_from` keeps its rows out of migration_data and cluster_load_data.
+    """
+
+    READ_QUERIES = {
+        "migration_data": "task_migration_in_range/migration_analysis",
+        "cluster_load_data": "cpu_cluster_load_in_range/cluster_load",
+    }
+    TOPOLOGY = [{"cpu_id": 0, "core_type": "little"}, {"cpu_id": 4, "core_type": "big"}]
+
+    def setUp(self) -> None:
+        manifests = SCRIPTS.parent / "references/generated/runtime/skills"
+        load = lambda skill_id: json.loads((manifests / f"{skill_id}.json").read_text(encoding="utf-8"))
+        jank = load("jank_frame_detail")
+        steps = [copy.deepcopy(step) for step in jank["steps"] if step["id"] in ("task_migration", "cpu_cluster_load")]
+        self.skills = {skill_id: load(skill_id) for skill_id in (
+            "task_migration_in_range", "cpu_cluster_load_in_range", "cpu_topology_view")}
+        self.skills["parent"] = {
+            "id": "parent", "runtime_status": "executable", "type": "composite",
+            "identity": {"policy": "none"},
+            "inputs": [item for item in jank["inputs"] if item["name"] in ("start_ts", "end_ts", "package")],
+            "steps": [*steps, {"id": "probe", "type": "atomic", "query_id": "parent/probe"}],
+        }
+
+    def bindings(self, read_rows):
+        from runtime.executor import SkillRunner
+
+        seen = {}
+
+        def query(query_id, **kwargs):
+            if query_id == "parent/probe":
+                seen.update(kwargs["results"])
+                return []
+            if query_id == "cpu_topology_view/read_topology":
+                return self.TOPOLOGY
+            if query_id in self.READ_QUERIES.values():
+                if isinstance(read_rows, Exception):
+                    raise read_rows
+                return read_rows
+            return []
+
+        result = SkillRunner({"skills": self.skills}, query).run("parent", {"start_ts": 1, "end_ts": 2})
+        self.assertTrue(result["success"])
+        return seen
+
+    def test_binds_the_read_step_rows(self) -> None:
+        rows = [{"source": "read_step"}]
+        seen = self.bindings(rows)
+        for name in self.READ_QUERIES:
+            self.assertEqual(seen[name], {"data": rows})
+
+    def test_binds_an_empty_read_step_as_empty(self) -> None:
+        seen = self.bindings([])
+        for name in self.READ_QUERIES:
+            self.assertEqual(seen[name], {"data": []})
+
+    def test_leaves_the_binding_unbound_when_the_read_step_failed(self) -> None:
+        seen = self.bindings(RuntimeError("read step failed"))
+        for name in self.READ_QUERIES:
+            self.assertNotIn(name, seen)
+
+
 class InheritedBindingPrecedenceTest(unittest.TestCase):
     """A name resolves to the Skill's own bindings, then its inputs, then the caller's."""
 

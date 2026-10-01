@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: 62ecf72c4ed2df7a881eeff7e7c601aa36f9ea52c63236624afde55dbcd63ec5
+Source SHA-256: d7229d927f2d16e4db07b7e348844eb91ddb26841309e9ce3886e429a6ec81b3
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -872,6 +872,7 @@ params:
   end_ts: ${end_ts}
   package: ${package}
 save_as: migration_data
+save_from: migration_analysis
 optional: true
 ```
 ### gpu_render
@@ -933,6 +934,7 @@ params:
   start_ts: ${start_ts}
   end_ts: ${end_ts}
 save_as: cluster_load_data
+save_from: cluster_load
 optional: true
 ```
 ### page_fault

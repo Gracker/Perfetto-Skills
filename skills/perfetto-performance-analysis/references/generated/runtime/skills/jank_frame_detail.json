@@ -192,7 +192,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-    "sha256": "62ecf72c4ed2df7a881eeff7e7c601aa36f9ea52c63236624afde55dbcd63ec5"
+    "sha256": "d7229d927f2d16e4db07b7e348844eb91ddb26841309e9ce3886e429a6ec81b3"
   },
   "steps": [
     {
@@ -412,6 +412,7 @@
         "start_ts": "${start_ts}"
       },
       "save_as": "migration_data",
+      "save_from": "migration_analysis",
       "skill": "task_migration_in_range",
       "type": "skill"
     },
@@ -461,6 +462,7 @@
         "start_ts": "${start_ts}"
       },
       "save_as": "cluster_load_data",
+      "save_from": "cluster_load",
       "skill": "cpu_cluster_load_in_range",
       "type": "skill"
     },
