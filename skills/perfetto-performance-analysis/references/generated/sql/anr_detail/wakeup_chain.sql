@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
--- Source SHA-256: 69869c165513d6e975cde75d83230b412b1276132fd888e9d2fbf6a898cc2db3
+-- Source SHA-256: 0be84fe96c0f5e4646a49f1630ef4cfcf6662638c5c42718b3bff9307513577f
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

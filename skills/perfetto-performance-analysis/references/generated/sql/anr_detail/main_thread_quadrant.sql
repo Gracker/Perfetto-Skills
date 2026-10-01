@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
--- Source SHA-256: 69869c165513d6e975cde75d83230b412b1276132fd888e9d2fbf6a898cc2db3
+-- Source SHA-256: 0be84fe96c0f5e4646a49f1630ef4cfcf6662638c5c42718b3bff9307513577f
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -116,6 +116,7 @@ SELECT upid,utid,role AS thread_type,
   ROUND(SUM(CASE WHEN state='Running' AND core_type IN ('prime','big','medium') THEN dur_ns ELSE 0 END)/1e6,2) AS q1_big_running_ms,
   ROUND(SUM(CASE WHEN state='Running' AND core_type='little' THEN dur_ns ELSE 0 END)/1e6,2) AS q2_little_running_ms,
   ROUND(SUM(CASE WHEN state='Running' AND core_type='unknown' THEN dur_ns ELSE 0 END)/1e6,2) AS unknown_running_ms,
+  SUM(CASE WHEN state='Running' AND core_type='unknown' THEN dur_ns ELSE 0 END) AS unknown_running_ns,
   ROUND(SUM(CASE WHEN state IN ('R','R+') THEN dur_ns ELSE 0 END)/1e6,2) AS q3_runnable_ms,
   ROUND(SUM(CASE WHEN state IN ('S','I','D','DK') THEN dur_ns ELSE 0 END)/1e6,2) AS q4_sleeping_ms,
   ROUND(SUM(CASE WHEN state IN ('D','DK') THEN dur_ns ELSE 0 END)/1e6,2) AS uninterruptible_ms,

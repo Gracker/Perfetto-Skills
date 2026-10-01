@@ -1,6 +1,7 @@
 from pathlib import Path
 import copy
 import json
+import re
 import sys
 import tempfile
 import unittest
@@ -1026,6 +1027,70 @@ class GeneratedDefaultChildSelectionTest(unittest.TestCase):
             "suspend_wakeup_analysis/suspend_overview": [{"source": "overview"}],
         })
         self.assertEqual(picked, [{"source": "overview"}])
+
+
+class AnrPlacementDiagnosisTest(unittest.TestCase):
+    """The generated anr_detail placement rule reports where the main thread ran, not why.
+
+    anr_detail collects no cpufreq max-limit evidence, so the rule may name no
+    thermal cause and leaves the frequency limit undetermined. Its share is
+    defined only over fully classified Running time (unrounded unknown_running_ns).
+    """
+
+    QUADRANT = {"q1_big_running_ms": 120, "q2_little_running_ms": 2630, "unknown_running_ms": 0,
+                "unknown_running_ns": 0, "q3_runnable_ms": 1750, "q4_sleeping_ms": 500, "total_ms": 5000,
+                "running_pct": 55, "runnable_pct": 35, "sleeping_pct": 10}
+    SCHEDULER_PRESSURE = {"direct_blocker_type": "scheduler_pressure", "confidence": "medium"}
+
+    def setUp(self) -> None:
+        manifest = SCRIPTS.parent / "references/generated/runtime/skills/anr_detail.json"
+        anr = json.loads(manifest.read_text(encoding="utf-8"))
+        diagnosis = next(step for step in anr["steps"] if step["id"] == "anr_event_diagnosis")
+        self.rules = [rule for rule in diagnosis["rules"] if "unknown_running_ns" in rule["condition"]]
+        self.all_rules = diagnosis["rules"]
+
+    def diagnose(self, quadrant, candidates):
+        from runtime.executor import SkillRunner
+
+        parent = {
+            "id": "parent", "runtime_status": "executable", "type": "composite",
+            "identity": {"policy": "none"}, "inputs": [],
+            "steps": [
+                {"id": "quadrant", "type": "atomic", "query_id": "parent/quadrant", "save_as": "quadrant"},
+                {"id": "candidates", "type": "atomic", "query_id": "parent/candidates",
+                 "save_as": "direct_blocker_candidates"},
+                {"id": "diagnose", "type": "diagnostic", "rules": copy.deepcopy(self.rules)},
+            ],
+        }
+        answers = {"parent/quadrant": quadrant, "parent/candidates": candidates}
+        result = SkillRunner({"skills": {"parent": parent}}, lambda query_id, **kwargs: answers[query_id]).run("parent")
+        self.assertTrue(result["success"])
+        return next(step for step in result["steps"] if step["step_id"] == "diagnose")["diagnostics"]
+
+    def test_placement_renders_as_an_observation_that_defers_the_limit(self) -> None:
+        self.assertEqual(len(self.rules), 1)
+        [finding] = self.diagnose([self.QUADRANT], [self.SCHEDULER_PRESSURE])
+        self.assertEqual(finding["diagnosis"],
+                         "主线程运行时间主要在小核：大核组（超大/大/中核）120ms、小核 2630ms，同时 Runnable 等待 35%")
+        self.assertEqual(len(finding["suggestions"]), 3)
+        self.assertIn("是否限频以 ANR 窗口的 CPU 限频证据为准", finding["suggestions"][2])
+        self.assertIn("限频与否未判定", finding["suggestions"][2])
+
+    def test_placement_stays_silent_on_unknown_time_or_low_confidence(self) -> None:
+        cases = [
+            ([{**self.QUADRANT, "unknown_running_ns": 4000}], [self.SCHEDULER_PRESSURE]),
+            ([{**self.QUADRANT, "unknown_running_ns": None}], [self.SCHEDULER_PRESSURE]),
+            ([self.QUADRANT], [{**self.SCHEDULER_PRESSURE, "confidence": "low"}]),
+            ([{**self.QUADRANT, "q1_big_running_ms": 789}], [self.SCHEDULER_PRESSURE]),
+        ]
+        for quadrant, candidates in cases:
+            self.assertEqual(self.diagnose(quadrant, candidates), [])
+
+    def test_no_rule_names_a_thermal_cause(self) -> None:
+        texts = [text for rule in self.all_rules for text in (rule["diagnosis"], *rule.get("suggestions", []))]
+        offenders = [text for text in texts
+                     if re.search(r"温控|温度|过热|散热|thermal", text.replace("不是限频或温控证据", ""), re.I)]
+        self.assertEqual(offenders, [])
 
 
 class InheritedBindingPrecedenceTest(unittest.TestCase):

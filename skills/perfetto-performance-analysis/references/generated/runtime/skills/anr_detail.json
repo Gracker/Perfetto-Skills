@@ -128,7 +128,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/anr_detail.skill.yaml",
-    "sha256": "69869c165513d6e975cde75d83230b412b1276132fd888e9d2fbf6a898cc2db3"
+    "sha256": "0be84fe96c0f5e4646a49f1630ef4cfcf6662638c5c42718b3bff9307513577f"
   },
   "steps": [
     {
@@ -546,14 +546,14 @@
           ]
         },
         {
-          "condition": "quadrant.data[0]?.running_pct > 50 && quadrant.data[0]?.q1_big_running_ms < quadrant.data[0]?.q2_little_running_ms * 0.3 && quadrant.data[0]?.runnable_pct > 10 && direct_blocker_candidates.data?.find(r => r.direct_blocker_type === 'scheduler_pressure' && r.confidence !== 'low')",
+          "condition": "quadrant.data[0]?.running_pct > 50 && quadrant.data[0]?.unknown_running_ns === 0 && quadrant.data[0]?.q1_big_running_ms < quadrant.data[0]?.q2_little_running_ms * 0.3 && quadrant.data[0]?.runnable_pct > 10 && direct_blocker_candidates.data?.find(r => r.direct_blocker_type === 'scheduler_pressure' && r.confidence !== 'low')",
           "confidence": "medium",
-          "diagnosis": "主线程大核占比偏低且存在调度等待（Runnable ${quadrant.data[0].runnable_pct}%），可能有 CPU 供给不足",
+          "diagnosis": "主线程运行时间主要在小核：大核组（超大/大/中核）${quadrant.data[0].q1_big_running_ms}ms、小核 ${quadrant.data[0].q2_little_running_ms}ms，同时 Runnable 等待 ${quadrant.data[0].runnable_pct}%",
           "severity": "warning",
           "suggestions": [
-            "检查高优先级线程是否占用大核",
-            "检查是否有高优先级任务抢占大核",
-            "可能触发温控策略"
+            "放置本身不说明原因；可能的解释包括负载均衡、EAS 能效放置、uclamp/cpuset 限制、主线程负载低于上迁阈值、大核组繁忙，需结合调度数据核对",
+            "核对同一 ANR 窗口内占用大核组的任务（目标任务调度交接、窗口 CPU 系统上下文），确认 Runnable 等待是否来自大核组争用",
+            "占比本身不是限频或温控证据；频率上限可能降低大核可用容量并影响放置，是否限频以 ANR 窗口的 CPU 限频证据为准：本 Skill 未采集该证据，限频与否未判定，可在同一窗口调用 cpu_throttling_in_range 核对"
           ]
         },
         {
