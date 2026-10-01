@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_detail.skill.yaml
-Source SHA-256: d8bd7e2e4f7cdef9dee9189f5a8055152f373d9c0c73ac25d7b272e3e81d290e
+Source SHA-256: 186d36d138d9b1f73f761df5c6f70901a1657693238ff523a7f897435e762cc4
 # 启动详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -233,6 +233,18 @@ display:
   - name: unknown_core_pct
     label: 未知核类型占比
     type: percentage
+  - name: unknown_core_ns
+    label: 未知核运行(ns)
+    type: number
+    hidden: true
+  - name: main_thread_count
+    label: 主线程数
+    type: number
+    hidden: true
+  - name: big_core_pct_definition
+    label: 大核占比口径
+    type: string
+    hidden: true
 process_scope:
   role: target
   binding: effective_target_processes
@@ -1703,7 +1715,7 @@ inputs:
 - jit_analysis
 - hot_slice_states
 rules:
-- condition: cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.unknown_core_pct === 0 && quadrant.data[0]?.q3_runnable_ms
+- condition: cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.unknown_core_ns === 0 && quadrant.data[0]?.q3_runnable_ms
     > 50
   severity: warning
   diagnosis: 主线程大核占比偏低（${cpu_core.data[0].big_core_pct}%）且 Runnable 排队明显（${quadrant.data[0].q3_runnable_ms}ms），可能存在调度供给不足
@@ -1711,9 +1723,9 @@ rules:
   suggestions:
   - 检查是否有其他高优先级进程抢占大核
   - 对照关键线程 kernel priority、R+ 切换和 affinity/cgroup 证据，再评估调度配置
-- condition: cpu_core.data[0]?.unknown_core_pct > 0
+- condition: cpu_core.data[0]?.unknown_core_ns > 0
   severity: info
-  diagnosis: 主线程运行时间中 ${cpu_core.data[0].unknown_core_pct}% 的核类型未知，不能把未知部分计为小核或据此认定摆核不足
+  diagnosis: 主线程有 ${cpu_core.data[0].unknown_core_ms}ms（${cpu_core.data[0].unknown_core_pct}%）运行时间的核类型未知，不能把未知部分计为小核或据此认定摆核不足
   confidence: medium
   suggestions:
   - 补充或检查 cpu_frequency/cpu capacity 数据后再判断大小核调度问题
