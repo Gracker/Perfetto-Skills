@@ -37,7 +37,7 @@ sys.path.insert(0, str(SCRIPTS))
 try:
     from perfetto_sql_guardrails import analyze_sql
     from _common import (
-        is_process_scope_name, runtime_sql_bindings, sql_template_names,
+        is_process_scope_name, runtime_sql_bindings, sql_template_names, sql_template_roots,
         validate_process_scope_declaration,
     )
 finally:
@@ -45,10 +45,10 @@ finally:
 
 
 def validate_sql_syntax(
-    sql: str, result_dependencies: list[str] | tuple[str, ...] = ()
+    sql: str, result_references: list[str] | tuple[str, ...] = ()
 ) -> list[str]:
     """Parse portable SQL without treating missing trace schema as syntax failure."""
-    result_names = set(result_dependencies)
+    result_names = set(result_references)
     rendered = PARAMETER.sub(
         lambda match: (
             f"__result_{match.group(1)}" if match.group(1) in result_names else "NULL"
@@ -127,6 +127,7 @@ def validate_query(
     query_ids: set[str] | None = None,
     required_symbols: set[str] | None = None,
     result_names: set[str] | None = None,
+    step_result_dependencies: list[str] | None = None,
 ) -> dict[str, object]:
     query_id = query.get("id")
     errors: list[str] = []
@@ -145,12 +146,12 @@ def validate_query(
         if actual != query.get("sha256"):
             errors.append("SQL hash mismatch")
         template_value = query.get("template")
-        result_dependencies_value = (
-            template_value.get("result_dependencies", [])
+        result_references_value = (
+            template_value.get("result_references", [])
             if isinstance(template_value, dict)
             else []
         )
-        syntax_errors = validate_sql_syntax(sql, result_dependencies_value)
+        syntax_errors = validate_sql_syntax(sql, result_references_value)
         if syntax_errors:
             errors.append(f"SQL syntax invalid: {syntax_errors[0]}")
         guardrail_findings = [issue.to_dict() for issue in analyze_sql(sql)]
@@ -185,7 +186,22 @@ def validate_query(
     parameters = template.get("parameters", [])
     if not isinstance(parameters, list) or not all(isinstance(item, str) for item in parameters):
         errors.append("template parameters must be strings")
+    result_references = template.get("result_references", [])
     result_dependencies = template.get("result_dependencies", [])
+    if not isinstance(result_references, list) or not all(
+        isinstance(name, str) for name in result_references
+    ):
+        errors.append("template result references must be strings")
+        result_references = []
+    expected_parameters, expected_references, expected_dependencies = sql_template_roots(
+        sql, result_references
+    )
+    if expected_references != sorted(result_references):
+        errors.append("result references do not match SQL placeholders")
+    if result_dependencies != expected_dependencies:
+        errors.append("result dependencies do not match the references without a default")
+    if step_result_dependencies is not None and step_result_dependencies != result_dependencies:
+        errors.append("step result dependencies differ from the query template")
     names = sql_template_names(sql)
     try:
         expected_bindings = set(runtime_sql_bindings(sql))
@@ -213,12 +229,9 @@ def validate_query(
             errors.append("runtime binding requires identity metadata")
         elif template.get("name_parameters") != sorted(set(aliases) & names):
             errors.append("runtime binding name parameters do not match SQL")
-    expected_parameters = {
-        name for name in PARAMETER.findall(sql) if not is_process_scope_name(name)
-    } - set(result_dependencies)
-    if any(is_process_scope_name(name) for name in result_dependencies):
+    if any(is_process_scope_name(name) for name in result_references):
         errors.append("saved results cannot supply runtime bindings")
-    if isinstance(parameters, list) and set(parameters) != expected_parameters:
+    if isinstance(parameters, list) and sorted(parameters) != expected_parameters:
         errors.append("template parameters do not match SQL placeholders")
     fragments = template.get("fragments", [])
     if not isinstance(fragments, list):
@@ -248,9 +261,9 @@ def validate_query(
         for dependency in setup_queries:
             if dependency not in query_ids:
                 errors.append(f"unknown setup query: {dependency}")
-        for dependency in result_dependencies:
-            if result_names is not None and dependency not in result_names:
-                errors.append(f"unknown result dependency: {dependency}")
+        for reference in result_references:
+            if result_names is not None and reference not in result_names:
+                errors.append(f"unknown result reference: {reference}")
 
     compatibility = query.get("compatibility")
     android = compatibility.get("android") if isinstance(compatibility, dict) else None
@@ -416,13 +429,21 @@ def main(arguments: list[str] | None = None) -> int:
         (args.generated / "runtime/skill-index.json").read_text(encoding="utf-8")
     )
     result_names_by_skill = {}
+    # SkillRunner gates a step on its own copy of the dependencies.
+    step_result_dependencies = {}
     for skill_id, relative_path in skill_index["skills"].items():
         skill = json.loads((args.generated / "runtime" / relative_path).read_text(encoding="utf-8"))
+        steps = [step for step in skill.get("steps", []) if isinstance(step, dict)]
         result_names_by_skill[skill_id] = {
             step.get("save_as", step.get("id"))
-            for step in skill.get("steps", [])
-            if isinstance(step, dict) and isinstance(step.get("id"), str)
+            for step in steps
+            if isinstance(step.get("id"), str)
         }
+        step_result_dependencies.update(
+            (step["query_id"], step.get("result_dependencies", []))
+            for step in steps
+            if isinstance(step.get("query_id"), str)
+        )
     descriptors = []
     seen: set[str] = set()
     for shard_name in index["shards"]:
@@ -444,6 +465,7 @@ def main(arguments: list[str] | None = None) -> int:
             query_ids=seen,
             required_symbols=required_symbols,
             result_names=result_names_by_skill.get(query["skill_id"], set()),
+            step_result_dependencies=step_result_dependencies.get(query["id"]),
         )
         for query in descriptors
     ]

@@ -101,6 +101,7 @@
           "startup_id"
         ],
         "result_dependencies": [],
+        "result_references": [],
         "runtime_bindings": []
       },
       "validation": {
@@ -201,6 +202,14 @@
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [
+          "main_binder_blocking",
+          "main_sync_binder",
+          "main_thread_file_io",
+          "main_thread_slices",
+          "sched_latency",
+          "startup_binder"
+        ],
+        "result_references": [
           "main_binder_blocking",
           "main_sync_binder",
           "main_thread_file_io",

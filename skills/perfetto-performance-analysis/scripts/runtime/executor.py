@@ -281,12 +281,33 @@ class SkillRunner:
         results: dict[str, Any] = {name: value for name, value in inherited.items() if name not in bound_inputs}
         context: dict[str, Any] = {**inputs, **results, "inputs": inputs}
 
+        # Names this Skill's own steps have bound, with or without data.
+        declared: set[str] = set()
+
         def bind(name: str, value: Any) -> None:
             variables[name] = context[name] = results[name] = value
+            declared.add(name)
 
-        def unbind(name: str) -> None:
+        def bind_no_data(name: str) -> None:
+            # The name stays this Skill's: a same-named input or caller value
+            # is not offered in its place. SQL that reads it lists it in
+            # result_dependencies and is skipped before rendering.
             for scope in (variables, context, results):
                 scope.pop(name, None)
+            declared.add(name)
+
+        def bind_unobserved(step: Mapping[str, Any], *, skipped: bool) -> None:
+            # A step that observed nothing: an optional step's result is empty,
+            # any other step's has no data. A skipped step did not run, so it
+            # leaves a name an earlier step of this Skill already bound.
+            names = [str(step["id"])] + ([str(step["save_as"])] if step.get("save_as") else [])
+            for name in names:
+                if skipped and name in declared:
+                    continue
+                if step.get("optional"):
+                    bind(name, {"data": []})
+                else:
+                    bind_no_data(name)
 
         steps = list(skill.get("steps", []) or [])
         if skill.get("type") == "atomic" and skill.get("query_id"):
@@ -301,6 +322,7 @@ class SkillRunner:
             condition = step.get("condition")
             if isinstance(condition, str) and not bool(evaluate(condition, context)):
                 output_steps.append({"step_id": step_id, "type": step_type, "status": "skipped_condition"})
+                bind_unobserved(step, skipped=True)
                 continue
             if step_type == "atomic":
                 query_id = step.get("query_id")
@@ -319,6 +341,7 @@ class SkillRunner:
                             "dependencies": empty_dependencies,
                         }
                     )
+                    bind_unobserved(step, skipped=True)
                     continue
                 try:
                     scope_context = (
@@ -353,6 +376,7 @@ class SkillRunner:
                     optional = bool(step.get("optional"))
                     result = {"step_id": step_id, "type": step_type, "status": "error", "error": str(exc), "optional": optional}
                     item = self._evidence(skill_id, step_id, str(query_id), inputs, "error", [], str(exc))
+                    bind_unobserved(step, skipped=False)
                     if not optional:
                         required_error = True
                 output_steps.append(result)
@@ -379,14 +403,24 @@ class SkillRunner:
                     result["message"] = step["on_empty"]
                 if status == "error" and not optional:
                     required_error = True
-                bind(step_id, {"data": rows})
+                # A failed child exposes no data through the step id or save_as,
+                # even with partial rows or an observed save_from step; they stay
+                # in the output step record. save_from otherwise binds exactly
+                # one child step. Nothing falls back to another step's rows, an
+                # earlier value, an input or a caller value.
+                failed = not child.get("success")
+                if failed:
+                    bind_no_data(step_id)
+                else:
+                    bind(step_id, {"data": rows})
                 if step.get("save_as"):
-                    # save_from binds exactly one child step; when that step
-                    # observed nothing the variable is unbound, never another
-                    # step's rows or an earlier value.
-                    saved = rows if "save_from" not in step else self._named_child_rows(child, str(step["save_from"]))
+                    saved = (
+                        None if failed
+                        else rows if "save_from" not in step
+                        else self._named_child_rows(child, str(step["save_from"]))
+                    )
                     if saved is None:
-                        unbind(str(step["save_as"]))
+                        bind_no_data(str(step["save_as"]))
                     else:
                         bind(str(step["save_as"]), {"data": saved})
                 output_steps.append(result)

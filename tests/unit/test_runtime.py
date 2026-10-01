@@ -187,6 +187,45 @@ class RuntimeTest(unittest.TestCase):
         # A null saved result is still bound: it shadows the same-name input.
         self.assertEqual(rendered, "SELECT 5, NULL, 7, NULL")
 
+    def test_sql_template_empty_saved_result_path_takes_its_explicit_default(self) -> None:
+        # SmartPerfetto resolvePath: `data[0]` of an empty result is undefined,
+        # so the placeholder takes its `|default` and the step still runs.
+        rendered = self.common.render_sql_template(
+            "SELECT ${r.data[0].period|16666667}, '${r.data[0].status|}', ${r.data[1].x|0}, ${gone.data[0].x|3}",
+            {},
+            {"r": {"data": [{"period": 8333333, "status": "ok"}]}},
+        )
+        self.assertEqual(rendered, "SELECT 8333333, 'ok', 0, 3")
+        rendered = self.common.render_sql_template(
+            "SELECT ${r.data[0].period|16666667}, ${n.data[0].x|2}", {}, {"r": {"data": []}, "n": None},
+        )
+        self.assertEqual(rendered, "SELECT 16666667, 2")
+
+    def test_sql_template_unresolvable_saved_result_path_stays_strict(self) -> None:
+        cases = (
+            ("SELECT ${r.data[0].period}", {"r": {"data": []}}, "out of range"),
+            ("SELECT ${r.data[0].typo|0}", {"r": {"data": [{"period": 1}]}}, "no field"),
+            ("SELECT ${r.data[0][0]|0}", {"r": {"data": [{"period": 1}]}}, "non-array"),
+            ("SELECT ${r.data[0]..x|0}", {"r": {"data": []}}, "invalid saved result path"),
+            ("SELECT ${r.data[0]|0}", {"r": {"data": [{"period": 1}]}}, "scalar"),
+        )
+        for template, results, message in cases:
+            with self.subTest(template=template):
+                with self.assertRaisesRegex(ValueError, message):
+                    self.common.render_sql_template(template, {}, results)
+
+    def test_sql_template_roots_gate_only_on_rows_the_template_cannot_default(self) -> None:
+        parameters, references, dependencies = self.common.sql_template_roots(
+            "SELECT ${vsync.data[0].period|16666667}, '${strict.data[0].status}', "
+            "${mixed.data[0].a|0}, ${mixed.data[0].b}, '${package}', ${__process_scope.upid} "
+            "FROM ${relation} JOIN ${relation_default|x} -- ${commented.data[0].x} ${note}\n",
+            {"vsync", "relation", "relation_default", "strict", "mixed", "commented", "unused"},
+        )
+        self.assertEqual(parameters, ["package"])
+        self.assertEqual(references, ["mixed", "relation", "relation_default", "strict", "vsync"])
+        # A bare relation cannot render without rows, default or not.
+        self.assertEqual(dependencies, ["mixed", "relation", "relation_default", "strict"])
+
     def test_query_output_is_bounded_before_loading_into_memory(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -475,6 +514,32 @@ class SkillInputContractTest(unittest.TestCase):
         result = self.runner(self.skills, query).run("fps")
         self.assertTrue(result["success"])
         self.assertEqual(rendered, ["WHERE ts >= 0 AND name = ''"])
+
+    def test_empty_saved_result_gates_only_the_steps_that_need_its_rows(self) -> None:
+        # memory_analysis/main_thread_gc: a defaulted path to an empty
+        # vsync_info runs with its default, as in SmartPerfetto.
+        common = load_skill_script("_common")
+        templates = {
+            "parent/gc": "SELECT dur / ${vsync_info.data[0].period|16666667}",
+            "parent/strict": "SELECT '${vsync_info.data[0].status}'",
+        }
+        rendered = []
+
+        def query(query_id, *, results, **_kwargs):
+            if query_id == "parent/vsync":
+                return []
+            rendered.append(common.render_sql_template(templates[query_id], {}, results))
+            return [{"value": 1}]
+
+        skills = self.with_parent([
+            {"id": "vsync", "type": "atomic", "query_id": "parent/vsync", "save_as": "vsync_info"},
+            {"id": "gc", "type": "atomic", "query_id": "parent/gc", "result_dependencies": []},
+            {"id": "strict", "type": "atomic", "query_id": "parent/strict", "result_dependencies": ["vsync_info"]},
+        ])
+        result = self.runner(skills, query).run("parent")
+        self.assertTrue(result["success"])
+        self.assertEqual([step["status"] for step in result["steps"]], ["empty", "observed", "skipped_empty_dependency"])
+        self.assertEqual(rendered, ["SELECT dur / 16666667"])
 
     def test_undeclared_parameter_is_rejected_before_any_trace_work(self) -> None:
         query = mock.Mock(return_value=[{"value": 1}])
@@ -802,6 +867,176 @@ class InheritedBindingPrecedenceTest(unittest.TestCase):
         self.assertEqual(steps["probe"]["status"], "observed")
         self.assertEqual(seen["x"], {"data": [{"source": "caller"}]})
         self.assertNotIn("y", seen)
+
+
+class UnobservedStepBindingTest(unittest.TestCase):
+    """A declared name that a step did not observe never falls through.
+
+    Mirrors SmartPerfetto: a step that declares ``save_as`` binds it once the
+    step ran. An optional step that was skipped or whose query errored binds an
+    empty result; a non-optional skip, a non-optional query error and a failed
+    child Skill leave the name with no data, so neither a same-named input nor
+    a caller value can be read in its place. A skip never replaces a binding an
+    earlier step of the same Skill made.
+    """
+
+    PROBE_RULES = [
+        {"condition": "shared === 'own'", "diagnosis": "input"},
+        {"condition": "shared.data[0].source === 'caller'", "diagnosis": "caller"},
+        {"condition": "shared.data[0].source === 'local'", "diagnosis": "local"},
+        {"condition": "shared.data.length === 0", "diagnosis": "empty"},
+    ]
+
+    def run_child(self, child_steps, extra_skills=None, fail=()):
+        from runtime.executor import SkillRunner
+
+        seen = {}
+        calls = []
+
+        def query(query_id, **kwargs):
+            calls.append(query_id)
+            if query_id in fail:
+                raise RuntimeError(f"{query_id} failed")
+            if query_id.startswith("parent/"):
+                return [{"source": "caller"}]
+            if query_id == "child/probe":
+                seen.update(kwargs["results"])
+                return []
+            if query_id.endswith("/empty"):
+                return []
+            return [{"source": "local"}]
+
+        skills = {
+            **(extra_skills or {}),
+            "child": {
+                "id": "child", "runtime_status": "executable", "type": "composite",
+                "identity": {"policy": "none"}, "inputs": [{"name": "shared", "type": "string"}],
+                "steps": [
+                    *child_steps,
+                    {"id": "probe", "type": "atomic", "query_id": "child/probe", "optional": True},
+                    {"id": "explain", "type": "diagnostic", "rules": self.PROBE_RULES},
+                ],
+            },
+            "parent": {
+                "id": "parent", "runtime_status": "executable", "type": "composite",
+                "identity": {"policy": "none"}, "inputs": [],
+                "steps": [
+                    {"id": "caller_step", "type": "atomic", "query_id": "parent/shared", "save_as": "shared"},
+                    {"id": "call", "type": "skill", "skill": "child", "params": {"shared": "own"}, "optional": True},
+                ],
+            },
+        }
+        result = SkillRunner({"skills": skills}, query).run("parent")
+        child = result["steps"][-1]["child"]
+        steps = {step["step_id"]: step for step in child["steps"]}
+        reads = [d["diagnosis"] for d in steps["explain"]["diagnostics"]]
+        return reads, seen, steps, calls
+
+    def assert_unobserved(self, child_steps, **kwargs):
+        reads, seen, steps, calls = self.run_child(child_steps, **kwargs)
+        self.assertEqual(reads, [])
+        self.assertNotIn("shared", seen)
+        return steps, seen
+
+    def assert_empty(self, child_steps, **kwargs):
+        reads, seen, _steps, _calls = self.run_child(child_steps, **kwargs)
+        self.assertEqual(reads, ["empty"])
+        self.assertEqual(seen["shared"], {"data": []})
+
+    def test_non_optional_skip_hides_the_input_and_the_caller_value(self) -> None:
+        for skipped in (
+            {"id": "make", "type": "atomic", "query_id": "child/make", "save_as": "shared", "condition": "false"},
+            {"id": "make", "type": "atomic", "query_id": "child/make", "save_as": "shared",
+             "result_dependencies": ["nothing"]},
+        ):
+            with self.subTest(skipped=skipped):
+                self.assert_unobserved([
+                    {"id": "nothing", "type": "atomic", "query_id": "child/empty"},
+                    skipped,
+                ])
+
+    def test_optional_skip_binds_an_empty_result(self) -> None:
+        for skipped in (
+            {"id": "make", "type": "atomic", "query_id": "child/make", "save_as": "shared",
+             "condition": "false", "optional": True},
+            {"id": "make", "type": "atomic", "query_id": "child/make", "save_as": "shared",
+             "result_dependencies": ["nothing"], "optional": True},
+        ):
+            with self.subTest(skipped=skipped):
+                self.assert_empty([
+                    {"id": "nothing", "type": "atomic", "query_id": "child/empty"},
+                    skipped,
+                ])
+
+    def test_query_error_binds_empty_when_optional_and_nothing_otherwise(self) -> None:
+        step = {"id": "make", "type": "atomic", "query_id": "child/make", "save_as": "shared"}
+        self.assert_empty([{**step, "optional": True}], fail=("child/make",))
+        self.assert_unobserved([step], fail=("child/make",))
+
+    def test_skipped_step_id_hides_the_input_and_the_caller_value(self) -> None:
+        self.assert_unobserved([
+            {"id": "shared", "type": "atomic", "query_id": "child/make", "condition": "false"},
+        ])
+
+    PARTIAL = {
+        "partial": {
+            "id": "partial", "runtime_status": "executable", "type": "composite",
+            "identity": {"policy": "none"}, "inputs": [],
+            "steps": [
+                {"id": "rows", "type": "atomic", "query_id": "partial/rows"},
+                {"id": "broken", "type": "atomic", "query_id": "partial/broken"},
+            ],
+        },
+    }
+
+    def test_failed_child_skill_exposes_no_rows_even_partial_ones(self) -> None:
+        for ref in ({}, {"save_from": "rows"}):
+            for optional in (True, False):
+                with self.subTest(ref=ref, optional=optional):
+                    steps, seen = self.assert_unobserved(
+                        [{"id": "ref", "type": "skill", "skill": "partial", "save_as": "shared",
+                          "optional": optional, **ref}],
+                        extra_skills=self.PARTIAL, fail=("partial/broken",),
+                    )
+                    # Neither the step id nor save_as exposes the partial rows; the
+                    # output record keeps them with the failed child.
+                    self.assertNotIn("ref", seen)
+                    self.assertEqual(steps["ref"]["rows"], [{"source": "local"}])
+                    self.assertFalse(steps["ref"]["child"]["success"])
+
+    def test_failed_child_skill_named_like_its_save_as_leaves_the_name_unbound(self) -> None:
+        steps, _seen = self.assert_unobserved(
+            [{"id": "shared", "type": "skill", "skill": "partial", "save_as": "shared", "optional": True}],
+            extra_skills=self.PARTIAL, fail=("partial/broken",),
+        )
+        self.assertEqual(steps["shared"]["rows"], [{"source": "local"}])
+
+    def test_a_skip_keeps_an_alternative_steps_binding(self) -> None:
+        ran = {"id": "ran", "type": "atomic", "query_id": "child/ran", "save_as": "shared"}
+        for optional in (False, True):
+            gated = {"id": "gated", "type": "atomic", "query_id": "child/gated", "save_as": "shared",
+                     "condition": "false", "optional": optional}
+            for order in ([ran, gated], [gated, ran]):
+                with self.subTest(optional=optional, first=order[0]["id"]):
+                    reads, seen, _steps, _calls = self.run_child(order)
+                    self.assertEqual(reads, ["local"])
+                    self.assertEqual(seen["shared"], {"data": [{"source": "local"}]})
+
+    def test_sql_reading_an_unobserved_name_is_skipped_not_rendered_with_the_input(self) -> None:
+        _reads, _seen, steps, calls = self.run_child([
+            {"id": "make", "type": "atomic", "query_id": "child/make", "save_as": "shared", "condition": "false"},
+            {"id": "reader", "type": "atomic", "query_id": "child/reader", "result_dependencies": ["shared"]},
+        ])
+        self.assertEqual(steps["reader"]["status"], "skipped_empty_dependency")
+        self.assertNotIn("child/reader", calls)
+
+    def test_sql_path_with_a_default_never_renders_a_same_named_input(self) -> None:
+        # Such a path is not a result dependency, so the step runs; with the name
+        # unbound, the result path matches no input parameter and takes |default.
+        rendered = load_skill_script("_common").render_sql_template(
+            "SELECT '${shared.data[0].source|none}'", {"shared": "own"}, {},
+        )
+        self.assertEqual(rendered, "SELECT 'none'")
 
 
 if __name__ == "__main__":

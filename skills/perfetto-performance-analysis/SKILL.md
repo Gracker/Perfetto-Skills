@@ -123,8 +123,9 @@ arrays (rendered as SQL literal lists for `IN (...)`),
 `--result NAME=/path/prior.json` exposes a non-empty saved row array as a
 relation for a dependent step. Pipeline expressions such as
 `${prior_step.data[0].upid}` select a scalar field from those rows. A
-placeholder `${name|default}` uses its default when `name` is omitted or
-resolves to JSON `null`:
+placeholder `${name|default}` uses its default when `name` is omitted,
+resolves to JSON `null`, or indexes past the rows of a saved result, so a
+defaulted path to an empty prior step needs no `--result`:
 
 ```bash
 python3 <skill-root>/scripts/perfetto_query.py /absolute/trace.pftrace \
