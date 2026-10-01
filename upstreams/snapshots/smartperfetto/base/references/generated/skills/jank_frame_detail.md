@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: c7316828564ad4a4c71880cd7161b8aa58418ee7fd19812aa7a9d62357befce2
+Source SHA-256: 53ffd6d3f14eb46ea6d96882c52ecb04304522a845a61c66e81e1c627f33fc25
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -9,7 +9,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: jank_frame_detail
-version: '2.2'
+version: '2.3'
 type: composite
 category: rendering
 tier: S
@@ -1030,6 +1030,8 @@ process_scope:
     - frame_budget_ms
     - primary_cause
     - secondary_info
+    - ramp_to_high_ms
+    - freq_ramp_evidence
     peer_context:
     - deep_reason
   limitations:
@@ -1038,6 +1040,7 @@ sql_fragments:
 - fragments/system_thread_state_spans.sql
 - fragments/system_cpu_frequency_spans.sql
 - fragments/system_sched_spans.sql
+- fragments/system_cpu_big_freq_coverage.sql
 - fragments/system_cpu_freq_limit_spans.sql
 - fragments/system_cpu_freq_limit_episodes.sql
 - fragments/thermal_cooling_spans.sql
@@ -1182,6 +1185,16 @@ display:
   - name: rt_freq_limit_policy_cpu
     label: RenderThread 限频 policy
     type: number
+    hidden: true
+  - name: ramp_to_high_ms
+    label: 大核升频延迟
+    type: duration
+    format: duration_ms
+    unit: ms
+    hidden: true
+  - name: freq_ramp_evidence
+    label: 大核升频观测
+    type: string
     hidden: true
 save_as: root_cause
 optional: true

@@ -192,7 +192,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-    "sha256": "c7316828564ad4a4c71880cd7161b8aa58418ee7fd19812aa7a9d62357befce2"
+    "sha256": "53ffd6d3f14eb46ea6d96882c52ecb04304522a845a61c66e81e1c627f33fc25"
   },
   "steps": [
     {
@@ -549,7 +549,9 @@
           "global_context": [
             "frame_budget_ms",
             "primary_cause",
-            "secondary_info"
+            "secondary_info",
+            "ramp_to_high_ms",
+            "freq_ramp_evidence"
           ],
           "peer_context": [
             "deep_reason"
@@ -1078,6 +1080,6 @@
     }
   ],
   "type": "composite",
-  "version": "2.2",
+  "version": "2.3",
   "workflow": "scrolling"
 }

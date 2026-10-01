@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: c7316828564ad4a4c71880cd7161b8aa58418ee7fd19812aa7a9d62357befce2
+-- Source SHA-256: 53ffd6d3f14eb46ea6d96882c52ecb04304522a845a61c66e81e1c627f33fc25
 
 -- 根因分析: 综合四象限、CPU频率、耗时操作等数据，输出明确的根因结论
 -- CTEs vsync_ticks, vsync_config, target_threads, thread_states injected via sql_fragments
@@ -120,6 +120,61 @@ system_sched_spans AS (
   LEFT JOIN thread t ON t.utid = s.utid
   LEFT JOIN system_cpu_topology ct ON ct.ucpu = s.ucpu
   WHERE w.window_end_ts > w.window_start_ts
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Requires, injected before it: system_sched_spans.sql (system_cpu_topology),
+-- system_cpu_frequency_spans.sql.
+-- Input defined by the consuming step:
+--   system_windows(window_id, window_start_ts, window_end_ts)
+--
+-- Whether a window's big-core frequency was observed well enough to time a
+-- frequency ramp. A ramp is "the first moment any big-tier CPU reached a high
+-- frequency", so it is evidence only when every big-tier CPU's frequency is
+-- known for the whole window: an unobserved CPU or stretch could have been at
+-- high frequency, and an absent observation must not read as "never reached
+-- high". frequency_spans drops NULL, negative and zero-length samples, so a
+-- counter track that started before the window can still leave holes; the
+-- check is the union of each CPU's valid clipped spans, not a span count or a
+-- duration sum (one CPU may carry overlapping tracks).
+--
+-- freq_ramp_evidence:
+--   machine_scope_ambiguous    CPUs of more than one machine: the window has
+--                              no machine identity, so no single big tier
+--   big_core_topology_unknown  no CPU is classified big/medium (capacity
+--                              missing or uniform)
+--   big_core_freq_incomplete   some big-tier CPU is not covered for the window
+--   observed                   every big-tier CPU is covered for the window
+-- Consumers time a ramp only for 'observed'; otherwise the ramp is NULL.
+system_cpu_big_freq_spans AS (
+  SELECT f.window_id,f.ucpu,f.window_start_ts,f.window_end_ts,f.clipped_start_ts,f.clipped_end_ts,
+    MAX(f.clipped_end_ts) OVER (PARTITION BY f.window_id,f.ucpu ORDER BY f.clipped_start_ts,f.clipped_end_ts
+      ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING) AS covered_until
+  FROM system_cpu_frequency_spans f JOIN system_cpu_topology ct ON ct.ucpu=f.ucpu
+  -- drops an unfinished sample that starts at or after the trace end (zero length)
+  WHERE ct.core_type IN ('prime','big','medium') AND f.clipped_end_ts>f.clipped_start_ts
+),
+system_cpu_big_freq_cpu_coverage AS (
+  SELECT window_id,ucpu
+  FROM system_cpu_big_freq_spans
+  GROUP BY window_id,ucpu
+  HAVING MIN(clipped_start_ts)<=MIN(window_start_ts) AND MAX(clipped_end_ts)>=MAX(window_end_ts)
+    AND SUM(CASE WHEN clipped_start_ts>covered_until THEN 1 ELSE 0 END)=0
+),
+system_cpu_big_freq_coverage AS (
+  SELECT w.window_id,
+    CASE
+      WHEN (SELECT COUNT(DISTINCT COALESCE(machine_id,-1)) FROM system_cpu_topology)>1 THEN 'machine_scope_ambiguous'
+      WHEN big.cpu_count=0 THEN 'big_core_topology_unknown'
+      WHEN COALESCE(covered.cpu_count,0)<big.cpu_count THEN 'big_core_freq_incomplete'
+      ELSE 'observed'
+    END AS freq_ramp_evidence
+  FROM system_windows w
+  CROSS JOIN (SELECT COUNT(*) AS cpu_count FROM system_cpu_topology WHERE core_type IN ('prime','big','medium')) big
+  LEFT JOIN (SELECT window_id,COUNT(*) AS cpu_count FROM system_cpu_big_freq_cpu_coverage GROUP BY window_id) covered
+    ON covered.window_id=w.window_id
 )
 ,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -1849,7 +1904,12 @@ big_freq_stats AS (
     SUM(freq_khz*1.0*dur_ns)/NULLIF(SUM(dur_ns),0) as avg_khz
   FROM big_freq_window
 ),
-big_freq_ramp AS (
+-- 频率爬升只在整帧每个大核频率都有观测时计时（fragments/system_cpu_big_freq_coverage.sql）；
+-- 拓扑未知或覆盖不全时为 NULL，不能把"没有观测"当成"一直没升到高频"。
+frame_freq_ramp_evidence AS (
+  SELECT freq_ramp_evidence FROM system_cpu_big_freq_coverage WHERE window_id='frame'
+),
+big_freq_ramp_timing AS (
   SELECT
     ROUND(
       (
@@ -1876,6 +1936,11 @@ big_freq_ramp AS (
     ) as ramp_to_2g_ms
   FROM big_freq_window b
   CROSS JOIN big_freq_stats s
+),
+-- 聚合在空窗口上也返回一行（MIN 为 NULL → COALESCE 成整帧），所以证据门控在聚合之后
+big_freq_ramp AS (
+  SELECT r.* FROM big_freq_ramp_timing r CROSS JOIN frame_freq_ramp_evidence e
+  WHERE e.freq_ramp_evidence = 'observed'
 ),
 system_target_threads AS (
   SELECT 'frame' AS window_id,t.upid,tt.utid,tt.thread_type AS role
@@ -2097,6 +2162,7 @@ analysis AS (
     (SELECT top_little_avg_freq_mhz FROM top_slice_freq) as top_little_avg_freq_mhz,
     (SELECT ramp_to_high_ms FROM big_freq_ramp) as ramp_to_high_ms,
     (SELECT ramp_to_2g_ms FROM big_freq_ramp) as ramp_to_2g_ms,
+    (SELECT freq_ramp_evidence FROM frame_freq_ramp_evidence) as freq_ramp_evidence,
     (SELECT overlap_ms FROM binder_overlap) as binder_overlap_ms,
     (SELECT max_overlap_ms FROM binder_overlap) as binder_max_overlap_ms,
     (SELECT overlap_server FROM binder_overlap) as binder_overlap_server,
@@ -2193,9 +2259,11 @@ analysis AS (
         AND COALESCE(top_big_max_freq_mhz, 0) > 0
         AND top_big_avg_freq_mhz < top_big_max_freq_mhz * 0.55
         THEN 'big_core_low_freq'
-      -- P6: 频率爬升慢（仅适用于边际情况：slice 在 1x-2x 帧预算区间）
+      -- P6: 频率爬升慢（仅适用于边际情况：slice 在 1x-2x 帧预算区间），且整帧
+      -- 每个大核的频率都有观测；否则爬升时间未知，落到 P7 兜底
       WHEN slice_dur > slice_critical_ms
-        AND COALESCE(ramp_to_high_ms, 0) > freq_ramp_critical_ms
+        AND freq_ramp_evidence = 'observed'
+        AND ramp_to_high_ms > freq_ramp_critical_ms
         AND COALESCE(top_slice_offset_ms, 0) <= ramp_to_high_ms
         THEN 'freq_ramp_slow'
       -- P7: 工作负载超时兜底（1x-2x 帧预算，无特定供给侧因素）
@@ -2486,6 +2554,7 @@ analysis AS (
     top_big_avg_freq_mhz,
     top_big_max_freq_mhz,
     ramp_to_high_ms,
+    freq_ramp_evidence,
     binder_overlap_ms,
     lock_contention_ms,
     render_sync_wait_ms,
@@ -2562,6 +2631,9 @@ SELECT
   rt_freq_limit_state,
   rt_freq_limit_binding_ns,
   rt_freq_limit_policy_cpu,
+  -- 大核频率爬升（fragments/system_cpu_big_freq_coverage.sql），无完整观测时为 NULL
+  ramp_to_high_ms,
+  freq_ramp_evidence,
   CASE
     WHEN cause_type IN ('slice', 'blocking', 'io_blocking') THEN 'trigger'
     WHEN cause_type IN ('sched_latency', 'cpu_contention', 'small_core', 'freq_limit', 'low_freq', 'cpu_overload') THEN 'supply'

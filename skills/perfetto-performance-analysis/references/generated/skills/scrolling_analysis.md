@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: e3956999bf44d54c8dac9bfa601d821973787904fa3ec95eacf3d31b20eabd4c
+Source SHA-256: 8900b9c6333a65acb3b9589b7f6af5a23a09d3514f5d60a1a86113392d570c4b
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1556,6 +1556,7 @@ sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/system_cpu_frequency_spans.sql
 - fragments/system_sched_spans.sql
+- fragments/system_cpu_big_freq_coverage.sql
 - fragments/system_thread_state_spans.sql
 - fragments/effective_target_processes.sql
 - fragments/vsync_config.sql
@@ -1751,6 +1752,10 @@ display:
     label: 升频延迟
     type: duration
     format: duration_ms
+    hidden: true
+  - name: freq_ramp_evidence
+    label: 大核升频观测
+    type: string
     hidden: true
   - name: top_slice_little_pct
     label: 小核占比%
@@ -1997,6 +2002,7 @@ process_scope:
     - big_avg_freq_mhz
     - big_max_freq_mhz
     - ramp_ms
+    - freq_ramp_evidence
     - frame_budget_ms
     - vsync_source
     - device_peak_freq_mhz
