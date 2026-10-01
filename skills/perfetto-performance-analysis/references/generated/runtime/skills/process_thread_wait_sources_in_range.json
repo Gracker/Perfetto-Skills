@@ -84,6 +84,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "wake_evidence_scope",
       "name": "唤醒证据可用性",
       "process_scope": {
@@ -96,6 +97,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "role_state_summary",
       "name": "按角色的线程状态分布",
       "process_scope": {
@@ -108,6 +110,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "wait_class_summary",
       "name": "等待类别分布",
       "process_scope": {
@@ -120,6 +123,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "top_waits",
       "name": "最长等待明细",
       "process_scope": {
@@ -144,6 +148,7 @@
     },
     {
       "condition": "packet_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "network_packet_correlation",
       "name": "收包时间相关",
       "process_scope": {

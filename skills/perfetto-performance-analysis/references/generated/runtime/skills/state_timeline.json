@@ -77,6 +77,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "input_coverage",
       "name": "输入事实覆盖范围",
       "optional": true,
@@ -86,6 +87,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "timeline_bounds",
       "name": "时间线范围与可用表",
       "query_id": "state_timeline/timeline_bounds",
@@ -95,6 +97,7 @@
     },
     {
       "condition": "timeline_bounds.data[0]?.has_screen_state === 1",
+      "displayed": true,
       "id": "device_state_lane",
       "name": "设备状态泳道",
       "optional": true,
@@ -104,6 +107,7 @@
     },
     {
       "condition": "timeline_bounds.data[0]?.has_screen_state !== 1",
+      "displayed": true,
       "id": "device_state_lane_fallback",
       "name": "设备状态泳道（降级）",
       "optional": true,
@@ -113,6 +117,7 @@
     },
     {
       "condition": "timeline_bounds.data[0]?.has_frame_timeline === 1 && timeline_bounds.data[0]?.has_input_events === 1",
+      "displayed": true,
       "id": "input_state_lane_frames",
       "name": "用户输入状态泳道",
       "optional": true,
@@ -122,6 +127,7 @@
     },
     {
       "condition": "timeline_bounds.data[0]?.has_frame_timeline !== 1 && timeline_bounds.data[0]?.has_input_events === 1",
+      "displayed": true,
       "id": "input_state_lane_fallback",
       "name": "用户输入状态泳道",
       "optional": true,
@@ -131,6 +137,7 @@
     },
     {
       "condition": "timeline_bounds.data[0]?.has_battery_top === 1",
+      "displayed": true,
       "id": "app_state_lane",
       "name": "应用状态泳道",
       "optional": true,
@@ -140,6 +147,7 @@
     },
     {
       "condition": "timeline_bounds.data[0]?.has_battery_top !== 1",
+      "displayed": true,
       "id": "app_state_lane_fallback",
       "name": "应用状态泳道（降级）",
       "optional": true,
@@ -148,6 +156,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "system_state_lane",
       "name": "系统状态泳道",
       "query_id": "state_timeline/system_state_lane",
@@ -155,6 +164,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "lane_summary",
       "name": "泳道统计汇总",
       "query_id": "state_timeline/lane_summary",

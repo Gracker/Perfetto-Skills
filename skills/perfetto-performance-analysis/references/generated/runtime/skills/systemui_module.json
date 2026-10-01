@@ -75,6 +75,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "systemui_process",
       "name": "SystemUI 进程识别",
       "query_id": "systemui_module/systemui_process",
@@ -83,6 +84,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "systemui_main_thread",
       "name": "SystemUI 主线程概览",
       "on_empty": "未找到 SystemUI 进程数据",
@@ -92,6 +94,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "systemui_frames",
       "name": "SystemUI 帧渲染",
       "query_id": "systemui_module/systemui_frames",
@@ -100,6 +103,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "statusbar_activities",
       "name": "状态栏活动",
       "query_id": "systemui_module/statusbar_activities",
@@ -108,6 +112,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "notification_shade",
       "name": "通知中心活动",
       "query_id": "systemui_module/notification_shade",
@@ -116,6 +121,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "quick_settings",
       "name": "快捷设置活动",
       "query_id": "systemui_module/quick_settings",
@@ -124,6 +130,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "navigation_activities",
       "name": "导航栏活动",
       "query_id": "systemui_module/navigation_activities",
@@ -132,6 +139,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "lockscreen_activities",
       "name": "锁屏活动",
       "query_id": "systemui_module/lockscreen_activities",
@@ -140,6 +148,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "systemui_binder",
       "name": "SystemUI Binder 调用",
       "query_id": "systemui_module/systemui_binder",
@@ -148,6 +157,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "volume_dialog",
       "name": "音量对话框",
       "optional": true,
@@ -157,6 +167,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "systemui_diagnosis",
       "inputs": [
         "systemui_frames",

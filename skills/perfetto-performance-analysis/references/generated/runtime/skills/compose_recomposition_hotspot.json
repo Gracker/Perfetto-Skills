@@ -79,6 +79,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "recomposition_overview",
       "name": "重组概览",
       "query_id": "compose_recomposition_hotspot/recomposition_overview",
@@ -87,6 +88,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "slow_recompositions",
       "name": "慢重组",
       "query_id": "compose_recomposition_hotspot/slow_recompositions",
@@ -95,6 +97,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "composition_frequency",
       "name": "重组频率",
       "query_id": "compose_recomposition_hotspot/composition_frequency",
@@ -104,6 +107,7 @@
     },
     {
       "condition": "frame_timeline.data[0]?.has_frame_timeline === 1",
+      "displayed": true,
       "id": "recomposition_frame_overlap",
       "name": "重组与帧重叠",
       "query_id": "compose_recomposition_hotspot/recomposition_frame_overlap",

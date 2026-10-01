@@ -73,6 +73,7 @@
     },
     {
       "condition": "cooling_data_check.data?.[0]?.has_cdev_data === 1",
+      "displayed": true,
       "id": "cooling_summary",
       "name": "散热设备概览",
       "optional": true,
@@ -86,6 +87,7 @@
     },
     {
       "condition": "cooling_data_check.data?.[0]?.has_cdev_data === 1",
+      "displayed": true,
       "id": "cooling_transitions",
       "name": "散热设备状态转换",
       "on_empty": "窗口内没有散热设备状态转换。",
@@ -100,6 +102,7 @@
     },
     {
       "condition": "cooling_data_check.data?.[0]?.has_cdev_data !== 1",
+      "displayed": true,
       "id": "cooling_unavailable",
       "name": "无散热设备数据",
       "process_scope": {

@@ -105,6 +105,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "get_process",
       "name": "获取目标进程",
       "on_empty": "未找到目标进程",
@@ -115,6 +116,7 @@
     },
     {
       "condition": "target_process.data.length > 0",
+      "displayed": true,
       "id": "init_gc_view",
       "name": "初始化 GC 事件视图",
       "optional": true,
@@ -123,6 +125,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "get_vsync_period",
       "name": "检测 VSync 周期",
       "optional": true,
@@ -135,6 +138,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "memory_growth_summary",
       "name": "RSS/Swap 增长检测",
       "optional": true,
@@ -148,6 +152,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "rss_swap_peaks",
       "name": "RSS/Swap 峰值",
       "optional": true,
@@ -161,6 +166,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "heap_graph_summary",
       "name": "Heap Graph 总览",
       "optional": true,
@@ -173,6 +179,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "heap_graph_leak_candidates",
       "name": "Heap Graph 泄漏候选",
       "optional": true,
@@ -186,6 +193,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "bitmap_memory",
       "name": "Bitmap 内存",
       "optional": true,
@@ -197,6 +205,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "native_heap_hotspots",
       "name": "全 Trace Native Heap 热点",
       "optional": true,
@@ -210,6 +219,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "lmk_events",
       "name": "LMK 事件",
       "optional": true,
@@ -224,6 +234,7 @@
     },
     {
       "condition": "target_process.data.length > 0",
+      "displayed": true,
       "id": "gc_overview",
       "name": "GC 概览",
       "query_id": "memory_analysis/gc_overview",
@@ -233,6 +244,7 @@
     },
     {
       "condition": "target_process.data.length > 0",
+      "displayed": true,
       "id": "gc_stats",
       "name": "GC 事件统计",
       "query_id": "memory_analysis/gc_stats",
@@ -242,6 +254,7 @@
     },
     {
       "condition": "target_process.data.length > 0",
+      "displayed": true,
       "id": "gc_frame_impact",
       "name": "GC 与帧关联",
       "optional": true,
@@ -252,6 +265,7 @@
     },
     {
       "condition": "target_process.data.length > 0",
+      "displayed": true,
       "id": "main_thread_gc",
       "name": "主线程 GC",
       "query_id": "memory_analysis/main_thread_gc",
@@ -261,6 +275,7 @@
     },
     {
       "condition": "target_process.data.length > 0",
+      "displayed": true,
       "id": "gc_thread_state",
       "name": "GC 期间主线程状态",
       "optional": true,
@@ -271,6 +286,7 @@
     },
     {
       "condition": "target_process.data.length > 0",
+      "displayed": true,
       "id": "gc_interval_analysis",
       "name": "GC 间隔分析",
       "query_id": "memory_analysis/gc_interval_analysis",
@@ -280,6 +296,7 @@
     },
     {
       "condition": "target_process.data.length > 0",
+      "displayed": true,
       "id": "long_gc_events",
       "name": "长时间 GC",
       "query_id": "memory_analysis/long_gc_events",
@@ -288,6 +305,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "memory_diagnosis",
       "inputs": [
         "gc_overview",

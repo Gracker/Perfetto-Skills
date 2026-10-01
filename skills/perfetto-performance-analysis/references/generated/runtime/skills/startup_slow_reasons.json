@@ -72,6 +72,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "startup_overview",
       "name": "启动事件汇总",
       "optional": true,
@@ -82,6 +83,7 @@
     },
     {
       "condition": "startup_overview.data.length > 0",
+      "displayed": true,
       "id": "slow_reason_checks",
       "name": "慢启动原因检测",
       "optional": true,

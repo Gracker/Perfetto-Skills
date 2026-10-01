@@ -196,6 +196,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
       "optional": true,
@@ -250,6 +251,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "quadrant_analysis",
       "name": "四象限分析",
       "optional": true,
@@ -263,6 +265,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "binder_calls",
       "name": "Binder 调用",
       "optional": true,
@@ -281,6 +284,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_freq_analysis",
       "name": "CPU频率",
       "optional": true,
@@ -293,6 +297,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "main_thread_slices",
       "name": "主线程耗时操作",
       "optional": true,
@@ -306,6 +311,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "choreographer_resync_markers",
       "name": "Choreographer resync 标记",
       "optional": true,
@@ -319,6 +325,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "render_thread_slices",
       "name": "RenderThread 耗时操作",
       "optional": true,
@@ -332,6 +339,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_freq_timeline",
       "name": "CPU 频率变化时间线",
       "optional": true,
@@ -345,6 +353,7 @@
     },
     {
       "condition": "monitor_contention.data[0]?.has_monitor_contention === 1",
+      "displayed": true,
       "id": "lock_contention",
       "name": "锁竞争分析",
       "optional": true,
@@ -366,6 +375,7 @@
     },
     {
       "condition": "gc_availability?.data?.[0]?.has_gc_table === 1",
+      "displayed": true,
       "id": "gc_in_frame",
       "name": "GC 影响分析",
       "optional": true,
@@ -379,6 +389,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "io_blocking",
       "name": "IO/page-cache 等待候选分析",
       "optional": true,
@@ -528,6 +539,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "root_cause_summary",
       "name": "根因分析",
       "optional": true,
@@ -554,6 +566,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "frame_diagnosis",
       "inputs": [
         "quadrant_data",

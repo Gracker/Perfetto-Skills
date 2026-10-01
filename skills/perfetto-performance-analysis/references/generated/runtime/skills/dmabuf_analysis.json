@@ -69,6 +69,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "dmabuf_overview",
       "name": "DMA Buffer 概览",
       "query_id": "dmabuf_analysis/dmabuf_overview",
@@ -78,6 +79,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "dmabuf_cumulative",
       "name": "DMA Buffer 累积使用",
       "optional": true,
@@ -88,6 +90,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "large_buffer_allocs",
       "name": "大型 Buffer 分配",
       "query_id": "dmabuf_analysis/large_buffer_allocs",
@@ -97,6 +100,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "dmabuf_frequency",
       "name": "Buffer 分配频率",
       "query_id": "dmabuf_analysis/dmabuf_frequency",
@@ -106,6 +110,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "thread_alloc_stats",
       "name": "线程级分配统计",
       "query_id": "dmabuf_analysis/thread_alloc_stats",
@@ -115,6 +120,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "buffer_lifecycle",
       "name": "Buffer 生命周期",
       "query_id": "dmabuf_analysis/buffer_lifecycle",
@@ -124,6 +130,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_data === 1",
+      "displayed": true,
       "id": "root_cause_classification",
       "name": "根因分类",
       "query_id": "dmabuf_analysis/root_cause_classification",

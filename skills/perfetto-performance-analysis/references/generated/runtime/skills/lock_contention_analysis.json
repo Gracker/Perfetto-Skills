@@ -77,6 +77,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "owner_contention_events",
       "name": "持锁线程归因事件",
       "optional": true,
@@ -87,6 +88,7 @@
     },
     {
       "condition": "data_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "contention_overview",
       "name": "锁竞争概览",
       "query_id": "lock_contention_analysis/contention_overview",
@@ -96,6 +98,7 @@
     },
     {
       "condition": "data_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "main_thread_contentions",
       "name": "主线程锁竞争",
       "query_id": "lock_contention_analysis/main_thread_contentions",
@@ -105,6 +108,7 @@
     },
     {
       "condition": "data_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "hot_locks",
       "name": "热点锁分析",
       "query_id": "lock_contention_analysis/hot_locks",
@@ -114,6 +118,7 @@
     },
     {
       "condition": "data_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "lock_chain_analysis",
       "name": "锁链分析",
       "optional": true,
@@ -124,6 +129,7 @@
     },
     {
       "condition": "data_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "blocking_thread_state",
       "name": "持锁线程状态",
       "optional": true,
@@ -134,6 +140,7 @@
     },
     {
       "condition": "data_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "blocking_functions",
       "name": "持锁时阻塞函数",
       "optional": true,
@@ -144,6 +151,7 @@
     },
     {
       "condition": "data_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "contention_binder_correlation",
       "name": "锁竞争与 Binder 关联",
       "optional": true,
@@ -153,6 +161,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "lock_held_capability",
       "name": "持锁区间数据检查",
       "optional": true,
@@ -163,6 +172,7 @@
     },
     {
       "condition": "lock_held_capability.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "lock_held_owner_summary",
       "name": "持锁时长汇总",
       "optional": true,
@@ -173,6 +183,7 @@
     },
     {
       "condition": "lock_held_capability.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "lock_held_long_holds",
       "name": "长时间持锁",
       "optional": true,
@@ -183,6 +194,7 @@
     },
     {
       "condition": "data_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "root_cause_classification",
       "name": "根因分类",
       "query_id": "lock_contention_analysis/root_cause_classification",
@@ -192,6 +204,7 @@
     },
     {
       "condition": "data_check.data[0]?.status === 'unavailable'",
+      "displayed": true,
       "id": "fallback_no_data",
       "name": "数据不可用提示",
       "query_id": "lock_contention_analysis/fallback_no_data",

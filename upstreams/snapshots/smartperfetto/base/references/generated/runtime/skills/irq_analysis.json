@@ -93,6 +93,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_irq_data === 1",
+      "displayed": true,
       "id": "irq_overview",
       "name": "中断概览",
       "optional": true,
@@ -103,6 +104,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_irq_data === 1",
+      "displayed": true,
       "id": "top_irq_sources",
       "name": "顶级 IRQ 源",
       "optional": true,
@@ -113,6 +115,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_irq_data === 1",
+      "displayed": true,
       "id": "hard_irq_detail",
       "name": "硬中断明细",
       "optional": true,
@@ -123,6 +126,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_irq_data === 1",
+      "displayed": true,
       "id": "soft_irq_detail",
       "name": "软中断明细",
       "optional": true,
@@ -133,6 +137,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_irq_data === 1",
+      "displayed": true,
       "id": "long_irq_events",
       "name": "长耗时中断事件",
       "optional": true,
@@ -143,6 +148,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_irq_data === 1",
+      "displayed": true,
       "id": "irq_timeline",
       "name": "中断时间分布",
       "optional": true,
@@ -153,6 +159,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_irq_data === 1",
+      "displayed": true,
       "id": "root_cause_classification",
       "name": "根因分类",
       "query_id": "irq_analysis/root_cause_classification",
@@ -161,6 +168,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "irq_diagnosis",
       "inputs": [
         "irq_overview",
@@ -206,6 +214,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_irq_data !== 1",
+      "displayed": true,
       "id": "no_data_fallback",
       "name": "无 IRQ 数据",
       "query_id": "irq_analysis/no_data_fallback",

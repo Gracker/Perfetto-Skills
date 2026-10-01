@@ -76,6 +76,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "workload_by_thread",
       "name": "线程级 CPU 负载归因",
       "on_empty": "窗口内没有可归因的非 idle 调度片；确认 trace 含 ftrace sched/sched_switch 且窗口落在数据范围内。",
@@ -88,6 +89,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "workload_summary",
       "name": "窗口负载汇总",
       "on_empty": "窗口内无调度数据。",

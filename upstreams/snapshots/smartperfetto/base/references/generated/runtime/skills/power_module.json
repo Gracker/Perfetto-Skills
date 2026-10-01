@@ -77,6 +77,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "wakelock_overview",
       "name": "Wakelock 概览",
       "on_empty": "未检测到 Wakelock 事件",
@@ -86,6 +87,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "long_wakelocks",
       "name": "长时间 Wakelock",
       "query_id": "power_module/long_wakelocks",
@@ -94,6 +96,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_idle_states",
       "name": "CPU 空闲状态",
       "optional": true,
@@ -103,6 +106,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "suspend_resume",
       "name": "休眠/唤醒事件",
       "query_id": "power_module/suspend_resume",
@@ -111,6 +115,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "power_counters",
       "name": "电源计数器",
       "query_id": "power_module/power_counters",
@@ -119,6 +124,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "power_mode_events",
       "name": "电源模式变化",
       "query_id": "power_module/power_mode_events",
@@ -127,6 +133,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "wakeup_sources",
       "name": "唤醒源",
       "query_id": "power_module/wakeup_sources",
@@ -135,6 +142,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "power_diagnosis",
       "inputs": [
         "wakelock_overview",

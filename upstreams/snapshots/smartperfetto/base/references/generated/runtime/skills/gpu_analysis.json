@@ -116,6 +116,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_gpu_data === 1",
+      "displayed": true,
       "id": "gpu_freq_overview",
       "name": "GPU 频率概览",
       "optional": true,
@@ -126,6 +127,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_gpu_memory === 1",
+      "displayed": true,
       "id": "gpu_memory_overview",
       "name": "GPU 内存概览",
       "optional": true,
@@ -136,6 +138,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_gpu_data === 1",
+      "displayed": true,
       "id": "gpu_freq_distribution",
       "name": "GPU 频率档位分布",
       "optional": true,
@@ -146,6 +149,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_gpu_data === 1 && data_check.data[0]?.has_frame_timeline === 1",
+      "displayed": true,
       "id": "gpu_frame_correlation",
       "name": "GPU-帧渲染关联",
       "optional": true,
@@ -156,6 +160,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_gpu_data === 1",
+      "displayed": true,
       "id": "gpu_high_load_periods",
       "name": "GPU 高负载时段",
       "optional": true,
@@ -166,6 +171,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_gpu_data === 1",
+      "displayed": true,
       "id": "root_cause_classification",
       "name": "GPU 根因分类",
       "optional": true,
@@ -176,6 +182,7 @@
     },
     {
       "condition": "data_check.data[0]?.has_gpu_data === 0",
+      "displayed": true,
       "id": "fallback_no_gpu_data",
       "name": "GPU 数据不可用",
       "query_id": "gpu_analysis/fallback_no_gpu_data",

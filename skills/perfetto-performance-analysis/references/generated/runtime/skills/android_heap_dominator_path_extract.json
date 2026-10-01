@@ -58,6 +58,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "data_check",
       "name": "Heap graph availability",
       "query_id": "android_heap_dominator_path_extract/data_check",
@@ -66,6 +67,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "dominator_tree_pass",
       "name": "Dominator tree pass",
       "optional": true,
@@ -75,6 +77,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "dominator_paths",
       "name": "Bounded dominator paths",
       "optional": true,

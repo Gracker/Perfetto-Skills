@@ -141,6 +141,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "input_coverage",
       "name": "输入事实覆盖范围",
       "optional": true,
@@ -150,6 +151,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "trace_time_range",
       "name": "Trace 时间范围",
       "query_id": "scene_reconstruction/trace_time_range",
@@ -158,6 +160,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "table_availability",
       "name": "可用数据表探测",
       "query_id": "scene_reconstruction/table_availability",
@@ -167,6 +170,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_screen_state === 1",
+      "displayed": true,
       "id": "screen_state_changes",
       "name": "屏幕状态变化",
       "optional": true,
@@ -177,6 +181,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_battery_top === 1",
+      "displayed": true,
       "id": "top_app_changes",
       "name": "Top App 切换",
       "optional": true,
@@ -186,6 +191,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "activity_lifecycle",
       "name": "Activity 生命周期",
       "optional": true,
@@ -196,6 +202,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_input_events === 1",
+      "displayed": true,
       "id": "user_gestures",
       "name": "用户手势识别",
       "optional": true,
@@ -206,6 +213,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_input_events === 1",
+      "displayed": true,
       "id": "scroll_initiation",
       "name": "滚动处理区间",
       "optional": true,
@@ -216,6 +224,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_key_events === 1",
+      "displayed": true,
       "id": "navigation_keys",
       "name": "导航按键",
       "optional": true,
@@ -225,6 +234,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "gesture_navigation",
       "name": "手势导航",
       "optional": true,
@@ -234,6 +244,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "window_transitions",
       "name": "窗口转场",
       "optional": true,
@@ -244,6 +255,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_anrs === 1",
+      "displayed": true,
       "id": "anr_events",
       "name": "ANR 事件",
       "optional": true,
@@ -253,6 +265,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "ime_events",
       "name": "输入法事件",
       "optional": true,
@@ -263,6 +276,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_input_events === 1 && table_availability.data[0]?.has_frame_timeline === 1",
+      "displayed": true,
       "id": "inertial_scrolls",
       "name": "惯性滑动",
       "optional": true,
@@ -273,6 +287,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_input_events === 1",
+      "displayed": true,
       "id": "idle_periods",
       "name": "未观测到输入的区间（采集完整性未确认）",
       "optional": true,
@@ -283,6 +298,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_startups === 1",
+      "displayed": true,
       "id": "app_launches",
       "name": "App 启动事件",
       "optional": true,
@@ -292,6 +308,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "system_events",
       "name": "系统事件",
       "optional": true,
@@ -301,6 +318,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "broadcast_events",
       "name": "广播事件",
       "optional": true,
@@ -310,6 +328,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cross_process_interactions",
       "name": "跨进程交互",
       "optional": true,
@@ -320,6 +339,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_frame_timeline === 1",
+      "displayed": true,
       "id": "jank_events",
       "name": "掉帧事件",
       "optional": true,
@@ -329,6 +349,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "device_state",
       "name": "设备状态",
       "optional": true,
@@ -338,6 +359,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "app_state_tracking",
       "name": "App 状态跟踪",
       "optional": true,
@@ -347,6 +369,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "operation_chain",
       "name": "操作链",
       "optional": true,
@@ -357,6 +380,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_input_events === 1 || table_availability.data[0]?.has_startups === 1 || table_availability.data[0]?.has_key_events === 1 || table_availability.data[0]?.has_anrs === 1",
+      "displayed": true,
       "id": "clean_timeline",
       "name": "场景时间线",
       "optional": true,
@@ -367,6 +391,7 @@
     },
     {
       "condition": "table_availability.data[0]?.has_screen_state === 1 || table_availability.data[0]?.has_input_events === 1 || table_availability.data[0]?.has_startups === 1 || table_availability.data[0]?.has_frame_timeline === 1",
+      "displayed": true,
       "id": "merged_timeline",
       "name": "合并时间线",
       "optional": true,
@@ -376,6 +401,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "scene_summary",
       "inputs": [
         "trace_time_range",

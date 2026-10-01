@@ -76,6 +76,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "lock_contention_overview",
       "name": "锁竞争概览",
       "on_empty": "未检测到明显的锁竞争事件",
@@ -85,6 +86,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "monitor_contention",
       "name": "Monitor 竞争",
       "query_id": "lock_contention_module/monitor_contention",
@@ -93,6 +95,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "blocked_threads",
       "name": "阻塞线程分析",
       "query_id": "lock_contention_module/blocked_threads",
@@ -101,6 +104,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "main_thread_locks",
       "name": "主线程锁等待",
       "query_id": "lock_contention_module/main_thread_locks",
@@ -109,6 +113,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "binder_thread_locks",
       "name": "Binder 线程锁等待",
       "query_id": "lock_contention_module/binder_thread_locks",
@@ -117,6 +122,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "long_lock_holds",
       "name": "长时间锁持有",
       "optional": true,
@@ -126,6 +132,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "thread_contention_pairs",
       "name": "线程竞争关系",
       "query_id": "lock_contention_module/thread_contention_pairs",
@@ -134,6 +141,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "lock_diagnosis",
       "inputs": [
         "lock_overview",

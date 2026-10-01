@@ -57,6 +57,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
       "optional": true,
@@ -64,6 +65,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "frequency_overview",
       "name": "CPU 频率概览",
       "query_id": "cpu_module/frequency_overview",
@@ -72,6 +74,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "throttling_events",
       "name": "频率限制事件",
       "query_id": "cpu_module/throttling_events",
@@ -80,6 +83,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cluster_utilization",
       "name": "集群利用率",
       "query_id": "cpu_module/cluster_utilization",
@@ -88,6 +92,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "frequency_distribution",
       "name": "频率分布",
       "query_id": "cpu_module/frequency_distribution",
@@ -96,6 +101,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_diagnosis",
       "inputs": [
         "freq_overview",

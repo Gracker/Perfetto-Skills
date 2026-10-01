@@ -51,6 +51,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "temperature_overview",
       "name": "温度概览",
       "on_empty": "窗口内未找到温度样本；检查 trace 是否包含 thermal/temperature 计数器。缺少单位时不进行摄氏温度阈值判断。",
@@ -60,6 +61,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "temperature_timeline",
       "name": "温度时间线",
       "query_id": "thermal_module/temperature_timeline",
@@ -68,6 +70,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "high_temp_periods",
       "name": "高温时段",
       "query_id": "thermal_module/high_temp_periods",
@@ -76,6 +79,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "throttling_events",
       "name": "频率骤降事件",
       "query_id": "thermal_module/throttling_events",
@@ -84,6 +88,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cooling_activity",
       "name": "散热设备活动",
       "optional": true,
@@ -93,6 +98,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "thermal_cpu_correlation",
       "name": "温度-频率相关性",
       "query_id": "thermal_module/thermal_cpu_correlation",
@@ -101,6 +107,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "thermal_diagnosis",
       "inputs": [
         "temp_overview",

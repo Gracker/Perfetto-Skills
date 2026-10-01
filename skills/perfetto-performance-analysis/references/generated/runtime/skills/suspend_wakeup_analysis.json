@@ -124,6 +124,7 @@
     },
     {
       "condition": "suspend_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "suspend_overview",
       "name": "休眠唤醒概览",
       "optional": true,
@@ -134,6 +135,7 @@
     },
     {
       "condition": "suspend_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "suspend_quality_assessment",
       "name": "休眠质量评估",
       "optional": true,
@@ -144,6 +146,7 @@
     },
     {
       "condition": "suspend_check.data[0]?.status === 'available' && wakeup_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "wakeup_type_overview",
       "name": "唤醒事件类型分布",
       "optional": true,
@@ -154,6 +157,7 @@
     },
     {
       "condition": "suspend_check.data[0]?.status === 'available' && wakeup_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "wakeup_source_ranking",
       "name": "唤醒源排行",
       "optional": true,
@@ -164,6 +168,7 @@
     },
     {
       "condition": "suspend_check.data[0]?.status === 'available' && wakeup_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "suspend_backoff",
       "name": "Suspend Backoff 分析",
       "optional": true,
@@ -174,6 +179,7 @@
     },
     {
       "condition": "suspend_check.data[0]?.status === 'available' && wakeup_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "wakeup_timeline",
       "name": "唤醒事件时间线",
       "optional": true,
@@ -184,6 +190,7 @@
     },
     {
       "condition": "suspend_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "long_suspend_events",
       "name": "长时间休眠事件",
       "optional": true,
@@ -194,6 +201,7 @@
     },
     {
       "condition": "suspend_check.data[0]?.status === 'unavailable' && suspend_slice_check.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "suspend_slice_overview",
       "name": "Suspend/Wakeup 相关 Slice",
       "query_id": "suspend_wakeup_analysis/suspend_slice_overview",
@@ -202,6 +210,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "suspend_diagnosis",
       "inputs": [
         "suspend_overview",
@@ -278,6 +287,7 @@
     },
     {
       "condition": "suspend_check.data[0]?.status === 'unavailable'",
+      "displayed": true,
       "id": "fallback_diagnosis",
       "inputs": [
         "suspend_check",

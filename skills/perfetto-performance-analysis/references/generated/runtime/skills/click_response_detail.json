@@ -133,6 +133,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "system_cpu_context",
       "name": "窗口 CPU 系统上下文",
       "optional": true,
@@ -145,6 +146,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "system_task_summary",
       "name": "目标任务系统状态",
       "optional": true,
@@ -158,6 +160,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "system_task_handoffs",
       "name": "目标任务调度交接",
       "optional": true,
@@ -171,6 +174,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
       "optional": true,
@@ -178,6 +182,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "event_info",
       "name": "事件基本信息",
       "query_id": "click_response_detail/event_info",
@@ -186,6 +191,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "input_dispatch_breakdown",
       "name": "输入分发管线分解",
       "optional": true,
@@ -194,6 +200,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "input_pipeline_lifecycle",
       "name": "输入管线生命周期",
       "optional": true,
@@ -203,6 +210,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "cpu_core_analysis",
       "name": "大小核占比分析",
       "process_scope": {
@@ -215,6 +223,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "quadrant_analysis",
       "name": "四大象限分析",
       "optional": true,
@@ -228,6 +237,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "blocking_analysis",
       "name": "阻塞原因分析",
       "params": {
@@ -241,6 +251,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "binder_analysis",
       "name": "Binder 调用分析",
       "params": {
@@ -253,6 +264,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "main_thread_sync_binder",
       "name": "主线程同步 Binder",
       "params": {
@@ -265,6 +277,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "sched_latency",
       "name": "调度延迟分析",
       "params": {
@@ -277,6 +290,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "main_thread_file_io",
       "name": "主线程文件 IO",
       "params": {
@@ -291,6 +305,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "click_diagnosis",
       "inputs": [
         "event_basic",

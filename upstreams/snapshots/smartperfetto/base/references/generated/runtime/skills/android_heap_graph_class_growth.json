@@ -70,6 +70,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "heap_class_table",
       "name": "Heap class 聚合",
       "query_id": "android_heap_graph_class_growth/heap_class_table",
@@ -78,6 +79,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "class_growth_availability",
       "name": "Heap dump 对比可用性",
       "query_id": "android_heap_graph_class_growth/class_growth_availability",
@@ -86,6 +88,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "class_dump_inventory",
       "name": "Heap dump 清单",
       "optional": true,
@@ -95,6 +98,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "class_ranking",
       "name": "Class 排名",
       "optional": true,
@@ -104,6 +108,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "requested_classes",
       "name": "指定 class 对齐行",
       "optional": true,
@@ -114,6 +119,7 @@
     },
     {
       "condition": "class_growth_availability.data[0]?.status === 'multiple_dumps'",
+      "displayed": true,
       "id": "class_growth_within_trace",
       "name": "同 trace 首尾 dump class 增长",
       "optional": true,

@@ -164,6 +164,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "navigation_overview",
       "name": "跳转概览",
       "query_id": "navigation_analysis/navigation_overview",
@@ -175,6 +176,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "lifecycle_phase_breakdown",
       "name": "生命周期阶段耗时",
       "query_id": "navigation_analysis/lifecycle_phase_breakdown",
@@ -186,6 +188,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "lifecycle_event_detail",
       "name": "生命周期事件详情",
       "query_id": "navigation_analysis/lifecycle_event_detail",
@@ -197,6 +200,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "navigation_blocking_ops",
       "name": "跳转期间主线程阻塞",
       "query_id": "navigation_analysis/navigation_blocking_ops",
@@ -208,6 +212,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "layout_inflation",
       "name": "布局膨胀分析",
       "query_id": "navigation_analysis/layout_inflation",
@@ -219,6 +224,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "fragment_transactions",
       "name": "Fragment 事务分析",
       "optional": true,
@@ -231,6 +237,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "transition_animations",
       "name": "转场动画分析",
       "optional": true,
@@ -243,6 +250,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "navigation_binder_calls",
       "name": "跳转期间 Binder 调用",
       "optional": true,
@@ -255,6 +263,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0",
+      "displayed": true,
       "id": "first_frame_render",
       "name": "首帧渲染分析",
       "query_id": "navigation_analysis/first_frame_render",
@@ -265,6 +274,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "navigation_diagnosis",
       "inputs": [
         "nav_overview",
@@ -333,6 +343,7 @@
     },
     {
       "condition": "lifecycle_check.data[0]?.status === 'unavailable'",
+      "displayed": true,
       "id": "no_data_fallback",
       "name": "无数据提示",
       "query_id": "navigation_analysis/no_data_fallback",

@@ -1431,6 +1431,15 @@ def probe_capabilities(
     return sorted(capabilities)
 
 
+def step_displayed(step: dict[str, Any]) -> bool:
+    """SmartPerfetto's `shouldDisplay`: `display: true`, or a display object
+    that is neither `show: false` nor `level: none` (`hidden` is displayed)."""
+    display = step.get("display")
+    if isinstance(display, bool):
+        return display
+    return isinstance(display, dict) and display.get("show") is not False and display.get("level") != "none"
+
+
 def normalize_step(
     step: dict[str, Any],
     skill_id: str,
@@ -1458,6 +1467,10 @@ def normalize_step(
         }
     }
     kept["type"] = step_type
+    # Only whether SmartPerfetto displays the step is portable: a parent that
+    # reads this Skill by default prefers a displayed step's data.
+    if step_displayed(step):
+        kept["displayed"] = True
     # SmartPerfetto accepts AND/OR in step conditions and iterator filters.
     for key in ("condition", "filter"):
         if isinstance(kept.get(key), str):

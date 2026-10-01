@@ -66,6 +66,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "data_check",
       "name": "Memory v57 data availability",
       "query_id": "android_memory_v57_ai_diagnostics/data_check",
@@ -75,6 +76,7 @@
     },
     {
       "condition": "data_check.data[0]?.heap_graph_class_rows > 0",
+      "displayed": true,
       "id": "heap_graph_repeated_objects",
       "name": "Repeated heap graph object classes",
       "optional": true,
@@ -85,6 +87,7 @@
     },
     {
       "condition": "data_check.data[0]?.heap_graph_objects > 0",
+      "displayed": true,
       "id": "heap_graph_size_frequencies",
       "name": "Heap graph object size frequencies",
       "optional": true,
@@ -95,6 +98,7 @@
     },
     {
       "condition": "data_check.data[0]?.heap_profile_allocations > 0",
+      "displayed": true,
       "id": "heap_profile_hotspots",
       "name": "Heap profile allocation hotspots",
       "optional": true,
@@ -110,6 +114,7 @@
     },
     {
       "condition": "data_check.data[0]?.heap_graph_class_rows === 0 && data_check.data[0]?.heap_graph_objects === 0 && data_check.data[0]?.heap_profile_allocations === 0",
+      "displayed": true,
       "id": "no_data_contract",
       "name": "Memory v57 no-data contract",
       "optional": true,

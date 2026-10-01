@@ -59,6 +59,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "hot_slices",
       "name": "代码定位候选 slice",
       "query_id": "code_pinpoint/hot_slices",
@@ -66,6 +67,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "native_symbols",
       "name": "Native symbol / module / build-id 线索",
       "on_empty": "no_symbol_data: trace 中没有符合当前进程与时间窗的 CPU profiling 符号数据",

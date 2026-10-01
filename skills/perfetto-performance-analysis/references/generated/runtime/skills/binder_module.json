@@ -55,6 +55,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "binder_summary",
       "name": "Binder 调用概览",
       "query_id": "binder_module/binder_summary",
@@ -63,6 +64,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "long_sync_calls",
       "name": "耗时同步调用",
       "query_id": "binder_module/long_sync_calls",
@@ -71,6 +73,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "blocking_analysis",
       "name": "阻塞模式分析",
       "query_id": "binder_module/blocking_analysis",
@@ -79,6 +82,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "binder_diagnosis",
       "inputs": [
         "binder_stats",

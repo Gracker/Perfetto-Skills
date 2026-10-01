@@ -64,6 +64,7 @@
   },
   "steps": [
     {
+      "displayed": true,
       "id": "process_state_capability",
       "name": "进程状态能力检查",
       "query_id": "android_process_state_residency/process_state_capability",
@@ -73,6 +74,7 @@
     },
     {
       "condition": "process_state_capability.data[0]?.status === 'runtime_supported'",
+      "displayed": true,
       "id": "process_state_data",
       "name": "进程状态数据检查",
       "optional": true,
@@ -83,6 +85,7 @@
     },
     {
       "condition": "process_state_data.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "process_state_residency",
       "name": "进程状态驻留",
       "optional": true,
@@ -93,6 +96,7 @@
     },
     {
       "condition": "process_state_data.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "process_state_transitions",
       "name": "进程状态切换",
       "optional": true,
@@ -103,6 +107,7 @@
     },
     {
       "condition": "process_state_data.data[0]?.status === 'available'",
+      "displayed": true,
       "id": "process_state_last_observed",
       "name": "最后观测状态",
       "optional": true,

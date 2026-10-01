@@ -143,6 +143,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "system_cpu_context",
       "name": "窗口 CPU 系统上下文",
       "optional": true,
@@ -155,6 +156,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "system_task_summary",
       "name": "目标任务系统状态",
       "optional": true,
@@ -168,6 +170,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "system_task_handoffs",
       "name": "目标任务调度交接",
       "optional": true,
@@ -181,6 +184,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "init_cpu_topology",
       "name": "初始化 CPU 拓扑",
       "optional": true,
@@ -188,6 +192,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "anr_info",
       "name": "ANR 基本信息",
       "process_scope": {
@@ -199,6 +204,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "main_thread_quadrant",
       "name": "主线程四象限分析",
       "optional": true,
@@ -212,6 +218,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "blocking_reasons",
       "name": "阻塞原因分析",
       "params": {
@@ -225,6 +232,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "render_thread_analysis",
       "name": "RenderThread 分析",
       "optional": true,
@@ -238,6 +246,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "binder_calls",
       "name": "Binder 调用分析",
       "optional": true,
@@ -251,6 +260,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "main_thread_sync_binder",
       "name": "主线程同步 Binder",
       "optional": true,
@@ -264,6 +274,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "sched_latency",
       "name": "调度延迟分析",
       "optional": true,
@@ -277,6 +288,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "lock_contention",
       "name": "锁竞争检测",
       "optional": true,
@@ -297,6 +309,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "app_freeze_check",
       "name": "应用冻结检测",
       "optional": true,
@@ -310,6 +323,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "wakeup_chain",
       "name": "唤醒链分析",
       "optional": true,
@@ -329,6 +343,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "main_thread_slices",
       "name": "主线程耗时操作",
       "optional": true,
@@ -344,6 +359,7 @@
       "type": "skill"
     },
     {
+      "displayed": true,
       "id": "thread_evidence_availability",
       "name": "线程证据可用性",
       "optional": true,
@@ -357,6 +373,7 @@
     },
     {
       "condition": "thread_evidence_availability.data[0]?.has_thread_state !== 1",
+      "displayed": true,
       "id": "direct_blocker_evidence_gap",
       "name": "直接阻塞点证据缺口",
       "optional": true,
@@ -370,6 +387,7 @@
     },
     {
       "condition": "thread_evidence_availability.data[0]?.has_thread_state === 1",
+      "displayed": true,
       "id": "direct_blocker_classification",
       "name": "直接阻塞点候选",
       "optional": true,
@@ -384,6 +402,7 @@
     },
     {
       "condition": "thread_evidence_availability.data[0]?.has_thread_state === 1 && (thread_evidence_availability.data[0]?.has_thread_track !== 1 || thread_evidence_availability.data[0]?.has_slice !== 1)",
+      "displayed": true,
       "id": "direct_blocker_slice_evidence_gap",
       "name": "Slice 直接阻塞点证据缺口",
       "optional": true,
@@ -397,6 +416,7 @@
     },
     {
       "condition": "thread_evidence_availability.data[0]?.has_thread_track === 1 && thread_evidence_availability.data[0]?.has_slice === 1",
+      "displayed": true,
       "id": "direct_blocker_slice_classification",
       "name": "Slice 直接阻塞点候选",
       "optional": true,
@@ -410,6 +430,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "logcat_availability",
       "name": "Logcat 表可用性",
       "optional": true,
@@ -423,6 +444,7 @@
     },
     {
       "condition": "logcat_availability.data[0]?.has_android_logs !== 1",
+      "displayed": true,
       "id": "anr_logcat_evidence_gap",
       "name": "当前 ANR 日志证据缺口",
       "optional": true,
@@ -436,6 +458,7 @@
     },
     {
       "condition": "logcat_availability.data[0]?.has_android_logs === 1",
+      "displayed": true,
       "id": "anr_logcat_context",
       "name": "当前 ANR 日志上下文",
       "optional": true,
@@ -451,6 +474,7 @@
       "type": "atomic"
     },
     {
+      "displayed": true,
       "id": "anr_event_diagnosis",
       "inputs": [
         "anr_basic",

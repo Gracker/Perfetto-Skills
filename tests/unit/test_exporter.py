@@ -985,6 +985,27 @@ class ProcessScopeExportTest(unittest.TestCase):
         manifest = json.loads((self.generated / "runtime/skills/parent.json").read_text())
         self.assertEqual(manifest["steps"][0].get("save_from"), "detail")
 
+    def test_steps_record_whether_smartperfetto_displays_them(self) -> None:
+        # A displayed step is preferred when a parent reads the Skill by default;
+        # `level: hidden` is still displayed, only `none` and `show: false` are not.
+        displays = {
+            "flag": True, "summary": {"level": "summary"}, "hidden": {"level": "hidden"},
+            "off": False, "none": {"level": "none"}, "unshown": {"level": "detail", "show": False},
+            "absent": None,
+        }
+        self.add_skill("child", {"type": "composite", "steps": [
+            {"id": step_id, "type": "atomic", "sql": "SELECT 1 AS value",
+             **({} if display is None else {"display": display})}
+            for step_id, display in displays.items()
+        ]})
+        self.export()
+        manifest = json.loads((self.generated / "runtime/skills/child.json").read_text())
+        self.assertEqual(
+            {step["id"]: step.get("displayed") for step in manifest["steps"]},
+            {"flag": True, "summary": True, "hidden": True,
+             "off": None, "none": None, "unshown": None, "absent": None},
+        )
+
     def test_identity_metadata_fallback_exports_its_actual_role_and_exact_unavailable(self) -> None:
         declaration = {
             "role": "identity_metadata",
