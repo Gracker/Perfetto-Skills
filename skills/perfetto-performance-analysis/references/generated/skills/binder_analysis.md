@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/binder_analysis.skill.yaml
-Source SHA-256: be42a4750a322322b4d24e8f51e764fd4a4ba09e3c3d943dca53f0ea8eb0971d
+Source SHA-256: fc34e062a7ce8185abceac60b9171ac039d0e631ee0ef1646f3d6ef0369cbeee
 # Binder 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -581,7 +581,7 @@ rules:
   - '[Verify] 重新执行 binder_analysis，确认 binder_check.status=available'
   evidence_fields:
   - binder_check.data
-- condition: main_thread_binder.data[0]?.dur_ms > (inputs?.slow_binder_critical_ms ?? 50)
+- condition: main_thread_binder.data[0]?.dur_ms > (slow_binder_critical_ms ?? 50)
   severity: critical
   diagnosis: 主线程存在严重慢 Binder 调用 (${main_thread_binder.data[0].dur_ms}ms)
   confidence: high
@@ -592,7 +592,7 @@ rules:
   evidence_fields:
   - main_thread_binder.data
   - binder_overview.data
-- condition: main_thread_binder.data[0]?.dur_ms > (inputs?.slow_binder_warning_ms ?? 16)
+- condition: main_thread_binder.data[0]?.dur_ms > (slow_binder_warning_ms ?? 16)
   severity: warning
   diagnosis: 主线程 Binder 调用超过一帧时间 (${main_thread_binder.data[0].dur_ms}ms)
   confidence: high
@@ -601,7 +601,7 @@ rules:
   - '[Verify] 对比优化前后关键场景帧时长与 Binder P95'
   evidence_fields:
   - main_thread_binder.data
-- condition: binder_overview.data[0]?.main_thread_txns > (inputs?.main_thread_txn_warning ?? 50)
+- condition: binder_overview.data[0]?.main_thread_txns > (main_thread_txn_warning ?? 50)
   severity: warning
   diagnosis: 主线程发起 ${binder_overview.data[0].main_thread_txns} 次 Binder 调用
   confidence: medium
@@ -610,7 +610,7 @@ rules:
   - '[Verify] 复测 main_thread_txns 和 slow_calls_count'
   evidence_fields:
   - binder_overview.data
-- condition: server_response.data[0]?.avg_server_dur_ms > (inputs?.server_response_warning_ms ?? 20)
+- condition: server_response.data[0]?.avg_server_dur_ms > (server_response_warning_ms ?? 20)
   severity: warning
   diagnosis: 服务端平均处理时间较长 (${server_response.data[0].avg_server_dur_ms}ms)
   confidence: medium

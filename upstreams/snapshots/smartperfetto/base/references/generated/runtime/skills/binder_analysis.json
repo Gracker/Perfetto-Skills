@@ -87,7 +87,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/binder_analysis.skill.yaml",
-    "sha256": "be42a4750a322322b4d24e8f51e764fd4a4ba09e3c3d943dca53f0ea8eb0971d"
+    "sha256": "fc34e062a7ce8185abceac60b9171ac039d0e631ee0ef1646f3d6ef0369cbeee"
   },
   "steps": [
     {
@@ -242,7 +242,7 @@
           ]
         },
         {
-          "condition": "main_thread_binder.data[0]?.dur_ms > (inputs?.slow_binder_critical_ms ?? 50)",
+          "condition": "main_thread_binder.data[0]?.dur_ms > (slow_binder_critical_ms ?? 50)",
           "confidence": "high",
           "diagnosis": "主线程存在严重慢 Binder 调用 (${main_thread_binder.data[0].dur_ms}ms)",
           "evidence_fields": [
@@ -257,7 +257,7 @@
           ]
         },
         {
-          "condition": "main_thread_binder.data[0]?.dur_ms > (inputs?.slow_binder_warning_ms ?? 16)",
+          "condition": "main_thread_binder.data[0]?.dur_ms > (slow_binder_warning_ms ?? 16)",
           "confidence": "high",
           "diagnosis": "主线程 Binder 调用超过一帧时间 (${main_thread_binder.data[0].dur_ms}ms)",
           "evidence_fields": [
@@ -270,7 +270,7 @@
           ]
         },
         {
-          "condition": "binder_overview.data[0]?.main_thread_txns > (inputs?.main_thread_txn_warning ?? 50)",
+          "condition": "binder_overview.data[0]?.main_thread_txns > (main_thread_txn_warning ?? 50)",
           "confidence": "medium",
           "diagnosis": "主线程发起 ${binder_overview.data[0].main_thread_txns} 次 Binder 调用",
           "evidence_fields": [
@@ -283,7 +283,7 @@
           ]
         },
         {
-          "condition": "server_response.data[0]?.avg_server_dur_ms > (inputs?.server_response_warning_ms ?? 20)",
+          "condition": "server_response.data[0]?.avg_server_dur_ms > (server_response_warning_ms ?? 20)",
           "confidence": "medium",
           "diagnosis": "服务端平均处理时间较长 (${server_response.data[0].avg_server_dur_ms}ms)",
           "evidence_fields": [

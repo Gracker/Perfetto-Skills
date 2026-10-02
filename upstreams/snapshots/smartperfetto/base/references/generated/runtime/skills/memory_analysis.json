@@ -101,7 +101,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/memory_analysis.skill.yaml",
-    "sha256": "cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4"
+    "sha256": "173f88b137c8d74b94c90839398d803aea4e0f655a143d76102fe519e2094f68"
   },
   "steps": [
     {
@@ -317,7 +317,7 @@
       "name": "内存诊断",
       "rules": [
         {
-          "condition": "gc_overview.data[0]?.total_gc_count > (inputs?.gc_count_critical ?? 100)",
+          "condition": "gc_overview.data[0]?.total_gc_count > (gc_count_critical ?? 100)",
           "confidence": "high",
           "diagnosis": "GC 频率过高 (${gc_overview.data[0].total_gc_count} 次)",
           "severity": "critical",
@@ -328,7 +328,7 @@
           ]
         },
         {
-          "condition": "gc_overview.data[0]?.total_gc_count > (inputs?.gc_count_warning ?? 50)",
+          "condition": "gc_overview.data[0]?.total_gc_count > (gc_count_warning ?? 50)",
           "confidence": "medium",
           "diagnosis": "GC 频率较高 (${gc_overview.data[0].total_gc_count} 次)",
           "severity": "warning",
@@ -338,7 +338,7 @@
           ]
         },
         {
-          "condition": "gc_overview.data[0]?.total_gc_time_ms > (inputs?.gc_total_time_critical_ms ?? 2000)",
+          "condition": "gc_overview.data[0]?.total_gc_time_ms > (gc_total_time_critical_ms ?? 2000)",
           "confidence": "high",
           "diagnosis": "GC 总耗时过长 (${gc_overview.data[0].total_gc_time_ms}ms)",
           "severity": "critical",
@@ -349,7 +349,7 @@
           ]
         },
         {
-          "condition": "gc_overview.data[0]?.main_thread_gc_count > (inputs?.main_thread_gc_critical ?? 10)",
+          "condition": "gc_overview.data[0]?.main_thread_gc_count > (main_thread_gc_critical ?? 10)",
           "confidence": "high",
           "diagnosis": "主线程发生 ${gc_overview.data[0].main_thread_gc_count} 次 GC",
           "severity": "critical",
@@ -359,7 +359,7 @@
           ]
         },
         {
-          "condition": "long_gc.data[0]?.dur_ms > (inputs?.single_gc_warning_ms ?? 50)",
+          "condition": "long_gc.data[0]?.dur_ms > (single_gc_warning_ms ?? 50)",
           "confidence": "medium",
           "diagnosis": "单次 GC 暂停过长 (${long_gc.data[0].dur_ms}ms)",
           "severity": "warning",

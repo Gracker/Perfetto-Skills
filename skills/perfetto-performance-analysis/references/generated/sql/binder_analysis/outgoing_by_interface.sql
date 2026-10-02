@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/binder_analysis.skill.yaml
--- Source SHA-256: be42a4750a322322b4d24e8f51e764fd4a4ba09e3c3d943dca53f0ea8eb0971d
+-- Source SHA-256: fc34e062a7ce8185abceac60b9171ac039d0e631ee0ef1646f3d6ef0369cbeee
 
 SELECT
   COALESCE(bt.aidl_name, 'unknown') as aidl_interface,

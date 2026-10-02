@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/memory_analysis.skill.yaml
-Source SHA-256: cdf7ef77bd46ca7ff4ab49a48acc199332397fade61d1e9cbc71b3270f4f8bc4
+Source SHA-256: 173f88b137c8d74b94c90839398d803aea4e0f655a143d76102fe519e2094f68
 # 内存性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -667,7 +667,7 @@ inputs:
 - long_gc
 - gc_intervals
 rules:
-- condition: gc_overview.data[0]?.total_gc_count > (inputs?.gc_count_critical ?? 100)
+- condition: gc_overview.data[0]?.total_gc_count > (gc_count_critical ?? 100)
   severity: critical
   diagnosis: GC 频率过高 (${gc_overview.data[0].total_gc_count} 次)
   confidence: high
@@ -675,14 +675,14 @@ rules:
   - 检查是否有频繁的对象创建和销毁
   - 使用对象池重用对象
   - 避免在循环中创建对象
-- condition: gc_overview.data[0]?.total_gc_count > (inputs?.gc_count_warning ?? 50)
+- condition: gc_overview.data[0]?.total_gc_count > (gc_count_warning ?? 50)
   severity: warning
   diagnosis: GC 频率较高 (${gc_overview.data[0].total_gc_count} 次)
   confidence: medium
   suggestions:
   - 检查内存分配热点
   - 优化临时对象使用
-- condition: gc_overview.data[0]?.total_gc_time_ms > (inputs?.gc_total_time_critical_ms ?? 2000)
+- condition: gc_overview.data[0]?.total_gc_time_ms > (gc_total_time_critical_ms ?? 2000)
   severity: critical
   diagnosis: GC 总耗时过长 (${gc_overview.data[0].total_gc_time_ms}ms)
   confidence: high
@@ -690,14 +690,14 @@ rules:
   - 减少内存分配频率
   - 检查大对象分配
   - 考虑调整堆大小
-- condition: gc_overview.data[0]?.main_thread_gc_count > (inputs?.main_thread_gc_critical ?? 10)
+- condition: gc_overview.data[0]?.main_thread_gc_count > (main_thread_gc_critical ?? 10)
   severity: critical
   diagnosis: 主线程发生 ${gc_overview.data[0].main_thread_gc_count} 次 GC
   confidence: high
   suggestions:
   - 将内存密集型操作移到后台线程
   - 避免在 UI 线程分配大量内存
-- condition: long_gc.data[0]?.dur_ms > (inputs?.single_gc_warning_ms ?? 50)
+- condition: long_gc.data[0]?.dur_ms > (single_gc_warning_ms ?? 50)
   severity: warning
   diagnosis: 单次 GC 暂停过长 (${long_gc.data[0].dur_ms}ms)
   confidence: medium
