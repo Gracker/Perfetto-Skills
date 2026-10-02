@@ -1371,27 +1371,30 @@ class ResultPathReadTest(unittest.TestCase):
                     aliases[name] = names
         self.assertEqual(undecided, [])
 
-    def coverage_cases(self, step_id: str):
+    def test_scrolling_coverage_is_full_only_after_a_sufficient_comparison(self) -> None:
         import sqlite3
 
-        sql = (self.SQL / f"scrolling_analysis/{step_id}.sql").read_text(encoding="utf-8")
-        block = re.search(r"CASE '\$\{buffer_tx_coverage\.data\[0\]\.coverage_status[^']*'.*?END", sql, re.S)
-        self.assertIsNotNone(block, step_id)
-        for status in (None, "sufficient_frame_timeline_coverage", "partial_frame_timeline_coverage",
-                       "no_buffer_tx_candidate", "frame_timeline_only_exact_upid", "target_process_not_found"):
-            rows = [] if status is None else [{"coverage_status": status}]
-            rendered = self.common.render_sql_template(f"SELECT {block.group(0)}", {},
-                                                       {"buffer_tx_coverage": {"data": rows}})
-            yield status, sqlite3.connect(":memory:").execute(rendered).fetchone()[0]
-
-    def test_scrolling_coverage_is_full_only_after_a_sufficient_comparison(self) -> None:
-        expected = {None: "coverage_unverified", "sufficient_frame_timeline_coverage": "full_frame_timeline",
+        # The probe maps its own coverage status to the scope the root-cause steps may claim.
+        probe = (self.SQL / "scrolling_analysis/buffer_tx_coverage_probe.sql").read_text(encoding="utf-8")
+        mapping = re.search(r"(CASE coverage_status.*?END) AS root_cause_evidence_scope", probe, re.S)
+        self.assertIsNotNone(mapping)
+        expected = {"sufficient_frame_timeline_coverage": "full_frame_timeline",
                     "partial_frame_timeline_coverage": "partial_sample",
                     "no_buffer_tx_candidate": "frame_timeline_only_unbenchmarked",
-                    "frame_timeline_only_exact_upid": "frame_timeline_only_unbenchmarked",
+                    "no_frame_timeline_coverage": "coverage_unverified",
                     "target_process_not_found": "coverage_unverified"}
+        db = sqlite3.connect(":memory:")
+        self.assertEqual({status: db.execute(f"SELECT {mapping.group(1)} FROM (SELECT ? AS coverage_status)",
+                                             (status,)).fetchone()[0] for status in expected}, expected)
+        # A consumer reads that scope; a probe without a row leaves coverage unverified.
         for step_id in ("jank_type_stats", "batch_frame_root_cause"):
-            self.assertEqual(dict(self.coverage_cases(step_id)), expected, step_id)
+            sql = (self.SQL / f"scrolling_analysis/{step_id}.sql").read_text(encoding="utf-8")
+            read = re.search(r"'\$\{buffer_tx_coverage\.data\[0\]\.root_cause_evidence_scope[^']*' as evidence_scope", sql)
+            self.assertIsNotNone(read, step_id)
+            for rows, scope in (([], "coverage_unverified"), ([{"root_cause_evidence_scope": "partial_sample"}], "partial_sample")):
+                rendered = self.common.render_sql_template(f"SELECT {read.group(0)}", {},
+                                                           {"buffer_tx_coverage": {"data": rows}})
+                self.assertEqual(db.execute(rendered).fetchone()[0], scope, step_id)
 
     def test_scrolling_fallback_runs_when_the_coverage_probe_did_not(self) -> None:
         from runtime.executor import SkillRunner

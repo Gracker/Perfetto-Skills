@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 70e2e9e26326360593d4ac87bd8c4c4dcefccffcf4ff1e6a410efb1016eb0aef
+Source SHA-256: 8016df273414d989f2aaa25e0e34647bbb695e925fcdcb07a400e74b9a806728
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -953,12 +953,17 @@ exact_sql:
     \ AS (\n  SELECT COUNT(DISTINCT COALESCE(CAST(a.display_frame_token AS TEXT),\n    'surface:' || COALESCE(a.layer_name,\
     \ '') || ':' || CAST(a.surface_frame_token AS TEXT))) AS frame_timeline_frames\n  FROM actual_frame_timeline_slice a\n\
     \  JOIN effective_target_processes p ON a.upid = p.upid\n  WHERE (${start_ts} IS NULL OR a.ts >= ${start_ts})\n    AND\
-    \ (${end_ts} IS NULL OR a.ts < ${end_ts})\n)\nSELECT target_process_count,\n  CASE WHEN target_process_count > 0 THEN\
-    \ 'found' ELSE 'not_found' END AS target_process_status,\n  frame_timeline_frames,\n  NULL AS buffer_tx_frames, NULL AS\
-    \ frame_timeline_to_buffer_tx_ratio,\n  NULL AS buffer_tx_track_id, NULL AS frame_source_track,\n  NULL AS buffer_tx_effective_span_ns,\n\
+    \ (${end_ts} IS NULL OR a.ts < ${end_ts})\n), probe_coverage AS (\nSELECT target_process_count,\n  CASE WHEN target_process_count\
+    \ > 0 THEN 'found' ELSE 'not_found' END AS target_process_status,\n  frame_timeline_frames,\n  NULL AS buffer_tx_frames,\
+    \ NULL AS frame_timeline_to_buffer_tx_ratio,\n  NULL AS buffer_tx_track_id, NULL AS frame_source_track,\n  NULL AS buffer_tx_effective_span_ns,\n\
     \  CASE WHEN target_process_count = 0 THEN 'target_process_not_found'\n    WHEN frame_timeline_frames = 0 THEN 'no_frame_timeline_coverage'\n\
     \    ELSE 'frame_timeline_only_exact_upid' END AS coverage_status,\n  0 AS should_fallback,\n  'unavailable_exact_upid'\
-    \ AS buffer_tx_status\nFROM target_presence CROSS JOIN frame_coverage\n"
+    \ AS buffer_tx_status\nFROM target_presence CROSS JOIN frame_coverage\n)\n-- Exact-UPID scope never compares against BufferTX.\n\
+    SELECT target_process_count, target_process_status, frame_timeline_frames,\n  buffer_tx_frames, frame_timeline_to_buffer_tx_ratio,\
+    \ buffer_tx_track_id,\n  frame_source_track, buffer_tx_effective_span_ns, coverage_status,\n  should_fallback, buffer_tx_status,\n\
+    \  CASE coverage_status\n    WHEN 'sufficient_frame_timeline_coverage' THEN 'full_frame_timeline'\n    WHEN 'partial_frame_timeline_coverage'\
+    \ THEN 'partial_sample'\n    WHEN 'no_buffer_tx_candidate' THEN 'frame_timeline_only_unbenchmarked'\n    WHEN 'frame_timeline_only_exact_upid'\
+    \ THEN 'frame_timeline_only_unbenchmarked'\n    ELSE 'coverage_unverified'\n  END AS root_cause_evidence_scope\nFROM probe_coverage\n"
 save_as: buffer_tx_coverage
 condition: frame_timeline.data[0]?.has_frame_timeline === 1
 ```

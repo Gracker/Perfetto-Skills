@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 70e2e9e26326360593d4ac87bd8c4c4dcefccffcf4ff1e6a410efb1016eb0aef
+-- Source SHA-256: 8016df273414d989f2aaa25e0e34647bbb695e925fcdcb07a400e74b9a806728
 
 WITH
 -- Fragment: vsync_config
@@ -180,7 +180,8 @@ frame_timeline_coverage AS (
     AND p.name NOT LIKE '/system/%'
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
-)
+),
+probe_coverage AS (
 SELECT
   tp.target_process_count,
   CASE
@@ -220,3 +221,19 @@ SELECT
 FROM frame_timeline_coverage ft
 CROSS JOIN target_process_presence tp
 LEFT JOIN selected_buffer_tx_track bt ON 1 = 1
+)
+-- The scope the root-cause steps may claim (not a qualifier of this
+-- probe row): only a measured, sufficient FrameTimeline/BufferTX
+-- comparison is full coverage; any other status leaves it unverified.
+SELECT target_process_count, target_process_status, frame_timeline_frames,
+  buffer_tx_frames, frame_timeline_to_buffer_tx_ratio, buffer_tx_track_id,
+  frame_source_track, buffer_tx_effective_span_ns, coverage_status,
+  should_fallback,
+  CASE coverage_status
+    WHEN 'sufficient_frame_timeline_coverage' THEN 'full_frame_timeline'
+    WHEN 'partial_frame_timeline_coverage' THEN 'partial_sample'
+    WHEN 'no_buffer_tx_candidate' THEN 'frame_timeline_only_unbenchmarked'
+    WHEN 'frame_timeline_only_exact_upid' THEN 'frame_timeline_only_unbenchmarked'
+    ELSE 'coverage_unverified'
+  END AS root_cause_evidence_scope
+FROM probe_coverage
