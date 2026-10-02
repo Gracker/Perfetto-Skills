@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling.skill.yaml
-Source SHA-256: dad4f0316164e1f40e731c8d36689fa5f09b8972bf70f5a4d48c894df90f3c91
+Source SHA-256: d8d420f2d0c8b12433ba27443f712124525100e866e03333420cc2bcbde623b8
 # 热节流分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -154,7 +154,7 @@ condition: enable_expert_probes !== false && (data_check.data[0]?.has_thermal_da
   === 1 || data_check.data[0]?.has_gpu_freq_data === 1)
 optional: true
 ```
-### 热风险预测
+### CPU 频率趋势
 
 - ID: `thermal_predictor_probe`
 - Type: `skill`
@@ -174,7 +174,9 @@ params:
 display:
   level: summary
   layer: overview
-  title: 热风险预测（专家探针）
+  title: CPU 频率趋势（专家探针）
+  title_i18n:
+    en: CPU frequency trend (expert probe)
   columns:
   - name: avg_start_freq_mhz
     label: 区间初段频率

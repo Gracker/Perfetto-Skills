@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_frequency_limit_episode.skill.yaml
--- Source SHA-256: 3ce0ca099f41594d791d6342c7ec947589a9245eacb379deabcee87ac49ee859
+-- Source SHA-256: 38983e5b69ab0a34125556f370d6330a8ddfff7ac04491867e13b853cb56bd8e
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -111,8 +111,8 @@ thermal_daemon_threads AS (
 )
 ,
 win AS (
-  SELECT ${episode_windows.data[0].before_start_ts} AS before_start_ts,
-    ${episode_windows.data[0].before_end_ts} AS before_end_ts
+  SELECT ${episode_windows.data[0].before_start_ts|NULL} AS before_start_ts,
+    ${episode_windows.data[0].before_end_ts|NULL} AS before_end_ts
 ),
 counter_presence AS (
   SELECT 'counter_track_type' AS source_kind, ct.type AS source_key,

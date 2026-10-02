@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_analysis.skill.yaml
--- Source SHA-256: 5b3df6636aa845fd7e5a72bd067025fd3ae618c026113c370b10c97284bdf3b2
+-- Source SHA-256: 73174387dbcbe50ec6a308be4a914c35d9587942dec32311fae979b1974a8d4f
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -60,8 +60,8 @@ system_sched_spans AS (
 )
 ,
 system_windows AS (
-  SELECT 0 AS window_id, COALESCE(${anr_ctx.data[0].anr_ts}-${anr_ctx.data[0].timeout_ns}, (SELECT start_ts FROM trace_bounds)) AS window_start_ts,
-    COALESCE(${anr_ctx.data[0].anr_ts}, (SELECT end_ts FROM trace_bounds)) AS window_end_ts
+  SELECT 0 AS window_id, ${anr_ctx.data[0].anr_ts}-${anr_ctx.data[0].timeout_ns} AS window_start_ts,
+    ${anr_ctx.data[0].anr_ts} AS window_end_ts
 ),cpu_activity AS (
   SELECT s.ucpu,SUM(CASE WHEN t.is_idle=0 THEN s.dur_ns ELSE 0 END) AS active_ns,
     SUM(s.dur_ns) AS covered_ns,SUM(CASE WHEN t.is_idle IS NULL THEN s.dur_ns ELSE 0 END) AS idle_identity_unknown_ns

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/cpu_frequency_limit_episode.skill.yaml
-Source SHA-256: 3ce0ca099f41594d791d6342c7ec947589a9245eacb379deabcee87ac49ee859
+Source SHA-256: 38983e5b69ab0a34125556f370d6330a8ddfff7ac04491867e13b853cb56bd8e
 # 限频区段归因详情
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

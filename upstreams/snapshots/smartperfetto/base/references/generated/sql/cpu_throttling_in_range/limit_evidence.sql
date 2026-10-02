@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
--- Source SHA-256: 28812a6f213dee36fbec4395d2bd58206c74a06e0734ecb350d89bb484719caa
+-- Source SHA-256: cb86c9d88cd71f79716c0e53b87ed34e4ef068e86e881f0bb0aca434f7a2a757
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

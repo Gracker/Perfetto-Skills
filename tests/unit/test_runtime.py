@@ -1311,7 +1311,7 @@ class LimitEvidencePlaceholderDefaultTest(unittest.TestCase):
         def query(query_id, **kwargs):
             seen.append(query_id)
             if query_id == "cpu_throttling_in_range/throttle_detection":
-                return [{"core_type": "大核", "freq_drop_pct": 0, "evidence_status": "thermal_evidence_missing"}]
+                return [{"core_type": "大核", "freq_drop_pct": 0, "evidence_status": "limit_evidence_unavailable"}]
             return []
 
         result = SkillRunner({"skills": {"cpu_throttling_in_range": skill, "cpu_topology_view": topology}}, query).run(
@@ -1319,6 +1319,166 @@ class LimitEvidencePlaceholderDefaultTest(unittest.TestCase):
         statuses = {step["step_id"]: step["status"] for step in result["steps"]}
         self.assertIn("cpu_throttling_in_range/throttle_detection", seen)
         self.assertEqual(statuses["throttle_detection"], "observed")
+
+
+    def test_throttle_detection_reports_the_limit_status_it_read(self) -> None:
+        import sqlite3
+
+        sql = (SCRIPTS.parent / "references/generated/sql/cpu_throttling_in_range/throttle_detection.sql").read_text(
+            encoding="utf-8")
+        block = re.search(r"SELECT '\$\{limit_evidence\.data\[0\]\.evidence_status[^']*' AS status", sql)
+        self.assertIsNotNone(block)
+        cases = [(None, "limit_evidence_unavailable"), ("no_limit_episode_in_range", "no_limit_episode_in_range"),
+                 ("limit_track_unavailable", "limit_track_unavailable")]
+        for status, expected in cases:
+            rows = [] if status is None else [{"evidence_status": status}]
+            rendered = self.common.render_sql_template(block.group(0), {}, {"limit_evidence": {"data": rows}})
+            self.assertEqual(sqlite3.connect(":memory:").execute(rendered).fetchone()[0], expected)
+        self.assertNotIn("thermal_evidence_missing", sql)
+
+    def setUp(self) -> None:
+        self.common = load_skill_script("_common")
+
+
+class ResultPathReadTest(unittest.TestCase):
+    """A path read of an earlier result gates its step only where the step's condition reads that result.
+
+    Every other such read carries a `|default`, so the step runs when the
+    result has no row and binds what SmartPerfetto binds ('' in a string, NULL
+    elsewhere). Bare relations (`${name}`) are not path reads and keep gating.
+    """
+
+    MANIFESTS = SCRIPTS.parent / "references/generated/runtime/skills"
+    SQL = SCRIPTS.parent / "references/generated/sql"
+
+    def test_only_a_guarding_condition_makes_a_path_read_a_dependency(self) -> None:
+        undecided = []
+        for path in sorted(self.MANIFESTS.glob("*.json")):
+            skill = json.loads(path.read_text(encoding="utf-8"))
+            aliases: dict[str, set[str]] = {}
+            for step in skill.get("steps", []) or []:
+                sql_path = self.SQL / f"{step.get('query_id', '')}.sql"
+                sql = sql_path.read_text(encoding="utf-8") if step.get("query_id") and sql_path.is_file() else ""
+                condition = step.get("condition") or ""
+                for dependency in step.get("result_dependencies", []):
+                    if not re.search(r"\$\{" + re.escape(dependency) + r"[.\[]", sql):
+                        continue
+                    names = aliases.get(dependency, {dependency})
+                    if not any(re.search(r"(?<![\w.$])" + re.escape(name) + r"(?![\w$])", condition) for name in names):
+                        undecided.append(f"{path.stem}/{step['id']} -> {dependency}")
+                names = {str(step["id"])} | ({str(step["save_as"])} if step.get("save_as") else set())
+                for name in names:
+                    aliases[name] = names
+        self.assertEqual(undecided, [])
+
+    def coverage_cases(self, step_id: str):
+        import sqlite3
+
+        sql = (self.SQL / f"scrolling_analysis/{step_id}.sql").read_text(encoding="utf-8")
+        block = re.search(r"CASE '\$\{buffer_tx_coverage\.data\[0\]\.coverage_status[^']*'.*?END", sql, re.S)
+        self.assertIsNotNone(block, step_id)
+        for status in (None, "sufficient_frame_timeline_coverage", "partial_frame_timeline_coverage",
+                       "no_buffer_tx_candidate", "frame_timeline_only_exact_upid", "target_process_not_found"):
+            rows = [] if status is None else [{"coverage_status": status}]
+            rendered = self.common.render_sql_template(f"SELECT {block.group(0)}", {},
+                                                       {"buffer_tx_coverage": {"data": rows}})
+            yield status, sqlite3.connect(":memory:").execute(rendered).fetchone()[0]
+
+    def test_scrolling_coverage_is_full_only_after_a_sufficient_comparison(self) -> None:
+        expected = {None: "coverage_unverified", "sufficient_frame_timeline_coverage": "full_frame_timeline",
+                    "partial_frame_timeline_coverage": "partial_sample",
+                    "no_buffer_tx_candidate": "frame_timeline_only_unbenchmarked",
+                    "frame_timeline_only_exact_upid": "frame_timeline_only_unbenchmarked",
+                    "target_process_not_found": "coverage_unverified"}
+        for step_id in ("jank_type_stats", "batch_frame_root_cause"):
+            self.assertEqual(dict(self.coverage_cases(step_id)), expected, step_id)
+
+    def test_scrolling_fallback_runs_when_the_coverage_probe_did_not(self) -> None:
+        from runtime.executor import SkillRunner
+
+        skill = json.loads((self.MANIFESTS / "scrolling_analysis.json").read_text(encoding="utf-8"))
+        by_id = {step["id"]: step for step in skill["steps"]}
+        self.assertNotIn("buffer_tx_coverage", by_id["fallback_no_frame_timeline"]["result_dependencies"])
+        parent = {"id": "parent", "runtime_status": "executable", "type": "composite",
+                  "identity": {"policy": "none"}, "inputs": [],
+                  "steps": [{"id": "frame_timeline_check", "type": "atomic", "query_id": "parent/frame_timeline",
+                             "save_as": "frame_timeline"},
+                            copy.deepcopy(by_id["buffer_tx_coverage_probe"]),
+                            copy.deepcopy(by_id["fallback_no_frame_timeline"])]}
+        for step in parent["steps"][1:]:
+            step.pop("process_scope", None)
+        answers = {"parent/frame_timeline": [{"has_frame_timeline": 0}],
+                   "scrolling_analysis/fallback_no_frame_timeline": [{"status": "no_frame_timeline"}]}
+        result = SkillRunner({"skills": {"parent": parent}}, lambda query_id, **kwargs: answers[query_id]).run("parent")
+        statuses = {step["step_id"]: step["status"] for step in result["steps"]}
+        self.assertEqual(statuses, {"frame_timeline_check": "observed", "buffer_tx_coverage_probe": "skipped_condition",
+                                    "fallback_no_frame_timeline": "observed"})
+
+    def setUp(self) -> None:
+        self.common = load_skill_script("_common")
+
+
+class MissingEvidenceVerdictTest(unittest.TestCase):
+    """Missing evidence is reported as missing, never as a negative finding."""
+
+    MANIFESTS = SCRIPTS.parent / "references/generated/runtime/skills"
+    SQL = SCRIPTS.parent / "references/generated/sql"
+    WINDOWED = ("system_cpu_health", "memory_pressure", "io_load", "futex_wait_probe", "system_freeze_check",
+                "top_cpu_processes")
+
+    def setUp(self) -> None:
+        self.common = load_skill_script("_common")
+
+    def test_first_anr_window_steps_do_not_run_without_a_window(self) -> None:
+        from runtime.executor import SkillRunner
+
+        anr = json.loads((self.MANIFESTS / "anr_analysis.json").read_text(encoding="utf-8"))
+        by_id = {step["id"]: step for step in anr["steps"]}
+        steps = [{"id": "anr_detection", "type": "atomic", "query_id": "parent/detection", "save_as": "detection"},
+                 {"id": "get_anr_context", "type": "atomic", "query_id": "parent/context", "save_as": "anr_ctx"}]
+        for step_id in self.WINDOWED:
+            step = copy.deepcopy(by_id[step_id])
+            step.pop("process_scope", None)
+            steps.append(step)
+        parent = {"id": "parent", "runtime_status": "executable", "type": "composite",
+                  "identity": {"policy": "none"}, "inputs": [], "steps": steps}
+        answers = {"parent/detection": [{"total_anr_count": 1}], "parent/context": []}
+        result = SkillRunner({"skills": {"parent": parent}}, lambda query_id, **kwargs: answers[query_id]).run("parent")
+        statuses = {step["step_id"]: step["status"] for step in result["steps"]}
+        self.assertEqual({step_id: statuses[step_id] for step_id in self.WINDOWED},
+                         {step_id: "skipped_condition" for step_id in self.WINDOWED})
+
+    def test_a_window_without_evaluable_main_threads_is_undetermined(self) -> None:
+        import sqlite3
+
+        sql = (self.SQL / "anr_analysis/system_freeze_check.sql").read_text(encoding="utf-8")
+        rendered = self.common.render_sql_template(
+            sql, {}, {"anr_ctx": {"data": [{"anr_ts": 10_000_000, "timeout_ns": 5_000_000}]}})
+        db = sqlite3.connect(":memory:")
+        db.executescript("CREATE TABLE process(upid, pid, name, uid); CREATE TABLE thread(utid, upid, tid);"
+                         "CREATE TABLE thread_state(utid, ts, dur, state);")
+        db.row_factory = sqlite3.Row
+        row = db.execute(rendered).fetchone()
+        self.assertEqual((row["total_apps"], row["freeze_verdict"]), (0, "undetermined"))
+
+    def test_startup_evidence_matrix_reports_no_row_as_not_observed(self) -> None:
+        import sqlite3
+
+        sql = (self.SQL / "startup_analysis/startup_evidence_matrix.sql").read_text(encoding="utf-8")
+        rendered = self.common.render_sql_template(sql, {}, {
+            "main_thread_slices": {"data": []},
+            "main_thread_file_io": {"data": [{"percent_of_startup": 1, "total_dur_ms": 10}]},
+            "startup_binder": {"data": [{"percent_of_startup": 30}]},
+        })
+        rows = {item: (value, status) for item, value, status in sqlite3.connect(":memory:").execute(
+            f"SELECT item, primary_value, status FROM ({rendered})")}
+        self.assertEqual(rows, {
+            "MainThread Hot Slice": (None, "not_observed"),
+            "MainThread File IO": (1, "normal"),
+            "Binder Total": (30, "needs_corroboration"),
+            "Main Sync Binder": (None, "not_observed"),
+            "Sched Latency": (None, "not_observed"),
+        })
 
 
 class InheritedBindingPrecedenceTest(unittest.TestCase):

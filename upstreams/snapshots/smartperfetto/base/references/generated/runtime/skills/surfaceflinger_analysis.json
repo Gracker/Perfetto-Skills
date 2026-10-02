@@ -144,7 +144,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
-    "sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac"
+    "sha256": "4d6e1ad9bf86293bfb2b3488cd30b3ff6d382e7560b18a6923e32b2150de4e27"
   },
   "steps": [
     {
@@ -171,9 +171,7 @@
       "id": "composition_overview",
       "name": "合成概览",
       "query_id": "surfaceflinger_analysis/composition_overview",
-      "result_dependencies": [
-        "vsync_env"
-      ],
+      "result_dependencies": [],
       "save_as": "composition_overview",
       "type": "atomic"
     },
@@ -194,9 +192,7 @@
       "id": "slow_compositions",
       "name": "慢合成列表",
       "query_id": "surfaceflinger_analysis/slow_compositions",
-      "result_dependencies": [
-        "vsync_env"
-      ],
+      "result_dependencies": [],
       "save_as": "slow_compositions",
       "type": "atomic"
     },
@@ -239,9 +235,7 @@
       "id": "root_cause_classification",
       "name": "SF 根因分类",
       "query_id": "surfaceflinger_analysis/root_cause_classification",
-      "result_dependencies": [
-        "vsync_env"
-      ],
+      "result_dependencies": [],
       "save_as": "conclusion",
       "type": "atomic"
     },

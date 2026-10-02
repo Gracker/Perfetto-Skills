@@ -115,7 +115,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/anr_analysis.skill.yaml",
-    "sha256": "5b3df6636aa845fd7e5a72bd067025fd3ae618c026113c370b10c97284bdf3b2"
+    "sha256": "73174387dbcbe50ec6a308be4a914c35d9587942dec32311fae979b1974a8d4f"
   },
   "steps": [
     {
@@ -162,7 +162,7 @@
       "type": "atomic"
     },
     {
-      "condition": "detection.data[0]?.total_anr_count > 0",
+      "condition": "detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0",
       "displayed": true,
       "id": "system_cpu_health",
       "name": "系统 CPU 健康状况",
@@ -178,7 +178,7 @@
       "type": "atomic"
     },
     {
-      "condition": "detection.data[0]?.total_anr_count > 0",
+      "condition": "detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0",
       "displayed": true,
       "id": "memory_pressure",
       "name": "内存压力检测",
@@ -191,7 +191,7 @@
       "type": "atomic"
     },
     {
-      "condition": "detection.data[0]?.total_anr_count > 0",
+      "condition": "detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0",
       "displayed": true,
       "id": "io_load",
       "name": "不可中断等待基线",
@@ -204,7 +204,7 @@
       "type": "atomic"
     },
     {
-      "condition": "detection.data[0]?.total_anr_count > 0 && enable_lock_probe !== false",
+      "condition": "detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0 && enable_lock_probe !== false",
       "displayed": true,
       "id": "futex_wait_probe",
       "name": "ANR 锁等待探针",
@@ -219,7 +219,7 @@
       "type": "skill"
     },
     {
-      "condition": "detection.data[0]?.total_anr_count > 0",
+      "condition": "detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0",
       "displayed": true,
       "id": "system_freeze_check",
       "name": "系统冻结检测",
@@ -252,7 +252,7 @@
       "type": "atomic"
     },
     {
-      "condition": "detection.data[0]?.total_anr_count > 0",
+      "condition": "detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0",
       "displayed": true,
       "id": "top_cpu_processes",
       "name": "Top CPU 进程",

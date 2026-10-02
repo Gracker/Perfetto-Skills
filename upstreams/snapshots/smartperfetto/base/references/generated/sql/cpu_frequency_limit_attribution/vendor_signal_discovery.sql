@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml
--- Source SHA-256: 65ee4648b54179625a86ee7e925f360104fabf5b5d4f4d9f929a120177022005
+-- Source SHA-256: 7a9e23034c57ed0ab02faba557f8fabd567e432aecdef313b1dfa80236cc0a06
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -111,8 +111,8 @@ thermal_daemon_threads AS (
 )
 ,
 win AS (
-  SELECT ${analysis_window.data[0].window_start_ts} AS window_start_ts,
-    ${analysis_window.data[0].window_end_ts} AS window_end_ts
+  SELECT ${analysis_window.data[0].window_start_ts|NULL} AS window_start_ts,
+    ${analysis_window.data[0].window_end_ts|NULL} AS window_end_ts
 ),
 counter_sig AS (
   SELECT * FROM thermal_signal_signatures WHERE match_target = 'counter_or_slice'

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/thermal_module.skill.yaml
-Source SHA-256: 8c83bc8520dbf3876468ade4e67ed590a9be89022763464315e08cd82452b23a
+Source SHA-256: 3713800e586f827002ea410f215faa46be46a589e7512324651b21f1128ce673
 # 热管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -199,7 +199,7 @@ rules:
   diagnosis: 检测到 ${throttling_events.data.length} 次频率骤降；尚不能据此确定热节流或性能影响
   confidence: high
   suggestions:
-  - 结合直接 thermal throttling/cooling 事件和同窗口工作负载判断降频原因
+  - 降频原因需结合直接 thermal throttling/cooling 事件和同窗口工作负载判断
   - 考虑分散计算任务
   - 优化算法减少 CPU 使用
   evidence_fields:

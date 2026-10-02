@@ -1,11 +1,12 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
--- Source SHA-256: 28812a6f213dee36fbec4395d2bd58206c74a06e0734ecb350d89bb484719caa
+-- Source SHA-256: cb86c9d88cd71f79716c0e53b87ed34e4ef068e86e881f0bb0aca434f7a2a757
 
 WITH
 -- 上一步的限频证据读一次，供下面的判定复用
 limit_status AS (
-  SELECT '${limit_evidence.data[0].evidence_status|}' AS status,
+  -- A limit step that produced no row leaves the limit evidence unavailable.
+  SELECT '${limit_evidence.data[0].evidence_status|limit_evidence_unavailable}' AS status,
     ${limit_evidence.data[0].deepest_depth_pct|0} AS depth_pct
 ),
 -- 频率采样（带拓扑分类）；NULL 或 <= 0 不是频率，保留为 NULL。拓扑未收录的
@@ -79,8 +80,8 @@ SELECT
   -- a fact; an observed frequency span never can.
   CASE status WHEN 'freq_limit_observed' THEN 1
     WHEN 'no_limit_episode_in_range' THEN 0 END AS throttle_detected,
-  CASE WHEN status = 'freq_limit_observed'
-    THEN 'freq_limit_observed' ELSE 'thermal_evidence_missing' END AS evidence_status,
+  -- The limit evidence of the window, as limit_evidence classified it.
+  status AS evidence_status,
   CASE WHEN tier_rank = 5
     THEN '核心类别未知：拓扑信息不足以可靠分级（如缺少完整 CPU capacity 元数据、单一均匀簇或多机器/元数据歧义），此行汇总这些核心的 cpufreq 轨道，不代表小核。'
     ELSE '' END ||
@@ -89,7 +90,9 @@ SELECT
     ELSE '' END ||
   CASE WHEN status = 'freq_limit_observed'
     THEN '区间内观测到 cpufreq policy 上限被下调（最大深度 ' || depth_pct || '%）：限频确实发生；这是整窗证据，不说明本行核心受限，触发方仍需用 cpu_frequency_limit_attribution 判定'
-    ELSE '频率变化可能来自负载下降或空闲 DVFS；需直接限频证据与同窗口负载才能确定是否限频' END ||
+    WHEN status = 'no_limit_episode_in_range'
+    THEN '有 cpufreq 上限轨道，区间内未观测到超过阈值的上限下调区段；频率变化不能归因于限频区段，可能来自负载、调速器或空闲 DVFS'
+    ELSE '缺少 cpufreq 上限证据，是否限频未判定；频率变化可能来自负载下降或空闲 DVFS' END ||
   '（首末为各 cpufreq 轨道窗口内首末采样均值，非窗口边界值；最低/最高为本类别包络，可能来自不同核心）' AS interpretation
 FROM per_tier_stats
 CROSS JOIN limit_status

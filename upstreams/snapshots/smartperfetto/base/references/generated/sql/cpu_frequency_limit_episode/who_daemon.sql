@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_frequency_limit_episode.skill.yaml
--- Source SHA-256: 3ce0ca099f41594d791d6342c7ec947589a9245eacb379deabcee87ac49ee859
+-- Source SHA-256: 38983e5b69ab0a34125556f370d6330a8ddfff7ac04491867e13b853cb56bd8e
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -111,8 +111,8 @@ thermal_daemon_threads AS (
 )
 ,
 win AS (
-  SELECT ${episode_windows.data[0].who_start_ts} AS who_start_ts,
-    ${episode_windows.data[0].who_end_ts} AS who_end_ts
+  SELECT ${episode_windows.data[0].who_start_ts|NULL} AS who_start_ts,
+    ${episode_windows.data[0].who_end_ts|NULL} AS who_end_ts
 ),
 trace_span AS (
   SELECT MIN(ts) AS span_start, MAX(ts + MAX(dur, 0)) AS span_end FROM sched_slice

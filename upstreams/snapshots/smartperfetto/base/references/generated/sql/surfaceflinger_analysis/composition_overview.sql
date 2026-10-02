@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/surfaceflinger_analysis.skill.yaml
--- Source SHA-256: 59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac
+-- Source SHA-256: 4d6e1ad9bf86293bfb2b3488cd30b3ff6d382e7560b18a6923e32b2150de4e27
 
 WITH
 sf_compositions AS (
@@ -27,7 +27,7 @@ SELECT
   MAX(dur) as max_composition_dur,
   CAST(ROUND(PERCENTILE(dur, 95)) AS INTEGER) as p95_composition_dur,
   ROUND(AVG(dur) / 1e6, 2) as avg_composition_ms,
-  SUM(CASE WHEN dur > ${vsync_env.data[0].vsync_period_ns} * ${slow_composition_multiplier|1.5} THEN 1 ELSE 0 END) as slow_composition_count,
+  SUM(CASE WHEN dur > ${vsync_env.data[0].vsync_period_ns|NULL} * ${slow_composition_multiplier|1.5} THEN 1 ELSE 0 END) as slow_composition_count,
   CASE
     WHEN AVG(dur) / 1e6 > ${composition_rating_poor_ms|12} THEN '较差'
     WHEN AVG(dur) / 1e6 > ${composition_rating_fair_ms|8} THEN '一般'

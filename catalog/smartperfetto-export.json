@@ -267,7 +267,7 @@
       "name": "anr_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/anr_analysis.skill.yaml",
-      "source_sha256": "5b3df6636aa845fd7e5a72bd067025fd3ae618c026113c370b10c97284bdf3b2",
+      "source_sha256": "73174387dbcbe50ec6a308be4a914c35d9587942dec32311fae979b1974a8d4f",
       "tier": "S",
       "version": "1.0",
       "workflow": "anr-blocking"
@@ -731,7 +731,7 @@
       "name": "cpu_frequency_limit_attribution",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
-      "source_sha256": "65ee4648b54179625a86ee7e925f360104fabf5b5d4f4d9f929a120177022005",
+      "source_sha256": "7a9e23034c57ed0ab02faba557f8fabd567e432aecdef313b1dfa80236cc0a06",
       "tier": "S",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -743,7 +743,7 @@
       "name": "cpu_frequency_limit_episode",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
-      "source_sha256": "3ce0ca099f41594d791d6342c7ec947589a9245eacb379deabcee87ac49ee859",
+      "source_sha256": "38983e5b69ab0a34125556f370d6330a8ddfff7ac04491867e13b853cb56bd8e",
       "tier": "A",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -862,7 +862,7 @@
       "name": "cpu_throttling_in_range",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_throttling_in_range.skill.yaml",
-      "source_sha256": "28812a6f213dee36fbec4395d2bd58206c74a06e0734ecb350d89bb484719caa",
+      "source_sha256": "cb86c9d88cd71f79716c0e53b87ed34e4ef068e86e881f0bb0aca434f7a2a757",
       "tier": "B",
       "version": "2.1",
       "workflow": "cpu-scheduling"
@@ -2366,7 +2366,7 @@
       "name": "scrolling_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-      "source_sha256": "0d32b714099786b1f04373b24b023fe8d99c6ce586baf33b2d38df56751b1044",
+      "source_sha256": "70e2e9e26326360593d4ac87bd8c4c4dcefccffcf4ff1e6a410efb1016eb0aef",
       "tier": "S",
       "version": "2.2",
       "workflow": "scrolling"
@@ -2426,7 +2426,7 @@
       "name": "startup_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/startup_analysis.skill.yaml",
-      "source_sha256": "793ae9585817a58767920f4404c8b9a64b6074d2bd53ba12d22f1e4d373f1c79",
+      "source_sha256": "b824b3e52812b34234264b56924e506d14ecb8965109e28181dd4f3672e04af1",
       "tier": "S",
       "version": "1.0",
       "workflow": "startup"
@@ -2689,7 +2689,7 @@
       "name": "surfaceflinger_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/surfaceflinger_analysis.skill.yaml",
-      "source_sha256": "59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac",
+      "source_sha256": "4d6e1ad9bf86293bfb2b3488cd30b3ff6d382e7560b18a6923e32b2150de4e27",
       "tier": "S",
       "version": "3.0",
       "workflow": "gpu-rendering"
@@ -2783,7 +2783,7 @@
       "name": "thermal_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
-      "source_sha256": "8c83bc8520dbf3876468ade4e67ed590a9be89022763464315e08cd82452b23a",
+      "source_sha256": "3713800e586f827002ea410f215faa46be46a589e7512324651b21f1128ce673",
       "version": "1.0",
       "workflow": "power-thermal"
     },
@@ -2794,7 +2794,7 @@
       "name": "thermal_predictor",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/thermal_predictor.skill.yaml",
-      "source_sha256": "b08c970d2d762c889d727456acccfef18f7088620076c63b8de51afc4b6704fa",
+      "source_sha256": "8c70b6fc3f75df62b4daf848ab2c020ae0c8fd7bc2136ab519bdc1bb8acc7383",
       "tier": "B",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -2805,7 +2805,7 @@
       "name": "thermal_throttling",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/thermal_throttling.skill.yaml",
-      "source_sha256": "dad4f0316164e1f40e731c8d36689fa5f09b8972bf70f5a4d48c894df90f3c91",
+      "source_sha256": "d8d420f2d0c8b12433ba27443f712124525100e866e03333420cc2bcbde623b8",
       "tier": "S",
       "version": "3.0",
       "workflow": "power-thermal"
@@ -3074,7 +3074,7 @@
     }
   ],
   "source": {
-    "commit": "84d4e7ffd62b1e72baacbfeaf30e2f895139b00b",
+    "commit": "55b34f526ac6c10a37f222ccfc0fb47734ead5c5",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
     "policy_sha256": "9f199dbdd1b25425eb2984962238f938a1f104132f34f29067ef543833436e72",
@@ -3393,7 +3393,7 @@
       "destination": "references/generated/strategies/anr.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/anr.strategy.md",
-      "source_sha256": "c12e8ea66d10b190aaaff903bd3e2906908a3388411cb0c3b026e59c56dd76fd",
+      "source_sha256": "7ca47f9c1ade989526593eb6cd9366ffc12f8e2c45f5840e3831efee489e21a9",
       "workflow": "anr-blocking"
     },
     {
@@ -4237,7 +4237,7 @@
       "destination": "references/generated/strategies/scrolling.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scrolling.strategy.md",
-      "source_sha256": "602dfe69c2023900642d8a020c5c918920e6e7d7bdce91df4c06f1236b058796",
+      "source_sha256": "6d80f4df24adead71a1ca6ecab4d0f5658454908eb1f177a7a84d3683b67c028",
       "workflow": "scrolling"
     },
     {

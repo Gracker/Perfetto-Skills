@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_analysis.skill.yaml
--- Source SHA-256: 5b3df6636aa845fd7e5a72bd067025fd3ae618c026113c370b10c97284bdf3b2
+-- Source SHA-256: 73174387dbcbe50ec6a308be4a914c35d9587942dec32311fae979b1974a8d4f
 
 WITH anr_window AS (
   SELECT
@@ -45,7 +45,9 @@ SELECT
         NULLIF(COUNT(*), 0), 1) as frozen_pct,
   MAX(CASE WHEN process_name = 'system_server' THEN ROUND(running_pct, 1) END) as system_server_running_pct,
   MAX(CASE WHEN process_name = 'system_server' AND running_pct < 5 THEN 1 ELSE 0 END) as system_server_frozen,
+  -- No evaluable main thread in the window decides nothing: not app-specific.
   CASE
+    WHEN COUNT(*) = 0 THEN 'undetermined'
     WHEN MAX(CASE WHEN process_name = 'system_server' AND running_pct < 5 THEN 1 ELSE 0 END) = 1
       THEN 'system_server_freeze'
     WHEN 100.0 * SUM(CASE WHEN running_pct < 5 THEN 1 ELSE 0 END) /

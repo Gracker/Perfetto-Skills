@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml
--- Source SHA-256: 65ee4648b54179625a86ee7e925f360104fabf5b5d4f4d9f929a120177022005
+-- Source SHA-256: 7a9e23034c57ed0ab02faba557f8fabd567e432aecdef313b1dfa80236cc0a06
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -393,8 +393,8 @@ system_cpu_freq_limit_episodes AS (
 ,
 system_windows AS (
   SELECT 0 AS window_id,
-    ${analysis_window.data[0].window_start_ts} AS window_start_ts,
-    ${analysis_window.data[0].window_end_ts} AS window_end_ts
+    ${analysis_window.data[0].window_start_ts|NULL} AS window_start_ts,
+    ${analysis_window.data[0].window_end_ts|NULL} AS window_end_ts
 )
 -- Windows are anchored on the trace-wide onset, never on the clipped
 -- window start: a window that cuts through an episode must not invent a
@@ -412,8 +412,8 @@ SELECT e.episode_id, e.trace_episode_id, e.policy_cpu, e.core_type, e.topology_s
     THEN 1 ELSE 0 END AS window_clipped_to_data_start,
   MAX(db.data_start_ts, e.onset_ts - CAST(${who_window_ms|2000} * 1000000 AS INTEGER)) AS who_start_ts,
   MIN(db.data_end_ts, e.onset_ts + CAST(${who_window_ms|2000} * 1000000 AS INTEGER)) AS who_end_ts,
-  ${analysis_window.data[0].window_start_ts} AS window_start_ts,
-  ${analysis_window.data[0].window_end_ts} AS window_end_ts,
+  ${analysis_window.data[0].window_start_ts|NULL} AS window_start_ts,
+  ${analysis_window.data[0].window_end_ts|NULL} AS window_end_ts,
   '${package}' AS package,
   '${process_name}' AS process_name,
   ${lookback_ms|10000} AS lookback_ms,

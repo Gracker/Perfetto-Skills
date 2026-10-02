@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/thermal_throttling.skill.yaml
--- Source SHA-256: dad4f0316164e1f40e731c8d36689fa5f09b8972bf70f5a4d48c894df90f3c91
+-- Source SHA-256: d8d420f2d0c8b12433ba27443f712124525100e866e03333420cc2bcbde623b8
 
 WITH
 -- Quality gates apply per track, not per sensor name or individual value.

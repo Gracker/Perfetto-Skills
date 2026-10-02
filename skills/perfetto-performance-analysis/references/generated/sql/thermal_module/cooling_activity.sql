@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/thermal_module.skill.yaml
--- Source SHA-256: 8c83bc8520dbf3876468ade4e67ed590a9be89022763464315e08cd82452b23a
+-- Source SHA-256: 3713800e586f827002ea410f215faa46be46a589e7512324651b21f1128ce673
 
 -- Match the typed cooling_device_counter track first. The previous
 -- GLOB '*cooling*' filter is case sensitive and never matched the actual

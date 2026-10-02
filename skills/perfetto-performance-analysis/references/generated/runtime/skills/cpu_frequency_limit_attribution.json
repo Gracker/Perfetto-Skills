@@ -176,7 +176,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
-    "sha256": "65ee4648b54179625a86ee7e925f360104fabf5b5d4f4d9f929a120177022005"
+    "sha256": "7a9e23034c57ed0ab02faba557f8fabd567e432aecdef313b1dfa80236cc0a06"
   },
   "steps": [
     {
@@ -242,9 +242,7 @@
         "role": "global_context"
       },
       "query_id": "cpu_frequency_limit_attribution/episodes",
-      "result_dependencies": [
-        "analysis_window"
-      ],
+      "result_dependencies": [],
       "save_as": "episode_rows",
       "type": "atomic"
     },
@@ -294,7 +292,6 @@
       },
       "query_id": "cpu_frequency_limit_attribution/attribution_summary",
       "result_dependencies": [
-        "analysis_window",
         "episode_rows"
       ],
       "save_as": "attribution_summary",
@@ -310,9 +307,7 @@
         "role": "global_context"
       },
       "query_id": "cpu_frequency_limit_attribution/vendor_signal_discovery",
-      "result_dependencies": [
-        "analysis_window"
-      ],
+      "result_dependencies": [],
       "save_as": "vendor_signal_discovery",
       "type": "atomic"
     },

@@ -1,15 +1,15 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/surfaceflinger_analysis.skill.yaml
--- Source SHA-256: 59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac
+-- Source SHA-256: 4d6e1ad9bf86293bfb2b3488cd30b3ff6d382e7560b18a6923e32b2150de4e27
 
 SELECT
   printf('%d', s.ts) as start_ts,
   s.dur,
   s.name as event_name,
-  CAST(ROUND(s.dur * 1.0 / ${vsync_env.data[0].vsync_period_ns} - 1) AS INTEGER) as vsync_missed,
+  CAST(ROUND(s.dur * 1.0 / ${vsync_env.data[0].vsync_period_ns|NULL} - 1) AS INTEGER) as vsync_missed,
   CASE
-    WHEN s.dur > ${vsync_env.data[0].vsync_period_ns} * 3.0 THEN 'critical'
-    WHEN s.dur > ${vsync_env.data[0].vsync_period_ns} * 2.0 THEN 'warning'
+    WHEN s.dur > ${vsync_env.data[0].vsync_period_ns|NULL} * 3.0 THEN 'critical'
+    WHEN s.dur > ${vsync_env.data[0].vsync_period_ns|NULL} * 2.0 THEN 'warning'
     ELSE 'notice'
   END as severity
 FROM slice s
@@ -21,7 +21,7 @@ WHERE (p.name = 'surfaceflinger' OR p.name = '/system/bin/surfaceflinger')
        OR s.name GLOB '*onMessageRefresh*'
        OR s.name GLOB '*composite*'
        OR s.name GLOB '*Composite*')
-  AND s.dur > ${vsync_env.data[0].vsync_period_ns} * ${slow_composition_multiplier|1.5}
+  AND s.dur > ${vsync_env.data[0].vsync_period_ns|NULL} * ${slow_composition_multiplier|1.5}
   AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
   AND (${end_ts} IS NULL OR s.ts < ${end_ts})
 ORDER BY s.dur DESC

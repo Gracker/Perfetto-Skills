@@ -1,7 +1,7 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/thermal_predictor.skill.yaml
-Source SHA-256: b08c970d2d762c889d727456acccfef18f7088620076c63b8de51afc4b6704fa
-# 热控风险预测
+Source SHA-256: 8c70b6fc3f75df62b4daf848ab2c020ae0c8fd7bc2136ab519bdc1bb8acc7383
+# CPU 频率趋势观察
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
 
@@ -18,7 +18,7 @@ tier: B
 ## Metadata
 
 ```yaml
-display_name: 热控风险预测
+display_name: CPU 频率趋势观察
 description: CPU 频率趋势观察；未提供温度或限频证据时不预测热机制
 icon: thermostat
 tags:
@@ -107,7 +107,7 @@ format: structured
 ```yaml
 level: summary
 layer: overview
-title: 热控预测
+title: CPU 频率趋势
 columns:
 - name: avg_start_freq_mhz
   label: 区间初段频率

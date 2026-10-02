@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 0d32b714099786b1f04373b24b023fe8d99c6ce586baf33b2d38df56751b1044
+-- Source SHA-256: 70e2e9e26326360593d4ac87bd8c4c4dcefccffcf4ff1e6a410efb1016eb0aef
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

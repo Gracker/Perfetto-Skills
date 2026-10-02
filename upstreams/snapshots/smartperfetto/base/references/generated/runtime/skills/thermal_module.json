@@ -47,7 +47,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
-    "sha256": "8c83bc8520dbf3876468ade4e67ed590a9be89022763464315e08cd82452b23a"
+    "sha256": "3713800e586f827002ea410f215faa46be46a589e7512324651b21f1128ce673"
   },
   "steps": [
     {
@@ -141,7 +141,7 @@
             "throttling_events.data[0]?.drop_pct"
           ],
           "suggestions": [
-            "结合直接 thermal throttling/cooling 事件和同窗口工作负载判断降频原因",
+            "降频原因需结合直接 thermal throttling/cooling 事件和同窗口工作负载判断",
             "考虑分散计算任务",
             "优化算法减少 CPU 使用"
           ]

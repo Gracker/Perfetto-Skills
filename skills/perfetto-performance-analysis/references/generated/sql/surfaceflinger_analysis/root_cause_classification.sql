@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/surfaceflinger_analysis.skill.yaml
--- Source SHA-256: 59c8f596d0111ef62440eb05318e85cfc2368d1d0b62d50ed6b1147b21e58aac
+-- Source SHA-256: 4d6e1ad9bf86293bfb2b3488cd30b3ff6d382e7560b18a6923e32b2150de4e27
 
 WITH
 -- 合成统计
@@ -27,8 +27,8 @@ composition_stats AS (
     COUNT(*) as total_count,
     AVG(dur) / 1e6 as avg_dur_ms,
     MAX(dur) / 1e6 as max_dur_ms,
-    SUM(CASE WHEN dur > ${vsync_env.data[0].vsync_period_ns} * ${slow_composition_multiplier|1.5} THEN 1 ELSE 0 END) as slow_count,
-    ROUND(100.0 * SUM(CASE WHEN dur > ${vsync_env.data[0].vsync_period_ns} * ${slow_composition_multiplier|1.5} THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 1) as slow_pct
+    SUM(CASE WHEN dur > ${vsync_env.data[0].vsync_period_ns|NULL} * ${slow_composition_multiplier|1.5} THEN 1 ELSE 0 END) as slow_count,
+    ROUND(100.0 * SUM(CASE WHEN dur > ${vsync_env.data[0].vsync_period_ns|NULL} * ${slow_composition_multiplier|1.5} THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0), 1) as slow_pct
   FROM sf_compositions
 ),
 -- Fence 统计

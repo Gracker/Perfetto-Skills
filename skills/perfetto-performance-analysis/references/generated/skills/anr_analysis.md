@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/anr_analysis.skill.yaml
-Source SHA-256: 5b3df6636aa845fd7e5a72bd067025fd3ae618c026113c370b10c97284bdf3b2
+Source SHA-256: 73174387dbcbe50ec6a308be4a914c35d9587942dec32311fae979b1974a8d4f
 # ANR 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -317,7 +317,7 @@ synthesize:
   - condition: status === 'normal'
     template: '{{core_type}} 核心负载正常 ({{avg_util_pct}}%)'
 save_as: cpu_health
-condition: detection.data[0]?.total_anr_count > 0
+condition: detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0
 optional: true
 ```
 ### 内存压力检测
@@ -345,7 +345,7 @@ display:
     label: 被杀进程
     type: string
 save_as: memory_pressure
-condition: detection.data[0]?.total_anr_count > 0
+condition: detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0
 optional: true
 ```
 ### 不可中断等待基线
@@ -375,7 +375,7 @@ display:
     type: number
     format: compact
 save_as: io_load
-condition: detection.data[0]?.total_anr_count > 0
+condition: detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0
 optional: true
 ```
 ### ANR 锁等待探针
@@ -418,7 +418,7 @@ display:
     format: duration_ms
     unit: ms
 save_as: lock_waits
-condition: detection.data[0]?.total_anr_count > 0 && enable_lock_probe !== false
+condition: detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0 && enable_lock_probe !== false
 optional: true
 ```
 ### 系统冻结检测
@@ -456,7 +456,7 @@ display:
     label: system_server 冻结
     type: boolean
 save_as: freeze_check
-condition: detection.data[0]?.total_anr_count > 0
+condition: detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0
 optional: true
 ```
 ### ANR 概览统计
@@ -641,7 +641,7 @@ display:
     type: percentage
     format: percentage
 save_as: top_processes
-condition: detection.data[0]?.total_anr_count > 0
+condition: detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0
 optional: true
 ```
 ### ANR 事件详细分析

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 0d32b714099786b1f04373b24b023fe8d99c6ce586baf33b2d38df56751b1044
+-- Source SHA-256: 70e2e9e26326360593d4ac87bd8c4c4dcefccffcf4ff1e6a410efb1016eb0aef
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 对齐的只有 direct-evidence（锁 / RT 同步）
@@ -2814,14 +2814,19 @@ SELECT
   pid,
   process_name,
   reason_code,
-  '${buffer_tx_coverage.data[0].coverage_status}' as frame_timeline_coverage_status,
-  ${buffer_tx_coverage.data[0].frame_timeline_to_buffer_tx_ratio} as frame_timeline_to_buffer_tx_ratio,
-  CASE
-    WHEN '${buffer_tx_coverage.data[0].coverage_status}' = 'partial_frame_timeline_coverage'
-      THEN 'partial_sample'
-    WHEN '${buffer_tx_coverage.data[0].coverage_status}' = 'no_buffer_tx_candidate'
-      THEN 'frame_timeline_only_unbenchmarked'
-    ELSE 'full_frame_timeline'
+  -- probe_unavailable is not a probe status: the optional probe produced no row.
+  '${buffer_tx_coverage.data[0].coverage_status|probe_unavailable}' as frame_timeline_coverage_status,
+  ${buffer_tx_coverage.data[0].frame_timeline_to_buffer_tx_ratio|NULL} as frame_timeline_to_buffer_tx_ratio,
+  -- Only a measured, sufficient FrameTimeline/BufferTX comparison is full
+  -- coverage. Exact-UPID scope never compares against BufferTX, and a
+  -- probe that produced no row (it is optional) or any other status
+  -- leaves coverage unverified.
+  CASE '${buffer_tx_coverage.data[0].coverage_status|probe_unavailable}'
+    WHEN 'sufficient_frame_timeline_coverage' THEN 'full_frame_timeline'
+    WHEN 'partial_frame_timeline_coverage' THEN 'partial_sample'
+    WHEN 'no_buffer_tx_candidate' THEN 'frame_timeline_only_unbenchmarked'
+    WHEN 'frame_timeline_only_exact_upid' THEN 'frame_timeline_only_unbenchmarked'
+    ELSE 'coverage_unverified'
   END as evidence_scope,
   scope.root_cause_eligible_frame_count,
   scope.root_cause_analyzed_frame_count,
