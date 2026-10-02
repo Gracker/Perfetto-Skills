@@ -1,80 +1,6 @@
 {
   "application_mode": "advisory_only",
   "definition": {
-    "additional_diagnostics": [
-      {
-        "condition": "coloross_boost_engine.count == 0",
-        "id": "hyperboost_not_active",
-        "message": "未检测到 HyperBoost 加速，启动可能未享受到系统加速",
-        "severity": "info",
-        "suggestions": [
-          "检查应用是否在 HyperBoost 白名单中",
-          "联系 OPPO 系统工程师确认加速策略"
-        ]
-      },
-      {
-        "condition": "oppo_system_services.any.dur_ms > 50",
-        "id": "oppo_service_slow",
-        "message": "OPPO 系统服务 ${server_process} 调用耗时 ${dur_ms}ms",
-        "severity": "warning",
-        "suggestions": [
-          "联系 OPPO 系统侧确认服务状态",
-          "检查是否可以异步调用"
-        ]
-      },
-      {
-        "condition": "app_freeze_state.any.dur_ms > 100",
-        "id": "freeze_recovery_slow",
-        "message": "从冻结状态恢复耗时 ${dur_ms}ms",
-        "severity": "warning",
-        "suggestions": [
-          "检查应用是否有大量状态需要恢复",
-          "优化 onResume 中的逻辑"
-        ]
-      }
-    ],
-    "additional_output_sections": [
-      {
-        "fields": [
-          {
-            "key": "boost_event",
-            "label": "加速事件"
-          },
-          {
-            "key": "dur_ms",
-            "label": "持续时间",
-            "unit": "ms"
-          }
-        ],
-        "from": "coloross_boost_engine",
-        "id": "hyperboost",
-        "show_when": "coloross_boost_engine.count > 0",
-        "title": "HyperBoost 加速状态",
-        "type": "status"
-      },
-      {
-        "fields": [
-          {
-            "key": "server_process",
-            "label": "服务"
-          },
-          {
-            "key": "dur_ms",
-            "label": "耗时",
-            "unit": "ms"
-          },
-          {
-            "key": "call_count",
-            "label": "调用次数"
-          }
-        ],
-        "from": "oppo_system_services",
-        "id": "oppo_services",
-        "show_when": "oppo_system_services.count > 0",
-        "title": "OPPO 系统服务调用",
-        "type": "table"
-      }
-    ],
     "additional_steps": [
       {
         "description": "检查 HyperBoost 是否在启动期间生效",
@@ -104,44 +30,6 @@
       "os": "ColorOS",
       "vendor": "oppo"
     },
-    "thresholds_override": {
-      "big_core_ratio": {
-        "levels": {
-          "critical": {
-            "max": 40
-          },
-          "excellent": {
-            "min": 80
-          },
-          "good": {
-            "max": 80,
-            "min": 60
-          },
-          "warning": {
-            "max": 60,
-            "min": 40
-          }
-        }
-      },
-      "cold_start_time": {
-        "levels": {
-          "critical": {
-            "min": 1500
-          },
-          "excellent": {
-            "max": 400
-          },
-          "good": {
-            "max": 800,
-            "min": 400
-          },
-          "warning": {
-            "max": 1500,
-            "min": 800
-          }
-        }
-      }
-    },
     "vendor_detection": {
       "signatures": [
         {
@@ -167,6 +55,6 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/vendors/oppo/startup.override.yaml",
-    "sha256": "e09d1bdc17b17e5e5ca98f4d55cb6ae982757998f7b915a4abe06a118291dd19"
+    "sha256": "5343e6c7a0260baf378fd1010412892f2eafbbd622ccb5fb7a380e869107e8d9"
   }
 }

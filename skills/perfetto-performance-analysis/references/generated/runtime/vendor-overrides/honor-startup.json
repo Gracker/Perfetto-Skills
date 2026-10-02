@@ -1,18 +1,6 @@
 {
   "application_mode": "advisory_only",
   "definition": {
-    "additional_diagnostics": [
-      {
-        "condition": "honor_turbo_engine.count == 0",
-        "id": "turbo_not_active",
-        "message": "未检测到 TurboX 加速",
-        "severity": "info",
-        "suggestions": [
-          "检查应用是否支持 GPU Turbo",
-          "联系 Honor 系统工程师确认优化策略"
-        ]
-      }
-    ],
     "additional_steps": [
       {
         "description": "检查 GPU Turbo、Link Turbo 等优化是否生效",
@@ -34,26 +22,6 @@
       "display_name": "Honor MagicOS 启动分析",
       "os": "MagicOS",
       "vendor": "honor"
-    },
-    "thresholds_override": {
-      "cold_start_time": {
-        "levels": {
-          "critical": {
-            "min": 1400
-          },
-          "excellent": {
-            "max": 420
-          },
-          "good": {
-            "max": 850,
-            "min": 420
-          },
-          "warning": {
-            "max": 1400,
-            "min": 850
-          }
-        }
-      }
     },
     "vendor_detection": {
       "signatures": [
@@ -84,6 +52,6 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/vendors/honor/startup.override.yaml",
-    "sha256": "920dd0c8279987157a9cc9a510a3b2c08444715f952506939d04087f5858a29d"
+    "sha256": "2bc96bdbc21b68232f2c21d7417443a4dc19a696565fbb0693d3ce9ef358aceb"
   }
 }

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/game_fps_analysis.skill.yaml
-Source SHA-256: b1c2c2f4499e3075a69a03b7dbde88b4145a3b8dea465d645cd175f697d90442
+Source SHA-256: afe29e2e27d3fbd6899c8b09c61c286650fe26e2f3f9585158f7f3d7818a7966
 # 游戏帧率分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -13,7 +13,6 @@ version: '1.0'
 type: atomic
 category: rendering
 tier: A
-priority: high
 ```
 
 ## Metadata
@@ -241,23 +240,4 @@ fields:
   description: 帧间隔统计
 - name: jank_stats
   description: 掉帧统计
-```
-
-## Thresholds
-
-```yaml
-jank_rate:
-  unit: '%'
-  description: 掉帧率
-  levels:
-    excellent:
-      max: 1
-    good:
-      min: 1
-      max: 5
-    warning:
-      min: 5
-      max: 10
-    critical:
-      min: 10
 ```

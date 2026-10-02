@@ -1,19 +1,6 @@
 {
   "application_mode": "advisory_only",
   "definition": {
-    "additional_diagnostics": [
-      {
-        "condition": "adreno_gpu_analysis.any.dur_ms > 16",
-        "id": "gpu_bottleneck",
-        "message": "Adreno GPU 操作耗时 ${dur_ms}ms，可能影响渲染",
-        "severity": "warning",
-        "suggestions": [
-          "检查是否有复杂的 GPU 计算",
-          "优化着色器复杂度",
-          "减少过度绘制"
-        ]
-      }
-    ],
     "additional_steps": [
       {
         "for_each": "startups",
@@ -81,6 +68,6 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/vendors/qualcomm/startup.override.yaml",
-    "sha256": "9a9f9841f92d4132fb1d625ad40a7d7a8f5309e2ed09a4f0d8dfe477641bc74c"
+    "sha256": "794129756c46236d468b89625c845edaec2b3f9576e3a4c100093c9adec7ff40"
   }
 }
