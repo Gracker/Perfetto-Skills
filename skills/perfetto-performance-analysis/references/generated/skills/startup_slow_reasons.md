@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_slow_reasons.skill.yaml
-Source SHA-256: 8929370f6941627feb8bba36285975fa579cdb15a349fff36b2d4167f5bc133c
+Source SHA-256: 0056319a6a46e55c0263b521daa518d49ea630bba3b03f02f0a545497a8bb1f7
 # 启动慢原因（官方分类）
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

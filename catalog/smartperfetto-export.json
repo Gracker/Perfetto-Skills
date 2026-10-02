@@ -791,7 +791,7 @@
       "name": "cpu_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/hardware/cpu_module.skill.yaml",
-      "source_sha256": "38a46781cab3d21259a05fbddbb08d99264e0251f7097c0f2a14c8902440e5be",
+      "source_sha256": "9e8552f0cd155816d8cfb9eae5c9a2bfc2e33fc6f5b730b1afc204b95798e935",
       "version": "1.0",
       "workflow": "cpu-scheduling"
     },
@@ -862,7 +862,7 @@
       "name": "cpu_throttling_in_range",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_throttling_in_range.skill.yaml",
-      "source_sha256": "05526dca03c6ffb8591b9ad7e6a6edd303221425e1e6e72589a289e0fd909505",
+      "source_sha256": "28812a6f213dee36fbec4395d2bd58206c74a06e0734ecb350d89bb484719caa",
       "tier": "B",
       "version": "2.1",
       "workflow": "cpu-scheduling"
@@ -1160,7 +1160,7 @@
       "name": "gpu_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/gpu_analysis.skill.yaml",
-      "source_sha256": "36f5184c4bd50b7001d0a1d14acaee52592734ad5771dec48bb5e811a7c66b96",
+      "source_sha256": "700737c3b798446d259b725cdb99906ea5b2a4b8b3a6334401f1cc18b352b061",
       "tier": "S",
       "version": "3.0",
       "workflow": "gpu-rendering"
@@ -1196,7 +1196,7 @@
       "name": "gpu_frequency_analysis",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/gpu_frequency_analysis.skill.yaml",
-      "source_sha256": "d8233f4d110ef07ec6469fa923b1ac018e0e6e0993faa2e079bf8d58bbc6b408",
+      "source_sha256": "bc94b1d344fadef2dc3610ebac99e3304c8349358417428301cbae1335687540",
       "tier": "B",
       "version": "1.0",
       "workflow": "gpu-rendering"
@@ -1325,7 +1325,7 @@
       "name": "jank_frame_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-      "source_sha256": "53ffd6d3f14eb46ea6d96882c52ecb04304522a845a61c66e81e1c627f33fc25",
+      "source_sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc",
       "tier": "S",
       "version": "2.3",
       "workflow": "scrolling"
@@ -2308,7 +2308,7 @@
       "name": "scheduler_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
-      "source_sha256": "d508d8d5d6b1e22d71b7222adc022483ea3e1f52c9093f402a1188b8baeaf32d",
+      "source_sha256": "67ddcf3a040cfc8fb5ace854ca824d699330c03bfd3894272d6df7d804f91677",
       "version": "1.0",
       "workflow": "cpu-scheduling"
     },
@@ -2486,7 +2486,7 @@
       "name": "startup_cpu_placement_timeline",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_cpu_placement_timeline.skill.yaml",
-      "source_sha256": "df62a33d3357a3f835c86fe807b64725bb4ce7129067c81f63799ccfa838aef3",
+      "source_sha256": "cecd3d6c3184a9109e8cb875c1a3f894fc9e7fa798be1d648b0651fbb2a29be8",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2510,7 +2510,7 @@
       "name": "startup_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/startup_detail.skill.yaml",
-      "source_sha256": "186d36d138d9b1f73f761df5c6f70901a1657693238ff523a7f897435e762cc4",
+      "source_sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f",
       "tier": "S",
       "version": "2.0",
       "workflow": "startup"
@@ -2654,7 +2654,7 @@
       "name": "startup_slow_reasons",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
-      "source_sha256": "8929370f6941627feb8bba36285975fa579cdb15a349fff36b2d4167f5bc133c",
+      "source_sha256": "0056319a6a46e55c0263b521daa518d49ea630bba3b03f02f0a545497a8bb1f7",
       "tier": "S",
       "version": "3.0",
       "workflow": "startup"
@@ -2805,7 +2805,7 @@
       "name": "thermal_throttling",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/thermal_throttling.skill.yaml",
-      "source_sha256": "41d4a62770191724931a4ad34d2575966bc0c65d2bb1d9259adec77825b6b34b",
+      "source_sha256": "dad4f0316164e1f40e731c8d36689fa5f09b8972bf70f5a4d48c894df90f3c91",
       "tier": "S",
       "version": "3.0",
       "workflow": "power-thermal"
@@ -3074,7 +3074,7 @@
     }
   ],
   "source": {
-    "commit": "254c5ca127c64705af3371730881fe399d7e7b0b",
+    "commit": "b64e6e848766bc682c4443ffdcd6201f8a811caf",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
     "policy_sha256": "9f199dbdd1b25425eb2984962238f938a1f104132f34f29067ef543833436e72",
@@ -3393,7 +3393,7 @@
       "destination": "references/generated/strategies/anr.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/anr.strategy.md",
-      "source_sha256": "016e87b6b171d0855beac6248714c7b8bb7ecf7360e59fba877ca03a172593f3",
+      "source_sha256": "c12e8ea66d10b190aaaff903bd3e2906908a3388411cb0c3b026e59c56dd76fd",
       "workflow": "anr-blocking"
     },
     {
@@ -3443,7 +3443,7 @@
       "destination": "references/generated/strategies/game.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/game.strategy.md",
-      "source_sha256": "4859330a4aee5a85c744963b24d1d03ce91ead4814d1b94a01387fbd10e0c13a",
+      "source_sha256": "1dc98c5c0c2f462121f5a0c08d8a0a4efaa3429f93ed8001ef05d934d188dddb",
       "workflow": "frameworks-games"
     },
     {
@@ -3491,7 +3491,7 @@
       "destination": "references/generated/knowledge/knowledge-cpu-scheduler.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-cpu-scheduler.template.md",
-      "source_sha256": "54160acf30404b210cd5b0b64d39c7dff7ca2fabe741db229e43c3aee6c42a5a",
+      "source_sha256": "bb7e66ee8fc345d946283c69a1fcafbd2857e90a318eeeb297d35c9bda4c2655",
       "workflow": "cpu-scheduling"
     },
     {
@@ -3595,7 +3595,7 @@
       "destination": "references/generated/knowledge/knowledge-startup-root-causes.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-startup-root-causes.template.md",
-      "source_sha256": "566d29aa6d2a1981fc87eccac2ef905ade3d2c451d91381838f944518b6c42a9",
+      "source_sha256": "ee6dfdb05712a63bb7eff37c1072e9139aaa59b598a23a7467ba0a9c0b969126",
       "workflow": "startup"
     },
     {
@@ -4263,7 +4263,7 @@
       "destination": "references/generated/strategies/startup.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/startup.strategy.md",
-      "source_sha256": "2c09eb4ec37af57735477ef1f91839c3a2bd21322e5feccf7852cc1d18608ec0",
+      "source_sha256": "7287e25dd6daba800b11e134684610b4ed234b4a43d309bb90ffc1b0cbf9b953",
       "workflow": "startup"
     },
     {

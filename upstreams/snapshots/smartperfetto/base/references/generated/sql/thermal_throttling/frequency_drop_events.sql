@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/thermal_throttling.skill.yaml
--- Source SHA-256: 41d4a62770191724931a4ad34d2575966bc0c65d2bb1d9259adec77825b6b34b
+-- Source SHA-256: dad4f0316164e1f40e731c8d36689fa5f09b8972bf70f5a4d48c894df90f3c91
 
 WITH freq_with_max AS (
   SELECT

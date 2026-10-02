@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/scheduler_module.skill.yaml
--- Source SHA-256: d508d8d5d6b1e22d71b7222adc022483ea3e1f52c9093f402a1188b8baeaf32d
+-- Source SHA-256: 67ddcf3a040cfc8fb5ace854ca824d699330c03bfd3894272d6df7d804f91677
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

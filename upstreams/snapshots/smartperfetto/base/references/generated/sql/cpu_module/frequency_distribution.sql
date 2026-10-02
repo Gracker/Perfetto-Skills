@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/cpu_module.skill.yaml
--- Source SHA-256: 38a46781cab3d21259a05fbddbb08d99264e0251f7097c0f2a14c8902440e5be
+-- Source SHA-256: 9e8552f0cd155816d8cfb9eae5c9a2bfc2e33fc6f5b730b1afc204b95798e935
 
 WITH
 cpu_info AS (

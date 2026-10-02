@@ -1218,6 +1218,109 @@ class AnrPlacementDiagnosisTest(unittest.TestCase):
         self.assertEqual(offenders, [])
 
 
+class UnevidencedThermalWordingTest(unittest.TestCase):
+    """Generated rules and texts that read no limit evidence name no thermal cause.
+
+    A frequency drop, a frequency ratio or a low big-core frequency is an
+    observation: only cpufreq max-limit evidence shows a cap, and only
+    temperature or cooling-device evidence speaks to a thermal mechanism.
+    """
+
+    CAUSE = re.compile(r"温控|热控|过热|发热|高温|热节流|热降频|热限频|散热|设备温度|温度过高|温度升高|冷却后|thermal", re.I)
+    DEFERRALS = ("不能据此判定限频或温控", "不判定限频或温控")
+    MANIFESTS = SCRIPTS.parent / "references/generated/runtime/skills"
+    SQL = SCRIPTS.parent / "references/generated/sql"
+
+    def names_cause(self, text: str) -> bool:
+        for deferral in self.DEFERRALS:
+            text = text.replace(deferral, "")
+        return bool(self.CAUSE.search(text))
+
+    def rules(self, skill_id: str, step_id: str) -> list:
+        """The step's frequency rules: those reading avg_freq_mhz, the inputs these cases bind."""
+        skill = json.loads((self.MANIFESTS / f"{skill_id}.json").read_text(encoding="utf-8"))
+        rules = next(step for step in skill["steps"] if step["id"] == step_id)["rules"]
+        return [rule for rule in rules if "avg_freq_mhz" in rule["condition"]]
+
+    def diagnose(self, rules: list, inputs: dict) -> list:
+        from runtime.executor import SkillRunner
+
+        steps = [{"id": f"stub_{name}", "type": "atomic", "query_id": f"parent/{name}", "save_as": name}
+                 for name in inputs]
+        parent = {"id": "parent", "runtime_status": "executable", "type": "composite",
+                  "identity": {"policy": "none"}, "inputs": [],
+                  "steps": [*steps, {"id": "diagnose", "type": "diagnostic", "rules": copy.deepcopy(rules)}]}
+        answers = {f"parent/{name}": rows for name, rows in inputs.items()}
+        result = SkillRunner({"skills": {"parent": parent}}, lambda query_id, **kwargs: answers[query_id]).run("parent")
+        self.assertTrue(result["success"])
+        return next(step for step in result["steps"] if step["step_id"] == "diagnose")["diagnostics"]
+
+    def test_cpu_frequency_rules_defer_a_limit_to_its_evidence(self) -> None:
+        cases = [
+            (self.rules("cpu_module", "cpu_diagnosis"),
+             {"freq_overview": [{"cluster": "big", "avg_freq_mhz": 1200, "max_freq_mhz": 2400},
+                                {"cluster": "little", "avg_freq_mhz": 1500, "max_freq_mhz": 1800}],
+              }, 2),
+            (self.rules("scheduler_module", "scheduling_diagnosis"),
+             {"freq_data": [{"core_type": "big", "avg_freq_mhz": 1200}]}, 1),
+        ]
+        for rules, inputs, deferring in cases:
+            diagnostics = self.diagnose(rules, inputs)
+            texts = [text for d in diagnostics for text in (d["diagnosis"], *d["suggestions"])]
+            self.assertEqual([text for text in texts if self.names_cause(text)], [])
+            self.assertEqual(sum("是否限频以同窗口的 CPU 限频证据" in text for text in texts), deferring)
+
+    def test_generated_frequency_observations_name_no_thermal_cause(self) -> None:
+        for path in ("gpu_analysis/root_cause_classification.sql", "gpu_frequency_analysis/query.sql",
+                     "startup_slow_reasons/slow_reason_checks.sql"):
+            sql = (self.SQL / path).read_text(encoding="utf-8")
+            literals = [literal for literal in re.findall(r"'((?:[^']|'')*)'", re.sub(r"--[^\n]*", "", sql))
+                        if re.search(r"[一-鿿]", literal)]
+            self.assertTrue(literals, path)
+            self.assertEqual([literal for literal in literals if self.names_cause(literal)], [], path)
+        gpu = (self.SQL / "gpu_analysis/root_cause_classification.sql").read_text(encoding="utf-8")
+        self.assertIn("'GPU_FREQ_DROPS'", gpu)
+        self.assertNotIn("GPU_THROTTLED", gpu)
+
+
+class LimitEvidencePlaceholderDefaultTest(unittest.TestCase):
+    """A quoted limit-evidence path with `|` renders '' without rows, as SmartPerfetto does.
+
+    throttle_detection and root_cause_classification still run when the limit
+    step yields no rows; without the default the runtime skipped them.
+    """
+
+    MANIFESTS = SCRIPTS.parent / "references/generated/runtime/skills"
+
+    def step(self, skill_id: str, step_id: str) -> dict:
+        skill = json.loads((self.MANIFESTS / f"{skill_id}.json").read_text(encoding="utf-8"))
+        return next(step for step in skill["steps"] if step["id"] == step_id)
+
+    def test_limit_steps_are_not_result_dependencies(self) -> None:
+        self.assertNotIn("limit_evidence", self.step("cpu_throttling_in_range", "throttle_detection")["result_dependencies"])
+        self.assertNotIn("direct_limit_evidence",
+                         self.step("thermal_throttling", "root_cause_classification")["result_dependencies"])
+
+    def test_throttle_detection_runs_when_limit_evidence_is_empty(self) -> None:
+        from runtime.executor import SkillRunner
+
+        skill = json.loads((self.MANIFESTS / "cpu_throttling_in_range.json").read_text(encoding="utf-8"))
+        topology = json.loads((self.MANIFESTS / "cpu_topology_view.json").read_text(encoding="utf-8"))
+        seen = []
+
+        def query(query_id, **kwargs):
+            seen.append(query_id)
+            if query_id == "cpu_throttling_in_range/throttle_detection":
+                return [{"core_type": "大核", "freq_drop_pct": 0, "evidence_status": "thermal_evidence_missing"}]
+            return []
+
+        result = SkillRunner({"skills": {"cpu_throttling_in_range": skill, "cpu_topology_view": topology}}, query).run(
+            "cpu_throttling_in_range", {"start_ts": 1, "end_ts": 2})
+        statuses = {step["step_id"]: step["status"] for step in result["steps"]}
+        self.assertIn("cpu_throttling_in_range/throttle_detection", seen)
+        self.assertEqual(statuses["throttle_detection"], "observed")
+
+
 class InheritedBindingPrecedenceTest(unittest.TestCase):
     """A name resolves to the Skill's own bindings, then its inputs, then the caller's."""
 

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_frequency_analysis.skill.yaml
--- Source SHA-256: d8233f4d110ef07ec6469fa923b1ac018e0e6e0993faa2e079bf8d58bbc6b408
+-- Source SHA-256: bc94b1d344fadef2dc3610ebac99e3304c8349358417428301cbae1335687540
 
 WITH gpu_freq AS (
   SELECT
@@ -33,7 +33,7 @@ WHERE NOT EXISTS (SELECT 1 FROM stats)
 UNION ALL
 SELECT 'GPU 均频' as metric,
   ROUND(avg_freq / 1000.0, 0) || ' MHz' as value,
-  CASE WHEN avg_freq < max_freq * 0.6 THEN '⚠️ GPU 频率偏低，可能存在 thermal 限频'
+  CASE WHEN avg_freq < max_freq * 0.6 THEN '⚠️ GPU 均频低于峰值的 60%（仅为频率观测，不能据此判定限频或温控）'
        ELSE '✓ 正常' END as assessment
 FROM stats
 UNION ALL

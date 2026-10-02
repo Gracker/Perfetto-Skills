@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_detail.skill.yaml
-Source SHA-256: 186d36d138d9b1f73f761df5c6f70901a1657693238ff523a7f897435e762cc4
+Source SHA-256: ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f
 # 启动详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -771,6 +771,11 @@ display:
     label: unknown_core_ms
     type: duration
     unit: ms
+    hidden: true
+  - name: unknown_core_ns
+    label: unknown_core_ns
+    type: duration
+    unit: ns
     hidden: true
   - name: used_ucpus
     label: used_ucpus
@@ -1874,9 +1879,10 @@ rules:
   suggestions:
   - 对齐该 CPU 上关键任务、DVFS 请求/限制及频率响应，再评估是否影响关键路径
 - condition: cpu_placement?.data?.length > 2 && cpu_placement.data[0]?.big_core_pct != null && cpu_placement.data[2]?.big_core_pct
-    != null && cpu_placement.data[0].big_core_pct < 20 && cpu_placement.data[2].big_core_pct > 60
+    != null && cpu_placement.data[0].unknown_core_ns === 0 && cpu_placement.data[0].big_core_pct < 20 && cpu_placement.data[2].big_core_pct
+    > 60
   severity: info
-  diagnosis: 主线程已分类大核占比从初期 ${cpu_placement.data[0].big_core_pct}% 变为后段 ${cpu_placement.data[2].big_core_pct}%；需保留未知核占比，不能据此认定被困小核或亲和性配置错误
+  diagnosis: 主线程大核组占比从初期 ${cpu_placement.data[0].big_core_pct}% 变为后段 ${cpu_placement.data[2].big_core_pct}%；不能据此认定被困小核或亲和性配置错误
   confidence: medium
   suggestions:
   - 结合实际 CPU 容量、核驻留时间及任务需求说明变化；未知拓扑保持未知

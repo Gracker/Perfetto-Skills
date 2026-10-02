@@ -1,11 +1,11 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/cpu_throttling_in_range.skill.yaml
--- Source SHA-256: 05526dca03c6ffb8591b9ad7e6a6edd303221425e1e6e72589a289e0fd909505
+-- Source SHA-256: 28812a6f213dee36fbec4395d2bd58206c74a06e0734ecb350d89bb484719caa
 
 WITH
 -- 上一步的限频证据读一次，供下面的判定复用
 limit_status AS (
-  SELECT '${limit_evidence.data[0].evidence_status}' AS status,
+  SELECT '${limit_evidence.data[0].evidence_status|}' AS status,
     ${limit_evidence.data[0].deepest_depth_pct|0} AS depth_pct
 ),
 -- 频率采样（带拓扑分类）；NULL 或 <= 0 不是频率，保留为 NULL。拓扑未收录的
@@ -89,7 +89,7 @@ SELECT
     ELSE '' END ||
   CASE WHEN status = 'freq_limit_observed'
     THEN '区间内观测到 cpufreq policy 上限被下调（最大深度 ' || depth_pct || '%）：限频确实发生；这是整窗证据，不说明本行核心受限，触发方仍需用 cpu_frequency_limit_attribution 判定'
-    ELSE '频率变化可能来自负载下降或空闲 DVFS；需直接限频证据与同窗口负载才能确定热控原因' END ||
+    ELSE '频率变化可能来自负载下降或空闲 DVFS；需直接限频证据与同窗口负载才能确定是否限频' END ||
   '（首末为各 cpufreq 轨道窗口内首末采样均值，非窗口边界值；最低/最高为本类别包络，可能来自不同核心）' AS interpretation
 FROM per_tier_stats
 CROSS JOIN limit_status

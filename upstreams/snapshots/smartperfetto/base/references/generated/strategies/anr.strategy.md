@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: 016e87b6b171d0855beac6248714c7b8bb7ecf7360e59fba877ca03a172593f3
+Source SHA-256: c12e8ea66d10b190aaaff903bd3e2906908a3388411cb0c3b026e59c56dd76fd
 
 # Anr Strategy
 
@@ -241,7 +241,7 @@ invoke_skill("anr_analysis")
 | freeze_verdict | 含义 | 后续分析方向 |
 |---------------|------|-------------|
 | `system_server_freeze` | system_server 冻结（running_pct < 5%） | **系统级问题**：system_server watchdog、kernel panic、硬件故障。报告为系统问题，不是 App Bug |
-| `system_freeze` | 多数应用冻结（frozen_pct > 70%）但 system_server 未冻结 | **系统级问题**：可能是 CPU 饥饿（thermal throttling、后台负载）、内存压力（大量 LMK）、IO 风暴。交叉检查 `cpu_health` 和 `memory_pressure` |
+| `system_freeze` | 多数应用冻结（frozen_pct > 70%）但 system_server 未冻结 | **系统级问题**：可能是 CPU 饥饿（后台负载；频率上限只是候选，是否限频以 `cpu_throttling_in_range` 的限频证据为准）、内存压力（大量 LMK）、IO 风暴。交叉检查 `cpu_health` 和 `memory_pressure` |
 | `app_specific` | 仅目标应用受影响 | **应用级问题**：进入 Phase 3 详细分析主线程阻塞原因 |
 
 **当 `freeze_verdict = system_server_freeze` 或 `system_freeze` 时：**
@@ -350,7 +350,7 @@ invoke_skill("anr_analysis")
 4. **优化建议**：
    - 按影响面排序
    - 区分系统侧 vs 应用侧建议
-   - 系统冻屏：建议检查 system_server watchdog、thermal、内存压力
+   - 系统冻屏：建议检查 system_server watchdog、CPU 限频证据、内存压力
    - 应用锁等待：建议减少 synchronized 范围、使用异步 Binder
    - 应用 IO/page-cache 候选：先补齐 io_wait/blocked_function 与文件/数据库/Provider 证据，再建议将同步 IO 移到后台线程
    - CPU 饥饿：建议检查后台进程、调整线程优先级

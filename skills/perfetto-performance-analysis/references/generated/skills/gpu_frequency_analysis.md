@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gpu_frequency_analysis.skill.yaml
-Source SHA-256: d8233f4d110ef07ec6469fa923b1ac018e0e6e0993faa2e079bf8d58bbc6b408
+Source SHA-256: bc94b1d344fadef2dc3610ebac99e3304c8349358417428301cbae1335687540
 # GPU 频率分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -19,7 +19,7 @@ tier: B
 
 ```yaml
 display_name: GPU 频率分析
-description: 分析 GPU 频率变化和 thermal throttling
+description: 分析 GPU 频率变化（不采集 GPU 频率上限证据，不判定限频或温控）
 icon: memory
 tags:
 - gpu

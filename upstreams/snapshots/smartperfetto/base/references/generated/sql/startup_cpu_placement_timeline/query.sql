@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_cpu_placement_timeline.skill.yaml
--- Source SHA-256: df62a33d3357a3f835c86fe807b64725bb4ce7129067c81f63799ccfa838aef3
+-- Source SHA-256: cecd3d6c3184a9109e8cb875c1a3f894fc9e7fa798be1d648b0651fbb2a29be8
 
 WITH RECURSIVE
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -95,6 +95,7 @@ SELECT tt.upid,tt.utid,b.bucket_idx,b.bucket_start AS window_start_ts,b.bucket_e
  SUM(CASE WHEN s.core_type IN ('prime','big','medium') THEN MIN(s.clipped_end_ts,b.bucket_end)-MAX(s.clipped_start_ts,b.bucket_start) ELSE 0 END)/1e6 AS big_core_ms,
  SUM(CASE WHEN s.core_type='little' THEN MIN(s.clipped_end_ts,b.bucket_end)-MAX(s.clipped_start_ts,b.bucket_start) ELSE 0 END)/1e6 AS little_core_ms,
  SUM(CASE WHEN s.core_type='unknown' THEN MIN(s.clipped_end_ts,b.bucket_end)-MAX(s.clipped_start_ts,b.bucket_start) ELSE 0 END)/1e6 AS unknown_core_ms,
+ SUM(CASE WHEN s.core_type='unknown' THEN MIN(s.clipped_end_ts,b.bucket_end)-MAX(s.clipped_start_ts,b.bucket_start) ELSE 0 END) AS unknown_core_ns,
  SUM(CASE WHEN s.core_type IN ('prime','big','medium') THEN MIN(s.clipped_end_ts,b.bucket_end)-MAX(s.clipped_start_ts,b.bucket_start) ELSE 0 END)*100.0/
    NULLIF(SUM(MIN(s.clipped_end_ts,b.bucket_end)-MAX(s.clipped_start_ts,b.bucket_start)),0) AS big_core_pct,
  GROUP_CONCAT(DISTINCT s.cpu) AS used_cpus,GROUP_CONCAT(DISTINCT s.ucpu) AS used_ucpus,

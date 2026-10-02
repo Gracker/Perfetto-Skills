@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/game.strategy.md
-Source SHA-256: 4859330a4aee5a85c744963b24d1d03ce91ead4814d1b94a01387fbd10e0c13a
+Source SHA-256: 1dc98c5c0c2f462121f5a0c08d8a0a4efaa3429f93ed8001ef05d934d188dddb
 
 # Game Strategy
 
@@ -206,6 +206,6 @@ invoke_skill("mali_gpu_power_state")
 1. **帧率概览**：平均/P50/P90/P99 帧间隔、稳定性评级
 2. **卡顿帧分析**：卡顿帧时间分布、帧间隔直方图
 3. **GPU 状态**：频率、利用率、Fence 等待
-4. **热节流影响**：CPU/GPU 频率是否被限制
+4. **限频影响**：CPU/GPU 频率是否被限制（限频以 `cpu_throttling_in_range` 的限频证据为准；温控触发还需温度/散热设备证据）
 5. **优化建议**：按 GPU-bound / CPU-bound / Thermal 分类
 <!-- /strategy-detail -->

@@ -120,7 +120,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/startup_detail.skill.yaml",
-    "sha256": "186d36d138d9b1f73f761df5c6f70901a1657693238ff523a7f897435e762cc4"
+    "sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f"
   },
   "steps": [
     {
@@ -666,9 +666,9 @@
           ]
         },
         {
-          "condition": "cpu_placement?.data?.length > 2 && cpu_placement.data[0]?.big_core_pct != null && cpu_placement.data[2]?.big_core_pct != null && cpu_placement.data[0].big_core_pct < 20 && cpu_placement.data[2].big_core_pct > 60",
+          "condition": "cpu_placement?.data?.length > 2 && cpu_placement.data[0]?.big_core_pct != null && cpu_placement.data[2]?.big_core_pct != null && cpu_placement.data[0].unknown_core_ns === 0 && cpu_placement.data[0].big_core_pct < 20 && cpu_placement.data[2].big_core_pct > 60",
           "confidence": "medium",
-          "diagnosis": "主线程已分类大核占比从初期 ${cpu_placement.data[0].big_core_pct}% 变为后段 ${cpu_placement.data[2].big_core_pct}%；需保留未知核占比，不能据此认定被困小核或亲和性配置错误",
+          "diagnosis": "主线程大核组占比从初期 ${cpu_placement.data[0].big_core_pct}% 变为后段 ${cpu_placement.data[2].big_core_pct}%；不能据此认定被困小核或亲和性配置错误",
           "severity": "info",
           "suggestions": [
             "结合实际 CPU 容量、核驻留时间及任务需求说明变化；未知拓扑保持未知"

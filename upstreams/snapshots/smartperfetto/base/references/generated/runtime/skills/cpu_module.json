@@ -53,7 +53,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/cpu_module.skill.yaml",
-    "sha256": "38a46781cab3d21259a05fbddbb08d99264e0251f7097c0f2a14c8902440e5be"
+    "sha256": "9e8552f0cd155816d8cfb9eae5c9a2bfc2e33fc6f5b730b1afc204b95798e935"
   },
   "steps": [
     {
@@ -76,7 +76,7 @@
     {
       "displayed": true,
       "id": "throttling_events",
-      "name": "频率限制事件",
+      "name": "频率变化事件",
       "query_id": "cpu_module/throttling_events",
       "result_dependencies": [],
       "save_as": "throttle_events",
@@ -113,13 +113,13 @@
         {
           "condition": "freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz < 1500",
           "confidence": "high",
-          "diagnosis": "大核 CPU 平均频率较低 (${freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz}MHz)，可能存在热节流或功耗限制",
+          "diagnosis": "大核 CPU 平均频率较低 (${freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz}MHz)；仅为频率观测，低频可能来自负载、调速器或频率上限",
           "evidence_fields": [
             "freq_overview.data[0].avg_freq_mhz",
             "freq_overview.data[0].max_freq_mhz"
           ],
           "suggestions": [
-            "检查设备温度",
+            "是否限频以同窗口的 CPU 限频证据（cpu_throttling_in_range）为准",
             "检查是否开启省电模式"
           ]
         },
@@ -138,12 +138,12 @@
         {
           "condition": "freq_overview.data.find(f => f.cluster === 'little')?.avg_freq_mhz > freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz",
           "confidence": "medium",
-          "diagnosis": "小核频率高于大核，可能存在调度异常或热节流",
+          "diagnosis": "小核平均频率高于大核；仅为频率观测，可能来自两簇负载不同或大核频率上限",
           "evidence_fields": [
             "freq_overview.data[0].avg_freq_mhz"
           ],
           "suggestions": [
-            "检查大核是否被热节流",
+            "是否限频以同窗口的 CPU 限频证据（cpu_throttling_in_range）为准",
             "检查 CPU affinity 设置"
           ]
         }

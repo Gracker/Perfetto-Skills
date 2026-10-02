@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/cpu_module.skill.yaml
-Source SHA-256: 38a46781cab3d21259a05fbddbb08d99264e0251f7097c0f2a14c8902440e5be
+Source SHA-256: 9e8552f0cd155816d8cfb9eae5c9a2bfc2e33fc6f5b730b1afc204b95798e935
 # CPU 硬件分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -18,7 +18,7 @@ category: hardware
 
 ```yaml
 display_name: CPU 硬件分析
-description: 分析 CPU 频率、热节流和电源状态
+description: 分析 CPU 频率、频率变化和电源状态
 tags:
 - hardware
 - cpu
@@ -99,7 +99,7 @@ synthesize:
   - field: cluster
     title: 核心集群
 ```
-### 频率限制事件
+### 频率变化事件
 
 - ID: `throttling_events`
 - Type: `atomic`
@@ -159,10 +159,10 @@ inputs:
 - cluster_util
 rules:
 - condition: freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz < 1500
-  diagnosis: 大核 CPU 平均频率较低 (${freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz}MHz)，可能存在热节流或功耗限制
+  diagnosis: 大核 CPU 平均频率较低 (${freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz}MHz)；仅为频率观测，低频可能来自负载、调速器或频率上限
   confidence: high
   suggestions:
-  - 检查设备温度
+  - 是否限频以同窗口的 CPU 限频证据（cpu_throttling_in_range）为准
   - 检查是否开启省电模式
   evidence_fields:
   - freq_overview.data[0].avg_freq_mhz
@@ -177,10 +177,10 @@ rules:
   - throttle_events.data.length
 - condition: freq_overview.data.find(f => f.cluster === 'little')?.avg_freq_mhz > freq_overview.data.find(f => f.cluster ===
     'big')?.avg_freq_mhz
-  diagnosis: 小核频率高于大核，可能存在调度异常或热节流
+  diagnosis: 小核平均频率高于大核；仅为频率观测，可能来自两簇负载不同或大核频率上限
   confidence: medium
   suggestions:
-  - 检查大核是否被热节流
+  - 是否限频以同窗口的 CPU 限频证据（cpu_throttling_in_range）为准
   - 检查 CPU affinity 设置
   evidence_fields:
   - freq_overview.data[0].avg_freq_mhz

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/scheduler_module.skill.yaml
-Source SHA-256: d508d8d5d6b1e22d71b7222adc022483ea3e1f52c9093f402a1188b8baeaf32d
+Source SHA-256: 67ddcf3a040cfc8fb5ace854ca824d699330c03bfd3894272d6df7d804f91677
 # 内核调度分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -168,10 +168,10 @@ rules:
   - runnable_data.data[0].thread_name
   - runnable_data.data[0].runnable_ms
 - condition: freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz < 1500
-  diagnosis: 观测大核窗口均频 ${freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz}MHz；需结合覆盖、容量和直接温控/策略证据解释
+  diagnosis: 观测大核窗口均频 ${freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz}MHz；需结合覆盖、容量和直接限频/策略证据解释
   confidence: medium
   suggestions:
-  - 检查设备温度
+  - 是否限频以同窗口的 CPU 限频证据（cpu_throttling_in_range）为准
   - 检查电池状态和功耗策略
   evidence_fields:
   - freq_data.data[0].avg_freq_mhz
