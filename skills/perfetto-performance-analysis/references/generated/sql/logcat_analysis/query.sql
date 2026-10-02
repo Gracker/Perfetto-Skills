@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/logcat_analysis.skill.yaml
--- Source SHA-256: 8c0018e6416eba29e18bcde7319b929fcc73db350ceff3d87b86e2e2b66e0f60
+-- Source SHA-256: 3e22777bc465abc270cfa5a40e878f1e91742a88662d87ca9d0e3e6eb808fd25
 
 WITH tagged AS (
   SELECT
@@ -68,8 +68,8 @@ scoped AS (
     CASE
       WHEN '${package|}' <> ''
         AND (
-          LOWER(COALESCE(msg, '')) LIKE '%' || LOWER('${package|}') || '%'
-          OR LOWER(COALESCE(tag, '')) LIKE '%' || LOWER('${package|}') || '%'
+          instr(LOWER(COALESCE(msg, '')), LOWER('${package|}')) > 0
+          OR instr(LOWER(COALESCE(tag, '')), LOWER('${package|}')) > 0
         )
         THEN 1 ELSE 0
     END AS package_match

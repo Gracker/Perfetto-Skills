@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rendering_pipeline_detection.skill.yaml
--- Source SHA-256: 8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff
+-- Source SHA-256: 87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569
 
 WITH
       dominant_process AS (
@@ -43,8 +43,8 @@ WITH
         FROM android_frames_layers
         WHERE layer_name IS NOT NULL
           AND (
-            ('${package}' <> '' AND layer_name GLOB '*' || '${package}' || '*')
-            OR ('${package}' = '' AND layer_name GLOB '*' || (SELECT pkg FROM dominant_pkg) || '*')
+            ('${package}' <> '' AND instr(layer_name, '${package}') > 0)
+            OR ('${package}' = '' AND instr(layer_name, (SELECT pkg FROM dominant_pkg)) > 0)
           )
       )
       SELECT

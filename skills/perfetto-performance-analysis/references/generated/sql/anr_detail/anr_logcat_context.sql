@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
--- Source SHA-256: 0be84fe96c0f5e4646a49f1630ef4cfcf6662638c5c42718b3bff9307513577f
+-- Source SHA-256: 5373394d55d3a035fc472bc4f0684c504581b9760f01a90d2c596cd88d35f92e
 
 WITH anr_window AS (
   SELECT
@@ -38,22 +38,22 @@ scoped AS (
     l.*,
     CASE
       WHEN '${process_name}' <> ''
-        AND LOWER(COALESCE(l.msg, '')) LIKE '%' || LOWER('${process_name}') || '%'
+        AND instr(LOWER(COALESCE(l.msg, '')), LOWER('${process_name}')) > 0
         THEN 1 ELSE 0
     END AS process_match,
     CASE
       WHEN '${component}' <> ''
-        AND LOWER(COALESCE(l.msg, '')) LIKE '%' || LOWER('${component}') || '%'
+        AND instr(LOWER(COALESCE(l.msg, '')), LOWER('${component}')) > 0
         THEN 1 ELSE 0
     END AS component_match,
     CASE
       WHEN '${intent}' <> ''
-        AND LOWER(COALESCE(l.msg, '')) LIKE '%' || LOWER('${intent}') || '%'
+        AND instr(LOWER(COALESCE(l.msg, '')), LOWER('${intent}')) > 0
         THEN 1 ELSE 0
     END AS intent_match,
     CASE
       WHEN '${error_id}' <> ''
-        AND LOWER(COALESCE(l.msg, '')) LIKE '%' || LOWER('${error_id}') || '%'
+        AND instr(LOWER(COALESCE(l.msg, '')), LOWER('${error_id}')) > 0
         THEN 1 ELSE 0
     END AS error_match,
     CASE

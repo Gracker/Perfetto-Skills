@@ -57,7 +57,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/score_pipelines.sql",
-      "sha256": "b43cc971b7d9f47c7863668483658de64ed9e4ff6dc13c20c9833ef393ef4e64",
+      "sha256": "a7e736ffa9e23fe3db5a416ae2b3e628f5ea5efc533abe726ac865c623e282c5",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -76,7 +76,7 @@
       "source": {
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
+        "sha256": "87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569"
       },
       "sql_dependencies": {
         "creates": [],
@@ -171,13 +171,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/determine_pipeline.sql",
-      "sha256": "a329a495ae6194286e0f4145b83fdd0dc327bccadbafb8fe598c3fa03de2aedc",
+      "sha256": "622f2030e48391a198e2409696ea4f2337925fa7dc75f99d0d69bbaa28f5bfc8",
       "signal_patterns": [],
       "skill_id": "rendering_pipeline_detection",
       "source": {
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
+        "sha256": "87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569"
       },
       "sql_dependencies": {
         "creates": [],
@@ -274,7 +274,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/subvariants.sql",
-      "sha256": "a3d9e3b597ec10f9550158725fddbfda4b5c52d9dbf5aa6e9d42fab682e457e0",
+      "sha256": "8350da4f289dca1b6e2357c3358c98748c6b5f4d5595faa3ee148e05aa212b54",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -303,7 +303,7 @@
       "source": {
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
+        "sha256": "87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569"
       },
       "sql_dependencies": {
         "creates": [],
@@ -398,7 +398,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/trace_requirements.sql",
-      "sha256": "5db4731a421a2de5484485f7a2feca5c40e8a786dab3f597cdb69635a2728b12",
+      "sha256": "60b6b39ae626fdf43de8217daa7d4b3ebcd5692966c07f8c98fe14cb3f85bd1d",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -422,7 +422,7 @@
       "source": {
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
+        "sha256": "87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569"
       },
       "sql_dependencies": {
         "creates": [],
@@ -519,7 +519,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/active_rendering_processes.sql",
-      "sha256": "2722ecbada5e60353cedf47ef3763d728e74eccd84c47099df34d11288666361",
+      "sha256": "2db32a5d3a5828cf92460bb29d322199af7313a0191f5194deef3ce728dbe65f",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -543,7 +543,7 @@
       "source": {
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
+        "sha256": "87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569"
       },
       "sql_dependencies": {
         "creates": [],
@@ -640,7 +640,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/layer_signals.sql",
-      "sha256": "11fa41d62382eba920e31040df31187ffb0b636afdfb376deffa5b5480fb4dda",
+      "sha256": "b6df69d1b845e7f8f48e9a597bade445085fcc62d024b27f72feeb22e17f2ccc",
       "signal_patterns": [
         "*Choreographer#doFrame*",
         "*FrameTimeline*",
@@ -653,7 +653,7 @@
       "source": {
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
+        "sha256": "87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569"
       },
       "sql_dependencies": {
         "creates": [],
@@ -748,7 +748,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/extra_rhythm_signals.sql",
-      "sha256": "e7b188b0f2ce87fad6d465c1cc25524447fd05fbf74ed573b35fb9c9631b58bf",
+      "sha256": "1cb0888af70c5ac1152d06bc28e51540fc9c6ce06614d6e2b172d663ff41edbb",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -762,7 +762,7 @@
       "source": {
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
+        "sha256": "87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569"
       },
       "sql_dependencies": {
         "creates": [],
@@ -859,7 +859,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rendering_pipeline_detection/bufferqueue_path_signals.sql",
-      "sha256": "ba0a3e15eaab0b0efc926e43d7b4af2b6f818b6ec331f05080a2119029420efe",
+      "sha256": "23e3f2db31544d8e3878a3d72e7a4e1816abef9e2fb964ac1b07a364a1879755",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -873,7 +873,7 @@
       "source": {
         "path": "backend/skills/atomic/rendering_pipeline_detection.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "8bd877df5f82a24930df01152c9abd1e7bab37802208d6afd2bade60b4bb0dff"
+        "sha256": "87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569"
       },
       "sql_dependencies": {
         "creates": [],

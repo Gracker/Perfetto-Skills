@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml
--- Source SHA-256: 9bd45c1ab88d6a908b1cc3212e0851489d75932736c4544a9bec8983237545b2
+-- Source SHA-256: 38cb7cb1b6874a31a2da8e82406e81c04fade5230ec56e948f7bfd2539a6a85b
 
 WITH
 sf_proc AS (

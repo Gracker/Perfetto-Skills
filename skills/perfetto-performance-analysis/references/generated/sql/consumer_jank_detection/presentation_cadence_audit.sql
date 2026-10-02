@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/consumer_jank_detection.skill.yaml
--- Source SHA-256: 4b5eabe1c5639d55456e498bdf6125fda0f49f1b49a216536b0f7ffde8cf04c7
+-- Source SHA-256: 1cabbcaffac2059d6095ba3df586dcd0990a0a9879057a8e8d44f7c3bf3756fc
 
 WITH
 timing_intervals AS (
@@ -31,7 +31,7 @@ cadence_rows AS (
   LEFT JOIN expected_frames e ON e.upid = a.upid AND e.layer_name = a.layer_name
     AND e.surface_frame_token = a.surface_frame_token
   WHERE a.layer_name IS NOT NULL AND a.surface_frame_token IS NOT NULL
-    AND (a.layer_name LIKE 'TX - ${package}%' OR a.layer_name = '${layer_name}'
+    AND (a.layer_name LIKE 'TX - ${package}%' ESCAPE '\' OR a.layer_name = '${layer_name}'
       OR ('${package}' = '' AND '${layer_name}' = ''))
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})

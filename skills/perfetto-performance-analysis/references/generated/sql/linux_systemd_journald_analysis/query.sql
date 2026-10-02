@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/linux_systemd_journald_analysis.skill.yaml
--- Source SHA-256: cd2cf0fd458e13893bab21974f26f9653bd1d4fe8b5fc6c41687bed42288a561
+-- Source SHA-256: 73a21e2a0fac64fb3e80030be4225b2c9e9051438c21557277bedf2ac1988aa2
 
 WITH input AS (
   SELECT
@@ -42,8 +42,8 @@ entries AS (
   FROM linux_systemd_journald_logs
   WHERE (${start_ts} IS NULL OR ts >= ${start_ts})
     AND (${end_ts} IS NULL OR ts < ${end_ts})
-    AND ('${unit|}' = '' OR LOWER(COALESCE(systemd_unit, '')) GLOB '*' || LOWER('${unit|}') || '*')
-    AND ('${tag|}' = '' OR LOWER(COALESCE(tag, '')) GLOB '*' || LOWER('${tag|}') || '*')
+    AND ('${unit|}' = '' OR instr(LOWER(COALESCE(systemd_unit, '')), LOWER('${unit|}')) > 0)
+    AND ('${tag|}' = '' OR instr(LOWER(COALESCE(tag, '')), LOWER('${tag|}')) > 0)
 ),
 selected AS (
   SELECT

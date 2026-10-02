@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/trace_state_track_summary.skill.yaml
--- Source SHA-256: 2cdb80f8ba21476ade7c51c601baad2f3af62cfa24ec319d2506c30c043c5699
+-- Source SHA-256: 5d59f9044f9221f0683e038476c7b53138b76302fa09efefa866ba13c4ae7633
 
 WITH input AS (
   SELECT MIN(MAX(COALESCE(${max_rows|80}, 80), 1), 500) AS max_rows
@@ -18,8 +18,8 @@ filtered AS (
   WHERE s.dur > 0
     AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR s.ts < ${end_ts})
-    AND ('${track_name|}' = '' OR LOWER(COALESCE(t.name, '')) GLOB '*' || LOWER('${track_name|}') || '*')
-    AND ('${category|}' = '' OR LOWER(COALESCE(s.category, '')) GLOB '*' || LOWER('${category|}') || '*')
+    AND ('${track_name|}' = '' OR instr(LOWER(COALESCE(t.name, '')), LOWER('${track_name|}')) > 0)
+    AND ('${category|}' = '' OR instr(LOWER(COALESCE(s.category, '')), LOWER('${category|}')) > 0)
 ),
 totals AS (
   SELECT SUM(dur) AS total_dur

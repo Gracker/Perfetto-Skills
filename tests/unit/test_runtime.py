@@ -115,6 +115,131 @@ class RuntimeTest(unittest.TestCase):
             "WHERE name GLOB 'o''hare*' AND ts >= 123 LIMIT 30",
         )
 
+    def test_sql_template_pattern_literal_values_match_themselves(self) -> None:
+        # SmartPerfetto sqlTemplate.ts: a value bound into the literal that is
+        # the whole GLOB/LIKE pattern is literal text; its author-written
+        # wildcards and |default stay patterns.
+        render = self.common.render_sql_template
+        self.assertEqual(
+            render("WHERE p.name = '${package}' OR p.name GLOB '${package}:*'", {"package": "com.foo*"}, {}),
+            "WHERE p.name = 'com.foo*' OR p.name GLOB 'com.foo[*]:*'",
+        )
+        self.assertEqual(
+            render("WHERE x NOT glob /* c */ ('*${v}*') COLLATE BINARY", {"v": "a?[b]'"}, {}),
+            "WHERE x NOT glob /* c */ ('*a[?][[]b]''*') COLLATE BINARY",
+        )
+        self.assertEqual(render("WHERE x GLOB '${v|com.*}'", {"v": None}, {}), "WHERE x GLOB 'com.*'")
+        self.assertEqual(
+            render("WHERE l LIKE 'TX - ${v}%' ESCAPE '\\'", {"v": "a_b%\\"}, {}),
+            "WHERE l LIKE 'TX - a\\_b\\%\\\\%' ESCAPE '\\'",
+        )
+        self.assertEqual(render("WHERE l LIKE '${v}'", {"v": "com.foo"}, {}), "WHERE l LIKE 'com.foo'")
+        with self.assertRaisesRegex(ValueError, "without ESCAPE"):
+            render("WHERE l LIKE '${v}'", {"v": "com_foo"}, {})
+
+    def test_sql_template_refuses_pattern_expressions_and_quoted_identifiers(self) -> None:
+        for template in (
+            "WHERE t.name GLOB '*' || LOWER('${v}') || '*'",
+            "WHERE msg LIKE '%' ||\n  '${v}'\n  || '%'",
+            "WHERE name GLOB LOWER('${v}')",
+            "WHERE name GLOB ${v}",
+            "WHERE name REGEXP '${v}'",
+            "WHERE glob('${v}', name)",
+            "WHERE name LIKE 'a%' ESCAPE '${v}'",
+        ):
+            with self.subTest(template=template):
+                with self.assertRaisesRegex(ValueError, "pattern expression"):
+                    self.common.render_sql_template(template, {"v": "x"}, {})
+        for template in ('SELECT "${v}" FROM t', "SELECT `${v}` FROM t", "SELECT [${v}] FROM t"):
+            with self.subTest(template=template):
+                with self.assertRaisesRegex(ValueError, "quoted identifier"):
+                    self.common.render_sql_template(template, {"v": "x"}, {})
+        self.assertEqual(
+            self.common.render_sql_template(
+                "WHERE a GLOB 'x*' AND b = '${v}' -- ${v}\n", {"v": "o'k"}, {}
+            ),
+            "WHERE a GLOB 'x*' AND b = 'o''k' -- ${v}\n",
+        )
+        # A quoted identifier is not a comment opener; the placeholder after it binds.
+        self.assertEqual(self.common.render_sql_template('SELECT "--", ${v}', {"v": 1}, {}), 'SELECT "--", 1')
+        for template, message in (("SELECT ${", "unterminated"), ("SELECT '${}'", "empty")):
+            with self.assertRaisesRegex(ValueError, message):
+                self.common.render_sql_template(template, {}, {})
+
+    def test_sql_template_closes_pattern_bypasses(self) -> None:
+        render = self.common.render_sql_template
+        for template in (
+            "WHERE name GLOB CASE WHEN 1 THEN '${v}' ELSE '' END",
+            "WHERE name GLOB '${v}' COLLATE BINARY || '${w}'",
+            "WHERE \"glob\"('${v}', name)",
+            "WHERE `like`('${v}', name)",
+            "WHERE name LIKE '${v}' ESCAPE ${e}",
+            "WHERE name GLOB '${v}' ESCAPE '\\'",
+        ):
+            with self.subTest(template=template):
+                with self.assertRaisesRegex(ValueError, "pattern expression"):
+                    render(template, {"v": "a", "w": "*", "e": 1}, {})
+        self.assertEqual(
+            render("WHERE a GLOB '${v}' COLLATE NOCASE AND b = CASE WHEN c THEN '${w}' END", {"v": "*", "w": "*"}, {}),
+            "WHERE a GLOB '[*]' COLLATE NOCASE AND b = CASE WHEN c THEN '*' END",
+        )
+        self.assertEqual(render("WHERE n LIKE '${v}' ESCAPE ('1')", {"v": "1a"}, {}), "WHERE n LIKE '11a' ESCAPE ('1')")
+        # A quoted name is never a keyword: "END" does not close the CASE, and a column called "glob" is not GLOB.
+        for template in (
+            "WHERE name GLOB CASE WHEN \"END\" THEN '${v}' ELSE '' END",
+            "WHERE name GLOB CASE WHEN [END] THEN '${v}' ELSE '' END",
+            "WHERE name GLOB CASE WHEN `END` THEN '${v}' ELSE '' END",
+        ):
+            with self.subTest(template=template):
+                with self.assertRaisesRegex(ValueError, "pattern expression"):
+                    render(template, {"v": "*"}, {})
+        self.assertEqual(render("SELECT \"glob\" || '${v}' FROM names", {"v": "*"}, {}), "SELECT \"glob\" || '*' FROM names")
+        for template, message in (
+            ("WHERE n GLOB '[${v}]'", "character class"),
+            ("WHERE n GLOB '[^]${v}'", "character class"),
+            ("WHERE n LIKE '\\${v}%' ESCAPE '\\'", "ESCAPE character"),
+        ):
+            with self.subTest(template=template):
+                with self.assertRaisesRegex(ValueError, message):
+                    render(template, {"v": "a-z"}, {})
+        self.assertEqual(render("WHERE n GLOB '[ab]${v}*'", {"v": "x"}, {}), "WHERE n GLOB '[ab]x*'")
+        self.assertEqual(render("SELECT 1-${v} AND x = 1", {"v": -1}, {}), "SELECT 1- -1 AND x = 1")
+
+    def test_published_sql_binds_placeholders_only_where_escaping_keeps_them_data(self) -> None:
+        # The same rule SmartPerfetto's sqlTemplate.test.ts applies to its Skills,
+        # over every SQL file this package ships.
+        refused = []
+        for path in sorted(SCRIPTS.parent.rglob("*.sql")):
+            for start, place in self.common.sql_placeholder_places(path.read_text(encoding="utf-8")).items():
+                token = place.token
+                if (
+                    place.context in {"identifier", "malformed"}
+                    or (token is not None and token.in_pattern_expression)
+                    or (token is not None and token.pattern == "like" and not token.escape)
+                ):
+                    refused.append(f"{path.relative_to(SCRIPTS.parent)}@{start}: {place.match}")
+        self.assertEqual(refused, [])
+
+    def test_sql_template_pattern_literals_match_only_the_value_in_sqlite(self) -> None:
+        import sqlite3
+
+        db = sqlite3.connect(":memory:")
+        db.execute("CREATE TABLE names (name TEXT)")
+        names = ["com.foo", "com.foo:remote", "com.foox", "com.foo*", "com.foo*:push", "com.f[o]o", "com.fo_"]
+        db.executemany("INSERT INTO names VALUES (?)", [(n,) for n in names])
+
+        def matching(predicate: str, value: str) -> list[str]:
+            where = self.common.render_sql_template(predicate, {"v": value}, {})
+            return [row[0] for row in db.execute(f"SELECT name FROM names WHERE {where} ORDER BY rowid")]
+
+        scope = "name = '${v}' OR name GLOB '${v}:*'"
+        self.assertEqual(matching(scope, "com.foo"), ["com.foo", "com.foo:remote"])
+        self.assertEqual(matching(scope, "com.foo*"), ["com.foo*", "com.foo*:push"])
+        self.assertEqual(matching(scope, "com.f[o]o"), ["com.f[o]o"])
+        self.assertEqual(matching("name GLOB '*${v}*'", "?"), [])
+        self.assertEqual(matching("name LIKE 'com.f${v}' ESCAPE '\\'", "o_"), ["com.fo_"])
+        db.close()
+
     def test_sql_template_binds_saved_result_as_relation(self) -> None:
         rendered = self.common.render_sql_template(
             "SELECT value FROM ${prior_result}",

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/consumer_jank_detection.skill.yaml
--- Source SHA-256: 4b5eabe1c5639d55456e498bdf6125fda0f49f1b49a216536b0f7ffde8cf04c7
+-- Source SHA-256: 1cabbcaffac2059d6095ba3df586dcd0990a0a9879057a8e8d44f7c3bf3756fc
 
 WITH
 sf_vsync_intervals AS (

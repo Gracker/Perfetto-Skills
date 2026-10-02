@@ -533,7 +533,7 @@ def sql_literal(value: object) -> str:
     raise ValueError(f"unsupported SQL parameter type: {type(value).__name__}")
 
 
-def sql_string_fragment(value: object) -> str:
+def _sql_string_text(value: object) -> str:
     if value is None:
         return ""
     if isinstance(value, bool):
@@ -541,10 +541,19 @@ def sql_string_fragment(value: object) -> str:
     if isinstance(value, (int, float, str)):
         if isinstance(value, float) and not math.isfinite(value):
             raise ValueError("SQL parameters cannot contain NaN or infinity")
-        return str(value).replace("'", "''")
+        return str(value)
     if isinstance(value, (list, tuple)):
-        return ",".join(sql_string_fragment(item) for item in value)
+        return ",".join(_sql_string_text(item) for item in value)
     raise ValueError(f"unsupported SQL string parameter type: {type(value).__name__}")
+
+
+def sql_string_fragment(value: object, literal: _SqlToken | None = None, name: str = "value") -> str:
+    """A value's text inside a single-quoted literal; in a GLOB/LIKE pattern
+    literal its own wildcards are escaped before quotes are doubled."""
+    text = _sql_string_text(value)
+    if literal is not None:
+        text = _sql_pattern_text(text, literal, name)
+    return text.replace("'", "''")
 
 
 def default_template_value(raw: str) -> object:
@@ -681,6 +690,245 @@ def sql_template_roots(
     return sorted(parameters), sorted(references), sorted(dependencies)
 
 
+_SQL_PLACEHOLDER = re.compile(r"\$\{([^}]+)\}")
+_SQL_WORD = re.compile(r"(?:[\w.]|\$(?!\{))+", re.ASCII)
+_SQL_OPERATOR = re.compile(r"[=<>!]+|\|+|.", re.DOTALL)
+_SQL_COMPARISON = re.compile(r"[=<>!]+")
+# SQLite's identifier quotes and the character that closes each.
+_SQL_IDENTIFIER_CLOSE = {'"': '"', "`": "`", "[": "]"}
+_SQL_PATTERN_OPERATORS = frozenset({"GLOB", "LIKE", "REGEXP", "MATCH"})
+# Words that end a pattern operand at its own nesting depth.
+_SQL_OPERAND_END_WORDS = frozenset({
+    "AND", "OR", "NOT", "IS", "IN", "BETWEEN", "ESCAPE", "THEN", "WHEN", "ELSE", "END",
+    "FROM", "WHERE", "GROUP", "HAVING", "WINDOW", "ORDER", "LIMIT", "UNION", "EXCEPT", "INTERSECT",
+    "AS", "ON", "JOIN",
+})
+
+
+@dataclass
+class _SqlToken:
+    kind: str  # "word", "identifier", "string" or "punct"
+    text: str = ""  # upper-cased word or quoted name, the punctuation, or the decoded literal text
+    pattern: str | None = None  # "glob" or "like": this literal is the whole pattern
+    escape: str | None = None  # the LIKE ESCAPE character, when exactly one
+    in_pattern_expression: bool = False  # in a pattern operand, not as its only literal
+    bound: bool = False  # a string literal with a placeholder in it
+
+
+@dataclass
+class SqlPlaceholderPlace:
+    """Where one `${...}` sits in SQL text (SmartPerfetto sqlTemplate.ts)."""
+
+    context: str  # "code", "string", "comment", "identifier" or "malformed"
+    match: str
+    token: _SqlToken | None = None  # the code token or string literal holding it
+    literal_prefix: str = ""  # in a string literal: the author's text before it
+
+
+def sql_placeholder_places(template: str) -> dict[int, SqlPlaceholderPlace]:
+    """Every placeholder start, in order, with where it sits. Placeholders are
+    opaque: a quote or comment marker inside `${...}` is not SQL. A `${` that
+    is not a placeholder outside comments is "malformed". SmartPerfetto's
+    sqlTemplate.ts scans with the same tokens and operand rules."""
+    at = {m.start(): m.group(0) for m in _SQL_PLACEHOLDER.finditer(template)}
+    places: dict[int, SqlPlaceholderPlace] = {}
+    tokens: list[_SqlToken] = []
+
+    def record(index: int, context: str, token: _SqlToken | None = None) -> int:
+        prefix = ""
+        if context == "string" and token is not None:
+            token.bound = True
+            prefix = token.text
+        places[index] = SqlPlaceholderPlace(context, at[index], token, prefix)
+        return index + len(at[index])
+
+    def malformed(index: int) -> bool:
+        if template.startswith("${", index):
+            places[index] = SqlPlaceholderPlace("malformed", "${")
+            return True
+        return False
+
+    def quoted(index: int, close: str, context: str, token: _SqlToken | None = None) -> int:
+        while index < len(template):
+            if index in at:
+                index = record(index, context, token)
+                continue
+            if malformed(index):
+                index += 2
+                continue
+            if template[index] == close:
+                if close == "]" or template[index + 1:index + 2] != close:
+                    return index + 1
+                if token is not None:
+                    token.text += close
+                index += 2
+                continue
+            if token is not None:
+                token.text += template[index]
+            index += 1
+        return index
+
+    index = 0
+    while index < len(template):
+        char = template[index]
+        if index in at:
+            token = _SqlToken("word")
+            tokens.append(token)
+            index = record(index, "code", token)
+        elif malformed(index):
+            index += 2
+        elif char.isspace():
+            index += 1
+        elif template.startswith("--", index) or template.startswith("/*", index):
+            close = "\n" if char == "-" else "*/"
+            found = template.find(close, index + 2)
+            end = len(template) if found < 0 else found + len(close)
+            index += 2
+            while index < end:
+                index = record(index, "comment") if index in at else index + 1
+        elif char == "'":
+            token = _SqlToken("string")
+            tokens.append(token)
+            index = quoted(index + 1, "'", "string", token)
+        elif char in _SQL_IDENTIFIER_CLOSE:
+            # A quoted name is never a keyword, but `"glob"(...)` still calls GLOB.
+            token = _SqlToken("identifier")
+            tokens.append(token)
+            index = quoted(index + 1, _SQL_IDENTIFIER_CLOSE[char], "identifier", token)
+            token.text = token.text.upper()
+        else:
+            word = _SQL_WORD.match(template, index)
+            if word:
+                tokens.append(_SqlToken("word", word.group(0).upper()))
+                index = word.end()
+            else:
+                op = _SQL_OPERATOR.match(template, index)
+                tokens.append(_SqlToken("punct", op.group(0)))
+                index = op.end()
+    _mark_sql_pattern_operands(tokens)
+    return places
+
+
+def _is_sql_punct(token: _SqlToken | None, text: str) -> bool:
+    return token is not None and token.kind == "punct" and token.text == text
+
+
+def _is_sql_word(token: _SqlToken | None, text: str) -> bool:
+    return token is not None and token.kind == "word" and token.text == text
+
+
+def _sql_operand_end(tokens: list[_SqlToken], start: int) -> int:
+    """The index just past the expression at `start`; CASE ... END nests like parentheses."""
+    end = start
+    depth = 0
+    while end < len(tokens):
+        t = tokens[end]
+        if _is_sql_punct(t, "(") or _is_sql_word(t, "CASE"):
+            depth += 1
+        elif _is_sql_punct(t, ")") or _is_sql_word(t, "END"):
+            if depth == 0:
+                break
+            depth -= 1
+        elif depth == 0 and t.kind == "punct" and (t.text in {",", ";"} or _SQL_COMPARISON.fullmatch(t.text)):
+            break
+        elif depth == 0 and t.kind == "word" and t.text in _SQL_OPERAND_END_WORDS:
+            break
+        end += 1
+    return end
+
+
+def _sql_sole_token(tokens: list[_SqlToken], first: int, last: int) -> _SqlToken | None:
+    """The one token `first..last` amounts to, through wrapping parentheses and postfix COLLATE."""
+    while True:
+        if last - first >= 2 and _is_sql_word(tokens[last - 1], "COLLATE"):
+            last -= 2
+        elif (
+            last > first and _is_sql_punct(tokens[first], "(") and _is_sql_punct(tokens[last], ")")
+            and _sql_closes(tokens, first, last)
+        ):
+            first += 1
+            last -= 1
+        else:
+            return tokens[first] if first == last else None
+
+
+def _mark_sql_pattern_operands(tokens: list[_SqlToken]) -> None:
+    """Tag the tokens of each GLOB/LIKE/REGEXP/MATCH right operand. Only a
+    string literal that is the whole GLOB/LIKE pattern, with no ESCAPE or a
+    fixed one-character ESCAPE literal, can take a value."""
+    for k, token in enumerate(tokens):
+        operator = token.text in _SQL_PATTERN_OPERATORS and (
+            token.kind == "word"
+            or (token.kind == "identifier" and k + 1 < len(tokens) and _is_sql_punct(tokens[k + 1], "("))
+        )
+        if not operator:
+            continue
+        end = _sql_operand_end(tokens, k + 1)
+        escape: str | None = None
+        escape_fixed = True
+        if end < len(tokens) and _is_sql_word(tokens[end], "ESCAPE"):
+            escape_end = _sql_operand_end(tokens, end + 1)
+            literal = _sql_sole_token(tokens, end + 1, escape_end - 1) if escape_end > end + 1 else None
+            escape_fixed = (
+                token.text == "LIKE" and literal is not None and literal.kind == "string"
+                and not literal.bound and len(literal.text) == 1
+            )
+            if escape_fixed:
+                escape = literal.text
+            for t in range(end + 1, escape_end):
+                tokens[t].in_pattern_expression = True
+        pattern = _sql_sole_token(tokens, k + 1, end - 1) if end > k + 1 else None
+        if escape_fixed and pattern is not None and pattern.kind == "string" and token.text in {"GLOB", "LIKE"}:
+            pattern.pattern = token.text.lower()
+            pattern.escape = escape
+        else:
+            for t in range(k + 1, end):
+                tokens[t].in_pattern_expression = True
+
+
+def _inside_glob_class(text: str) -> bool:
+    """Whether a GLOB pattern's author text leaves the next character inside a `[...]` class."""
+    open_index = -1
+    for i, char in enumerate(text):
+        if open_index < 0:
+            if char == "[":
+                open_index = i
+        elif char == "]" and i > open_index + (2 if text[open_index + 1:open_index + 2] == "^" else 1):
+            open_index = -1
+    return open_index >= 0
+
+
+def _ends_escaping(text: str, escape: str) -> bool:
+    """Whether `text` ends in an odd run of `escape`, which escapes the next character."""
+    return (len(text) - len(text.rstrip(escape))) % 2 == 1
+
+
+def _sql_closes(tokens: list[_SqlToken], open_index: int, close_index: int) -> bool:
+    depth = 0
+    for t in range(open_index, close_index + 1):
+        if _is_sql_punct(tokens[t], "("):
+            depth += 1
+        elif _is_sql_punct(tokens[t], ")"):
+            depth -= 1
+            if depth == 0:
+                return t == close_index
+    return False
+
+
+def _sql_pattern_text(text: str, token: _SqlToken, name: str) -> str:
+    """A bound value's text in a pattern literal: its own wildcards match
+    themselves, each character mapped once. LIKE without ESCAPE cannot escape,
+    so `%` or `_` is refused."""
+    if token.pattern == "glob":
+        return re.sub(r"[*?\[]", lambda m: f"[{m.group(0)}]", text)
+    if token.pattern == "like":
+        if token.escape:
+            return "".join(token.escape + ch if ch in {"%", "_", token.escape} else ch for ch in text)
+        if "%" in text or "_" in text:
+            raise ValueError(f"SQL placeholder {name!r} binds a LIKE pattern without ESCAPE; its value cannot contain % or _")
+    return text
+
+
 def render_sql_template(
     template: str,
     parameters: Mapping[str, object],
@@ -694,90 +942,69 @@ def render_sql_template(
     reject_process_scope_names(results)
     output: list[str] = []
     template_names: set[str] | None = None
-    index = 0
-    state = "normal"
-    while index < len(template):
-        if state == "line_comment":
-            output.append(template[index])
-            if template[index] == "\n":
-                state = "normal"
-            index += 1
+    cursor = 0
+    for index, place in sql_placeholder_places(template).items():
+        if place.context == "comment":
             continue
-        if state == "block_comment":
-            if template.startswith("*/", index):
-                output.append("*/")
-                index += 2
-                state = "normal"
-            else:
-                output.append(template[index])
-                index += 1
-            continue
-        if state == "normal" and template.startswith("--", index):
-            output.append("--")
-            index += 2
-            state = "line_comment"
-            continue
-        if state == "normal" and template.startswith("/*", index):
-            output.append("/*")
-            index += 2
-            state = "block_comment"
-            continue
-        if template.startswith("${", index):
-            end = template.find("}", index + 2)
-            if end < 0:
+        if place.context == "malformed":
+            if template.find("}", index + 2) < 0:
                 raise ValueError("unterminated SQL template placeholder")
-            expression = template[index + 2 : end]
-            name, separator, raw_default = expression.partition("|")
-            if not name:
-                raise ValueError("empty SQL template placeholder")
-            if is_process_scope_name(name):
-                if name != "__process_scope.upid" or separator or state == "string":
-                    raise ValueError("unsupported runtime process scope placeholder")
-                if template_names is None:
-                    template_names = sql_template_names(template)
-                output.append(sql_literal(_process_scope_value(
-                    process_scope, parameters, results, template_names, trace_sha256, trace_side,
-                )))
-                index = end + 1
-                continue
-            matched_result, is_relation, value = resolve_result_expression(
-                name, results, allow_missing=bool(separator)
+            raise ValueError("empty SQL template placeholder")
+        end = index + len(place.match)
+        name, separator, raw_default = place.match[2:-1].partition("|")
+        if not name:
+            raise ValueError("empty SQL template placeholder")
+        if place.context == "identifier":
+            raise ValueError(f"SQL placeholder {name!r} cannot be bound inside a quoted identifier")
+        if place.token is not None and place.token.in_pattern_expression:
+            raise ValueError(
+                f"SQL placeholder {name!r} is part of a GLOB/LIKE/REGEXP/MATCH pattern expression; "
+                "bind it as the pattern's only string literal, or compare with instr()"
             )
-            if not matched_result:
-                if name not in parameters and not separator:
-                    raise ValueError(f"missing SQL template value: {name}")
-                value = parameters.get(name)
-            # SmartPerfetto: a bound name whose value is null (an unset optional
-            # input, a null field, a row an empty result lacks) still takes its
-            # `|default`.
-            if value is None and separator:
-                value = default_template_value(raw_default)
-            if is_relation:
-                if state == "string":
-                    raise ValueError(
-                        f"saved result {name!r} cannot be used inside a string"
-                    )
-                replacement = result_rows_to_relation(value, name)
-            else:
-                replacement = (
-                    sql_string_fragment(value) if state == "string" else sql_literal(value)
-                )
-            output.append(replacement)
-            index = end + 1
+        in_string = place.context == "string"
+        literal = place.token if in_string and place.token is not None and place.token.pattern else None
+        if literal is not None and literal.pattern == "glob" and _inside_glob_class(place.literal_prefix):
+            raise ValueError(f"SQL placeholder {name!r} sits inside a GLOB character class")
+        if literal is not None and literal.escape and _ends_escaping(place.literal_prefix, literal.escape):
+            raise ValueError(f"SQL placeholder {name!r} follows the pattern's ESCAPE character")
+        output.append(template[cursor:index])
+        cursor = end
+        if is_process_scope_name(name):
+            if name != "__process_scope.upid" or separator or in_string:
+                raise ValueError("unsupported runtime process scope placeholder")
+            if template_names is None:
+                template_names = sql_template_names(template)
+            output.append(sql_literal(_process_scope_value(
+                process_scope, parameters, results, template_names, trace_sha256, trace_side,
+            )))
             continue
-        if state == "string":
-            if template.startswith("''", index):
-                output.append("''")
-                index += 2
-                continue
-            if template[index] == "'":
-                state = "normal"
-        elif template[index] == "'":
-            state = "string"
-        output.append(template[index])
-        index += 1
+        matched_result, is_relation, value = resolve_result_expression(
+            name, results, allow_missing=bool(separator)
+        )
+        if not matched_result:
+            if name not in parameters and not separator:
+                raise ValueError(f"missing SQL template value: {name}")
+            value = parameters.get(name)
+        # SmartPerfetto: a bound name whose value is null (an unset optional
+        # input, a null field, a row an empty result lacks) still takes its
+        # `|default`, which is author text and keeps its own wildcards.
+        from_default = value is None and bool(separator)
+        if from_default:
+            value = default_template_value(raw_default)
+        if is_relation:
+            if in_string:
+                raise ValueError(
+                    f"saved result {name!r} cannot be used inside a string"
+                )
+            output.append(result_rows_to_relation(value, name))
+        elif in_string:
+            output.append(sql_string_fragment(value, None if from_default else literal, name))
+        else:
+            text = sql_literal(value)
+            # `1-${v}` with v = -1 must not become the comment `1--1`.
+            output.append(f" {text}" if text.startswith("-") else text)
+    output.append(template[cursor:])
     return "".join(output)
-
 
 _INTEGER = re.compile(r"^-?(?:0|[1-9][0-9]*)$")
 _FLOAT = re.compile(
