@@ -55,7 +55,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/input_coverage.sql",
-      "sha256": "217fa701073647a1277870fcb25ab393d7484554c63af2def9c9c11373cecea1",
+      "sha256": "593c7cbd548114cbdc567691c8474fca9854192f89171ddbfac71683b7d4ea68",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
@@ -89,12 +89,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "8cf98355a5e54d927fcf200111666c3da884681d14746be7ac663461f5c30b63"
+            "source_sha256": "0d6c6f993fc077ba607f2ed3eec7e65037ad49699487c036df5decc347dfe7cb"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/scene_input_facts.sql",
-            "source_sha256": "4634ff33d5ba31bf1949dbc9337c5f3e8a7c75d83de57341233910e465fb4fe8"
+            "source_sha256": "e859ee4b69506a8f2c8a5a0a30c76add7c91a4231fd0884fba6e35ab297c3688"
           },
           {
             "order": 2,
@@ -692,7 +692,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/user_gestures.sql",
-      "sha256": "adb9dab1c48be373b13c3f6a89f33974fbc3e2fde1682915b066b8264227f52a",
+      "sha256": "b0d010dccec8723972e202e95b3ff629ac10fc87cc29a0717adbc17dd3f3de68",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
@@ -726,12 +726,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "8cf98355a5e54d927fcf200111666c3da884681d14746be7ac663461f5c30b63"
+            "source_sha256": "0d6c6f993fc077ba607f2ed3eec7e65037ad49699487c036df5decc347dfe7cb"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/scene_input_facts.sql",
-            "source_sha256": "4634ff33d5ba31bf1949dbc9337c5f3e8a7c75d83de57341233910e465fb4fe8"
+            "source_sha256": "e859ee4b69506a8f2c8a5a0a30c76add7c91a4231fd0884fba6e35ab297c3688"
           },
           {
             "order": 2,
@@ -1536,7 +1536,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/idle_periods.sql",
-      "sha256": "393da5ac46a6e860bb0d6edb23477dc467da339b9cceaaf3ca6bd97d718c655d",
+      "sha256": "a665fc2d81fa46a7b5ef4f42b64278d7aa2a3212bcf16d7ab4f68e2d8b0c6749",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
@@ -1570,12 +1570,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "8cf98355a5e54d927fcf200111666c3da884681d14746be7ac663461f5c30b63"
+            "source_sha256": "0d6c6f993fc077ba607f2ed3eec7e65037ad49699487c036df5decc347dfe7cb"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/scene_input_facts.sql",
-            "source_sha256": "4634ff33d5ba31bf1949dbc9337c5f3e8a7c75d83de57341233910e465fb4fe8"
+            "source_sha256": "e859ee4b69506a8f2c8a5a0a30c76add7c91a4231fd0884fba6e35ab297c3688"
           }
         ],
         "name_parameters": [],
@@ -2368,7 +2368,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/operation_chain.sql",
-      "sha256": "b3fa4ae337d2cf5d6ef8cec0bf1b97b2d40f1eed9f386cf67ed8489d9db5d2e6",
+      "sha256": "042665dbca4013ebea0c602c78d23573121e8321c6cd632dbc305c4471fb2042",
       "signal_patterns": [
         "*.*",
         "battery_stats.top",
@@ -2407,12 +2407,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "8cf98355a5e54d927fcf200111666c3da884681d14746be7ac663461f5c30b63"
+            "source_sha256": "0d6c6f993fc077ba607f2ed3eec7e65037ad49699487c036df5decc347dfe7cb"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/scene_input_facts.sql",
-            "source_sha256": "4634ff33d5ba31bf1949dbc9337c5f3e8a7c75d83de57341233910e465fb4fe8"
+            "source_sha256": "e859ee4b69506a8f2c8a5a0a30c76add7c91a4231fd0884fba6e35ab297c3688"
           }
         ],
         "name_parameters": [],
@@ -2487,7 +2487,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/clean_timeline.sql",
-      "sha256": "cc04faeb4d1fa1e0b95c9cd41dc9607123bf2c7fccd4e350a099ddeab7004710",
+      "sha256": "36dc24ccbaa29fecf489c63c4913b429814a47ec87936d9e858471a57b8e989a",
       "signal_patterns": [
         "*AppTransition*",
         "*BackGesture*",
@@ -2548,12 +2548,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "8cf98355a5e54d927fcf200111666c3da884681d14746be7ac663461f5c30b63"
+            "source_sha256": "0d6c6f993fc077ba607f2ed3eec7e65037ad49699487c036df5decc347dfe7cb"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/scene_input_facts.sql",
-            "source_sha256": "4634ff33d5ba31bf1949dbc9337c5f3e8a7c75d83de57341233910e465fb4fe8"
+            "source_sha256": "e859ee4b69506a8f2c8a5a0a30c76add7c91a4231fd0884fba6e35ab297c3688"
           }
         ],
         "name_parameters": [],
@@ -2628,7 +2628,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/scene_reconstruction/merged_timeline.sql",
-      "sha256": "d77141330f1b7e514f5ab75150385432c0dbe325d889d9dc74ac86484275ad5c",
+      "sha256": "0e5bb4e4237d820daf2f6c84ea87a35c4dc52a16c8f3a3c7b9486ecd3b6d9c3b",
       "signal_patterns": [],
       "skill_id": "scene_reconstruction",
       "source": {
@@ -2662,12 +2662,12 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/android_input_events_normalized.sql",
-            "source_sha256": "8cf98355a5e54d927fcf200111666c3da884681d14746be7ac663461f5c30b63"
+            "source_sha256": "0d6c6f993fc077ba607f2ed3eec7e65037ad49699487c036df5decc347dfe7cb"
           },
           {
             "order": 1,
             "source_path": "backend/skills/fragments/scene_input_facts.sql",
-            "source_sha256": "4634ff33d5ba31bf1949dbc9337c5f3e8a7c75d83de57341233910e465fb4fe8"
+            "source_sha256": "e859ee4b69506a8f2c8a5a0a30c76add7c91a4231fd0884fba6e35ab297c3688"
           },
           {
             "order": 2,

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/scene_input_facts.sql
--- Source SHA-256: 4634ff33d5ba31bf1949dbc9337c5f3e8a7c75d83de57341233910e465fb4fe8
+-- Source SHA-256: e859ee4b69506a8f2c8a5a0a30c76add7c91a4231fd0884fba6e35ab297c3688
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Shared input observation contract. Legacy android_input_events contains only
@@ -8,7 +8,8 @@
 -- Do not infer scrolling, long-click recognition or fling from MOVE counts,
 -- contact duration or subsequent frames. Preserve native device/display IDs.
 -- Requires fragments/android_input_events_normalized.sql listed before this
--- fragment: the legacy branch reads its prefix-free actions (MOVE, DOWN, UP).
+-- fragment: the legacy branch reads its prefix-free actions (MOVE, DOWN, UP)
+-- and receiver_owns_window.
 scene_raw_input AS (
   SELECT 'android_motion_events' AS source_table, CAST(id AS TEXT) AS source_id,
     ts, 'MOTION' AS event_type,
@@ -17,7 +18,7 @@ scene_raw_input AS (
       WHEN 3 THEN 'CANCEL' WHEN 5 THEN 'POINTER_DOWN' WHEN 6 THEN 'POINTER_UP'
       WHEN 7 THEN 'HOVER_MOVE' WHEN 8 THEN 'SCROLL' ELSE 'UNKNOWN' END AS event_action,
     device_id, display_id, source AS input_source, NULL AS upid,
-    NULL AS process_name, NULL AS event_channel,
+    NULL AS process_name, NULL AS event_channel, 0 AS receiver_owns_window,
     'device:' || COALESCE(CAST(device_id AS TEXT), 'unknown:' || id) ||
       ':display:' || COALESCE(CAST(display_id AS TEXT), 'unknown') ||
       ':source:' || COALESCE(CAST(source AS TEXT), 'unknown') AS stream_key,
@@ -26,7 +27,7 @@ scene_raw_input AS (
   UNION ALL
   SELECT 'android_key_events', CAST(id AS TEXT), ts, 'KEY',
     CASE action WHEN 0 THEN 'KEY_DOWN' WHEN 1 THEN 'KEY_UP' ELSE 'UNKNOWN' END,
-    device_id, display_id, source, NULL, NULL, NULL,
+    device_id, display_id, source, NULL, NULL, NULL, 0,
     'device:' || COALESCE(CAST(device_id AS TEXT), 'unknown:' || id) ||
       ':display:' || COALESCE(CAST(display_id AS TEXT), 'unknown') ||
       ':source:' || COALESCE(CAST(source AS TEXT), 'unknown'),
@@ -37,7 +38,7 @@ scene_raw_input AS (
     COALESCE(input_event_id, event_seq, '') || ':' || COALESCE(event_channel, '') || ':' || dispatch_ts,
     COALESCE(read_time, dispatch_ts, receive_ts), event_type,
     COALESCE(NULLIF(event_action, ''), 'UNKNOWN'), NULL, NULL, NULL, upid,
-    process_name, event_channel,
+    process_name, event_channel, receiver_owns_window,
     -- Channel + process incarnation, not pid/name or a global DOWN counter.
     COALESCE(CAST(upid AS TEXT), 'unknown') || ':' ||
       COALESCE(event_channel, 'unknown:' || COALESCE(input_event_id, event_seq, CAST(dispatch_ts AS TEXT))),
@@ -62,8 +63,11 @@ scene_input_facts AS (
   ) WHERE duplicate_rank = 1
 ),
 -- Multiple dispatch targets are observations of one physical event. Rank by
--- action availability on the receiving stream, not app/vendor name. Ambiguous
--- action-bearing recipients remain unassigned; the selected row is provenance,
+-- action availability on the receiving stream, then receiver_owns_window
+-- (defined in android_input_events_normalized.sql), never by app/vendor name.
+-- Candidates are the action-bearing receivers, else the window owners, else
+-- every receiver; the ranking and receiver_count follow that same precedence.
+-- More than one candidate stays unassigned; the selected row is provenance,
 -- never a claim that this recipient owns the user's action.
 scene_stream_quality AS (
   SELECT stream_key, SUM(event_action != 'UNKNOWN') AS known_actions
@@ -74,14 +78,17 @@ scene_physical_ranked AS (
     COALESCE(f.physical_event_id || ':' || f.ts, f.source_table || ':' || f.source_id) AS physical_event_key,
     ROW_NUMBER() OVER (
       PARTITION BY COALESCE(f.physical_event_id || ':' || f.ts, f.source_table || ':' || f.source_id)
-      ORDER BY f.event_action = 'UNKNOWN', q.known_actions DESC, f.stream_key, f.source_id
+      ORDER BY f.event_action = 'UNKNOWN', q.known_actions DESC, f.receiver_owns_window DESC,
+        f.stream_key, f.source_id
     ) AS physical_rank
   FROM scene_input_facts f JOIN scene_stream_quality q USING (stream_key)
 ),
 scene_physical_quality AS (
   SELECT physical_event_key, COUNT(*) AS dispatch_count,
     CASE WHEN MAX(known_actions) > 0
-      THEN COUNT(DISTINCT CASE WHEN known_actions > 0 THEN stream_key END)
+        THEN COUNT(DISTINCT CASE WHEN known_actions > 0 THEN stream_key END)
+      WHEN MAX(receiver_owns_window) = 1
+        THEN COUNT(DISTINCT CASE WHEN receiver_owns_window = 1 THEN stream_key END)
       ELSE COUNT(DISTINCT stream_key) END AS receiver_count,
     COUNT(DISTINCT CASE WHEN event_action != 'UNKNOWN' THEN event_action END) AS action_variants
   FROM scene_physical_ranked GROUP BY physical_event_key
