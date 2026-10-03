@@ -47,7 +47,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
-    "sha256": "3713800e586f827002ea410f215faa46be46a589e7512324651b21f1128ce673"
+    "sha256": "704e180a6465afd151d94ae86efccee580680462a62262896290e7844e46f481"
   },
   "steps": [
     {
@@ -156,7 +156,7 @@
             "high_temp_periods.data[0]?.peak_temp"
           ],
           "suggestions": [
-            "持续高温会加速热节流",
+            "持续高温时是否已触发频率上限，以 cpufreq 限频证据为准",
             "检查设备是否被遮挡",
             "考虑降低持续性能需求"
           ]

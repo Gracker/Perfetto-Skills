@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/thermal_module.skill.yaml
-Source SHA-256: 3713800e586f827002ea410f215faa46be46a589e7512324651b21f1128ce673
+Source SHA-256: 704e180a6465afd151d94ae86efccee580680462a62262896290e7844e46f481
 # 热管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -136,6 +136,8 @@ display:
   level: detail
   layer: list
   title: 频率骤降事件（原因待查）
+  title_i18n:
+    en: Frequency Drop Events (cause not determined)
 save_as: throttling_events
 ```
 ### 散热设备活动
@@ -209,7 +211,7 @@ rules:
   diagnosis: 高温样本首尾跨度 ${high_temp_periods.data[0]?.duration_sec} 秒；不代表连续高温或散热不足
   confidence: high
   suggestions:
-  - 持续高温会加速热节流
+  - 持续高温时是否已触发频率上限，以 cpufreq 限频证据为准
   - 检查设备是否被遮挡
   - 考虑降低持续性能需求
   evidence_fields:

@@ -1409,104 +1409,31 @@ GPU_CAPABILITY_TABLES = ("gpu_slice", "gpu_track")
 _SQL_COMMENT_OR_STRING = re.compile(r"--[^\n]*|/\*.*?\*/|'(?:[^']|'')*'", re.DOTALL)
 
 
-# SmartPerfetto's effective process identity contract
-# (backend/src/services/processIdentity/identityGate.ts and types.ts): an
-# explicit `identity` gets SmartPerfetto's defaults, and a Skill without one is
-# verified when present if any of its SQL statements filters by process name.
-DEFAULT_PROCESS_IDENTITY_ALIASES = [
-    "package", "process_name", "package_name", "target_package", "app_package", "packageName", "processName",
-]
-_PROCESS_NAME_OPERATORS = r"(?:\s+(?:NOT\s+GLOB|NOT\s+LIKE|GLOB|LIKE|IN|IS(?:\s+NOT)?)\b|\s*(?:!=|<>|=))"
-_PROCESS_ALIAS_KEYWORDS = frozenset({
-    "where", "on", "using", "join", "left", "right", "inner", "outer", "cross", "full", "group", "order", "limit",
-})
-_LABEL_ONLY_FRAGMENT = re.compile(r"^\s*--\s*process-identity:\s*label-only\b", re.MULTILINE)
+# SmartPerfetto's effective process identity contract: the policy each
+# built-in Skill gets (backend/src/services/processIdentity/identityGate.ts),
+# recorded by SmartPerfetto in backend/skills/identity-policy.catalog.json.
+# Reading it keeps one implementation of the decision, which reads SQL
+# structure (qualified names, wrappers, query blocks, CTE columns).
+IDENTITY_POLICY_CATALOG = Path("backend") / "skills" / "identity-policy.catalog.json"
 
 
-def sql_uses_process_name_filter(sql: str) -> bool:
-    """SmartPerfetto's sqlUsesProcessNameFilter: a comparison that scopes a query to a named process."""
-    stripped = re.sub(r"/\*[\s\S]*?\*/", " ", re.sub(r"--[^\n\r]*", " ", sql))
-    has_process_table = re.search(r"\b(?:FROM|JOIN)\s+process\b", stripped, re.IGNORECASE) is not None
-    aliases = {"process"}
-    for match in re.finditer(
-        r"\b(?:FROM|JOIN)\s+process\b(?:\s+(?:AS\s+)?([A-Za-z_][A-Za-z0-9_]*))?", stripped, re.IGNORECASE
-    ):
-        alias = (match.group(1) or "").lower()
-        if alias and alias not in _PROCESS_ALIAS_KEYWORDS:
-            aliases.add(alias)
-    for alias in aliases:
-        if re.search(rf"\b{re.escape(alias)}\.name{_PROCESS_NAME_OPERATORS}", stripped, re.IGNORECASE):
-            return True
-    if has_process_table and re.search(rf"(?<!\.)\bname{_PROCESS_NAME_OPERATORS}", stripped, re.IGNORECASE):
-        return True
-    return re.search(
-        rf"\b(?:[A-Za-z_][A-Za-z0-9_]*\.)?(?:process_name|client_process|server_process|package_name){_PROCESS_NAME_OPERATORS}",
-        stripped, re.IGNORECASE,
-    ) is not None
+def identity_policy_reader(source: Path) -> Callable[[str], dict[str, Any]]:
+    """The effective identity policy of each SmartPerfetto Skill, by id; a Skill it does not list is an error."""
+    path = source / IDENTITY_POLICY_CATALOG
+    if not path.is_file():
+        raise ExportError(f"SmartPerfetto source has no {IDENTITY_POLICY_CATALOG.as_posix()}")
+    catalog = json.loads(path.read_text(encoding="utf-8"))
+    policies = catalog.get("skills") if catalog.get("schemaVersion") == 1 else None
+    if not isinstance(policies, dict):
+        raise ExportError(f"Unsupported {IDENTITY_POLICY_CATALOG.as_posix()} schema")
 
+    def read(skill_id: str) -> dict[str, Any]:
+        policy = policies.get(skill_id)
+        if not isinstance(policy, dict) or not isinstance(policy.get("policy"), str):
+            raise ExportError(f"{IDENTITY_POLICY_CATALOG.as_posix()} has no identity policy for {skill_id}")
+        return dict(policy)
 
-def _identity_sql_unit(source_step: object, fragment_text: Callable[[str], str | None]) -> str | None:
-    if not isinstance(source_step, dict) or not isinstance(source_step.get("sql"), str):
-        return None
-    parts = [source_step["sql"]]
-    for fragment in source_step.get("sql_fragments") or []:
-        text = fragment_text(fragment) if isinstance(fragment, str) else None
-        # A fragment that only labels processes does not select target evidence.
-        if text and not _LABEL_ONLY_FRAGMENT.search(text):
-            parts.append(text)
-    return "\n".join(parts)
-
-
-def skill_sql_units(raw: dict[str, Any], fragment_text: Callable[[str], str | None]) -> list[str]:
-    """Every statement a Skill can execute, each with its injected fragments."""
-    units: list[str] = []
-
-    def visit(step: object) -> None:
-        if not isinstance(step, dict):
-            return
-        for unit in (_identity_sql_unit(step, fragment_text), _identity_sql_unit(step.get("exact_sql"), fragment_text)):
-            if unit is not None:
-                units.append(unit)
-        for nested in step.get("steps") or []:
-            visit(nested)
-        for branch in step.get("conditions") or []:
-            if isinstance(branch, dict) and isinstance(branch.get("then"), dict):
-                visit(branch["then"])
-        if isinstance(step.get("else"), dict):
-            visit(step["else"])
-
-    root = _identity_sql_unit(raw, fragment_text)
-    if root is not None:
-        units.append(root)
-    for step in raw.get("steps") or []:
-        visit(step)
-    return units
-
-
-def effective_identity_config(
-    skill_id: str, raw: dict[str, Any], fragment_text: Callable[[str], str | None]
-) -> dict[str, Any]:
-    """SmartPerfetto's getEffectiveIdentityConfig for one Skill."""
-    if skill_id == "process_identity_resolver":
-        return {"policy": "exempt", "scope": "process"}
-    explicit = raw.get("identity")
-    if isinstance(explicit, dict) and explicit.get("policy"):
-        return {
-            "scope": "process",
-            "aliases": list(DEFAULT_PROCESS_IDENTITY_ALIASES),
-            "rewriteTo": "recommended_process_name_param",
-            "minConfidence": 50,
-            **explicit,
-        }
-    if any(sql_uses_process_name_filter(unit) for unit in skill_sql_units(raw, fragment_text)):
-        return {
-            "policy": "verify_if_present",
-            "scope": "process",
-            "aliases": list(DEFAULT_PROCESS_IDENTITY_ALIASES),
-            "rewriteTo": "recommended_process_name_param",
-            "minConfidence": 50,
-        }
-    return {"policy": "none"}
+    return read
 
 
 # SmartPerfetto's processScopeSql.ts: whether one SQL source can run under an
@@ -1850,6 +1777,7 @@ def build_runtime_assets(
                 object_producers.setdefault(
                     item["name"], f"{producer_skill_id}/{producer_step_id}"
                 )
+    identity_policy = identity_policy_reader(source)
     for entry in catalog["skills"]:
         skill_id = str(entry["name"])
         raw = load_yaml(source / entry["source_path"])
@@ -1876,7 +1804,7 @@ def build_runtime_assets(
             if isinstance(step, dict) and step.get("save_as")
         }
         reject_process_scope_names({name: None for name in result_names})
-        identity = effective_identity_config(skill_id, raw, builtin_fragment_reader(source))
+        identity = identity_policy(skill_id)
         queries: list[dict[str, Any]] = []
         normalized_steps: list[dict[str, Any]] = []
         setup_queries: list[str] = []

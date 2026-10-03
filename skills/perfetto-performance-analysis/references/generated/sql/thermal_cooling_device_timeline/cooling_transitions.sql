@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thermal_cooling_device_timeline.skill.yaml
--- Source SHA-256: 252496e12e03759739be92ebe4b7e8a146cb45244a6321c67dd45d40816a0ab6
+-- Source SHA-256: 2bfbf5a93acfc357d547823fbb66c86dfb6194896e44f4c338d3a98f941c141b
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

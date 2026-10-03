@@ -24,7 +24,19 @@
   },
   "id": "thermal_throttling",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package",
+      "process_name",
+      "package_name",
+      "target_package",
+      "app_package",
+      "packageName",
+      "processName"
+    ],
+    "minConfidence": 50,
+    "policy": "verify_if_present",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -113,7 +125,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/thermal_throttling.skill.yaml",
-    "sha256": "1e92511408fcf6a3d7e74eab485e8e3dc635c0ae58b11c015822aea3646f3836"
+    "sha256": "03d5214cde82b7f701aaf49433f9e9dd86053d0c50cd7845247da2506662c32e"
   },
   "steps": [
     {

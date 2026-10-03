@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_frequency_analysis.skill.yaml
--- Source SHA-256: 426ed62ea0fe1c4cf8e5f8414569076f13999b8f740cd50e6eff1b332188e817
+-- Source SHA-256: 1d59af695d05776443586c0844c80e4355558779825f9f6befb83acc2b8338d0
 
 -- MHz from fragments/gpu_frequency_intervals.sql, per GPU. Frequencies are
 -- of running time, weighted by time; time powered off is its own row,
@@ -141,7 +141,7 @@ rows AS (
   UNION ALL
   SELECT gpu_id, 3, '最低运行频率', COALESCE(ROUND(min_running_mhz, 0) || ' MHz', '无运行时间'),
     CASE WHEN min_running_mhz IS NULL THEN ''
-         WHEN min_running_mhz < max_running_mhz * 0.3 THEN '⚠️ GPU 曾深度降频'
+         WHEN min_running_mhz < max_running_mhz * 0.3 THEN '⚠️ GPU 频率曾大幅下调'
          ELSE '✓ 频率波动正常' END
   FROM gpu_frequency_summary
   UNION ALL

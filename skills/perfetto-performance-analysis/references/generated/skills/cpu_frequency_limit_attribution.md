@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml
-Source SHA-256: 7a9e23034c57ed0ab02faba557f8fabd567e432aecdef313b1dfa80236cc0a06
+Source SHA-256: fadfd961c7ab22ea31aac7cd517f2c6d149809b9fe4e69b4fd07d7953cf1e293
 # CPU 限频归因
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -703,6 +703,8 @@ params:
   end_ts: ${analysis_window.data?.[0]?.window_end_ts ?? null}
 display:
   level: summary
+  title_i18n:
+    en: Frequency observation without limit data
 save_as: no_limit_throttle_observation
 ```
 ### 限频数据缺失说明

@@ -54,7 +54,19 @@
       },
       "id": "screen_off_background_cpu_attribution/screen_off_cpu",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -86,7 +98,9 @@
       "step_id": "screen_off_cpu",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",

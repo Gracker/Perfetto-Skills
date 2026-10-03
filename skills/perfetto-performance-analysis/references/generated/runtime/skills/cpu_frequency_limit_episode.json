@@ -17,7 +17,19 @@
   },
   "id": "cpu_frequency_limit_episode",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package",
+      "process_name",
+      "package_name",
+      "target_package",
+      "app_package",
+      "packageName",
+      "processName"
+    ],
+    "minConfidence": 50,
+    "policy": "verify_if_present",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -198,7 +210,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
-    "sha256": "b8c4443fd1550a0d7e87eb55fa04be818089a405e1bc6467fc6e5d40e73725ac"
+    "sha256": "8d75cefe0155fc514370fc541fbd0b54aa5c81c152e666ea0dde0514011da4cb"
   },
   "steps": [
     {
@@ -244,7 +256,7 @@
     {
       "displayed": true,
       "id": "temperature_context",
-      "name": "限频前温度上下文",
+      "name": "区段起点前温度上下文",
       "on_empty": "回溯窗口内没有温度采样。部分平台温度上报非常稀疏（每分钟数次），窗口内无样本不代表温度未变化。",
       "optional": true,
       "process_scope": {
@@ -258,7 +270,7 @@
     {
       "displayed": true,
       "id": "before_workload",
-      "name": "限频前负载归因",
+      "name": "区段起点前负载归因",
       "optional": true,
       "params": {
         "end_ts": "${episode_windows.data?.[0]?.before_end_ts}",
@@ -274,7 +286,7 @@
     {
       "displayed": true,
       "id": "before_anomalies",
-      "name": "限频前异常线程",
+      "name": "区段起点前异常线程",
       "optional": true,
       "params": {
         "end_ts": "${episode_windows.data?.[0]?.before_end_ts}",
@@ -295,7 +307,7 @@
     {
       "displayed": true,
       "id": "non_cpu_heat_context",
-      "name": "限频前非 CPU 热源上下文",
+      "name": "区段起点前非 CPU 热源上下文",
       "on_empty": "回溯窗口内没有观测到非 CPU 热源相关的计数器或进程活动。",
       "optional": true,
       "process_scope": {

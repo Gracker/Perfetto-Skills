@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/gpu_analysis.skill.yaml
-Source SHA-256: 16d9635bd76e3e596da0e0ef704764a78461c0e4e531aa3e272757d03a8cbba4
+Source SHA-256: ccca4067c8ee136de6c5a431984bc78be6e76efd3e44164776f7513e754a9c90
 # GPU 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -103,7 +103,7 @@ modules:
   type: number
   required: false
   default: 20
-  description: 频率突降次数阈值（超过该值判定为限频）
+  description: 频率突降次数阈值（超过该值标记为频率频繁突降；不判定限频）
 - name: high_load_min_dur_ns
   type: number
   required: false

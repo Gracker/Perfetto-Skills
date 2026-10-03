@@ -419,78 +419,35 @@ class RuntimeExpressionExportTest(unittest.TestCase):
             self.normalize(bad)
 
 
-class EffectiveIdentityConfigTest(unittest.TestCase):
-    """SmartPerfetto's getEffectiveIdentityConfig and sqlUsesProcessNameFilter (identityGate.test.ts)."""
+class IdentityPolicyCatalogTest(unittest.TestCase):
+    """Each Skill exports the identity policy SmartPerfetto records in identity-policy.catalog.json."""
 
-    def test_process_name_filters_are_detected(self) -> None:
-        for sql in (
-            "SELECT * FROM process proc WHERE proc.name IN ('com.example')",
-            "SELECT * FROM process WHERE name = 'surfaceflinger'",
-            "SELECT * FROM android_binder_txns WHERE client_process GLOB 'com.example*'",
-            "SELECT * FROM thread_slice s WHERE s.process_name NOT GLOB 'com.android*'",
-            "SELECT * FROM slice JOIN process p USING(upid) WHERE p.name='com.a'",
-            "SELECT * FROM slice JOIN process p USING(upid) WHERE p.name!='com.a'",
-            "SELECT * FROM slice JOIN process p USING(upid) WHERE p.name<>'com.a'",
-            "SELECT * FROM process WHERE name='com.a'",
-            "SELECT * FROM v WHERE process_name='com.a'",
-            "SELECT * FROM v WHERE package_name='com.a'",
-            "WITH t AS (SELECT upid FROM process WHERE name='com.a') SELECT * FROM slice JOIN t USING(upid)",
-            "SELECT * FROM process p WHERE p.name GLOB 'com.a*'",
-            "SELECT * FROM process p WHERE p.name NOT LIKE '%a%'",
-            "SELECT * FROM process p WHERE p.name IN ('a','b')",
-        ):
-            with self.subTest(sql=sql):
-                self.assertTrue(exporter.sql_uses_process_name_filter(sql))
+    def write_catalog(self, root: Path, content: object) -> None:
+        path = root / exporter.IDENTITY_POLICY_CATALOG
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(content), encoding="utf-8")
 
-    def test_other_name_filters_are_not_process_identity(self) -> None:
-        for sql in (
-            "SELECT * FROM slice WHERE name GLOB '*binder*'",
-            "SELECT * FROM thread t WHERE t.name = 'RenderThread'",
-            "SELECT * FROM slice s JOIN thread t USING(utid) JOIN process p USING(upid) WHERE s.name GLOB '*binder*'",
-            "SELECT * FROM counter_track cct WHERE cct.name = 'cpufreq'",
-            "SELECT * FROM thread_slice WHERE upid = 1008",
-            "SELECT * FROM slice WHERE dur > 1000",
-            "SELECT * FROM slice s WHERE s.name='doFrame'",
-            "SELECT nameGLOBAL FROM t WHERE nameGLOBAL > 1",
-            "SELECT 1 -- FROM process WHERE name = 'x'",
-        ):
-            with self.subTest(sql=sql):
-                self.assertFalse(exporter.sql_uses_process_name_filter(sql))
+    def test_reads_the_policy_smartperfetto_decided(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            policy = {"policy": "verify_if_present", "scope": "process", "aliases": ["package"],
+                      "rewriteTo": "recommended_process_name_param", "minConfidence": 50}
+            self.write_catalog(root, {"schemaVersion": 1, "skills": {"s": policy, "r": {"policy": "exempt", "scope": "process"}}})
+            read = exporter.identity_policy_reader(root)
+            self.assertEqual(read("s"), policy)
+            self.assertEqual(read("r"), {"policy": "exempt", "scope": "process"})
+            # A Skill the catalog does not list fails the export rather than guessing a policy.
+            with self.assertRaisesRegex(exporter.ExportError, "no identity policy for missing"):
+                read("missing")
 
-    def test_detection_reads_declared_fragments_exact_sql_and_branches_per_statement(self) -> None:
-        fragments = {
-            "fragments/filter.sql": "x AS (SELECT * FROM process WHERE name = 'com.example')",
-            "fragments/labels.sql": "-- process-identity: label-only\nx AS (SELECT * FROM process WHERE name = 'com.example')",
-        }
-        read = fragments.get
-        def config(raw):
-            return exporter.effective_identity_config("s", raw, read)["policy"]
-
-        def step(**fields):
-            return {"steps": [{"id": "s", **fields}]}
-
-        self.assertEqual(config(step(sql="SELECT 1", sql_fragments=["fragments/filter.sql"])), "verify_if_present")
-        self.assertEqual(config({"sql": "SELECT 1", "sql_fragments": ["fragments/filter.sql"]}), "verify_if_present")
-        self.assertEqual(
-            config(step(sql="SELECT 1", exact_sql={"sql": "SELECT 1", "sql_fragments": ["fragments/filter.sql"]})),
-            "verify_if_present",
-        )
-        self.assertEqual(config(step(sql="SELECT 1", sql_fragments=["fragments/labels.sql"])), "none")
-        self.assertEqual(config(step(sql="SELECT 1", sql_fragments=["fragments/missing.sql"])), "none")
-        self.assertEqual(config({"steps": [{"conditions": [{"then": {"sql": "SELECT * FROM process WHERE name = 'a'"}}]}]}), "verify_if_present")
-        # A process read in one statement and a bare name comparison in another is not a filter.
-        self.assertEqual(config({"steps": [{"sql": "SELECT * FROM process"}, {"sql": "SELECT * FROM t WHERE name = 'a'"}]}), "none")
-
-    def test_explicit_identity_gets_smartperfetto_defaults_and_the_resolver_is_exempt(self) -> None:
-        self.assertEqual(
-            exporter.effective_identity_config("s", {"identity": {"policy": "required", "aliases": ["package"]}}, lambda _p: None),
-            {"scope": "process", "aliases": ["package"], "rewriteTo": "recommended_process_name_param",
-             "minConfidence": 50, "policy": "required"},
-        )
-        self.assertEqual(
-            exporter.effective_identity_config("process_identity_resolver", {"identity": {"policy": "required"}}, lambda _p: None),
-            {"policy": "exempt", "scope": "process"},
-        )
+    def test_a_missing_or_unknown_catalog_fails_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with self.assertRaisesRegex(exporter.ExportError, "has no backend/skills/identity-policy.catalog.json"):
+                exporter.identity_policy_reader(root)
+            self.write_catalog(root, {"schemaVersion": 2, "skills": {}})
+            with self.assertRaisesRegex(exporter.ExportError, "Unsupported"):
+                exporter.identity_policy_reader(root)
 
 
 class ProbeCapabilityGateTest(unittest.TestCase):
@@ -965,6 +922,7 @@ class ProcessScopeExportTest(unittest.TestCase):
         self.addCleanup(self.temporary.cleanup)
         root = Path(self.temporary.name).resolve()
         self.source = root / "SmartPerfetto"
+        self.identity_policies: dict[str, dict] = {}
         self.generated = root / "output"
         self.skill_root = root / "public-skill"
         self.commit = "a" * 40
@@ -1003,6 +961,17 @@ class ProcessScopeExportTest(unittest.TestCase):
             "name": name, "source_path": relative,
             "source_sha256": exporter.sha256_file(path), "disposition": "exported",
         })
+        # The policy SmartPerfetto's getEffectiveIdentityConfig records for an explicit identity.
+        self.identity_policies[name] = {
+            "scope": "process",
+            "aliases": ["package", "process_name", "package_name", "target_package", "app_package",
+                        "packageName", "processName"],
+            "rewriteTo": "recommended_process_name_param",
+            "minConfidence": 50,
+            **self.identity,
+        }
+        policy_catalog = self.source / exporter.IDENTITY_POLICY_CATALOG
+        policy_catalog.write_text(json.dumps({"schemaVersion": 1, "skills": self.identity_policies}), encoding="utf-8")
 
     def export(self):
         source_lock = {"runtime": {
@@ -1028,11 +997,8 @@ class ProcessScopeExportTest(unittest.TestCase):
         self.assertEqual(entry["template"]["parameters"], ["package"])
         self.assertEqual(entry["template"]["result_dependencies"], [])
         self.assertEqual(entry.get("process_scope"), self.scope)
-        # The exporter records SmartPerfetto's effective identity contract.
-        self.assertEqual(entry.get("identity"), {
-            "scope": "process", "aliases": list(exporter.DEFAULT_PROCESS_IDENTITY_ALIASES),
-            "rewriteTo": "recommended_process_name_param", "minConfidence": 50, **self.identity,
-        })
+        # The exporter records the effective identity policy SmartPerfetto recorded.
+        self.assertEqual(entry.get("identity"), self.identity_policies[entry["id"].split("/")[0]])
         self.assertEqual(entry["template"]["fragments"], [{
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
@@ -1067,10 +1033,7 @@ class ProcessScopeExportTest(unittest.TestCase):
         self.assertEqual(query["path"], "sql/scoped/query.sql")
         skill = json.loads((self.generated / "runtime/skills/scoped.json").read_text())
         self.assertEqual(skill.get("process_scope"), self.scope)
-        self.assertEqual(skill["identity"], {
-            "scope": "process", "aliases": list(exporter.DEFAULT_PROCESS_IDENTITY_ALIASES),
-            "rewriteTo": "recommended_process_name_param", "minConfidence": 50, **self.identity,
-        })
+        self.assertEqual(skill["identity"], self.identity_policies["scoped"])
         self.assertEqual(query["compatibility"].get("exact_scope", {}).get("status"), "unsupported")
         self.assertNotIn(
             "EXACT_BRANCH_MUST_NOT_REPLACE_BASE",

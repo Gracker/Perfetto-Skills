@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/cpu_frequency_limit_episode.skill.yaml
-Source SHA-256: b8c4443fd1550a0d7e87eb55fa04be818089a405e1bc6467fc6e5d40e73725ac
+Source SHA-256: 8d75cefe0155fc514370fc541fbd0b54aa5c81c152e666ea0dde0514011da4cb
 # 限频区段归因详情
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -330,7 +330,7 @@ sql_fragments:
 display:
   level: summary
   layer: list
-  title: 限频前后的温控/性能策略守护进程活动（名字匹配，仅候选）
+  title: 区段起点前后的温控/性能策略守护进程活动（名字匹配，仅候选）
   columns:
   - name: process_name
     label: 进程
@@ -364,16 +364,16 @@ display:
     label: 速率倍数
     type: number
   - name: ran_before_limit_ns
-    label: 限频前运行
+    label: 区段起点前运行
     type: duration
     unit: ns
   - name: last_run_end_before_ts
-    label: 限频前最后一次运行结束
+    label: 区段起点前最后一次运行结束
     type: timestamp
     unit: ns
     clickAction: navigate_timeline
   - name: lead_ns
-    label: 距离限频时刻
+    label: 距区段起点
     type: duration
     unit: ns
   - name: match_basis
@@ -385,7 +385,7 @@ display:
 on_empty: 归因窗口内没有名字匹配温控/性能策略签名的线程在运行。
 save_as: who_daemon
 ```
-### 限频前温度上下文
+### 区段起点前温度上下文
 
 - ID: `temperature_context`
 - Type: `atomic`
@@ -402,7 +402,7 @@ sql_fragments:
 display:
   level: summary
   layer: list
-  title: 限频前回溯窗口内的温度
+  title: 区段起点前回溯窗口内的温度
   columns:
   - name: sensor_name
     label: 传感器/热区
@@ -450,7 +450,7 @@ display:
 on_empty: 回溯窗口内没有温度采样。部分平台温度上报非常稀疏（每分钟数次），窗口内无样本不代表温度未变化。
 save_as: temperature_context
 ```
-### 限频前负载归因
+### 区段起点前负载归因
 
 - ID: `before_workload`
 - Type: `skill`
@@ -470,7 +470,7 @@ display:
   level: summary
 save_as: before_workload
 ```
-### 限频前异常线程
+### 区段起点前异常线程
 
 - ID: `before_anomalies`
 - Type: `skill`
@@ -495,7 +495,7 @@ display:
   level: summary
 save_as: before_anomalies
 ```
-### 限频前非 CPU 热源上下文
+### 区段起点前非 CPU 热源上下文
 
 - ID: `non_cpu_heat_context`
 - Type: `atomic`
@@ -513,7 +513,7 @@ sql_fragments:
 display:
   level: detail
   layer: list
-  title: 限频前回溯窗口内的非 CPU 热源迹象（仅存在性观测）
+  title: 区段起点前回溯窗口内的非 CPU 热源迹象（仅存在性观测）
   columns:
   - name: source_kind
     label: 来源类别

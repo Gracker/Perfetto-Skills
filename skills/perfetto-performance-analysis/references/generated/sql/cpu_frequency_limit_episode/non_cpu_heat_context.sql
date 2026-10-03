@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_frequency_limit_episode.skill.yaml
--- Source SHA-256: b8c4443fd1550a0d7e87eb55fa04be818089a405e1bc6467fc6e5d40e73725ac
+-- Source SHA-256: 8d75cefe0155fc514370fc541fbd0b54aa5c81c152e666ea0dde0514011da4cb
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -187,7 +187,7 @@ counter_presence AS (
     printf('%d tracks', COUNT(DISTINCT track_id)) AS detail,
     COUNT(*) AS observed_count, NULL AS running_ns,
     MIN(ts) AS first_ts, MAX(ts) AS last_ts,
-    '存在该类计数器样本，不代表该子系统是本次限频的热源' AS interpretation
+    '存在该类计数器样本，不代表该子系统是本区段的热源' AS interpretation
   FROM (
     SELECT ct.type AS source_key, c.track_id, c.ts
     FROM counter_track ct JOIN counter c ON c.track_id = ct.id
@@ -215,7 +215,7 @@ process_activity AS (
     SUM(MIN(s.ts + s.dur, (SELECT before_end_ts FROM win))
       - MAX(s.ts, (SELECT before_start_ts FROM win))) AS running_ns,
     MIN(s.ts) AS first_ts, MAX(s.ts + s.dur) AS last_ts,
-    '进程在窗口内运行，不代表其产生的热量导致了本次限频' AS interpretation
+    '进程在窗口内运行，不代表其产生的热量触发了本区段' AS interpretation
   FROM heat_processes h
   JOIN thread t ON t.upid = h.upid
   JOIN sched_slice s ON s.utid = t.utid AND s.dur > 0

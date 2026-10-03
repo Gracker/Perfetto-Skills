@@ -17,7 +17,19 @@
   },
   "id": "cpu_frequency_limit_attribution",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package",
+      "process_name",
+      "package_name",
+      "target_package",
+      "app_package",
+      "packageName",
+      "processName"
+    ],
+    "minConfidence": 50,
+    "policy": "verify_if_present",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -176,7 +188,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
-    "sha256": "7a9e23034c57ed0ab02faba557f8fabd567e432aecdef313b1dfa80236cc0a06"
+    "sha256": "fadfd961c7ab22ea31aac7cd517f2c6d149809b9fe4e69b4fd07d7953cf1e293"
   },
   "steps": [
     {

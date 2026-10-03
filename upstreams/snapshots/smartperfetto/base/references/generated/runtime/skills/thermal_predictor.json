@@ -31,35 +31,35 @@
     },
     {
       "default": 30,
-      "description": "平均降频高风险阈值（%）",
+      "description": "平均频率降幅高风险阈值（%）",
       "name": "high_drop_threshold_pct",
       "required": false,
       "type": "number"
     },
     {
       "default": 15,
-      "description": "平均降频中风险阈值（%）",
+      "description": "平均频率降幅中风险阈值（%）",
       "name": "medium_drop_threshold_pct",
       "required": false,
       "type": "number"
     },
     {
       "default": 50,
-      "description": "限频核心占比高风险阈值（%）",
+      "description": "频率大幅下降核心占比高风险阈值（%）",
       "name": "high_core_ratio_threshold_pct",
       "required": false,
       "type": "number"
     },
     {
       "default": 25,
-      "description": "限频核心占比中风险阈值（%）",
+      "description": "频率大幅下降核心占比中风险阈值（%）",
       "name": "medium_core_ratio_threshold_pct",
       "required": false,
       "type": "number"
     },
     {
       "default": 30,
-      "description": "单核心疑似限频判定阈值（%）",
+      "description": "单核心频率大幅下降判定阈值（%）",
       "name": "core_drop_threshold_pct",
       "required": false,
       "type": "number"
@@ -77,7 +77,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/thermal_predictor.skill.yaml",
-    "sha256": "629871e8a6a9d863095033cebba42371f6255209e829840c6ccf36a06a982695"
+    "sha256": "ba31bdaed9a46dcc8234edf52e0b5fb92c1d869542ae6e78dcca0e79f5e33422"
   },
   "steps": [],
   "type": "atomic",

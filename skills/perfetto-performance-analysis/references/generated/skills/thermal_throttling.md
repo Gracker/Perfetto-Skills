@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling.skill.yaml
-Source SHA-256: 1e92511408fcf6a3d7e74eab485e8e3dc635c0ae58b11c015822aea3646f3836
+Source SHA-256: 03d5214cde82b7f701aaf49433f9e9dd86053d0c50cd7845247da2506662c32e
 # 热节流分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -191,6 +191,8 @@ display:
     format: percentage
   - name: throttled_core_ratio_pct
     label: 频率变化核心占比
+    label_i18n:
+      en: Frequency-drop core ratio (%)
     type: percentage
     format: percentage
   - name: frequency_trend_risk
@@ -198,6 +200,8 @@ display:
     type: string
   - name: thermal_risk
     label: 热原因证据
+    label_i18n:
+      en: Heat-cause evidence
     type: string
   - name: prediction
     label: 预测
@@ -373,6 +377,8 @@ synthesize:
     format: '{{value}} MHz'
   - key: throttle_ratio
     label: 观测频率跨度
+    label_i18n:
+      en: Observed frequency span
   insights:
   - condition: throttle_ratio > 50
     template: CPU{{cpu_id}} 频率下降超过最大频率 50%，仅说明 DVFS 频率变化，不能确定热节流
@@ -404,10 +410,14 @@ display:
     format: compact
   - name: throttle_ratio
     label: 观测频率跨度(%)
+    label_i18n:
+      en: Observed frequency span (%)
     type: percentage
     format: percentage
   - name: throttling_status
     label: 状态
+    label_i18n:
+      en: Status
     type: string
 save_as: cpu_freq_overview
 optional: true

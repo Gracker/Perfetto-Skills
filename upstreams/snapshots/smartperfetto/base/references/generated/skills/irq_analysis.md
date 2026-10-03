@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/irq_analysis.skill.yaml
-Source SHA-256: f009fd41aa9f0a562da268c17227701662484f515d5399de8137df35dc9cf21d
+Source SHA-256: fea29723032ba827d7c7b294e22ea8ff4633c9c6e8abb832895f9a9642a6e595
 # IRQ 中断分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -502,7 +502,7 @@ rules:
   diagnosis: 中断负载较重 (总计 ${root_cause.data[0].total_irq_count} 次，耗时 ${root_cause.data[0].total_dur_ms}ms)
   confidence: high
   suggestions:
-  - 检查高频中断源，评估是否可以合并或降频
+  - 检查高频中断源，评估是否可以合并或降低其触发频率
   - 使用 IRQ affinity 分散中断负载
   - 检查网络和存储 IO 是否导致过多中断
 - condition: root_cause.data[0]?.classification === 'IRQ_NORMAL'

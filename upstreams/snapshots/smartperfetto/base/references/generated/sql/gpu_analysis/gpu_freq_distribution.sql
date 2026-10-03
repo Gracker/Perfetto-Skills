@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gpu_analysis.skill.yaml
--- Source SHA-256: 16d9635bd76e3e596da0e0ef704764a78461c0e4e531aa3e272757d03a8cbba4
+-- Source SHA-256: ccca4067c8ee136de6c5a431984bc78be6e76efd3e44164776f7513e754a9c90
 
 -- One row per running frequency of each GPU, plus one for time powered off
 -- and one for samples whose value is no GPU clock; time_pct is of all

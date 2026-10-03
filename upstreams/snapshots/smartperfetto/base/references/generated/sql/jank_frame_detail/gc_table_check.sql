@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1
+-- Source SHA-256: a0211e3d982714457a51437e411533797d8d6b214b85d9f67ce0d80ba4ad4c61
 
 SELECT
   CASE

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/gpu_power_state_analysis.skill.yaml
--- Source SHA-256: a0e54254f65ca6f9f3c07fba63cbf1a40086b3d12bab82246a33388404938687
+-- Source SHA-256: 871f3507060112eb0aba2d1328f0c1c47a6e70c5865bb46d16ac0ff9ef8436bc
 
 -- MHz from fragments/gpu_frequency_intervals.sql. A shift is a change
 -- between two running frequencies that starts in the window; powering the

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/thermal_cooling_device_timeline.skill.yaml
-Source SHA-256: 252496e12e03759739be92ebe4b7e8a146cb45244a6321c67dd45d40816a0ab6
+Source SHA-256: 2bfbf5a93acfc357d547823fbb66c86dfb6194896e44f4c338d3a98f941c141b
 # 散热设备状态时间线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

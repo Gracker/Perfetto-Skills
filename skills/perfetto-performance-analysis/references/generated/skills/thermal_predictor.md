@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/thermal_predictor.skill.yaml
-Source SHA-256: 629871e8a6a9d863095033cebba42371f6255209e829840c6ccf36a06a982695
+Source SHA-256: ba31bdaed9a46dcc8234edf52e0b5fb92c1d869542ae6e78dcca0e79f5e33422
 # CPU 频率趋势观察
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -23,7 +23,7 @@ display_name_i18n:
   en: CPU Frequency Trend
 description: CPU 频率趋势观察；未提供温度或限频证据时不预测热机制
 description_i18n:
-  en: Observes the CPU frequency trend; without temperature or frequency-limit evidence it predicts no thermal mechanism
+  en: Observes the CPU frequency trend; it reads no temperature or frequency-limit evidence and names no cause
 icon: thermostat
 tags:
 - thermal
@@ -73,27 +73,27 @@ required_tables:
   type: number
   required: false
   default: 30
-  description: 平均降频高风险阈值（%）
+  description: 平均频率降幅高风险阈值（%）
 - name: medium_drop_threshold_pct
   type: number
   required: false
   default: 15
-  description: 平均降频中风险阈值（%）
+  description: 平均频率降幅中风险阈值（%）
 - name: high_core_ratio_threshold_pct
   type: number
   required: false
   default: 50
-  description: 限频核心占比高风险阈值（%）
+  description: 频率大幅下降核心占比高风险阈值（%）
 - name: medium_core_ratio_threshold_pct
   type: number
   required: false
   default: 25
-  description: 限频核心占比中风险阈值（%）
+  description: 频率大幅下降核心占比中风险阈值（%）
 - name: core_drop_threshold_pct
   type: number
   required: false
   default: 30
-  description: 单核心疑似限频判定阈值（%）
+  description: 单核心频率大幅下降判定阈值（%）
 ```
 
 ## Query
@@ -125,6 +125,8 @@ columns:
   format: percentage
 - name: throttled_core_ratio_pct
   label: 频率变化核心占比
+  label_i18n:
+    en: Frequency-drop core ratio (%)
   type: percentage
   format: percentage
 - name: frequency_trend_risk
@@ -132,6 +134,8 @@ columns:
   type: string
 - name: thermal_risk
   label: 热原因证据
+  label_i18n:
+    en: Heat-cause evidence
   type: string
 - name: prediction
   label: 预测

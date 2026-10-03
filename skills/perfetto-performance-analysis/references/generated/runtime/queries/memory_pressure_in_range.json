@@ -52,19 +52,7 @@
       },
       "id": "memory_pressure_in_range/memory_pressure_analysis",
       "identity": {
-        "aliases": [
-          "package",
-          "process_name",
-          "package_name",
-          "target_package",
-          "app_package",
-          "packageName",
-          "processName"
-        ],
-        "minConfidence": 50,
-        "policy": "verify_if_present",
-        "rewriteTo": "recommended_process_name_param",
-        "scope": "process"
+        "policy": "none"
       },
       "license": {
         "origin": "smartperfetto",
@@ -104,9 +92,7 @@
       "step_id": "memory_pressure_analysis",
       "template": {
         "fragments": [],
-        "name_parameters": [
-          "package"
-        ],
+        "name_parameters": [],
         "parameters": [
           "end_ts",
           "package",

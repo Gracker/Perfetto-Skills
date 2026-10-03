@@ -54,7 +54,19 @@
       },
       "id": "camera_trace_evidence/evidence_coverage",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -166,7 +178,19 @@
       },
       "id": "camera_trace_evidence/camera_process_candidates",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -276,7 +300,19 @@
       },
       "id": "camera_trace_evidence/camera_slice_candidates",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -386,7 +422,19 @@
       },
       "id": "camera_trace_evidence/camera_binder_summary",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -496,7 +544,19 @@
       },
       "id": "camera_trace_evidence/camera_dmabuf_summary",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -608,7 +668,19 @@
       },
       "id": "camera_trace_evidence/pixel_camera_stage_summary",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",

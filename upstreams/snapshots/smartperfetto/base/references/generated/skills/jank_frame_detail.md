@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1
+Source SHA-256: a0211e3d982714457a51437e411533797d8d6b214b85d9f67ce0d80ba4ad4c61
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -908,7 +908,7 @@ save_as: binder_blocking_data
 optional: true
 condition: binder_availability?.data?.[0]?.has_binder_table === 1
 ```
-### cpu_throttling
+### CPU 限频证据
 
 - ID: `cpu_throttling`
 - Type: `skill`
@@ -1589,10 +1589,10 @@ rules:
   - 是否限频以本帧的 CPU 限频证据为准；频率偏低先从负载与调速器策略排查
 - condition: freq_timeline?.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length > 2
   severity: info
-  diagnosis: 大核频率降频 ${freq_timeline.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length || 0}次
+  diagnosis: 大核频率下调 ${freq_timeline.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length || 0}次
   confidence: medium
   suggestions:
-  - 降频次数本身不能说明温控或限频，是否限频以本帧的 CPU 限频证据为准
+  - 频率下调次数本身不能说明温控或限频，是否限频以本帧的 CPU 限频证据为准
   - 检查系统负载与调速器策略
 - condition: ${vsync_missed} >= 3
   severity: critical

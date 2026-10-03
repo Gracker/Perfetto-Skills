@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/thermal_module.skill.yaml
--- Source SHA-256: 3713800e586f827002ea410f215faa46be46a589e7512324651b21f1128ce673
+-- Source SHA-256: 704e180a6465afd151d94ae86efccee580680462a62262896290e7844e46f481
 
 WITH
 time_range AS (

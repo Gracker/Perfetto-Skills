@@ -51,7 +51,19 @@
       },
       "id": "scheduler_module/runnable_analysis",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -96,7 +108,9 @@
             "source_sha256": "9731dae208d19f0f96bd0faaa948d92e4be07936331ccc5eb6de57f46b370a53"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",
@@ -169,7 +183,19 @@
       },
       "id": "scheduler_module/cpu_frequency",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -280,7 +306,19 @@
       },
       "id": "scheduler_module/core_distribution",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -325,7 +363,9 @@
             "source_sha256": "06777e61237b61b3318f9fa40c2714e1b08648d6773844d8ab6c4f1d12ee9184"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",

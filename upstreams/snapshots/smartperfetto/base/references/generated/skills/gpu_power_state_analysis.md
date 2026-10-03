@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gpu_power_state_analysis.skill.yaml
-Source SHA-256: a0e54254f65ca6f9f3c07fba63cbf1a40086b3d12bab82246a33388404938687
+Source SHA-256: 871f3507060112eb0aba2d1328f0c1c47a6e70c5865bb46d16ac0ff9ef8436bc
 # GPU 功耗状态分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -19,7 +19,7 @@ tier: B
 
 ```yaml
 display_name: GPU 功耗状态分析
-description: 分析 GPU 频率状态切换，识别降频压力与抖动
+description: 分析 GPU 频率状态切换，识别频率下调与抖动
 icon: bolt
 tags:
 - gpu
@@ -64,7 +64,7 @@ patterns:
   type: number
   required: false
   default: 15
-  description: 判定升降频的百分比阈值
+  description: 判定频率上调或下调的百分比阈值
 ```
 
 ## Query
@@ -100,13 +100,13 @@ columns:
   label: 最高频率(MHz)
   type: number
 - name: downshift_count
-  label: 降频次数
+  label: 频率下调次数
   type: number
 - name: upshift_count
   label: 升频次数
   type: number
 - name: downshift_ratio_pct
-  label: 降频占比
+  label: 频率下调占比
   type: percentage
   format: percentage
 - name: off_pct

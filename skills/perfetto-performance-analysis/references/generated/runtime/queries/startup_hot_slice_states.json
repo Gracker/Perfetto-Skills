@@ -51,7 +51,19 @@
       },
       "id": "startup_hot_slice_states/root",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -95,7 +107,9 @@
             "source_sha256": "8d45506b0b20c30c432f555da5a21e293f3d290c55059f1cd3f508f77df72bb0"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "package",
