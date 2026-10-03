@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gc_analysis.skill.yaml
--- Source SHA-256: 7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b
+-- Source SHA-256: 47cc9fb68d5a1829532f3fd9a415485a4c530444763c02c8273cf74db93c3845
 
 WITH gc_stats AS (
   SELECT
@@ -28,10 +28,12 @@ WITH gc_stats AS (
 ),
 frame_impact AS (
   SELECT
-    COUNT(*) AS jank_during_gc
+    -- A janky frame several GCs overlap is still one frame.
+    COUNT(DISTINCT f.id) AS jank_during_gc
   FROM android_garbage_collection_events gc
   JOIN actual_frame_timeline_slice f
-    ON f.ts < gc.gc_ts + gc.gc_dur
+    ON f.upid = gc.upid
+    AND f.ts < gc.gc_ts + gc.gc_dur
     AND f.ts + f.dur > gc.gc_ts
   WHERE f.jank_type != 'None'
     AND CASE WHEN '${package}' != ''

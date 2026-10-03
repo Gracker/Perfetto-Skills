@@ -982,7 +982,7 @@
       "name": "filesystem_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
-      "source_sha256": "e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719",
+      "source_sha256": "18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3",
       "version": "1.0",
       "workflow": "io-network-media"
     },
@@ -1113,7 +1113,7 @@
       "name": "gc_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/gc_analysis.skill.yaml",
-      "source_sha256": "7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b",
+      "source_sha256": "47cc9fb68d5a1829532f3fd9a415485a4c530444763c02c8273cf74db93c3845",
       "tier": "S",
       "version": "3.0",
       "workflow": "memory"
@@ -1515,7 +1515,7 @@
       "name": "main_thread_file_io_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/main_thread_file_io_in_range.skill.yaml",
-      "source_sha256": "6af76f29db034ff131210ae7fa8c46e353eb6bf0bbe2337e3981767cef8dff16",
+      "source_sha256": "1e6721dae814a7a27fab828fb7d59ed2ed7389499b9e16178ec2690ef54d5ff5",
       "tier": "B",
       "version": "1.0",
       "workflow": "io-network-media"
@@ -1611,7 +1611,7 @@
       "name": "memory_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/memory_analysis.skill.yaml",
-      "source_sha256": "173f88b137c8d74b94c90839398d803aea4e0f655a143d76102fe519e2094f68",
+      "source_sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10",
       "tier": "S",
       "version": "2.1",
       "workflow": "memory"
@@ -1704,7 +1704,7 @@
       "name": "navigation_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/navigation_analysis.skill.yaml",
-      "source_sha256": "b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9",
+      "source_sha256": "22cd4dfce1fd88d4610a41825267b0c17ab31811b871551db13a6719c8466f52",
       "tier": "S",
       "version": "3.0",
       "workflow": "interaction"
@@ -2594,7 +2594,7 @@
       "name": "startup_main_thread_file_io_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_main_thread_file_io_in_range.skill.yaml",
-      "source_sha256": "d0b865bcdf6a32b3aef63b49a77e990e8082645efaec7abdb610a4ce1dfea983",
+      "source_sha256": "77d5bc6d4a5f3e1318e51c1416e53dcafd7e9ce1378d2e1f7cad524529e7a0b2",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "00cb84c3044b45b7e023ef5d1c20456029d9a6ff",
+    "commit": "0f5e66e87c386f518c8e3f85c47235cfa0168089",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "9f199dbdd1b25425eb2984962238f938a1f104132f34f29067ef543833436e72",
+    "policy_sha256": "e3671103b0b8362d3d51d289b01d7439e74c47d15a7e0611d7aa3fbdcef212db",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3122,6 +3122,12 @@
       "disposition": "exported",
       "source_path": "backend/skills/fragments/effective_target_processes.sql",
       "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/file_io_slice_names.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/file_io_slice_names.sql",
+      "source_sha256": "7b9d50032ad17755cecaabfa0c0503d8de5e0ac4496f725e5df4ce63b91a051c"
     },
     {
       "destination": "references/generated/runtime/fragments/flutter_process_identity.sql",
@@ -4290,7 +4296,7 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_sql_fragments": 42,
+    "exported_sql_fragments": 43,
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
@@ -4304,7 +4310,7 @@
       "pipeline_definition": 31
     },
     "skill_yaml_files": 257,
-    "sql_fragments": 49,
+    "sql_fragments": 50,
     "strategy_sources": 144,
     "vendor_overrides": 8
   },

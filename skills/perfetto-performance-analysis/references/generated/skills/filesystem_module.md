@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/filesystem_module.skill.yaml
-Source SHA-256: e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719
+Source SHA-256: 18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3
 # 文件系统 I/O 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -80,6 +80,8 @@ subsystems:
 ```yaml
 id: io_overview
 type: atomic
+sql_fragments:
+- fragments/file_io_slice_names.sql
 display:
   level: key
   layer: overview
@@ -105,6 +107,8 @@ synthesize:
 ```yaml
 id: main_thread_io
 type: atomic
+sql_fragments:
+- fragments/file_io_slice_names.sql
 display:
   level: detail
   layer: list
@@ -169,6 +173,8 @@ synthesize: true
 ```yaml
 id: slow_io_operations
 type: atomic
+sql_fragments:
+- fragments/file_io_slice_names.sql
 display:
   level: detail
   layer: list

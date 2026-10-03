@@ -1,8 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
--- Source: backend/skills/atomic/main_thread_file_io_in_range.skill.yaml
--- Source SHA-256: 1e6721dae814a7a27fab828fb7d59ed2ed7389499b9e16178ec2690ef54d5ff5
+-- Source: backend/skills/fragments/file_io_slice_names.sql
+-- Source SHA-256: 7b9d50032ad17755cecaabfa0c0503d8de5e0ac4496f725e5df4ce63b91a051c
 
-WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
 
@@ -67,42 +66,3 @@ file_io_slice_name_exclusions(pattern) AS (
     ('GC:*'), ('*Wait For Completion*'), ('*[Cc]ontention*'),
     ('AIDL::*'), ('HIDL::*'), ('L*;')
 )
-,
-main_thread AS (
-  SELECT t.utid
-  FROM thread t
-  JOIN process p ON t.upid = p.upid
-  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
-    AND t.tid = p.pid
-),
-io_slices AS (
-  SELECT
-    s.name as io_slice,
-    MIN(s.ts + s.dur, ${end_ts}) - MAX(s.ts, ${start_ts}) as clipped_dur
-  FROM slice s
-  JOIN thread_track tt ON s.track_id = tt.id
-  JOIN main_thread mt ON tt.utid = mt.utid
-  WHERE s.ts < ${end_ts}
-    AND s.ts + s.dur > ${start_ts}
-    -- File IO by whole slice-name word (fragments/file_io_slice_names.sql);
-    -- a SharedPreferences call is not file IO by its name alone.
-    AND EXISTS (SELECT 1 FROM file_io_slice_name_words w WHERE instr(lower(s.name), w.stem) > 0)
-    AND EXISTS (
-      SELECT 1 FROM file_io_slice_name_patterns n
-      WHERE n.io_type != 'shared_prefs'
-        AND s.name GLOB n.pattern
-    )
-    AND NOT EXISTS (SELECT 1 FROM file_io_slice_name_exclusions x WHERE s.name GLOB x.pattern)
-)
-SELECT
-  io_slice,
-  COUNT(*) as count,
-  ROUND(SUM(clipped_dur) / 1e6, 2) as total_ms,
-  ROUND(AVG(clipped_dur) / 1e6, 2) as avg_ms,
-  ROUND(MAX(clipped_dur) / 1e6, 2) as max_ms,
-  ROUND(100.0 * SUM(clipped_dur) / NULLIF(${end_ts} - ${start_ts}, 0), 1) as percent
-FROM io_slices
-WHERE clipped_dur >= ${min_dur_ns|500000}
-GROUP BY io_slice
-ORDER BY total_ms DESC
-LIMIT ${top_k|10}

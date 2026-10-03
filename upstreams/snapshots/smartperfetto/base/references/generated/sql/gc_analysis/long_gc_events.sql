@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gc_analysis.skill.yaml
--- Source SHA-256: 7fe3eb2595b5f8920c8da24ca631b91a13f1e04ac0fe3dda1f3efae096b3319b
+-- Source SHA-256: 47cc9fb68d5a1829532f3fd9a415485a4c530444763c02c8273cf74db93c3845
 
 SELECT
   printf('%d', gc_ts) AS gc_ts_nav,

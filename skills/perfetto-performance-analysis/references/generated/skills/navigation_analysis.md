@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/navigation_analysis.skill.yaml
-Source SHA-256: b9e2d3fb86601d2c0f82d87e454f701201afac230ce76013877fe2252698fdb9
+Source SHA-256: 22cd4dfce1fd88d4610a41825267b0c17ab31811b871551db13a6719c8466f52
 # 界面跳转分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -366,6 +366,8 @@ display:
   - name: severity
     label: 严重程度
     type: enum
+sql_fragments:
+- fragments/file_io_slice_names.sql
 save_as: blocking_ops
 condition: lifecycle_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```

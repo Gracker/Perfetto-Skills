@@ -55,13 +55,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_main_thread_file_io_in_range/query.sql",
-      "sha256": "2efd34e55b44676fac6d75a4add72a50a060a983f2f2abd79d3c57c6d3ed5964",
+      "sha256": "af9fcc48cb96aef42770c47098f6ed88db536751312f32c912e427d8509c3557",
       "signal_patterns": [],
       "skill_id": "startup_main_thread_file_io_in_range",
       "source": {
         "path": "backend/skills/atomic/startup_main_thread_file_io_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d0b865bcdf6a32b3aef63b49a77e990e8082645efaec7abdb610a4ce1dfea983"
+        "sha256": "77d5bc6d4a5f3e1318e51c1416e53dcafd7e9ce1378d2e1f7cad524529e7a0b2"
       },
       "sql_dependencies": {
         "creates": [],
@@ -75,7 +75,13 @@
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/file_io_slice_names.sql",
+            "source_sha256": "a4f26ce9e37b3367be1e95f8f602862b6ec1416c6e859618dea924bbb0876cf4"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",

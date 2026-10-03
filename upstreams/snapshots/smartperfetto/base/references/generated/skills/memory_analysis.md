@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/memory_analysis.skill.yaml
-Source SHA-256: 173f88b137c8d74b94c90839398d803aea4e0f655a143d76102fe519e2094f68
+Source SHA-256: 51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10
 # 内存性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -468,11 +468,17 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+  - name: frame_count
+    label: 重叠帧数
+    type: number
+  - name: janky_frame_count
+    label: 掉帧数
+    type: number
   - name: jank_type
     label: 掉帧类型
     type: string
   - name: frame_dur_ms
-    label: 帧耗时
+    label: 最长帧耗时
     type: duration
     format: duration_ms
     unit: ms

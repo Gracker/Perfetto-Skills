@@ -70,31 +70,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/io_overview.sql",
-      "sha256": "5701dba27ce826e698c0e7706111e7281cdb10a64527134a95c8a85758478ce4",
+      "sha256": "7092767cdcf2c4f1cab6e23ec87db49ec29121906daa84e98a91213335f9d022",
       "signal_patterns": [
         "${package}",
-        "${package}:*",
-        "*File*",
-        "*IO*",
-        "*Open*",
-        "*Read*",
-        "*SQLite*",
-        "*SharedPreferences*",
-        "*Write*",
-        "*database*",
-        "*flush*",
-        "*open*",
-        "*read*",
-        "*sharedpref*",
-        "*sqlite*",
-        "*sync*",
-        "*write*"
+        "${package}:*"
       ],
       "skill_id": "filesystem_module",
       "source": {
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719"
+        "sha256": "18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3"
       },
       "sql_dependencies": {
         "creates": [],
@@ -111,7 +96,13 @@
       },
       "step_id": "io_overview",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/file_io_slice_names.sql",
+            "source_sha256": "7b9d50032ad17755cecaabfa0c0503d8de5e0ac4496f725e5df4ce63b91a051c"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
@@ -201,26 +192,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/main_thread_io.sql",
-      "sha256": "1b8735261d7a5bd5600c62945168edb45f24f1777697ec5df20b417f0a9d0708",
+      "sha256": "546dfd47297ececf0128f53684362e537215d9c57203b8fe28e8443f936e010c",
       "signal_patterns": [
         "${package}",
-        "${package}:*",
-        "*File*",
-        "*Read*",
-        "*SQLite*",
-        "*SharedPreferences*",
-        "*Write*",
-        "*flush*",
-        "*open*",
-        "*read*",
-        "*sqlite*",
-        "*write*"
+        "${package}:*"
       ],
       "skill_id": "filesystem_module",
       "source": {
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719"
+        "sha256": "18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3"
       },
       "sql_dependencies": {
         "creates": [],
@@ -237,7 +218,13 @@
       },
       "step_id": "main_thread_io",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/file_io_slice_names.sql",
+            "source_sha256": "7b9d50032ad17755cecaabfa0c0503d8de5e0ac4496f725e5df4ce63b91a051c"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
@@ -327,7 +314,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/database_operations.sql",
-      "sha256": "1dbd5292325c951f16e697c6d60f9b531149336c8b0dc6840c86c724aeed7bd8",
+      "sha256": "0585c1a673347649779befea8bc5f74d6c14486bd4c96839e160b93df633b574",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -336,7 +323,7 @@
       "source": {
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719"
+        "sha256": "18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3"
       },
       "sql_dependencies": {
         "creates": [],
@@ -443,7 +430,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/shared_prefs_operations.sql",
-      "sha256": "a981a4429580db49897109e01afaab6ac2378d75de01868f934097084e087124",
+      "sha256": "b4cbe249aa54549f73d564ac185ea70902ea8346e3c758c9d80d64e725b57b1a",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -452,7 +439,7 @@
       "source": {
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719"
+        "sha256": "18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3"
       },
       "sql_dependencies": {
         "creates": [],
@@ -559,7 +546,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/io_wait_state.sql",
-      "sha256": "60bbf2dfcf3800002d224009b2cc3d5651d86987daf088e838a91a6d0853f444",
+      "sha256": "81798c397aba1f1de3929dd0c10338eb166c9c3e0035a0517a4e6d6935cefa5a",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -568,7 +555,7 @@
       "source": {
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719"
+        "sha256": "18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3"
       },
       "sql_dependencies": {
         "creates": [],
@@ -681,22 +668,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/filesystem_module/slow_io_operations.sql",
-      "sha256": "66f8c4f931bda43a9ec3cc06209c467c9962fb0f40fa93cfd72c5f7a11b2f46d",
+      "sha256": "f975ac396710ebf84e567e2632370c43206d31502fbe8b8c32fc6657aa464ad0",
       "signal_patterns": [
         "${package}",
-        "${package}:*",
-        "*File*",
-        "*IO*",
-        "*flush*",
-        "*read*",
-        "*sqlite*",
-        "*write*"
+        "${package}:*"
       ],
       "skill_id": "filesystem_module",
       "source": {
         "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e628d2472eff6e2c0726180c21aa7a192edad2766c416d45595d4e5060b31719"
+        "sha256": "18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3"
       },
       "sql_dependencies": {
         "creates": [],
@@ -713,7 +694,13 @@
       },
       "step_id": "slow_io_operations",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/file_io_slice_names.sql",
+            "source_sha256": "7b9d50032ad17755cecaabfa0c0503d8de5e0ac4496f725e5df4ce63b91a051c"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
