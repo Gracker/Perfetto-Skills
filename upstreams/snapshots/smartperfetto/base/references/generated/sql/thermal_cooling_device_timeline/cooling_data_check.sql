@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thermal_cooling_device_timeline.skill.yaml
--- Source SHA-256: 2bfbf5a93acfc357d547823fbb66c86dfb6194896e44f4c338d3a98f941c141b
+-- Source SHA-256: 17b99628c5f63da669cd61bdbfc242a3c4c1081c73e8f12091bf24d3466e9fc2
 
 SELECT
   CASE WHEN EXISTS (

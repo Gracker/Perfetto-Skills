@@ -97,7 +97,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/io_pressure.skill.yaml",
-    "sha256": "f93c2eaa02bdce4ad3a29f012310549c505a8b764145b270e2d45073116e6774"
+    "sha256": "abd029a09336e7e2a849db7fba8b0e13357e976e20c5bd6fd7290e1997a29298"
   },
   "steps": [
     {
@@ -184,6 +184,7 @@
       "rules": [
         {
           "condition": "(io_overview?.data?.[0]?.severity) === 'critical'",
+          "confidence": "low",
           "diagnosis": "IO 压力严重: 总等待 ${io_overview.data[0].total_io_wait_ms}ms, 影响 ${io_overview.data[0].affected_threads} 个线程",
           "severity": "critical",
           "suggestions": [
@@ -194,6 +195,7 @@
         },
         {
           "condition": "(io_overview?.data?.[0]?.severity) === 'warning'",
+          "confidence": "low",
           "diagnosis": "IO 压力偏高: 总等待 ${io_overview.data[0].total_io_wait_ms}ms",
           "severity": "warning",
           "suggestions": [
@@ -203,6 +205,7 @@
         },
         {
           "condition": "(root_cause?.data?.[0]?.root_cause_type) === 'IO_FS_BOUND'",
+          "confidence": "low",
           "diagnosis": "文件系统操作是主要 IO 瓶颈 (${root_cause.data[0].primary_pct}%)",
           "severity": "warning",
           "suggestions": [
@@ -212,6 +215,7 @@
         },
         {
           "condition": "(root_cause?.data?.[0]?.root_cause_type) === 'IO_SYNC_BOUND'",
+          "confidence": "low",
           "diagnosis": "同步操作频繁导致 IO 等待 (${root_cause.data[0].primary_pct}%)",
           "severity": "warning",
           "suggestions": [
@@ -221,6 +225,7 @@
         },
         {
           "condition": "(io_overview?.data?.[0]?.severity) === 'normal' || (io_overview?.data?.[0]?.severity) === 'info'",
+          "confidence": "low",
           "diagnosis": "IO 压力在正常范围内 (${io_overview.data[0].total_io_wait_ms}ms)",
           "severity": "info"
         }
