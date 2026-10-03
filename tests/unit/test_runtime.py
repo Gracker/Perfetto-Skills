@@ -1160,6 +1160,20 @@ class GeneratedDefaultChildSelectionTest(unittest.TestCase):
                     })
                     self.assertEqual(picked, expected)
 
+    def test_cpu_topology_view_exposes_read_topology_whether_or_not_its_table_exists(self) -> None:
+        # SmartPerfetto 951bcec7: the existence check is not displayed, so a
+        # parent's default read of the topology never depends on call order.
+        steps = {step["id"]: step for step in self.catalog.load("cpu_topology_view")["steps"]}
+        self.assertFalse(steps["inspect_existing_topology_object"].get("displayed", False))
+        self.assertTrue(steps["read_topology"].get("displayed"))
+        for existing in ([], [{"type": "table"}]):
+            with self.subTest(existing=existing):
+                picked = self.bound("cpu_topology_view", {}, {
+                    "cpu_topology_view/inspect_existing_topology_object": existing,
+                    "cpu_topology_view/read_topology": self.TOPOLOGY,
+                })
+                self.assertEqual(picked, self.TOPOLOGY)
+
     def test_a_displayed_overview_wins_over_the_undisplayed_availability_check(self) -> None:
         available = [{"status": "available"}]
         picked = self.bound("suspend_wakeup_analysis", {}, {
