@@ -127,9 +127,23 @@ candidate scoring, warnings, status, and minimum confidence, refuses an
 unverified target with SmartPerfetto's reason text (only a resolver failure
 under `verify_if_present` runs on, recorded as unresolved), and rewrites name
 aliases to the verified `process.name`. A child Skill reuses its parent's
-verified named identity through a runtime-issued scope. Exact UPID scopes have
-no portable SQL path, so an invocation SmartPerfetto would scope to an
-explicit UPID or PID is refused here.
+verified named identity through a runtime-issued scope.
+
+A verified explicit UPID, or a PID that resolves to one UPID, issues an exact
+UPID scope as in SmartPerfetto; an iterator row's `upid`, such as each ANR
+handed to `anr_detail`, is the common case. A child inherits it and cannot
+change it. The exporter records, per query, whether the SQL an exact scope
+runs (the step's `exact_sql` variant, exported as `<skill>/<step>.exact`, when
+it has one) carries a usable `process_scope` declaration, using
+SmartPerfetto's own reasons; `validate_all_queries.py` recomputes that record
+from the compiled SQL. The runner admits an exact scope only when every SQL
+source in the Skill's closure (child and item Skills, setup SQL) is supported,
+and otherwise refuses with SmartPerfetto's text, naming the supported exact
+Skills. A declared `exact_unavailable` step runs nothing, binds no data, and
+leaves the Skill completed but partial; a root atomic query fails as partial.
+`${__process_scope.upid}` renders the scoped UPID, and evidence records the
+applied scope, its role, and its limitations as SmartPerfetto's
+`process_scope_evidence@1`.
 
 A probe, manifest query, or Skill run loads its trace once: the CLIs keep that
 child for the whole run. Every warm query must answer exactly as a fresh

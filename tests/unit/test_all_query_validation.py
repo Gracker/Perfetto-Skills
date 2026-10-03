@@ -25,11 +25,11 @@ class AllQueryValidationTest(unittest.TestCase):
                     "parameters": ["package"], "result_dependencies": [], "fragments": [],
                     "runtime_bindings": ["__process_scope.upid"], "name_parameters": ["package"],
                 },
-                "process_scope": {"role": "target", "binding": "effective_target_processes"},
+                "process_scope": {"role": "target", "binding": "native_upid"},
                 "identity": {"policy": "verify_if_present", "aliases": ["package"]},
                 "compatibility": {"android": {
                     str(api): {"status": "capability_gated"} for api in range(28, 38)
-                }},
+                }, "exact_scope": {"status": "supported"}},
                 "validation": {},
             }
 
@@ -136,7 +136,8 @@ class AllQueryValidationTest(unittest.TestCase):
                     "android": {
                         str(api): {"status": "capability_gated"}
                         for api in range(28, 38)
-                    }
+                    },
+                    "exact_scope": {"status": "unsupported", "reason": "SQL has no process_scope declaration"},
                 },
                 "validation": {
                     "runtime_compatible": True,
@@ -192,7 +193,8 @@ class AllQueryValidationTest(unittest.TestCase):
                     "android": {
                         str(api): {"status": "capability_gated"}
                         for api in range(28, 38)
-                    }
+                    },
+                    "exact_scope": {"status": "unsupported", "reason": "SQL has no process_scope declaration"},
                 },
                 "validation": {},
             }
@@ -229,7 +231,8 @@ class AllQueryValidationTest(unittest.TestCase):
                     "android": {
                         str(api): {"status": "capability_gated"}
                         for api in range(28, 38)
-                    }
+                    },
+                    "exact_scope": {"status": "unsupported", "reason": "SQL has no process_scope declaration"},
                 },
                 "validation": {
                     "runtime_compatible": True,
@@ -269,7 +272,7 @@ class AllQueryValidationTest(unittest.TestCase):
                 },
                 "compatibility": {"android": {
                     str(api): {"status": "capability_gated"} for api in range(28, 38)
-                }},
+                }, "exact_scope": {"status": "unsupported", "reason": "SQL has no process_scope declaration"}},
                 "validation": {},
             }
 

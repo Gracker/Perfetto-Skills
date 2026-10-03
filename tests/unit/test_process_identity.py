@@ -179,7 +179,7 @@ class IdentityGateTest(unittest.TestCase):
         self.assertIn("different trace/side", result.error)
         resolve.assert_not_called()
 
-    def test_explicit_selectors_are_validated_and_exact_scopes_refused(self) -> None:
+    def test_explicit_selectors_are_validated_and_a_verified_pid_scopes_exactly(self) -> None:
         exact = verified(recommendedProcessNameParam="com.example", candidates=[
             {"rank": 1, "confidenceScore": 100, "upid": 42, "pid": 4242, "processName": "com.example",
              "canonicalPackageName": "com.example"},
@@ -192,10 +192,14 @@ class IdentityGateTest(unittest.TestCase):
                 self.assertFalse(result.allowed)
                 self.assertIn("expected a positive safe integer", result.error)
                 resolve.assert_not_called()
+        # A verified PID issues an exact UPID scope, as in SmartPerfetto; the
+        # PID and UPID are different numbers.
         resolve = mock.Mock(return_value=exact)
         result = FixedGate(resolve).apply(target_skill, {"pid": 4242}, {"package": "com.default"})
         resolve.assert_called_once_with({"pid": 4242})
-        self.assertEqual((result.allowed, result.error), (False, identity.EXACT_SCOPE_UNSUPPORTED))
+        self.assertTrue(result.allowed)
+        self.assertEqual((result.scope.mode, result.scope.upid), ("exact_upid", 42))
+        self.assertNotIn("pid", result.params)
         reused = verified(upids=[42, 43], candidates=[
             {"rank": 1, "confidenceScore": 100, "pid": 4242, "upid": 42},
             {"rank": 2, "confidenceScore": 100, "pid": 4242, "upid": 43},

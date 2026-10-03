@@ -1509,6 +1509,62 @@ def effective_identity_config(
     return {"policy": "none"}
 
 
+# SmartPerfetto's processScopeSql.ts: whether one SQL source can run under an
+# exact UPID scope (sqlScopeDeclarationError), with its reason texts.
+EFFECTIVE_TARGET_FRAGMENT = "fragments/effective_target_processes.sql"
+EXACT_UPID_TOKEN = "${__process_scope.upid}"
+_SCOPE_CONTEXT_ROLES = ("global_context", "peer_context", "identity_metadata")
+_SQL_COMMENTS_AND_LITERALS = re.compile(r"--[^\n\r]*|/\*[\s\S]*?\*/|'(?:''|[^'])*'")
+
+
+def sql_scope_declaration_error(source: dict[str, Any], fragment_text: Callable[[str], str | None]) -> str | None:
+    declaration = source.get("process_scope")
+    if not declaration:
+        return "SQL has no process_scope declaration"
+    role = declaration.get("role")
+    if role not in ("target", *_SCOPE_CONTEXT_ROLES):
+        return "Unknown process_scope role"
+    if "exact_unavailable" in declaration and declaration["exact_unavailable"] is not None:
+        reason = declaration["exact_unavailable"]
+        return None if isinstance(reason, str) and reason.strip() else "exact_unavailable requires an authored reason"
+    for context_role, fields in (declaration.get("context_fields") or {}).items():
+        if context_role not in _SCOPE_CONTEXT_ROLES or not isinstance(fields, list) or any(
+            not isinstance(field, str) or not field.strip() for field in fields
+        ):
+            return "Invalid process_scope context_fields declaration"
+    paths = [str(path) for path in source.get("sql_fragments") or []]
+    texts: dict[str, str] = {}
+    for path in paths:
+        text = fragment_text(path)
+        if text is None:
+            return f"Required SQL fragment is missing: {path}"
+        texts[path] = text
+    if role in _SCOPE_CONTEXT_ROLES:
+        return "Context evidence cannot claim a target UPID binding" if declaration.get("binding") else None
+    executable = _SQL_COMMENTS_AND_LITERALS.sub(" ", "\n".join([str(source.get("sql") or ""), *texts.values()]))
+    binding = declaration.get("binding")
+    if binding == "native_upid":
+        return None if EXACT_UPID_TOKEN in executable else "native_upid SQL must bind the trusted __process_scope.upid"
+    if binding == "effective_target_processes":
+        if EFFECTIVE_TARGET_FRAGMENT not in paths:
+            return "Target SQL must include effective_target_processes.sql"
+        if EXACT_UPID_TOKEN not in executable:
+            return "Target fragment is missing its trusted UPID binding"
+        consumer = _SQL_COMMENTS_AND_LITERALS.sub(" ", "\n".join(
+            [str(source.get("sql") or ""), *(text for path, text in texts.items() if path != EFFECTIVE_TARGET_FRAGMENT)]
+        ))
+        return None if re.search(r"\b(?:FROM|JOIN)\s+effective_target_processes\b", consumer, re.IGNORECASE) else (
+            "Target SQL does not consume effective_target_processes"
+        )
+    return "Target SQL has no supported exact UPID binding"
+
+
+def exact_scope_status(selected: dict[str, Any], fragment_text: Callable[[str], str | None]) -> dict[str, Any]:
+    """The exact-scope admission record of the SQL source an exact scope runs."""
+    reason = sql_scope_declaration_error(selected, fragment_text)
+    return {"status": "unsupported", "reason": reason} if reason else {"status": "supported"}
+
+
 def builtin_fragment_reader(source: Path) -> Callable[[str], str | None]:
     """SmartPerfetto's builtInSkillFragment: a declared fragment's text, or None."""
     root = (source / "backend" / "skills" / "fragments").resolve()
@@ -1675,6 +1731,7 @@ def normalize_step(
     }
     if scope is not None:
         query["process_scope"] = scope
+    fragment_text = builtin_fragment_reader(source)
     if "exact_sql" in step:
         exact = step["exact_sql"]
         if not isinstance(exact, dict) or not isinstance(exact.get("sql"), str) or not isinstance(exact.get("process_scope"), dict):
@@ -1683,11 +1740,25 @@ def normalize_step(
             validate_process_scope_declaration(exact["process_scope"])
         except ValueError as error:
             raise ExportError(f"Invalid exact_sql declaration in {query_id}: {error}") from error
-    if "exact_sql" in step or isinstance(scope, dict) and "exact_unavailable" in scope:
-        query["compatibility"]["exact_scope"] = {
-            "status": "unsupported",
-            "reason": "Portable runtime does not issue exact process identity bindings",
+        # An exact scope runs this SQL instead (SmartPerfetto's selectProcessScopeSql).
+        variant_step = {
+            "id": f"{step_id}.exact", "type": "atomic", "sql": exact["sql"],
+            **{key: exact[key] for key in ("sql_fragments", "process_scope") if key in exact},
         }
+        _kept, variant = normalize_step(
+            variant_step, skill_id, source, generated_root, source_entry, modules,
+            result_names, list(setup_queries), fixture_assertions, object_producers, identity,
+        )
+        assert variant is not None
+        variant["exact_variant_of"] = query_id
+        query["compatibility"]["exact_scope"] = {**variant["compatibility"]["exact_scope"], "exact_query_id": variant["id"]}
+        query["exact_variant"] = variant
+        kept["exact"] = {
+            "query_id": variant["id"],
+            "result_dependencies": variant["template"]["result_dependencies"],
+        }
+    else:
+        query["compatibility"]["exact_scope"] = exact_scope_status(step, fragment_text)
     if created:
         setup_queries.append(query_id)
     return kept, query
@@ -1810,6 +1881,7 @@ def build_runtime_assets(
         normalized_steps: list[dict[str, Any]] = []
         setup_queries: list[str] = []
         root_query_id: str | None = None
+        root_exact: dict[str, Any] | None = None
         root_sql = raw.get("sql")
         if isinstance(root_sql, str) and root_sql.strip():
             root_step = {
@@ -1822,6 +1894,7 @@ def build_runtime_assets(
                 object_producers, identity,
             )
             root_query_id = normalized_root["query_id"]
+            root_exact = normalized_root.get("exact")
             assert query is not None
             query["path"] = query["path"].replace("/root.sql", "/query.sql")
             old = generated_root / "sql" / safe_component(skill_id, "Skill") / "root.sql"
@@ -1848,6 +1921,11 @@ def build_runtime_assets(
         skill_required_tables = [
             str(value)
             for value in raw.get("prerequisites", {}).get("required_tables", []) or []
+        ]
+        # An exact_sql variant is a query of its own, selected under an exact scope.
+        queries = [
+            item for query in queries
+            for item in (query, *([query.pop("exact_variant")] if "exact_variant" in query else []))
         ]
         for query in queries:
             query["sql_dependencies"]["required_tables"] = skill_required_tables
@@ -1896,6 +1974,8 @@ def build_runtime_assets(
         }
         if "process_scope" in raw:
             skill_manifest["process_scope"] = raw["process_scope"]
+        if root_exact:
+            skill_manifest["exact"] = root_exact
         skill_relative = f"skills/{safe_component(skill_id, 'Skill')}.json"
         write_json(runtime_root / skill_relative, skill_manifest)
         skills_index[skill_id] = skill_relative

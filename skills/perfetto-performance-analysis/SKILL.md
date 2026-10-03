@@ -87,7 +87,10 @@ also accepts its identity aliases (`package`, `process_name`, ...): the gate
 verifies the named process with the `process_identity_resolver` Skill and
 rewrites the alias to the verified `process.name`. An unverified or ambiguous
 target is refused with the reason (`identity_blocked`); pick an exact process
-name from that Skill's candidates instead of retrying the same name.
+name from that Skill's candidates instead of retrying the same name. A
+verified `upid` (or a `pid` with one UPID) runs the Skill on exactly that
+process; a Skill whose SQL cannot run that way is refused with the Skills that
+can.
 
 Complete Skill runs and `--query-id` runs verify the selected processor's
 commit, RPC API, platform, and SHA-256 against the release lock before

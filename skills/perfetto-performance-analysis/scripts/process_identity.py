@@ -11,9 +11,9 @@ both products admit or refuse the same invocation on the same trace and use
 the same reason text. The candidates come from the exported
 process_identity_resolver Skill.
 
-One deliberate boundary: this runtime has no exact-UPID SQL scope, so an
-invocation the gate would scope to an explicit UPID or PID is refused with an
-explicit reason instead of running unscoped.
+An explicit UPID or PID, once verified, issues an exact-UPID scope exactly as
+SmartPerfetto does; the runner then admits it only for Skills whose SQL can
+run under it (exact_scope_admission_error, a port of processScopeSql.ts).
 """
 from __future__ import annotations
 
@@ -30,9 +30,6 @@ DEFAULT_PROCESS_IDENTITY_ALIASES = (
 )
 PROCESS_IDENTITY_SELECTORS = (*DEFAULT_PROCESS_IDENTITY_ALIASES, "upid", "pid", "thread_name", "threadName")
 RESOLVER_SKILL = "process_identity_resolver"
-EXACT_SCOPE_UNSUPPORTED = (
-    "Exact UPID scope is unsupported in the portable runtime; select the process by name"
-)
 
 # Resolver(params) -> (success, rows, error); PidCounter(pid) -> (process_count, unique_upid).
 Resolver = Callable[[Mapping[str, Any]], "tuple[bool, list[Mapping[str, Any]], str | None]"]
@@ -338,10 +335,14 @@ class IdentityScope:
     trace side, so a scope never carries an identity onto another trace.
     """
 
-    mode: str  # "named" or "unscoped"
+    mode: str  # "exact_upid", "named" or "unscoped"
     requested_name: str | None = None
     _identity: tuple[dict[str, Any], dict[str, Any]] | None = field(default=None, repr=False)
     _owner: object = field(default=None, repr=False)
+    upid: int | None = None
+
+    def issued_by(self, owner: object) -> bool:
+        return self in _issued_scopes and self._owner is owner
 
     def verified_identity(self) -> tuple[dict[str, Any], dict[str, Any]] | None:
         if self not in _issued_scopes or self._identity is None:
@@ -361,7 +362,13 @@ def _issue_scope(
         (json.loads(json.dumps(dict(target))), json.loads(json.dumps(dict(resolution))))
         if target and resolution else None
     )
-    scope = IdentityScope("named" if requested else "unscoped", requested, identity, owner)
+    upid = (target or {}).get("upid")
+    if upid is not None and (
+        not resolution or resolution.get("status") != "verified" or list(resolution.get("upids") or []) != [upid]
+    ):
+        raise ValueError("An exact process scope requires one verified selected UPID")
+    mode = "exact_upid" if upid is not None else "named" if requested else "unscoped"
+    scope = IdentityScope(mode, requested, identity, owner, upid)
     _issued_scopes.add(scope)
     return scope
 
@@ -508,6 +515,10 @@ class IdentityGate:
         if skill_id == RESOLVER_SKILL:
             return GateResult(True, params, config, scope=parent or _issue_scope(self))
         target = extract_target(params, inherited, config)
+        if parent is not None and parent.mode == "exact_upid":
+            if "upid" in target and target["upid"] != parent.upid:
+                return blocked("Child Skill cannot change the inherited exact UPID")
+            target["upid"] = parent.upid
         policy = config.get("policy", "none")
         if "upid" not in target and "pid" not in target and policy in {"none", "exempt"}:
             return GateResult(True, params, config, scope=parent or _issue_scope(self, target))
@@ -531,7 +542,8 @@ class IdentityGate:
                 prepared[1].get("recommendedProcessNameParam"),
             ))
         )
-        resolution = prepared[1] if same_named and prepared and not new_thread else self.resolve(target)
+        reuse = (parent is not None and parent.mode == "exact_upid") or same_named
+        resolution = prepared[1] if reuse and prepared and not new_thread else self.resolve(target)
 
         aliases = list(dict.fromkeys([*DEFAULT_PROCESS_IDENTITY_ALIASES, *(config.get("aliases") or [])]))
         explicit = [(key, _first_value(params, [key])) for key in aliases if _first_value(params, [key]) is not None]
@@ -611,7 +623,10 @@ class IdentityGate:
                 if resolution.get("resolverError")
                 else f"{base}: status={resolution['status']}, confidence={_js_text(resolution['confidenceScore'])}"
             )
-            if policy == "verify_if_present" and resolution["status"] == "unresolved" and resolution.get("resolverError"):
+            if (
+                "upid" not in target and policy == "verify_if_present"
+                and resolution["status"] == "unresolved" and resolution.get("resolverError")
+            ):
                 # SmartPerfetto keeps broad flows running when the resolver itself
                 # is unavailable; the run records why it is unverified.
                 return GateResult(
@@ -620,14 +635,16 @@ class IdentityGate:
                 )
             return GateResult(False, params, config, target=target, resolution=resolution, error=reason)
 
-        if "upid" in target:
-            # SmartPerfetto would scope this run to the verified UPID; this
-            # runtime has no exact-UPID SQL scope, so it refuses instead.
-            return GateResult(False, params, config, target=target, resolution=resolution, error=EXACT_SCOPE_UNSUPPORTED)
         rewritten = _rewrite_params(params, skill, target, resolution, config)
+        declared = set(_declared_inputs(skill))
+        if "upid" in target and "upid" in declared:
+            rewritten["upid"] = target["upid"]
+        if "pid" in target and "pid" in declared:
+            rewritten["pid"] = target["pid"]
+        keep_parent = parent is not None and (parent.mode == "exact_upid" or same_named)
         return GateResult(
             True, rewritten, config, target=target, resolution=resolution,
-            scope=parent if same_named else _issue_scope(self, target, resolution),
+            scope=parent if keep_parent else _issue_scope(self, target, resolution),
         )
 
 
@@ -636,3 +653,111 @@ def _js_text(value: Any) -> str:
     if isinstance(value, float) and value.is_integer():
         return str(int(value))
     return str(value)
+
+
+# ---------------------------------------------------------------------------
+# Exact-UPID admission (SmartPerfetto processScopeSql.ts getExactProcessScopeSupport
+# and skillExecutor.ts exactScopeAdmissionError). The exporter records, for every
+# exported query, whether the SQL an exact scope runs (its exact_sql variant when
+# it has one) carries a usable process_scope declaration; this walks the Skill
+# closure over those records.
+# ---------------------------------------------------------------------------
+SkillLoader = Callable[[str], "Mapping[str, Any] | None"]
+QueryLoader = Callable[[str], "Mapping[str, Any]"]
+
+
+def query_exact_support(
+    query_id: str, load_query: QueryLoader, path: str, visiting: frozenset[str] = frozenset(),
+) -> str | None:
+    """None when the SQL an exact scope runs for this query (its exact variant,
+    and the setup SQL assembled in front of it) can run exactly."""
+    if query_id in visiting:
+        return None
+    try:
+        entry = load_query(query_id)
+    except (KeyError, OSError, ValueError):
+        return f"{path}: SQL descriptor is missing: {query_id}"
+    status = (entry.get("compatibility") or {}).get("exact_scope") or {}
+    if status.get("status") != "supported":
+        # A query without a record fails closed.
+        return f"{path}: {status.get('reason') or 'SQL has no process_scope declaration'}"
+    if status.get("exact_query_id"):
+        try:
+            selected = load_query(str(status["exact_query_id"]))
+        except (KeyError, OSError, ValueError):
+            return f"{path}: SQL descriptor is missing: {status['exact_query_id']}"
+        # The variant's own record decides; a stale base record cannot admit it.
+        selected_status = (selected.get("compatibility") or {}).get("exact_scope") or {}
+        if selected_status.get("status") != "supported":
+            return f"{path}: {selected_status.get('reason') or 'SQL has no process_scope declaration'}"
+    else:
+        selected = entry
+    for setup in (selected.get("sql_dependencies") or {}).get("setup_queries") or []:
+        reason = query_exact_support(str(setup), load_query, f"{path}<{setup}>", visiting | {query_id})
+        if reason:
+            return reason
+    return None
+
+
+def exact_scope_support(
+    skill_id: str, load_skill: SkillLoader, load_query: QueryLoader, visiting: frozenset[str] = frozenset(),
+) -> str | None:
+    """None when every SQL source in the Skill's closure can run exactly, else SmartPerfetto's reason."""
+    skill = load_skill(skill_id)
+    if skill is None:
+        return f"Skill dependency is missing: {skill_id}"
+    if not skill.get("query_id") and not skill.get("steps"):
+        return f"Skill has no executable SQL or steps: {skill_id}"
+    if skill_id in visiting:
+        return f"Cyclic Skill dependency: {skill_id}"
+    following = visiting | {skill_id}
+
+    def inspect(node: Mapping[str, Any], path: str) -> str | None:
+        query_id = node.get("query_id")
+        if isinstance(query_id, str):
+            reason = query_exact_support(query_id, load_query, path)
+            if reason:
+                return reason
+        referenced = node.get("item_skill") or node.get("skill")
+        if isinstance(referenced, str):
+            if load_skill(referenced) is None:
+                return f"{path}: Skill dependency is missing: {referenced}"
+            reason = exact_scope_support(referenced, load_skill, load_query, following)
+            if reason:
+                return reason
+        if node.get("type") in ("pipeline", "comparison"):
+            return f"{path}: exact UPID execution is not declared for {node['type']}"
+        return None
+
+    reason = inspect(skill, skill_id)
+    if reason:
+        return reason
+    for step in skill.get("steps") or []:
+        reason = inspect(step, f"{skill_id}.{step.get('id')}")
+        if reason:
+            return reason
+    return None
+
+
+def exact_scope_admission_error(
+    skill_id: str, load_skill: SkillLoader, load_query: QueryLoader, skill_ids: Callable[[], "list[str]"],
+) -> str | None:
+    """SmartPerfetto's refusal text for an exact scope this Skill cannot run, else None."""
+    reason = exact_scope_support(skill_id, load_skill, load_query)
+    if reason is None:
+        return None
+    alternatives = []
+    for candidate_id in skill_ids():
+        candidate = load_skill(candidate_id)
+        if not candidate or candidate.get("type") != "atomic" or candidate_id == RESOLVER_SKILL:
+            continue
+        roles = [(candidate.get("process_scope") or {}).get("role")] + [
+            (step.get("process_scope") or {}).get("role") for step in candidate.get("steps") or []
+        ]
+        if "target" in roles and exact_scope_support(candidate_id, load_skill, load_query) is None:
+            alternatives.append(candidate_id)
+    alternatives.sort()
+    return f"Exact UPID scope is unsupported: {reason}. " + (
+        f"Use a supported exact Skill: {', '.join(alternatives)}." if alternatives
+        else "Use execute_sql with an explicit verified process.upid equality on the target relation."
+    )

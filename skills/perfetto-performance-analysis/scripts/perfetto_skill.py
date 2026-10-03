@@ -21,15 +21,18 @@ from _common import (
 )
 from perfetto_query import (
     bind_manifest_process_scope,
+    exact_variant,
     load_query_entry,
     manifest_process_scope_receipt,
     parse_parameters,
     prepare_manifest_query,
+    raise_if_exact_unavailable,
+    scope_evidence,
     verify_manifest_schema,
 )
 from perfetto_doctor import resolve_verified_processor
 from perfetto_probe import probe_trace
-from process_identity import RESOLVER_SKILL, IdentityGate
+from process_identity import RESOLVER_SKILL, IdentityGate, exact_scope_admission_error
 from runtime.executor import SkillRunner, precheck_inputs
 from runtime.report import validate_report_payload
 from runtime.validation import validate_query_execution
@@ -117,24 +120,50 @@ def build_runtime_runner(
         prelude: list[str],
         identity_result: Mapping[str, Any] | None = None,
         supplied_parameters: Mapping[str, Any] | None = None,
+        identity_scope: Any = None,
     ) -> Mapping[str, Any]:
         del prelude
-        entry = load_query_entry(query_id, SKILL_ROOT)
-        gate = validate_query_execution(
-            entry,
-            probe,
-            trace_sha256=trace_sha256,
-            allow_unverified=allow_unverified,
-            schema_tables=verify_manifest_schema(
-                entry,
-                trace,
-                trace_processor=trace_processor,
-                timeout=timeout,
-                max_output_bytes=max_output_bytes,
-            ),
-        )
+        exact = getattr(identity_scope, "mode", None) == "exact_upid"
+        base_entry = load_query_entry(query_id, SKILL_ROOT)
+        # Under an exact UPID scope the step's exact_sql variant is the query:
+        # its own capability gate, schema, setups and template apply.
+        entry = exact_variant(base_entry, SKILL_ROOT) if exact else base_entry
         binding_entries: list[tuple[dict[str, Any], str]] = []
-        template = prepare_manifest_query(entry, SKILL_ROOT, binding_entries=binding_entries)
+        template = prepare_manifest_query(entry, SKILL_ROOT, binding_entries=binding_entries, exact=exact)
+        if exact:
+            # Declared unavailability is decided before any schema or capability work.
+            raise_if_exact_unavailable(
+                binding_entries, identity_scope, trace_sha256=trace_sha256, trace_side=trace_side,
+            )
+        declaration = binding_entries[-1][0].get("process_scope") if binding_entries else None
+
+        def keep_scope_evidence(exc: BaseException) -> None:
+            # A step whose query cannot run (schema, capability or SQL failure)
+            # keeps its scope evidence, unavailable with the error; an optional
+            # step reports it (SmartPerfetto's optional_query_error).
+            if isinstance(declaration, Mapping):
+                exc.scope_metadata = scope_evidence(  # type: ignore[attr-defined]
+                    {**declaration, "exact_unavailable": str(exc)}, identity_scope, str(base_entry.get("step_id")),
+                    None, trace_sha256=trace_sha256, trace_side=trace_side, unavailable=True,
+                )
+
+        try:
+            gate = validate_query_execution(
+                entry,
+                probe,
+                trace_sha256=trace_sha256,
+                allow_unverified=allow_unverified,
+                schema_tables=verify_manifest_schema(
+                    entry,
+                    trace,
+                    trace_processor=trace_processor,
+                    timeout=timeout,
+                    max_output_bytes=max_output_bytes,
+                ),
+            )
+        except Exception as exc:
+            keep_scope_evidence(exc)
+            raise
         normalized_results = {
             name: value.get("data", value) if isinstance(value, Mapping) else value
             for name, value in results.items()
@@ -144,18 +173,23 @@ def build_runtime_runner(
             identity_result=identity_result, trace=resolved_trace,
             trace_sha256=trace_sha256, trace_side=trace_side,
             trace_processor=trace_processor, timeout=timeout, max_output_bytes=max_output_bytes,
+            identity_scope=identity_scope, identity_owner=runner.identity_gate,
         )
         sql = render_sql_template(
             template, params, normalized_results,
             process_scope=scope, trace_sha256=trace_sha256, trace_side=trace_side,
         )
-        output = run_query(
-            trace,
-            sql=sql,
-            trace_processor=trace_processor,
-            timeout=timeout,
-            max_output_bytes=max_output_bytes,
-        )
+        try:
+            output = run_query(
+                trace,
+                sql=sql,
+                trace_processor=trace_processor,
+                timeout=timeout,
+                max_output_bytes=max_output_bytes,
+            )
+        except Exception as exc:
+            keep_scope_evidence(exc)
+            raise
         rows = query_rows(output)
         return {
             "rows": rows,
@@ -167,6 +201,10 @@ def build_runtime_runner(
                 "compatibility": entry["compatibility"],
                 "capability_gate": gate,
                 **manifest_process_scope_receipt(binding_entries),
+                **scope_evidence(
+                    declaration, identity_scope, str(base_entry.get("step_id")), rows,
+                    trace_sha256=trace_sha256, trace_side=trace_side,
+                ),
             },
         }
 
@@ -202,6 +240,18 @@ def build_runtime_runner(
         return rows[0].get("process_count"), rows[0].get("unique_upid")
 
     runner.identity_gate = IdentityGate(run_resolver, count_pid)
+    catalog = ManifestCatalog()
+
+    def load_skill(skill_id: str) -> Mapping[str, Any] | None:
+        try:
+            return runner.skills.get(skill_id) or catalog.load(skill_id)
+        except (KeyError, OSError, ValueError):
+            return None
+
+    runner.exact_admission = lambda skill_id: exact_scope_admission_error(
+        skill_id, load_skill, lambda query_id: load_query_entry(query_id, SKILL_ROOT),
+        lambda: sorted(catalog.index["skills"]),
+    )
     return runner
 
 

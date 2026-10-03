@@ -151,20 +151,42 @@ def load_query_entry(query_id: str, skill_root: Path) -> dict[str, object]:
     raise ValueError(f"unknown manifest query: {query_id}")
 
 
+class ExactScopeUnavailable(ValueError):
+    """An exact UPID scope reached SQL whose author declared it cannot run exactly."""
+
+    code = "exact_scope_unavailable"
+
+
+def exact_variant(entry: dict[str, object], skill_root: Path) -> dict[str, object]:
+    """The query an exact UPID scope runs: its exact_sql variant when it has one
+    (SmartPerfetto's selectProcessScopeSql)."""
+    exact = (entry.get("compatibility") or {}).get("exact_scope") or {}
+    variant = exact.get("exact_query_id") if isinstance(exact, Mapping) else None
+    return load_query_entry(str(variant), skill_root) if variant else entry
+
+
 def prepare_manifest_query(
     entry: dict[str, object], skill_root: Path,
     *, binding_entries: list[tuple[dict[str, object], str]] | None = None,
+    exact: bool = False,
 ) -> str:
-    """Assemble SQL and optionally collect the exact descriptors in its closure."""
+    """Assemble SQL and optionally collect the exact descriptors in its closure.
+
+    Under an exact UPID scope every query in the closure runs its exact variant.
+    """
     generated = skill_root / "references" / "generated"
     setup_sql: list[str] = []
     visited: set[str] = set()
+    if exact:
+        entry = exact_variant(entry, skill_root)
 
     def append_setup(query_id: str) -> None:
         if query_id in visited or query_id == entry["id"]:
             return
         visited.add(query_id)
         setup = load_query_entry(query_id, skill_root)
+        if exact:
+            setup = exact_variant(setup, skill_root)
         for dependency in setup["sql_dependencies"].get("setup_queries", []):
             append_setup(str(dependency))
         text = (generated / str(setup["path"])).read_text(encoding="utf-8").rstrip()
@@ -189,19 +211,17 @@ def bind_manifest_process_scope(
     *, identity_result: Mapping[str, object] | None,
     trace: Path, trace_sha256: str, trace_side: str,
     trace_processor: str | None, timeout: float, max_output_bytes: int,
+    identity_scope: object | None = None,
+    identity_owner: object | None = None,
 ) -> tuple[RuntimeProcessScope | None, Mapping[str, object] | None]:
     reject_process_scope_names(parameters)
     reject_process_scope_names(supplied_parameters)
+    exact_upid = verified_exact_upid(identity_scope, identity_owner)
+    if exact_upid is not None:
+        raise_if_exact_unavailable(entries, identity_scope, trace_sha256=trace_sha256, trace_side=trace_side)
     requirements: list[tuple[Mapping[str, object], list[str], str]] = []
     for entry, sql in entries:
-        declaration = entry.get("process_scope")
-        role = validate_process_scope_declaration(declaration) if "process_scope" in entry else None
-        compatibility = entry.get("compatibility", {})
-        exact = compatibility.get("exact_scope", {}) if isinstance(compatibility, Mapping) else {}
-        if isinstance(exact, Mapping) and exact.get("status") == "unsupported" and any(
-            supplied_parameters.get(selector) is not None for selector in ("upid", "pid")
-        ):
-            raise ValueError("exact process scope is unsupported for this query")
+        role = validate_process_scope_declaration(entry.get("process_scope")) if "process_scope" in entry else None
         template = entry.get("template", {})
         if not isinstance(template, Mapping):
             raise ValueError("invalid SQL template declaration")
@@ -241,7 +261,7 @@ def bind_manifest_process_scope(
             identity, identity_policy=policy, parameters=parameters,
             supplied_parameters=supplied_parameters, name_parameters=names,
             trace_sha256=trace_sha256, trace_side=trace_side,
-            scope_roles=(role,),
+            scope_roles=(role,), exact_upid=exact_upid,
         )
         if role == "target":
             all_names.update(names)
@@ -252,9 +272,104 @@ def bind_manifest_process_scope(
         identity, identity_policy=policy, parameters=parameters,
         supplied_parameters=supplied_parameters, name_parameters=sorted(all_names),
         trace_sha256=trace_sha256, trace_side=trace_side,
-        scope_roles=tuple(sorted(all_roles)),
+        scope_roles=tuple(sorted(all_roles)), exact_upid=exact_upid,
     )
     return scope, identity
+
+
+def raise_if_exact_unavailable(
+    entries: list[tuple[dict[str, object], str]], identity_scope: object | None,
+    *, trace_sha256: str, trace_side: str,
+) -> None:
+    """Refuse, before any trace work, an exact closure that cannot run exactly.
+
+    Every assembled query must be supported under an exact scope; a query whose
+    author declared it unavailable raises ExactScopeUnavailable with its scope
+    evidence (SmartPerfetto's exact_scope_unavailable step result).
+    """
+    for entry, _sql in entries:
+        compatibility = entry.get("compatibility", {})
+        exact = compatibility.get("exact_scope", {}) if isinstance(compatibility, Mapping) else {}
+        if not isinstance(exact, Mapping) or exact.get("status") != "supported":
+            reason = exact.get("reason") if isinstance(exact, Mapping) else None
+            raise ValueError(f"Exact UPID scope is unsupported: {entry['id']}: {reason or 'SQL has no process_scope declaration'}")
+        declaration = entry.get("process_scope")
+        if isinstance(declaration, Mapping) and declaration.get("exact_unavailable"):
+            unavailable = ExactScopeUnavailable(str(declaration["exact_unavailable"]))
+            unavailable.metadata = scope_evidence(
+                declaration, identity_scope, str(entry.get("step_id")), None,
+                trace_sha256=trace_sha256, trace_side=trace_side, unavailable=True,
+            )
+            raise unavailable
+
+
+def verified_exact_upid(identity_scope: object | None, owner: object | None) -> int | None:
+    """The UPID of an exact identity scope issued by `owner`, the identity gate of
+    the trace and side this SQL runs on; None for any other scope mode."""
+    from process_identity import IdentityScope
+
+    if not isinstance(identity_scope, IdentityScope) or identity_scope.mode != "exact_upid":
+        return None
+    if owner is None or not identity_scope.issued_by(owner) or not isinstance(identity_scope.upid, int):
+        raise ValueError("Process scope is untrusted or belongs to a different trace/side")
+    return identity_scope.upid
+
+
+def _scope_record(identity_scope: object | None, trace_sha256: str, trace_side: str) -> dict[str, object]:
+    record: dict[str, object] = {"mode": "unscoped", "trace_sha256": trace_sha256, "trace_side": trace_side}
+    mode = getattr(identity_scope, "mode", None)
+    if mode == "exact_upid":
+        record.update(mode="exact_upid", upid=identity_scope.upid)  # type: ignore[union-attr]
+    elif mode == "named":
+        record.update(mode="named", requested_name=identity_scope.requested_name)  # type: ignore[union-attr]
+    return record
+
+
+def scope_evidence(
+    declaration: Mapping[str, object] | None, identity_scope: object | None, step_id: str, rows: object,
+    *, trace_sha256: str, trace_side: str, unavailable: bool = False,
+) -> dict[str, object]:
+    """Which process scope each part of a step's evidence was measured under
+    (SmartPerfetto's sqlScopeEvidence and scopeMetadata, without its UI fields).
+
+    Only a single available target entry carries `applied_process_scope`;
+    context roles and unavailable evidence never claim the target's scope.
+    """
+    if not isinstance(declaration, Mapping):
+        return {}
+    target = _scope_record(identity_scope, trace_sha256, trace_side)
+    global_scope = {"mode": "unscoped", "trace_sha256": trace_sha256, "trace_side": trace_side}
+    contexts = list((declaration.get("context_fields") or {}).items())  # type: ignore[union-attr]
+    context_fields = {field for _role, fields in contexts for field in fields}
+    first = rows[0] if isinstance(rows, list) and rows else rows
+    fields = list(first) if isinstance(first, Mapping) else []
+    role = declaration.get("role")
+    entry: dict[str, object] = {
+        "role": role, "scope": target if role == "target" else global_scope, "source_step_id": step_id,
+        "availability": "unavailable" if unavailable else "available",
+    }
+    if contexts:
+        entry["fields"] = [field for field in fields if field not in context_fields]
+    if unavailable:
+        entry["reason"] = declaration.get("exact_unavailable")
+    if role != "target":
+        entry["relative_to"] = target
+    entries = [entry] + [
+        {"role": context_role, "scope": global_scope, "source_step_id": step_id, "fields": list(columns),
+         "availability": "available", "relative_to": target}
+        for context_role, columns in contexts
+    ]
+    roles = {str(item["role"]) for item in entries}
+    only = entries[0] if len(entries) == 1 else None
+    result: dict[str, object] = {
+        "scope_provenance": {"version": "process_scope_evidence@1", "entries": entries},
+        "evidence_role": next(iter(roles)) if len(roles) == 1 else "mixed",
+    }
+    if only and only["role"] == "target" and only["availability"] != "unavailable" and only.get("fields") != []:
+        result["applied_process_scope"] = only["scope"]
+    if declaration.get("limitations"):
+        result["scope_limitations"] = list(declaration["limitations"])  # type: ignore[arg-type]
+    return result
 
 
 def manifest_process_scope_receipt(entries: list[tuple[dict[str, object], str]]) -> dict[str, object]:
@@ -300,6 +415,64 @@ def verify_manifest_schema(
     return set(tables)
 
 
+def write_query_evidence(
+    args: argparse.Namespace, manifest_entry: Mapping[str, object], processor_identity: Mapping[str, object],
+    *, executed_entry: Mapping[str, object], sql: str | None, rows: list[object],
+    capability_gate: object, identity: object,
+    receipt: Mapping[str, object], scope: Mapping[str, object], status: str,
+    failure: Mapping[str, object] | None = None,
+) -> None:
+    """The mandatory --query-id evidence sidecar; `sql` is None when no SQL ran.
+
+    `query.id` is the requested query; its source hash and validation are those
+    of the SQL that ran, the exact_sql variant under an exact UPID scope.
+    """
+    evidence_path = args.evidence_output
+    if evidence_path is None and args.output is not None:
+        evidence_path = args.output.with_suffix(args.output.suffix + ".evidence.json")
+    if evidence_path is None:
+        raise ValueError("--query-id requires --output or --evidence-output for its mandatory sidecar")
+    resolved_trace = args.trace.expanduser().resolve()
+    trace_sha256 = sha256_file(resolved_trace)
+    params = parse_parameters(args.param)
+    rendered = hashlib.sha256(sql.encode("utf-8")).hexdigest() if sql is not None else None
+    evidence = {
+        "schema_version": 1,
+        "evidence_id": "ev_" + hashlib.sha256(
+            json.dumps(
+                {
+                    "trace": trace_sha256,
+                    "trace_side": args.trace_side,
+                    "query": manifest_entry["id"],
+                    "sql": rendered,
+                    "params": params,
+                    "processor": processor_identity["binary_sha256"],
+                },
+                sort_keys=True,
+            ).encode("utf-8")
+        ).hexdigest()[:24],
+        "trace": {"path": str(resolved_trace), "sha256": trace_sha256, "side": args.trace_side},
+        "query": {
+            "id": manifest_entry["id"],
+            **({"executed_id": executed_entry["id"]} if executed_entry["id"] != manifest_entry["id"] else {}),
+            "source_sha256": executed_entry["sha256"],
+            "rendered_sha256": rendered,
+            "params_sha256": hashlib.sha256(json.dumps(params, sort_keys=True).encode("utf-8")).hexdigest(),
+        },
+        "validation": executed_entry["validation"],
+        "capability_gate": capability_gate,
+        "processor": processor_identity,
+        "identity": identity,
+        **receipt,
+        **scope,
+        **(failure or {}),
+        "status": status,
+        "row_count": len(rows),
+        "rows": rows,
+    }
+    write_text_atomic(evidence_path, json.dumps(evidence, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
+
+
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     sessions = ExitStack()
@@ -309,6 +482,7 @@ def main(argv: list[str] | None = None) -> int:
         skill_root = Path(__file__).resolve().parents[1]
         manifest_entry = None
         identity = None
+        gate_scope = None
         scope = None
         trace_sha256 = None
         params = parse_parameters(args.param)
@@ -343,38 +517,77 @@ def main(argv: list[str] | None = None) -> int:
                 timeout=args.timeout,
                 max_output_bytes=args.max_output_bytes,
             )
+            # The same identity gate a Skill run applies, whether or not this
+            # query's SQL carries a reserved process-scope binding.
+            from perfetto_skill import build_identity_gate
+
+            identity_gate = build_identity_gate(
+                args.trace, trace_processor=trace_processor, timeout=args.timeout,
+                max_output_bytes=args.max_output_bytes, allow_unverified=args.allow_unverified,
+                probe=probe, trace_side=args.trace_side,
+            )
+            gate = identity_gate.apply(query_skill, params, {})
+            if not gate.allowed:
+                raise ValueError(gate.error)
+            supplied = params
+            params = without_consumed_selectors(str(query_skill["id"]), query_skill, gate.params)
+            gate_scope = gate.scope
+            exact = getattr(gate.scope, "mode", None) == "exact_upid"
+            # Under an exact UPID scope the query's exact_sql variant runs; its own
+            # capability gate and schema apply.
+            executed_entry = exact_variant(manifest_entry, skill_root) if exact else manifest_entry
+            if exact:
+                from process_identity import query_exact_support
+
+                reason = query_exact_support(
+                    str(manifest_entry["id"]), lambda query_id: load_query_entry(query_id, skill_root),
+                    str(manifest_entry["id"]),
+                )
+                if reason:
+                    raise ValueError(f"Exact UPID scope is unsupported: {reason}.")
+            binding_entries: list[tuple[dict[str, object], str]] = []
+            template = prepare_manifest_query(
+                manifest_entry, skill_root, binding_entries=binding_entries, exact=exact,
+            )
+            if exact:
+                # Declared unavailability is decided before any schema or
+                # capability work, and still leaves its evidence sidecar.
+                try:
+                    raise_if_exact_unavailable(
+                        binding_entries, gate.scope, trace_sha256=trace_sha256, trace_side=args.trace_side,
+                    )
+                except ExactScopeUnavailable as unavailable:
+                    write_query_evidence(
+                        args, manifest_entry, processor_identity, executed_entry=executed_entry, sql=None, rows=[],
+                        capability_gate=None, identity=gate.evidence(),
+                        receipt=manifest_process_scope_receipt(binding_entries),
+                        scope=dict(unavailable.metadata), status="unavailable",
+                        failure={
+                            "code": unavailable.code, "error": str(unavailable), "partial": True,
+                            "scope_limitations": list(dict.fromkeys(
+                                [*unavailable.metadata.get("scope_limitations", []), str(unavailable)]
+                            )),
+                        },
+                    )
+                    raise
             capability_gate = validate_query_execution(
-                manifest_entry,
+                executed_entry,
                 probe,
                 trace_sha256=trace_sha256,
                 allow_unverified=args.allow_unverified,
                 schema_tables=verify_manifest_schema(
-                    manifest_entry,
+                    executed_entry,
                     args.trace,
                     trace_processor=trace_processor,
                     timeout=args.timeout,
                     max_output_bytes=args.max_output_bytes,
                 ),
             )
-            binding_entries: list[tuple[dict[str, object], str]] = []
-            template = prepare_manifest_query(manifest_entry, skill_root, binding_entries=binding_entries)
-            # The same identity gate a Skill run applies, whether or not this
-            # query's SQL carries a reserved process-scope binding.
-            from perfetto_skill import build_identity_gate
-
-            gate = build_identity_gate(
-                args.trace, trace_processor=trace_processor, timeout=args.timeout,
-                max_output_bytes=args.max_output_bytes, allow_unverified=args.allow_unverified,
-                probe=probe, trace_side=args.trace_side,
-            ).apply(query_skill, params, {})
-            if not gate.allowed:
-                raise ValueError(gate.error)
-            supplied = params
-            params = without_consumed_selectors(str(query_skill["id"]), query_skill, gate.params)
             scope, identity = bind_manifest_process_scope(
                 binding_entries, params, supplied, identity_result=gate.evidence(),
                 trace=resolved_trace, trace_sha256=trace_sha256, trace_side=args.trace_side,
                 trace_processor=trace_processor, timeout=args.timeout, max_output_bytes=args.max_output_bytes,
+                identity_scope=gate.scope, identity_owner=identity_gate,
             )
         else:
             template = (
@@ -415,53 +628,22 @@ def main(argv: list[str] | None = None) -> int:
         if result.stderr:
             sys.stderr.write(result.stderr)
         if manifest_entry is not None:
-            evidence_path = args.evidence_output
-            if evidence_path is None and args.output is not None:
-                evidence_path = args.output.with_suffix(args.output.suffix + ".evidence.json")
-            if evidence_path is None:
-                raise ValueError("--query-id requires --output or --evidence-output for its mandatory sidecar")
-            resolved_trace = args.trace.expanduser().resolve()
-            params = parse_parameters(args.param)
-            evidence = {
-                "schema_version": 1,
-                "evidence_id": "ev_" + hashlib.sha256(
-                    json.dumps(
-                        {
-                            "trace": sha256_file(resolved_trace),
-                            "trace_side": args.trace_side,
-                            "query": manifest_entry["id"],
-                            "sql": hashlib.sha256(sql.encode("utf-8")).hexdigest(),
-                            "params": params,
-                            "processor": processor_identity["binary_sha256"],
-                        },
-                        sort_keys=True,
-                    ).encode("utf-8")
-                ).hexdigest()[:24],
-                "trace": {"path": str(resolved_trace), "sha256": sha256_file(resolved_trace), "side": args.trace_side},
-                "query": {
-                    "id": manifest_entry["id"],
-                    "source_sha256": manifest_entry["sha256"],
-                    "rendered_sha256": hashlib.sha256(sql.encode("utf-8")).hexdigest(),
-                    "params_sha256": hashlib.sha256(
-                        json.dumps(params, sort_keys=True).encode("utf-8")
-                    ).hexdigest(),
-                },
-                "validation": manifest_entry["validation"],
-                "capability_gate": capability_gate,
-                "processor": processor_identity,
-                "identity": identity if identity is not None else {"status": "not_checked", "policy": "none"},
-                **manifest_process_scope_receipt(binding_entries),
-                "status": "observed" if rows else "empty",
-                "row_count": len(rows),
-                "rows": rows,
-            }
-            write_text_atomic(
-                evidence_path,
-                json.dumps(evidence, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            write_query_evidence(
+                args, manifest_entry, processor_identity, executed_entry=executed_entry, sql=sql, rows=rows,
+                capability_gate=capability_gate,
+                identity=identity if identity is not None else {"status": "not_checked", "policy": "none"},
+                receipt=manifest_process_scope_receipt(binding_entries),
+                scope=scope_evidence(
+                    binding_entries[-1][0].get("process_scope") if binding_entries else None,
+                    gate_scope, str(manifest_entry.get("step_id")), rows,
+                    trace_sha256=trace_sha256, trace_side=args.trace_side,
+                ),
+                status="observed" if rows else "empty",
             )
         return 0
     except (OSError, json.JSONDecodeError, ValueError, RuntimeError) as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        code = getattr(exc, "code", None)
+        print(f"error: {code}: {exc}" if isinstance(code, str) else f"error: {exc}", file=sys.stderr)
         return 2
     finally:
         sessions.close()

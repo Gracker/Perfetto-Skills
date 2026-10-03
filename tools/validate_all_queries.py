@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Mapping
 import hashlib
 import json
 import os
@@ -16,8 +17,10 @@ import tempfile
 
 try:
     from tools.overlays import load_overlays
+    from tools.export_from_smartperfetto import sql_scope_declaration_error
 except ModuleNotFoundError:  # Direct script execution.
     from overlays import load_overlays
+    from export_from_smartperfetto import sql_scope_declaration_error
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -117,6 +120,55 @@ def validate_sql_syntax(
     return errors
 
 
+def exact_scope_errors(
+    query: dict[str, object], sql: str, generated_root: Path, query_ids: set[str] | None,
+    exact_records: Mapping[str, object] | None = None,
+) -> list[str]:
+    """The exact-scope admission record must hold for the compiled SQL.
+
+    The exporter derives it from SmartPerfetto's source; recomputing it here
+    from the final SQL and runtime fragments keeps an overlay or recompile
+    from leaving a stale `supported` behind. A missing record fails closed.
+    """
+    compatibility = query.get("compatibility")
+    record = compatibility.get("exact_scope") if isinstance(compatibility, dict) else None
+    if not isinstance(record, dict) or record.get("status") not in {"supported", "unsupported"}:
+        return ["exact scope admission record is missing"]
+    if record.get("status") == "unsupported" and not isinstance(record.get("reason"), str):
+        return ["unsupported exact scope needs a reason"]
+    variant = record.get("exact_query_id")
+    if variant is not None:
+        # The admission record of a step with an exact_sql variant is the
+        # variant's, which is itself recomputed from its compiled SQL.
+        if query_ids is not None and variant not in query_ids:
+            return [f"exact variant query is missing: {variant}"]
+        if exact_records is not None:
+            variant_record = exact_records.get(str(variant))
+            if not isinstance(variant_record, dict) or variant_record.get("exact_variant_of") != query.get("id"):
+                return [f"exact variant {variant} does not belong to this query"]
+            own = {key: record.get(key) for key in ("status", "reason")}
+            if own != {key: variant_record.get(key) for key in ("status", "reason")}:
+                return [f"exact scope record does not match its variant {variant}"]
+        return []
+    template = query.get("template") if isinstance(query.get("template"), dict) else {}
+    fragments = {
+        f"fragments/{Path(item['source_path']).name}": generated_root / "runtime/fragments" / Path(item["source_path"]).name
+        for item in template.get("fragments", []) or [] if isinstance(item, dict) and isinstance(item.get("source_path"), str)
+    }
+    texts = {path: file.read_text(encoding="utf-8").strip() for path, file in fragments.items() if file.is_file()}
+    own_sql = sql
+    for text in texts.values():
+        own_sql = own_sql.replace(text, "")
+    reason = sql_scope_declaration_error(
+        {"sql": own_sql, "sql_fragments": list(fragments), "process_scope": query.get("process_scope")},
+        texts.get,
+    )
+    expected = {"status": "unsupported", "reason": reason} if reason else {"status": "supported"}
+    if {key: record.get(key) for key in expected} != expected:
+        return [f"exact scope record does not match the compiled SQL: expected {expected}"]
+    return []
+
+
 def validate_query(
     query: dict[str, object],
     generated_root: Path,
@@ -128,6 +180,7 @@ def validate_query(
     required_symbols: set[str] | None = None,
     result_names: set[str] | None = None,
     step_result_dependencies: list[str] | None = None,
+    exact_records: Mapping[str, object] | None = None,
 ) -> dict[str, object]:
     query_id = query.get("id")
     errors: list[str] = []
@@ -252,6 +305,7 @@ def validate_query(
                 "source_sha256"
             ):
                 errors.append(f"template fragment hash mismatch: {fragment_path.name}")
+    errors.extend(exact_scope_errors(query, sql, generated_root, query_ids, exact_records))
     if query_ids is not None and isinstance(query_id, str):
         setup_queries = (
             dependencies.get("setup_queries", [])
@@ -444,6 +498,12 @@ def main(arguments: list[str] | None = None) -> int:
             for step in steps
             if isinstance(step.get("query_id"), str)
         )
+        # Under an exact scope the runner gates on the step's exact copy.
+        step_result_dependencies.update(
+            (owner["exact"]["query_id"], owner["exact"].get("result_dependencies", []))
+            for owner in (skill, *steps)
+            if isinstance(owner.get("exact"), dict) and isinstance(owner["exact"].get("query_id"), str)
+        )
     descriptors = []
     seen: set[str] = set()
     for shard_name in index["shards"]:
@@ -455,6 +515,14 @@ def main(arguments: list[str] | None = None) -> int:
                 raise ValueError(f"duplicate query id: {query['id']}")
             seen.add(query["id"])
             descriptors.append(query)
+    exact_records = {
+        query["id"]: {
+            **((query.get("compatibility") or {}).get("exact_scope") or {}),
+            "exact_variant_of": query["exact_variant_of"],
+        }
+        for query in descriptors
+        if isinstance(query.get("exact_variant_of"), str)
+    }
     queries = [
         validate_query(
             query,
@@ -466,6 +534,7 @@ def main(arguments: list[str] | None = None) -> int:
             required_symbols=required_symbols,
             result_names=result_names_by_skill.get(query["skill_id"], set()),
             step_result_dependencies=step_result_dependencies.get(query["id"]),
+            exact_records=exact_records,
         )
         for query in descriptors
     ]

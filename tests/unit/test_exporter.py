@@ -305,6 +305,50 @@ class PortableStepMetadataTest(unittest.TestCase):
         self.assertEqual(step, original)
 
 
+class ExactScopeExportTest(unittest.TestCase):
+    """Each query records whether the SQL an exact UPID scope runs can run exactly."""
+
+    def normalize(self, step: dict[str, object]):
+        with tempfile.TemporaryDirectory() as temporary:
+            return exporter.normalize_step(
+                step, "under_test", Path("."), Path(temporary),
+                {"source_path": "backend/skills/under_test.skill.yaml", "source_sha256": "a" * 64},
+                [], {"coverage"}, ["setup/rows"], {}, {},
+            )
+
+    def test_an_exact_sql_variant_is_exported_as_its_own_query(self) -> None:
+        kept, query = self.normalize({
+            "id": "threads", "type": "atomic", "save_as": "threads",
+            "sql": "SELECT utid FROM thread JOIN process USING (upid) WHERE process.name = '${package}' "
+                   "AND ${coverage.data[0].ok}",
+            "exact_sql": {"sql": "SELECT utid FROM thread WHERE upid = ${__process_scope.upid}",
+                          "process_scope": {"role": "target", "binding": "native_upid"}},
+        })
+        variant = query["exact_variant"]
+        self.assertEqual(kept["exact"], {"query_id": "under_test/threads.exact", "result_dependencies": []})
+        self.assertEqual(query["compatibility"]["exact_scope"],
+                         {"status": "supported", "exact_query_id": "under_test/threads.exact"})
+        self.assertEqual((variant["id"], variant["exact_variant_of"]), ("under_test/threads.exact", "under_test/threads"))
+        self.assertEqual(variant["template"]["runtime_bindings"], ["__process_scope.upid"])
+        self.assertEqual(variant["sql_dependencies"]["setup_queries"], ["setup/rows"])
+
+    def test_the_record_carries_smartperfetto_reason(self) -> None:
+        _kept, plain = self.normalize({"id": "plain", "type": "atomic", "sql": "SELECT 1"})
+        self.assertEqual(plain["compatibility"]["exact_scope"],
+                         {"status": "unsupported", "reason": "SQL has no process_scope declaration"})
+        _kept, unwired = self.normalize({
+            "id": "unwired", "type": "atomic", "sql": "SELECT 1",
+            "exact_sql": {"sql": "SELECT * FROM effective_target_processes",
+                          "process_scope": {"role": "target", "binding": "effective_target_processes"}},
+        })
+        self.assertEqual(unwired["compatibility"]["exact_scope"], {
+            "status": "unsupported", "reason": "Target SQL must include effective_target_processes.sql",
+            "exact_query_id": "under_test/unwired.exact",
+        })
+        with self.assertRaisesRegex(exporter.ExportError, "Invalid exact_sql declaration"):
+            self.normalize({"id": "bad", "type": "atomic", "sql": "SELECT 1", "exact_sql": "SELECT 2"})
+
+
 class RuntimeExpressionExportTest(unittest.TestCase):
     """Every string the portable executor evaluates is parsed by its own parser at export."""
 

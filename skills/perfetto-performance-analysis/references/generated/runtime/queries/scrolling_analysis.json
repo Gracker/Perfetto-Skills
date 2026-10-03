@@ -44,6 +44,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/system_context_window",
@@ -152,6 +155,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -284,6 +290,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -422,6 +431,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/main_thread_work_sources",
@@ -558,6 +570,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -698,6 +713,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/frame_timeline_check",
@@ -807,6 +825,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -946,6 +967,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/frame_timeline_population",
@@ -1053,8 +1077,8 @@
           }
         },
         "exact_scope": {
-          "reason": "Portable runtime does not issue exact process identity bindings",
-          "status": "unsupported"
+          "exact_query_id": "scrolling_analysis/buffer_tx_coverage_probe.exact",
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -1184,6 +1208,134 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
+        },
+        "probe_capabilities": []
+      },
+      "exact_variant_of": "scrolling_analysis/buffer_tx_coverage_probe",
+      "id": "scrolling_analysis/buffer_tx_coverage_probe.exact",
+      "identity": {
+        "aliases": [
+          "package",
+          "process_name"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/scrolling_analysis/buffer_tx_coverage_probe.exact.sql",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "limitations": [
+          "BufferTX track names do not identify a unique UPID; exact process evidence uses FrameTimeline only."
+        ],
+        "role": "target"
+      },
+      "sha256": "8ec19919557fb417b0af2985100b466231bb462399f907797c6feb08c33806cd",
+      "signal_patterns": [],
+      "skill_id": "scrolling_analysis",
+      "source": {
+        "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "8016df273414d989f2aaa25e0e34647bbb695e925fcdcb07a400e74b9a806728"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "android.input",
+          "android.frames.timeline",
+          "android.frames.jank_type",
+          "android.binder",
+          "android.garbage_collection",
+          "android.monitor_contention"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "buffer_tx_coverage_probe.exact",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "3176b87558e516c66bdca036137bb4b0782c6a6972a6924d7f22b10b9829a5fa"
+          }
+        ],
+        "name_parameters": [],
+        "parameters": [
+          "end_ts",
+          "start_ts"
+        ],
+        "result_dependencies": [],
+        "result_references": [],
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -1318,8 +1470,7 @@
           }
         },
         "exact_scope": {
-          "reason": "Portable runtime does not issue exact process identity bindings",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -1450,6 +1601,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/input_data_fallback_view",
@@ -1560,6 +1714,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -1698,6 +1855,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -1845,6 +2005,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/expert_analysis_window",
@@ -1970,6 +2133,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -2100,6 +2266,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/scroll_sessions",
@@ -2226,6 +2395,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -2374,6 +2546,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/session_jank",
@@ -2500,6 +2675,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -2637,6 +2815,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -2908,6 +3089,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/global_context_flags",
@@ -3106,6 +3290,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/session_quadrant_summary",
@@ -3242,6 +3429,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "scrolling_analysis/session_cpu_freq",
@@ -3363,6 +3553,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -3499,6 +3692,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -3648,8 +3844,7 @@
           }
         },
         "exact_scope": {
-          "reason": "Portable runtime does not issue exact process identity bindings",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },

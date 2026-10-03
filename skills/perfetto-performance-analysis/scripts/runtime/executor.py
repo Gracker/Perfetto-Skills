@@ -223,6 +223,9 @@ class SkillRunner:
         self.max_depth = max_depth
         # process_identity.IdentityGate (or a test double with the same apply()).
         self.identity_gate = identity_gate
+        # skill_id -> SmartPerfetto's exact-UPID refusal text, or None when the
+        # Skill's SQL can run under an exact scope.
+        self.exact_admission: Callable[[str], str | None] | None = None
         self.prerequisite_checker = prerequisite_checker
         self.process_scope_enabled = process_scope_enabled
 
@@ -338,6 +341,12 @@ class SkillRunner:
             if self.identity_gate is not None
             else None
         )
+        if gate is not None and gate.allowed and getattr(gate.scope, "mode", None) == "exact_upid":
+            admission = self.exact_admission(skill_id) if self.exact_admission is not None else (
+                "Exact UPID scope is unsupported: no exact-scope admission is configured"
+            )
+            if admission:
+                gate.allowed, gate.error = False, admission
         if gate is not None and not gate.allowed:
             return {
                 "schema_version": 1,
@@ -417,10 +426,23 @@ class SkillRunner:
 
         steps = list(skill.get("steps", []) or [])
         if skill.get("type") == "atomic" and skill.get("query_id"):
-            steps = [{"id": "root", "type": "atomic", "query_id": skill["query_id"]}]
+            steps = [{"id": "root", "type": "atomic", "query_id": skill["query_id"],
+                      **({"exact": skill["exact"]} if skill.get("exact") else {})}]
         output_steps: list[dict[str, Any]] = []
         evidence: list[dict[str, Any]] = []
         required_error = False
+        # An exact UPID scope runs each step's exact_sql variant, whose result
+        # dependencies may differ (SmartPerfetto's selectProcessScopeSql).
+        exact_scope = getattr(child_scope, "mode", None) == "exact_upid"
+        # SmartPerfetto's resultScopeLimitations: authored limitations of the SQL
+        # that ran, exact-unavailable reasons, and those of child and item
+        # Skills. Any limitation makes the result partial.
+        limitations: list[str] = []
+
+        def limit(values: Any) -> None:
+            for value in values or []:
+                if isinstance(value, str) and value not in limitations:
+                    limitations.append(value)
 
         for step in steps:
             step_id = str(step["id"])
@@ -432,9 +454,13 @@ class SkillRunner:
                 continue
             if step_type == "atomic":
                 query_id = step.get("query_id")
+                dependencies = (
+                    (step.get("exact") or {}).get("result_dependencies", [])
+                    if exact_scope and step.get("exact") else step.get("result_dependencies", [])
+                )
                 empty_dependencies = [
                     dependency
-                    for dependency in step.get("result_dependencies", [])
+                    for dependency in dependencies
                     if not isinstance(results.get(str(dependency)), Mapping)
                     or not results[str(dependency)].get("data")
                 ]
@@ -451,7 +477,8 @@ class SkillRunner:
                     continue
                 try:
                     scope_context = (
-                        {"identity_result": identity, "supplied_parameters": dict(params or {})}
+                        {"identity_result": identity, "supplied_parameters": dict(params or {}),
+                         "identity_scope": child_scope}
                         if self.process_scope_enabled or skill.get("process_scope") or step.get("process_scope")
                         else {}
                     )
@@ -478,10 +505,37 @@ class SkillRunner:
                     item = self._evidence(skill_id, step_id, str(query_id), inputs, status, rows)
                     item.update(metadata)
                     item.setdefault("identity", identity)
+                    limit(metadata.get("scope_limitations"))
                 except Exception as exc:
                     optional = bool(step.get("optional"))
+                    if getattr(exc, "code", None) == "exact_scope_unavailable":
+                        # The author declared this evidence unavailable under an
+                        # exact scope: SmartPerfetto records it, runs no SQL,
+                        # continues, and marks the result partial. Its names
+                        # stay unobserved so no caller value stands in for it.
+                        result = {"step_id": step_id, "type": step_type, "status": "unavailable",
+                                  "code": exc.code, "error": str(exc), "optional": optional}
+                        item = self._evidence(skill_id, step_id, str(query_id), inputs, "unavailable", [], str(exc))
+                        item.update(getattr(exc, "metadata", {}) or {})
+                        limit(item.get("scope_limitations"))
+                        limit([str(exc)])
+                        bind_no_data(step_id)
+                        if step.get("save_as"):
+                            bind_no_data(str(step["save_as"]))
+                        if skill.get("type") == "atomic" and skill.get("query_id"):
+                            required_error = True
+                        output_steps.append(result)
+                        evidence.append(item)
+                        continue
                     result = {"step_id": step_id, "type": step_type, "status": "error", "error": str(exc), "optional": optional}
+                    if getattr(exc, "code", None):
+                        result["code"] = exc.code
                     item = self._evidence(skill_id, step_id, str(query_id), inputs, "error", [], str(exc))
+                    if optional:
+                        # SmartPerfetto keeps an optional step's scope evidence,
+                        # unavailable with the error; a required error throws.
+                        item.update(getattr(exc, "scope_metadata", {}) or {})
+                        limit(item.get("scope_limitations"))
                     bind_unobserved(step, skipped=False)
                     if not optional:
                         required_error = True
@@ -533,6 +587,7 @@ class SkillRunner:
                         bind(str(step["save_as"]), {"data": saved})
                 output_steps.append(result)
                 evidence.extend(child.get("evidence", []))
+                limit(child.get("scope_limitations"))
                 continue
             if step_type == "iterator":
                 source = results.get(str(step.get("source")), {})
@@ -564,6 +619,7 @@ class SkillRunner:
                     )
                     item_results.append({"index": index, "item": item, "result": child})
                     evidence.extend(child.get("evidence", []))
+                    limit(child.get("scope_limitations"))
                 failed_items = sum(
                     1 for item_result in item_results
                     if not item_result["result"].get("success")
@@ -617,4 +673,5 @@ class SkillRunner:
             "identity": identity,
             "steps": output_steps,
             "evidence": evidence,
+            **({"partial": True, "scope_limitations": limitations} if limitations else {}),
         }

@@ -25,11 +25,15 @@ be reused during a trace.
   filters by process name verifies a supplied name with
   `process_identity_resolver`, runs only on one verified process, and records
   the gate's status, confidence, candidates, and warnings in its evidence.
-  Two exceptions follow SmartPerfetto and this runtime's boundary: when the
-  resolver itself fails, a `verify_if_present` Skill still runs and records its
-  identity as `unresolved` with the reason; and an explicit UPID or PID, which
-  SmartPerfetto would use as an exact process scope, is refused because the
-  portable runtime has no exact-UPID SQL scope.
+  When the resolver itself fails, a `verify_if_present` Skill still runs and
+  records its identity as `unresolved` with the reason, as in SmartPerfetto.
+- A verified explicit UPID, or a PID that maps to one UPID, scopes the run to
+  that exact process. The evidence carries `applied_process_scope` (mode
+  `exact_upid`, the UPID, trace SHA-256 and side) only for target rows; global
+  or peer context rows record their role in `scope_provenance` instead. A
+  Skill whose SQL cannot run under an exact scope is refused before any query,
+  with the supported exact Skills named; a step declared unavailable for an
+  exact scope is recorded `unavailable` and the result is `partial`.
 
 ## Event identity
 

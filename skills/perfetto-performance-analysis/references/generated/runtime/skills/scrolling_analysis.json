@@ -346,6 +346,10 @@
     },
     {
       "condition": "frame_timeline.data[0]?.has_frame_timeline === 1",
+      "exact": {
+        "query_id": "scrolling_analysis/buffer_tx_coverage_probe.exact",
+        "result_dependencies": []
+      },
       "id": "buffer_tx_coverage_probe",
       "name": "BufferTX / FrameTimeline 覆盖探针",
       "optional": true,

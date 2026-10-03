@@ -44,6 +44,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": [
           "thread_states"
         ]
@@ -161,6 +164,10 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "reason": "SQL has no process_scope declaration",
+          "status": "unsupported"
         },
         "probe_capabilities": [
           "thread_states"
@@ -286,6 +293,10 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "reason": "SQL has no process_scope declaration",
+          "status": "unsupported"
         },
         "probe_capabilities": [
           "thread_states"
@@ -415,6 +426,10 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "reason": "SQL has no process_scope declaration",
+          "status": "unsupported"
         },
         "probe_capabilities": [
           "thread_states"
@@ -546,6 +561,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": [
           "thread_states"
@@ -683,6 +701,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": [
           "thread_states"

@@ -44,6 +44,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "cpu_analysis/get_process",
@@ -174,6 +177,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "cpu_analysis/core_type_stats",
@@ -301,6 +307,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "cpu_analysis/thread_cpu_usage",
@@ -427,6 +436,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -559,6 +571,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -693,6 +708,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "cpu_analysis/main_thread_cores",
@@ -819,6 +837,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -957,6 +978,9 @@
             "status": "capability_gated"
           }
         },
+        "exact_scope": {
+          "status": "supported"
+        },
         "probe_capabilities": []
       },
       "id": "cpu_analysis/cpu_frequency_distribution",
@@ -1083,6 +1107,9 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -1215,6 +1242,10 @@
             "reason": "No exact API semantic fixture; runtime capability proof required",
             "status": "capability_gated"
           }
+        },
+        "exact_scope": {
+          "reason": "SQL has no process_scope declaration",
+          "status": "unsupported"
         },
         "probe_capabilities": []
       },

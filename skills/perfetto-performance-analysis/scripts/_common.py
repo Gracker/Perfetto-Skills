@@ -49,13 +49,14 @@ class QueryResult:
 class RuntimeProcessScope:
     """An in-process binding; serialized fields cannot reissue its authority."""
 
-    kind: str
+    kind: str  # "exact", "named" or "unscoped"
     trace_sha256: str
     trace_side: str
     target: str | None
     selectors: tuple[tuple[str, object], ...]
     name_parameters: tuple[str, ...]
     roles: tuple[str, ...]
+    upid: int | None = None
 
 
 _issued_process_scopes: weakref.WeakSet[RuntimeProcessScope] = weakref.WeakSet()
@@ -148,19 +149,38 @@ def bind_runtime_process_scope(
     trace_sha256: str,
     trace_side: str,
     scope_roles: tuple[str, ...] = ("target",),
+    exact_upid: int | None = None,
 ) -> RuntimeProcessScope:
+    """Bind a query's process scope from the identity gate's outcome.
+
+    `exact_upid` comes only from a runtime-issued exact identity scope (the
+    caller checks its authority); it binds the trusted UPID into SQL.
+    """
     reject_process_scope_names(parameters)
     reject_process_scope_names(supplied_parameters)
     if not scope_roles or any(not isinstance(role, str) or role not in PROCESS_SCOPE_ROLES for role in scope_roles):
         raise ValueError("invalid process scope roles")
     if not re.fullmatch(r"[0-9a-f]{64}", trace_sha256) or not trace_side:
         raise ValueError("runtime process scope requires current trace identity")
+    if exact_upid is not None:
+        if not isinstance(exact_upid, int) or isinstance(exact_upid, bool) or exact_upid <= 0:
+            raise ValueError("An exact process scope requires one verified selected UPID")
+        if parameters.get("upid") not in (None, 0, exact_upid):
+            raise ValueError("process scope selectors changed after binding")
+        scope = RuntimeProcessScope(
+            "exact", trace_sha256, trace_side, None,
+            tuple((name, parameters.get(name)) for name in ("upid", "pid")),
+            tuple(name_parameters), tuple(scope_roles), exact_upid,
+        )
+        _issued_process_scopes.add(scope)
+        return scope
     for selector in ("upid", "pid"):
         # A null selector is no selector, as in SmartPerfetto's identity gate.
+        # Any other one is an exact selector, which only an exact scope binds.
         if supplied_parameters.get(selector) is not None:
-            raise ValueError("explicit process selectors are unsupported by the portable scope binding")
+            raise ValueError("explicit process selectors require a verified exact process scope")
         if parameters.get(selector) not in (None, 0):
-            raise ValueError("exact process scope is unsupported")
+            raise ValueError("explicit process selectors require a verified exact process scope")
     policy = identity_policy.get("policy")
     aliases = identity_policy.get("aliases", [])
     if not isinstance(aliases, list) or not all(isinstance(name, str) for name in aliases):
@@ -208,7 +228,7 @@ def _process_scope_value(
     template_names: set[str],
     trace_sha256: str | None,
     trace_side: str | None,
-) -> None:
+) -> int | None:
     if not isinstance(scope, RuntimeProcessScope) or scope not in _issued_process_scopes:
         raise ValueError("runtime-issued process scope is required")
     if scope.trace_sha256 != trace_sha256 or scope.trace_side != trace_side:
@@ -224,7 +244,8 @@ def _process_scope_value(
         raise ValueError("named process scope requires its SQL name parameter")
     # Only target measurements require a name predicate. Context declarations
     # retain their role; resolved run identity does not make their rows targets.
-    return None
+    # An exact scope binds its verified UPID; any other scope binds NULL.
+    return scope.upid if scope.kind == "exact" else None
 
 
 def runtime_platform_key(
