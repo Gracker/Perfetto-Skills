@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/thermal_predictor.skill.yaml
-Source SHA-256: 8c70b6fc3f75df62b4daf848ab2c020ae0c8fd7bc2136ab519bdc1bb8acc7383
+Source SHA-256: 629871e8a6a9d863095033cebba42371f6255209e829840c6ccf36a06a982695
 # CPU 频率趋势观察
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -19,7 +19,11 @@ tier: B
 
 ```yaml
 display_name: CPU 频率趋势观察
+display_name_i18n:
+  en: CPU Frequency Trend
 description: CPU 频率趋势观察；未提供温度或限频证据时不预测热机制
+description_i18n:
+  en: Observes the CPU frequency trend; without temperature or frequency-limit evidence it predicts no thermal mechanism
 icon: thermostat
 tags:
 - thermal
