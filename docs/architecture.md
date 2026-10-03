@@ -91,6 +91,17 @@ The deterministic runner uses a validated, non-evaluating expression subset for
 authored step conditions. Empty rows remain distinct from unavailable
 instrumentation and query failure.
 
+A probe, manifest query, or Skill run loads its trace once: the CLIs keep a
+private `trace_processor_shell server unix` session on a socket in a fresh
+temporary directory, terminate it on exit, and let it reap itself 60 s after a
+killed owner. Every warm query must answer exactly as a fresh process would.
+Leading `INCLUDE PERFETTO MODULE` statements run before a `BEGIN`, the body runs
+inside it and is rolled back, and the session serves only queries that include
+every module it has already loaded, so a query never sees a module it did not
+include. Effects a rollback does not undo (Perfetto functions and macros,
+`RUN_METRIC`, `IMPORT`, or an include after the first body statement), another
+trace, Windows, and a processor without unix server mode run one-shot.
+
 Product snapshot services are replaced by `perfetto_compare.py`. Each trace is
 analyzed independently into a local side-summary JSON; the adapter compares
 only metrics whose status, unit, and definition match, preserving evidence

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import ExitStack
 import hashlib
 import json
 from pathlib import Path
@@ -16,6 +17,7 @@ from _common import (
     resolve_identity,
     run_query,
     sha256_file,
+    trace_processor_session,
     write_text_atomic,
 )
 from perfetto_query import (
@@ -216,6 +218,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    sessions = ExitStack()
     try:
         catalog = ManifestCatalog()
         if args.command == "list":
@@ -244,6 +247,8 @@ def main(argv: list[str] | None = None) -> int:
             skill_root=SKILL_ROOT,
             allow_unsupported=args.allow_unsupported_processor,
         )
+        # The probe and every step query share one trace load.
+        sessions.enter_context(trace_processor_session(args.trace, trace_processor=str(processor)))
         probe = probe_trace(
             args.trace,
             trace_processor=str(processor),
@@ -289,6 +294,8 @@ def main(argv: list[str] | None = None) -> int:
     except (KeyError, OSError, ValueError, RuntimeError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
+    finally:
+        sessions.close()
 
 
 if __name__ == "__main__":

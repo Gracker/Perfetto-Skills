@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import csv
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass
 import hashlib
 import io
@@ -14,9 +16,10 @@ import re
 import shutil
 import subprocess
 import tempfile
+import threading
 import time
 import weakref
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from typing import Any, TypeVar
 
 
@@ -369,6 +372,56 @@ def run_query(
     if max_output_bytes <= 0:
         raise ValueError("max_output_bytes must be greater than zero")
 
+    query_path: Path | None = None
+    if sql_file is not None:
+        query_path = Path(sql_file).expanduser().resolve()
+        if not query_path.is_file():
+            raise FileNotFoundError(f"SQL file not found: {query_path}")
+    limits = _ProcessorLimits(time.monotonic() + timeout, timeout, max_output_bytes)
+    result: QueryResult | None = None
+    session = _active_session(trace, binary)
+    if session is not None and not session.unavailable:
+        try:
+            plan = _session_plan(sql if query_path is None else query_path.read_text(encoding="utf-8"))
+        except UnicodeDecodeError:
+            plan = None
+        if plan is not None:
+            result = session.run(plan, limits)
+    if result is None:
+        result = _run_processor(
+            (str(binary), "query", "--extra-checks"),
+            (str(trace),),
+            sql=sql,
+            sql_file=query_path,
+            limits=limits,
+        )
+    if result.returncode != 0:
+        detail = result.stderr.strip() or result.stdout.strip()
+        raise QueryError(
+            f"trace_processor_shell exited with {result.returncode}: {detail}"
+        )
+    return result
+
+
+@dataclass(frozen=True)
+class _ProcessorLimits:
+    deadline: float
+    timeout: float
+    max_output_bytes: int
+
+    def timed_out(self) -> QueryError:
+        return QueryError(f"Trace query timed out after {self.timeout:g}s")
+
+
+def _run_processor(
+    head: tuple[str, ...],
+    tail: tuple[str, ...] = (),
+    *,
+    sql: str | None,
+    sql_file: Path | None,
+    limits: _ProcessorLimits,
+) -> QueryResult:
+    """Run `head --query-file SQL tail`; `sql` text goes through a temporary file."""
     temporary_query: Path | None = None
     if sql_file is None:
         with tempfile.NamedTemporaryFile(
@@ -376,20 +429,8 @@ def run_query(
         ) as handle:
             handle.write(sql or "")
             temporary_query = Path(handle.name)
-        query_path = temporary_query
-    else:
-        query_path = Path(sql_file).expanduser().resolve()
-        if not query_path.is_file():
-            raise FileNotFoundError(f"SQL file not found: {query_path}")
-
-    command = (
-        str(binary),
-        "query",
-        "--extra-checks",
-        "--query-file",
-        str(query_path),
-        str(trace),
-    )
+        sql_file = temporary_query
+    command = (*head, "--query-file", str(sql_file), *tail)
     stdout_path: Path | None = None
     stderr_path: Path | None = None
     process: subprocess.Popen[bytes] | None = None
@@ -403,28 +444,31 @@ def run_query(
                     stdout=stdout_file,
                     stderr=stderr_file,
                 )
-                deadline = time.monotonic() + timeout
-                while process.poll() is None:
-                    if time.monotonic() >= deadline:
+                while True:
+                    try:
+                        process.wait(timeout=0.02)
+                        break
+                    except subprocess.TimeoutExpired:
+                        pass
+                    if time.monotonic() >= limits.deadline:
                         process.kill()
                         process.wait()
-                        raise QueryError(f"Trace query timed out after {timeout:g}s")
+                        raise limits.timed_out()
                     if (
-                        stdout_path.stat().st_size > max_output_bytes
-                        or stderr_path.stat().st_size > max_output_bytes
+                        stdout_path.stat().st_size > limits.max_output_bytes
+                        or stderr_path.stat().st_size > limits.max_output_bytes
                     ):
                         process.kill()
                         process.wait()
                         raise QueryError(
-                            f"Trace query exceeded the {max_output_bytes} byte output limit"
+                            f"Trace query exceeded the {limits.max_output_bytes} byte output limit"
                         )
-                    time.sleep(0.02)
         if (
-            stdout_path.stat().st_size > max_output_bytes
-            or stderr_path.stat().st_size > max_output_bytes
+            stdout_path.stat().st_size > limits.max_output_bytes
+            or stderr_path.stat().st_size > limits.max_output_bytes
         ):
             raise QueryError(
-                f"Trace query exceeded the {max_output_bytes} byte output limit"
+                f"Trace query exceeded the {limits.max_output_bytes} byte output limit"
             )
         stdout = stdout_path.read_text(encoding="utf-8", errors="replace")
         stderr = stderr_path.read_text(encoding="utf-8", errors="replace")
@@ -439,19 +483,252 @@ def run_query(
             stdout_path.unlink(missing_ok=True)
         if stderr_path is not None:
             stderr_path.unlink(missing_ok=True)
+    return QueryResult(stdout=stdout, stderr=stderr, returncode=returncode, command=command)
 
-    result = QueryResult(
-        stdout=stdout,
-        stderr=stderr,
-        returncode=returncode,
-        command=command,
-    )
-    if returncode != 0:
-        detail = stderr.strip() or stdout.strip()
-        raise QueryError(
-            f"trace_processor_shell exited with {returncode}: {detail}"
+
+# A warm session must answer every query exactly as a fresh process would.
+# Body statements run inside BEGIN/ROLLBACK, which SQLite undoes for tables,
+# views and indexes (PERFETTO ones included), but not for PERFETTO FUNCTION or
+# MACRO definitions, metric/IMPORT side effects, or module includes: a rolled
+# back INCLUDE stays marked as loaded while its tables disappear. Includes are
+# therefore run before the transaction and accumulate, and a query is admitted
+# only when it includes every module the session already loaded, so it sees
+# exactly the schema its own includes produce. Anything else runs one-shot.
+_SESSION_INCLUDE = re.compile(
+    r"INCLUDE\s+PERFETTO\s+MODULE\s+([A-Za-z_][A-Za-z0-9_.]*)", re.IGNORECASE
+)
+_SESSION_BODY = re.compile(
+    r"(?:SELECT|WITH|VALUES"
+    r"|CREATE\s+(?:OR\s+REPLACE\s+)?PERFETTO\s+(?:TABLE|VIEW|INDEX)"
+    r"|CREATE\s+(?:TEMP(?:ORARY)?\s+)?(?:TABLE|VIEW))\b",
+    re.IGNORECASE,
+)
+_SESSION_UNSAFE_CALL = re.compile(r"\b(?:RUN_METRIC|IMPORT)\s*\(", re.IGNORECASE)
+
+
+@dataclass(frozen=True)
+class _SessionPlan:
+    includes: str
+    body: str
+    modules: frozenset[str]
+
+
+def _sql_statements(sql: str) -> list[tuple[int, str]] | None:
+    """Split SQL into (end offset, code without comments or literals).
+
+    None when the text ends inside a literal or comment: the appended ROLLBACK
+    would be swallowed and leave the session inside a transaction.
+    """
+    statements: list[tuple[int, str]] = []
+    code: list[str] = []
+    quote = ""
+    comment = ""
+    index = 0
+    while index < len(sql):
+        current = sql[index]
+        following = sql[index + 1] if index + 1 < len(sql) else ""
+        if comment == "line":
+            if current == "\n":
+                comment = ""
+        elif comment == "block":
+            if current == "*" and following == "/":
+                comment = ""
+                index += 1
+        elif quote:
+            if current == quote:
+                if following == quote and quote != "]":
+                    index += 1
+                else:
+                    quote = ""
+        elif current == "-" and following == "-":
+            comment = "line"
+            code.append(" ")
+            index += 1
+        elif current == "/" and following == "*":
+            comment = "block"
+            code.append(" ")
+            index += 1
+        elif current in ("'", '"', "`", "["):
+            quote = "]" if current == "[" else current
+            code.append(" ? ")
+        else:
+            code.append(current)
+            if current == ";":
+                statements.append((index + 1, "".join(code)))
+                code = []
+        index += 1
+    if quote or comment == "block":
+        return None
+    statements.append((len(sql), "".join(code)))
+    return statements
+
+
+def _session_plan(sql: str) -> _SessionPlan | None:
+    statements = _sql_statements(sql)
+    if statements is None:
+        return None
+    modules: set[str] = set()
+    includes_end = 0
+    has_body = False
+    for end, code in statements:
+        statement = code.strip().rstrip(";").strip()
+        if not statement:
+            continue
+        include = _SESSION_INCLUDE.fullmatch(statement)
+        if include is not None and not has_body:
+            modules.add(include.group(1))
+            includes_end = end
+        elif include is None and _SESSION_BODY.match(statement) and not _SESSION_UNSAFE_CALL.search(statement):
+            has_body = True
+        else:
+            return None
+    if not has_body:
+        return None
+    return _SessionPlan(sql[:includes_end], sql[includes_end:], frozenset(modules))
+
+
+class TraceProcessorSession:
+    """One loaded trace that run_query reuses for statements a rollback undoes."""
+
+    # sockaddr_un.sun_path is 104 bytes on macOS and 108 on Linux.
+    _MAX_SOCKET_PATH = 100
+
+    def __init__(self, trace: Path, binary: Path) -> None:
+        self.trace = trace
+        self.binary = binary
+        self.start_count = 0
+        self.unavailable = os.name == "nt"
+        self.modules: frozenset[str] = frozenset()
+        self._process: subprocess.Popen[bytes] | None = None
+        self._directory: Path | None = None
+        self._lock = threading.Lock()
+
+    @property
+    def address(self) -> str:
+        return str(self._directory / "trace.sock") if self._directory is not None else ""
+
+    def run(self, plan: _SessionPlan, limits: _ProcessorLimits) -> QueryResult | None:
+        """Return the query result, or None when the caller must run it one-shot."""
+        with self._lock:
+            if self._process is not None and (
+                self._process.poll() is not None or not self.modules <= plan.modules
+            ):
+                self.close()
+            if self._process is None and not self._start(limits):
+                return None
+            try:
+                # The includes keep their own positions, and the body keeps
+                # its line and column numbers behind a blank of the includes,
+                # so error locations match a one-shot run.
+                begin = self._remote(plan.includes + "\nBEGIN;\n", limits)
+                if begin.returncode != 0:
+                    self.close()
+                    return begin
+                self.modules |= plan.modules
+                blank = re.sub(r"[^\n]", " ", plan.includes)
+                result = self._remote(f"{blank}{plan.body}\n;\nROLLBACK;\n", limits)
+                # A failing body statement stops before the ROLLBACK, and
+                # every admitted body statement is undone by one.
+                if result.returncode != 0 and self._remote("ROLLBACK;", limits).returncode != 0:
+                    self.close()
+                return result
+            except BaseException:
+                self.close()
+                raise
+
+    def _remote(self, sql: str, limits: _ProcessorLimits) -> QueryResult:
+        return _run_processor(
+            (str(self.binary), "query", "--remote", self.address), sql=sql, sql_file=None, limits=limits
         )
-    return result
+
+    def _start(self, limits: _ProcessorLimits) -> bool:
+        if self.unavailable:
+            return False
+        self._directory = Path(tempfile.mkdtemp(prefix="perfetto-session-"))
+        if len(os.fsencode(self.address)) > self._MAX_SOCKET_PATH:
+            self.close()
+            self.unavailable = True
+            return False
+        # The idle clock runs only once this process is gone, so a session
+        # orphaned by a hard kill is reaped instead of holding the trace.
+        self._process = subprocess.Popen(
+            (
+                str(self.binary), "server", "--extra-checks", "--idle-timeout", "60s",
+                "--path", self.address, "unix", str(self.trace),
+            ),
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        # The server creates its socket only after the trace has loaded.
+        while not Path(self.address).exists():
+            if self._process.poll() is not None:
+                # No unix server mode, or a trace it cannot load: one-shot runs
+                # report the processor's own result for every later query.
+                self.close()
+                self.unavailable = True
+                return False
+            if time.monotonic() >= limits.deadline:
+                self.close()
+                raise limits.timed_out()
+            time.sleep(0.02)
+        if self._remote("SELECT 1;", limits).returncode != 0:
+            self.close()
+            self.unavailable = True
+            return False
+        self.start_count += 1
+        return True
+
+    def close(self) -> None:
+        if self._process is not None:
+            if self._process.poll() is None:
+                self._process.terminate()
+                try:
+                    self._process.wait(timeout=3)
+                except subprocess.TimeoutExpired:
+                    self._process.kill()
+                    self._process.wait()
+            self._process = None
+        if self._directory is not None:
+            shutil.rmtree(self._directory, ignore_errors=True)
+            self._directory = None
+        self.modules = frozenset()
+
+
+_trace_sessions: ContextVar[tuple[TraceProcessorSession, ...]] = ContextVar(
+    "perfetto_trace_sessions", default=()
+)
+
+
+def _active_session(trace: Path, binary: Path) -> TraceProcessorSession | None:
+    return next(
+        (item for item in _trace_sessions.get() if item.trace == trace and item.binary == binary),
+        None,
+    )
+
+
+@contextmanager
+def trace_processor_session(
+    trace: str | Path, *, trace_processor: str | None = None
+) -> Iterator[TraceProcessorSession]:
+    """Keep `trace` loaded for run_query calls in this context.
+
+    Re-entering for the same trace and processor yields the active session;
+    queries for any other trace still run one-shot.
+    """
+    resolved = Path(trace).expanduser().resolve()
+    binary = resolve_trace_processor(trace_processor)
+    active = _active_session(resolved, binary)
+    if active is not None:
+        yield active
+        return
+    session = TraceProcessorSession(resolved, binary)
+    token = _trace_sessions.set(_trace_sessions.get() + (session,))
+    try:
+        yield session
+    finally:
+        _trace_sessions.reset(token)
+        session.close()
 
 
 def include_modules_sql(modules: Iterable[str]) -> str:
@@ -469,7 +746,7 @@ R = TypeVar("R")
 def run_batch_or_each(items: Sequence[T], attempt: Callable[[Sequence[T]], R]) -> tuple[list[R], list[T]]:
     """Run `attempt` on all items at once, splitting only when the batch fails.
 
-    Every trace_processor_shell invocation re-parses the whole trace, so the
+    Outside a warm session every invocation re-parses the whole trace, so the
     common all-readable case costs one invocation; a failed batch is retried
     per item to name the failures. Returns (results, failed items).
     """

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+from contextlib import ExitStack
 import json
 from pathlib import Path
 import re
@@ -24,6 +25,7 @@ from _common import (
     sha256_file,
     sql_template_names,
     table_access_sql,
+    trace_processor_session,
     validate_process_scope_declaration,
     write_text_atomic,
 )
@@ -303,6 +305,7 @@ def verify_manifest_schema(
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    sessions = ExitStack()
     try:
         if any(not MODULE_PATTERN.fullmatch(module) for module in args.module):
             raise ValueError("--module names may contain only letters, digits, dots, and underscores")
@@ -324,6 +327,8 @@ def main(argv: list[str] | None = None) -> int:
                 allow_unsupported=args.allow_unsupported_processor,
             )
             trace_processor = str(processor)
+            # The schema check, probe and query below share one trace load.
+            sessions.enter_context(trace_processor_session(args.trace, trace_processor=trace_processor))
             manifest_entry = load_query_entry(args.query_id, skill_root)
             resolved_trace = args.trace.expanduser().resolve()
             trace_sha256 = sha256_file(resolved_trace)
@@ -440,6 +445,8 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, json.JSONDecodeError, ValueError, RuntimeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
+    finally:
+        sessions.close()
 
 
 if __name__ == "__main__":

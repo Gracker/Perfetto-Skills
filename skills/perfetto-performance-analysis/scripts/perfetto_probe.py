@@ -16,6 +16,7 @@ from _common import (
     run_query,
     sha256_file,
     sql_literal,
+    trace_processor_session,
     write_text_atomic,
 )
 
@@ -262,12 +263,13 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        probe = probe_trace(
-            args.trace,
-            trace_processor=args.trace_processor,
-            timeout=args.timeout,
-            max_output_bytes=args.max_output_bytes,
-        )
+        with trace_processor_session(args.trace, trace_processor=args.trace_processor):
+            probe = probe_trace(
+                args.trace,
+                trace_processor=args.trace_processor,
+                timeout=args.timeout,
+                max_output_bytes=args.max_output_bytes,
+            )
         rendered = json.dumps(
             probe, ensure_ascii=False, indent=2, sort_keys=True
         ) + "\n"
