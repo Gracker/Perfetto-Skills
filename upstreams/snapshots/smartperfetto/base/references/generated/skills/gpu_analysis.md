@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/gpu_analysis.skill.yaml
-Source SHA-256: 1782c39f5ca4ce044bf815ac7ed529e2509316b08ab38f26baaab7ce64fce6bb
+Source SHA-256: 16d9635bd76e3e596da0e0ef704764a78461c0e4e531aa3e272757d03a8cbba4
 # GPU 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -61,6 +61,7 @@ patterns:
 ```yaml
 modules:
 - android.gpu.memory
+- intervals.intersect
 ```
 
 ## Inputs
@@ -306,6 +307,9 @@ display:
   layer: list
   title: GPU 频率与帧渲染关联
   columns:
+  - name: gpu_id
+    label: GPU
+    type: number
   - name: jank_type
     label: 帧类型
     type: string
@@ -334,9 +338,6 @@ display:
   - name: gpu_freq_range
     label: 频率范围
     type: string
-  - name: gpu_id
-    label: GPU
-    type: number
 sql_fragments:
 - fragments/gpu_frequency_intervals.sql
 save_as: gpu_frame_correlation

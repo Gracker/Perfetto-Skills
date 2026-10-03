@@ -1,8 +1,7 @@
 -- GENERATED FILE - DO NOT EDIT.
--- Source: backend/skills/atomic/anr_context_in_range.skill.yaml
--- Source SHA-256: 4a14d85ad7cd54b07f817c9c76948eefd985a4e2af90e0864f7f4360abc171d3
+-- Source: backend/skills/fragments/anr_matched.sql
+-- Source SHA-256: 383794ff3b297a187d7ee1e3b5b7733e26a64163864e8f4fd3d9690dbed3384d
 
-WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
 
@@ -45,18 +44,3 @@ anr_matched AS (
     )
     AND (anr_type = '${anr_type}' OR '${anr_type}' = '')
 )
--- The first matching ANR and the window before it (fragments/anr_matched.sql).
-SELECT
-  printf('%d', ts) as anr_ts,
-  printf('%d', CAST(analysis_timeout_ms * 1e6 AS INTEGER)) as timeout_ns,
-  printf('%d', ts - CAST(analysis_timeout_ms * 1e6 AS INTEGER)) as window_start_ts,
-  ROUND(analysis_timeout_ms, 2) as timeout_ms,
-  timeout_source,
-  process_name,
-  pid,
-  upid,
-  anr_type,
-  error_id
-FROM anr_matched
-ORDER BY ts ASC
-LIMIT 1

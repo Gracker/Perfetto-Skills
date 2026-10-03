@@ -49,8 +49,8 @@
     },
     {
       "default": 1000,
-      "description": "Minimum sustained throttle interval in ns",
-      "name": "min_throttle_ns",
+      "description": "Minimum busy interval below the target clock, in ns",
+      "name": "min_below_target_ns",
       "required": false,
       "type": "integer"
     },
@@ -74,7 +74,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
-    "sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280"
+    "sha256": "cc0be719cf724cb2c0f128f806abaa4a1cd942f6381a0b8e28a83ca9c4a876ab"
   },
   "steps": [
     {
@@ -144,12 +144,12 @@
     {
       "condition": "frequency_residency.data?.length > 0",
       "displayed": true,
-      "id": "sustained_throttle_events",
-      "name": "Sustained GPU throttle events",
+      "id": "sustained_below_target_events",
+      "name": "GPU busy time below the target clock",
       "optional": true,
-      "query_id": "gpu_v57_ai_diagnostics/sustained_throttle_events",
+      "query_id": "gpu_v57_ai_diagnostics/sustained_below_target_events",
       "result_dependencies": [],
-      "save_as": "sustained_throttle_events",
+      "save_as": "sustained_below_target_events",
       "type": "atomic"
     },
     {

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml
--- Source SHA-256: 608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280
+-- Source SHA-256: cc0be719cf724cb2c0f128f806abaa4a1cd942f6381a0b8e28a83ca9c4a876ab
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -125,7 +125,7 @@ gpu_ugpu_fmax AS (
 params AS (
   SELECT
     COALESCE(${target_freq_ratio|0.9}, 0.9) AS target_ratio,
-    MIN(MAX(COALESCE(${min_throttle_ns|1000}, 1000), 1), 10000000000) AS min_throttle_ns,
+    MIN(MAX(COALESCE(${min_below_target_ns|1000}, 1000), 1), 10000000000) AS min_below_target_ns,
     MIN(MAX(COALESCE(${max_rows|20}, 20), 1), 200) AS max_rows
 ),
 low_busy AS (
@@ -185,7 +185,7 @@ SELECT
 FROM low_busy AS l
 LEFT JOIN gpu AS g
   ON g.ugpu = l.ugpu
-WHERE l.dur >= (SELECT min_throttle_ns FROM params)
+WHERE l.dur >= (SELECT min_below_target_ns FROM params)
   AND l.ts >= (
     SELECT MAX(e.ramp_reach_ts)
     FROM ramp_reach AS e

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml
-Source SHA-256: 608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280
+Source SHA-256: cc0be719cf724cb2c0f128f806abaa4a1cd942f6381a0b8e28a83ca9c4a876ab
 # GPU v57 AI Diagnostics
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -19,14 +19,14 @@ tier: B
 
 ```yaml
 display_name: GPU v57 AI Diagnostics
-description: Translate Perfetto v57 GPU Agent Skill SQL into deterministic inventory, occupancy, frequency, ramp, and throttle
-  evidence
+description: Translate Perfetto v57 GPU Agent Skill SQL into deterministic inventory, occupancy, frequency, ramp, and below-target-clock
+  evidence; it reads no frequency-cap evidence
 icon: memory
 tags:
 - gpu
 - occupancy
 - dvfs
-- throttle
+- below_target_clock
 - upstream_v57
 - composite
 ```
@@ -82,11 +82,11 @@ modules:
   required: false
   default: 0.9
   description: Target clock ratio relative to observed fmax
-- name: min_throttle_ns
+- name: min_below_target_ns
   type: integer
   required: false
   default: 1000
-  description: Minimum sustained throttle interval in ns
+  description: Minimum busy interval below the target clock, in ns
 - name: max_rows
   type: integer
   required: false
@@ -343,21 +343,21 @@ sql_fragments:
 - fragments/gpu_frequency_by_ugpu.sql
 save_as: dvfs_ramp_events
 ```
-### Sustained GPU throttle events
+### GPU busy time below the target clock
 
-- ID: `sustained_throttle_events`
+- ID: `sustained_below_target_events`
 - Type: `atomic`
-- SQL: [`../sql/gpu_v57_ai_diagnostics/sustained_throttle_events.sql`](../sql/gpu_v57_ai_diagnostics/sustained_throttle_events.sql)
+- SQL: [`../sql/gpu_v57_ai_diagnostics/sustained_below_target_events.sql`](../sql/gpu_v57_ai_diagnostics/sustained_below_target_events.sql)
 
 ```yaml
-id: sustained_throttle_events
+id: sustained_below_target_events
 type: atomic
 optional: true
 condition: frequency_residency.data?.length > 0
 display:
   level: detail
   layer: list
-  title: Sustained GPU Throttle Events
+  title: GPU Busy Time Below Target Clock (not frequency-cap evidence)
   columns:
   - name: gpu
     label: GPU
@@ -389,7 +389,7 @@ sql_fragments:
 - fragments/gpu_frequency_intervals.sql
 - fragments/gpu_frequency_window.sql
 - fragments/gpu_frequency_by_ugpu.sql
-save_as: sustained_throttle_events
+save_as: sustained_below_target_events
 ```
 ### GPU v57 no-data contract
 
@@ -432,6 +432,8 @@ fields:
   description: Busy-time clock residency and effective occupancy translated from upstream gpu_frequency_residency.sql
 - name: dvfs_ramp_events
   description: Idle-to-busy clock ramp latency translated from upstream gpu_dvfs_ramp.sql
-- name: sustained_throttle_events
-  description: Sustained low-clock busy intervals translated from upstream gpu_sustained_throttle.sql
+- name: sustained_below_target_events
+  description: 'Busy intervals held below the target clock after a ramp reached it, translated from upstream gpu_sustained_throttle.sql.
+    The upstream name says throttle, but no frequency-cap or thermal evidence is read: a governor lowers the clock for load
+    as often as a cap does, so this is not a throttling finding'
 ```

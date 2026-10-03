@@ -267,7 +267,7 @@
       "name": "anr_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/anr_analysis.skill.yaml",
-      "source_sha256": "7ff32bd00930745e7472e3fd492581136074cf0cf6843caf8fecf18d85f1a757",
+      "source_sha256": "1fa589ef5136298372b33fb125b7e0ffa15108e83ecabe89690df65f9bf71ed2",
       "tier": "S",
       "version": "1.0",
       "workflow": "anr-blocking"
@@ -279,7 +279,7 @@
       "name": "anr_context_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/anr_context_in_range.skill.yaml",
-      "source_sha256": "726ac85fa546492063fe506b6b43966c68f37a7429e353399823900137954562",
+      "source_sha256": "4a14d85ad7cd54b07f817c9c76948eefd985a4e2af90e0864f7f4360abc171d3",
       "tier": "B",
       "version": "1.0",
       "workflow": "anr-blocking"
@@ -743,7 +743,7 @@
       "name": "cpu_frequency_limit_episode",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_frequency_limit_episode.skill.yaml",
-      "source_sha256": "38983e5b69ab0a34125556f370d6330a8ddfff7ac04491867e13b853cb56bd8e",
+      "source_sha256": "b8c4443fd1550a0d7e87eb55fa04be818089a405e1bc6467fc6e5d40e73725ac",
       "tier": "A",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -1160,7 +1160,7 @@
       "name": "gpu_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/gpu_analysis.skill.yaml",
-      "source_sha256": "1782c39f5ca4ce044bf815ac7ed529e2509316b08ab38f26baaab7ce64fce6bb",
+      "source_sha256": "16d9635bd76e3e596da0e0ef704764a78461c0e4e531aa3e272757d03a8cbba4",
       "tier": "S",
       "version": "3.0",
       "workflow": "gpu-rendering"
@@ -1255,7 +1255,7 @@
       "name": "gpu_v57_ai_diagnostics",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
-      "source_sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280",
+      "source_sha256": "cc0be719cf724cb2c0f128f806abaa4a1cd942f6381a0b8e28a83ca9c4a876ab",
       "tier": "B",
       "version": "1.0",
       "workflow": "gpu-rendering"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "62b502d45501a234e6c439f4ebb48a48f644f867",
+    "commit": "35188445f7f7896e8027079eb13560b71344ec45",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "880621339536fca996eb3f6f91f153dd791cb58718edc8bd9c0e5bb8d6bc631e",
+    "policy_sha256": "452dc4955e56d69a3c64454b81cbdc5d3e3f1df22da27c6f838322ff4b0b1714",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3104,6 +3104,18 @@
       "disposition": "exported",
       "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
       "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/anr_classified.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/anr_classified.sql",
+      "source_sha256": "f899c461b293b14dba2d07e96070453290e98c8257b1679ecc5c1453bafee2c1"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/anr_matched.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/anr_matched.sql",
+      "source_sha256": "383794ff3b297a187d7ee1e3b5b7733e26a64163864e8f4fd3d9690dbed3384d"
     },
     {
       "destination": "references/generated/runtime/fragments/art_gc_names.sql",
@@ -4338,7 +4350,7 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_sql_fragments": 50,
+    "exported_sql_fragments": 52,
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
@@ -4352,7 +4364,7 @@
       "pipeline_definition": 31
     },
     "skill_yaml_files": 257,
-    "sql_fragments": 57,
+    "sql_fragments": 59,
     "strategy_sources": 144,
     "vendor_overrides": 8
   },

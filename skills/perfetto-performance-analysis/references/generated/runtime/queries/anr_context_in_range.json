@@ -67,7 +67,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/anr_context_in_range/query.sql",
-      "sha256": "bc2889542f2ae300863e9d14f597212192cf947b16804cd0e15fbb6eaa03ac23",
+      "sha256": "b1eea733019cb090d683c4e972b75a09cac1e81a3fd3aeb7df65eff41b49525f",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -78,7 +78,7 @@
       "source": {
         "path": "backend/skills/atomic/anr_context_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "726ac85fa546492063fe506b6b43966c68f37a7429e353399823900137954562"
+        "sha256": "4a14d85ad7cd54b07f817c9c76948eefd985a4e2af90e0864f7f4360abc171d3"
       },
       "sql_dependencies": {
         "creates": [],
@@ -92,7 +92,13 @@
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/anr_matched.sql",
+            "source_sha256": "ebabbbbfa0deeee19cf4f894cc04291823185f0a8124440d27b8b75c000b5844"
+          }
+        ],
         "name_parameters": [
           "package",
           "process_name"

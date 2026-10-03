@@ -1,7 +1,7 @@
 {
   "files": {
     "catalog.json": {
-      "sha256": "7c129fe705eed0d90426720867b2a28114c3a95b20ada70bc7034707c0316376",
+      "sha256": "ee68c7767733a4f7a8987d6ff4e3cfb7611c9373a4f6d8bf2c88d13711746f99",
       "size": 13174
     },
     "knowledge/knowledge-binder-ipc.template.md": {
@@ -181,12 +181,12 @@
       "size": 10293
     },
     "runtime/android/anr_analysis.json": {
-      "sha256": "2baa546064bb0363fb4922944737c9065cbcab0c7cec807c1fa3677a54fdcab7",
-      "size": 22258
+      "sha256": "68551bff87775b78aeb860c2d37b54258c479a994c645e126fe4dc405de59090",
+      "size": 22172
     },
     "runtime/android/anr_context_in_range.json": {
-      "sha256": "a7f83a35063b8a993d0d960ba36f3cf137c10ad98827659f6bbfbd062ea187a9",
-      "size": 1918
+      "sha256": "49d063023f070fdea48eddf45e238cc9436d6ec18aa36e0f552adedd40953ee4",
+      "size": 1830
     },
     "runtime/android/anr_detail.json": {
       "sha256": "5bf26187957e87a58f0d3cf8158e14a4df83f87fb5c3826debcc80da85e9b8ef",
@@ -481,8 +481,8 @@
       "size": 14399
     },
     "runtime/android/gpu_analysis.json": {
-      "sha256": "7c76f0aa80ff5bbc7022a6e6d392806e4ed4a227fe2c34bfbf6e86b30b88092c",
-      "size": 15440
+      "sha256": "7a0bf64834d8dcb76e02d44efb7a73b32bdf654fe9a6e52f57760d3b0660e0ad",
+      "size": 15467
     },
     "runtime/android/gpu_compute_kernel_analysis.json": {
       "sha256": "a6f110850525eef34c7d9eae70612967dc6cf5c9ce210f06ac4890bb2f2bb06d",
@@ -513,8 +513,8 @@
       "size": 2117
     },
     "runtime/android/gpu_v57_ai_diagnostics.json": {
-      "sha256": "3be0bf3c2b21409c774b458d29457643a44d3b445d588a7d220b50e2e421ab3f",
-      "size": 15222
+      "sha256": "98869e385b6113b8a2806bac25873e43cdacb5d22f4a0dc422f476dbe488e89e",
+      "size": 15230
     },
     "runtime/android/input_events_in_range.json": {
       "sha256": "b444a2ec1ef2b3edde5ebf81c0d4332f4c9a878a2112d13a5391f99c11c0e7fb",
@@ -1156,6 +1156,14 @@
       "sha256": "d714ec458a5ed924aa621caa3404b7580e066e6180e755a34236488b01944d72",
       "size": 1926
     },
+    "runtime/fragments/anr_classified.sql": {
+      "sha256": "cfe4acd3d54e0e1b366530cca13165eb9060951ded5bd369c081c6eab1d05838",
+      "size": 2720
+    },
+    "runtime/fragments/anr_matched.sql": {
+      "sha256": "ebabbbbfa0deeee19cf4f894cc04291823185f0a8124440d27b8b75c000b5844",
+      "size": 2218
+    },
     "runtime/fragments/art_gc_names.sql": {
       "sha256": "2e50cd240ecb068815a92c13ff38fe2ea843172eece9818b3ed8bfd05f43dfd5",
       "size": 2924
@@ -1397,12 +1405,12 @@
       "size": 19282
     },
     "runtime/queries/anr_analysis.json": {
-      "sha256": "89d5629ba65c08a2a8a2069da50ac1fd67db564c01f6257316671d04e113c602",
-      "size": 37841
+      "sha256": "4a7a4644059a18f01c88ee2376ea149c7660c382784aeb60b57970df1f25e89d",
+      "size": 39370
     },
     "runtime/queries/anr_context_in_range.json": {
-      "sha256": "74807ff9c36d50f4262a313c226a569708d0b36bbacf59ccf4c465f829fac763",
-      "size": 3752
+      "sha256": "56b7c80de95d6599257cc0db32b89b76851eafddda7fbb45de4c5f88ba826b4e",
+      "size": 3976
     },
     "runtime/queries/anr_detail.json": {
       "sha256": "96510873eddba8b4d22b5e28050808c9f91f069984ec9a512105e9c6f7cd6827",
@@ -1557,8 +1565,8 @@
       "size": 25791
     },
     "runtime/queries/cpu_frequency_limit_episode.json": {
-      "sha256": "03b0d1923c1f4a8ccd939bc2c321bd82e3494c7d719e5b17d86f6bd0ded592bf",
-      "size": 30378
+      "sha256": "d7841853d5480cd2a42493bdb00ef03862e5c5cfc7baa1e884bbb1e84cda105d",
+      "size": 30631
     },
     "runtime/queries/cpu_idle_analysis.json": {
       "sha256": "12a279ae396de1b2c538f53c4e14bad58b1770fd02d5942829965b3d49ab638f",
@@ -1697,8 +1705,8 @@
       "size": 23637
     },
     "runtime/queries/gpu_analysis.json": {
-      "sha256": "b74356a34a6a5891572400f95690ecbba5acb8fd401849d7c34f54b9e86cf1de",
-      "size": 31878
+      "sha256": "d98f81e2be62c0c6c11f5c0c8fbc729ece2047de7dafef02707966619666b993",
+      "size": 32142
     },
     "runtime/queries/gpu_compute_kernel_analysis.json": {
       "sha256": "8dd977cd25adf2ccca1ef3f42515b7b8f27ac67323964c73b130a78543e4c301",
@@ -1729,8 +1737,8 @@
       "size": 4304
     },
     "runtime/queries/gpu_v57_ai_diagnostics.json": {
-      "sha256": "af6af74207ac5eaa1cf55210a97d2ff30e58ba4b403a6d95794edbaf9da54c1e",
-      "size": 29302
+      "sha256": "34b5a5190f8f773b655927d15e0ee9c84b72dbdbe1a571c8f8e760a1c3aec6b8",
+      "size": 29318
     },
     "runtime/queries/input_events_in_range.json": {
       "sha256": "7a9921322937b96ba0f951ee70bc1b35e725d41dd3b47197df78e2715c4619be",
@@ -2409,12 +2417,12 @@
       "size": 3841
     },
     "runtime/skills/anr_analysis.json": {
-      "sha256": "624893d20bef6527ccb6d156c85fb210faec26148a72f374a444db4ac60b0014",
-      "size": 21289
+      "sha256": "93b79a5d70a329dbf28ab9f56b1d73ec8a34ae4e71c0cc7e813ec7ea25a8db04",
+      "size": 21195
     },
     "runtime/skills/anr_context_in_range.json": {
-      "sha256": "06c1e028583fd440c5599569e79e5d41c14692fe5f70d53f68232f1d2d41006c",
-      "size": 1588
+      "sha256": "8887aeaed1c1fd85a4aa7794f927add1f2e1a2e1cecba4c6139b94feb49dfec4",
+      "size": 1490
     },
     "runtime/skills/anr_detail.json": {
       "sha256": "35d220db9327a92e6162d3024c04716fdcb22150f81bd448cd47ae8e7582cf00",
@@ -2569,7 +2577,7 @@
       "size": 19605
     },
     "runtime/skills/cpu_frequency_limit_episode.json": {
-      "sha256": "ab0272020ca6c48d7c2c012bc81aa4a71afc58b4152eca6b987f667b04084891",
+      "sha256": "76aa83dfa3a3cb209193fa51cd2ede755dbe8e3870a5a62c9c9ab1e03e293862",
       "size": 10142
     },
     "runtime/skills/cpu_idle_analysis.json": {
@@ -2709,8 +2717,8 @@
       "size": 3672
     },
     "runtime/skills/gpu_analysis.json": {
-      "sha256": "474462dc91fad398c3e319596d79f06695d9219c5aaccd6e06401497eeda9b7c",
-      "size": 5846
+      "sha256": "9b0d745a5072398a5ca6f7e04c4ddaa1eb28122dd29ba10699480c469931ee5c",
+      "size": 5875
     },
     "runtime/skills/gpu_compute_kernel_analysis.json": {
       "sha256": "48a8d0e71c14ef9758ddc681684d0f5b433c989ad68a324b81d3334f4eb09d85",
@@ -2741,8 +2749,8 @@
       "size": 1931
     },
     "runtime/skills/gpu_v57_ai_diagnostics.json": {
-      "sha256": "d07904270e99edc3ac7d055cafa6f397afed76f5cb570946ad7daa5d01c32901",
-      "size": 4911
+      "sha256": "88c6900fdd11de50239300de720ec3cee58f1ec4b2a8b7f5a1baf6f61c4ebb4b",
+      "size": 4944
     },
     "runtime/skills/input_events_in_range.json": {
       "sha256": "8d5df09f978fec50de790a4ed35aae0e0fba9b1f6419a0c3ba7b25edd5be6887",
@@ -3465,11 +3473,11 @@
       "size": 7676
     },
     "skills/anr_analysis.md": {
-      "sha256": "c0ca7e91a44fdf46bec5dc58424b8b14aad625563e8f1a84492e2e06c8f9b914",
-      "size": 27985
+      "sha256": "7c976cc2b994e6af3315cd3bc0119c0adfab46f7bdca25cd81393057d0cc1a44",
+      "size": 28205
     },
     "skills/anr_context_in_range.md": {
-      "sha256": "06f4797a2e594ff9db8ab20c7dded92ee1a80f44e04d4ee145e035a79757e7ea",
+      "sha256": "78448e03273d3ba58933dac07eed15789968dd808a6d180e1461a4cd17edd5ce",
       "size": 2107
     },
     "skills/anr_detail.md": {
@@ -3625,8 +3633,8 @@
       "size": 26518
     },
     "skills/cpu_frequency_limit_episode.md": {
-      "sha256": "5dba39118324894e0e94e667f0aafe6ff09b98cd7422b104f31e102c1b999b7f",
-      "size": 18128
+      "sha256": "62730e48316d76469cde4bf010ff7c31bfac4ecb3f161804341c916dcf231397",
+      "size": 18168
     },
     "skills/cpu_idle_analysis.md": {
       "sha256": "a78647d0cef43079358fd9cddc2cc9da580e6ec2a06f56d0e1dcabd4d6d29b05",
@@ -3765,8 +3773,8 @@
       "size": 11117
     },
     "skills/gpu_analysis.md": {
-      "sha256": "15cfd401edc8135f8ae74198dd094bb194b97fa1b4fbc670eb1da507a6ab00e8",
-      "size": 10990
+      "sha256": "994ef7527fb47acd8d2ca029fc6fe5e70716c4c2900a6d7dcdbacde91a302e0b",
+      "size": 11012
     },
     "skills/gpu_compute_kernel_analysis.md": {
       "sha256": "38ef4094da33d73303d8aa141292932b88e191e975c17a9bc3fd8c688360fd20",
@@ -3797,8 +3805,8 @@
       "size": 2267
     },
     "skills/gpu_v57_ai_diagnostics.md": {
-      "sha256": "f0b52ba9b9ac954d408fb343f04872987423ace64c24f241abe51a26185c194c",
-      "size": 9868
+      "sha256": "703c337c561e31e81b6695575b6cebe94597918b26a56a39411ec65a57cdb34a",
+      "size": 10225
     },
     "skills/input_events_in_range.md": {
       "sha256": "10a66569b8fc2b4407b3331f064881d7cf3424f9501f19e648bfdf8cc74de801",
@@ -4589,48 +4597,48 @@
       "size": 2047
     },
     "sql/anr_analysis/anr_detection.sql": {
-      "sha256": "b17d8dc02067bed461e2c303663f88eab59ff2ce50e85b09cafd27471b9dca59",
-      "size": 732
+      "sha256": "94ad5487869c05271283cc6480052981dd6aeca8f4c603ba6bbc6153046dab16",
+      "size": 2455
     },
     "sql/anr_analysis/anr_overview.sql": {
-      "sha256": "e32bc287285e037976e8176afb97cbd95e2a3e2adb7b4c04c7a36d7aaaa75557",
-      "size": 7426
+      "sha256": "e8c163511c5ff0300989f0ce95b379468da1115b0d427653131e30832ed57881",
+      "size": 9668
     },
     "sql/anr_analysis/anr_process_io_wait.sql": {
-      "sha256": "1a6002711e59a974cd978f9482a525db51b38831b592d449fc855632e8e7b18c",
+      "sha256": "3a4430202580fabfc78ff7e1fb745cf086e944480cf6b3add11e5a886b318bf5",
       "size": 4737
     },
     "sql/anr_analysis/get_anr_events.sql": {
-      "sha256": "225b47f0e07c27ed7835cd6e85a6188b88de9627dd1483252e1bcaf466b4e317",
-      "size": 8350
+      "sha256": "bf988e2a06302f50c2c9518dac3d6fabb9a046cac5fe6a81682b1ff62592de33",
+      "size": 9655
     },
     "sql/anr_analysis/io_load.sql": {
-      "sha256": "f532ecba110f94f1e97ac10d2d9b478918b674b859cabca3a391915958fda84a",
+      "sha256": "f56c780d57fb2266469766858a524f66494f8c0af5ddac71fbb8d1b27f4b5d88",
       "size": 1126
     },
     "sql/anr_analysis/memory_pressure.sql": {
-      "sha256": "144773f767c82b2f9baf910d9f2c8f01b7a1af005cf1dd46a6387ff5622a7d98",
+      "sha256": "6e37ec6343a69380f2b489889ca5a6f21f12a71a58c3b98596634a00977b1eec",
       "size": 466
     },
     "sql/anr_analysis/system_cpu_health.sql": {
-      "sha256": "59a73d20cf00222901c20ecdf8162dffabe12bf330eb478eefc7610fc9206010",
+      "sha256": "7d0c90b0f9d107c78f36f8c47b69bb70eb4fdafe3b2d81829fa0243c97cecc27",
       "size": 4569
     },
     "sql/anr_analysis/system_freeze_check.sql": {
-      "sha256": "b6a5bddc2deb0b2c3a45d290911df4bf81b5beacc3b37f97c9d813adcbe1b74b",
+      "sha256": "20b2ed440603acb39b00ad615d4d965e1ee33def2a8126b5810923c53eb68a7b",
       "size": 3471
     },
     "sql/anr_analysis/top_cpu_processes.sql": {
-      "sha256": "db8382a1240465f1e5e3a892ac5c36d1ae769b836f54a16c2d6df5aa96445ee7",
+      "sha256": "52b0ed50610b0f926bf12073e8458b3111b4cf5858ee0b1e8331ab97e08241ea",
       "size": 1011
     },
     "sql/anr_analysis/trigger_classification.sql": {
-      "sha256": "fcc16199299b98c37284f208c5f888a2d6edda209f724fc88e2420c0a8cf20ca",
-      "size": 6885
+      "sha256": "b7974d8a08c7f79c4cca0688e2539d3c33a237752184cbd00e2c94434e3d9f60",
+      "size": 9192
     },
     "sql/anr_context_in_range/query.sql": {
-      "sha256": "bc2889542f2ae300863e9d14f597212192cf947b16804cd0e15fbb6eaa03ac23",
-      "size": 2287
+      "sha256": "b1eea733019cb090d683c4e972b75a09cac1e81a3fd3aeb7df65eff41b49525f",
+      "size": 2671
     },
     "sql/anr_detail/anr_info.sql": {
       "sha256": "e332ef911b1e0f3ae4b80a96721863c74c4450344511423135ff5a176d0ce3a4",
@@ -5229,31 +5237,31 @@
       "size": 12509
     },
     "sql/cpu_frequency_limit_episode/episode_windows.sql": {
-      "sha256": "6b5361877b2080cfeacdd28cc5bca9358f8248d89e629c7dbe427bc37961d1ab",
+      "sha256": "4fecfddf511673cc9ebf88ad77b90c5a183401707f991682c0eda60f95d401c6",
       "size": 2127
     },
     "sql/cpu_frequency_limit_episode/limit_onsets.sql": {
-      "sha256": "08562771f1c57f0754efa6db7bd774615d7a9515dbe96e60a841cb6eaffc94d0",
+      "sha256": "9411518cc865d36eb780a610d06903686a6748dc59fd7eb7610c04324c3cd3f8",
       "size": 60889
     },
     "sql/cpu_frequency_limit_episode/non_cpu_heat_context.sql": {
-      "sha256": "3f0c595376ca9af9841b7a1fcf92d87d5884067c125fa9c9dc3262d75287d924",
-      "size": 9603
+      "sha256": "ea9d1a58903c3f27523e59d840702f87233979dbeb1b7354e8ff6ecdd34e2210",
+      "size": 12049
     },
     "sql/cpu_frequency_limit_episode/temperature_context.sql": {
-      "sha256": "02bd0e6ccc9b9cef6b69067919bd289f64b28590968370710743d27fb65cf175",
+      "sha256": "d5858656d5c2d865e5bc15848504bb385467b42ccaf2e93701ad3e491e59f438",
       "size": 5515
     },
     "sql/cpu_frequency_limit_episode/who_cooling.sql": {
-      "sha256": "b925f5859659779cd760caa08a7805cd656615a40562f9d65d8ee1ebbde0dd93",
+      "sha256": "4db9928f7f76ae59a2a43229c9353cebc1fc9d824b743b3f2ea76ad1ac79bffe",
       "size": 27809
     },
     "sql/cpu_frequency_limit_episode/who_daemon.sql": {
-      "sha256": "9acd4139ae906ec5b351a7e1773b212e750c314ad1f5b5fd68acf4aef500367c",
+      "sha256": "24c4591325ef6a9f9bf9fad44ffd2d29c5bf83bb54ad94a369427a1d6d52c751",
       "size": 9692
     },
     "sql/cpu_frequency_limit_episode/who_verdict.sql": {
-      "sha256": "660768e93c76ca963c7802d42856879cb0937de2c0a27653fd514c978f8dd040",
+      "sha256": "2abfd2336ef6b293a9b89dabb1c78d630405c77dd256977bab697aeae854ed9d",
       "size": 61932
     },
     "sql/cpu_idle_analysis/query.sql": {
@@ -5641,35 +5649,35 @@
       "size": 695
     },
     "sql/gpu_analysis/data_check.sql": {
-      "sha256": "66ed01f8c8da866e6d0ef16ad10ec84a729f2aeabcad93c1642c2e1998d9d0c4",
+      "sha256": "12f0615b7a9146b8ef30e1312f8bc55fd8aab94efb8d0a5326b05fdb51b4ba5b",
       "size": 3051
     },
     "sql/gpu_analysis/fallback_no_gpu_data.sql": {
-      "sha256": "295dce2728752bb8036f89dea1ad8143878c9eceaa769fbea0166922bb145996",
+      "sha256": "abbf7db90c1cdc566acbf133f0dceed8193066136cd9016fbcc69d8891d39591",
       "size": 739
     },
     "sql/gpu_analysis/gpu_frame_correlation.sql": {
-      "sha256": "243098b096e03f20fbb1292ef72de07521eb452f510a416c8945253571c1216c",
-      "size": 4168
+      "sha256": "9ba487fbe73855933fa61c463038be5845bc0462d2da64ea18b4ad18c95eeddf",
+      "size": 4878
     },
     "sql/gpu_analysis/gpu_freq_distribution.sql": {
-      "sha256": "a5e73a85f300a19d0138927ebee556f79bab767c089c367158e7e3e22acb7a6f",
+      "sha256": "337305a7909206baec29b5185df2c056bb907a9d678475282ec533778c448f64",
       "size": 5732
     },
     "sql/gpu_analysis/gpu_freq_overview.sql": {
-      "sha256": "5bca136073b32cd7015f33e21a3ca4b2db7749c0e1ee980fe16c51e6fa5eef47",
+      "sha256": "ce4c06ad86028c80ec0de4acdc50013fe707e0623099405e03cd30d0545a62fe",
       "size": 5988
     },
     "sql/gpu_analysis/gpu_high_load_periods.sql": {
-      "sha256": "b5ef5dc111e6502ca1ef6f887db587cfb007455f5d4f1375b54ab4c21ba96539",
+      "sha256": "6dd7125ea76d6bc577321f1f84ec49902547ed8cfdd5d169037e5de452305f9e",
       "size": 5529
     },
     "sql/gpu_analysis/gpu_memory_overview.sql": {
-      "sha256": "f36d49c959143ca4c2f0ff33ee360ad6448ea37be785aa50999335a3ccfbee01",
+      "sha256": "cc2bc12f772ec0fbcdec98249bf8e747542f2980b91de1836ce9a85db552ac33",
       "size": 850
     },
     "sql/gpu_analysis/root_cause_classification.sql": {
-      "sha256": "c4d2bc9e4520b31c051e046104a1ca77c34f2885f01fca0f6fee031d9d21fbf1",
+      "sha256": "9c5e71c032d9468fbb5da8063393279e3f28a956f62108843e967a06e769502a",
       "size": 9236
     },
     "sql/gpu_compute_kernel_analysis/data_check.sql": {
@@ -5745,35 +5753,35 @@
       "size": 2600
     },
     "sql/gpu_v57_ai_diagnostics/data_check.sql": {
-      "sha256": "82417d71f99a661bc37d650f5845b0173d370f6c2abf9b7663907c06c56d75c0",
+      "sha256": "615ed174ce50ca1855f92c227cbc7a41d56304f940947881e10137c060618fee",
       "size": 3199
     },
     "sql/gpu_v57_ai_diagnostics/dvfs_ramp_events.sql": {
-      "sha256": "d500adcdd6e82c7273a6cf1dbf52607ba3cb140aa4bf9df1a64434734edc399e",
+      "sha256": "946bcf6a1da335a4ce33740589042e6a971b70a313dcef5c4dc9ec88df874f2b",
       "size": 6105
     },
     "sql/gpu_v57_ai_diagnostics/frequency_residency.sql": {
-      "sha256": "5488e8fe7846c8fce8d9c2887b0049333ebc102ce1aa65829ee8ec048f7f067e",
+      "sha256": "7250a8e604cb34a694872b777d6e7d969613a4efce9cd4111160f7d1c860eb70",
       "size": 6033
     },
     "sql/gpu_v57_ai_diagnostics/gpu_inventory.sql": {
-      "sha256": "f7f67f3b43a393efaac55d38342bcc6988beec98262e0e8f295908a6da1a7f5d",
+      "sha256": "880ea360e02332a406fd5cbbbfc3a4bda89e7317ca6d7d364cae4e22ede931a4",
       "size": 622
     },
     "sql/gpu_v57_ai_diagnostics/idle_gaps.sql": {
-      "sha256": "8ffe79bfdcb5ff05163570786559fb8907b8923ecea2d8da41d48dd7f2ebfa86",
+      "sha256": "faa0f23e9ee1787851051f93a2c70c24cfc3f9f5b3a0a86413d085cab42fe70f",
       "size": 756
     },
     "sql/gpu_v57_ai_diagnostics/no_data_contract.sql": {
-      "sha256": "0d2fffaefb4dacc0ed9f80ed5c32ffddb5182bdfdfbc149fa42e6f73c7e31dfa",
+      "sha256": "554e7fc4ba8859a32181885fe33385b643cd28175577b8f8b94cddcb3c659063",
       "size": 317
     },
-    "sql/gpu_v57_ai_diagnostics/sustained_throttle_events.sql": {
-      "sha256": "14f6bb4d95de520aa7f9220707709681aa59ecb42bdd90c8f07389542bb567b4",
-      "size": 6734
+    "sql/gpu_v57_ai_diagnostics/sustained_below_target_events.sql": {
+      "sha256": "7ce075a1c80028c7596a4c30dd11c8d278ec8174387247fda4776eea376402e0",
+      "size": 6746
     },
     "sql/gpu_v57_ai_diagnostics/timeline_occupancy.sql": {
-      "sha256": "f0fd4ba98c048aa1da0729ebfc0fec33f771315b6edbbb49d13efeb77a039540",
+      "sha256": "8ccd93da0097523802ac8c3f536bcee4ada01cd737c2cc86f7996abff4e41bff",
       "size": 1592
     },
     "sql/input_events_in_range/query.sql": {
@@ -7502,5 +7510,5 @@
     }
   },
   "schema_version": 1,
-  "source_commit": "62b502d45501a234e6c439f4ebb48a48f644f867"
+  "source_commit": "35188445f7f7896e8027079eb13560b71344ec45"
 }

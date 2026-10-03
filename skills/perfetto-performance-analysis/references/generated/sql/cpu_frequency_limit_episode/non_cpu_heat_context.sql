@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_frequency_limit_episode.skill.yaml
--- Source SHA-256: 38983e5b69ab0a34125556f370d6330a8ddfff7ac04491867e13b853cb56bd8e
+-- Source SHA-256: b8c4443fd1550a0d7e87eb55fa04be818089a405e1bc6467fc6e5d40e73725ac
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -110,21 +110,94 @@ thermal_daemon_threads AS (
   WHERE signature_kind IN ('thermal_daemon', 'thermal_kernel_thread')
 )
 ,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- No input CTE. The GPU frequency of every GPU as leading intervals, one row
+-- per counter sample of the trace_processor "gpufreq" track (the same input
+-- and interval shape as stdlib android_gpu_frequency, which returns the raw
+-- value), with the value normalized to MHz.
+--
+-- That track is labelled kHz, but its writers disagree: power/gpu_frequency
+-- and generic GPU events write kHz, kgsl_gpu_frequency is multiplied to Hz by
+-- trace_processor, and sys_stats gpufreq_mhz writes MHz to GPU 0, so one
+-- track can carry two units. Each sample is read by its own magnitude, which
+-- is unambiguous for a GPU clock between 10 MHz and 10 GHz:
+--   0                  off: the GPU is powered down, not running slowly
+--   10 <= v < 1e4      MHz
+--   1e4 <= v < 1e7     kHz
+--   1e7 <= v <= 1e10   Hz
+--   anything else      out_of_domain, freq_mhz NULL
+-- prev_freq_mhz is the normalized previous value, so a unit change is not
+-- a frequency change. A consumer reports off time apart and
+-- leaves it out of averages and low-frequency shares.
+gpu_frequency_samples AS (
+  SELECT
+    c.id AS counter_id,
+    c.ts,
+    c.track_id,
+    t.ugpu,
+    t.gpu_id,
+    c.value AS raw_value,
+    CASE
+      WHEN c.value = 0 THEN 'off'
+      WHEN c.value >= 10 AND c.value < 1e4 THEN 'mhz'
+      WHEN c.value >= 1e4 AND c.value < 1e7 THEN 'khz'
+      WHEN c.value >= 1e7 AND c.value <= 1e10 THEN 'hz'
+      ELSE 'out_of_domain'
+    END AS unit_basis
+  FROM counter c
+  JOIN gpu_counter_track t ON t.id = c.track_id
+  WHERE t.name = 'gpufreq' AND t.gpu_id IS NOT NULL
+),
+gpu_frequency_normalized AS (
+  SELECT
+    *,
+    CASE unit_basis
+      WHEN 'off' THEN 0.0
+      WHEN 'mhz' THEN raw_value
+      WHEN 'khz' THEN raw_value / 1e3
+      WHEN 'hz' THEN raw_value / 1e6
+    END AS freq_mhz
+  FROM gpu_frequency_samples
+),
+gpu_frequency_intervals AS (
+  SELECT
+    counter_id,
+    ts,
+    COALESCE(LEAD(ts) OVER w, trace_end()) - ts AS dur,
+    track_id,
+    ugpu,
+    gpu_id,
+    freq_mhz,
+    unit_basis = 'off' AS is_off,
+    unit_basis,
+    LAG(freq_mhz) OVER w AS prev_freq_mhz
+  FROM gpu_frequency_normalized
+  WINDOW w AS (PARTITION BY track_id ORDER BY ts, counter_id)
+)
+,
 win AS (
   SELECT ${episode_windows.data[0].before_start_ts|NULL} AS before_start_ts,
     ${episode_windows.data[0].before_end_ts|NULL} AS before_end_ts
 ),
+-- GPU frequency samples come through their normalizing fragment.
 counter_presence AS (
-  SELECT 'counter_track_type' AS source_kind, ct.type AS source_key,
-    printf('%d tracks', COUNT(DISTINCT ct.id)) AS detail,
-    COUNT(c.id) AS observed_count, NULL AS running_ns,
-    MIN(c.ts) AS first_ts, MAX(c.ts) AS last_ts,
+  SELECT 'counter_track_type' AS source_kind, source_key,
+    printf('%d tracks', COUNT(DISTINCT track_id)) AS detail,
+    COUNT(*) AS observed_count, NULL AS running_ns,
+    MIN(ts) AS first_ts, MAX(ts) AS last_ts,
     '存在该类计数器样本，不代表该子系统是本次限频的热源' AS interpretation
-  FROM counter_track ct JOIN counter c ON c.track_id = ct.id
-  WHERE ct.type IN ('battery_counter', 'power_rails', 'gpu_frequency', 'gpu_memory')
-    AND c.ts >= (SELECT before_start_ts FROM win)
-    AND c.ts < (SELECT before_end_ts FROM win)
-  GROUP BY ct.type
+  FROM (
+    SELECT ct.type AS source_key, c.track_id, c.ts
+    FROM counter_track ct JOIN counter c ON c.track_id = ct.id
+    WHERE ct.type IN ('battery_counter', 'power_rails', 'gpu_memory')
+    UNION ALL
+    SELECT 'gpu_frequency', track_id, ts FROM gpu_frequency_samples
+  )
+  WHERE ts >= (SELECT before_start_ts FROM win)
+    AND ts < (SELECT before_end_ts FROM win)
+  GROUP BY source_key
 ),
 sig AS (
   SELECT * FROM thermal_signal_signatures WHERE match_target = 'non_cpu_heat_process'

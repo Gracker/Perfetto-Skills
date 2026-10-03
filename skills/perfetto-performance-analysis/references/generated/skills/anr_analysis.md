@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/anr_analysis.skill.yaml
-Source SHA-256: 7ff32bd00930745e7472e3fd492581136074cf0cf6843caf8fecf18d85f1a757
+Source SHA-256: 1fa589ef5136298372b33fb125b7e0ffa15108e83ecabe89690df65f9bf71ed2
 # ANR 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -202,6 +202,8 @@ synthesize:
     template: 检测到 {{total_anr_count}} 个 ANR 事件，影响 {{affected_process_count}} 个进程
   - condition: total_anr_count > 3
     template: ⚠️ 检测到 {{total_anr_count}} 个 ANR，可能是系统级问题
+sql_fragments:
+- fragments/anr_matched.sql
 save_as: detection
 optional: true
 on_empty: 未检测到 ANR 事件。请确认 Trace 包含 ANR 数据。
@@ -254,6 +256,8 @@ synthesize:
   - template: ANR 触发类型 {{trigger_type}}（{{event_count}} 次）；候选根因提示只作为排查入口，不是最终结论
 sql_fragments:
 - fragments/art_gc_names.sql
+- fragments/anr_matched.sql
+- fragments/anr_classified.sql
 save_as: trigger_classification
 condition: detection.data[0]?.total_anr_count > 0
 ```
@@ -596,6 +600,8 @@ synthesize:
     template: 服务超时 {{anr_count}} 次：Service 生命周期方法超时
 sql_fragments:
 - fragments/art_gc_names.sql
+- fragments/anr_matched.sql
+- fragments/anr_classified.sql
 save_as: overview
 condition: detection.data[0]?.total_anr_count > 0
 ```
@@ -680,6 +686,8 @@ synthesize:
     format: '{{value}} ms'
 sql_fragments:
 - fragments/art_gc_names.sql
+- fragments/anr_matched.sql
+- fragments/anr_classified.sql
 save_as: anr_events
 condition: detection.data[0]?.total_anr_count > 0
 ```
