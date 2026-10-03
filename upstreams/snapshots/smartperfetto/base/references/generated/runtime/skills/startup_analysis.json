@@ -98,7 +98,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/startup_analysis.skill.yaml",
-    "sha256": "b824b3e52812b34234264b56924e506d14ecb8965109e28181dd4f3672e04af1"
+    "sha256": "eca7dbe4662017ed928fa3ef41a4da151d49e1543de7a03a96fdfecb7f3d1105"
   },
   "steps": [
     {
@@ -448,9 +448,9 @@
           ]
         },
         {
-          "condition": "(startup_binder?.data?.length || 0) > 0 && ((startup_binder.data[0]?.percent_of_startup) || 0) > 20 && ((startup_binder.data[0]?.main_thread_calls || 0) > 0) && ((((main_sync_binder?.data?.[0]?.percent_of_startup) || 0) > 5) || (((main_binder_blocking?.data?.[0]?.dur_ms) || 0) > 8) || (((main_thread_states?.data?.find(s => s.state === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))",
+          "condition": "(startup_binder?.data?.length || 0) > 0 && ((startup_binder.data[0]?.all_percent_of_startup) || 0) > 20 && startup_binder.data.find(r => r.main_thread_calls > 0) && ((((main_sync_binder?.data?.[0]?.all_percent_of_startup) || 0) > 5) || (((main_binder_blocking?.data?.[0]?.dur_ms) || 0) > 8) || (((main_thread_states?.data?.find(s => s.state === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))",
           "confidence": "high",
-          "diagnosis": "Binder 调用占启动时间 ${startup_binder?.data?.[0]?.percent_of_startup}%（含主线程调用）",
+          "diagnosis": "Binder 调用合计占启动时间 ${startup_binder?.data?.[0]?.all_percent_of_startup}%（含主线程调用）",
           "severity": "warning",
           "suggestions": [
             "减少启动期间的 IPC 调用",
@@ -459,9 +459,9 @@
           ]
         },
         {
-          "condition": "(main_sync_binder?.data?.length || 0) > 0 && ((main_sync_binder.data[0]?.percent_of_startup) || 0) > 8 && ((((main_binder_blocking?.data?.[0]?.dur_ms) || 0) > 16) || (((main_thread_states?.data?.find(s => s.state === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))",
+          "condition": "(main_sync_binder?.data?.length || 0) > 0 && ((main_sync_binder.data[0]?.all_percent_of_startup) || 0) > 8 && ((((main_binder_blocking?.data?.[0]?.dur_ms) || 0) > 16) || (((main_thread_states?.data?.find(s => s.state === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))",
           "confidence": "high",
-          "diagnosis": "主线程同步 Binder 占启动时间 ${main_sync_binder?.data?.[0]?.percent_of_startup}% 且主线程存在阻塞态证据",
+          "diagnosis": "主线程同步 Binder 合计占启动时间 ${main_sync_binder?.data?.[0]?.all_percent_of_startup}% 且主线程存在阻塞态证据",
           "severity": "warning",
           "suggestions": [
             "优先将同步 Binder 调用迁移到后台线程",
@@ -469,9 +469,9 @@
           ]
         },
         {
-          "condition": "(main_thread_file_io?.data?.length || 0) > 0 && (((main_thread_file_io.data[0]?.percent_of_startup) || 0) > 5 || ((main_thread_file_io.data[0]?.total_dur_ms) || 0) > 50) && ((((main_thread_states?.data?.find(s => s.state === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))",
+          "condition": "(main_thread_file_io?.data?.length || 0) > 0 && (((main_thread_file_io.data[0]?.all_percent_of_startup) || 0) > 5 || ((main_thread_file_io.data[0]?.all_total_dur_ms) || 0) > 50) && ((((main_thread_states?.data?.find(s => s.state === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))",
           "confidence": "high",
-          "diagnosis": "主线程文件 IO 占比较高（${main_thread_file_io?.data?.[0]?.percent_of_startup}%）且主线程阻塞态占比偏高",
+          "diagnosis": "主线程文件 IO 合计占比较高（${main_thread_file_io?.data?.[0]?.all_percent_of_startup}%）且主线程阻塞态占比偏高",
           "severity": "warning",
           "suggestions": [
             "将文件读取与数据库初始化前移到预热阶段或改为异步",

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_sched_latency_in_range.skill.yaml
--- Source SHA-256: dcc810fd9781cf0cab752296caf935a196da4190f066c3c7f07eddd4b7868483
+-- Source SHA-256: 4495fc1b9a706e425ddfeedcd91fd8d26f80d02c18c661b1a7fb40d0167d4162
 
 SELECT
   ts.state,
@@ -8,7 +8,10 @@ SELECT
   SUM(ts.dur) / 1e6 as total_wait_ms,
   ROUND(AVG(ts.dur) / 1e6, 2) as avg_wait_ms,
   ROUND(MAX(ts.dur) / 1e6, 2) as max_wait_ms,
-  SUM(CASE WHEN ts.dur / 1e6 > 8 THEN 1 ELSE 0 END) as severe_delays
+  SUM(CASE WHEN ts.dur / 1e6 > 8 THEN 1 ELSE 0 END) as severe_delays,
+  -- Over both runnable states (R and R+), not only the first row.
+  SUM(SUM(CASE WHEN ts.dur / 1e6 > 8 THEN 1 ELSE 0 END)) OVER () as all_severe_delays,
+  ROUND(MAX(MAX(ts.dur)) OVER () / 1e6, 2) as all_max_wait_ms
 FROM thread_state ts
 JOIN android_startup_threads st ON ts.utid = st.utid
 JOIN android_startups s ON st.startup_id = s.startup_id
@@ -21,3 +24,4 @@ WHERE st.is_main_thread = 1
   AND ts.ts >= s.ts
   AND ts.ts <= s.ts + s.dur
 GROUP BY ts.state
+ORDER BY total_wait_ms DESC, ts.state

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_main_thread_sync_binder_in_range.skill.yaml
--- Source SHA-256: 08633a0a57e4feffd73443330239d89629196c1da5987db8cbe7cc02074561e2
+-- Source SHA-256: e3e7bddf13c5477b91abce5e30ab653dfc3094b2cce3138d89c532328657078e
 
 SELECT
   bt.server_process,
@@ -9,7 +9,9 @@ SELECT
   SUM(bt.client_dur) / 1e6 as total_dur_ms,
   ROUND(AVG(bt.client_dur) / 1e6, 2) as avg_dur_ms,
   ROUND(MAX(bt.client_dur) / 1e6, 2) as max_dur_ms,
-  ROUND(100.0 * SUM(bt.client_dur) / s.dur, 1) as percent_of_startup
+  ROUND(100.0 * SUM(bt.client_dur) / s.dur, 1) as percent_of_startup,
+  -- Window aggregates see every group before LIMIT: totals over the whole startup.
+  ROUND(100.0 * SUM(SUM(bt.client_dur)) OVER (PARTITION BY s.startup_id) / s.dur, 1) as all_percent_of_startup
 FROM android_binder_txns bt
 JOIN android_startups s ON (
   bt.client_ts >= s.ts AND bt.client_ts <= s.ts + s.dur

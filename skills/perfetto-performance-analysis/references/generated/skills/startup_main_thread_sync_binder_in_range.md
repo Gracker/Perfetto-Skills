@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_main_thread_sync_binder_in_range.skill.yaml
-Source SHA-256: 08633a0a57e4feffd73443330239d89629196c1da5987db8cbe7cc02074561e2
+Source SHA-256: e3e7bddf13c5477b91abce5e30ab653dfc3094b2cce3138d89c532328657078e
 # 启动主线程同步 Binder (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -103,4 +103,8 @@ columns:
   label: 启动占比
   type: percentage
   format: percentage
+- name: all_percent_of_startup
+  label: 全部主线程同步 Binder 启动占比
+  type: number
+  hidden: true
 ```

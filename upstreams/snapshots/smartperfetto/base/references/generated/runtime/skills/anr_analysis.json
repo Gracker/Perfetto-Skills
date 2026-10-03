@@ -18,7 +18,6 @@
       "${package}:*",
       "${process_name}",
       "${process_name}:*",
-      "com.android.systemui",
       "system_server"
     ]
   },
@@ -115,7 +114,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/anr_analysis.skill.yaml",
-    "sha256": "73174387dbcbe50ec6a308be4a914c35d9587942dec32311fae979b1974a8d4f"
+    "sha256": "886c11c88b8de59f7a759bb5510cc207277be4fee7d37149ed00f9c1c29c96f9"
   },
   "steps": [
     {
@@ -307,7 +306,7 @@
         {
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && freeze_check.data[0]?.freeze_verdict === 'system_server_freeze'",
           "confidence": "high",
-          "diagnosis": "system_server 运行占比仅 ${freeze_check.data[0].system_server_running_pct}%（疑似系统服务冻结）",
+          "diagnosis": "system_server 主线程 ${freeze_check.data[0].system_server_stalled_pct}% 的存活时间处于可运行等待或不可中断等待（系统服务停滞）",
           "severity": "critical",
           "suggestions": [
             "这是系统级问题，优先排查 system_server 调度阻塞",
@@ -318,7 +317,7 @@
         {
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && freeze_check.data[0]?.freeze_verdict === 'system_freeze'",
           "confidence": "high",
-          "diagnosis": "系统级冻结：${freeze_check.data[0].frozen_apps}/${freeze_check.data[0].total_apps} 个应用主线程几乎无运行",
+          "diagnosis": "系统级停滞：${freeze_check.data[0].stalled_apps}/${freeze_check.data[0].demanding_apps} 个有运行需求的应用主线程过半存活时间处于可运行等待或不可中断等待",
           "severity": "critical",
           "suggestions": [
             "这是系统级问题，非单个应用问题",
@@ -329,7 +328,7 @@
         {
           "condition": "(detection.data[0]?.total_anr_count || 0) > 1 && freeze_check.data[0]?.freeze_verdict === 'system_server_freeze'",
           "confidence": "medium",
-          "diagnosis": "首个 ANR 窗口 baseline 显示 system_server 运行占比仅 ${freeze_check.data[0].system_server_running_pct}%，需逐 ANR 复核后才能升级为系统根因",
+          "diagnosis": "首个 ANR 窗口 baseline 显示 system_server 主线程 ${freeze_check.data[0].system_server_stalled_pct}% 存活时间停滞，需逐 ANR 复核后才能升级为系统根因",
           "severity": "warning",
           "suggestions": [
             "该 freeze_check 只覆盖首个 ANR 窗口",
@@ -340,7 +339,7 @@
         {
           "condition": "(detection.data[0]?.total_anr_count || 0) > 1 && freeze_check.data[0]?.freeze_verdict === 'system_freeze'",
           "confidence": "medium",
-          "diagnosis": "首个 ANR 窗口 baseline 显示 ${freeze_check.data[0].frozen_apps}/${freeze_check.data[0].total_apps} 个应用主线程低活动，需逐 ANR 复核后才能升级为系统根因",
+          "diagnosis": "首个 ANR 窗口 baseline 显示 ${freeze_check.data[0].stalled_apps}/${freeze_check.data[0].demanding_apps} 个有运行需求的应用主线程停滞，需逐 ANR 复核后才能升级为系统根因",
           "severity": "warning",
           "suggestions": [
             "该 freeze_check 只覆盖首个 ANR 窗口",

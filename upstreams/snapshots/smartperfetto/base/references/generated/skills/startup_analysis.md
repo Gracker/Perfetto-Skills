@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_analysis.skill.yaml
-Source SHA-256: b824b3e52812b34234264b56924e506d14ecb8965109e28181dd4f3672e04af1
+Source SHA-256: eca7dbe4662017ed928fa3ef41a4da151d49e1543de7a03a96fdfecb7f3d1105
 # 应用启动分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -460,6 +460,14 @@ display:
   - name: startup_type
     label: 启动类型
     type: string
+  - name: all_percent_of_startup
+    label: 全部文件 IO 启动占比
+    type: number
+    hidden: true
+  - name: all_total_dur_ms
+    label: 全部文件 IO 总耗时
+    type: number
+    hidden: true
 params:
   package: ${package}
   startup_id: ${startup_id}
@@ -534,6 +542,10 @@ display:
     label: 启动占比
     type: percentage
     format: percentage
+  - name: all_percent_of_startup
+    label: 全部 Binder 启动占比
+    type: number
+    hidden: true
 params:
   package: ${package}
   startup_id: ${startup_id}
@@ -588,6 +600,10 @@ display:
     label: 启动占比
     type: percentage
     format: percentage
+  - name: all_percent_of_startup
+    label: 全部主线程同步 Binder 启动占比
+    type: number
+    hidden: true
 params:
   package: ${package}
   startup_id: ${startup_id}
@@ -838,6 +854,14 @@ display:
   - name: severe_delays
     label: 严重延迟次数
     type: number
+  - name: all_severe_delays
+    label: 全部状态严重延迟次数
+    type: number
+    hidden: true
+  - name: all_max_wait_ms
+    label: 全部状态最大等待
+    type: number
+    hidden: true
 params:
   package: ${package}
   startup_id: ${startup_id}
@@ -1000,31 +1024,31 @@ rules:
   suggestions:
   - 检查 onResume() 中是否有不必要的数据刷新或视图重建
   - 减少热启动路径上的同步调用
-- condition: (startup_binder?.data?.length || 0) > 0 && ((startup_binder.data[0]?.percent_of_startup) || 0) > 20 && ((startup_binder.data[0]?.main_thread_calls
-    || 0) > 0) && ((((main_sync_binder?.data?.[0]?.percent_of_startup) || 0) > 5) || (((main_binder_blocking?.data?.[0]?.dur_ms)
+- condition: (startup_binder?.data?.length || 0) > 0 && ((startup_binder.data[0]?.all_percent_of_startup) || 0) > 20 && startup_binder.data.find(r
+    => r.main_thread_calls > 0) && ((((main_sync_binder?.data?.[0]?.all_percent_of_startup) || 0) > 5) || (((main_binder_blocking?.data?.[0]?.dur_ms)
     || 0) > 8) || (((main_thread_states?.data?.find(s => s.state === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s
     => s.state === 'S')?.percent) || 0) > 20))
   severity: warning
-  diagnosis: Binder 调用占启动时间 ${startup_binder?.data?.[0]?.percent_of_startup}%（含主线程调用）
+  diagnosis: Binder 调用合计占启动时间 ${startup_binder?.data?.[0]?.all_percent_of_startup}%（含主线程调用）
   confidence: high
   suggestions:
   - 减少启动期间的 IPC 调用
   - 将非必要的服务调用延迟到启动后
   - 使用异步 Binder 调用
-- condition: (main_sync_binder?.data?.length || 0) > 0 && ((main_sync_binder.data[0]?.percent_of_startup) || 0) > 8 && ((((main_binder_blocking?.data?.[0]?.dur_ms)
-    || 0) > 16) || (((main_thread_states?.data?.find(s => s.state === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s
-    => s.state === 'S')?.percent) || 0) > 20))
+- condition: (main_sync_binder?.data?.length || 0) > 0 && ((main_sync_binder.data[0]?.all_percent_of_startup) || 0) > 8 &&
+    ((((main_binder_blocking?.data?.[0]?.dur_ms) || 0) > 16) || (((main_thread_states?.data?.find(s => s.state === 'D')?.percent)
+    || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))
   severity: warning
-  diagnosis: 主线程同步 Binder 占启动时间 ${main_sync_binder?.data?.[0]?.percent_of_startup}% 且主线程存在阻塞态证据
+  diagnosis: 主线程同步 Binder 合计占启动时间 ${main_sync_binder?.data?.[0]?.all_percent_of_startup}% 且主线程存在阻塞态证据
   confidence: high
   suggestions:
   - 优先将同步 Binder 调用迁移到后台线程
   - 首屏前只保留必要 IPC，其余延后到首帧后
-- condition: (main_thread_file_io?.data?.length || 0) > 0 && (((main_thread_file_io.data[0]?.percent_of_startup) || 0) > 5
-    || ((main_thread_file_io.data[0]?.total_dur_ms) || 0) > 50) && ((((main_thread_states?.data?.find(s => s.state === 'D')?.percent)
-    || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))
+- condition: (main_thread_file_io?.data?.length || 0) > 0 && (((main_thread_file_io.data[0]?.all_percent_of_startup) || 0)
+    > 5 || ((main_thread_file_io.data[0]?.all_total_dur_ms) || 0) > 50) && ((((main_thread_states?.data?.find(s => s.state
+    === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))
   severity: warning
-  diagnosis: 主线程文件 IO 占比较高（${main_thread_file_io?.data?.[0]?.percent_of_startup}%）且主线程阻塞态占比偏高
+  diagnosis: 主线程文件 IO 合计占比较高（${main_thread_file_io?.data?.[0]?.all_percent_of_startup}%）且主线程阻塞态占比偏高
   confidence: high
   suggestions:
   - 将文件读取与数据库初始化前移到预热阶段或改为异步

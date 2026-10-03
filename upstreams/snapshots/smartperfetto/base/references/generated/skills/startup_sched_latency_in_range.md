@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_sched_latency_in_range.skill.yaml
-Source SHA-256: dcc810fd9781cf0cab752296caf935a196da4190f066c3c7f07eddd4b7868483
+Source SHA-256: 4495fc1b9a706e425ddfeedcd91fd8d26f80d02c18c661b1a7fb40d0167d4162
 # 启动调度延迟 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -98,4 +98,12 @@ columns:
 - name: severe_delays
   label: 严重延迟次数
   type: number
+- name: all_severe_delays
+  label: 全部状态严重延迟次数
+  type: number
+  hidden: true
+- name: all_max_wait_ms
+  label: 全部状态最大等待
+  type: number
+  hidden: true
 ```

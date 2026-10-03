@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: 7ca47f9c1ade989526593eb6cd9366ffc12f8e2c45f5840e3831efee489e21a9
+Source SHA-256: 2a88a78ef4273d95d18830eaa1992008d98e04aafca4f02f8e5dcb3198b1a394
 
 # Anr Strategy
 
@@ -112,8 +112,8 @@ phase_hints:
   - anr_analysis
   - 系统
   - system
-  constraints: 有 ANR 窗口时先读 freeze_verdict：system freeze → 系统原因排查；app_specific → App 根因决策树；undetermined（窗口内无可评估主线程）或 verdict
-    不可得时继续 App 决策树与无锚点主线程调查，保留系统健康证据缺口，既不排除也不断言系统冻结。
+  constraints: 有 ANR 窗口时先读 freeze_verdict：system freeze → 系统原因排查；app_specific → App 根因决策树；undetermined（system_server 主线程不可评估且无停滞证据）或
+    verdict 不可得时继续 App 决策树与无锚点主线程调查，保留系统健康证据缺口，既不排除也不断言系统冻结。
   critical_tools:
   - anr_analysis
   critical: true
@@ -241,10 +241,10 @@ invoke_skill("anr_analysis")
 
 | freeze_verdict | 含义 | 后续分析方向 |
 |---------------|------|-------------|
-| `system_server_freeze` | system_server 冻结（running_pct < 5%） | **系统级问题**：system_server watchdog、kernel panic、硬件故障。报告为系统问题，不是 App Bug |
-| `system_freeze` | 多数应用冻结（frozen_pct > 50%）但 system_server 未冻结 | **系统级问题**：可能是 CPU 饥饿（后台负载；频率上限只是候选，是否限频以 `cpu_throttling_in_range` 的限频证据为准）、内存压力（大量 LMK）、IO 风暴。交叉检查 `cpu_health` 和 `memory_pressure` |
-| `app_specific` | 仅目标应用受影响 | **应用级问题**：进入 Phase 3 详细分析主线程阻塞原因 |
-| `undetermined` | ANR 窗口内没有可评估的应用主线程 | **系统/应用未判定**：不能仅凭 freeze_check 判定为 App 问题或系统冻结；进入 Phase 3，由逐 ANR 证据闭环定因，结论中保留系统健康证据缺口 |
+| `system_server_freeze` | system_server 主线程过半存活时间处于可运行等待或不可中断等待（R/R+/D/DK） | **系统级问题**：system_server watchdog、kernel panic、硬件故障。报告为系统问题，不是 App Bug |
+| `system_freeze` | ≥3 个有运行需求的应用主线程（不含 ANR 进程）中过半停滞（stalled_pct > 50%） | **系统级问题**：可能是 CPU 饥饿（后台负载；频率上限只是候选，是否限频以 `cpu_throttling_in_range` 的限频证据为准）、内存压力（大量 LMK）、IO 风暴。交叉检查 `cpu_health` 和 `memory_pressure` |
+| `app_specific` | system_server 可评估且未停滞，未见系统级停滞证据（主线程处于 S 睡眠不算停滞证据；`demanding_apps` < 3 时应用侧系统停滞未评估） | **应用级排查**：进入 Phase 3 详细分析主线程阻塞原因；它不证明系统无问题，S 态死锁要靠逐 ANR 阻塞证据 |
+| `undetermined` | system_server 主线程在 ANR 窗口内不可评估（缺失或存活不足 90% 窗口），且没有停滞证据 | **系统/应用未判定**：不能仅凭 freeze_check 判定为 App 问题或系统冻结；进入 Phase 3，由逐 ANR 证据闭环定因，结论中保留系统健康证据缺口 |
 
 **当 `freeze_verdict = system_server_freeze` 或 `system_freeze` 时：**
 - 如果 `detection.total_anr_count === 1`：可报告为系统级问题，不要深入推测 App 代码；交叉检查 `cpu_health`、`memory_pressure`、`io_load` 和系统侧日志后到 Phase 4 输出

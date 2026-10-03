@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/anr_analysis.skill.yaml
-Source SHA-256: 73174387dbcbe50ec6a308be4a914c35d9587942dec32311fae979b1974a8d4f
+Source SHA-256: 886c11c88b8de59f7a759bb5510cc207277be4fee7d37149ed00f9c1c29c96f9
 # ANR 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -436,25 +436,32 @@ display:
   title: 首个 ANR 窗口系统冻结检测
   columns:
   - name: total_apps
-    label: 检测应用数
+    label: 可评估主线程数
     type: number
-  - name: frozen_apps
-    label: 冻结应用数
+  - name: demanding_apps
+    label: 有运行需求的主线程数
     type: number
-  - name: frozen_pct
-    label: 冻结占比
+  - name: stalled_apps
+    label: 停滞主线程数
+    type: number
+  - name: stalled_pct
+    label: 停滞占比（有需求者中）
     type: percentage
     format: percentage
   - name: freeze_verdict
     label: 判定
     type: string
+  - name: system_server_evaluated
+    label: system_server 可评估
+    type: boolean
+  - name: system_server_stalled_pct
+    label: system_server 停滞时间占比
+    type: percentage
+    format: percentage
   - name: system_server_running_pct
     label: system_server 运行占比
     type: percentage
     format: percentage
-  - name: system_server_frozen
-    label: system_server 冻结
-    type: boolean
 save_as: freeze_check
 condition: detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0
 optional: true
@@ -730,7 +737,7 @@ inputs:
 rules:
 - condition: (detection.data[0]?.total_anr_count || 0) === 1 && freeze_check.data[0]?.freeze_verdict === 'system_server_freeze'
   severity: critical
-  diagnosis: system_server 运行占比仅 ${freeze_check.data[0].system_server_running_pct}%（疑似系统服务冻结）
+  diagnosis: system_server 主线程 ${freeze_check.data[0].system_server_stalled_pct}% 的存活时间处于可运行等待或不可中断等待（系统服务停滞）
   confidence: high
   suggestions:
   - 这是系统级问题，优先排查 system_server 调度阻塞
@@ -738,7 +745,7 @@ rules:
   - 结合内核调度与系统服务线程栈定位阻塞点
 - condition: (detection.data[0]?.total_anr_count || 0) === 1 && freeze_check.data[0]?.freeze_verdict === 'system_freeze'
   severity: critical
-  diagnosis: 系统级冻结：${freeze_check.data[0].frozen_apps}/${freeze_check.data[0].total_apps} 个应用主线程几乎无运行
+  diagnosis: 系统级停滞：${freeze_check.data[0].stalled_apps}/${freeze_check.data[0].demanding_apps} 个有运行需求的应用主线程过半存活时间处于可运行等待或不可中断等待
   confidence: high
   suggestions:
   - 这是系统级问题，非单个应用问题
@@ -746,7 +753,7 @@ rules:
   - 检查是否有内核级阻塞（内存/IO/锁）
 - condition: (detection.data[0]?.total_anr_count || 0) > 1 && freeze_check.data[0]?.freeze_verdict === 'system_server_freeze'
   severity: warning
-  diagnosis: 首个 ANR 窗口 baseline 显示 system_server 运行占比仅 ${freeze_check.data[0].system_server_running_pct}%，需逐 ANR 复核后才能升级为系统根因
+  diagnosis: 首个 ANR 窗口 baseline 显示 system_server 主线程 ${freeze_check.data[0].system_server_stalled_pct}% 存活时间停滞，需逐 ANR 复核后才能升级为系统根因
   confidence: medium
   suggestions:
   - 该 freeze_check 只覆盖首个 ANR 窗口
@@ -754,8 +761,8 @@ rules:
   - 不要把首个窗口 system_server_freeze 直接推广到所有 ANR
 - condition: (detection.data[0]?.total_anr_count || 0) > 1 && freeze_check.data[0]?.freeze_verdict === 'system_freeze'
   severity: warning
-  diagnosis: 首个 ANR 窗口 baseline 显示 ${freeze_check.data[0].frozen_apps}/${freeze_check.data[0].total_apps} 个应用主线程低活动，需逐 ANR
-    复核后才能升级为系统根因
+  diagnosis: 首个 ANR 窗口 baseline 显示 ${freeze_check.data[0].stalled_apps}/${freeze_check.data[0].demanding_apps} 个有运行需求的应用主线程停滞，需逐
+    ANR 复核后才能升级为系统根因
   confidence: medium
   suggestions:
   - 该 freeze_check 只覆盖首个 ANR 窗口

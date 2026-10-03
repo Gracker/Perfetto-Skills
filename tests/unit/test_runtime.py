@@ -1451,18 +1451,45 @@ class MissingEvidenceVerdictTest(unittest.TestCase):
         self.assertEqual({step_id: statuses[step_id] for step_id in self.WINDOWED},
                          {step_id: "skipped_condition" for step_id in self.WINDOWED})
 
-    def test_a_window_without_evaluable_main_threads_is_undetermined(self) -> None:
+    def freeze_verdict(self, threads: dict, anr_upid=None) -> dict:
+        """system_freeze_check over a 10 ms window; `threads` maps (upid, name, uid) to state segments in ms."""
         import sqlite3
 
+        ms = 1_000_000
         sql = (self.SQL / "anr_analysis/system_freeze_check.sql").read_text(encoding="utf-8")
         rendered = self.common.render_sql_template(
-            sql, {}, {"anr_ctx": {"data": [{"anr_ts": 10_000_000, "timeout_ns": 5_000_000}]}})
+            sql, {}, {"anr_ctx": {"data": [{"anr_ts": 10 * ms, "timeout_ns": 10 * ms, "upid": anr_upid}]}})
         db = sqlite3.connect(":memory:")
         db.executescript("CREATE TABLE process(upid, pid, name, uid); CREATE TABLE thread(utid, upid, tid);"
                          "CREATE TABLE thread_state(utid, ts, dur, state);")
+        for (upid, name, uid), segments in threads.items():
+            db.execute("INSERT INTO process VALUES (?, ?, ?, ?)", (upid, 100 + upid, name, uid))
+            db.execute("INSERT INTO thread VALUES (?, ?, ?)", (upid, upid, 100 + upid))
+            at = 0
+            for state, dur in segments:
+                db.execute("INSERT INTO thread_state VALUES (?, ?, ?, ?)", (upid, at * ms, dur * ms, state))
+                at += dur
         db.row_factory = sqlite3.Row
-        row = db.execute(rendered).fetchone()
+        return dict(db.execute(rendered).fetchone())
+
+    def test_a_window_without_evaluable_main_threads_is_undetermined(self) -> None:
+        row = self.freeze_verdict({})
         self.assertEqual((row["total_apps"], row["freeze_verdict"]), (0, "undetermined"))
+
+    def test_idle_main_threads_are_no_freeze_evidence(self) -> None:
+        idle = [("Running", 0.2), ("S", 9.8)]
+        starved = [("Running", 1), ("R", 7), ("S", 2)]
+        server = (100, "system_server", 1000)
+        apps = [(n, f"com.example.app{n}", 10100 + n) for n in range(1, 4)]
+        self.assertEqual(self.freeze_verdict({server: idle, **{app: idle for app in apps}})["freeze_verdict"],
+                         "app_specific")
+        self.assertEqual(self.freeze_verdict({server: [("Running", 1), ("D", 8), ("S", 1)]})["freeze_verdict"],
+                         "system_server_freeze")
+        self.assertEqual(self.freeze_verdict({server: idle, **{app: starved for app in apps}})["freeze_verdict"],
+                         "system_freeze")
+        # The ANR process itself is not system-wide stall evidence.
+        self.assertEqual(self.freeze_verdict({server: idle, **{app: starved for app in apps}}, anr_upid=1)
+                         ["freeze_verdict"], "app_specific")
 
     def test_startup_evidence_matrix_reports_no_row_as_not_observed(self) -> None:
         import sqlite3
@@ -1470,8 +1497,8 @@ class MissingEvidenceVerdictTest(unittest.TestCase):
         sql = (self.SQL / "startup_analysis/startup_evidence_matrix.sql").read_text(encoding="utf-8")
         rendered = self.common.render_sql_template(sql, {}, {
             "main_thread_slices": {"data": []},
-            "main_thread_file_io": {"data": [{"percent_of_startup": 1, "total_dur_ms": 10}]},
-            "startup_binder": {"data": [{"percent_of_startup": 30}]},
+            "main_thread_file_io": {"data": [{"all_percent_of_startup": 1, "all_total_dur_ms": 10}]},
+            "startup_binder": {"data": [{"all_percent_of_startup": 30}]},
         })
         rows = {item: (value, status) for item, value, status in sqlite3.connect(":memory:").execute(
             f"SELECT item, primary_value, status FROM ({rendered})")}
