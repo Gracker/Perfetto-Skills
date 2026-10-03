@@ -33,8 +33,8 @@ snapshots, and frontend behavior remain in the product repository.
 ## Analysis flow
 
 1. The client discovers `perfetto-performance-analysis` from `SKILL.md`.
-2. `perfetto_doctor.py` verifies the selected binary against the v57.2 commit,
-   RPC API, platform, and SHA-256 release lock.
+2. `perfetto_doctor.py` verifies the selected binary against the release lock's
+   commit, RPC API, platform, and SHA-256.
 3. `perfetto_probe.py` establishes trace bounds and five-state capability
    evidence: unsupported, not recorded, recorded empty, recorded populated, or
    unknown.
@@ -81,7 +81,11 @@ SHA-256 differs from the release lock unless the caller supplies the explicit
 `--allow-unsupported-processor` escape hatch. This is separate from
 `--allow-unverified`, which applies only to queries explicitly classified as
 unverified. Capability-gated queries instead require an automatic, same-trace
-probe and preserve that gate result in their evidence sidecar.
+probe and preserve that gate result in their evidence sidecar. The exporter
+gates a query on a capability only when the query reads a table that
+capability measures (`gpu_slice` or `gpu_track` for `gpu`); heap-graph queries
+stay gated by name. A GPU-named query over other tracks runs and reports its
+own empty rows.
 
 The query CLI passes the executable, query, and trace as an argument array,
 enforces timeouts and a default 16 MiB stdout/stderr bound, and returns typed

@@ -191,5 +191,23 @@ class BootstrapTest(unittest.TestCase):
         )
 
 
+    def test_cache_fallback_finds_the_binary_bootstrap_installs(self) -> None:
+        """resolve_trace_processor's last candidate is the committed lock's install path."""
+        common = load_skill_script("_common")
+        lock = self.bootstrap.load_lock(SCRIPTS.parent / "references" / "trace-processor-lock.json")
+        for key in lock["platforms"]:
+            with self.subTest(platform=key), tempfile.TemporaryDirectory() as tmp:
+                payload = b"locked"
+                entry = dict(lock["platforms"][key], sha256=hashlib.sha256(payload).hexdigest())
+                installed = self.bootstrap.install_locked_binary(
+                    {**lock, "platforms": {key: entry}}, key, Path(tmp),
+                    opener=lambda _: io.BytesIO(payload),
+                )
+                self.assertEqual(
+                    common.default_cache_binary(platform_name=key, env={"PERFETTO_SKILLS_CACHE": tmp}).resolve(),
+                    installed,
+                )
+
+
 if __name__ == "__main__":
     unittest.main()

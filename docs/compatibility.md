@@ -32,8 +32,10 @@ unless an explicit reviewed override is supplied.
 
 ## Trace processor
 
-The current lock pins Perfetto `v57.2` and publishes a SHA-256 for each supported
-artifact:
+`references/trace-processor-lock.json` is the release lock. It currently pins
+the Perfetto runtime revision `99234d73fe356bf7edf6b2cb7afcf2a9eefc5368`, which
+reports `v58.3` with RPC API 14 (the official Skill gap check separately tracks
+the `v58.2` release tag), and publishes a SHA-256 for each supported artifact:
 
 | Host | Lock key | Bootstrap support |
 |---|---|---|
@@ -44,7 +46,8 @@ artifact:
 | Windows x86-64 | `windows-amd64` | Yes |
 
 An explicit `--trace-processor` wins, followed by
-`PERFETTO_TRACE_PROCESSOR`, `PATH`, and the verified cache. Before a complete
+`PERFETTO_TRACE_PROCESSOR`, `PATH`, and the verified cache entry that
+`bootstrap_trace_processor.py` installs for the locked revision. Before a complete
 Skill or manifest query runs, `perfetto_doctor.py` checks the binary commit, RPC
 API, platform, and SHA-256. A mismatch is rejected by default; the deliberately
 verbose `--allow-unsupported-processor` flag is the only bypass and the

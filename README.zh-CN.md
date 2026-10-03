@@ -136,12 +136,12 @@ Android 版本不是 Trace schema 版本。系统 API、QPR、OEM、内核、Mai
 本项目把保证拆成四个轴：
 
 - `static_valid`：参数、fragment、依赖图、module 和表达式闭合；
-- `runtime_compatible`：在锁定的官方 v57.2 / RPC API 14 上可解析、可执行；
+- `runtime_compatible`：在 `trace-processor-lock.json` 锁定的 runtime（当前 v58.3 / RPC API 14）上可解析、可执行；
 - `execution_verified`：在有哈希的真实 fixture 上实际运行过；
 - `semantic_verified`：fixture 还有列、值或关系断言，不只是“没有报错”。
 
 官方 Perfetto Skill 的 stdlib-first、schema discovery、UPID/UTID、`dur = -1`
-等规则会作为 gap-check 清单持续对照，但本项目保持自包含。v57.2 已通过本项目
+等规则会作为 gap-check 清单持续对照，但本项目保持自包含。锁定的 runtime 已通过本项目
 的 binary hash、RPC API、module/schema 与 fixture 门禁；未来版本仍只先作为
 canary，相同的 stdlib tree 也不能自动证明二进制和所有查询语义兼容。
 

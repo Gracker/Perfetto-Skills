@@ -23,7 +23,7 @@ from collections.abc import Callable, Iterable, Iterator, Mapping, Sequence
 from typing import Any, TypeVar
 
 
-DEFAULT_PERFETTO_VERSION = "v57.2"
+TRACE_PROCESSOR_LOCK = Path(__file__).resolve().parents[1] / "references" / "trace-processor-lock.json"
 DEFAULT_MAX_OUTPUT_BYTES = 16 * 1024 * 1024
 
 
@@ -307,11 +307,17 @@ def default_cache_root(env: Mapping[str, str] | None = None) -> Path:
     return Path.home() / ".cache" / "perfetto-skills"
 
 
+def locked_trace_processor_revision() -> str:
+    """The revision bootstrap_trace_processor.py installs into the cache."""
+    return str(json.loads(TRACE_PROCESSOR_LOCK.read_text(encoding="utf-8"))["revision"])
+
+
 def default_cache_binary(
-    version: str = DEFAULT_PERFETTO_VERSION,
+    version: str | None = None,
     platform_name: str | None = None,
     env: Mapping[str, str] | None = None,
 ) -> Path:
+    version = version or locked_trace_processor_revision()
     key = platform_name or runtime_platform_key()
     filename = "trace_processor_shell.exe" if key == "windows-amd64" else "trace_processor_shell"
     return default_cache_root(env) / "trace_processor" / version / key / filename

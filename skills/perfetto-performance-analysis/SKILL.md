@@ -87,7 +87,8 @@ input: when a Skill binds `package`, pass the target as `package`, not
 `process_name`, even if a strategy names `process_name`.
 
 Complete Skill runs and `--query-id` runs verify the selected processor's
-v57.2 commit, RPC API, platform, and SHA-256 before executing SQL. Inspect that
+commit, RPC API, platform, and SHA-256 against the release lock before
+executing SQL. Inspect that
 identity independently with:
 
 ```bash

@@ -1404,14 +1404,31 @@ def android_adapters(modules: list[str], sql_text: str) -> list[dict[str, Any]]:
     return adapters
 
 
+# The tables whose recorded rows the probe's `gpu` capability measures.
+GPU_CAPABILITY_TABLES = ("gpu_slice", "gpu_track")
+_SQL_COMMENT_OR_STRING = re.compile(r"--[^\n]*|/\*.*?\*/|'(?:[^']|'')*'", re.DOTALL)
+
+
 def probe_capabilities(
     query_id: str,
     required_tables: list[str],
+    sql: str = "",
 ) -> list[str]:
+    """Capabilities whose probe evidence a query needs before it may run.
+
+    A query is gated on `gpu` only when it reads a table that capability
+    measures; a GPU-named query over other tracks (work periods, frequency
+    counters, Mali power states) runs like any other query and reports empty
+    rows itself. heap_graph stays gated by name as well, deliberately.
+    """
     lowered_id = query_id.lower()
     lowered_tables = {table.lower() for table in required_tables}
+    code = _SQL_COMMENT_OR_STRING.sub(" ", sql).lower()
     capabilities: set[str] = set()
-    if "gpu" in lowered_id or "mali" in lowered_id or any("gpu" in table for table in lowered_tables):
+    if any(
+        table in lowered_tables or re.search(rf"\b{table}\b", code)
+        for table in GPU_CAPABILITY_TABLES
+    ):
         capabilities.add("gpu")
     if any("heap_graph" in table for table in lowered_tables) or "heap_graph" in lowered_id:
         capabilities.add("heap_graph")
@@ -1538,7 +1555,7 @@ def normalize_step(
         "signal_patterns": sorted(set(_SIGNAL_PATTERN.findall(expanded))),
         "compatibility": {
             "android": android_query_matrix(query_id, fixture_assertions),
-            "probe_capabilities": probe_capabilities(query_id, []),
+            "probe_capabilities": probe_capabilities(query_id, [], expanded),
         },
         "validation": query_validation(query_id, fixture_assertions),
         "license": {"origin": "smartperfetto", "spdx": "AGPL-3.0-or-later"},
@@ -1722,7 +1739,8 @@ def build_runtime_assets(
         for query in queries:
             query["sql_dependencies"]["required_tables"] = skill_required_tables
             query["compatibility"]["probe_capabilities"] = probe_capabilities(
-                str(query["id"]), skill_required_tables
+                str(query["id"]), skill_required_tables,
+                (generated_root / str(query["path"])).read_text(encoding="utf-8"),
             )
         condition_count = validate_conditions(raw_steps, skill_id)
         total_conditions += condition_count

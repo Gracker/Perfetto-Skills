@@ -54,10 +54,13 @@ class V02ContractTest(unittest.TestCase):
             self.assertEqual(len(query["compatibility"]["android"]), 10)
             self.assertRegex(query["sha256"], r"^[0-9a-f]{64}$")
             self.assertEqual(query["license"]["spdx"], "AGPL-3.0-or-later")
-        gpu_frequency = next(
-            query for query in queries if query["id"] == "gpu_metrics/gpu_frequency"
-        )
-        self.assertIn("gpu", gpu_frequency["compatibility"]["probe_capabilities"])
+        by_id = {query["id"]: query for query in queries}
+        # The gpu gate follows the tables the probe's gpu capability measures,
+        # not the word "gpu" in a query id.
+        self.assertIn("gpu", by_id["gpu_compute_kernel_analysis/kernel_summary"]["compatibility"]["probe_capabilities"])
+        self.assertNotIn("gpu", by_id["gpu_metrics/gpu_frequency"]["compatibility"]["probe_capabilities"])
+        self.assertNotIn("gpu", by_id["android_gpu_work_period_track/gpu_work"]["compatibility"]["probe_capabilities"])
+        self.assertIn("heap_graph", by_id["android_heap_graph_summary/heap_graph_dump_sizes"]["compatibility"]["probe_capabilities"])
         validation = json.loads(
             (runtime / "sql-validation-report.json").read_text(encoding="utf-8")
         )

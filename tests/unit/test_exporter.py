@@ -375,6 +375,28 @@ class RuntimeExpressionExportTest(unittest.TestCase):
             self.normalize(bad)
 
 
+class ProbeCapabilityGateTest(unittest.TestCase):
+    def test_gpu_gate_follows_the_tables_the_capability_measures(self) -> None:
+        gate = exporter.probe_capabilities
+        self.assertEqual(gate("gpu_x/a", [], "SELECT * FROM gpu_slice"), ["gpu"])
+        self.assertEqual(gate("x/b", [], "SELECT id FROM GPU_TRACK t"), ["gpu"])
+        self.assertEqual(gate("x/c", ["gpu_track"], "SELECT 1"), ["gpu"])
+        for sql in (
+            "SELECT * FROM android_gpu_work_period_track",
+            "SELECT * FROM gpu_counter_track WHERE name = 'gpufreq'",
+            "SELECT 'gpu_slice' AS label -- reads gpu_track later\n/* gpu_slice */",
+            "SELECT gpu_track_id FROM mali_power_state",
+        ):
+            with self.subTest(sql=sql):
+                self.assertEqual(gate("gpu_metrics/mali_gpu", [], sql), [])
+
+    def test_heap_graph_queries_stay_gated_by_name(self) -> None:
+        self.assertEqual(
+            exporter.probe_capabilities("android_heap_graph_summary/heap_graph_dump_sizes", [], "SELECT 1"),
+            ["heap_graph"],
+        )
+
+
 class ExporterTest(unittest.TestCase):
     def setUp(self) -> None:
         self.assertTrue(EXPORTER.is_file(), "tools/export_from_smartperfetto.py")
