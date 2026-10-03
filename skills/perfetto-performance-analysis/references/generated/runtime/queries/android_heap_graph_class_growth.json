@@ -50,7 +50,19 @@
       },
       "id": "android_heap_graph_class_growth/heap_class_table",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -149,7 +161,19 @@
       },
       "id": "android_heap_graph_class_growth/class_growth_availability",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -199,7 +223,10 @@
             "source_sha256": "a6741ed12a05a5d489c99f5e399b1028be65277da87f180e5adcae2258cdd1ec"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "dump_selector",
           "graph_sample_ts",
@@ -270,7 +297,19 @@
       },
       "id": "android_heap_graph_class_growth/class_dump_inventory",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -322,7 +361,10 @@
             "source_sha256": "a6741ed12a05a5d489c99f5e399b1028be65277da87f180e5adcae2258cdd1ec"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "dump_selector",
           "graph_sample_ts",
@@ -393,7 +435,19 @@
       },
       "id": "android_heap_graph_class_growth/class_ranking",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -445,7 +499,10 @@
             "source_sha256": "a6741ed12a05a5d489c99f5e399b1028be65277da87f180e5adcae2258cdd1ec"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "dump_selector",
           "graph_sample_ts",
@@ -517,7 +574,19 @@
       },
       "id": "android_heap_graph_class_growth/requested_classes",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -569,7 +638,10 @@
             "source_sha256": "a6741ed12a05a5d489c99f5e399b1028be65277da87f180e5adcae2258cdd1ec"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "class_names",
           "dump_selector",
@@ -641,7 +713,19 @@
       },
       "id": "android_heap_graph_class_growth/class_growth_within_trace",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -688,7 +772,10 @@
             "source_sha256": "4b0db7618d6d3b9db6b371cf8ebe963e88ddfd4738b7115a184fe2cbeae826f9"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "graph_sample_ts",
           "max_rows",

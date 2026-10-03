@@ -50,7 +50,19 @@
       },
       "id": "game_main_loop_jank/engine_loop_summary",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -104,7 +116,10 @@
       "step_id": "engine_loop_summary",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "package",
@@ -175,7 +190,19 @@
       },
       "id": "game_main_loop_jank/slow_engine_slices",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -229,7 +256,10 @@
       "step_id": "slow_engine_slices",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "package",

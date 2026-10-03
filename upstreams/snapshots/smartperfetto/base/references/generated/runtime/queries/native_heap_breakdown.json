@@ -48,7 +48,19 @@
       },
       "id": "native_heap_breakdown/heap_profile_inventory",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -90,7 +102,10 @@
             "source_sha256": "4799e5a6b0c12e61e55bdc3e85315e0da57f218cf4b4d1ffd48d986f68a61014"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "package",
           "process_name",
@@ -157,7 +172,19 @@
       },
       "id": "native_heap_breakdown/native_heap_hotspots",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -203,7 +230,10 @@
             "source_sha256": "4799e5a6b0c12e61e55bdc3e85315e0da57f218cf4b4d1ffd48d986f68a61014"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "max_rows",
           "min_alloc_mb",

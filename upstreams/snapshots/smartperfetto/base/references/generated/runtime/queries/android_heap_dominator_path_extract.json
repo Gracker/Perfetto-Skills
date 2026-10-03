@@ -48,7 +48,19 @@
       },
       "id": "android_heap_dominator_path_extract/data_check",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -92,7 +104,10 @@
             "source_sha256": "248e8d24e4d4a4a59af389667aeebb9ce641f23bbd4974544c09a2826ce5fee2"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "graph_sample_ts",
           "package",
@@ -160,7 +175,19 @@
       },
       "id": "android_heap_dominator_path_extract/dominator_tree_pass",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -274,7 +301,19 @@
       },
       "id": "android_heap_dominator_path_extract/dominator_paths",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -324,7 +363,10 @@
             "source_sha256": "248e8d24e4d4a4a59af389667aeebb9ce641f23bbd4974544c09a2826ce5fee2"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "graph_sample_ts",
           "max_rows",

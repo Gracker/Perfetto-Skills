@@ -50,7 +50,19 @@
       },
       "id": "anr_main_thread_blocking/main_thread_state",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -86,7 +98,9 @@
       "step_id": "main_thread_state",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "anr_ts",
           "end_ts",
@@ -156,7 +170,19 @@
       },
       "id": "anr_main_thread_blocking/blocked_functions",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -192,7 +218,9 @@
       "step_id": "blocked_functions",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "anr_ts",
           "end_ts",
@@ -262,7 +290,19 @@
       },
       "id": "anr_main_thread_blocking/wakeup_chain",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -303,7 +343,9 @@
             "source_sha256": "40a17843f23e9cd7a249735450ff58accb11c2ecb13ac8c22f3f9ff31bcadaa1"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "anr_ts",
           "end_ts",
@@ -376,7 +418,19 @@
       },
       "id": "anr_main_thread_blocking/binder_blocking",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -412,7 +466,9 @@
       "step_id": "binder_blocking",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "anr_ts",
           "end_ts",
@@ -482,7 +538,19 @@
       },
       "id": "anr_main_thread_blocking/lock_contention",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -519,7 +587,9 @@
       "step_id": "lock_contention",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "anr_ts",
           "end_ts",

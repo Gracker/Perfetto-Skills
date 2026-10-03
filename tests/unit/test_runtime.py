@@ -470,8 +470,11 @@ class RuntimeProcessScopeTest(unittest.TestCase):
                     self.bind(self.named_identity, parameters, names=names)
 
     def test_explicit_exact_selectors_are_unavailable_and_invalid_ids_are_not_defaults(self) -> None:
+        # A null selector is no selector (SmartPerfetto's gate ignores it); any
+        # other explicit value has no portable exact scope.
         for selector in ("upid", "pid"):
-            for value in (42, 0, -1, None):
+            self.bind(self.named_identity, {"package": "com.example", selector: None})
+            for value in (42, 0, -1):
                 with self.subTest(selector=selector, value=value):
                     with self.assertRaises(ValueError):
                         self.bind(
@@ -669,29 +672,29 @@ class SkillInputContractTest(unittest.TestCase):
 
     def test_undeclared_parameter_is_rejected_before_any_trace_work(self) -> None:
         query = mock.Mock(return_value=[{"value": 1}])
-        resolver = mock.Mock(return_value={"status": "exempt"})
+        gate = mock.Mock()
         prerequisite = mock.Mock(return_value={"status": "satisfied", "missing": []})
         runner = self.runner(
-            self.skills, query, identity_resolver=resolver, prerequisite_checker=prerequisite,
+            self.skills, query, identity_gate=gate, prerequisite_checker=prerequisite,
         )
         with self.assertRaisesRegex(ValueError, r"fps.*undeclared.*frame_rate.*declared inputs: package, start_ts"):
             runner.run("fps", {"package": "com.example", "frame_rate": 60})
         query.assert_not_called()
-        resolver.assert_not_called()
+        gate.apply.assert_not_called()
         prerequisite.assert_not_called()
 
     def test_identity_alias_without_bound_input_names_the_bound_input(self) -> None:
         for params in ({"process_name": "com.example"}, {"process_name": "com.example", "package": "com.example"}):
             with self.subTest(params=params):
+                # Without an identity gate to consume and rewrite it, an alias that
+                # is not an input is refused with the input that binds the name.
                 query = mock.Mock(return_value=[{"value": 1}])
-                resolver = mock.Mock(return_value={"status": "resolved", "target": "com.example"})
-                runner = self.runner(self.skills, query, identity_resolver=resolver)
+                runner = self.runner(self.skills, query)
                 with self.assertRaisesRegex(
                     ValueError, r"frame.*identity alias process_name.*not bound.*pass the value as package",
                 ):
                     runner.run("frame", params)
                 query.assert_not_called()
-                resolver.assert_not_called()
 
     def test_alias_that_is_not_an_identity_alias_of_an_unscoped_skill_is_plainly_undeclared(self) -> None:
         runner = self.runner(self.skills, mock.Mock(return_value=[]))
@@ -967,6 +970,19 @@ def _skill(skill_id, steps, **extra):
     }
 
 
+class _RefusingGate:
+    """An identity gate double that refuses the Skill it is applied to when its policy is required."""
+
+    def apply(self, skill, params, inherited, scope=None):
+        from types import SimpleNamespace
+
+        allowed = (skill.get("identity") or {}).get("policy") != "required"
+        return SimpleNamespace(
+            allowed=allowed, params=dict(params), scope=None,
+            error=None if allowed else "Process identity is required", evidence=lambda: {"status": "exempt"},
+        )
+
+
 def _run_reference(skills, child_id, answers, *, ref=None, **runner):
     """Run a parent whose `ref` step references `child_id`, then a probe step.
 
@@ -1066,7 +1082,7 @@ class DefaultChildSelectionTest(unittest.TestCase):
             [{"id": "nested", "type": "skill", "skill": "grandchild", "optional": True},
              {"id": "read", "type": "atomic", "query_id": "child/read"}],
             {"grandchild/rows": [{"source": "nested"}], "child/read": [{"source": "read"}]},
-            skills=[blocked], identity_resolver=lambda _skill, _inputs: {"status": "blocked"},
+            skills=[blocked], identity_gate=_RefusingGate(),
         )
         self.assertEqual(picked, [])
 

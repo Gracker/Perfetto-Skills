@@ -375,6 +375,80 @@ class RuntimeExpressionExportTest(unittest.TestCase):
             self.normalize(bad)
 
 
+class EffectiveIdentityConfigTest(unittest.TestCase):
+    """SmartPerfetto's getEffectiveIdentityConfig and sqlUsesProcessNameFilter (identityGate.test.ts)."""
+
+    def test_process_name_filters_are_detected(self) -> None:
+        for sql in (
+            "SELECT * FROM process proc WHERE proc.name IN ('com.example')",
+            "SELECT * FROM process WHERE name = 'surfaceflinger'",
+            "SELECT * FROM android_binder_txns WHERE client_process GLOB 'com.example*'",
+            "SELECT * FROM thread_slice s WHERE s.process_name NOT GLOB 'com.android*'",
+            "SELECT * FROM slice JOIN process p USING(upid) WHERE p.name='com.a'",
+            "SELECT * FROM slice JOIN process p USING(upid) WHERE p.name!='com.a'",
+            "SELECT * FROM slice JOIN process p USING(upid) WHERE p.name<>'com.a'",
+            "SELECT * FROM process WHERE name='com.a'",
+            "SELECT * FROM v WHERE process_name='com.a'",
+            "SELECT * FROM v WHERE package_name='com.a'",
+            "WITH t AS (SELECT upid FROM process WHERE name='com.a') SELECT * FROM slice JOIN t USING(upid)",
+            "SELECT * FROM process p WHERE p.name GLOB 'com.a*'",
+            "SELECT * FROM process p WHERE p.name NOT LIKE '%a%'",
+            "SELECT * FROM process p WHERE p.name IN ('a','b')",
+        ):
+            with self.subTest(sql=sql):
+                self.assertTrue(exporter.sql_uses_process_name_filter(sql))
+
+    def test_other_name_filters_are_not_process_identity(self) -> None:
+        for sql in (
+            "SELECT * FROM slice WHERE name GLOB '*binder*'",
+            "SELECT * FROM thread t WHERE t.name = 'RenderThread'",
+            "SELECT * FROM slice s JOIN thread t USING(utid) JOIN process p USING(upid) WHERE s.name GLOB '*binder*'",
+            "SELECT * FROM counter_track cct WHERE cct.name = 'cpufreq'",
+            "SELECT * FROM thread_slice WHERE upid = 1008",
+            "SELECT * FROM slice WHERE dur > 1000",
+            "SELECT * FROM slice s WHERE s.name='doFrame'",
+            "SELECT nameGLOBAL FROM t WHERE nameGLOBAL > 1",
+            "SELECT 1 -- FROM process WHERE name = 'x'",
+        ):
+            with self.subTest(sql=sql):
+                self.assertFalse(exporter.sql_uses_process_name_filter(sql))
+
+    def test_detection_reads_declared_fragments_exact_sql_and_branches_per_statement(self) -> None:
+        fragments = {
+            "fragments/filter.sql": "x AS (SELECT * FROM process WHERE name = 'com.example')",
+            "fragments/labels.sql": "-- process-identity: label-only\nx AS (SELECT * FROM process WHERE name = 'com.example')",
+        }
+        read = fragments.get
+        def config(raw):
+            return exporter.effective_identity_config("s", raw, read)["policy"]
+
+        def step(**fields):
+            return {"steps": [{"id": "s", **fields}]}
+
+        self.assertEqual(config(step(sql="SELECT 1", sql_fragments=["fragments/filter.sql"])), "verify_if_present")
+        self.assertEqual(config({"sql": "SELECT 1", "sql_fragments": ["fragments/filter.sql"]}), "verify_if_present")
+        self.assertEqual(
+            config(step(sql="SELECT 1", exact_sql={"sql": "SELECT 1", "sql_fragments": ["fragments/filter.sql"]})),
+            "verify_if_present",
+        )
+        self.assertEqual(config(step(sql="SELECT 1", sql_fragments=["fragments/labels.sql"])), "none")
+        self.assertEqual(config(step(sql="SELECT 1", sql_fragments=["fragments/missing.sql"])), "none")
+        self.assertEqual(config({"steps": [{"conditions": [{"then": {"sql": "SELECT * FROM process WHERE name = 'a'"}}]}]}), "verify_if_present")
+        # A process read in one statement and a bare name comparison in another is not a filter.
+        self.assertEqual(config({"steps": [{"sql": "SELECT * FROM process"}, {"sql": "SELECT * FROM t WHERE name = 'a'"}]}), "none")
+
+    def test_explicit_identity_gets_smartperfetto_defaults_and_the_resolver_is_exempt(self) -> None:
+        self.assertEqual(
+            exporter.effective_identity_config("s", {"identity": {"policy": "required", "aliases": ["package"]}}, lambda _p: None),
+            {"scope": "process", "aliases": ["package"], "rewriteTo": "recommended_process_name_param",
+             "minConfidence": 50, "policy": "required"},
+        )
+        self.assertEqual(
+            exporter.effective_identity_config("process_identity_resolver", {"identity": {"policy": "required"}}, lambda _p: None),
+            {"policy": "exempt", "scope": "process"},
+        )
+
+
 class ProbeCapabilityGateTest(unittest.TestCase):
     def test_gpu_gate_follows_the_tables_the_capability_measures(self) -> None:
         gate = exporter.probe_capabilities
@@ -910,7 +984,11 @@ class ProcessScopeExportTest(unittest.TestCase):
         self.assertEqual(entry["template"]["parameters"], ["package"])
         self.assertEqual(entry["template"]["result_dependencies"], [])
         self.assertEqual(entry.get("process_scope"), self.scope)
-        self.assertEqual(entry.get("identity"), self.identity)
+        # The exporter records SmartPerfetto's effective identity contract.
+        self.assertEqual(entry.get("identity"), {
+            "scope": "process", "aliases": list(exporter.DEFAULT_PROCESS_IDENTITY_ALIASES),
+            "rewriteTo": "recommended_process_name_param", "minConfidence": 50, **self.identity,
+        })
         self.assertEqual(entry["template"]["fragments"], [{
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
@@ -945,7 +1023,10 @@ class ProcessScopeExportTest(unittest.TestCase):
         self.assertEqual(query["path"], "sql/scoped/query.sql")
         skill = json.loads((self.generated / "runtime/skills/scoped.json").read_text())
         self.assertEqual(skill.get("process_scope"), self.scope)
-        self.assertEqual(skill["identity"], self.identity)
+        self.assertEqual(skill["identity"], {
+            "scope": "process", "aliases": list(exporter.DEFAULT_PROCESS_IDENTITY_ALIASES),
+            "rewriteTo": "recommended_process_name_param", "minConfidence": 50, **self.identity,
+        })
         self.assertEqual(query["compatibility"].get("exact_scope", {}).get("status"), "unsupported")
         self.assertNotIn(
             "EXACT_BRANCH_MUST_NOT_REPLACE_BASE",

@@ -50,7 +50,19 @@
       },
       "id": "click_response_detail/system_context_window",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -156,7 +168,19 @@
       },
       "id": "click_response_detail/event_info",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -191,7 +215,9 @@
       "step_id": "event_info",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "dispatch_ms",
           "event_action",
@@ -267,7 +293,19 @@
       },
       "id": "click_response_detail/input_dispatch_breakdown",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -313,7 +351,9 @@
       "step_id": "input_dispatch_breakdown",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "event_end_ts",
           "event_ts",
@@ -382,7 +422,19 @@
       },
       "id": "click_response_detail/input_pipeline_lifecycle",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -430,7 +482,9 @@
             "source_sha256": "f43bd5a184bdb678fda9a90f950048cfd659b52f11fe57dab107a7d13abd60a5"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "event_end_ts",
           "event_ts",
@@ -499,7 +553,19 @@
       },
       "id": "click_response_detail/cpu_core_analysis",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -551,7 +617,9 @@
             "source_sha256": "ebcdcc6f476c4109051e817bcd107b1e45351faea14ff238ba76fb3f53b0b032"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "event_end_ts",
           "event_ts",
@@ -622,7 +690,19 @@
       },
       "id": "click_response_detail/quadrant_analysis",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -679,7 +759,9 @@
             "source_sha256": "ebcdcc6f476c4109051e817bcd107b1e45351faea14ff238ba76fb3f53b0b032"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "event_end_ts",
           "event_ts",

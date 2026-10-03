@@ -50,7 +50,19 @@
       },
       "id": "lock_contention_analysis/data_check",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -85,7 +97,9 @@
       "step_id": "data_check",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "process_name",
@@ -154,7 +168,19 @@
       },
       "id": "lock_contention_analysis/owner_contention_events",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -192,7 +218,9 @@
       "step_id": "owner_contention_events",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "min_duration_ms",
@@ -262,7 +290,19 @@
       },
       "id": "lock_contention_analysis/contention_overview",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -297,7 +337,9 @@
       "step_id": "contention_overview",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "min_duration_ms",
@@ -367,7 +409,19 @@
       },
       "id": "lock_contention_analysis/main_thread_contentions",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -402,7 +456,9 @@
       "step_id": "main_thread_contentions",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "min_duration_ms",
@@ -472,7 +528,19 @@
       },
       "id": "lock_contention_analysis/hot_locks",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -507,7 +575,9 @@
       "step_id": "hot_locks",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "process_name",
@@ -576,7 +646,19 @@
       },
       "id": "lock_contention_analysis/lock_chain_analysis",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -611,7 +693,9 @@
       "step_id": "lock_chain_analysis",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "process_name",
@@ -680,7 +764,19 @@
       },
       "id": "lock_contention_analysis/blocking_thread_state",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -777,7 +873,19 @@
       },
       "id": "lock_contention_analysis/blocking_functions",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -874,7 +982,19 @@
       },
       "id": "lock_contention_analysis/contention_binder_correlation",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -909,7 +1029,9 @@
       "step_id": "contention_binder_correlation",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "min_duration_ms",
@@ -979,7 +1101,19 @@
       },
       "id": "lock_contention_analysis/lock_held_capability",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -1016,7 +1150,9 @@
       "step_id": "lock_held_capability",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "process_name"
         ],
@@ -1083,7 +1219,19 @@
       },
       "id": "lock_contention_analysis/lock_held_owner_summary",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -1118,7 +1266,9 @@
       "step_id": "lock_held_owner_summary",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "process_name",
@@ -1187,7 +1337,19 @@
       },
       "id": "lock_contention_analysis/lock_held_long_holds",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -1222,7 +1384,9 @@
       "step_id": "lock_held_long_holds",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "min_duration_ms",
@@ -1292,7 +1456,19 @@
       },
       "id": "lock_contention_analysis/root_cause_classification",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -1327,7 +1503,9 @@
       "step_id": "root_cause_classification",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "min_duration_ms",
@@ -1397,7 +1575,19 @@
       },
       "id": "lock_contention_analysis/fallback_no_data",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",

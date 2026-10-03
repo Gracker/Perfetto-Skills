@@ -19,7 +19,6 @@ from _common import (
     query_rows,
     render_sql_template,
     reject_process_scope_names,
-    resolve_identity,
     runtime_sql_bindings,
     run_query,
     sha256_file,
@@ -31,6 +30,7 @@ from _common import (
 )
 from perfetto_doctor import resolve_verified_processor
 from perfetto_probe import probe_trace
+from runtime.executor import precheck_inputs, without_consumed_selectors
 from runtime.validation import validate_query_execution
 
 
@@ -199,7 +199,7 @@ def bind_manifest_process_scope(
         compatibility = entry.get("compatibility", {})
         exact = compatibility.get("exact_scope", {}) if isinstance(compatibility, Mapping) else {}
         if isinstance(exact, Mapping) and exact.get("status") == "unsupported" and any(
-            selector in supplied_parameters for selector in ("upid", "pid")
+            supplied_parameters.get(selector) is not None for selector in ("upid", "pid")
         ):
             raise ValueError("exact process scope is unsupported for this query")
         template = entry.get("template", {})
@@ -230,10 +230,7 @@ def bind_manifest_process_scope(
         return None, identity_result
     identity = identity_result
     if identity is None:
-        identity = resolve_identity(
-            {"identity": requirements[0][0]}, parameters, trace=trace,
-            trace_processor=trace_processor, timeout=timeout, max_output_bytes=max_output_bytes,
-        )
+        raise ValueError("process scope binding requires the identity gate's result")
     # Every target query must retain its own name predicate. A context query's
     # names cannot supply a missing target predicate elsewhere in the closure.
     all_names: set[str] = set()
@@ -330,6 +327,14 @@ def main(argv: list[str] | None = None) -> int:
             # The schema check, probe and query below share one trace load.
             sessions.enter_context(trace_processor_session(args.trace, trace_processor=trace_processor))
             manifest_entry = load_query_entry(args.query_id, skill_root)
+            # The query's parameters are its declared inputs: refuse any other
+            # name, except a selector the identity gate consumes, before trace work.
+            query_skill = {
+                "id": manifest_entry.get("skill_id"),
+                "identity": manifest_entry.get("identity") or {"policy": "none"},
+                "inputs": [{"name": name} for name in manifest_entry.get("template", {}).get("parameters", [])],
+            }
+            precheck_inputs(str(query_skill["id"]), query_skill, params)
             resolved_trace = args.trace.expanduser().resolve()
             trace_sha256 = sha256_file(resolved_trace)
             probe = probe_trace(
@@ -353,8 +358,21 @@ def main(argv: list[str] | None = None) -> int:
             )
             binding_entries: list[tuple[dict[str, object], str]] = []
             template = prepare_manifest_query(manifest_entry, skill_root, binding_entries=binding_entries)
+            # The same identity gate a Skill run applies, whether or not this
+            # query's SQL carries a reserved process-scope binding.
+            from perfetto_skill import build_identity_gate
+
+            gate = build_identity_gate(
+                args.trace, trace_processor=trace_processor, timeout=args.timeout,
+                max_output_bytes=args.max_output_bytes, allow_unverified=args.allow_unverified,
+                probe=probe, trace_side=args.trace_side,
+            ).apply(query_skill, params, {})
+            if not gate.allowed:
+                raise ValueError(gate.error)
+            supplied = params
+            params = without_consumed_selectors(str(query_skill["id"]), query_skill, gate.params)
             scope, identity = bind_manifest_process_scope(
-                binding_entries, params, params, identity_result=None,
+                binding_entries, params, supplied, identity_result=gate.evidence(),
                 trace=resolved_trace, trace_sha256=trace_sha256, trace_side=args.trace_side,
                 trace_processor=trace_processor, timeout=args.timeout, max_output_bytes=args.max_output_bytes,
             )

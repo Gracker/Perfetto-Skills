@@ -156,7 +156,8 @@ def bind_runtime_process_scope(
     if not re.fullmatch(r"[0-9a-f]{64}", trace_sha256) or not trace_side:
         raise ValueError("runtime process scope requires current trace identity")
     for selector in ("upid", "pid"):
-        if selector in supplied_parameters:
+        # A null selector is no selector, as in SmartPerfetto's identity gate.
+        if supplied_parameters.get(selector) is not None:
             raise ValueError("explicit process selectors are unsupported by the portable scope binding")
         if parameters.get(selector) not in (None, 0):
             raise ValueError("exact process scope is unsupported")
@@ -169,7 +170,13 @@ def bind_runtime_process_scope(
     values = {name: parameters.get(name) for name in names if parameters.get(name) not in (None, "")}
     status = identity_result.get("status")
     target = identity_result.get("target")
-    if status == "resolved":
+    # The identity gate admits an unverified name only when the resolver itself
+    # failed under verify_if_present; the scope then follows the requested name
+    # and the run's identity record stays unresolved.
+    admitted_unverified = (
+        status == "unresolved" and bool(identity_result.get("gate_warning")) and policy == "verify_if_present"
+    )
+    if status == "resolved" or admitted_unverified:
         if policy not in {"required", "verify_if_present"} or not isinstance(target, str) or not target:
             raise ValueError("named process scope requires resolved identity")
         if "target" in scope_roles and not any(parameters.get(name) == target for name in name_parameters):
@@ -218,62 +225,6 @@ def _process_scope_value(
     # Only target measurements require a name predicate. Context declarations
     # retain their role; resolved run identity does not make their rows targets.
     return None
-
-
-def resolve_identity(
-    skill: Mapping[str, Any],
-    params: Mapping[str, Any],
-    *,
-    trace: Path,
-    trace_processor: str | None,
-    timeout: float,
-    max_output_bytes: int,
-) -> dict[str, Any]:
-    config = skill.get("identity", {}) or {"policy": "none"}
-    policy = str(config.get("policy", "none"))
-    if policy in {"none", "exempt"}:
-        return {"status": "exempt", "policy": policy}
-    aliases = [str(value) for value in config.get("aliases", [])]
-    target_name = next(
-        (str(params[name]) for name in aliases if params.get(name) not in (None, "")),
-        None,
-    )
-    if target_name is None:
-        return {"status": "not_requested", "policy": policy, "aliases": aliases}
-    query = f"""
-SELECT upid, pid, name, start_ts, end_ts
-FROM process
-WHERE name = {sql_literal(target_name)} OR name GLOB {sql_literal(target_name + ':*')}
-ORDER BY CASE WHEN name = {sql_literal(target_name)} THEN 0 ELSE 1 END, start_ts;
-""".strip()
-    rows = query_rows(
-        run_query(
-            trace,
-            sql=query,
-            trace_processor=trace_processor,
-            timeout=timeout,
-            max_output_bytes=max_output_bytes,
-        )
-    )
-    exact = [row for row in rows if row.get("name") == target_name]
-    candidates = exact or rows
-    if len(candidates) == 1:
-        candidate = candidates[0]
-        return {
-            "status": "resolved",
-            "policy": policy,
-            "target": target_name,
-            "upid": candidate.get("upid"),
-            "pid": candidate.get("pid"),
-            "process_name": candidate.get("name"),
-            "lifetime": {"start_ns": candidate.get("start_ts"), "end_ns": candidate.get("end_ts")},
-        }
-    return {
-        "status": "not_found" if not candidates else "ambiguous",
-        "policy": policy,
-        "target": target_name,
-        "candidates": candidates,
-    }
 
 
 def runtime_platform_key(

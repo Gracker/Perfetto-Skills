@@ -82,9 +82,12 @@ python3 <skill-root>/scripts/perfetto_skill.py run /absolute/trace.pftrace \
 ```
 
 Pass only the Skill's declared inputs through `--param`; the runner rejects
-any other name before touching the trace. An identity alias is not a bound
-input: when a Skill binds `package`, pass the target as `package`, not
-`process_name`, even if a strategy names `process_name`.
+any other name before touching the trace. A Skill with a process identity gate
+also accepts its identity aliases (`package`, `process_name`, ...): the gate
+verifies the named process with the `process_identity_resolver` Skill and
+rewrites the alias to the verified `process.name`. An unverified or ambiguous
+target is refused with the reason (`identity_blocked`); pick an exact process
+name from that Skill's candidates instead of retrying the same name.
 
 Complete Skill runs and `--query-id` runs verify the selected processor's
 commit, RPC API, platform, and SHA-256 against the release lock before

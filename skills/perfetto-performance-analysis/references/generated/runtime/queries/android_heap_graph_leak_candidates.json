@@ -50,7 +50,19 @@
       },
       "id": "android_heap_graph_leak_candidates/leak_candidates",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -104,7 +116,10 @@
             "source_sha256": "4b0db7618d6d3b9db6b371cf8ebe963e88ddfd4738b7115a184fe2cbeae826f9"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "class_name_glob",
           "graph_sample_ts",
@@ -177,7 +192,19 @@
       },
       "id": "android_heap_graph_leak_candidates/reference_holders",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -231,7 +258,10 @@
             "source_sha256": "4b0db7618d6d3b9db6b371cf8ebe963e88ddfd4738b7115a184fe2cbeae826f9"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "class_name_glob",
           "graph_sample_ts",

@@ -15,6 +15,37 @@ RUNTIME = ROOT / "skills" / "perfetto-performance-analysis" / "scripts"
 sys.path.insert(0, str(RUNTIME))
 
 
+
+class StaticGate:
+    """An identity gate double that admits (or refuses) with a fixed record."""
+
+    def __init__(self, identity, *, allowed=True, error=None):
+        self.identity, self.allowed, self.error = identity, allowed, error
+        self.calls = []
+
+    def apply(self, skill, params, inherited, scope=None):
+        self.calls.append((skill.get("id"), dict(params)))
+        identity = dict(self.identity)
+        return SimpleNamespace(
+            allowed=self.allowed, params=dict(params), error=self.error, scope=None, evidence=lambda: identity,
+        )
+
+
+def resolver_rows_from_processes(csv_text):
+    """process_identity_resolver rows for every process in a process CSV fixture."""
+    import csv as csv_module
+    import io
+
+    rows = []
+    for index, row in enumerate(csv_module.DictReader(io.StringIO(csv_text))):
+        rows.append({
+            "rank": index + 1, "confidence_score": 100, "identity_status": "confirmed",
+            "canonical_package_name": row["name"], "recommended_process_name_param": row["name"],
+            "upid": int(row["upid"]), "pid": int(row["pid"]), "process_name": row["name"],
+            "target_match_sources": "process.name", "identity_warning": "ok",
+        })
+    return rows
+
 class PortableExpressionTest(unittest.TestCase):
     def setUp(self) -> None:
         from runtime.expressions import evaluate, validate
@@ -425,13 +456,13 @@ class PortableProcessScopeRunnerTest(unittest.TestCase):
             calls.append((query_id, copy.deepcopy(kwargs)))
             return [{"value": 1}]
 
-        resolver = mock.Mock(return_value=self.identity)
-        # A declared input named `identity` still cannot stand in for the resolver.
+        gate = StaticGate(self.identity)
+        # A declared input named `identity` still cannot stand in for the gate's record.
         skill = copy.deepcopy(self.skill)
         skill["inputs"].append({"name": "identity", "type": "object", "required": False})
         params = {"package": "com.example", "identity": {"status": "not_requested"}}
         result = self.runner_type(
-            {"skills": {"scoped": skill}}, execute, identity_resolver=resolver,
+            {"skills": {"scoped": skill}}, execute, identity_gate=gate,
         ).run("scoped", params)
         self.assertTrue(result["success"])
         self.assertEqual(len(calls), 1)
@@ -439,7 +470,7 @@ class PortableProcessScopeRunnerTest(unittest.TestCase):
         self.assertEqual(calls[0][1].get("supplied_parameters"), params)
         self.assertNotIn("__process_scope", calls[0][1]["params"])
         self.assertNotIn("__process_scope", calls[0][1]["results"])
-        resolver.assert_called_once()
+        self.assertEqual(len(gate.calls), 1)
 
     def test_reserved_parameters_inherited_values_and_output_names_are_rejected_before_queries(self) -> None:
         for alias in ("__process_scope", "__process_scope.upid", "__process_scope['upid']"):
@@ -459,7 +490,7 @@ class PortableProcessScopeRunnerTest(unittest.TestCase):
                     query = mock.Mock(return_value=[{"value": 1}])
                     runner = self.runner_type(
                         {"skills": {"scoped": skill}}, query,
-                        identity_resolver=lambda *_args: self.identity,
+                        identity_gate=StaticGate(self.identity),
                     )
                     with self.assertRaises(ValueError):
                         runner.run("scoped", params, _inherited=inherited)
@@ -528,11 +559,30 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
             json.dumps({"queries": list(self.entries.values())}), encoding="utf-8",
         )
 
+    def fake_gate(self):
+        """The real identity gate over resolver rows derived from self.csv."""
+        self.resolver_calls = []
+        gate_type = self.adapter.IdentityGate
+
+        def resolver(params):
+            self.resolver_calls.append(dict(params))
+            rows = resolver_rows_from_processes(self.csv)
+            wanted = params.get("package")
+            return True, [row for row in rows if row["process_name"] == wanted or params.get("upid") == row["upid"]], None
+
+        def count_pid(pid):
+            rows = [row for row in resolver_rows_from_processes(self.csv) if row["pid"] == pid]
+            return len(rows), min((row["upid"] for row in rows), default=None)
+
+        return lambda _resolver, _count_pid: gate_type(resolver, count_pid)
+
     def run_skill(self, params, *, inherited=None):
         self.write_queries()
         output = SimpleNamespace(stdout=self.csv, stderr="", returncode=0, rows=None)
         query = mock.Mock(return_value=output)
-        with mock.patch.object(self.adapter, "SKILL_ROOT", self.root), mock.patch.object(
+        with mock.patch.object(self.adapter, "IdentityGate", self.fake_gate()), mock.patch.object(
+            self.adapter, "SKILL_ROOT", self.root,
+        ), mock.patch.object(
             self.adapter, "run_query", query,
         ), mock.patch.object(self.common, "run_query", query), mock.patch.object(
             self.adapter, "validate_query_execution", return_value={"status": "allowed"},
@@ -547,7 +597,7 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
             call.kwargs["sql"] for call in query.call_args_list
             if "/* ANALYSIS_QUERY */" in call.kwargs["sql"]
         ]
-        self.identity_query_count = len(query.call_args_list) - len(analysis_calls)
+        self.assertEqual(len(query.call_args_list), len(analysis_calls))
         return result, analysis_calls
 
     def add_scoped_root(self):
@@ -565,7 +615,7 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
                 result, queries = self.run_skill(params)
                 self.assertTrue(result["success"], result)
                 self.assertEqual(len(queries), 1)
-                self.assertEqual(self.identity_query_count, 1 if params else 0)
+                self.assertEqual(len(self.resolver_calls), 1 if params else 0)
                 self.assertIn("NULL IS NULL OR upid = NULL", queries[0])
                 self.assertNotIn("${", queries[0])
                 self.assertEqual(
@@ -576,11 +626,16 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
 
     def test_ambiguous_identity_and_explicit_exact_or_invalid_selector_do_not_execute_sql(self) -> None:
         self.add_scoped_root()
-        for value in (42, 0, -1, None):
+        # An explicit UPID needs an exact scope this runtime does not have; a
+        # zero or negative one is invalid; a null one is no selector at all.
+        for value, error in ((42, "Exact UPID scope is unsupported"), (0, "Invalid explicit upid"), (-1, "Invalid explicit upid")):
             with self.subTest(upid=value):
                 result, queries = self.run_skill({"package": "com.example", "upid": value})
                 self.assertFalse(result["success"])
+                self.assertIn(error, result["error"])
                 self.assertEqual(queries, [])
+        result, queries = self.run_skill({"package": "com.example", "upid": None})
+        self.assertTrue(result["success"], result)
         self.csv += '43,124,"com.example",21,30\n'
         result, queries = self.run_skill({"package": "com.example"})
         self.assertFalse(result["success"])
@@ -605,7 +660,7 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
         self.assertIn("NULL IS NULL OR upid = NULL", queries[0])
         self.assertIn("name = 'com.example'", queries[0])
 
-    def test_setup_name_requirement_cannot_be_omitted_or_conflict_with_leaf_identity(self) -> None:
+    def test_the_verified_name_fills_every_declared_alias_and_conflicting_aliases_are_refused(self) -> None:
         self.add_query(
             "setup", "CREATE VIEW selected AS SELECT * FROM process "
             "WHERE (${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}) "
@@ -616,14 +671,16 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
             "root", "/* ANALYSIS_QUERY */ SELECT * FROM selected "
             "WHERE name = '${process_name}'", setups=("scoped/setup",), names=("process_name",),
         )
-        for params in (
-            {"process_name": "com.example"},
-            {"package": "com.example", "process_name": "different"},
-        ):
-            with self.subTest(params=params):
-                result, queries = self.run_skill(params)
-                self.assertFalse(result["success"])
-                self.assertEqual(queries, [])
+        # The verified name fills every declared alias, as SmartPerfetto's
+        # rewrite does, so the setup's own name predicate is never omitted.
+        result, queries = self.run_skill({"process_name": "com.example"})
+        self.assertTrue(result["success"], result)
+        self.assertIn("name = 'com.example'", queries[0])
+        self.assertIn("WHERE name = 'com.example'", queries[0])
+        result, queries = self.run_skill({"package": "com.example", "process_name": "different"})
+        self.assertFalse(result["success"])
+        self.assertEqual(result["error"], "Explicit process selector aliases conflict")
+        self.assertEqual(queries, [])
 
     def test_two_setup_queries_with_conflicting_name_requirements_are_rejected(self) -> None:
         for step, name in (("first", "package"), ("second", "process_name")):
@@ -640,13 +697,20 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
         self.assertFalse(result["success"])
         self.assertEqual(queries, [])
 
-    def test_legacy_query_without_scope_retains_optional_identity_and_default_behavior(self) -> None:
+    def test_an_unscoped_query_is_still_gated_and_an_explicit_zero_upid_is_refused(self) -> None:
         self.add_query("root", "/* ANALYSIS_QUERY */ SELECT ${upid|0} AS value")
         self.csv += '43,124,"com.example",21,30\n'
-        result, queries = self.run_skill({"package": "com.example", "upid": 0})
-        self.assertTrue(result["success"], result)
+        result, queries = self.run_skill({"package": "com.example"})
+        self.assertFalse(result["success"])
         self.assertEqual(result["identity"]["status"], "ambiguous")
-        self.assertEqual(queries, ["/* ANALYSIS_QUERY */ SELECT 0 AS value"])
+        self.assertEqual(
+            result["error"], 'Process identity could not be verified for skill "scoped": status=ambiguous, confidence=100',
+        )
+        self.assertEqual(queries, [])
+        # Zero is the SQL fallback for an omitted UPID; supplied explicitly it would widen the target.
+        result, queries = self.run_skill({"package": "com.example", "upid": 0})
+        self.assertEqual((result["success"], result["error"]), (False, "Invalid explicit upid: expected a positive safe integer"))
+        self.assertEqual(queries, [])
 
     def test_declared_unsupported_exact_branch_cannot_fall_back_to_base_sql(self) -> None:
         self.add_query("root", "/* ANALYSIS_QUERY */ SELECT ${upid|0} AS value")
@@ -719,7 +783,13 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
         args = [str(self.trace), "--query-id", "scoped/root", "--output", str(destination)]
         output = SimpleNamespace(stdout=self.csv, stderr="", returncode=0, rows=None)
         query = mock.Mock(return_value=output)
-        with mock.patch.object(cli, "__file__", str(self.root / "scripts/perfetto_query.py")), mock.patch.object(
+        import sys as sys_module
+
+        load_skill_script("perfetto_skill")
+        adapter_module = sys_module.modules.setdefault("perfetto_skill", self.adapter)
+        with mock.patch.object(adapter_module, "IdentityGate", self.fake_gate()), mock.patch.object(
+            adapter_module, "SKILL_ROOT", self.root,
+        ), mock.patch.object(cli, "__file__", str(self.root / "scripts/perfetto_query.py")), mock.patch.object(
             cli, "resolve_verified_processor", return_value=(Path("/unused/processor"), {"binary_sha256": "b" * 64}),
         ), mock.patch.object(cli, "probe_trace", return_value={}), mock.patch.object(
             cli, "validate_query_execution", return_value={"status": "allowed"},
@@ -727,7 +797,7 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
             cli, "run_query", query,
         ), mock.patch.object(self.common, "run_query", query):
             self.assertEqual(cli.main([*args, "--param", 'package="com.example"']), 0)
-            self.assertEqual(query.call_count, 2)
+            self.assertEqual((query.call_count, len(self.resolver_calls)), (1, 1))
             self.assertIn("NULL IS NULL OR upid = NULL", query.call_args.kwargs["sql"])
             self.assertIn("name = 'com.example'", query.call_args.kwargs["sql"])
             sidecar = json.loads(destination.with_suffix(".json.evidence.json").read_text())
@@ -742,13 +812,18 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
             self.write_queries()
             query.reset_mock()
             self.assertEqual(cli.main([*args, "--param", 'package="com.example"']), 0)
-            self.assertEqual(query.call_count, 2)
+            self.assertEqual(query.call_count, 1)
             self.assertEqual(query.call_args.kwargs["sql"], "/* ANALYSIS_QUERY */ SELECT NULL AS context_upid")
             sidecar = json.loads(destination.with_suffix(".json.evidence.json").read_text())
             self.assertEqual(sidecar.get("process_scope"), context_declaration)
             self.assertEqual(sidecar["identity"]["status"], "resolved")
             self.assertNotIn("appliedProcessScope", sidecar)
             self.assertFalse(sidecar["validation"].get("semantic_verified", False))
+            # An undeclared name that no gate consumes is refused before trace work.
+            query.reset_mock()
+            self.resolver_calls.clear()
+            self.assertEqual(cli.main([*args, "--param", 'package="com.example"', "--param", "typo=7"]), 2)
+            self.assertEqual((query.call_count, len(self.resolver_calls)), (0, 0))
             saved = self.root / "forged.json"
             saved.write_text('{"upid": null}', encoding="utf-8")
             for extra in (

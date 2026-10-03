@@ -48,7 +48,19 @@
       },
       "id": "memory_rss_high_watermark/rss_peaks",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -79,7 +91,9 @@
       "step_id": "rss_peaks",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "process_name",
           "top_n"

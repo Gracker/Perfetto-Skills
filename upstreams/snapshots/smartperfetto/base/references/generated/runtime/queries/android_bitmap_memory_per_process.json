@@ -48,7 +48,19 @@
       },
       "id": "android_bitmap_memory_per_process/bitmap_memory",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -83,7 +95,10 @@
             "source_sha256": "2501f16f49b1b70eae19e70e98c8e66da29ee6335c6a4dafce480282c879058e"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "package",
           "process_name",
@@ -150,7 +165,19 @@
       },
       "id": "android_bitmap_memory_per_process/heap_bitmap_availability",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -244,7 +271,19 @@
       },
       "id": "android_bitmap_memory_per_process/heap_bitmap_metadata",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -279,7 +318,10 @@
             "source_sha256": "2501f16f49b1b70eae19e70e98c8e66da29ee6335c6a4dafce480282c879058e"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "package",
           "process_name",
@@ -346,7 +388,19 @@
       },
       "id": "android_bitmap_memory_per_process/heap_bitmap_sender_attribution",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -381,7 +435,10 @@
             "source_sha256": "2501f16f49b1b70eae19e70e98c8e66da29ee6335c6a4dafce480282c879058e"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "package",
           "process_name",

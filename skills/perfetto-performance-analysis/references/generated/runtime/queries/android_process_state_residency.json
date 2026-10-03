@@ -48,7 +48,19 @@
       },
       "id": "android_process_state_residency/process_state_capability",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -141,7 +153,19 @@
       },
       "id": "android_process_state_residency/process_state_data",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -175,7 +199,9 @@
             "source_sha256": "af3414537aa1a703e9b854a6abda6fa0df8ae3488f58c8cf650ecb2647cd802f"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "process_name",
           "upid"
@@ -241,7 +267,19 @@
       },
       "id": "android_process_state_residency/process_state_residency",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -275,7 +313,9 @@
             "source_sha256": "af3414537aa1a703e9b854a6abda6fa0df8ae3488f58c8cf650ecb2647cd802f"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "process_name",
@@ -343,7 +383,19 @@
       },
       "id": "android_process_state_residency/process_state_transitions",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -377,7 +429,9 @@
             "source_sha256": "af3414537aa1a703e9b854a6abda6fa0df8ae3488f58c8cf650ecb2647cd802f"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "max_rows",
@@ -446,7 +500,19 @@
       },
       "id": "android_process_state_residency/process_state_last_observed",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -480,7 +546,9 @@
             "source_sha256": "af3414537aa1a703e9b854a6abda6fa0df8ae3488f58c8cf650ecb2647cd802f"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "process_name"
+        ],
         "parameters": [
           "end_ts",
           "process_name",

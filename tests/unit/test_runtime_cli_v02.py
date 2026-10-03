@@ -277,11 +277,12 @@ class RuntimeCliV02Test(unittest.TestCase):
 
     def test_skill_cli_rejects_undeclared_parameters_before_resolving_a_processor(self) -> None:
         cli = load_skill_script("perfetto_skill")
+        # A process selector the identity gate consumes (and rewrites into the
+        # declared input) is accepted; any other undeclared name, or a missing
+        # required input no supplied name can fill, is refused first.
         cases = (
-            # game_fps_analysis binds `package`; `process_name` would leave it unscoped.
-            ("game_fps_analysis", 'process_name="com.foo"', r"undeclared input\(s\): process_name; declared inputs: .*package"),
-            # jank_frame_detail verifies `process_name` as an alias but binds only `package`.
-            ("jank_frame_detail", 'process_name="com.foo"', r"identity alias process_name .*pass the value as package"),
+            ("game_fps_analysis", 'frame_rate=60', r"undeclared input\(s\): frame_rate; declared inputs: .*package"),
+            ("cpu_topology_view", 'process_name="com.foo"', r"undeclared input\(s\): process_name"),
             ("frame_blocking_calls", 'start_ts=1', r"frame_blocking_calls missing required input: process_name"),
         )
         for skill_id, param, message in cases:
@@ -310,7 +311,11 @@ class RuntimeCliV02Test(unittest.TestCase):
                 if alias in _declared_inputs(skill):
                     continue
                 with self.subTest(skill=skill_id, alias=alias):
-                    with self.assertRaisesRegex(ValueError, rf"identity alias {alias} .*pass the value as \w+"):
+                    # Without the identity gate's rewrite the alias is refused, naming
+                    # the input that binds the name or saying that none does.
+                    with self.assertRaisesRegex(
+                        ValueError, rf"identity alias {alias} .*(pass the value as \w+|this Skill binds no process name input)",
+                    ):
                         resolve_inputs(skill_id, skill, {alias: "com.example"})
 
     def test_report_validator_rejects_non_object_json(self) -> None:

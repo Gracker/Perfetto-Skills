@@ -14,7 +14,6 @@ from _common import (
     missing_tables,
     query_rows,
     render_sql_template,
-    resolve_identity,
     run_query,
     sha256_file,
     trace_processor_session,
@@ -30,7 +29,8 @@ from perfetto_query import (
 )
 from perfetto_doctor import resolve_verified_processor
 from perfetto_probe import probe_trace
-from runtime.executor import SkillRunner, resolve_inputs
+from process_identity import RESOLVER_SKILL, IdentityGate
+from runtime.executor import SkillRunner, precheck_inputs
 from runtime.report import validate_report_payload
 from runtime.validation import validate_query_execution
 
@@ -109,16 +109,6 @@ def build_runtime_runner(
         prerequisite_cache[cache_key] = result
         return result
 
-    def identity_resolver(skill: Mapping[str, Any], params: Mapping[str, Any]) -> Mapping[str, Any]:
-        return resolve_identity(
-            skill,
-            params,
-            trace=trace,
-            trace_processor=trace_processor,
-            timeout=timeout,
-            max_output_bytes=max_output_bytes,
-        )
-
     def query_executor(
         query_id: str,
         *,
@@ -180,13 +170,51 @@ def build_runtime_runner(
             },
         }
 
-    return SkillRunner(
+    runner = SkillRunner(
         {"skills": graph},
         query_executor,
-        identity_resolver=identity_resolver,
         prerequisite_checker=prerequisite_checker,
         process_scope_enabled=True,
     )
+
+    def run_resolver(params: Mapping[str, Any]) -> tuple[bool, list[Mapping[str, Any]], str | None]:
+        # SmartPerfetto resolves identity with its process_identity_resolver Skill.
+        if RESOLVER_SKILL not in runner.skills:
+            runner.skills.update(ManifestCatalog().graph(RESOLVER_SKILL))
+        result = runner.run(RESOLVER_SKILL, dict(params))
+        steps = result.get("steps") or []
+        rows = next((step.get("rows") or [] for step in steps if step.get("step_id") == "root"), [])
+        error = result.get("error") or next((step.get("error") for step in steps if step.get("error")), None)
+        if not result.get("success") and error is None:
+            error = str(result.get("status") or "resolver failed")
+        return bool(result.get("success")), list(rows), error
+
+    def count_pid(pid: int) -> tuple[Any, Any]:
+        rows = query_rows(run_query(
+            trace,
+            sql=f"SELECT COUNT(DISTINCT upid) AS process_count, MIN(upid) AS unique_upid FROM process WHERE pid = {int(pid)}",
+            trace_processor=trace_processor,
+            timeout=timeout,
+            max_output_bytes=max_output_bytes,
+        ))
+        if len(rows) != 1:
+            raise ValueError("PID uniqueness query returned incomplete facts")
+        return rows[0].get("process_count"), rows[0].get("unique_upid")
+
+    runner.identity_gate = IdentityGate(run_resolver, count_pid)
+    return runner
+
+
+
+def build_identity_gate(
+    trace: Path, *, trace_processor: str | None, timeout: float, max_output_bytes: int,
+    allow_unverified: bool, probe: Mapping[str, Any], trace_side: str,
+) -> IdentityGate:
+    """The identity gate a Skill run on `trace` applies, for a single manifest query."""
+    return build_runtime_runner(
+        trace, {}, trace_processor=trace_processor, timeout=timeout, max_output_bytes=max_output_bytes,
+        allow_unverified=allow_unverified, probe=probe, trace_side=trace_side,
+    ).identity_gate
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -240,8 +268,10 @@ def main(argv: list[str] | None = None) -> int:
             return 0 if not issues else 2
         params = parse_parameters(args.param)
         graph = catalog.graph(args.skill)
-        # Enforce the root Skill's input contract before any trace work.
-        resolve_inputs(args.skill, graph[args.skill], params)
+        # Refuse names the Skill cannot take before any trace work; the identity
+        # gate may consume selectors and fill declared inputs, so the full
+        # input contract applies to the parameters it returns.
+        precheck_inputs(args.skill, graph[args.skill], params)
         processor, processor_identity = resolve_verified_processor(
             args.trace_processor,
             skill_root=SKILL_ROOT,

@@ -6,6 +6,7 @@ import json
 import math
 from typing import Any
 from _common import reject_process_scope_names
+from process_identity import DEFAULT_PROCESS_IDENTITY_ALIASES, consumable_selectors, extract_target
 
 from .expressions import evaluate, interpolate, is_expression_param, validate, validate_template
 
@@ -95,6 +96,35 @@ def _resolve_inputs(
     return result, unset
 
 
+def precheck_inputs(
+    skill_id: str, skill: Mapping[str, Any], supplied: Mapping[str, Any], inherited: Mapping[str, Any] | None = None,
+) -> None:
+    """Refuse, before any trace work, a name that is neither a declared input
+    nor a process selector the identity gate consumes. The full contract
+    (types, required inputs) applies to the parameters the gate returns."""
+    early = sorted(set(supplied) - set(_declared_inputs(skill)) - consumable_selectors({"id": skill_id, **skill}))
+    if early:
+        _reject_undeclared(skill_id, skill, _declared_inputs(skill), early)
+    # A missing required input is refused here too, unless it is an identity
+    # alias the gate fills from a supplied process name.
+    config = skill.get("identity") or {}
+    gated = config.get("policy") in {"required", "verify_if_present"}
+    aliases = set(config.get("aliases") or DEFAULT_PROCESS_IDENTITY_ALIASES) if gated else set()
+    named = gated and bool(extract_target(supplied, inherited or {}, config).get("requestedName"))
+    for spec in skill.get("inputs", []) or []:
+        name = str(spec["name"])
+        if spec.get("required") and name not in supplied and "default" not in spec and not (named and name in aliases):
+            raise SkillInputError(f"{skill_id} missing required input: {name}")
+
+
+def without_consumed_selectors(skill_id: str, skill: Mapping[str, Any], params: Mapping[str, Any]) -> dict[str, Any]:
+    """The gate consumed every process selector the Skill does not declare;
+    SmartPerfetto ignores those names after its gate, and so does this runtime."""
+    declared = set(_declared_inputs(skill))
+    consumed = consumable_selectors({"id": skill_id, **skill})
+    return {name: value for name, value in params.items() if name in declared or name not in consumed}
+
+
 def _child_failed(step: Mapping[str, Any]) -> bool:
     """Whether a Skill reference step ran a child Skill that failed."""
     return (step.get("child") or {}).get("success") is False
@@ -179,7 +209,7 @@ class SkillRunner:
         query_executor: QueryExecutor,
         *,
         max_depth: int = 12,
-        identity_resolver: Callable[[Mapping[str, Any], Mapping[str, Any]], Mapping[str, Any]] | None = None,
+        identity_gate: Any | None = None,
         prerequisite_checker: Callable[[Mapping[str, Any]], Mapping[str, Any]] | None = None,
         process_scope_enabled: bool = False,
     ):
@@ -191,7 +221,8 @@ class SkillRunner:
         )
         self.query_executor = query_executor
         self.max_depth = max_depth
-        self.identity_resolver = identity_resolver
+        # process_identity.IdentityGate (or a test double with the same apply()).
+        self.identity_gate = identity_gate
         self.prerequisite_checker = prerequisite_checker
         self.process_scope_enabled = process_scope_enabled
 
@@ -263,9 +294,11 @@ class SkillRunner:
             return evaluate(value, context)
         return value
 
-    def _run_child(self, skill_id: str, params: Mapping[str, Any], *, depth: int, inherited: Mapping[str, Any]) -> dict[str, Any]:
+    def _run_child(
+        self, skill_id: str, params: Mapping[str, Any], *, depth: int, inherited: Mapping[str, Any], scope: Any = None,
+    ) -> dict[str, Any]:
         try:
-            return self.run(skill_id, params, _depth=depth, _inherited=inherited)
+            return self.run(skill_id, params, _depth=depth, _inherited=inherited, _scope=scope)
         except SkillInputError as exc:
             # A manifest-authored call that breaks the child's input contract is
             # a visible step failure; optional/required handling decides the parent.
@@ -280,7 +313,10 @@ class SkillRunner:
                 "evidence": [],
             }
 
-    def run(self, skill_id: str, params: Mapping[str, Any] | None = None, *, _depth: int = 0, _inherited: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    def run(
+        self, skill_id: str, params: Mapping[str, Any] | None = None, *, _depth: int = 0,
+        _inherited: Mapping[str, Any] | None = None, _scope: Any = None,
+    ) -> dict[str, Any]:
         if _depth > self.max_depth:
             raise RuntimeError(f"Skill recursion depth exceeds {self.max_depth}")
         if skill_id not in self.skills:
@@ -293,6 +329,35 @@ class SkillRunner:
         reject_process_scope_names(_inherited or {})
         for step in skill.get("steps", []) or []:
             reject_process_scope_names({name: None for name in (step.get("id"), step.get("save_as")) if name is not None})
+        precheck_inputs(skill_id, skill, params or {}, _inherited or {})
+        # SmartPerfetto gates the raw call first: the gate consumes identity
+        # aliases and rewrites them to the verified process name, and only the
+        # rewritten parameters meet the input contract.
+        gate = (
+            self.identity_gate.apply({"id": skill_id, **skill}, params or {}, _inherited or {}, _scope)
+            if self.identity_gate is not None
+            else None
+        )
+        if gate is not None and not gate.allowed:
+            return {
+                "schema_version": 1,
+                "skill_id": skill_id,
+                "success": False,
+                "status": "identity_blocked",
+                "error": gate.error,
+                "params": dict(params or {}),
+                "identity": gate.evidence(),
+                "steps": [],
+                "evidence": [],
+            }
+        if gate is not None:
+            params = without_consumed_selectors(skill_id, skill, gate.params)
+        identity_policy = skill.get("identity", {}) or {"policy": "none"}
+        identity = (
+            gate.evidence() if gate is not None
+            else {"status": "not_checked", "policy": identity_policy.get("policy", "none")}
+        )
+        child_scope = gate.scope if gate is not None else None
         inputs, unset_inputs = _resolve_inputs(skill_id, skill, params or {})
         prerequisite = (
             dict(self.prerequisite_checker(skill))
@@ -307,23 +372,6 @@ class SkillRunner:
                 "status": "missing_evidence",
                 "params": inputs,
                 "prerequisite": prerequisite,
-                "steps": [],
-                "evidence": [],
-            }
-        identity_policy = skill.get("identity", {}) or {"policy": "none"}
-        identity = (
-            dict(self.identity_resolver(skill, inputs))
-            if self.identity_resolver is not None
-            else {"status": "not_checked", "policy": identity_policy.get("policy", "none")}
-        )
-        if identity_policy.get("policy") == "required" and identity.get("status") != "resolved":
-            return {
-                "schema_version": 1,
-                "skill_id": skill_id,
-                "success": False,
-                "status": "identity_blocked",
-                "params": inputs,
-                "identity": identity,
                 "steps": [],
                 "evidence": [],
             }
@@ -445,7 +493,9 @@ class SkillRunner:
                     key: self._resolve_param(value, context)
                     for key, value in (step.get("params", {}) or {}).items()
                 }
-                child = self._run_child(str(step["skill"]), child_params, depth=_depth + 1, inherited=variables)
+                child = self._run_child(
+                    str(step["skill"]), child_params, depth=_depth + 1, inherited=variables, scope=child_scope,
+                )
                 rows = self._default_child_rows(child)
                 status = "observed" if rows else ("empty" if child.get("success") else "error")
                 optional = bool(step.get("optional"))
@@ -510,7 +560,7 @@ class SkillRunner:
                         child_params = {key: value for key, value in item.items() if key in row_inputs}
                     child = self._run_child(
                         str(step["item_skill"]), child_params,
-                        depth=_depth + 1, inherited={**variables, "item": item},
+                        depth=_depth + 1, inherited={**variables, "item": item}, scope=child_scope,
                     )
                     item_results.append({"index": index, "item": item, "result": child})
                     evidence.extend(child.get("evidence", []))

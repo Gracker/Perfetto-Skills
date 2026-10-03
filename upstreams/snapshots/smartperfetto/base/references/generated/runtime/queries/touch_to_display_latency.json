@@ -48,7 +48,19 @@
       },
       "id": "touch_to_display_latency/root",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -99,7 +111,9 @@
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
           "event_type",

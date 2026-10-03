@@ -41,7 +41,7 @@ snapshots, and frontend behavior remain in the product repository.
 4. The agent selects one workflow from `workflow-index.json` and invokes
    `perfetto_skill.py run` for its exported root Skill.
 5. The executor lazily loads only the transitive Skill and SQL shards. It
-   applies typed defaults, prerequisites, identity rules, safe conditions,
+   applies the process identity gate, typed defaults, prerequisites, safe conditions,
    persistent SQL setup dependencies, child Skills, bounded iterators,
    diagnostics, empty/error semantics, and explicit AI handoffs.
 6. Every query emits stable evidence with trace, source, rendered SQL,
@@ -116,6 +116,20 @@ number reads as that number, as the CSV path always did, because Skills print
 coerces such text where this runtime's evaluator does not. A processor that
 cannot serve stdio RPC falls back to the `query` CLI and its six-decimal
 doubles.
+
+Process identity follows SmartPerfetto's contract. The exporter records each
+Skill's effective identity policy: an explicit `identity` with SmartPerfetto's
+defaults, or `verify_if_present` when any of its SQL statements (with their
+declared fragments) filters by process name. Before a Skill or manifest query
+runs, `process_identity.py` resolves a supplied name, PID, or UPID with the
+exported `process_identity_resolver` Skill, applies SmartPerfetto's
+candidate scoring, warnings, status, and minimum confidence, refuses an
+unverified target with SmartPerfetto's reason text (only a resolver failure
+under `verify_if_present` runs on, recorded as unresolved), and rewrites name
+aliases to the verified `process.name`. A child Skill reuses its parent's
+verified named identity through a runtime-issued scope. Exact UPID scopes have
+no portable SQL path, so an invocation SmartPerfetto would scope to an
+explicit UPID or PID is refused here.
 
 A probe, manifest query, or Skill run loads its trace once: the CLIs keep that
 child for the whole run. Every warm query must answer exactly as a fresh

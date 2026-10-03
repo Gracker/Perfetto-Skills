@@ -24,7 +24,19 @@
   },
   "id": "sf_frame_consumption",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package",
+      "process_name",
+      "package_name",
+      "target_package",
+      "app_package",
+      "packageName",
+      "processName"
+    ],
+    "minConfidence": 50,
+    "policy": "verify_if_present",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
   },
   "inputs": [
     {

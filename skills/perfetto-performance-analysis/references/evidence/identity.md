@@ -20,7 +20,16 @@ be reused during a trace.
   for joins inside one trace.
 - When a user supplies only a package or name, list candidates and resolve the
   target from overlapping lifetime and activity. Record ambiguity instead of
-  silently selecting the first row.
+  silently selecting the first row. `perfetto_skill.py` and `--query-id` runs
+  do this through the same identity gate as SmartPerfetto: a Skill whose SQL
+  filters by process name verifies a supplied name with
+  `process_identity_resolver`, runs only on one verified process, and records
+  the gate's status, confidence, candidates, and warnings in its evidence.
+  Two exceptions follow SmartPerfetto and this runtime's boundary: when the
+  resolver itself fails, a `verify_if_present` Skill still runs and records its
+  identity as `unresolved` with the reason; and an explicit UPID or PID, which
+  SmartPerfetto would use as an exact process scope, is refused because the
+  portable runtime has no exact-UPID SQL scope.
 
 ## Event identity
 

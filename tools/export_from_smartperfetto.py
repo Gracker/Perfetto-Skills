@@ -16,7 +16,7 @@ import subprocess
 import sys
 import tempfile
 from types import MappingProxyType
-from typing import Any, Mapping, NamedTuple
+from typing import Any, Callable, Mapping, NamedTuple
 
 import yaml
 
@@ -1409,6 +1409,119 @@ GPU_CAPABILITY_TABLES = ("gpu_slice", "gpu_track")
 _SQL_COMMENT_OR_STRING = re.compile(r"--[^\n]*|/\*.*?\*/|'(?:[^']|'')*'", re.DOTALL)
 
 
+# SmartPerfetto's effective process identity contract
+# (backend/src/services/processIdentity/identityGate.ts and types.ts): an
+# explicit `identity` gets SmartPerfetto's defaults, and a Skill without one is
+# verified when present if any of its SQL statements filters by process name.
+DEFAULT_PROCESS_IDENTITY_ALIASES = [
+    "package", "process_name", "package_name", "target_package", "app_package", "packageName", "processName",
+]
+_PROCESS_NAME_OPERATORS = r"(?:\s+(?:NOT\s+GLOB|NOT\s+LIKE|GLOB|LIKE|IN|IS(?:\s+NOT)?)\b|\s*(?:!=|<>|=))"
+_PROCESS_ALIAS_KEYWORDS = frozenset({
+    "where", "on", "using", "join", "left", "right", "inner", "outer", "cross", "full", "group", "order", "limit",
+})
+_LABEL_ONLY_FRAGMENT = re.compile(r"^\s*--\s*process-identity:\s*label-only\b", re.MULTILINE)
+
+
+def sql_uses_process_name_filter(sql: str) -> bool:
+    """SmartPerfetto's sqlUsesProcessNameFilter: a comparison that scopes a query to a named process."""
+    stripped = re.sub(r"/\*[\s\S]*?\*/", " ", re.sub(r"--[^\n\r]*", " ", sql))
+    has_process_table = re.search(r"\b(?:FROM|JOIN)\s+process\b", stripped, re.IGNORECASE) is not None
+    aliases = {"process"}
+    for match in re.finditer(
+        r"\b(?:FROM|JOIN)\s+process\b(?:\s+(?:AS\s+)?([A-Za-z_][A-Za-z0-9_]*))?", stripped, re.IGNORECASE
+    ):
+        alias = (match.group(1) or "").lower()
+        if alias and alias not in _PROCESS_ALIAS_KEYWORDS:
+            aliases.add(alias)
+    for alias in aliases:
+        if re.search(rf"\b{re.escape(alias)}\.name{_PROCESS_NAME_OPERATORS}", stripped, re.IGNORECASE):
+            return True
+    if has_process_table and re.search(rf"(?<!\.)\bname{_PROCESS_NAME_OPERATORS}", stripped, re.IGNORECASE):
+        return True
+    return re.search(
+        rf"\b(?:[A-Za-z_][A-Za-z0-9_]*\.)?(?:process_name|client_process|server_process|package_name){_PROCESS_NAME_OPERATORS}",
+        stripped, re.IGNORECASE,
+    ) is not None
+
+
+def _identity_sql_unit(source_step: object, fragment_text: Callable[[str], str | None]) -> str | None:
+    if not isinstance(source_step, dict) or not isinstance(source_step.get("sql"), str):
+        return None
+    parts = [source_step["sql"]]
+    for fragment in source_step.get("sql_fragments") or []:
+        text = fragment_text(fragment) if isinstance(fragment, str) else None
+        # A fragment that only labels processes does not select target evidence.
+        if text and not _LABEL_ONLY_FRAGMENT.search(text):
+            parts.append(text)
+    return "\n".join(parts)
+
+
+def skill_sql_units(raw: dict[str, Any], fragment_text: Callable[[str], str | None]) -> list[str]:
+    """Every statement a Skill can execute, each with its injected fragments."""
+    units: list[str] = []
+
+    def visit(step: object) -> None:
+        if not isinstance(step, dict):
+            return
+        for unit in (_identity_sql_unit(step, fragment_text), _identity_sql_unit(step.get("exact_sql"), fragment_text)):
+            if unit is not None:
+                units.append(unit)
+        for nested in step.get("steps") or []:
+            visit(nested)
+        for branch in step.get("conditions") or []:
+            if isinstance(branch, dict) and isinstance(branch.get("then"), dict):
+                visit(branch["then"])
+        if isinstance(step.get("else"), dict):
+            visit(step["else"])
+
+    root = _identity_sql_unit(raw, fragment_text)
+    if root is not None:
+        units.append(root)
+    for step in raw.get("steps") or []:
+        visit(step)
+    return units
+
+
+def effective_identity_config(
+    skill_id: str, raw: dict[str, Any], fragment_text: Callable[[str], str | None]
+) -> dict[str, Any]:
+    """SmartPerfetto's getEffectiveIdentityConfig for one Skill."""
+    if skill_id == "process_identity_resolver":
+        return {"policy": "exempt", "scope": "process"}
+    explicit = raw.get("identity")
+    if isinstance(explicit, dict) and explicit.get("policy"):
+        return {
+            "scope": "process",
+            "aliases": list(DEFAULT_PROCESS_IDENTITY_ALIASES),
+            "rewriteTo": "recommended_process_name_param",
+            "minConfidence": 50,
+            **explicit,
+        }
+    if any(sql_uses_process_name_filter(unit) for unit in skill_sql_units(raw, fragment_text)):
+        return {
+            "policy": "verify_if_present",
+            "scope": "process",
+            "aliases": list(DEFAULT_PROCESS_IDENTITY_ALIASES),
+            "rewriteTo": "recommended_process_name_param",
+            "minConfidence": 50,
+        }
+    return {"policy": "none"}
+
+
+def builtin_fragment_reader(source: Path) -> Callable[[str], str | None]:
+    """SmartPerfetto's builtInSkillFragment: a declared fragment's text, or None."""
+    root = (source / "backend" / "skills" / "fragments").resolve()
+
+    def read(fragment_path: str) -> str | None:
+        path = (root / re.sub(r"^fragments/", "", fragment_path)).resolve()
+        if root not in path.parents or not path.is_file():
+            return None
+        return path.read_text(encoding="utf-8")
+
+    return read
+
+
 def probe_capabilities(
     query_id: str,
     required_tables: list[str],
@@ -1692,7 +1805,7 @@ def build_runtime_assets(
             if isinstance(step, dict) and step.get("save_as")
         }
         reject_process_scope_names({name: None for name in result_names})
-        identity = raw.get("identity", {"policy": "none"})
+        identity = effective_identity_config(skill_id, raw, builtin_fragment_reader(source))
         queries: list[dict[str, Any]] = []
         normalized_steps: list[dict[str, Any]] = []
         setup_queries: list[str] = []
@@ -1768,7 +1881,7 @@ def build_runtime_assets(
             },
             "inputs": input_list,
             "prerequisites": {"modules": modules, "required_tables": required_tables},
-            "identity": raw.get("identity", {"policy": "none"}),
+            "identity": identity,
             "steps": normalized_steps,
             "query_id": root_query_id,
             "android": {

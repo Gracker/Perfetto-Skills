@@ -48,7 +48,19 @@
       },
       "id": "android_memory_v57_ai_diagnostics/data_check",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -144,7 +156,19 @@
       },
       "id": "android_memory_v57_ai_diagnostics/heap_graph_repeated_objects",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -189,7 +213,10 @@
             "source_sha256": "248e8d24e4d4a4a59af389667aeebb9ce641f23bbd4974544c09a2826ce5fee2"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "graph_sample_ts",
           "max_rows",
@@ -260,7 +287,19 @@
       },
       "id": "android_memory_v57_ai_diagnostics/heap_graph_size_frequencies",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
@@ -305,7 +344,10 @@
             "source_sha256": "248e8d24e4d4a4a59af389667aeebb9ce641f23bbd4974544c09a2826ce5fee2"
           }
         ],
-        "name_parameters": [],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
         "parameters": [
           "graph_sample_ts",
           "max_rows",
@@ -374,7 +416,19 @@
       },
       "id": "android_memory_v57_ai_diagnostics/no_data_contract",
       "identity": {
-        "policy": "none"
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
       },
       "license": {
         "origin": "smartperfetto",
