@@ -9,7 +9,7 @@ import sys
 
 from _common import (
     DEFAULT_MAX_OUTPUT_BYTES,
-    parse_csv_output,
+    query_rows,
     parse_scalar,
     quote_identifier,
     run_batch_or_each,
@@ -196,7 +196,7 @@ def probe_trace(
         timeout=timeout,
         max_output_bytes=max_output_bytes,
     )
-    rows = parse_csv_output(result.stdout)
+    rows = query_rows(result)
     tables = {
         str(row["key"])
         for row in rows
@@ -236,7 +236,7 @@ def count_capability_rows(
         )
         return {
             str(row["table_name"]): row["row_count"]
-            for row in parse_csv_output(output.stdout)
+            for row in query_rows(output)
             if isinstance(row.get("row_count"), int)
         }
 

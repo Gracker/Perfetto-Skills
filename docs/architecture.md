@@ -95,16 +95,36 @@ The deterministic runner uses a validated, non-evaluating expression subset for
 authored step conditions. Empty rows remain distinct from unavailable
 instrumentation and query failure.
 
-A probe, manifest query, or Skill run loads its trace once: the CLIs keep a
-private `trace_processor_shell server unix` session on a socket in a fresh
-temporary directory, terminate it on exit, and let it reap itself 60 s after a
-killed owner. Every warm query must answer exactly as a fresh process would.
-Leading `INCLUDE PERFETTO MODULE` statements run before a `BEGIN`, the body runs
-inside it and is rolled back, and the session serves only queries that include
-every module it has already loaded, so a query never sees a module it did not
-include. Effects a rollback does not undo (Perfetto functions and macros,
-`RUN_METRIC`, `IMPORT`, or an include after the first body statement), another
-trace, Windows, and a processor without unix server mode run one-shot.
+Queries run over the trace processor's own RPC protocol: a
+`trace_processor_shell server stdio TRACE` child answers
+`TPM_STATEMENT_STREAMING` requests on its stdin/stdout with typed cells, one
+statement at a time as the CLI runs them. It exits when its stdin closes. It
+runs under a small guardian process that is its parent and kills it as soon as
+this process dies, even in the middle of a query; this process kills guardian
+and processor together as one process group. Output, stderr and buffered
+responses are bounded by the query's byte limit, and every wait is bounded by
+its deadline. The guardian is POSIX-only, so on Windows queries keep using the
+`query` CLI. The scripts print those cells in the CLI's
+CSV shape with two deliberate differences: a double keeps full precision (the
+shortest text that round-trips, where the CLI prints six decimals), and a
+quote inside a string is doubled, so the output is valid CSV. Error text and
+SQL positions are the CLI's own. For a query with one result set, the rows
+handed to Skills and JSON output come from the cells themselves: NULL stays distinct from the text `"[NULL]"`, and a
+blob reads as `"<raw bytes>"` as on the CLI. Text holding a plain decimal
+number reads as that number, as the CSV path always did, because Skills print
+64-bit timestamps with `printf('%d')` for SmartPerfetto's JavaScript, which
+coerces such text where this runtime's evaluator does not. A processor that
+cannot serve stdio RPC falls back to the `query` CLI and its six-decimal
+doubles.
+
+A probe, manifest query, or Skill run loads its trace once: the CLIs keep that
+child for the whole run. Every warm query must answer exactly as a fresh
+process would. Leading `INCLUDE PERFETTO MODULE` statements run before a
+`BEGIN`, the body runs inside it and is rolled back, and the session serves
+only queries that include every module it has already loaded, so a query never
+sees a module it did not include. Effects a rollback does not undo (Perfetto
+functions and macros, `RUN_METRIC`, `IMPORT`, or an include after the first
+body statement) and another trace run on a fresh child.
 
 Product snapshot services are replaced by `perfetto_compare.py`. Each trace is
 analyzed independently into a local side-summary JSON; the adapter compares

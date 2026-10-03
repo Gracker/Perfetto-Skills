@@ -530,7 +530,7 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
 
     def run_skill(self, params, *, inherited=None):
         self.write_queries()
-        output = SimpleNamespace(stdout=self.csv, stderr="", returncode=0)
+        output = SimpleNamespace(stdout=self.csv, stderr="", returncode=0, rows=None)
         query = mock.Mock(return_value=output)
         with mock.patch.object(self.adapter, "SKILL_ROOT", self.root), mock.patch.object(
             self.adapter, "run_query", query,
@@ -717,7 +717,7 @@ class ManifestProcessScopeExecutionTest(unittest.TestCase):
         cli = load_skill_script("perfetto_query")
         destination = self.root / "result.json"
         args = [str(self.trace), "--query-id", "scoped/root", "--output", str(destination)]
-        output = SimpleNamespace(stdout=self.csv, stderr="", returncode=0)
+        output = SimpleNamespace(stdout=self.csv, stderr="", returncode=0, rows=None)
         query = mock.Mock(return_value=output)
         with mock.patch.object(cli, "__file__", str(self.root / "scripts/perfetto_query.py")), mock.patch.object(
             cli, "resolve_verified_processor", return_value=(Path("/unused/processor"), {"binary_sha256": "b" * 64}),

@@ -12,7 +12,7 @@ from typing import Any, Mapping
 from _common import (
     DEFAULT_MAX_OUTPUT_BYTES,
     missing_tables,
-    parse_csv_output,
+    query_rows,
     render_sql_template,
     resolve_identity,
     run_query,
@@ -166,7 +166,7 @@ def build_runtime_runner(
             timeout=timeout,
             max_output_bytes=max_output_bytes,
         )
-        rows = parse_csv_output(output.stdout)
+        rows = query_rows(output)
         return {
             "rows": rows,
             "metadata": {

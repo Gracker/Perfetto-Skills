@@ -16,7 +16,7 @@ from _common import (
     RuntimeProcessScope,
     bind_runtime_process_scope,
     include_modules_sql,
-    parse_csv_output,
+    query_rows,
     render_sql_template,
     reject_process_scope_names,
     resolve_identity,
@@ -380,7 +380,7 @@ def main(argv: list[str] | None = None) -> int:
             timeout=args.timeout,
             max_output_bytes=args.max_output_bytes,
         )
-        rows = parse_csv_output(result.stdout)
+        rows = query_rows(result)
         if args.format == "json":
             rendered = json.dumps(
                 rows,

@@ -19,7 +19,7 @@ LIMITS = {"trace_processor": None, "timeout": 1, "max_output_bytes": 4096}
 
 
 def completed(stdout: str = "") -> SimpleNamespace:
-    return SimpleNamespace(stdout=stdout, stderr="", returncode=0)
+    return SimpleNamespace(stdout=stdout, stderr="", returncode=0, rows=None)
 
 
 class TraceProcessorBatchingTest(unittest.TestCase):

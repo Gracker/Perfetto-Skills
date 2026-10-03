@@ -77,7 +77,7 @@ class QueryProbeCliTest(unittest.TestCase):
 
             def fake_run_query(*args: object, **kwargs: object) -> object:
                 captured.update(kwargs)
-                return type("Result", (), {"stdout": '"value"\n1\n', "stderr": ""})()
+                return type("Result", (), {"stdout": '"value"\n1\n', "stderr": "", "rows": None})()
 
             with mock.patch.object(self.query, "run_query", side_effect=fake_run_query):
                 exit_code = self.query.main(
@@ -115,7 +115,7 @@ class QueryProbeCliTest(unittest.TestCase):
 
             def fake_run_query(*args: object, **kwargs: object) -> object:
                 captured.update(kwargs)
-                return type("Result", (), {"stdout": '"value"\n7\n', "stderr": ""})()
+                return type("Result", (), {"stdout": '"value"\n7\n', "stderr": "", "rows": None})()
 
             with mock.patch.object(self.query, "run_query", side_effect=fake_run_query):
                 exit_code = self.query.main(

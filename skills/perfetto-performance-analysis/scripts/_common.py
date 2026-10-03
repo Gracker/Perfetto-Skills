@@ -13,8 +13,12 @@ import os
 from pathlib import Path
 import platform
 import re
+import queue
 import shutil
+import signal
+import struct
 import subprocess
+import sys
 import tempfile
 import threading
 import time
@@ -37,6 +41,8 @@ class QueryResult:
     stderr: str
     returncode: int
     command: tuple[str, ...]
+    # Rows of the single result set as read over RPC; None for CLI output.
+    rows: tuple[Mapping[str, str | int | float | None], ...] | None = None
 
 
 @dataclass(frozen=True, eq=False)
@@ -240,14 +246,14 @@ FROM process
 WHERE name = {sql_literal(target_name)} OR name GLOB {sql_literal(target_name + ':*')}
 ORDER BY CASE WHEN name = {sql_literal(target_name)} THEN 0 ELSE 1 END, start_ts;
 """.strip()
-    rows = parse_csv_output(
+    rows = query_rows(
         run_query(
             trace,
             sql=query,
             trace_processor=trace_processor,
             timeout=timeout,
             max_output_bytes=max_output_bytes,
-        ).stdout
+        )
     )
     exact = [row for row in rows if row.get("name") == target_name]
     candidates = exact or rows
@@ -384,15 +390,18 @@ def run_query(
         if not query_path.is_file():
             raise FileNotFoundError(f"SQL file not found: {query_path}")
     limits = _ProcessorLimits(time.monotonic() + timeout, timeout, max_output_bytes)
+    try:
+        text = sql if query_path is None else query_path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        text = None
     result: QueryResult | None = None
     session = _active_session(trace, binary)
-    if session is not None and not session.unavailable:
-        try:
-            plan = _session_plan(sql if query_path is None else query_path.read_text(encoding="utf-8"))
-        except UnicodeDecodeError:
-            plan = None
+    if text is not None and session is not None and not session.unavailable:
+        plan = _session_plan(text)
         if plan is not None:
             result = session.run(plan, limits)
+    if result is None and text is not None and _RPC_SUPPORTED and (binary, trace) not in _RPC_UNAVAILABLE:
+        result = _run_rpc_once(binary, trace, text, limits)
     if result is None:
         result = _run_processor(
             (str(binary), "query", "--extra-checks"),
@@ -418,6 +427,14 @@ class _ProcessorLimits:
     def timed_out(self) -> QueryError:
         return QueryError(f"Trace query timed out after {self.timeout:g}s")
 
+    def over_limit(self) -> QueryError:
+        return QueryError(f"Trace query exceeded the {self.max_output_bytes} byte output limit")
+
+
+def query_rows(result: QueryResult) -> list[dict[str, str | int | float | None]]:
+    """A query's rows: the RPC cells when read over RPC, else the parsed CLI CSV."""
+    return [dict(row) for row in result.rows] if result.rows is not None else parse_csv_output(result.stdout)
+
 
 def _run_processor(
     head: tuple[str, ...],
@@ -427,7 +444,7 @@ def _run_processor(
     sql_file: Path | None,
     limits: _ProcessorLimits,
 ) -> QueryResult:
-    """Run `head --query-file SQL tail`; `sql` text goes through a temporary file."""
+    """Run `head --query-file SQL tail` (the CLI fallback); `sql` goes through a temporary file."""
     temporary_query: Path | None = None
     if sql_file is None:
         with tempfile.NamedTemporaryFile(
@@ -466,16 +483,12 @@ def _run_processor(
                     ):
                         process.kill()
                         process.wait()
-                        raise QueryError(
-                            f"Trace query exceeded the {limits.max_output_bytes} byte output limit"
-                        )
+                        raise limits.over_limit()
         if (
             stdout_path.stat().st_size > limits.max_output_bytes
             or stderr_path.stat().st_size > limits.max_output_bytes
         ):
-            raise QueryError(
-                f"Trace query exceeded the {limits.max_output_bytes} byte output limit"
-            )
+            raise limits.over_limit()
         stdout = stdout_path.read_text(encoding="utf-8", errors="replace")
         stderr = stderr_path.read_text(encoding="utf-8", errors="replace")
         returncode = process.returncode
@@ -490,6 +503,569 @@ def _run_processor(
         if stderr_path is not None:
             stderr_path.unlink(missing_ok=True)
     return QueryResult(stdout=stdout, stderr=stderr, returncode=returncode, command=command)
+
+
+# ---------------------------------------------------------------------------
+# trace_processor_shell RPC over stdio.
+#
+# `query` prints doubles with "%f" (six decimals, so 1e-7 prints 0.000000) and
+# does not escape quotes or newlines in strings. `server stdio` serves the
+# TraceProcessorRpc protocol (protos/perfetto/trace_processor/
+# trace_processor.proto) on stdin/stdout and returns typed cells. Statements run
+# one per TPM_STATEMENT_STREAMING request, as the CLI runs them, and an error
+# carries the CLI's own traceback text and SQL positions. The child exits when
+# its stdin closes, which also happens when this process dies.
+# ---------------------------------------------------------------------------
+_TPM_STATEMENT_STREAMING = 20
+_RPC_UNAVAILABLE: set[tuple[Path, Path]] = set()
+_RPC_READ_CHUNK = 1 << 16
+# At most this many unread stdout chunks are buffered; the reader then blocks
+# and the processor with it, so a fast producer cannot outrun memory.
+_RPC_QUEUED_CHUNKS = 16
+_STDERR_TAIL = 4000
+# The processor runs under a small guardian that is its parent: the guardian
+# kills it, through the handle it alone holds, as soon as this process dies,
+# even in the middle of a query, so nothing outlives its owner. The guardian
+# and the processor share one process group, which this process kills as a
+# whole before reaping the guardian, so the group ID cannot have been reused.
+_RPC_GUARDIAN = """
+import os, subprocess, sys, time
+owner = int(sys.argv[1])
+if os.getppid() != owner:
+    sys.exit(0)
+child = subprocess.Popen(sys.argv[2:])
+null = os.open(os.devnull, os.O_RDWR)
+for fd in (0, 1, 2):
+    os.dup2(null, fd)
+while child.poll() is None:
+    if os.getppid() != owner:
+        child.kill()
+        child.wait()
+        break
+    time.sleep(0.1)
+sys.exit(child.returncode if child.returncode and child.returncode > 0 else 0)
+"""
+# stdio RPC needs the POSIX guardian; Windows uses the CLI (and its doubles).
+_RPC_SUPPORTED = os.name != "nt"
+
+
+class _RpcUnavailable(Exception):
+    """The processor did not answer stdio RPC; the CLI path is used instead."""
+
+
+def _malformed(detail: str) -> QueryError:
+    return QueryError(f"trace_processor_shell RPC sent a malformed response: {detail}")
+
+
+def _pb_varint(value: int) -> bytes:
+    value &= (1 << 64) - 1
+    out = bytearray()
+    while True:
+        low = value & 0x7F
+        value >>= 7
+        if value:
+            out.append(low | 0x80)
+        else:
+            out.append(low)
+            return bytes(out)
+
+
+def _pb_read_varint(data: bytes | bytearray, index: int) -> tuple[int, int]:
+    """Decode a varint at `index`; IndexError when the data ends inside it."""
+    shift = value = 0
+    while True:
+        byte = data[index]
+        index += 1
+        value |= (byte & 0x7F) << shift
+        shift += 7
+        if not byte & 0x80:
+            return value, index
+        if shift > 63:
+            raise _malformed("varint longer than 64 bits")
+
+
+def _pb_fields(data: bytes) -> Iterator[tuple[int, int, Any]]:
+    index = 0
+    try:
+        while index < len(data):
+            key, index = _pb_read_varint(data, index)
+            number, wire = key >> 3, key & 7
+            if wire == 0:
+                value, index = _pb_read_varint(data, index)
+            elif wire in (1, 2, 5):
+                if wire == 2:
+                    size, index = _pb_read_varint(data, index)
+                else:
+                    size = 8 if wire == 1 else 4
+                if index + size > len(data):
+                    raise _malformed("field runs past the end of its message")
+                value, index = data[index:index + size], index + size
+            else:
+                raise _malformed(f"wire type {wire}")
+            yield number, wire, value
+    except IndexError as error:
+        raise _malformed("truncated varint") from error
+
+
+def _pb_typed_fields(data: bytes, wires: Mapping[int, tuple[int, ...]]) -> Iterator[tuple[int, int, Any]]:
+    """_pb_fields, rejecting a known field sent with a wire type it cannot have."""
+    for number, wire, value in _pb_fields(data):
+        if number in wires and wire not in wires[number]:
+            raise _malformed(f"field {number} has wire type {wire}")
+        yield number, wire, value
+
+
+# Wire types of the fields read from TraceProcessorRpc, StatementResult,
+# QueryResult and QueryResult.CellsBatch (packed repeated fields may arrive
+# unpacked).
+_RPC_WIRES = {4: (0,), 5: (2,), 219: (2,)}
+_STATEMENT_WIRES = {1: (2,), 2: (0,), 3: (0,)}
+_RESULT_WIRES = {1: (2,), 2: (2,), 3: (2,), 5: (0,)}
+_BATCH_WIRES = {1: (0, 2), 2: (0, 2), 3: (1, 2), 4: (2,), 5: (2,), 6: (0,)}
+
+
+def _pb_packed_varints(value: Any, wire: int) -> list[int]:
+    if wire == 0:
+        return [value]
+    values, index = [], 0
+    try:
+        while index < len(value):
+            item, index = _pb_read_varint(value, index)
+            values.append(item)
+    except IndexError as error:
+        raise _malformed("truncated packed varint") from error
+    return values
+
+
+def _pb_bytes(number: int, payload: bytes) -> bytes:
+    return _pb_varint(number << 3 | 2) + _pb_varint(len(payload)) + payload
+
+
+def _pb_uint(number: int, value: int) -> bytes:
+    return _pb_varint(number << 3) + _pb_varint(value)
+
+
+class _RawBytes:
+    """A blob cell; the CLI prints it as "<raw bytes>"."""
+
+    def __repr__(self) -> str:
+        return "<raw bytes>"
+
+
+_RAW_BYTES = _RawBytes()
+
+
+def _rpc_cells(batches: list[bytes], check: Callable[[], None] = lambda: None) -> list[object]:
+    """Decode QueryResult.CellsBatch messages into a flat cell list."""
+    cells: list[object] = []
+    for batch in batches:
+        check()
+        types: list[int] = []
+        varints: list[int] = []
+        doubles: list[float] = []
+        blobs: list[bytes] = []
+        strings: list[str] = []
+        for number, wire, value in _pb_typed_fields(batch, _BATCH_WIRES):
+            if number == 1:
+                types.extend(_pb_packed_varints(value, wire))
+            elif number == 2:
+                varints.extend(_pb_packed_varints(value, wire))
+            elif number == 3:
+                if len(value) % 8:
+                    raise _malformed("float64 cells are not whole doubles")
+                doubles.extend(struct.unpack(f"<{len(value) // 8}d", value))
+            elif number == 4:
+                blobs.append(value)
+            elif number == 5:
+                text = value.decode("utf-8", errors="replace")
+                if text and not text.endswith("\0"):
+                    raise _malformed("string cells are not NUL-terminated")
+                strings.extend(text.split("\0")[:-1])
+        sources = {2: iter(varints), 3: iter(doubles), 4: iter(strings), 5: iter(blobs)}
+        try:
+            for cell_type in types:
+                if cell_type == 1:
+                    cells.append(None)
+                elif cell_type == 2:
+                    number = next(sources[2])
+                    cells.append(number - (1 << 64) if number >= 1 << 63 else number)
+                elif cell_type in (3, 4):
+                    cells.append(next(sources[cell_type]))
+                elif cell_type == 5:
+                    next(sources[5])
+                    cells.append(_RAW_BYTES)
+                else:
+                    raise _malformed(f"cell type {cell_type}")
+        except StopIteration as error:
+            raise _malformed("a cell has no value") from error
+        if any(next(source, None) is not None for source in sources.values()):
+            raise _malformed("a value has no cell")
+    return cells
+
+
+def _row_value(value: object) -> str | int | float | None:
+    """The portable value of one cell.
+
+    Text holding a plain decimal number reads as that number, as the CSV path
+    always did: Skills print 64-bit timestamps with printf('%d') so that
+    SmartPerfetto's JavaScript keeps them exact, and JavaScript coerces such
+    text in comparisons, arithmetic and bare SQL placeholders where this
+    runtime's evaluator does not. Unlike the CSV path, NULL stays distinct
+    from the text "[NULL]", and text never changes shape.
+    """
+    if value is _RAW_BYTES:
+        return "<raw bytes>"
+    if isinstance(value, str):
+        if _INTEGER.fullmatch(value):
+            return int(value)
+        if _FLOAT.fullmatch(value):
+            return float(value)
+    return value  # type: ignore[return-value]
+
+
+def _csv_cell(value: object) -> str:
+    # The CLI's CSV shape, with two deliberate differences: doubles keep full
+    # precision (the shortest text that round-trips), and quotes inside a
+    # string are doubled, so the output is valid CSV.
+    if value is None:
+        return '"[NULL]"'
+    if value is _RAW_BYTES:
+        return '"<raw bytes>"'
+    if isinstance(value, float):
+        return repr(value)
+    if isinstance(value, int):
+        return str(value)
+    return '"' + str(value).replace('"', '""') + '"'
+
+
+@dataclass(frozen=True)
+class _ResultSet:
+    columns: tuple[str, ...]
+    rows: tuple[tuple[object, ...], ...]
+
+    def csv_lines(self) -> Iterator[str]:
+        yield ",".join('"' + name.replace('"', '""') + '"' for name in self.columns) + "\n"
+        for row in self.rows:
+            yield ",".join(_csv_cell(value) for value in row) + "\n"
+
+
+class _TraceProcessorRpc:
+    """A `trace_processor_shell server stdio TRACE` child and its RPC stream."""
+
+    def __init__(self, binary: Path, trace: Path) -> None:
+        self.command = (str(binary), "server", "--extra-checks", "stdio", str(trace))
+        self._process = subprocess.Popen(
+            (sys.executable, "-c", _RPC_GUARDIAN, str(os.getpid()), *self.command),
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True,
+        )
+        self._reaped = False
+        self._signalled = False
+        try:
+            self._start()
+        except BaseException:
+            self.kill()
+            raise
+
+    def _start(self) -> None:
+        self._chunks: queue.Queue[bytes | None] = queue.Queue(maxsize=_RPC_QUEUED_CHUNKS)
+        self._requests: queue.Queue[bytes | None] = queue.Queue()
+        self._buffer = bytearray()
+        self._stderr_tail = bytearray()
+        self._stderr_bytes = 0
+        self._stderr_base = 0
+        self._received = 0
+        self._seq = 0
+        self.requests_written = 0
+        self.answered = False
+        self._threads: tuple[threading.Thread, ...] = ()
+        threads = (
+            threading.Thread(target=self._read, daemon=True),
+            threading.Thread(target=self._write, daemon=True),
+            threading.Thread(target=self._drain_stderr, daemon=True),
+        )
+        for thread in threads:
+            thread.start()
+            self._threads += (thread,)
+
+    def _read(self) -> None:
+        stdout = self._process.stdout
+        assert stdout is not None
+        try:
+            while chunk := stdout.read1(_RPC_READ_CHUNK):
+                self._chunks.put(chunk)
+        except (OSError, ValueError):
+            pass
+        self._chunks.put(None)
+
+    def _write(self) -> None:
+        stdin = self._process.stdin
+        assert stdin is not None
+        try:
+            while (request := self._requests.get()) is not None:
+                stdin.write(request)
+                stdin.flush()
+                self.requests_written += 1
+        except (OSError, ValueError):
+            pass
+        finally:
+            try:
+                stdin.close()
+            except OSError:
+                pass
+
+    def _drain_stderr(self) -> None:
+        stderr = self._process.stderr
+        assert stderr is not None
+        try:
+            while chunk := stderr.read1(_RPC_READ_CHUNK):
+                self._stderr_bytes += len(chunk)
+                self._stderr_tail.extend(chunk)
+                del self._stderr_tail[:-_STDERR_TAIL]
+        except (OSError, ValueError):
+            pass
+
+    def begin_query(self) -> None:
+        """Start one query's output budget, shared by every exchange it needs."""
+        self._received = 0
+        self._stderr_base = self._stderr_bytes
+
+    def stderr_tail(self) -> str:
+        return bytes(self._stderr_tail).decode("utf-8", errors="replace").strip()
+
+    def _check(self, limits: _ProcessorLimits) -> None:
+        if time.monotonic() >= limits.deadline:
+            self.kill()
+            raise limits.timed_out()
+        if self._received > limits.max_output_bytes or self._stderr_bytes - self._stderr_base > limits.max_output_bytes:
+            self.kill()
+            raise limits.over_limit()
+
+    def _message(self, limits: _ProcessorLimits) -> bytes:
+        """Next TraceProcessorRpc message (each is field 1 of the stream)."""
+        while True:
+            self._check(limits)
+            if self._buffer:
+                if self._buffer[0] != 0x0A:
+                    if not self.answered:
+                        # Whatever this binary prints, it does not serve RPC on stdio.
+                        self.kill()
+                        raise _RpcUnavailable("not a TraceProcessorRpcStream")
+                    raise _malformed("stream item is not TraceProcessorRpcStream.msg")
+                try:
+                    length, index = _pb_read_varint(self._buffer, 1)
+                except IndexError:
+                    length, index = -1, 0
+                if length >= 0 and len(self._buffer) >= index + length:
+                    message = bytes(self._buffer[index:index + length])
+                    del self._buffer[:index + length]
+                    return message
+            # Short waits keep the stderr budget enforced while stdout is quiet.
+            remaining = limits.deadline - time.monotonic()
+            try:
+                chunk = self._chunks.get(timeout=min(max(remaining, 0.0), 0.05))
+            except queue.Empty:
+                continue
+            if chunk is None:
+                # Stdout closed: the process should be exiting, but the deadline
+                # and the stderr budget still hold while it does.
+                while not self._exited():
+                    self._check(limits)
+                    time.sleep(0.02)
+                detail = self.stderr_tail()
+                if not self.answered:
+                    raise _RpcUnavailable(detail)
+                raise QueryError(f"trace_processor_shell exited during a query: {detail}")
+            self._received += len(chunk)
+            self._buffer.extend(chunk)
+
+    def _statement(self, sql: bytes, offset: int, limits: _ProcessorLimits) -> tuple[_ResultSet, bool, int, int, str | None]:
+        """Run the next statement: (result, executed, tail offset, output count, error)."""
+        self._seq += 1
+        args = _pb_bytes(1, sql) + _pb_uint(2, offset)
+        request = _pb_uint(1, self._seq) + _pb_uint(2, _TPM_STATEMENT_STREAMING) + _pb_bytes(115, args)
+        self._requests.put(_pb_bytes(1, request))
+        columns: list[str] = []
+        batches: list[bytes] = []
+        executed, tail, with_output, error = False, offset, 0, None
+        while True:
+            message = self._message(limits)
+            statement: bytes | None = None
+            for number, _wire, value in _pb_typed_fields(message, _RPC_WIRES):
+                if number == 4:
+                    raise _RpcUnavailable("statement streaming is not supported")
+                if number == 5:
+                    raise QueryError(f"trace_processor_shell RPC failed: {value.decode('utf-8', 'replace')}")
+                if number == 219:
+                    statement = value
+            if statement is None:
+                continue
+            self.answered = True
+            last = False
+            for number, _wire, value in _pb_typed_fields(statement, _STATEMENT_WIRES):
+                if number == 2:
+                    tail = value
+                elif number == 3:
+                    executed = bool(value)
+                elif number == 1:
+                    for field_number, _field_wire, item in _pb_typed_fields(value, _RESULT_WIRES):
+                        if field_number == 1:
+                            columns.append(item.decode("utf-8", "replace"))
+                        elif field_number == 2:
+                            error = item.decode("utf-8", "replace")
+                        elif field_number == 3:
+                            batches.append(item)
+                            last = last or any(
+                                number == 6 and bool(flag) for number, _w, flag in _pb_typed_fields(item, _BATCH_WIRES)
+                            )
+                        elif field_number == 5:
+                            with_output = item
+            if last:
+                break
+        cells = _rpc_cells(batches, lambda: self._check(limits))
+        width = len(columns)
+        if (width and len(cells) % width) or (not width and cells):
+            raise _malformed("cells do not fill whole rows")
+        rows = tuple(tuple(cells[index:index + width]) for index in range(0, len(cells), width)) if width else ()
+        self._check(limits)
+        return _ResultSet(tuple(columns), rows), executed, tail, with_output, error
+
+    def run(self, sql: str, limits: _ProcessorLimits) -> QueryResult:
+        """Run every statement of `sql` and print them as the CLI does."""
+        encoded = sql.encode("utf-8")
+        offset = 0
+        printed: list[_ResultSet] = []
+        executed_any = False
+        error: str | None = None
+        lines: list[str] = []
+        size = 0
+        while True:
+            result, executed, offset, with_output, error = self._statement(encoded, offset, limits)
+            if error is not None or not executed:
+                break
+            executed_any = True
+            # The CLI prints nothing for a statement without columns, for rows
+            # it counts as having no output, and for an empty
+            # `suppress_query_output` result.
+            if not result.columns or (result.rows and not with_output) or (
+                not result.rows and result.columns == ("suppress_query_output",)
+            ):
+                continue
+            if printed:
+                lines.append("\n")
+                size += 1
+            printed.append(result)
+            for index, line in enumerate(result.csv_lines()):
+                size += len(line.encode("utf-8"))
+                if size > limits.max_output_bytes:
+                    self.kill()
+                    raise limits.over_limit()
+                if index % 1024 == 0:
+                    self._check(limits)
+                lines.append(line)
+        if error is None and not executed_any:
+            error = "No valid SQL to run"
+        if error is not None and len(error.encode("utf-8")) > limits.max_output_bytes:
+            raise limits.over_limit()
+        rows = None
+        # Typed rows exist for exactly one printed result set; several result
+        # sets keep the CLI's layout and are read from the CSV.
+        if error is None and len(printed) == 1:
+            columns = printed[0].columns
+            converted: list[dict[str, str | int | float | None]] = []
+            for index, row in enumerate(printed[0].rows):
+                if index % 1024 == 0:
+                    self._check(limits)
+                converted.append({name: _row_value(value) for name, value in zip(columns, row)})
+            rows = tuple(converted)
+        stdout = "".join(lines)
+        # Nothing returns as a success once its deadline has passed.
+        self._check(limits)
+        return QueryResult(
+            stdout=stdout,
+            stderr=error or "",
+            returncode=1 if error is not None else 0,
+            command=self.command,
+            rows=rows,
+        )
+
+    def _exited(self) -> bool:
+        """Whether the processor has exited, judged without reaping anything.
+
+        Only the processor holds its stderr pipe (the guardian closes its
+        copies at once), so that pipe's end marks the processor's exit.
+        """
+        return self._reaped or len(self._threads) < 3 or not self._threads[2].is_alive()
+
+    def close(self) -> None:
+        """Close stdin (the server then exits) and release every pipe."""
+        if not self._reaped and hasattr(self, "_requests"):
+            self._requests.put(None)
+            deadline = time.monotonic() + 3
+            while not self._exited() and time.monotonic() < deadline:
+                time.sleep(0.02)
+        self.kill()
+
+    def kill(self) -> None:
+        if self._reaped:
+            return
+        # Only this method reaps the guardian, and only after signalling its
+        # group: until then the zombie guardian keeps the group ID reserved,
+        # so the signal can reach no process but the guardian and its child.
+        # The group is signalled at most once: an interrupted wait may already
+        # have reaped the guardian, and a retry must not signal a freed ID.
+        if not self._signalled:
+            self._signalled = True
+            try:
+                os.killpg(self._process.pid, signal.SIGKILL)
+            except (ProcessLookupError, PermissionError):
+                pass
+        self._process.wait()
+        self._reaped = True
+        if hasattr(self, "_requests"):
+            self._requests.put(None)
+            self._release()
+        else:
+            for stream in (self._process.stdin, self._process.stdout, self._process.stderr):
+                if stream is not None:
+                    stream.close()
+
+    def _release(self) -> None:
+        if not self._threads:
+            for stream in (self._process.stdin, self._process.stdout, self._process.stderr):
+                if stream is not None:
+                    stream.close()
+            return
+        reader = self._threads[0]
+        deadline = time.monotonic() + 3
+        while reader.is_alive() and time.monotonic() < deadline:
+            # Unblock a reader waiting on the bounded queue so it can see EOF.
+            try:
+                while True:
+                    self._chunks.get_nowait()
+            except queue.Empty:
+                pass
+            reader.join(timeout=0.02)
+        for thread in self._threads[1:]:
+            thread.join(timeout=1)
+        for stream in (self._process.stdin, self._process.stdout, self._process.stderr):
+            if stream is not None:
+                try:
+                    stream.close()
+                except OSError:
+                    pass
+
+
+def _run_rpc_once(binary: Path, trace: Path, sql: str, limits: _ProcessorLimits) -> QueryResult | None:
+    """One-shot query over RPC; None when the processor has no stdio RPC."""
+    rpc = _TraceProcessorRpc(binary, trace)
+    try:
+        rpc.begin_query()
+        return rpc.run(sql, limits)
+    except _RpcUnavailable:
+        _RPC_UNAVAILABLE.add((binary, trace))
+        return None
+    finally:
+        rpc.kill()
 
 
 # A warm session must answer every query exactly as a fresh process would.
@@ -596,108 +1172,57 @@ def _session_plan(sql: str) -> _SessionPlan | None:
 class TraceProcessorSession:
     """One loaded trace that run_query reuses for statements a rollback undoes."""
 
-    # sockaddr_un.sun_path is 104 bytes on macOS and 108 on Linux.
-    _MAX_SOCKET_PATH = 100
-
     def __init__(self, trace: Path, binary: Path) -> None:
         self.trace = trace
         self.binary = binary
         self.start_count = 0
-        self.unavailable = os.name == "nt"
+        self.unavailable = not _RPC_SUPPORTED or (binary, trace) in _RPC_UNAVAILABLE
         self.modules: frozenset[str] = frozenset()
-        self._process: subprocess.Popen[bytes] | None = None
-        self._directory: Path | None = None
+        self._rpc: _TraceProcessorRpc | None = None
         self._lock = threading.Lock()
-
-    @property
-    def address(self) -> str:
-        return str(self._directory / "trace.sock") if self._directory is not None else ""
 
     def run(self, plan: _SessionPlan, limits: _ProcessorLimits) -> QueryResult | None:
         """Return the query result, or None when the caller must run it one-shot."""
         with self._lock:
-            if self._process is not None and (
-                self._process.poll() is not None or not self.modules <= plan.modules
-            ):
+            if self._rpc is not None and not self.modules <= plan.modules:
                 self.close()
-            if self._process is None and not self._start(limits):
-                return None
+            fresh = self._rpc is None
+            if fresh:
+                self._rpc = _TraceProcessorRpc(self.binary, self.trace)
             try:
+                self._rpc.begin_query()
                 # The includes keep their own positions, and the body keeps
                 # its line and column numbers behind a blank of the includes,
                 # so error locations match a one-shot run.
-                begin = self._remote(plan.includes + "\nBEGIN;\n", limits)
+                begin = self._rpc.run(plan.includes + "\nBEGIN;\n", limits)
+                if fresh:
+                    self.start_count += 1
                 if begin.returncode != 0:
                     self.close()
                     return begin
                 self.modules |= plan.modules
                 blank = re.sub(r"[^\n]", " ", plan.includes)
-                result = self._remote(f"{blank}{plan.body}\n;\nROLLBACK;\n", limits)
+                result = self._rpc.run(f"{blank}{plan.body}\n;\nROLLBACK;\n", limits)
                 # A failing body statement stops before the ROLLBACK, and
                 # every admitted body statement is undone by one.
-                if result.returncode != 0 and self._remote("ROLLBACK;", limits).returncode != 0:
+                if result.returncode != 0 and self._rpc.run("ROLLBACK;", limits).returncode != 0:
                     self.close()
                 return result
+            except _RpcUnavailable:
+                # No stdio RPC, or a trace it cannot load: the CLI reports the
+                # processor's own result for every later query.
+                _RPC_UNAVAILABLE.add((self.binary, self.trace))
+                self.unavailable = True
+                self.close()
+                return None
             except BaseException:
                 self.close()
                 raise
 
-    def _remote(self, sql: str, limits: _ProcessorLimits) -> QueryResult:
-        return _run_processor(
-            (str(self.binary), "query", "--remote", self.address), sql=sql, sql_file=None, limits=limits
-        )
-
-    def _start(self, limits: _ProcessorLimits) -> bool:
-        if self.unavailable:
-            return False
-        self._directory = Path(tempfile.mkdtemp(prefix="perfetto-session-"))
-        if len(os.fsencode(self.address)) > self._MAX_SOCKET_PATH:
-            self.close()
-            self.unavailable = True
-            return False
-        # The idle clock runs only once this process is gone, so a session
-        # orphaned by a hard kill is reaped instead of holding the trace.
-        self._process = subprocess.Popen(
-            (
-                str(self.binary), "server", "--extra-checks", "--idle-timeout", "60s",
-                "--path", self.address, "unix", str(self.trace),
-            ),
-            stdin=subprocess.DEVNULL,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-        )
-        # The server creates its socket only after the trace has loaded.
-        while not Path(self.address).exists():
-            if self._process.poll() is not None:
-                # No unix server mode, or a trace it cannot load: one-shot runs
-                # report the processor's own result for every later query.
-                self.close()
-                self.unavailable = True
-                return False
-            if time.monotonic() >= limits.deadline:
-                self.close()
-                raise limits.timed_out()
-            time.sleep(0.02)
-        if self._remote("SELECT 1;", limits).returncode != 0:
-            self.close()
-            self.unavailable = True
-            return False
-        self.start_count += 1
-        return True
-
     def close(self) -> None:
-        if self._process is not None:
-            if self._process.poll() is None:
-                self._process.terminate()
-                try:
-                    self._process.wait(timeout=3)
-                except subprocess.TimeoutExpired:
-                    self._process.kill()
-                    self._process.wait()
-            self._process = None
-        if self._directory is not None:
-            shutil.rmtree(self._directory, ignore_errors=True)
-            self._directory = None
+        if self._rpc is not None:
+            self._rpc.kill()
+            self._rpc = None
         self.modules = frozenset()
 
 
@@ -1291,7 +1816,7 @@ def render_sql_template(
 
 _INTEGER = re.compile(r"^-?(?:0|[1-9][0-9]*)$")
 _FLOAT = re.compile(
-    r"^-?(?:[0-9]+\.[0-9]*|[0-9]*\.[0-9]+)(?:[eE][+-]?[0-9]+)?$"
+    r"^-?(?:[0-9]+\.[0-9]*|[0-9]*\.[0-9]+|[0-9]+(?=[eE]))(?:[eE][+-]?[0-9]+)?$"
 )
 
 
