@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_analysis.skill.yaml
--- Source SHA-256: 886c11c88b8de59f7a759bb5510cc207277be4fee7d37149ed00f9c1c29c96f9
+-- Source SHA-256: 7ff32bd00930745e7472e3fd492581136074cf0cf6843caf8fecf18d85f1a757
 
 WITH anr_window AS (
   SELECT
@@ -19,7 +19,7 @@ uninterruptible_states AS (
   CROSS JOIN anr_window aw
   JOIN thread t ON ts.utid = t.utid
   JOIN process p ON t.upid = p.upid
-  WHERE ts.state = 'D'
+  WHERE ts.state IN ('D', 'DK')
     AND ts.ts < aw.end_ts
     AND (CASE WHEN ts.dur < 0 THEN aw.end_ts ELSE ts.ts + ts.dur END) > aw.start_ts
   GROUP BY p.name

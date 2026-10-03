@@ -67,7 +67,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/get_process.sql",
-      "sha256": "5ec559943d789c8056828b17d86e4eb7ec991906d0e3cb72d539140d5fc656a0",
+      "sha256": "df586097f2d1ca2ceb921a91a13daecd6399ac9ce074874c48c7df9491349576",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -76,7 +76,7 @@
       "source": {
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
+        "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -94,137 +94,6 @@
         ],
         "parameters": [
           "package"
-        ],
-        "result_dependencies": [],
-        "result_references": [],
-        "runtime_bindings": []
-      },
-      "validation": {
-        "default_execution": "capability_gate_required",
-        "execution_verified": false,
-        "fixtures": [],
-        "runtime_compatible": null,
-        "semantic_verified": false,
-        "static_valid": true
-      }
-    },
-    {
-      "compatibility": {
-        "android": {
-          "28": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "29": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "30": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "31": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "32": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "33": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "34": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "35": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "36": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          },
-          "37": {
-            "reason": "No exact API semantic fixture; runtime capability proof required",
-            "status": "capability_gated"
-          }
-        },
-        "probe_capabilities": []
-      },
-      "id": "memory_analysis/init_gc_view",
-      "identity": {
-        "aliases": [
-          "package",
-          "process_name",
-          "package_name",
-          "target_package",
-          "app_package",
-          "packageName",
-          "processName"
-        ],
-        "minConfidence": 50,
-        "policy": "verify_if_present",
-        "rewriteTo": "recommended_process_name_param",
-        "scope": "process"
-      },
-      "license": {
-        "origin": "smartperfetto",
-        "spdx": "AGPL-3.0-or-later"
-      },
-      "path": "sql/memory_analysis/init_gc_view.sql",
-      "sha256": "dd7ba504fc9ebf7a0f2669f5fa653e5a7bcdd9dfdb3c3ba34bb54ec2b96720a7",
-      "signal_patterns": [
-        "${package}",
-        "${package}:*",
-        "*Alloc*",
-        "*Background*",
-        "*ConcurrentCopying*",
-        "*Explicit*",
-        "*Full*",
-        "*GC*",
-        "*MarkSweep*",
-        "*Young*",
-        "*full*",
-        "*gc*",
-        "*young*"
-      ],
-      "skill_id": "memory_analysis",
-      "source": {
-        "path": "backend/skills/composite/memory_analysis.skill.yaml",
-        "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
-      },
-      "sql_dependencies": {
-        "creates": [
-          {
-            "kind": "view",
-            "name": "_gc_events"
-          }
-        ],
-        "declared_modules": [],
-        "drops": [
-          {
-            "kind": "view",
-            "name": "_gc_events"
-          }
-        ],
-        "required_tables": [],
-        "requires": [],
-        "setup_queries": []
-      },
-      "step_id": "init_gc_view",
-      "template": {
-        "fragments": [],
-        "name_parameters": [
-          "package"
-        ],
-        "parameters": [
-          "end_ts",
-          "package",
-          "start_ts"
         ],
         "result_dependencies": [],
         "result_references": [],
@@ -306,34 +175,50 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_overview.sql",
-      "sha256": "3a81e8f0ed346d50cbe0929f9acd3827c11906d920b1e8bff49643d67e319024",
-      "signal_patterns": [],
+      "sha256": "45760009eb2dcae56fd657a7565a381f8113444a28f1d88cae6b21c86b0a89f5",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*",
+        "*GC*"
+      ],
       "skill_id": "memory_analysis",
       "source": {
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
+        "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_gc_events"
-        ],
-        "setup_queries": [
-          "memory_analysis/init_gc_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "gc_overview",
       "template": {
-        "fragments": [],
-        "name_parameters": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/art_gc_names.sql",
+            "source_sha256": "2e50cd240ecb068815a92c13ff38fe2ea843172eece9818b3ed8bfd05f43dfd5"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/memory_gc_events.sql",
+            "source_sha256": "f682124224f533bdb40865b3a859b2d702a90fdc6899dc377b307e0c4e33d569"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
+          "end_ts",
           "gc_count_critical",
           "gc_count_warning",
-          "gc_total_time_critical_ms"
+          "gc_total_time_critical_ms",
+          "package",
+          "start_ts"
         ],
         "result_dependencies": [],
         "result_references": [],
@@ -415,31 +300,48 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_stats.sql",
-      "sha256": "6b469ac68ba209f9265109a1175608cd10cfa16fc30656c2a932b242d798626a",
-      "signal_patterns": [],
+      "sha256": "97efdeb9f73f99b0983c6db367b82c633ed39e56b836b3c28285c581df69810c",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*",
+        "*GC*"
+      ],
       "skill_id": "memory_analysis",
       "source": {
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
+        "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_gc_events"
-        ],
-        "setup_queries": [
-          "memory_analysis/init_gc_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "gc_stats",
       "template": {
-        "fragments": [],
-        "name_parameters": [],
-        "parameters": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/art_gc_names.sql",
+            "source_sha256": "2e50cd240ecb068815a92c13ff38fe2ea843172eece9818b3ed8bfd05f43dfd5"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/memory_gc_events.sql",
+            "source_sha256": "f682124224f533bdb40865b3a859b2d702a90fdc6899dc377b307e0c4e33d569"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
         "result_dependencies": [],
         "result_references": [],
         "runtime_bindings": []
@@ -520,31 +422,48 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_frame_impact.sql",
-      "sha256": "007da66c913542a658549aafafc23cfa14aa0fbec2de9b7bed7fbd83d0511861",
-      "signal_patterns": [],
+      "sha256": "907cb4c517d191eb5a847a6d8e3a56ca1cc32341cc95475723fa891a18305260",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*",
+        "*GC*"
+      ],
       "skill_id": "memory_analysis",
       "source": {
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
+        "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_gc_events"
-        ],
-        "setup_queries": [
-          "memory_analysis/init_gc_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "gc_frame_impact",
       "template": {
-        "fragments": [],
-        "name_parameters": [],
-        "parameters": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/art_gc_names.sql",
+            "source_sha256": "2e50cd240ecb068815a92c13ff38fe2ea843172eece9818b3ed8bfd05f43dfd5"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/memory_gc_events.sql",
+            "source_sha256": "f682124224f533bdb40865b3a859b2d702a90fdc6899dc377b307e0c4e33d569"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
         "result_dependencies": [],
         "result_references": [
           "vsync_info"
@@ -627,32 +546,48 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/main_thread_gc.sql",
-      "sha256": "a50eb4c73a5849d58e2a8738754055451a6be72ddfa2cc47ecbde74d3e81aa2d",
-      "signal_patterns": [],
+      "sha256": "b1557eceb7b2eceaacda00dbdde4967a7e1f3d3822c6c12f08f6a6cccd0fe782",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*",
+        "*GC*"
+      ],
       "skill_id": "memory_analysis",
       "source": {
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
+        "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_gc_events"
-        ],
-        "setup_queries": [
-          "memory_analysis/init_gc_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "main_thread_gc",
       "template": {
-        "fragments": [],
-        "name_parameters": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/art_gc_names.sql",
+            "source_sha256": "2e50cd240ecb068815a92c13ff38fe2ea843172eece9818b3ed8bfd05f43dfd5"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/memory_gc_events.sql",
+            "source_sha256": "f682124224f533bdb40865b3a859b2d702a90fdc6899dc377b307e0c4e33d569"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
-          "single_gc_warning_ms"
+          "end_ts",
+          "package",
+          "single_gc_warning_ms",
+          "start_ts"
         ],
         "result_dependencies": [],
         "result_references": [
@@ -736,37 +671,47 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_thread_state.sql",
-      "sha256": "04f46342c1cc9bc30f229c724be75c83ec26cef753e6f3b92189b4e5f501e49c",
+      "sha256": "9b19b68eb4f7121b3e1b75bd8475a2c10e910268f5632dca0e015046f5470366",
       "signal_patterns": [
         "${package}",
-        "${package}:*"
+        "${package}:*",
+        "*GC*"
       ],
       "skill_id": "memory_analysis",
       "source": {
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
+        "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_gc_events"
-        ],
-        "setup_queries": [
-          "memory_analysis/init_gc_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "gc_thread_state",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/art_gc_names.sql",
+            "source_sha256": "2e50cd240ecb068815a92c13ff38fe2ea843172eece9818b3ed8bfd05f43dfd5"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/memory_gc_events.sql",
+            "source_sha256": "f682124224f533bdb40865b3a859b2d702a90fdc6899dc377b307e0c4e33d569"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
         "parameters": [
-          "package"
+          "end_ts",
+          "package",
+          "start_ts"
         ],
         "result_dependencies": [],
         "result_references": [],
@@ -848,31 +793,48 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/gc_interval_analysis.sql",
-      "sha256": "fbd910d55f7d38c1d03aa0d6a9cb45c4166a918dfc30f0dd6eb6bcad8192f030",
-      "signal_patterns": [],
+      "sha256": "678da50b8615061e430388d53bd302ead24b5824ac1df3a8cd3f019ea5cc7abd",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*",
+        "*GC*"
+      ],
       "skill_id": "memory_analysis",
       "source": {
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
+        "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_gc_events"
-        ],
-        "setup_queries": [
-          "memory_analysis/init_gc_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "gc_interval_analysis",
       "template": {
-        "fragments": [],
-        "name_parameters": [],
-        "parameters": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/art_gc_names.sql",
+            "source_sha256": "2e50cd240ecb068815a92c13ff38fe2ea843172eece9818b3ed8bfd05f43dfd5"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/memory_gc_events.sql",
+            "source_sha256": "f682124224f533bdb40865b3a859b2d702a90fdc6899dc377b307e0c4e33d569"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
         "result_dependencies": [],
         "result_references": [],
         "runtime_bindings": []
@@ -953,31 +915,48 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/memory_analysis/long_gc_events.sql",
-      "sha256": "1d4e862e0e3865fb37f7c68f222c329f1dc7214320c8c31f983f93894e39484c",
-      "signal_patterns": [],
+      "sha256": "1cdef62d1378140057dfe600406a48b8436f86bd17e81afe997ba676c1e6513f",
+      "signal_patterns": [
+        "${package}",
+        "${package}:*",
+        "*GC*"
+      ],
       "skill_id": "memory_analysis",
       "source": {
         "path": "backend/skills/composite/memory_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
+        "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_gc_events"
-        ],
-        "setup_queries": [
-          "memory_analysis/init_gc_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "long_gc_events",
       "template": {
-        "fragments": [],
-        "name_parameters": [],
-        "parameters": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/art_gc_names.sql",
+            "source_sha256": "2e50cd240ecb068815a92c13ff38fe2ea843172eece9818b3ed8bfd05f43dfd5"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/memory_gc_events.sql",
+            "source_sha256": "f682124224f533bdb40865b3a859b2d702a90fdc6899dc377b307e0c4e33d569"
+          }
+        ],
+        "name_parameters": [
+          "package"
+        ],
+        "parameters": [
+          "end_ts",
+          "package",
+          "start_ts"
+        ],
         "result_dependencies": [],
         "result_references": [],
         "runtime_bindings": []

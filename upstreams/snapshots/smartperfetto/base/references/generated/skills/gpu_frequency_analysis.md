@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gpu_frequency_analysis.skill.yaml
-Source SHA-256: bc94b1d344fadef2dc3610ebac99e3304c8349358417428301cbae1335687540
+Source SHA-256: 426ed62ea0fe1c4cf8e5f8414569076f13999b8f740cd50e6eff1b332188e817
 # GPU 频率分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

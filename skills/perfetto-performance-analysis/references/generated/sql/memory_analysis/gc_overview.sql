@@ -1,29 +1,153 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/memory_analysis.skill.yaml
--- Source SHA-256: 51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10
+-- Source SHA-256: 1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1
 
+-- Counts, totals and rates take collector runs; a wait overlaps the run
+-- it waits on and is reported apart, as time a thread was blocked.
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- No input CTE. ART garbage collection named by a slice or a log line.
+--
+-- Slices (GLOB on the original name; a consumer that has lower-cased the
+-- name compares it with lower(pattern)):
+--   collection  a collector run. ART names every run "<cause> <collector> GC"
+--               with collector concurrent copying, concurrent mark compact,
+--               (sticky or partial concurrent) mark sweep or semispace:
+--               "Background young concurrent copying GC", "Alloc concurrent
+--               copying GC", "Background concurrent mark compact GC".
+--   wait        a thread blocked on the collector: "GC: Wait For Completion
+--               <cause>", waiting for a run or for a GC critical section
+--               (ProfileSaver, for one) to end. A wait overlaps what it waits
+--               on, so a count or a total takes runs only and reports waits
+--               as blocked time.
+-- Every pattern contains "GC": a consumer scanning all slices tests
+-- s.name GLOB '*GC*' first, which rejects nearly every name before the
+-- pattern table is read.
+-- Not GC although the name says gc: Collector classes (MetricsCollector,
+-- BatchSignalCollector), art::gc::Heap::Trim* heap trimming, a gc() method
+-- (SparseArray.gc), logcat, the f2fs_gc thread, and "Lock contention on GC
+-- barrier lock" (a microsecond checkpoint). "Lock contention on GC thread
+-- flip lock" does block a thread for the concurrent copying flip, but it is
+-- lock contention, reported with locks, not counted as GC.
+--
+-- stdlib android_garbage_collection_events keeps depth-0 "*concurrent*GC"
+-- slices that overlap a "Heap size (KB)" counter: a run nested under an app
+-- thread slice (an Alloc GC on a blocked thread) or one without that counter
+-- is not there, so its count can be lower than one taken with these names.
+--
+-- Log text (GLOB on the lower-cased text): ART reports a finished run as
+-- "<cause> ... GC freed ...", a blocked thread as "WaitForGcToComplete
+-- blocked ...", "Waiting for a blocking GC ..." or "Starting a blocking GC
+-- ...", and a heap resize as "Clamp target GC heap ...". A bare "gc" word is
+-- not enough: it is a method name, a process name or part of a path as
+-- often.
+art_gc_slice_name_patterns(gc_kind, pattern) AS (
+  VALUES
+    ('collection', '*concurrent*GC'),
+    ('collection', '*mark sweep GC'),
+    ('collection', '*mark compact GC'),
+    ('collection', '*semispace GC'),
+    ('wait', 'GC: Wait For Completion*')
+),
+art_gc_text_patterns(pattern) AS (
+  VALUES
+    ('*gc freed*'),
+    ('*waitforgctocomplete*'),
+    ('*waiting for a blocking gc*'),
+    ('*starting a blocking gc*'),
+    ('*clamp target gc heap*')
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Input: fragments/art_gc_names.sql, listed before this fragment; the step
+-- parameters package, start_ts and end_ts. The GC slices of the target
+-- process(es) that start in the range, one row per slice: runs and waits,
+-- told apart by gc_kind. gc_type is the cause ART names a run by (Explicit,
+-- Alloc), Young for another young-generation run, Background for another
+-- background run, or Wait for a thread blocked on the collector.
+memory_gc_events AS (
+  SELECT
+    *,
+    CASE
+      WHEN gc_kind = 'wait' THEN 'Wait'
+      WHEN gc_name GLOB '*Explicit*' THEN 'Explicit'
+      WHEN gc_name GLOB 'Alloc*' OR gc_name GLOB 'NativeAlloc*' THEN 'Alloc'
+      WHEN gc_name GLOB '*young*' THEN 'Young'
+      WHEN gc_name GLOB 'Background*' THEN 'Background'
+      ELSE 'Other'
+    END AS gc_type
+  FROM (
+    SELECT
+      s.id AS gc_id,
+      s.ts,
+      s.dur,
+      s.name AS gc_name,
+      (
+        SELECT n.gc_kind FROM art_gc_slice_name_patterns n
+        WHERE s.name GLOB n.pattern
+        ORDER BY n.gc_kind
+        LIMIT 1
+      ) AS gc_kind,
+      t.name AS thread_name,
+      t.tid,
+      p.pid,
+      p.upid,
+      CASE WHEN t.tid = p.pid THEN 1 ELSE 0 END AS is_main_thread
+    FROM slice s
+    JOIN thread_track tt ON s.track_id = tt.id
+    JOIN thread t ON tt.utid = t.utid
+    JOIN process p ON t.upid = p.upid
+    WHERE s.name GLOB '*GC*'
+      AND ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+      AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
+      AND (${end_ts} IS NULL OR s.ts < ${end_ts})
+  )
+  WHERE gc_kind IS NOT NULL
+)
+,
+waits AS (
+  SELECT
+    COALESCE(SUM(is_main_thread = 1), 0) as main_thread_gc_wait_count,
+    COALESCE(SUM(CASE WHEN is_main_thread = 1 THEN dur END), 0) / 1e6 as main_thread_gc_wait_ms,
+    COALESCE(SUM(dur), 0) / 1e6 as gc_wait_ms
+  FROM memory_gc_events
+  WHERE gc_kind = 'wait'
+),
+runs AS (
+  SELECT
+    COUNT(*) as total_gc_count,
+    SUM(dur) / 1e6 as total_gc_time_ms,
+    ROUND(AVG(dur) / 1e6, 2) as avg_gc_time_ms,
+    ROUND(MAX(dur) / 1e6, 2) as max_gc_time_ms,
+    ROUND(MIN(dur) / 1e6, 2) as min_gc_time_ms,
+    -- 主线程 GC 统计：主线程上执行的回收
+    SUM(CASE WHEN is_main_thread = 1 THEN 1 ELSE 0 END) as main_thread_gc_count,
+    SUM(CASE WHEN is_main_thread = 1 THEN dur ELSE 0 END) / 1e6 as main_thread_gc_time_ms,
+    -- GC 频率（每秒）
+    ROUND(COUNT(*) * 1e9 / (MAX(ts + dur) - MIN(ts)), 2) as gc_per_second,
+    -- 评级
+    CASE
+      WHEN COUNT(*) > ${gc_count_critical|100} THEN '频繁'
+      WHEN COUNT(*) > ${gc_count_warning|50} THEN '较多'
+      WHEN COUNT(*) > 10 THEN '正常'
+      ELSE '良好'
+    END as gc_frequency_rating,
+    CASE
+      WHEN SUM(dur) / 1e6 > ${gc_total_time_critical_ms|2000} THEN '严重'
+      WHEN SUM(dur) / 1e6 > 500 THEN '需优化'
+      WHEN SUM(dur) / 1e6 > 100 THEN '良好'
+      ELSE '优秀'
+    END as gc_time_rating
+  FROM memory_gc_events
+  WHERE gc_kind = 'collection'
+)
 SELECT
-  COUNT(*) as total_gc_count,
-  SUM(dur) / 1e6 as total_gc_time_ms,
-  ROUND(AVG(dur) / 1e6, 2) as avg_gc_time_ms,
-  ROUND(MAX(dur) / 1e6, 2) as max_gc_time_ms,
-  ROUND(MIN(dur) / 1e6, 2) as min_gc_time_ms,
-  -- 主线程 GC 统计
-  SUM(CASE WHEN is_main_thread = 1 THEN 1 ELSE 0 END) as main_thread_gc_count,
-  SUM(CASE WHEN is_main_thread = 1 THEN dur ELSE 0 END) / 1e6 as main_thread_gc_time_ms,
-  -- GC 频率（每秒）
-  ROUND(COUNT(*) * 1e9 / (MAX(ts + dur) - MIN(ts)), 2) as gc_per_second,
-  -- 评级
-  CASE
-    WHEN COUNT(*) > ${gc_count_critical|100} THEN '频繁'
-    WHEN COUNT(*) > ${gc_count_warning|50} THEN '较多'
-    WHEN COUNT(*) > 10 THEN '正常'
-    ELSE '良好'
-  END as gc_frequency_rating,
-  CASE
-    WHEN SUM(dur) / 1e6 > ${gc_total_time_critical_ms|2000} THEN '严重'
-    WHEN SUM(dur) / 1e6 > 500 THEN '需优化'
-    WHEN SUM(dur) / 1e6 > 100 THEN '良好'
-    ELSE '优秀'
-  END as gc_time_rating
-FROM _gc_events
+  r.total_gc_count, r.total_gc_time_ms, r.avg_gc_time_ms, r.max_gc_time_ms, r.min_gc_time_ms,
+  r.main_thread_gc_count, r.main_thread_gc_time_ms,
+  w.main_thread_gc_wait_count, w.main_thread_gc_wait_ms, w.gc_wait_ms,
+  r.gc_per_second, r.gc_frequency_rating, r.gc_time_rating
+FROM runs r, waits w

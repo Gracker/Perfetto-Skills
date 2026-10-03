@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gpu_analysis.skill.yaml
--- Source SHA-256: 700737c3b798446d259b725cdb99906ea5b2a4b8b3a6334401f1cc18b352b061
+-- Source SHA-256: 1782c39f5ca4ce044bf815ac7ed529e2509316b08ab38f26baaab7ce64fce6bb
 
 SELECT
   p.name as process_name,

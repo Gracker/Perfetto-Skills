@@ -57,7 +57,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/data_check.sql",
-      "sha256": "e11befc88c8f8cb6963d25970fc71532a598b889e3a0eda5b54c43c86298221d",
+      "sha256": "82417d71f99a661bc37d650f5845b0173d370f6c2abf9b7663907c06c56d75c0",
       "signal_patterns": [
         "architecture",
         "dimension_arg_set_id",
@@ -69,12 +69,11 @@
       "source": {
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
+        "sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "counters.intervals",
           "intervals.overlap",
           "intervals.intersect"
         ],
@@ -85,7 +84,13 @@
       },
       "step_id": "data_check",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/gpu_frequency_intervals.sql",
+            "source_sha256": "9b40d45c78027c092f8d72eefc39f6a24c716142df9a4b8ec940b20e927f2aa1"
+          }
+        ],
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [],
@@ -156,18 +161,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/gpu_inventory.sql",
-      "sha256": "339f2eb0dd6b79cc09c849a02234a023009e9b3043b39e61e1a03c14169b7339",
+      "sha256": "f7f67f3b43a393efaac55d38342bcc6988beec98262e0e8f295908a6da1a7f5d",
       "signal_patterns": [],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
+        "sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "counters.intervals",
           "intervals.overlap",
           "intervals.intersect"
         ],
@@ -253,13 +257,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/timeline_occupancy.sql",
-      "sha256": "ceac62d3cf797134faf20a7baa9a1e3a2719ec20fe436978cf183e2d84a5c186",
+      "sha256": "f0fd4ba98c048aa1da0729ebfc0fec33f771315b6edbbb49d13efeb77a039540",
       "signal_patterns": [],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
+        "sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280"
       },
       "sql_dependencies": {
         "creates": [
@@ -273,7 +277,6 @@
           }
         ],
         "declared_modules": [
-          "counters.intervals",
           "intervals.overlap",
           "intervals.intersect"
         ],
@@ -359,18 +362,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/idle_gaps.sql",
-      "sha256": "4a652a6cd94f991df05bd5a93cd44634f6f56441d72c8edb51ee94a02c0561b8",
+      "sha256": "8ffe79bfdcb5ff05163570786559fb8907b8923ecea2d8da41d48dd7f2ebfa86",
       "signal_patterns": [],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
+        "sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "counters.intervals",
           "intervals.overlap",
           "intervals.intersect"
         ],
@@ -458,7 +460,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/frequency_residency.sql",
-      "sha256": "0df5be1d088dd6eb0d709c5b9f671059a94a0cba67a79b5989c1d9dda6aafa9c",
+      "sha256": "5488e8fe7846c8fce8d9c2887b0049333ebc102ce1aa65829ee8ec048f7f067e",
       "signal_patterns": [
         "gpufreq"
       ],
@@ -466,25 +468,11 @@
       "source": {
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
+        "sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280"
       },
       "sql_dependencies": {
-        "creates": [
-          {
-            "kind": "table",
-            "name": "__sp_v57_gpu_freq"
-          },
-          {
-            "kind": "table",
-            "name": "__sp_v57_busy_at_freq"
-          },
-          {
-            "kind": "table",
-            "name": "__sp_v57_gpu_span"
-          }
-        ],
+        "creates": [],
         "declared_modules": [
-          "counters.intervals",
           "intervals.overlap",
           "intervals.intersect"
         ],
@@ -499,7 +487,23 @@
       },
       "step_id": "frequency_residency",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/gpu_frequency_intervals.sql",
+            "source_sha256": "9b40d45c78027c092f8d72eefc39f6a24c716142df9a4b8ec940b20e927f2aa1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/gpu_frequency_window.sql",
+            "source_sha256": "4e05463daa5f57e439a95b58e26b401c2a6e8b86f76a3d23ed34f65455f7c798"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/gpu_frequency_by_ugpu.sql",
+            "source_sha256": "cff09b8819f58e69cdbd487433b54a77d981e627e48bccf24e39da157d103fac"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",
@@ -574,52 +578,57 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/dvfs_ramp_events.sql",
-      "sha256": "b7e34cc74cec87f56844acf5c11cd8e6cff1297499f81cd0bd5f707ac86ec41e",
-      "signal_patterns": [],
+      "sha256": "d500adcdd6e82c7273a6cf1dbf52607ba3cb140aa4bf9df1a64434734edc399e",
+      "signal_patterns": [
+        "gpufreq"
+      ],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
+        "sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280"
       },
       "sql_dependencies": {
-        "creates": [
-          {
-            "kind": "table",
-            "name": "__sp_v57_gpu_params"
-          },
-          {
-            "kind": "table",
-            "name": "__sp_v57_gpu_fmax"
-          },
-          {
-            "kind": "table",
-            "name": "__sp_v57_gpu_edges"
-          }
-        ],
+        "creates": [],
         "declared_modules": [
-          "counters.intervals",
           "intervals.overlap",
           "intervals.intersect"
         ],
         "drops": [],
         "required_tables": [],
         "requires": [
-          "__sp_v57_gpu_busy",
-          "__sp_v57_gpu_freq"
+          "__sp_v57_gpu_busy"
         ],
         "setup_queries": [
-          "gpu_v57_ai_diagnostics/timeline_occupancy",
-          "gpu_v57_ai_diagnostics/frequency_residency"
+          "gpu_v57_ai_diagnostics/timeline_occupancy"
         ]
       },
       "step_id": "dvfs_ramp_events",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/gpu_frequency_intervals.sql",
+            "source_sha256": "9b40d45c78027c092f8d72eefc39f6a24c716142df9a4b8ec940b20e927f2aa1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/gpu_frequency_window.sql",
+            "source_sha256": "4e05463daa5f57e439a95b58e26b401c2a6e8b86f76a3d23ed34f65455f7c798"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/gpu_frequency_by_ugpu.sql",
+            "source_sha256": "cff09b8819f58e69cdbd487433b54a77d981e627e48bccf24e39da157d103fac"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
+          "end_ts",
           "max_rows",
-          "target_freq_ratio"
+          "start_ts",
+          "target_freq_ratio",
+          "ugpu"
         ],
         "result_dependencies": [],
         "result_references": [],
@@ -689,54 +698,60 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/sustained_throttle_events.sql",
-      "sha256": "ae882b235149c680e48872eb7c5a3e2f4ee38944b79a54f8afe97d10ead3d5f5",
+      "sha256": "14f6bb4d95de520aa7f9220707709681aa59ecb42bdd90c8f07389542bb567b4",
       "signal_patterns": [
         "Power",
-        "Temperature"
+        "Temperature",
+        "gpufreq"
       ],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
+        "sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280"
       },
       "sql_dependencies": {
-        "creates": [
-          {
-            "kind": "table",
-            "name": "__sp_v57_gpu_params"
-          },
-          {
-            "kind": "table",
-            "name": "__sp_v57_gpu_low_busy"
-          }
-        ],
+        "creates": [],
         "declared_modules": [
-          "counters.intervals",
           "intervals.overlap",
           "intervals.intersect"
         ],
         "drops": [],
         "required_tables": [],
         "requires": [
-          "__sp_v57_gpu_busy",
-          "__sp_v57_gpu_fmax",
-          "__sp_v57_gpu_freq"
+          "__sp_v57_gpu_busy"
         ],
         "setup_queries": [
-          "gpu_v57_ai_diagnostics/timeline_occupancy",
-          "gpu_v57_ai_diagnostics/frequency_residency",
-          "gpu_v57_ai_diagnostics/dvfs_ramp_events"
+          "gpu_v57_ai_diagnostics/timeline_occupancy"
         ]
       },
       "step_id": "sustained_throttle_events",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/gpu_frequency_intervals.sql",
+            "source_sha256": "9b40d45c78027c092f8d72eefc39f6a24c716142df9a4b8ec940b20e927f2aa1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/gpu_frequency_window.sql",
+            "source_sha256": "4e05463daa5f57e439a95b58e26b401c2a6e8b86f76a3d23ed34f65455f7c798"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/gpu_frequency_by_ugpu.sql",
+            "source_sha256": "cff09b8819f58e69cdbd487433b54a77d981e627e48bccf24e39da157d103fac"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
+          "end_ts",
           "max_rows",
           "min_throttle_ns",
-          "target_freq_ratio"
+          "start_ts",
+          "target_freq_ratio",
+          "ugpu"
         ],
         "result_dependencies": [],
         "result_references": [],
@@ -806,18 +821,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_v57_ai_diagnostics/no_data_contract.sql",
-      "sha256": "b5a91d860ce0a28425149c57a5b1148b276192a4b4c08846ec65f32da09ff79e",
+      "sha256": "0d2fffaefb4dacc0ed9f80ed5c32ffddb5182bdfdfbc149fa42e6f73c7e31dfa",
       "signal_patterns": [],
       "skill_id": "gpu_v57_ai_diagnostics",
       "source": {
         "path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36"
+        "sha256": "608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [
-          "counters.intervals",
           "intervals.overlap",
           "intervals.intersect"
         ],
@@ -825,10 +839,7 @@
         "required_tables": [],
         "requires": [],
         "setup_queries": [
-          "gpu_v57_ai_diagnostics/timeline_occupancy",
-          "gpu_v57_ai_diagnostics/frequency_residency",
-          "gpu_v57_ai_diagnostics/dvfs_ramp_events",
-          "gpu_v57_ai_diagnostics/sustained_throttle_events"
+          "gpu_v57_ai_diagnostics/timeline_occupancy"
         ]
       },
       "step_id": "no_data_contract",

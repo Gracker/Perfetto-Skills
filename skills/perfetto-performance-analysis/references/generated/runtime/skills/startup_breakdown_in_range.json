@@ -9,6 +9,10 @@
         ],
         "id": "official_android_startup_tags",
         "source": "perfetto stdlib android/startup/startups.sql"
+      },
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
       }
     ],
     "selection_order": [
@@ -68,7 +72,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/startup_breakdown_in_range.skill.yaml",
-    "sha256": "3edbb22c53ce4530862f4cb22587c0713ddf763759f543991288a2f6f8e12ccf"
+    "sha256": "875c769a1b5142a0c856926f49058a4195a3d98f9ee8e50d00d497a4b0651286"
   },
   "steps": [],
   "type": "atomic",

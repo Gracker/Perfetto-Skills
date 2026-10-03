@@ -1,61 +1,157 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gpu_analysis.skill.yaml
--- Source SHA-256: 700737c3b798446d259b725cdb99906ea5b2a4b8b3a6334401f1cc18b352b061
+-- Source SHA-256: 1782c39f5ca4ce044bf815ac7ed529e2509316b08ab38f26baaab7ce64fce6bb
 
+-- MHz from fragments/gpu_frequency_intervals.sql. Average and range are of
+-- the time the GPU ran; max_freq_time_pct and off_pct are of all observed
+-- time, so time powered off counts as not at the top frequency.
 WITH
-gpu_freq_filtered AS (
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- No input CTE. The GPU frequency of every GPU as leading intervals, one row
+-- per counter sample of the trace_processor "gpufreq" track (the same input
+-- and interval shape as stdlib android_gpu_frequency, which returns the raw
+-- value), with the value normalized to MHz.
+--
+-- That track is labelled kHz, but its writers disagree: power/gpu_frequency
+-- and generic GPU events write kHz, kgsl_gpu_frequency is multiplied to Hz by
+-- trace_processor, and sys_stats gpufreq_mhz writes MHz to GPU 0, so one
+-- track can carry two units. Each sample is read by its own magnitude, which
+-- is unambiguous for a GPU clock between 10 MHz and 10 GHz:
+--   0                  off: the GPU is powered down, not running slowly
+--   10 <= v < 1e4      MHz
+--   1e4 <= v < 1e7     kHz
+--   1e7 <= v <= 1e10   Hz
+--   anything else      out_of_domain, freq_mhz NULL
+-- prev_freq_mhz is the normalized previous value, so a unit change is not
+-- a frequency change. A consumer reports off time apart and
+-- leaves it out of averages and low-frequency shares.
+gpu_frequency_samples AS (
+  SELECT
+    c.id AS counter_id,
+    c.ts,
+    c.track_id,
+    t.ugpu,
+    t.gpu_id,
+    c.value AS raw_value,
+    CASE
+      WHEN c.value = 0 THEN 'off'
+      WHEN c.value >= 10 AND c.value < 1e4 THEN 'mhz'
+      WHEN c.value >= 1e4 AND c.value < 1e7 THEN 'khz'
+      WHEN c.value >= 1e7 AND c.value <= 1e10 THEN 'hz'
+      ELSE 'out_of_domain'
+    END AS unit_basis
+  FROM counter c
+  JOIN gpu_counter_track t ON t.id = c.track_id
+  WHERE t.name = 'gpufreq' AND t.gpu_id IS NOT NULL
+),
+gpu_frequency_normalized AS (
+  SELECT
+    *,
+    CASE unit_basis
+      WHEN 'off' THEN 0.0
+      WHEN 'mhz' THEN raw_value
+      WHEN 'khz' THEN raw_value / 1e3
+      WHEN 'hz' THEN raw_value / 1e6
+    END AS freq_mhz
+  FROM gpu_frequency_samples
+),
+gpu_frequency_intervals AS (
+  SELECT
+    counter_id,
+    ts,
+    COALESCE(LEAD(ts) OVER w, trace_end()) - ts AS dur,
+    track_id,
+    ugpu,
+    gpu_id,
+    freq_mhz,
+    unit_basis = 'off' AS is_off,
+    unit_basis,
+    LAG(freq_mhz) OVER w AS prev_freq_mhz
+  FROM gpu_frequency_normalized
+  WINDOW w AS (PARTITION BY track_id ORDER BY ts, counter_id)
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Input: fragments/gpu_frequency_intervals.sql, listed before this fragment;
+-- the step parameters start_ts and end_ts (either may be NULL). The GPU
+-- frequency intervals that overlap [start_ts, end_ts), clipped to it, so a
+-- level held from before the window counts only for its time inside.
+-- running_mhz is the frequency while the GPU runs (NULL when off or
+-- unreadable). is_running_change marks a change between two running
+-- frequencies whose sample was taken inside the window.
+gpu_frequency_window AS (
+  SELECT
+    counter_id,
+    ugpu,
+    gpu_id,
+    freq_mhz,
+    is_off,
+    prev_freq_mhz,
+    CASE WHEN freq_mhz > 0 THEN freq_mhz END AS running_mhz,
+    COALESCE((${start_ts} IS NULL OR ts >= ${start_ts}) AND freq_mhz > 0
+      AND prev_freq_mhz > 0 AND freq_mhz != prev_freq_mhz, 0) AS is_running_change,
+    MAX(ts, COALESCE(${start_ts}, ts)) AS ts,
+    MIN(ts + dur, COALESCE(${end_ts}, ts + dur)) - MAX(ts, COALESCE(${start_ts}, ts)) AS dur
+  FROM gpu_frequency_intervals
+  WHERE dur > 0
+    AND (${start_ts} IS NULL OR ${end_ts} IS NULL OR ${start_ts} < ${end_ts})
+    AND (${start_ts} IS NULL OR ts + dur > ${start_ts})
+    AND (${end_ts} IS NULL OR ts < ${end_ts})
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- Input: fragments/gpu_frequency_intervals.sql and
+-- fragments/gpu_frequency_window.sql, listed before this fragment. One row
+-- per GPU over the window: observed time split into running, off and
+-- out-of-domain time, and the running frequencies (MHz) weighted by time.
+-- A share of running time and a share of observed time are different
+-- numbers; a consumer names which one it reports.
+gpu_frequency_summary AS (
   SELECT
     gpu_id,
-    gpu_freq,
-    dur,
-    ts
-  FROM android_gpu_frequency
-  WHERE dur > 0
-    AND (${start_ts} IS NULL OR ts >= ${start_ts})
-    AND (${end_ts} IS NULL OR ts < ${end_ts})
-),
-max_freq_per_gpu AS (
-  SELECT gpu_id, MAX(gpu_freq) as max_gpu_freq
-  FROM gpu_freq_filtered
+    SUM(dur) AS observed_ns,
+    SUM(CASE WHEN running_mhz IS NOT NULL THEN dur ELSE 0 END) AS running_ns,
+    SUM(CASE WHEN is_off THEN dur ELSE 0 END) AS off_ns,
+    SUM(CASE WHEN freq_mhz IS NULL THEN dur ELSE 0 END) AS out_of_domain_ns,
+    SUM(running_mhz * dur) / NULLIF(SUM(CASE WHEN running_mhz IS NOT NULL THEN dur END), 0) AS avg_running_mhz,
+    MAX(running_mhz) AS max_running_mhz,
+    MIN(running_mhz) AS min_running_mhz,
+    COUNT(DISTINCT running_mhz) AS running_levels,
+    SUM(is_running_change) AS running_change_count
+  FROM gpu_frequency_window
   GROUP BY gpu_id
-),
-gpu_stats AS (
+)
+,
+overview AS (
   SELECT
-    g.gpu_id,
-    -- 加权平均频率 (按持续时间加权)
-    ROUND(SUM(g.gpu_freq * 1.0 * g.dur) / NULLIF(SUM(g.dur), 0) / 1e6, 0) as weighted_avg_freq_mhz,
-    ROUND(MAX(g.gpu_freq) / 1e6, 0) as max_freq_mhz,
-    ROUND(MIN(g.gpu_freq) / 1e6, 0) as min_freq_mhz,
-    -- 最高频占比
-    ROUND(100.0 * SUM(CASE WHEN g.gpu_freq = mf.max_gpu_freq THEN g.dur ELSE 0 END) / NULLIF(SUM(g.dur), 0), 1) as max_freq_time_pct,
-    COUNT(DISTINCT g.gpu_freq) as freq_levels,
-    -- 变频次数 (频率不同于上一条记录的次数)
-    (SELECT COUNT(*) FROM android_gpu_frequency f2
-     WHERE f2.gpu_id = g.gpu_id
-       AND f2.prev_gpu_freq IS NOT NULL
-       AND f2.gpu_freq != f2.prev_gpu_freq
-       AND (${start_ts} IS NULL OR f2.ts >= ${start_ts})
-       AND (${end_ts} IS NULL OR f2.ts < ${end_ts})
-    ) as freq_change_count,
-    ROUND(SUM(g.dur) / 1e9, 2) as total_time_sec
-  FROM gpu_freq_filtered g
-  JOIN max_freq_per_gpu mf ON g.gpu_id = mf.gpu_id
-  GROUP BY g.gpu_id
+    s.*,
+    100.0 * COALESCE((
+      SELECT SUM(w.dur) FROM gpu_frequency_window w
+      WHERE w.gpu_id = s.gpu_id AND w.running_mhz = s.max_running_mhz
+    ), 0) / NULLIF(s.observed_ns, 0) AS top_pct
+  FROM gpu_frequency_summary s
 )
 SELECT
   gpu_id,
-  weighted_avg_freq_mhz,
-  max_freq_mhz,
-  min_freq_mhz,
-  max_freq_time_pct,
-  freq_levels,
-  freq_change_count,
-  total_time_sec,
+  ROUND(avg_running_mhz, 0) as weighted_avg_freq_mhz,
+  ROUND(max_running_mhz, 0) as max_freq_mhz,
+  ROUND(min_running_mhz, 0) as min_freq_mhz,
+  ROUND(top_pct, 1) as max_freq_time_pct,
+  running_levels as freq_levels,
+  running_change_count as freq_change_count,
+  ROUND(100.0 * off_ns / NULLIF(observed_ns, 0), 1) as off_pct,
+  ROUND(observed_ns / 1e9, 2) as total_time_sec,
   CASE
-    WHEN max_freq_time_pct > ${high_freq_threshold_pct|70} THEN '高负载'
-    WHEN max_freq_time_pct > ${mid_freq_threshold_pct|40} THEN '中负载'
-    WHEN max_freq_time_pct > ${low_freq_threshold_pct|10} THEN '低负载'
+    WHEN top_pct > ${high_freq_threshold_pct|70} THEN '高负载'
+    WHEN top_pct > ${mid_freq_threshold_pct|40} THEN '中负载'
+    WHEN top_pct > ${low_freq_threshold_pct|10} THEN '低负载'
     ELSE '空闲'
   END as rating
-FROM gpu_stats
+FROM overview
 ORDER BY gpu_id

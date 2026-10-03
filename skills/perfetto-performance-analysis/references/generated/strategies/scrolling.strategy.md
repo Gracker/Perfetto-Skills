@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: 6d80f4df24adead71a1ca6ecab4d0f5658454908eb1f177a7a84d3683b67c028
+Source SHA-256: 95560b32a9ffcf5256056f186380bbfac4ee0ee0d80f51dc2f669bd07f92e281
 
 # Scrolling Strategy
 
@@ -829,6 +829,8 @@ invoke_skill("jank_frame_detail", {
 #### 滑动场景关键 Stdlib 表
 
 写 execute_sql 时优先使用（完整列表见方法论模板）：`android_frame_stats`、`android_frames_overrun`、`android_surfaceflinger_workloads`、`android_gpu_frequency`、`cpu_thread_utilization_in_interval(ts, dur)`、`cpu_frequency_counters`、`slice_self_dur`、`android_screen_state`
+
+`android_gpu_frequency.gpu_freq` 是 gpufreq 计数器原值，单位随写入源是 kHz、Hz 或 MHz，0 表示 GPU 关闭；要 GPU 频率数值时读 `gpu_freq_in_range` / `gpu_analysis` 的 MHz 列，不要自己换算。
 
 ---
 

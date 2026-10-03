@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_analysis.skill.yaml
-Source SHA-256: eca7dbe4662017ed928fa3ef41a4da151d49e1543de7a03a96fdfecb7f3d1105
+Source SHA-256: 1c29d77206e96bcebd17d2eb78ff8f36ef33384e61393103588476b8d1b923de
 # 应用启动分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -317,6 +317,10 @@ display:
   - name: category
     label: 类别
     type: string
+  - name: category_percent
+    label: 类别占比
+    type: percentage
+    format: percentage
 params:
   package: ${package}
   startup_id: ${startup_id}
@@ -1082,10 +1086,10 @@ rules:
   suggestions:
   - 降低启动阶段后台并发，避免与主线程争抢 CPU
   - 检查系统级负载和高优先级抢占线程
-- condition: (breakdown?.data?.length || 0) > 0 && ((breakdown.data.find(b => b.category === 'ClassLoading')?.percent) ||
-    0) > 15 && (class_loading?.data?.length || 0) > 0 && ((class_loading.data[0]?.percent_of_startup) || 0) > 5
+- condition: (breakdown?.data?.length || 0) > 0 && ((breakdown.data.find(b => b.category === 'ClassLoading')?.category_percent)
+    || 0) > 15 && (class_loading?.data?.length || 0) > 0 && ((class_loading.data[0]?.percent_of_startup) || 0) > 5
   severity: info
-  diagnosis: 类加载占比较高（breakdown ${breakdown?.data?.find(b => b.category === 'ClassLoading')?.percent}%）
+  diagnosis: 类加载占比较高（breakdown ${breakdown?.data?.find(b => b.category === 'ClassLoading')?.category_percent}%）
   confidence: medium
   suggestions:
   - 使用 baseline profile 预编译热点类

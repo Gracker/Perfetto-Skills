@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gpu_power_state_analysis.skill.yaml
-Source SHA-256: 0a4ae145d64ac7d9eddb15b2f73f8f209e360d4d06e87e8bb500751ee7162f6d
+Source SHA-256: a0e54254f65ca6f9f3c07fba63cbf1a40086b3d12bab82246a33388404938687
 # GPU 功耗状态分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -49,13 +49,6 @@ patterns:
 - .*(降频|功耗|热控).*gpu.*
 ```
 
-## Prerequisites
-
-```yaml
-modules:
-- android.gpu.frequency
-```
-
 ## Inputs
 
 ```yaml
@@ -98,7 +91,7 @@ columns:
   label: 采样数
   type: number
 - name: avg_freq_mhz
-  label: 平均频率(MHz)
+  label: 运行时平均频率(MHz)
   type: number
 - name: min_freq_mhz
   label: 最低频率(MHz)
@@ -114,6 +107,10 @@ columns:
   type: number
 - name: downshift_ratio_pct
   label: 降频占比
+  type: percentage
+  format: percentage
+- name: off_pct
+  label: GPU 关闭占比
   type: percentage
   format: percentage
 ```

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/thermal_throttling.skill.yaml
-Source SHA-256: d8d420f2d0c8b12433ba27443f712124525100e866e03333420cc2bcbde623b8
+Source SHA-256: 1e92511408fcf6a3d7e74eab485e8e3dc635c0ae58b11c015822aea3646f3836
 # 热节流分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -137,6 +137,7 @@ type: atomic
 display: false
 sql_fragments:
 - fragments/system_cpu_freq_limit_spans.sql
+- fragments/gpu_frequency_intervals.sql
 save_as: data_check
 ```
 ### 热分析窗口
@@ -450,6 +451,10 @@ display:
     type: number
   - name: downshift_ratio_pct
     label: 降频占比
+    type: percentage
+    format: percentage
+  - name: off_pct
+    label: GPU 关闭占比
     type: percentage
     format: percentage
 save_as: gpu_power_probe

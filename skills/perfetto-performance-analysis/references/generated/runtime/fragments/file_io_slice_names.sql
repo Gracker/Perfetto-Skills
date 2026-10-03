@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/file_io_slice_names.sql
--- Source SHA-256: 7b9d50032ad17755cecaabfa0c0503d8de5e0ac4496f725e5df4ce63b91a051c
+-- Source SHA-256: 52da153737a6f059cdc78e49a1238456f9303bcbb72d400582217e373c2ea26f
 
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
@@ -27,9 +27,14 @@
 -- after the code it handles (JIT compiling of a java.io.File method, code
 -- cache writes, class definition and dex registration, GC waits, lock
 -- contention at a method) and Binder calls named after their interface
--- method (AIDL::...::openSession); a ParcelFileDescriptor is still a file. "flush" is not here: in real traces it
--- is GPU and SurfaceFlinger work (GrOpFlushState, flush commands), not file
--- I/O. GLOB is case-sensitive.
+-- method (AIDL::...::openSession); a ParcelFileDescriptor is still a file.
+-- "flush" is not here: in real traces it is GPU and SurfaceFlinger work
+-- (GrOpFlushState, flush commands), not file I/O. GLOB is case-sensitive.
+--
+-- An all-caps word (READ, OPEN, FILE) is deliberately not a form of a word: in
+-- the six canonical traces, the constructed corpus and a dozen local device
+-- traces the only all-caps I/O word is the WindowManager transition type OPEN
+-- (playTransition: OPEN, Transition-OPEN#409), which is not file I/O.
 file_io_slice_name_words(io_type, stem, word, camel) AS (
   VALUES
     ('open', 'open', '[Oo]pen', 'Open'),

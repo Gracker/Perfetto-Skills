@@ -65,7 +65,7 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "2c4a986c782083825c00b4ccc120b23a1852d45c5c13c12727b198d5a00d7844",
+      "sha256": "704c86c52395f61475bc8ec9bcaeb85ced99efb2c69630ac0570e8387a9ee3f8",
       "signal_patterns": [
         "android_monitor_contention"
       ],
@@ -73,7 +73,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -82,8 +82,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -173,7 +172,7 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "f105cedbc23fd075446cb03ff073e93667b80938552116d67f8c4578143c1a50",
+      "sha256": "9f3a106346924cc81bbf4c17f7b5c4ae65b6ce1eba4511c75baf112f76afece7",
       "signal_patterns": [
         "android_garbage_collection_events"
       ],
@@ -181,7 +180,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -190,8 +189,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -281,20 +279,20 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "10a0a80cb46080463eba99505336254a556d0b71a53be62b08e758f84b183005",
+      "sha256": "5033dfbc298098effc2bdb005b27a1e295b9a8588c36af65ce6c16965a848a4b",
       "signal_patterns": [
         "*Draw*",
         "*Fence*",
         "*eglSwap*",
         "RenderThread",
         "[0-9]*.raster",
-        "android_gpu_frequency"
+        "gpufreq"
       ],
       "skill_id": "jank_frame_detail",
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -303,8 +301,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -313,7 +310,13 @@
       },
       "step_id": "gpu_table_check",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/gpu_frequency_intervals.sql",
+            "source_sha256": "9b40d45c78027c092f8d72eefc39f6a24c716142df9a4b8ec940b20e927f2aa1"
+          }
+        ],
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [],
@@ -394,7 +397,7 @@
       "process_scope": {
         "role": "identity_metadata"
       },
-      "sha256": "a236b26a4cb74d77d5d5dd807ff8eccd780cd379200f5951d55a3fce0abbdbc4",
+      "sha256": "3bf7d516c7df643e9524331124658514992279ea5b60571edf9476bb4e8fc7d8",
       "signal_patterns": [
         "android_binder_txns"
       ],
@@ -402,7 +405,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -411,8 +414,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -503,7 +505,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "19d769f17ce6f4f909d7a313f1c0897c8215272dff5b7df246aeee9cc1edbce7",
+      "sha256": "a6f5e25ceca4f03cd6d034a2ab08f165e857e29fe24296f6eab11adcedbeb64e",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -515,7 +517,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -524,8 +526,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -649,13 +650,13 @@
         },
         "role": "target"
       },
-      "sha256": "541147cf1046984140d082a3581cc36f0d8316249e27a0543e5ea644e7b883dd",
+      "sha256": "84e886973bf1a9f1d350681b80a05c9116530a621990555414f9df96759089cc",
       "signal_patterns": [],
       "skill_id": "jank_frame_detail",
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -664,8 +665,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -763,13 +763,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "275a6d9b23b340df34cd7c6162505e97c8ad8bf8f9003c51aa8ddd829bd16360",
+      "sha256": "cb0020471d41883d98d0b47a5485aa90a29b1ade5e9fef5790390689656bb25c",
       "signal_patterns": [],
       "skill_id": "jank_frame_detail",
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -778,8 +778,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -884,7 +883,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "1d6a7b383b9856b067e4d9c1ab0946f1d5db6fa4cbab61e5929e0493d94d5e48",
+      "sha256": "e9986426e720afc46ca11fa634780bf3b38dc7b034840944319398b99e7216f8",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -894,7 +893,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -903,8 +902,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -1011,7 +1009,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "7b07645fb5ebdfe2318e4fd698d848c7e08b3ce8d1c863044d4375514a0e4c8a",
+      "sha256": "4e70638a3f79243830a1451f64846f3a230ed5d3debca6cff459d14b39c9735a",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1022,7 +1020,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1031,8 +1029,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -1139,7 +1136,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "a54cb47cad6245d40e1570956227064eab8984c739bac135f7897ba0240714e4",
+      "sha256": "2875c65752c769f71d587b735fb77a1d56a01295190357ae7b3bebacad9d8540",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1150,7 +1147,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1159,8 +1156,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -1266,13 +1262,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "8fbd18e8c8a41c58c7890b0111527a84faefc02114c927979e1c4d1c79e8b040",
+      "sha256": "109a38012228569aa71c9ab1049353f43a11c5567ea5ec183bc2d8c50ca39fc7",
       "signal_patterns": [],
       "skill_id": "jank_frame_detail",
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1281,8 +1277,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -1394,7 +1389,7 @@
         },
         "role": "target"
       },
-      "sha256": "8598fe62a9c5fdb0e86567f6c48c17fe96fdb946b25521c5972a7856252d228a",
+      "sha256": "ee9261242c72695f9383312a2efbeaa8c00f3d736fc655e035cdaabe9bbf76e4",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -1403,7 +1398,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1412,8 +1407,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -1512,7 +1506,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "9a0d8f2c1dd26eeb7f45127148725bf917982cda2f3da4d6ccb91661f2abea1e",
+      "sha256": "35bdee53d6baa1a3aa47a8d8c8742e125656a1ae71568559945d13b203acc49c",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -1521,7 +1515,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1530,8 +1524,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -1636,7 +1629,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "71ccd6cd8048f12fa56627cb09aea99963c7404cc2b13547cac5b721327566f0",
+      "sha256": "dcca377917c9433c28020e1446f6f8597e037466c19be340cff73d822e41858b",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1648,7 +1641,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1657,8 +1650,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],
@@ -1783,7 +1775,7 @@
         ],
         "role": "target"
       },
-      "sha256": "cd22b3734220008753f5be40520d615b4ca68da9d451c0226efcc802693220f3",
+      "sha256": "5425594606f488fc876038e8f8e6f17add3641aee4ff695259c674e012df089b",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -1811,7 +1803,7 @@
       "source": {
         "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+        "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1820,8 +1812,7 @@
           "android.binder",
           "android.slices",
           "android.monitor_contention",
-          "android.garbage_collection",
-          "android.gpu.frequency"
+          "android.garbage_collection"
         ],
         "drops": [],
         "required_tables": [],

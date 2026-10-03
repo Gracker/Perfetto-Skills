@@ -1,8 +1,64 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_slow_reasons.skill.yaml
--- Source SHA-256: 0056319a6a46e55c0263b521daa518d49ea630bba3b03f02f0a545497a8bb1f7
+-- Source SHA-256: cb20c2647635bf0ce38dcf0c37c60e5e49521b2ea7d4bbd75ed108c97535e0c8
 
-WITH startup_info AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- No input CTE. ART garbage collection named by a slice or a log line.
+--
+-- Slices (GLOB on the original name; a consumer that has lower-cased the
+-- name compares it with lower(pattern)):
+--   collection  a collector run. ART names every run "<cause> <collector> GC"
+--               with collector concurrent copying, concurrent mark compact,
+--               (sticky or partial concurrent) mark sweep or semispace:
+--               "Background young concurrent copying GC", "Alloc concurrent
+--               copying GC", "Background concurrent mark compact GC".
+--   wait        a thread blocked on the collector: "GC: Wait For Completion
+--               <cause>", waiting for a run or for a GC critical section
+--               (ProfileSaver, for one) to end. A wait overlaps what it waits
+--               on, so a count or a total takes runs only and reports waits
+--               as blocked time.
+-- Every pattern contains "GC": a consumer scanning all slices tests
+-- s.name GLOB '*GC*' first, which rejects nearly every name before the
+-- pattern table is read.
+-- Not GC although the name says gc: Collector classes (MetricsCollector,
+-- BatchSignalCollector), art::gc::Heap::Trim* heap trimming, a gc() method
+-- (SparseArray.gc), logcat, the f2fs_gc thread, and "Lock contention on GC
+-- barrier lock" (a microsecond checkpoint). "Lock contention on GC thread
+-- flip lock" does block a thread for the concurrent copying flip, but it is
+-- lock contention, reported with locks, not counted as GC.
+--
+-- stdlib android_garbage_collection_events keeps depth-0 "*concurrent*GC"
+-- slices that overlap a "Heap size (KB)" counter: a run nested under an app
+-- thread slice (an Alloc GC on a blocked thread) or one without that counter
+-- is not there, so its count can be lower than one taken with these names.
+--
+-- Log text (GLOB on the lower-cased text): ART reports a finished run as
+-- "<cause> ... GC freed ...", a blocked thread as "WaitForGcToComplete
+-- blocked ...", "Waiting for a blocking GC ..." or "Starting a blocking GC
+-- ...", and a heap resize as "Clamp target GC heap ...". A bare "gc" word is
+-- not enough: it is a method name, a process name or part of a path as
+-- often.
+art_gc_slice_name_patterns(gc_kind, pattern) AS (
+  VALUES
+    ('collection', '*concurrent*GC'),
+    ('collection', '*mark sweep GC'),
+    ('collection', '*mark compact GC'),
+    ('collection', '*semispace GC'),
+    ('wait', 'GC: Wait For Completion*')
+),
+art_gc_text_patterns(pattern) AS (
+  VALUES
+    ('*gc freed*'),
+    ('*waitforgctocomplete*'),
+    ('*waiting for a blocking gc*'),
+    ('*starting a blocking gc*'),
+    ('*clamp target gc heap*')
+)
+,
+startup_info AS (
   SELECT
     startup_id,
     package,
@@ -39,19 +95,34 @@ dex2oat_check AS (
     AND p.start_ts IS NOT NULL
     AND p.start_ts < (SELECT ts + dur FROM startup_info)
 ),
--- Check: GC during startup
+-- Check: GC during startup. Count and time take collector runs; runs and
+-- waits on the collector of the main thread are counted apart, and a
+-- wait alone still reports the main thread blocked
+-- (fragments/art_gc_names.sql).
+gc_slices AS (
+  SELECT * FROM (
+    SELECT
+      s.dur,
+      tt.utid,
+      (SELECT n.gc_kind FROM art_gc_slice_name_patterns n WHERE s.name GLOB n.pattern
+       ORDER BY n.gc_kind LIMIT 1) AS gc_kind
+    FROM slice s
+    JOIN thread_track tt ON s.track_id = tt.id
+    JOIN thread t ON tt.utid = t.utid
+    JOIN startup_info si ON t.upid = si.upid
+    WHERE s.name GLOB '*GC*'
+      AND s.ts >= si.ts AND s.ts < si.ts + si.dur
+      AND s.dur > 100000  -- > 0.1ms
+  )
+  WHERE gc_kind IS NOT NULL
+),
 gc_check AS (
   SELECT
-    COUNT(*) as gc_count,
-    ROUND(COALESCE(SUM(s.dur), 0) / 1e6, 1) as gc_total_ms,
-    SUM(CASE WHEN tt.utid = (SELECT utid FROM main_thread) THEN 1 ELSE 0 END) as main_thread_gc_count
-  FROM slice s
-  JOIN thread_track tt ON s.track_id = tt.id
-  JOIN thread t ON tt.utid = t.utid
-  JOIN startup_info si ON t.upid = si.upid
-  WHERE (s.name GLOB '*GC*' OR s.name GLOB '*gc*')
-    AND s.ts >= si.ts AND s.ts < si.ts + si.dur
-    AND s.dur > 100000  -- > 0.1ms
+    COALESCE(SUM(gc_kind = 'collection'), 0) as gc_count,
+    ROUND(COALESCE(SUM(CASE WHEN gc_kind = 'collection' THEN dur END), 0) / 1e6, 1) as gc_total_ms,
+    COALESCE(SUM(gc_kind = 'collection' AND utid = (SELECT utid FROM main_thread)), 0) as main_thread_gc_count,
+    COALESCE(SUM(gc_kind = 'wait' AND utid = (SELECT utid FROM main_thread)), 0) as main_thread_gc_wait_count
+  FROM gc_slices
 ),
 -- Check: Lock contention
 lock_check AS (
@@ -150,12 +221,13 @@ FROM dex2oat_check WHERE dex2oat_running > 0
 
 UNION ALL
 SELECT 'SR03',
-  CASE WHEN main_thread_gc_count > 0 THEN '主线程 GC（直接阻塞）'
+  CASE WHEN main_thread_gc_count + main_thread_gc_wait_count > 0 THEN '主线程 GC（直接阻塞）'
        ELSE 'GC 活动（间接影响）' END,
-  CASE WHEN main_thread_gc_count > 0 THEN 'warning' ELSE 'info' END,
-  gc_count || ' 次 GC, 总耗时 ' || gc_total_ms || ' ms, 主线程 ' || main_thread_gc_count || ' 次',
+  CASE WHEN main_thread_gc_count + main_thread_gc_wait_count > 0 THEN 'warning' ELSE 'info' END,
+  gc_count || ' 次 GC 回收, 总耗时 ' || gc_total_ms || ' ms; 主线程执行回收 ' || main_thread_gc_count
+    || ' 次、等待 GC 完成 ' || main_thread_gc_wait_count || ' 次',
   '减少启动期间的对象分配，避免触发 GC'
-FROM gc_check WHERE gc_count > 0
+FROM gc_check WHERE gc_count + main_thread_gc_wait_count > 0
 
 UNION ALL
 SELECT 'SR04', '主线程锁竞争',

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/game.strategy.md
-Source SHA-256: 1dc98c5c0c2f462121f5a0c08d8a0a4efaa3429f93ed8001ef05d934d188dddb
+Source SHA-256: f0a1e0aca344b0e7ebeaecaa46d02129a4acaeb089a2c09c4b2203360dbba3b9
 
 # Game Strategy
 
@@ -152,6 +152,8 @@ Connect CPU execution to GPU work, fences and presentation, with thermal and ene
 #### 游戏场景关键 Stdlib 表
 
 写 execute_sql 时优先使用（完整列表见方法论模板）：`android_gpu_frequency`、`cpu_utilization_per_second`、`cpu_frequency_counters`、`android_dvfs_counters`、`android_screen_state`
+
+`android_gpu_frequency.gpu_freq` 是 gpufreq 计数器原值，单位随写入源是 kHz、Hz 或 MHz，0 表示 GPU 关闭；要 GPU 频率数值时读 `gpu_freq_in_range` / `gpu_analysis` 的 MHz 列，不要自己换算。
 
 **Phase 1 — 游戏帧率分析（1 次调用）：**
 ```

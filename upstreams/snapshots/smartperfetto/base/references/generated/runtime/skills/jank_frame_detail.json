@@ -39,7 +39,6 @@
       "[0-9]*.ui",
       "android_binder_txns",
       "android_garbage_collection_events",
-      "android_gpu_frequency",
       "android_monitor_contention"
     ]
   },
@@ -183,8 +182,7 @@
       "android.binder",
       "android.slices",
       "android.monitor_contention",
-      "android.garbage_collection",
-      "android.gpu.frequency"
+      "android.garbage_collection"
     ],
     "required_tables": []
   },
@@ -193,7 +191,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-    "sha256": "b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc"
+    "sha256": "c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1"
   },
   "steps": [
     {
@@ -940,7 +938,7 @@
         {
           "condition": "gpu_freq_data?.data?.length > 0 && gpu_freq_data.data[0]?.low_freq_pct > 50",
           "confidence": "medium",
-          "diagnosis": "GPU 低频运行占比 ${gpu_freq_data.data[0].low_freq_pct}%",
+          "diagnosis": "GPU 运行时间中低频占比 ${gpu_freq_data.data[0].low_freq_pct}%",
           "severity": "warning",
           "suggestions": [
             "GPU 未能提升频率",

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/anr_detail.skill.yaml
-Source SHA-256: 5373394d55d3a035fc472bc4f0684c504581b9760f01a90d2c596cd88d35f92e
+Source SHA-256: 74e651ef4fa4d3949dacf7c4db5b28bd3f522b40e1ff76c40cb2829ea17d44a5
 # ANR 详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -817,6 +817,7 @@ process_scope:
   role: target
   binding: effective_target_processes
 sql_fragments:
+- fragments/art_gc_names.sql
 - fragments/effective_target_processes.sql
 optional: true
 condition: thread_evidence_availability.data[0]?.has_thread_track === 1 && thread_evidence_availability.data[0]?.has_slice
@@ -952,6 +953,8 @@ display:
   - name: msg_preview
     label: 消息
     type: string
+sql_fragments:
+- fragments/art_gc_names.sql
 save_as: logcat_event_context
 ```
 ### ANR 事件诊断

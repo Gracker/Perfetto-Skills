@@ -9,14 +9,8 @@
       "api_hint"
     ],
     "signal_patterns": [
-      "${package}",
-      "${package}:*",
-      "%GC%",
       "%JIT%",
-      "%collection%",
-      "%compile%",
-      "%garbage%",
-      "main"
+      "%compile%"
     ]
   },
   "id": "art_module",
@@ -64,7 +58,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/framework/art_module.skill.yaml",
-    "sha256": "e7d524de05ca91174a9bf283192a02d3dfab1324753b0b8ebfaaa259379d9e8a"
+    "sha256": "420e56403b3df38fd4f2d2f938b611c484252d3bc7f733ba7b956813c7a02fcf"
   },
   "steps": [
     {
@@ -74,6 +68,15 @@
       "query_id": "art_module/gc_overview",
       "result_dependencies": [],
       "save_as": "gc_overview",
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "gc_totals",
+      "name": "GC 合计",
+      "query_id": "art_module/gc_totals",
+      "result_dependencies": [],
+      "save_as": "gc_totals",
       "type": "atomic"
     },
     {
@@ -108,6 +111,7 @@
       "id": "art_diagnosis",
       "inputs": [
         "gc_overview",
+        "gc_totals",
         "gc_events",
         "main_thread_gc",
         "jit_events"
@@ -115,12 +119,13 @@
       "name": "ART 诊断",
       "rules": [
         {
-          "condition": "main_thread_gc.data.length > 0",
+          "condition": "(gc_totals.data[0]?.main_thread_collection_count || 0) + (gc_totals.data[0]?.main_thread_wait_count || 0) > 0",
           "confidence": "high",
-          "diagnosis": "主线程发生 ${main_thread_gc.data.length} 次 GC，可能导致卡顿",
+          "diagnosis": "主线程执行 GC 回收 ${gc_totals.data[0].main_thread_collection_count} 次、等待 GC 完成 ${gc_totals.data[0].main_thread_wait_count} 次，共 ${gc_totals.data[0].main_thread_gc_ms}ms，可能导致卡顿",
           "evidence_fields": [
-            "main_thread_gc.data.length",
-            "main_thread_gc.data[0]?.dur_ms"
+            "gc_totals.data[0].main_thread_collection_count",
+            "gc_totals.data[0].main_thread_wait_count",
+            "gc_totals.data[0].main_thread_gc_ms"
           ],
           "suggestions": [
             "减少临时对象分配",
@@ -128,12 +133,12 @@
           ]
         },
         {
-          "condition": "gc_overview.data[0]?.total_gc_ms > 100",
+          "condition": "(gc_totals.data[0]?.collection_ms || 0) > 100",
           "confidence": "high",
-          "diagnosis": "GC 总耗时过长 (${gc_overview.data[0]?.total_gc_ms}ms)，内存压力大",
+          "diagnosis": "GC 回收总耗时过长 (${gc_totals.data[0].collection_ms}ms，${gc_totals.data[0].collection_count} 次)，内存压力大",
           "evidence_fields": [
-            "gc_overview.data[0].total_gc_ms",
-            "gc_overview.data[0].gc_count"
+            "gc_totals.data[0].collection_ms",
+            "gc_totals.data[0].collection_count"
           ],
           "suggestions": [
             "检查是否有内存泄漏",
@@ -141,9 +146,9 @@
           ]
         },
         {
-          "condition": "gc_events.data[0]?.dur_ms > 10",
+          "condition": "gc_events.data[0]?.gc_kind === 'collection' && gc_events.data[0]?.dur_ms > 10",
           "confidence": "medium",
-          "diagnosis": "存在长 GC 暂停 (${gc_events.data[0]?.dur_ms}ms)",
+          "diagnosis": "存在长 GC 回收 (${gc_events.data[0]?.dur_ms}ms)",
           "evidence_fields": [
             "gc_events.data[0].dur_ms",
             "gc_events.data[0].gc_type"

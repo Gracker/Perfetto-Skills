@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/navigation_analysis.skill.yaml
--- Source SHA-256: 22cd4dfce1fd88d4610a41825267b0c17ab31811b871551db13a6719c8466f52
+-- Source SHA-256: c8bbe81d2a904151402e873ca39bfb964e77a0287f268961fbb540b88648da48
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -28,9 +28,14 @@ WITH
 -- after the code it handles (JIT compiling of a java.io.File method, code
 -- cache writes, class definition and dex registration, GC waits, lock
 -- contention at a method) and Binder calls named after their interface
--- method (AIDL::...::openSession); a ParcelFileDescriptor is still a file. "flush" is not here: in real traces it
--- is GPU and SurfaceFlinger work (GrOpFlushState, flush commands), not file
--- I/O. GLOB is case-sensitive.
+-- method (AIDL::...::openSession); a ParcelFileDescriptor is still a file.
+-- "flush" is not here: in real traces it is GPU and SurfaceFlinger work
+-- (GrOpFlushState, flush commands), not file I/O. GLOB is case-sensitive.
+--
+-- An all-caps word (READ, OPEN, FILE) is deliberately not a form of a word: in
+-- the six canonical traces, the constructed corpus and a dozen local device
+-- traces the only all-caps I/O word is the WindowManager transition type OPEN
+-- (playTransition: OPEN, Transition-OPEN#409), which is not file I/O.
 file_io_slice_name_words(io_type, stem, word, camel) AS (
   VALUES
     ('open', 'open', '[Oo]pen', 'Open'),
@@ -67,6 +72,61 @@ file_io_slice_name_exclusions(pattern) AS (
     ('GC:*'), ('*Wait For Completion*'), ('*[Cc]ontention*'),
     ('AIDL::*'), ('HIDL::*'), ('L*;')
 )
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- No input CTE. ART garbage collection named by a slice or a log line.
+--
+-- Slices (GLOB on the original name; a consumer that has lower-cased the
+-- name compares it with lower(pattern)):
+--   collection  a collector run. ART names every run "<cause> <collector> GC"
+--               with collector concurrent copying, concurrent mark compact,
+--               (sticky or partial concurrent) mark sweep or semispace:
+--               "Background young concurrent copying GC", "Alloc concurrent
+--               copying GC", "Background concurrent mark compact GC".
+--   wait        a thread blocked on the collector: "GC: Wait For Completion
+--               <cause>", waiting for a run or for a GC critical section
+--               (ProfileSaver, for one) to end. A wait overlaps what it waits
+--               on, so a count or a total takes runs only and reports waits
+--               as blocked time.
+-- Every pattern contains "GC": a consumer scanning all slices tests
+-- s.name GLOB '*GC*' first, which rejects nearly every name before the
+-- pattern table is read.
+-- Not GC although the name says gc: Collector classes (MetricsCollector,
+-- BatchSignalCollector), art::gc::Heap::Trim* heap trimming, a gc() method
+-- (SparseArray.gc), logcat, the f2fs_gc thread, and "Lock contention on GC
+-- barrier lock" (a microsecond checkpoint). "Lock contention on GC thread
+-- flip lock" does block a thread for the concurrent copying flip, but it is
+-- lock contention, reported with locks, not counted as GC.
+--
+-- stdlib android_garbage_collection_events keeps depth-0 "*concurrent*GC"
+-- slices that overlap a "Heap size (KB)" counter: a run nested under an app
+-- thread slice (an Alloc GC on a blocked thread) or one without that counter
+-- is not there, so its count can be lower than one taken with these names.
+--
+-- Log text (GLOB on the lower-cased text): ART reports a finished run as
+-- "<cause> ... GC freed ...", a blocked thread as "WaitForGcToComplete
+-- blocked ...", "Waiting for a blocking GC ..." or "Starting a blocking GC
+-- ...", and a heap resize as "Clamp target GC heap ...". A bare "gc" word is
+-- not enough: it is a method name, a process name or part of a path as
+-- often.
+art_gc_slice_name_patterns(gc_kind, pattern) AS (
+  VALUES
+    ('collection', '*concurrent*GC'),
+    ('collection', '*mark sweep GC'),
+    ('collection', '*mark compact GC'),
+    ('collection', '*semispace GC'),
+    ('wait', 'GC: Wait For Completion*')
+),
+art_gc_text_patterns(pattern) AS (
+  VALUES
+    ('*gc freed*'),
+    ('*waitforgctocomplete*'),
+    ('*waiting for a blocking gc*'),
+    ('*starting a blocking gc*'),
+    ('*clamp target gc heap*')
+)
 SELECT
   printf('%d', s.ts) as block_ts,
   printf('%d', s.dur) as dur_ns,
@@ -77,7 +137,8 @@ SELECT
     WHEN s.name GLOB '*database*' OR s.name GLOB '*SQL*' OR s.name GLOB '*sqlite*' THEN 'database'
     WHEN s.name GLOB '*Binder*' OR s.name GLOB '*binder*' THEN 'binder'
     WHEN s.name GLOB '*SharedPreferences*' THEN 'shared_prefs'
-    WHEN s.name GLOB '*GC*' OR s.name GLOB '*collector*' THEN 'gc'
+    -- An ART GC run or a wait on one (fragments/art_gc_names.sql).
+    WHEN s.name GLOB '*GC*' AND EXISTS (SELECT 1 FROM art_gc_slice_name_patterns n WHERE s.name GLOB n.pattern) THEN 'gc'
     -- File IO by whole slice-name word (fragments/file_io_slice_names.sql).
     WHEN EXISTS (SELECT 1 FROM file_io_slice_name_words w WHERE instr(lower(s.name), w.stem) > 0)
       AND EXISTS (SELECT 1 FROM file_io_slice_name_patterns n WHERE s.name GLOB n.pattern)

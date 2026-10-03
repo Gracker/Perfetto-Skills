@@ -1,8 +1,64 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
--- Source SHA-256: 5373394d55d3a035fc472bc4f0684c504581b9760f01a90d2c596cd88d35f92e
+-- Source SHA-256: 74e651ef4fa4d3949dacf7c4db5b28bd3f522b40e1ff76c40cb2829ea17d44a5
 
-WITH anr_window AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- No input CTE. ART garbage collection named by a slice or a log line.
+--
+-- Slices (GLOB on the original name; a consumer that has lower-cased the
+-- name compares it with lower(pattern)):
+--   collection  a collector run. ART names every run "<cause> <collector> GC"
+--               with collector concurrent copying, concurrent mark compact,
+--               (sticky or partial concurrent) mark sweep or semispace:
+--               "Background young concurrent copying GC", "Alloc concurrent
+--               copying GC", "Background concurrent mark compact GC".
+--   wait        a thread blocked on the collector: "GC: Wait For Completion
+--               <cause>", waiting for a run or for a GC critical section
+--               (ProfileSaver, for one) to end. A wait overlaps what it waits
+--               on, so a count or a total takes runs only and reports waits
+--               as blocked time.
+-- Every pattern contains "GC": a consumer scanning all slices tests
+-- s.name GLOB '*GC*' first, which rejects nearly every name before the
+-- pattern table is read.
+-- Not GC although the name says gc: Collector classes (MetricsCollector,
+-- BatchSignalCollector), art::gc::Heap::Trim* heap trimming, a gc() method
+-- (SparseArray.gc), logcat, the f2fs_gc thread, and "Lock contention on GC
+-- barrier lock" (a microsecond checkpoint). "Lock contention on GC thread
+-- flip lock" does block a thread for the concurrent copying flip, but it is
+-- lock contention, reported with locks, not counted as GC.
+--
+-- stdlib android_garbage_collection_events keeps depth-0 "*concurrent*GC"
+-- slices that overlap a "Heap size (KB)" counter: a run nested under an app
+-- thread slice (an Alloc GC on a blocked thread) or one without that counter
+-- is not there, so its count can be lower than one taken with these names.
+--
+-- Log text (GLOB on the lower-cased text): ART reports a finished run as
+-- "<cause> ... GC freed ...", a blocked thread as "WaitForGcToComplete
+-- blocked ...", "Waiting for a blocking GC ..." or "Starting a blocking GC
+-- ...", and a heap resize as "Clamp target GC heap ...". A bare "gc" word is
+-- not enough: it is a method name, a process name or part of a path as
+-- often.
+art_gc_slice_name_patterns(gc_kind, pattern) AS (
+  VALUES
+    ('collection', '*concurrent*GC'),
+    ('collection', '*mark sweep GC'),
+    ('collection', '*mark compact GC'),
+    ('collection', '*semispace GC'),
+    ('wait', 'GC: Wait For Completion*')
+),
+art_gc_text_patterns(pattern) AS (
+  VALUES
+    ('*gc freed*'),
+    ('*waitforgctocomplete*'),
+    ('*waiting for a blocking gc*'),
+    ('*starting a blocking gc*'),
+    ('*clamp target gc heap*')
+)
+,
+anr_window AS (
   SELECT
     ${anr_ts} - ${timeout_ns} AS start_ts,
     ${anr_ts} AS anr_ts,
@@ -23,7 +79,9 @@ tagged AS (
       WHEN LOWER(COALESCE(l.tag, '')) GLOB '*jobscheduler*' OR LOWER(COALESCE(l.msg, '')) GLOB '*jobservice*' THEN 'job_scheduler'
       WHEN LOWER(COALESCE(l.tag, '')) GLOB '*watchdog*' OR LOWER(COALESCE(l.msg, '')) GLOB '*system_server*watchdog*' THEN 'watchdog'
       WHEN LOWER(COALESCE(l.tag, '')) GLOB '*lmkd*' OR LOWER(COALESCE(l.tag, '')) GLOB '*lowmemorykiller*' OR LOWER(COALESCE(l.msg, '')) GLOB '*lowmemory*' THEN 'memory_pressure'
-      WHEN LOWER(COALESCE(l.tag, '')) GLOB '*art*' OR LOWER(COALESCE(l.msg, '')) GLOB '*gc*' THEN 'gc_or_art'
+      -- ART logs under tag "art"; its GC lines: fragments/art_gc_names.sql.
+      WHEN LOWER(COALESCE(l.tag, '')) = 'art'
+        OR EXISTS (SELECT 1 FROM art_gc_text_patterns g WHERE LOWER(COALESCE(l.msg, '')) GLOB g.pattern) THEN 'gc_or_art'
       WHEN LOWER(COALESCE(l.tag, '')) GLOB '*strictmode*'
         OR LOWER(COALESCE(l.tag, '')) GLOB '*binder*'
         OR LOWER(COALESCE(l.msg, '')) GLOB '*anr*'

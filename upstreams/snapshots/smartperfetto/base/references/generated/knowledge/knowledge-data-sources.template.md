@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-data-sources.template.md
-Source SHA-256: 58dc678a6e945a883bfdf0b6b41766c906ea5cecd7b21c320f4dab91b640c62f
+Source SHA-256: 51011b2777df9a4f602bc7866194ee41530d7fa1cc1223f31af616bae0cb400e
 
 # Knowledge Data Sources Template
 
@@ -461,7 +461,8 @@ data_sources {
 
 ## GPU 分析 (gpu)
 
-**依赖表**: `gpu_slice`, `android_gpu_frequency`
+**依赖表**: `gpu_slice`, `gpu_counter_track`（gpufreq 计数器）
+**频率单位**: gpufreq 计数器标注为 kHz，但 power/gpu_frequency 写 kHz、kgsl 写 Hz、sys_stats 写 MHz，可能混在同一条轨道；0 表示 GPU 关闭。Skill 经 `fragments/gpu_frequency_intervals.sql` 逐样本按量级归一为 MHz，关闭时间单独报告，不计入低频和平均频率。
 **架构适用**: 所有架构
 **最低版本**: Android 12 (API 31) — GPU work period API
 

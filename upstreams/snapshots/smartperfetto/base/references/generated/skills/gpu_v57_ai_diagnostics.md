@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml
-Source SHA-256: ac78ea2ed81bd2cff026d28c2ff54159ddd20e792fccc6cbd00171f1b18c6a36
+Source SHA-256: 608783942f2db1a99117105e5d2d95faddd0b3074bd5cfdc5ad464f383ec5280
 # GPU v57 AI Diagnostics
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -58,7 +58,6 @@ patterns:
 
 ```yaml
 modules:
-- counters.intervals
 - intervals.overlap
 - intervals.intersect
 ```
@@ -108,6 +107,8 @@ id: data_check
 type: atomic
 display:
   level: hidden
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
 save_as: data_check
 ```
 ### GPU inventory
@@ -287,6 +288,10 @@ display:
     label: Freq Coverage
     type: percentage
     format: percentage
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
+- fragments/gpu_frequency_window.sql
+- fragments/gpu_frequency_by_ugpu.sql
 save_as: frequency_residency
 ```
 ### GPU DVFS ramp events
@@ -332,6 +337,10 @@ display:
   - name: completed
     label: Completed
     type: boolean
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
+- fragments/gpu_frequency_window.sql
+- fragments/gpu_frequency_by_ugpu.sql
 save_as: dvfs_ramp_events
 ```
 ### Sustained GPU throttle events
@@ -376,6 +385,10 @@ display:
   - name: power_w
     label: Power(W)
     type: number
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
+- fragments/gpu_frequency_window.sql
+- fragments/gpu_frequency_by_ugpu.sql
 save_as: sustained_throttle_events
 ```
 ### GPU v57 no-data contract

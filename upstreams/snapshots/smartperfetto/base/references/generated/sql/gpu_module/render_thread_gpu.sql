@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/gpu_module.skill.yaml
--- Source SHA-256: 192990c452ad55ead1e017ec97c29c577f607f5717020867e352b598e36abbce
+-- Source SHA-256: 579fe2d70ef30c53d7a5e32a06732ef2872ce8b45c31aea88cb079bf2a45c9e0
 
 SELECT
   thread.name AS thread_name,

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc
+-- Source SHA-256: c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

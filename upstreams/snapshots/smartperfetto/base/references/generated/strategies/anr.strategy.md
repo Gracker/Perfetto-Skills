@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: 2a88a78ef4273d95d18830eaa1992008d98e04aafca4f02f8e5dcb3198b1a394
+Source SHA-256: 1c6da87b2722d713d9a291bf8c7a41b45f1142efbf1140bcfbbfdf15ff6b124c
 
 # Anr Strategy
 
@@ -226,7 +226,8 @@ invoke_skill("anr_analysis")
   - `trigger_classification`：Perfetto ANR 类型到 the portable runtime `trigger_type` 的规范化映射，并输出候选根因提示（非最终结论）
   - `cpu_health`：系统 CPU 负载（大核/小核利用率、是否过载）
   - `memory_pressure`：ANR 窗口内的 LMK 事件
-  - `io_load`：各进程的 D-state 不可中断等待基线；不能单独作为 IO 根因
+  - `io_load`：各进程的 D-state 不可中断等待基线，只是系统背景；不能单独作为 IO 根因
+  - `anr_io_wait`：ANR 进程自己的 D/DK 等待（主线程、进程合计、最长线程、IO 等待点、冻结等待、blocked_function 覆盖率）；缺少 ANR 进程 upid 时不运行，不能读成「没有 D 态」
   - `lock_waits`：futex/mutex 锁等待分布（P95/max）
   - **`freeze_check`**（from `system_freeze_check`）：**系统冻结判定（最关键）**
   - `overview` / `anr_events`：ANR 分类统计、逐事件窗口、`timeout_source` 与跳转范围
@@ -301,7 +302,7 @@ invoke_skill("anr_analysis")
 | BROADCAST_OF_INTENT | `onReceive()` 内是否有网络/IO/数据库操作在主线程执行 | `direct_blocker_candidates`、`main_slices`（查找 onReceive 相关 slice）、事件级 ActivityManager/Broadcast 日志 |
 | START_FOREGROUND_SERVICE / EXECUTING_SERVICE / FOREGROUND_SERVICE_TIMEOUT | Service 生命周期、前台服务启动和冷启动链路 | `direct_blocker_candidates`、`main_slices`、Service/ActivityManager 日志 |
 | JOB_SERVICE_START / STOP / BIND | JobService 回调或绑定链路，不要简化成普通 Service | `direct_blocker_candidates`、`logcat_event_context`、事件级 JobScheduler 日志 |
-| CONTENT_PROVIDER_NOT_RESPONDING | provider publish、query/CRUD 或跨进程 Provider 访问阻塞 | `direct_blocker_candidates`、`main_slices`、`io_load` |
+| CONTENT_PROVIDER_NOT_RESPONDING | provider publish、query/CRUD 或跨进程 Provider 访问阻塞 | `direct_blocker_candidates`、`main_slices`、`anr_io_wait` |
 | SYSTEM_SERVER_WATCHDOG_TIMEOUT | system_server Handler/锁/Binder 线程，默认不是 App Bug | `freeze_check`、system_server 线程状态、monitor contention |
 | GPU_HANG | GPU/fence/buffer 或 RenderThread/SF 链路 | `render_thread`、SurfaceFlinger 日志、frame/fence slice |
 

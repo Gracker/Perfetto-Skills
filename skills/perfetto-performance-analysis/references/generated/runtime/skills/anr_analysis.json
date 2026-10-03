@@ -126,7 +126,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/anr_analysis.skill.yaml",
-    "sha256": "886c11c88b8de59f7a759bb5510cc207277be4fee7d37149ed00f9c1c29c96f9"
+    "sha256": "7ff32bd00930745e7472e3fd492581136074cf0cf6843caf8fecf18d85f1a757"
   },
   "steps": [
     {
@@ -212,6 +212,19 @@
         "anr_ctx"
       ],
       "save_as": "io_load",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0 && anr_ctx.data[0]?.upid != null",
+      "displayed": true,
+      "id": "anr_process_io_wait",
+      "name": "ANR 进程不可中断等待",
+      "optional": true,
+      "query_id": "anr_analysis/anr_process_io_wait",
+      "result_dependencies": [
+        "anr_ctx"
+      ],
+      "save_as": "anr_io_wait",
       "type": "atomic"
     },
     {
@@ -307,6 +320,7 @@
         "cpu_health",
         "memory_pressure",
         "io_load",
+        "anr_io_wait",
         "lock_waits",
         "freeze_check",
         "overview",
@@ -392,9 +406,9 @@
           ]
         },
         {
-          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && io_load.data[0]?.uninterruptible_wait_ms > (uninterruptible_wait_threshold_ms || io_wait_threshold_ms || 500)",
+          "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && (anr_io_wait.data?.[0]?.main_thread_uninterruptible_ms || 0) > (uninterruptible_wait_threshold_ms || io_wait_threshold_ms || 500)",
           "confidence": "low",
-          "diagnosis": "进程 ${io_load.data[0].process_name} D-state 不可中断等待 ${io_load.data[0].uninterruptible_wait_ms}ms",
+          "diagnosis": "ANR 进程 ${anr_io_wait.data[0].process_name} 主线程在 ANR 窗口内 D-state 不可中断等待 ${anr_io_wait.data[0].main_thread_uninterruptible_ms}ms",
           "severity": "warning",
           "suggestions": [
             "D-state 只能说明不可中断等待，不能单独证明磁盘 IO",

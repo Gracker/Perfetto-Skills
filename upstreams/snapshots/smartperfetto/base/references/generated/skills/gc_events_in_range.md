@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gc_events_in_range.skill.yaml
-Source SHA-256: c618c2aa27388890e4aaf972e146cb0140091771eb5354023f79a88920c1f1fb
+Source SHA-256: e5cc8038e2b2ecb4fc7bed20131e40311fae60ff21f1e9ebb2dc40b418813409
 # GC 事件查询
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

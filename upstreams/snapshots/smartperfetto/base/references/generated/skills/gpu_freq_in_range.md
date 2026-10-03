@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gpu_freq_in_range.skill.yaml
-Source SHA-256: c9f3c23f79f32591148e7aa55971b4c5942b49679d8f46914963b038fc0ee060
+Source SHA-256: d7a056a78bb004c44c0adf586f2b7196787ca1a028962541130e5731e76a7096
 # GPU 频率分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -25,13 +25,6 @@ tags:
 - gpu
 - frequency
 - atomic
-```
-
-## Prerequisites
-
-```yaml
-modules:
-- android.gpu.frequency
 ```
 
 ## Inputs
@@ -73,19 +66,27 @@ columns:
   label: GPU
   type: number
 - name: avg_freq_mhz
-  label: 平均频率
+  label: 运行时平均频率
   type: number
 - name: max_freq_mhz
-  label: 最大频率
+  label: 最高运行频率
   type: number
 - name: min_freq_mhz
-  label: 最小频率
+  label: 最低运行频率
   type: number
 - name: freq_changes
   label: 变频次数
   type: number
 - name: low_freq_pct
-  label: 低频占比
+  label: 运行时间中低频占比
+  type: percentage
+  format: percentage
+- name: off_pct
+  label: GPU 关闭占比
+  type: percentage
+  format: percentage
+- name: out_of_domain_pct
+  label: 频率不可读占比
   type: percentage
   format: percentage
 ```

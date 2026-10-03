@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/anr_analysis.skill.yaml
-Source SHA-256: 886c11c88b8de59f7a759bb5510cc207277be4fee7d37149ed00f9c1c29c96f9
+Source SHA-256: 7ff32bd00930745e7472e3fd492581136074cf0cf6843caf8fecf18d85f1a757
 # ANR 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -252,6 +252,8 @@ synthesize:
     label: 候选提示
   insights:
   - template: ANR 触发类型 {{trigger_type}}（{{event_count}} 次）；候选根因提示只作为排查入口，不是最终结论
+sql_fragments:
+- fragments/art_gc_names.sql
 save_as: trigger_classification
 condition: detection.data[0]?.total_anr_count > 0
 ```
@@ -376,6 +378,62 @@ display:
     format: compact
 save_as: io_load
 condition: detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0
+optional: true
+```
+### ANR 进程不可中断等待
+
+- ID: `anr_process_io_wait`
+- Type: `atomic`
+- SQL: [`../sql/anr_analysis/anr_process_io_wait.sql`](../sql/anr_analysis/anr_process_io_wait.sql)
+
+```yaml
+id: anr_process_io_wait
+type: atomic
+sql_fragments:
+- fragments/io_blocked_function_families.sql
+- fragments/system_thread_state_spans.sql
+display:
+  level: detail
+  layer: list
+  title: ANR 进程 D 态等待
+  columns:
+  - name: process_name
+    label: ANR 进程
+    type: string
+  - name: main_thread_uninterruptible_ms
+    label: 主线程 D 态
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: process_uninterruptible_ms
+    label: 进程 D 态合计
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: top_thread_name
+    label: D 态最长线程
+    type: string
+  - name: top_thread_ms
+    label: 该线程 D 态
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: main_thread_io_wchan_ms
+    label: 主线程 IO 等待点
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: frozen_ms
+    label: 冻结等待
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: blocked_function_coverage_pct
+    label: 等待点覆盖
+    type: percentage
+    format: percentage
+save_as: anr_io_wait
+condition: detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0 && anr_ctx.data[0]?.upid != null
 optional: true
 ```
 ### ANR 锁等待探针
@@ -536,6 +594,8 @@ synthesize:
     template: 广播超时 {{anr_count}} 次：BroadcastReceiver 处理超时
   - condition: anr_type === 'EXECUTING_SERVICE'
     template: 服务超时 {{anr_count}} 次：Service 生命周期方法超时
+sql_fragments:
+- fragments/art_gc_names.sql
 save_as: overview
 condition: detection.data[0]?.total_anr_count > 0
 ```
@@ -618,6 +678,8 @@ synthesize:
   - key: anr_dur_ms
     label: 超时时长
     format: '{{value}} ms'
+sql_fragments:
+- fragments/art_gc_names.sql
 save_as: anr_events
 condition: detection.data[0]?.total_anr_count > 0
 ```
@@ -729,6 +791,7 @@ inputs:
 - cpu_health
 - memory_pressure
 - io_load
+- anr_io_wait
 - lock_waits
 - freeze_check
 - overview
@@ -793,10 +856,10 @@ rules:
   - CPU 资源严重不足
   - 检查后台进程 CPU 占用
   - top_processes 显示的进程可能是罪魁祸首
-- condition: (detection.data[0]?.total_anr_count || 0) === 1 && io_load.data[0]?.uninterruptible_wait_ms > (uninterruptible_wait_threshold_ms
-    || io_wait_threshold_ms || 500)
+- condition: (detection.data[0]?.total_anr_count || 0) === 1 && (anr_io_wait.data?.[0]?.main_thread_uninterruptible_ms ||
+    0) > (uninterruptible_wait_threshold_ms || io_wait_threshold_ms || 500)
   severity: warning
-  diagnosis: 进程 ${io_load.data[0].process_name} D-state 不可中断等待 ${io_load.data[0].uninterruptible_wait_ms}ms
+  diagnosis: ANR 进程 ${anr_io_wait.data[0].process_name} 主线程在 ANR 窗口内 D-state 不可中断等待 ${anr_io_wait.data[0].main_thread_uninterruptible_ms}ms
   confidence: low
   suggestions:
   - D-state 只能说明不可中断等待，不能单独证明磁盘 IO

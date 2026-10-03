@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/gpu_analysis.skill.yaml
-Source SHA-256: 700737c3b798446d259b725cdb99906ea5b2a4b8b3a6334401f1cc18b352b061
+Source SHA-256: 1782c39f5ca4ce044bf815ac7ed529e2509316b08ab38f26baaab7ce64fce6bb
 # GPU 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -60,7 +60,6 @@ patterns:
 
 ```yaml
 modules:
-- android.gpu.frequency
 - android.gpu.memory
 ```
 
@@ -123,6 +122,8 @@ modules:
 id: data_check
 type: atomic
 display: false
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
 save_as: data_check
 ```
 ### GPU 频率概览
@@ -139,7 +140,7 @@ synthesize:
   role: overview
   fields:
   - key: weighted_avg_freq_mhz
-    label: 加权平均频率
+    label: 运行时加权平均频率
     format: '{{value}} MHz'
   - key: max_freq_time_pct
     label: 最高频占比
@@ -150,8 +151,10 @@ synthesize:
   insights:
   - condition: max_freq_time_pct > 70
     template: GPU 在最高频率运行 {{max_freq_time_pct}}%，可能存在 GPU 瓶颈
-  - condition: max_freq_time_pct < 10
-    template: GPU 大部分时间低频运行，负载较轻
+  - condition: off_pct >= 50
+    template: GPU 在 {{off_pct}}% 的观测时间里处于关闭状态，负载较轻
+  - condition: max_freq_time_pct < 10 && off_pct < 50
+    template: GPU 运行时大部分低于最高频，负载较轻
   - condition: freq_change_count > 500
     template: GPU 频率变化 {{freq_change_count}} 次，调频活跃
 display:
@@ -163,7 +166,7 @@ display:
     label: GPU ID
     type: number
   - name: weighted_avg_freq_mhz
-    label: 加权平均频率
+    label: 运行时加权平均频率
     type: number
     format: compact
   - name: max_freq_mhz
@@ -185,12 +188,20 @@ display:
     label: 变频次数
     type: number
     format: compact
+  - name: off_pct
+    label: GPU 关闭占比
+    type: percentage
+    format: percentage
   - name: total_time_sec
     label: 采样时间
     type: number
   - name: rating
     label: 评级
     type: string
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
+- fragments/gpu_frequency_window.sql
+- fragments/gpu_frequency_summary.sql
 save_as: gpu_freq_overview
 condition: data_check.data[0]?.has_gpu_data === 1
 ```
@@ -256,6 +267,9 @@ display:
   - name: gpu_id
     label: GPU
     type: number
+  - name: state
+    label: 状态
+    type: string
   - name: gpu_freq_mhz
     label: 频率 (MHz)
     type: number
@@ -270,6 +284,10 @@ display:
   - name: is_max_freq
     label: 是否最高频
     type: string
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
+- fragments/gpu_frequency_window.sql
+- fragments/gpu_frequency_summary.sql
 save_as: gpu_freq_distribution
 condition: data_check.data[0]?.has_gpu_data === 1
 ```
@@ -295,8 +313,12 @@ display:
     label: 帧数
     type: number
     format: compact
+  - name: frames_with_running_freq
+    label: 有运行频率的帧
+    type: number
+    format: compact
   - name: avg_gpu_freq_mhz
-    label: 平均 GPU 频率
+    label: 帧内平均运行频率
     type: number
     format: compact
   - name: avg_frame_dur_ms
@@ -312,6 +334,11 @@ display:
   - name: gpu_freq_range
     label: 频率范围
     type: string
+  - name: gpu_id
+    label: GPU
+    type: number
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
 save_as: gpu_frame_correlation
 condition: data_check.data[0]?.has_gpu_data === 1 && data_check.data[0]?.has_frame_timeline === 1
 ```
@@ -352,6 +379,10 @@ display:
     format: duration_ms
     unit: ns
     hidden: true
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
+- fragments/gpu_frequency_window.sql
+- fragments/gpu_frequency_summary.sql
 save_as: gpu_high_load
 condition: data_check.data[0]?.has_gpu_data === 1
 ```
@@ -396,6 +427,10 @@ display:
   - name: suggestion
     label: 优化建议
     type: string
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
+- fragments/gpu_frequency_window.sql
+- fragments/gpu_frequency_summary.sql
 save_as: conclusion
 condition: data_check.data[0]?.has_gpu_data === 1
 ```

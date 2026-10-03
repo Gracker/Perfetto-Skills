@@ -99,7 +99,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/startup_analysis.skill.yaml",
-    "sha256": "eca7dbe4662017ed928fa3ef41a4da151d49e1543de7a03a96fdfecb7f3d1105"
+    "sha256": "1c29d77206e96bcebd17d2eb78ff8f36ef33384e61393103588476b8d1b923de"
   },
   "steps": [
     {
@@ -510,9 +510,9 @@
           ]
         },
         {
-          "condition": "(breakdown?.data?.length || 0) > 0 && ((breakdown.data.find(b => b.category === 'ClassLoading')?.percent) || 0) > 15 && (class_loading?.data?.length || 0) > 0 && ((class_loading.data[0]?.percent_of_startup) || 0) > 5",
+          "condition": "(breakdown?.data?.length || 0) > 0 && ((breakdown.data.find(b => b.category === 'ClassLoading')?.category_percent) || 0) > 15 && (class_loading?.data?.length || 0) > 0 && ((class_loading.data[0]?.percent_of_startup) || 0) > 5",
           "confidence": "medium",
-          "diagnosis": "类加载占比较高（breakdown ${breakdown?.data?.find(b => b.category === 'ClassLoading')?.percent}%）",
+          "diagnosis": "类加载占比较高（breakdown ${breakdown?.data?.find(b => b.category === 'ClassLoading')?.category_percent}%）",
           "severity": "info",
           "suggestions": [
             "使用 baseline profile 预编译热点类",

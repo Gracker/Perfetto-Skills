@@ -55,18 +55,15 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_frequency_analysis/query.sql",
-      "sha256": "706723c1d1325fb88544123168906d27e363bb481cccbafeacc7b8b77e69f724",
+      "sha256": "55286a63739d8da1a253ab41290be606edebb571f8c6edca592ffc1721997927",
       "signal_patterns": [
-        "*adreno*freq*",
-        "*gpu*freq*",
-        "*img*freq*",
-        "*mali*freq*"
+        "gpufreq"
       ],
       "skill_id": "gpu_frequency_analysis",
       "source": {
         "path": "backend/skills/atomic/gpu_frequency_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "bc94b1d344fadef2dc3610ebac99e3304c8349358417428301cbae1335687540"
+        "sha256": "426ed62ea0fe1c4cf8e5f8414569076f13999b8f740cd50e6eff1b332188e817"
       },
       "sql_dependencies": {
         "creates": [],
@@ -78,7 +75,23 @@
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/gpu_frequency_intervals.sql",
+            "source_sha256": "2bd8dac125b274ab3a3966e9f43ed780d0eef389b2eb5c0ee60e82fbfb5d6cba"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/gpu_frequency_window.sql",
+            "source_sha256": "f615d9d238a1c9aa1382d69f35e6adc7cb087cfefb0aad8cc117d774a1f6b17f"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/gpu_frequency_summary.sql",
+            "source_sha256": "3e0a701cdd5e39f4b248ef4137a0928476716dbf4b74824cb29a40847d75387b"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",

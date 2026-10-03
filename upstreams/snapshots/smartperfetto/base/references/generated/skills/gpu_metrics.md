@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/gpu_metrics.skill.yaml
-Source SHA-256: 9456c4556e1e976ba2c42d7261839a9deac5ebd010487a69b95b965f094a68b2
+Source SHA-256: 80fe51882560c325dcd072ed62a0c07db6b43a2fdf215b072b366077ec1fbf51
 # GPU 指标分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -89,6 +89,13 @@ display:
     label: 计数器
     type: string
     format: truncate
+  - name: undeclared_unit_counters
+    label: 单位未声明的计数器
+    type: string
+    format: truncate
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
+- fragments/gpu_descriptor_frequency_tracks.sql
 save_as: gpu_freq
 optional: true
 ```

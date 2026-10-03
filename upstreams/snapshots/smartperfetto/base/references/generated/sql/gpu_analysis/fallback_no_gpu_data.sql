@@ -1,10 +1,10 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/gpu_analysis.skill.yaml
--- Source SHA-256: 700737c3b798446d259b725cdb99906ea5b2a4b8b3a6334401f1cc18b352b061
+-- Source SHA-256: 1782c39f5ca4ce044bf815ac7ed529e2509316b08ab38f26baaab7ce64fce6bb
 
 SELECT
   '无法执行 GPU 分析' as status,
-  'android_gpu_frequency (GPU 频率数据)' as missing_data,
+  'gpufreq 计数器（GPU 频率数据）' as missing_data,
   '请确保 trace 采集时启用了 GPU 频率采集 (需要内核支持 gpu_frequency tracepoint)' as suggestion
 UNION ALL
 SELECT

@@ -19,18 +19,7 @@
     ],
     "signal_patterns": [
       "${package}",
-      "${package}:*",
-      "*Alloc*",
-      "*Background*",
-      "*ConcurrentCopying*",
-      "*Explicit*",
-      "*Full*",
-      "*GC*",
-      "*MarkSweep*",
-      "*Young*",
-      "*full*",
-      "*gc*",
-      "*young*"
+      "${package}:*"
     ]
   },
   "id": "memory_analysis",
@@ -98,6 +87,13 @@
     },
     {
       "default": 50,
+      "description": "主线程等待 GC 完成的总时长警告阈值 (ms)",
+      "name": "main_thread_gc_wait_warning_ms",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 50,
       "description": "单次 GC 告警阈值（ms）",
       "name": "single_gc_warning_ms",
       "required": false,
@@ -113,7 +109,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/memory_analysis.skill.yaml",
-    "sha256": "51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10"
+    "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
   },
   "steps": [
     {
@@ -124,16 +120,6 @@
       "query_id": "memory_analysis/get_process",
       "result_dependencies": [],
       "save_as": "target_process",
-      "type": "atomic"
-    },
-    {
-      "condition": "target_process.data.length > 0",
-      "displayed": true,
-      "id": "init_gc_view",
-      "name": "初始化 GC 事件视图",
-      "optional": true,
-      "query_id": "memory_analysis/init_gc_view",
-      "result_dependencies": [],
       "type": "atomic"
     },
     {
@@ -371,9 +357,19 @@
           ]
         },
         {
+          "condition": "gc_overview.data[0]?.main_thread_gc_wait_ms > (main_thread_gc_wait_warning_ms ?? 50)",
+          "confidence": "high",
+          "diagnosis": "主线程等待 GC 完成 ${gc_overview.data[0].main_thread_gc_wait_count} 次，共 ${gc_overview.data[0].main_thread_gc_wait_ms}ms",
+          "severity": "warning",
+          "suggestions": [
+            "减少主线程分配，避免触发 Alloc GC 后同步等待",
+            "检查 ProfileSaver 等 GC 临界区与主线程的重叠"
+          ]
+        },
+        {
           "condition": "long_gc.data[0]?.dur_ms > (single_gc_warning_ms ?? 50)",
           "confidence": "medium",
-          "diagnosis": "单次 GC 暂停过长 (${long_gc.data[0].dur_ms}ms)",
+          "diagnosis": "单次 GC 回收过长 (${long_gc.data[0].dur_ms}ms)",
           "severity": "warning",
           "suggestions": [
             "检查大对象分配",

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: b8b0e8e27b90ca26e7b7093b06e8f8379945cfbb569a581292addbed79bd3cfc
+Source SHA-256: c238a56b3f563e79c915c28bace4980867e7537c6c851c9cd04fcc7be4b48dd1
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -55,7 +55,6 @@ modules:
 - android.slices
 - android.monitor_contention
 - android.garbage_collection
-- android.gpu.frequency
 ```
 
 ## Inputs
@@ -207,6 +206,8 @@ type: atomic
 process_scope:
   role: identity_metadata
 display: false
+sql_fragments:
+- fragments/gpu_frequency_intervals.sql
 save_as: gpu_availability
 optional: true
 ```
@@ -1509,7 +1510,7 @@ rules:
   - 检查图层数量和复杂度
 - condition: gpu_freq_data?.data?.length > 0 && gpu_freq_data.data[0]?.low_freq_pct > 50
   severity: warning
-  diagnosis: GPU 低频运行占比 ${gpu_freq_data.data[0].low_freq_pct}%
+  diagnosis: GPU 运行时间中低频占比 ${gpu_freq_data.data[0].low_freq_pct}%
   confidence: medium
   suggestions:
   - GPU 未能提升频率

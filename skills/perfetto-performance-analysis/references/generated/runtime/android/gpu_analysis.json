@@ -52,7 +52,6 @@
     }
   },
   "required_modules": [
-    "android.gpu.frequency",
     "android.gpu.memory"
   ],
   "required_tables": [],
@@ -68,7 +67,6 @@
     "${package}",
     "${package}:*",
     "actual_frame_timeline_slice",
-    "android_gpu_frequency",
     "android_gpu_memory_per_process"
   ],
   "skill_id": "gpu_analysis",

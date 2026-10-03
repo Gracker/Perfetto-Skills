@@ -55,19 +55,19 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_power_state_analysis/query.sql",
-      "sha256": "ac16ee5878d9d2a72e033d9bf30b9e548d3d8427c6b123b2ff6034a10b04b843",
-      "signal_patterns": [],
+      "sha256": "f48e5266bdb1077cd9c72a233e3b02f1c386e12fade976e0d6d83a6de18ca0ed",
+      "signal_patterns": [
+        "gpufreq"
+      ],
       "skill_id": "gpu_power_state_analysis",
       "source": {
         "path": "backend/skills/atomic/gpu_power_state_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "0a4ae145d64ac7d9eddb15b2f73f8f209e360d4d06e87e8bb500751ee7162f6d"
+        "sha256": "a0e54254f65ca6f9f3c07fba63cbf1a40086b3d12bab82246a33388404938687"
       },
       "sql_dependencies": {
         "creates": [],
-        "declared_modules": [
-          "android.gpu.frequency"
-        ],
+        "declared_modules": [],
         "drops": [],
         "required_tables": [],
         "requires": [],
@@ -75,7 +75,23 @@
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/gpu_frequency_intervals.sql",
+            "source_sha256": "9b40d45c78027c092f8d72eefc39f6a24c716142df9a4b8ec940b20e927f2aa1"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/gpu_frequency_window.sql",
+            "source_sha256": "4e05463daa5f57e439a95b58e26b401c2a6e8b86f76a3d23ed34f65455f7c798"
+          },
+          {
+            "order": 2,
+            "source_path": "backend/skills/fragments/gpu_frequency_summary.sql",
+            "source_sha256": "ad8874b375cb5be9d30cfc8c61fcf803fdf859ea58fabaa530eebfb9de2468f1"
+          }
+        ],
         "name_parameters": [],
         "parameters": [
           "end_ts",

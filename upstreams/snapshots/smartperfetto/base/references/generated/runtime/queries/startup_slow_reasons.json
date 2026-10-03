@@ -75,7 +75,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_slow_reasons/startup_overview.sql",
-      "sha256": "86763c0a6401fadf44be472ee603174ad81e48cb5b6864226d272d36f48fb8d3",
+      "sha256": "82def617168696524ae0a2eec863c41eb273bd2b0af737833bfde3f5e9feb118",
       "signal_patterns": [
         "bindApplication",
         "handleRelaunchActivity*",
@@ -86,7 +86,7 @@
       "source": {
         "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "0056319a6a46e55c0263b521daa518d49ea630bba3b03f02f0a545497a8bb1f7"
+        "sha256": "cb20c2647635bf0ce38dcf0c37c60e5e49521b2ea7d4bbd75ed108c97535e0c8"
       },
       "sql_dependencies": {
         "creates": [],
@@ -190,7 +190,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_slow_reasons/slow_reason_checks.sql",
-      "sha256": "b7c512df4b56ccd20764d476f3a6297aef1dc24f8908e89375719162e2b73086",
+      "sha256": "b335ce72968d606a6ece74a958e565f7843ab187781868f30a57f2be5db2c64e",
       "signal_patterns": [
         "*GC*",
         "*Lock contention*",
@@ -200,7 +200,6 @@
         "*contentProviderCreate*",
         "*dex2oat*",
         "*dex2oatd*",
-        "*gc*",
         "*monitor contention*",
         "*webview*",
         "JIT compiling*",
@@ -220,7 +219,7 @@
       "source": {
         "path": "backend/skills/atomic/startup_slow_reasons.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "0056319a6a46e55c0263b521daa518d49ea630bba3b03f02f0a545497a8bb1f7"
+        "sha256": "cb20c2647635bf0ce38dcf0c37c60e5e49521b2ea7d4bbd75ed108c97535e0c8"
       },
       "sql_dependencies": {
         "creates": [],
@@ -235,7 +234,13 @@
       },
       "step_id": "slow_reason_checks",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/art_gc_names.sql",
+            "source_sha256": "e015d4d78f8ffda8073a50b08fcea97f40c01606f56af6ef4b5568934f0b1614"
+          }
+        ],
         "name_parameters": [],
         "parameters": [],
         "result_dependencies": [

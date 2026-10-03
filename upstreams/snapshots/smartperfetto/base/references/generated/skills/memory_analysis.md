@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/memory_analysis.skill.yaml
-Source SHA-256: 51ddff1e843e8e91fa5b9e8f494b2c95beaf700729248e96efd733cbaea21e10
+Source SHA-256: 1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1
 # 内存性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -97,6 +97,11 @@ modules: []
   required: false
   default: 10
   description: 主线程 GC 次数严重阈值
+- name: main_thread_gc_wait_warning_ms
+  type: number
+  required: false
+  default: 50
+  description: 主线程等待 GC 完成的总时长警告阈值 (ms)
 - name: single_gc_warning_ms
   type: number
   required: false
@@ -131,20 +136,6 @@ display:
     type: string
 save_as: target_process
 on_empty: 未找到目标进程
-```
-### 初始化 GC 事件视图
-
-- ID: `init_gc_view`
-- Type: `atomic`
-- SQL: [`../sql/memory_analysis/init_gc_view.sql`](../sql/memory_analysis/init_gc_view.sql)
-
-```yaml
-id: init_gc_view
-type: atomic
-display:
-  level: hidden
-optional: true
-condition: target_process.data.length > 0
 ```
 ### 检测 VSync 周期
 
@@ -364,6 +355,20 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+  - name: main_thread_gc_wait_count
+    label: 主线程等待 GC
+    type: number
+    format: compact
+  - name: main_thread_gc_wait_ms
+    label: 主线程等待 GC 耗时
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: gc_wait_ms
+    label: 各线程等待 GC 合计
+    type: duration
+    format: duration_ms
+    unit: ms
   - name: gc_per_second
     label: GC 频率
     type: number
@@ -373,6 +378,9 @@ display:
   - name: gc_time_rating
     label: 耗时评级
     type: string
+sql_fragments:
+- fragments/art_gc_names.sql
+- fragments/memory_gc_events.sql
 save_as: gc_overview
 condition: target_process.data.length > 0
 ```
@@ -429,6 +437,9 @@ display:
     label: 主线程 GC
     type: number
     format: compact
+sql_fragments:
+- fragments/art_gc_names.sql
+- fragments/memory_gc_events.sql
 save_as: gc_stats
 condition: target_process.data.length > 0
 ```
@@ -485,6 +496,9 @@ display:
   - name: impact
     label: 影响
     type: string
+sql_fragments:
+- fragments/art_gc_names.sql
+- fragments/memory_gc_events.sql
 save_as: gc_frame_impact
 condition: target_process.data.length > 0
 ```
@@ -527,6 +541,9 @@ display:
   - name: dropped_frames
     label: 掉帧数
     type: number
+sql_fragments:
+- fragments/art_gc_names.sql
+- fragments/memory_gc_events.sql
 save_as: main_thread_gc
 condition: target_process.data.length > 0
 ```
@@ -564,6 +581,9 @@ display:
   - name: blocked_function
     label: 阻塞函数
     type: string
+sql_fragments:
+- fragments/art_gc_names.sql
+- fragments/memory_gc_events.sql
 save_as: gc_thread_state
 condition: target_process.data.length > 0
 ```
@@ -598,6 +618,9 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+sql_fragments:
+- fragments/art_gc_names.sql
+- fragments/memory_gc_events.sql
 save_as: gc_intervals
 condition: target_process.data.length > 0
 ```
@@ -640,6 +663,9 @@ display:
   - name: is_main_thread
     label: 主线程
     type: string
+sql_fragments:
+- fragments/art_gc_names.sql
+- fragments/memory_gc_events.sql
 save_as: long_gc
 condition: target_process.data.length > 0
 ```
@@ -703,9 +729,16 @@ rules:
   suggestions:
   - 将内存密集型操作移到后台线程
   - 避免在 UI 线程分配大量内存
+- condition: gc_overview.data[0]?.main_thread_gc_wait_ms > (main_thread_gc_wait_warning_ms ?? 50)
+  severity: warning
+  diagnosis: 主线程等待 GC 完成 ${gc_overview.data[0].main_thread_gc_wait_count} 次，共 ${gc_overview.data[0].main_thread_gc_wait_ms}ms
+  confidence: high
+  suggestions:
+  - 减少主线程分配，避免触发 Alloc GC 后同步等待
+  - 检查 ProfileSaver 等 GC 临界区与主线程的重叠
 - condition: long_gc.data[0]?.dur_ms > (single_gc_warning_ms ?? 50)
   severity: warning
-  diagnosis: 单次 GC 暂停过长 (${long_gc.data[0].dur_ms}ms)
+  diagnosis: 单次 GC 回收过长 (${long_gc.data[0].dur_ms}ms)
   confidence: medium
   suggestions:
   - 检查大对象分配

@@ -206,8 +206,33 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "anr_analysis/trigger_classification",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.system_sched_spans.sql.source_sha256",
       "query_id": "anr_analysis/system_cpu_health",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
+      "query_id": "anr_analysis/anr_process_io_wait",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "anr_analysis/anr_process_io_wait",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "anr_analysis/anr_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "anr_analysis/get_anr_events",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -256,8 +281,18 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "anr_detail/direct_blocker_slice_classification",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "anr_detail/direct_blocker_slice_classification",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "anr_detail/anr_logcat_context",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -268,6 +303,46 @@
     {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "app_frame_production/app_production_stats",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "art_module/gc_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "art_module/gc_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "art_module/gc_totals",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "art_module/gc_totals",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "art_module/gc_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "art_module/gc_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "art_module/gc_during_main_thread",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "art_module/gc_during_main_thread",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -911,6 +986,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "device_state_timeline/gpu_freq_transitions",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.file_io_slice_names.sql.source_sha256",
       "query_id": "filesystem_module/io_overview",
       "reason": "hash identifies the packaged runtime fragment"
@@ -966,8 +1046,193 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_analysis/data_check",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_freq_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_freq_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_summary.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_freq_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_freq_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_freq_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_summary.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_freq_distribution",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_frame_correlation",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_high_load_periods",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_high_load_periods",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_summary.sql.source_sha256",
+      "query_id": "gpu_analysis/gpu_high_load_periods",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_analysis/root_cause_classification",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_analysis/root_cause_classification",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_summary.sql.source_sha256",
+      "query_id": "gpu_analysis/root_cause_classification",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_freq_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_freq_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_summary.sql.source_sha256",
+      "query_id": "gpu_freq_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_frequency_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_frequency_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_summary.sql.source_sha256",
+      "query_id": "gpu_frequency_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_metrics/gpu_frequency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_descriptor_frequency_tracks.sql.source_sha256",
+      "query_id": "gpu_metrics/gpu_frequency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_module/gpu_frequency_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_descriptor_frequency_tracks.sql.source_sha256",
+      "query_id": "gpu_module/gpu_frequency_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_power_state_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_power_state_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_summary.sql.source_sha256",
+      "query_id": "gpu_power_state_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "gpu_render_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/data_check",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/frequency_residency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/frequency_residency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_by_ugpu.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/frequency_residency",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/dvfs_ramp_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/dvfs_ramp_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_by_ugpu.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/dvfs_ramp_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/sustained_throttle_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_window.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/sustained_throttle_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_by_ugpu.sql.source_sha256",
+      "query_id": "gpu_v57_ai_diagnostics/sustained_throttle_events",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -1038,6 +1303,11 @@
     {
       "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
       "query_id": "io_pressure/root_cause_classification",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
+      "query_id": "jank_frame_detail/gpu_table_check",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -1186,6 +1456,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "logcat_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.file_io_slice_names.sql.source_sha256",
       "query_id": "main_thread_file_io_in_range/root",
       "reason": "hash identifies the packaged runtime fragment"
@@ -1261,6 +1536,76 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "memory_analysis/gc_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "memory_analysis/gc_overview",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "memory_analysis/gc_stats",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "memory_analysis/gc_stats",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "memory_analysis/gc_frame_impact",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "memory_analysis/gc_frame_impact",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "memory_analysis/main_thread_gc",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "memory_analysis/main_thread_gc",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "memory_analysis/gc_thread_state",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "memory_analysis/gc_thread_state",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "memory_analysis/gc_interval_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "memory_analysis/gc_interval_analysis",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "memory_analysis/long_gc_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.memory_gc_events.sql.source_sha256",
+      "query_id": "memory_analysis/long_gc_events",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.heap_target_process.sql.source_sha256",
       "query_id": "native_heap_breakdown/heap_profile_inventory",
       "reason": "hash identifies the packaged runtime fragment"
@@ -1282,6 +1627,11 @@
     },
     {
       "field": "template.fragments.file_io_slice_names.sql.source_sha256",
+      "query_id": "navigation_analysis/navigation_blocking_ops",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
       "query_id": "navigation_analysis/navigation_blocking_ops",
       "reason": "hash identifies the packaged runtime fragment"
     },
@@ -1976,6 +2326,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "startup_gc_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "startup_hot_slice_states/root",
       "reason": "hash identifies the packaged runtime fragment"
@@ -1993,6 +2348,11 @@
     {
       "field": "template.fragments.io_blocked_function_families.sql.source_sha256",
       "query_id": "startup_main_thread_states_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "startup_slow_reasons/slow_reason_checks",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -2062,6 +2422,11 @@
     },
     {
       "field": "template.fragments.system_cpu_freq_limit_spans.sql.source_sha256",
+      "query_id": "thermal_throttling/data_check",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.gpu_frequency_intervals.sql.source_sha256",
       "query_id": "thermal_throttling/data_check",
       "reason": "hash identifies the packaged runtime fragment"
     },

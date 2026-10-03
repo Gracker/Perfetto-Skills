@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/navigation_analysis.skill.yaml
--- Source SHA-256: 22cd4dfce1fd88d4610a41825267b0c17ab31811b871551db13a6719c8466f52
+-- Source SHA-256: c8bbe81d2a904151402e873ca39bfb964e77a0287f268961fbb540b88648da48
 
 SELECT
   bt.server_process,

@@ -1,34 +1,103 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/device_state_timeline.skill.yaml
--- Source SHA-256: 706331c8ba61ce76147693d6cb6cdf6758bdfc7ecab0b035ab635b86002efd08
+-- Source SHA-256: 4bdcfcf7ad8209f5290e1f7a6e7ff4d7886529fa423c89e440374bc4111114d1
 
-WITH gpu_freq AS (
+-- MHz from fragments/gpu_frequency_intervals.sql, which normalizes each
+-- sample and compares normalized neighbours, so a unit change is not a
+-- transition. Powering the GPU off or on is named as such; a lower
+-- frequency alone is not throttling.
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+
+-- No input CTE. The GPU frequency of every GPU as leading intervals, one row
+-- per counter sample of the trace_processor "gpufreq" track (the same input
+-- and interval shape as stdlib android_gpu_frequency, which returns the raw
+-- value), with the value normalized to MHz.
+--
+-- That track is labelled kHz, but its writers disagree: power/gpu_frequency
+-- and generic GPU events write kHz, kgsl_gpu_frequency is multiplied to Hz by
+-- trace_processor, and sys_stats gpufreq_mhz writes MHz to GPU 0, so one
+-- track can carry two units. Each sample is read by its own magnitude, which
+-- is unambiguous for a GPU clock between 10 MHz and 10 GHz:
+--   0                  off: the GPU is powered down, not running slowly
+--   10 <= v < 1e4      MHz
+--   1e4 <= v < 1e7     kHz
+--   1e7 <= v <= 1e10   Hz
+--   anything else      out_of_domain, freq_mhz NULL
+-- prev_freq_mhz is the normalized previous value, so a unit change is not
+-- a frequency change. A consumer reports off time apart and
+-- leaves it out of averages and low-frequency shares.
+gpu_frequency_samples AS (
   SELECT
+    c.id AS counter_id,
     c.ts,
-    ct.name as counter_name,
-    ROUND(c.value / 1000.0, 0) as freq_mhz,
-    LAG(ROUND(c.value / 1000.0, 0)) OVER (PARTITION BY ct.name ORDER BY c.ts) as prev_freq_mhz
+    c.track_id,
+    t.ugpu,
+    t.gpu_id,
+    c.value AS raw_value,
+    CASE
+      WHEN c.value = 0 THEN 'off'
+      WHEN c.value >= 10 AND c.value < 1e4 THEN 'mhz'
+      WHEN c.value >= 1e4 AND c.value < 1e7 THEN 'khz'
+      WHEN c.value >= 1e7 AND c.value <= 1e10 THEN 'hz'
+      ELSE 'out_of_domain'
+    END AS unit_basis
   FROM counter c
-  JOIN counter_track ct ON c.track_id = ct.id
-  WHERE (ct.name GLOB '*gpu_frequency*' OR ct.name GLOB '*gpu*freq*'
-         OR ct.name GLOB '*GPU*Freq*' OR ct.name GLOB '*gpu*clock*')
-    AND (${start_ts} IS NULL OR c.ts >= ${start_ts})
-    AND (${end_ts} IS NULL OR c.ts <= ${end_ts})
+  JOIN gpu_counter_track t ON t.id = c.track_id
+  WHERE t.name = 'gpufreq' AND t.gpu_id IS NOT NULL
+),
+gpu_frequency_normalized AS (
+  SELECT
+    *,
+    CASE unit_basis
+      WHEN 'off' THEN 0.0
+      WHEN 'mhz' THEN raw_value
+      WHEN 'khz' THEN raw_value / 1e3
+      WHEN 'hz' THEN raw_value / 1e6
+    END AS freq_mhz
+  FROM gpu_frequency_samples
+),
+gpu_frequency_intervals AS (
+  SELECT
+    counter_id,
+    ts,
+    COALESCE(LEAD(ts) OVER w, trace_end()) - ts AS dur,
+    track_id,
+    ugpu,
+    gpu_id,
+    freq_mhz,
+    unit_basis = 'off' AS is_off,
+    unit_basis,
+    LAG(freq_mhz) OVER w AS prev_freq_mhz
+  FROM gpu_frequency_normalized
+  WINDOW w AS (PARTITION BY track_id ORDER BY ts, counter_id)
+)
+,
+samples AS (
+  SELECT
+    *,
+    LAG(counter_id) OVER (PARTITION BY track_id ORDER BY ts, counter_id) IS NULL AS is_first
+  FROM gpu_frequency_intervals
 )
 SELECT
   printf('%d', ts) as ts,
-  counter_name,
-  freq_mhz,
-  prev_freq_mhz,
+  'GPU ' || gpu_id as counter_name,
+  ROUND(freq_mhz, 0) as freq_mhz,
+  ROUND(prev_freq_mhz, 0) as prev_freq_mhz,
   ROUND(freq_mhz - COALESCE(prev_freq_mhz, freq_mhz), 0) as delta_mhz,
   CASE
-    WHEN prev_freq_mhz IS NULL THEN 'initial'
-    WHEN freq_mhz > prev_freq_mhz THEN 'boost'
-    WHEN freq_mhz < prev_freq_mhz THEN 'throttle'
-    ELSE 'stable'
+    WHEN is_first THEN 'initial'
+    WHEN freq_mhz IS NULL THEN 'out_of_domain'
+    WHEN prev_freq_mhz IS NULL THEN 'after_out_of_domain'
+    WHEN is_off THEN 'power_off'
+    WHEN prev_freq_mhz = 0 THEN 'power_on'
+    WHEN freq_mhz > prev_freq_mhz THEN 'increase'
+    ELSE 'decrease'
   END as transition_type
-FROM gpu_freq
-WHERE prev_freq_mhz IS NULL
-   OR freq_mhz != prev_freq_mhz
+FROM samples
+WHERE (is_first OR freq_mhz IS NOT prev_freq_mhz)
+  AND (${start_ts} IS NULL OR ts >= ${start_ts})
+  AND (${end_ts} IS NULL OR ts <= ${end_ts})
 ORDER BY ts ASC
 LIMIT 300

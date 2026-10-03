@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/logcat_analysis.skill.yaml
-Source SHA-256: 3e22777bc465abc270cfa5a40e878f1e91742a88662d87ca9d0e3e6eb808fd25
+Source SHA-256: 4c006bf2fd2861d2f647a5ad1a5b282ebec951cf2ec824f792431262fb8769cb
 # Logcat 异常信号检测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

@@ -63,18 +63,7 @@
   ],
   "signal_patterns": [
     "${package}",
-    "${package}:*",
-    "*Alloc*",
-    "*Background*",
-    "*ConcurrentCopying*",
-    "*Explicit*",
-    "*Full*",
-    "*GC*",
-    "*MarkSweep*",
-    "*Young*",
-    "*full*",
-    "*gc*",
-    "*young*"
+    "${package}:*"
   ],
   "skill_id": "memory_analysis",
   "steps": {
@@ -487,51 +476,6 @@
         }
       },
       "query_id": null
-    },
-    "init_gc_view": {
-      "api": {
-        "28": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "29": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "30": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "31": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "32": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "33": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "34": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "35": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "36": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        },
-        "37": {
-          "reason": "No exact API semantic fixture; runtime capability proof required",
-          "status": "capability_gated"
-        }
-      },
-      "query_id": "memory_analysis/init_gc_view"
     },
     "lmk_events": {
       "api": {
