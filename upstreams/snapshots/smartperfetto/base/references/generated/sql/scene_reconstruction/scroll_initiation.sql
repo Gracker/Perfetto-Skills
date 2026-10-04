@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scene_reconstruction.skill.yaml
--- Source SHA-256: 2dc3194fd8730e6ce16c5d4db97860cc8cdfccee8b6b2f23dfd11ddb3d752ab4
+-- Source SHA-256: 59b4122937e29b04987a3c415c69cc1ce8120d970dcdd14b005ed5a34adbc22e
 
 SELECT printf('%d', s.ts) AS ts, printf('%d', s.dur) AS dur,
   'RecyclerView 滚动处理' AS event, s.id AS gesture_id, p.name AS app_package,

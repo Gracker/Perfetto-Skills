@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scroll-response.strategy.md
-Source SHA-256: 6680d84010bef5db61f723d5c148145d7db81c333104d81131233e4f917b1e40
+Source SHA-256: 4cb9824fa8afc1d9bc28026e5c2f39af9dac33f6cf231933a605f23ea0b04661
 
 # Scroll Response Strategy
 
@@ -127,86 +127,6 @@ final_report_contract:
       - 不适用
       - missing
       - confidence
-phase_hints:
-- id: scroll_latency_scope_boundary
-  keywords:
-  - scroll response
-  - scroll latency
-  - first frame
-  - ACTION_MOVE
-  - 首帧
-  - 响应延迟
-  - 滑动响应
-  constraints: 先声明响应口径：dispatch-to-ACK、ACTION_MOVE 到首帧候选、还是 input-to-present。scroll_response_latency 的默认输出不能在缺少 FrameTimeline/present
-    链接时被写成硬端到端上屏。
-  critical_tools:
-  - input_events_in_range
-  - scroll_response_latency
-  critical: true
-- id: scroll_input_target_boundary
-  keywords:
-  - InputDispatcher
-  - InputChannel
-  - FINISHED
-  - ACK
-  - wait queue
-  - wq
-  - stale
-  - focused window
-  - target window
-  constraints: 滑动响应异常可能来自输入队列、窗口目标、stale drop 或未完成 ACK。若没有 dumpsys/logcat/WindowManager/InputDispatcher 证据，只能作为缺口，不要把它归因成
-    App 滑动代码。
-  critical_tools:
-  - input_events_in_range
-  critical: false
-plan_template:
-  mandatory_aspects:
-  - id: input_event_detection
-    match_keywords:
-    - input
-    - gesture
-    - motion
-    - action_move
-    - 输入
-    - 手势
-    - 触摸
-    - input_events
-    suggestion: 滑动响应场景建议包含输入事件定位阶段 (input event detection)
-    required_expected_call_alternatives:
-    - skill_id: click_response_analysis
-    - skill_id: input_events_in_range
-  - id: latency_breakdown
-    match_keywords:
-    - latency
-    - response
-    - delay
-    - 延迟
-    - 响应
-    - 分解
-    - breakdown
-    - 首帧
-    - FrameTimeline
-    - present
-    suggestion: 滑动响应场景建议包含响应延迟口径和帧/上屏证据边界 (latency scope + frame linkage)
-    required_expected_call_alternatives:
-    - skill_id: scroll_response_latency
-    - skill_id: touch_to_display_latency
-  - id: input_target_boundary
-    match_keywords:
-    - stale
-    - focused window
-    - target window
-    - InputChannel
-    - FINISHED
-    - ACK
-    - wait queue
-    - wq
-    - dumpsys
-    - logcat
-    suggestion: 滑动响应场景需要说明输入目标、stale、FINISHED ACK 和窗口/队列证据是否可用或缺失
-    required_expected_call_alternatives:
-    - skill_id: click_response_detail
-    - skill_id: input_events_in_range
 ```
 
 ## Investigation methodology

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/multi-trace-result-comparison.strategy.md
-Source SHA-256: d5d5f1054761c3838d03ffcf3d25d15cd48044b3e3114e2039ba58fd97427d25
+Source SHA-256: 46b894b8ba88cf71c7f8132180915ad67eeccec6409c5913400018f0bbbf49e6
 
 # Multi Trace Result Comparison Strategy
 
@@ -42,55 +42,6 @@ keywords:
 - multi trace result comparison
 - compare snapshots
 - compare analysis results
-phase_hints:
-- id: result_snapshot_selection
-  keywords:
-  - snapshot
-  - 结果
-  - 候选
-  - baseline
-  - current result
-  - analysis result
-  critical_tools: []
-  critical: true
-- id: matrix_first
-  keywords:
-  - matrix
-  - delta
-  - metric
-  - fps
-  - jank
-  - startup
-  - 启动
-  - 帧率
-  constraints: 定量结论只能来自 ComparisonMatrix 的 normalized metrics。缺失 metric 要标注 missing reason；只有允许回填时才请求 trace backfill。
-  critical_tools: []
-  critical: true
-plan_template:
-  mandatory_aspects:
-  - id: snapshot_scope
-    match_keywords:
-    - snapshot
-    - analysis result
-    - 结果
-    - baseline
-    - candidate
-    suggestion: 分析结果对比必须先确认 snapshot 范围、baseline 和 candidates
-    required_expected_calls:
-    - {}
-  - id: comparison_matrix
-    match_keywords:
-    - matrix
-    - metric
-    - delta
-    - fps
-    - jank
-    - startup
-    - 启动
-    - 帧率
-    suggestion: 分析结果对比必须构造 ComparisonMatrix，并基于结构化 metric 输出 delta
-    required_expected_calls:
-    - skill_id: multi_trace_result_comparison
 ```
 
 ## Investigation methodology

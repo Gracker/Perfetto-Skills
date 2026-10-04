@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
-Source SHA-256: ab5ff507b1fd4b7df8182c5305ab1a5e57968f67630cba1342534a27d3e7cb25
+Source SHA-256: 65644ec982e2a7cef39a9e2f32b6079cd5b6158e4a2994094a5f30ec05f15f38
 
 # Memory Strategy
 
@@ -162,85 +162,6 @@ final_report_contract:
       - 不可
       - not prove
       - not equal
-phase_hints:
-- id: memory_evidence_gate
-  keywords:
-  - memory
-  - 内存
-  - heap
-  - rss
-  - pss
-  - gc
-  - lmk
-  - memory_analysis
-  - 证据
-  constraints: 先确认 memory_analysis/lmk/GC/heap graph/dmabuf 等证据哪些存在。结论必须按证据类型分层；缺失 Native/SO/匿名 mmap/thread stack/ApplicationExitInfo/MemoryLimiter
-    等来源时只写数据缺口，不能当成已证明。
-  critical_tools:
-  - memory_analysis
-  critical: true
-- id: lmk_freezer_oom_boundary
-  keywords:
-  - lmk
-  - oom
-  - freezer
-  - kill
-  - 杀进程
-  - 低内存
-  - 内存压力
-  constraints: LMK、freezer、Java OOM、Native OOM、Android 17 MemoryLimiter 是不同机制。只有对应事件、ApplicationExitInfo 或进程状态证据存在时才能命名；否则写成候选或采集建议。
-  critical_tools:
-  - lmk_analysis
-  - lmk_kill_attribution
-  - oom_adjuster_score_timeline
-  critical: false
-- id: gc_churn_boundary
-  keywords:
-  - gc
-  - churn
-  - allocation
-  - 分配
-  - 回收
-  - 抖动
-  - pause
-  constraints: GC 与卡顿/ANR 重叠只能说明相关性。必须结合 GC pause、allocation churn、线程状态或帧/ANR窗口证据，避免把后台 GC 或普通回收直接写成根因。
-  critical_tools:
-  - memory_analysis
-  - gc_analysis
-  critical: false
-- id: memory_diagnostic_api_boundary
-  keywords:
-  - ApplicationExitInfo
-  - getHistoricalProcessExitReasons
-  - REASON_LOW_MEMORY
-  - REASON_FREEZER
-  - REASON_EXCESSIVE_RESOURCE_USAGE
-  - ProfilingManager
-  - ProfilingTrigger
-  - heap dump
-  - heap profile
-  - KOOM
-  - APM
-  constraints: ApplicationExitInfo、ProfilingManager/ProfilingTrigger、heap dump/profile、KOOM/APM 都是补充证据。必须说明 API/Android 版本、record/artifact
-    时间、进程身份、reason/result file、与当前 trace 的对齐关系；不得把高内存直接等同泄漏，也不得把缺少退出记录写成没有 OOM/LMK。
-  critical_tools:
-  - memory_analysis
-  - lmk_analysis
-  critical: false
-plan_template:
-  mandatory_aspects:
-  - id: memory_trend_and_gc
-    match_keywords:
-    - memory
-    - oom
-    - gc
-    - 内存
-    - heap
-    - lmk
-    - memory_analysis
-    suggestion: 内存场景建议包含内存使用趋势和 GC 分析阶段 (memory_analysis)
-    required_expected_calls:
-    - skill_id: memory_analysis
 ```
 
 ## Investigation methodology

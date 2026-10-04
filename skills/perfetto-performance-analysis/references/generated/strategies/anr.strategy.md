@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: 1c6da87b2722d713d9a291bf8c7a41b45f1142efbf1140bcfbbfdf15ff6b124c
+Source SHA-256: 97b5a194de8fe894586b3b3c5a7663c00df02991d22f2574c0179c2e4be62e45
 
 # Anr Strategy
 
@@ -100,55 +100,6 @@ final_report_contract:
       - 不能
       - 不可
       - not replace
-phase_hints:
-- id: freeze_verdict
-  keywords:
-  - verdict
-  - 判定
-  - freeze
-  - diagnosis
-  - 诊断
-  - 原因
-  - anr_analysis
-  - 系统
-  - system
-  constraints: 有 ANR 窗口时先读 freeze_verdict：system freeze → 系统原因排查；app_specific → App 根因决策树；undetermined（system_server 主线程不可评估且无停滞证据）或
-    verdict 不可得时继续 App 决策树与无锚点主线程调查，保留系统健康证据缺口，既不排除也不断言系统冻结。
-  critical_tools:
-  - anr_analysis
-  critical: true
-- id: anr_diagnostic_api_boundary
-  keywords:
-  - ApplicationExitInfo
-  - getHistoricalProcessExitReasons
-  - getAnrInfo
-  - REASON_ANR
-  - ProfilingManager
-  - ProfilingTrigger
-  - TRIGGER_TYPE_ANR
-  - Play Vitals
-  - Android Vitals
-  - client watchdog
-  - SDK watchdog
-  constraints: ApplicationExitInfo、ProfilingTrigger 产物、Play/Android Vitals、客户端 watchdog 都只能补充 ANR 证据。必须说明 API/Android 版本、reason/trigger
-    type、record/artifact 时间、事件窗口对齐；根因仍需 Perfetto ANR window、direct_blocker、logcat、Binder/lock/IO/GC/scheduler 证据闭环。
-  critical_tools:
-  - anr_analysis
-  critical: false
-plan_template:
-  mandatory_aspects:
-  - id: anr_root_cause
-    match_keywords:
-    - anr
-    - deadlock
-    - block
-    - 死锁
-    - 阻塞
-    - not_responding
-    - anr_analysis
-    suggestion: ANR 场景建议包含 ANR 原因定位阶段 (anr_analysis)
-    required_expected_calls:
-    - skill_id: anr_analysis
 ```
 
 ## Investigation methodology

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/touch-tracking.strategy.md
-Source SHA-256: da1a7cfbcbd8391ed92d44d284f40658ad27654188530b2d8178db346bff01dc
+Source SHA-256: 52b3c2bb17f6d7082dce681f37166c7f72618c03fd82aaa7ff29c475c2c3dca2
 
 # Touch Tracking Strategy
 
@@ -48,20 +48,6 @@ keywords:
 - 触摸跟踪
 - touch latency
 - 输入延迟持续
-plan_template:
-  mandatory_aspects:
-  - id: per_frame_latency_measurement
-    match_keywords:
-    - input
-    - touch
-    - 跟手
-    - 延迟
-    - latency
-    - per_frame
-    - tracking
-    suggestion: 跟手度场景建议包含逐帧 Input-to-Display 延迟测量阶段
-    required_expected_calls:
-    - skill_id: touch_to_display_latency
 ```
 
 ## Investigation methodology

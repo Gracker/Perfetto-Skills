@@ -2272,7 +2272,7 @@
       "name": "scene_reconstruction",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scene_reconstruction.skill.yaml",
-      "source_sha256": "2dc3194fd8730e6ce16c5d4db97860cc8cdfccee8b6b2f23dfd11ddb3d752ab4",
+      "source_sha256": "59b4122937e29b04987a3c415c69cc1ce8120d970dcdd14b005ed5a34adbc22e",
       "tier": "S",
       "version": "1.1",
       "workflow": "scene-reconstruction"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "5d81f0c006adcca001a106bdd4565ad72805d281",
+    "commit": "3105ee8365ada3bd913f26b0a02d69a404c3a0e4",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "dd01cc94732e4359110878cb0d59f8dc5db7a42402b84ecaf5e5c8fe3848d82b",
+    "policy_sha256": "bc897000733bbec078f91650a7c7b5b5a99f7146f981512e8eb30022583f9d3c",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3441,7 +3441,7 @@
       "destination": "references/generated/strategies/anr.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/anr.strategy.md",
-      "source_sha256": "1c6da87b2722d713d9a291bf8c7a41b45f1142efbf1140bcfbbfdf15ff6b124c",
+      "source_sha256": "97b5a194de8fe894586b3b3c5a7663c00df02991d22f2574c0179c2e4be62e45",
       "workflow": "anr-blocking"
     },
     {
@@ -3485,7 +3485,7 @@
       "destination": "references/generated/strategies/game.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/game.strategy.md",
-      "source_sha256": "f0a1e0aca344b0e7ebeaecaa46d02129a4acaeb089a2c09c4b2203360dbba3b9",
+      "source_sha256": "bf79124f20f00d3a74c57dbae05915cd39d554116803611cfdb2a2a1b6912c9f",
       "workflow": "frameworks-games"
     },
     {
@@ -3496,16 +3496,10 @@
       "workflow": "trace-overview"
     },
     {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto golden trace evaluation corpus and gated overlay lifecycle",
-      "source_path": "backend/strategies/golden-trace-eval.registry.json",
-      "source_sha256": "e069390e83bde27224d7e675595498383856286e2867b97867959a2729d96d65"
-    },
-    {
       "destination": "references/generated/strategies/interaction.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/interaction.strategy.md",
-      "source_sha256": "a96195b45079d83c99ff2e1805b83da7b5b6f3997d3b4d795b5f5d18a14542e2",
+      "source_sha256": "e3c710af622d1e64c23c43d1c6e1a40788c8b81f0446a6c7a79ff26323b4a02a",
       "workflow": "interaction"
     },
     {
@@ -3519,7 +3513,7 @@
       "destination": "references/generated/strategies/io.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/io.strategy.md",
-      "source_sha256": "21e19aa8e0f55105567e1d876ea035e840e48fd5fbb4b1fc7c8ccc2ef0fd0bb8",
+      "source_sha256": "7712d6ee0e1bfe670171efa799a4e5dfbe3ff1855107ed9cdd5da3582bb30cf7",
       "workflow": "io-network-media"
     },
     {
@@ -3665,35 +3659,35 @@
       "destination": "references/generated/strategies/linux.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/linux.strategy.md",
-      "source_sha256": "0a65e59b0ec9179c432ab964faf5bc6492526a6206adb8e886c6ffd709ab18a3",
+      "source_sha256": "ea6c15dd398fff318bb92d96fc3e09d94f05a2cd424cf43386da0d7981a67a9b",
       "workflow": "cpu-scheduling"
     },
     {
       "destination": "references/generated/strategies/media.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/media.strategy.md",
-      "source_sha256": "d71f3076a5e368b276aa2c86623230749c5de77a141c6f9ddeab722402f94411",
+      "source_sha256": "741df6a282da351455c783692f856cca062c2f3bcc462cf2224def0d350930a4",
       "workflow": "io-network-media"
     },
     {
       "destination": "references/generated/strategies/memory.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/memory.strategy.md",
-      "source_sha256": "ab5ff507b1fd4b7df8182c5305ab1a5e57968f67630cba1342534a27d3e7cb25",
+      "source_sha256": "65644ec982e2a7cef39a9e2f32b6079cd5b6158e4a2994094a5f30ec05f15f38",
       "workflow": "memory"
     },
     {
       "destination": "references/generated/strategies/multi-trace-result-comparison.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/multi-trace-result-comparison.strategy.md",
-      "source_sha256": "d5d5f1054761c3838d03ffcf3d25d15cd48044b3e3114e2039ba58fd97427d25",
+      "source_sha256": "46b894b8ba88cf71c7f8132180915ad67eeccec6409c5913400018f0bbbf49e6",
       "workflow": "trace-comparison"
     },
     {
       "destination": "references/generated/strategies/network.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/network.strategy.md",
-      "source_sha256": "8001ee76f059bc8bf0f3cbf99545625b6e7e44843ad385849c86e3989d7a4b5f",
+      "source_sha256": "94f092fedee04da64eb9cf396b60ccba41e1efd65a5b42e5308367ec2106e103",
       "workflow": "io-network-media"
     },
     {
@@ -3707,14 +3701,14 @@
       "destination": "references/generated/strategies/pipeline.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/pipeline.strategy.md",
-      "source_sha256": "1e10561fa72092b93a666e2d5a21c45f230ac9774bbb894598ea42c20f2f1c18",
+      "source_sha256": "c5e2812baf359102bc6a0224f385315a57fcd2193d69548601e08bb16058d4a8",
       "workflow": "rendering-pipeline"
     },
     {
       "destination": "references/generated/strategies/power.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/power.strategy.md",
-      "source_sha256": "688812402e6539a836ce1f00eba98ac1b72207ff8c0a1b5389afc18c52cbe1e3",
+      "source_sha256": "f76bc14650a8408b1ef076b9f3f778a1c9ce3ed7c47d1f5032dedb2ea1e7c70d",
       "workflow": "power-thermal"
     },
     {
@@ -3752,6 +3746,24 @@
       "reason": "Runtime artifact access policy and preview interpretation",
       "source_path": "backend/strategies/prompt-artifact-result-guidance.template.md",
       "source_sha256": "45e9f4c320c5e108fec4d17db234266c85413dcad02ef8dfd3bdc11c7e13f898"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto execute_sql refusal of artifact pseudo-tables (English)",
+      "source_path": "backend/strategies/prompt-artifact-sql-misuse-en.template.md",
+      "source_sha256": "ef9cf1101bf0b35cc88c634a20f2a8beab0357bf18b44e88e09e05aef2c76720"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto execute_sql hint toward fetch_artifact for artifact references",
+      "source_path": "backend/strategies/prompt-artifact-sql-misuse-hint.template.md",
+      "source_sha256": "30728791135493104b2869386bbd88970a6061c65c276d12e069766f7ff37432"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto execute_sql refusal of artifact pseudo-tables (Chinese)",
+      "source_path": "backend/strategies/prompt-artifact-sql-misuse-zh.template.md",
+      "source_sha256": "08be14b922a5ebe4f64346f111e546617f993b29731fd7c99b4b2092b01275cc"
     },
     {
       "disposition": "product-only",
@@ -3883,13 +3895,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto selected document knowledge bases, their tools and citation contract",
       "source_path": "backend/strategies/prompt-knowledge-use-en.template.md",
-      "source_sha256": "70f9a5b22ad67e35a9026f074fa85f31685e84ca67817c6ce94d6874e3e4570a"
+      "source_sha256": "bf1c8ad3f947d155442b87f353e4d9e2aa5402391851a691d8cd8cbecd9f6a65"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto selected document knowledge bases, their tools and citation contract",
       "source_path": "backend/strategies/prompt-knowledge-use-zh.template.md",
-      "source_sha256": "d31804b93acc92ebae96352a7f94835f7e2f106bb68b270a94fd7bc69c71c0c5"
+      "source_sha256": "13363c9edceacf1bad4b9836743d42e93cdedf4746cea0f46dd57862fc80a1d3"
     },
     {
       "disposition": "product-only",
@@ -3950,6 +3962,18 @@
       "reason": "SmartPerfetto document knowledge base section read MCP tool contract",
       "source_path": "backend/strategies/prompt-read-knowledge-section-tool-description.template.md",
       "source_sha256": "454f8be22044a4149fb831a2950414d0da41c7be66c8d88fc13a36d3f6f8fa82"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto MCP data-tool result reasoning reminder (English)",
+      "source_path": "backend/strategies/prompt-reasoning-nudge-en.template.md",
+      "source_sha256": "d3e24790053f83035647aab520dc64d27b780fa4d4ebf785c7af4844f1945ad1"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto MCP data-tool result reasoning reminder (Chinese)",
+      "source_path": "backend/strategies/prompt-reasoning-nudge-zh.template.md",
+      "source_sha256": "1facdcf077062909f4f30c4461cc1234a873308ef044d933385b66fede4d4dd1"
     },
     {
       "disposition": "product-only",
@@ -4124,7 +4148,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto Skill and MCP evidence acquisition contract",
       "source_path": "backend/strategies/prompt-sql-evidence-guidance.template.md",
-      "source_sha256": "bcd9ab3eb586bebc03604fcd8e8a70382b4c4fa8b3711df1e41407f9020a0969"
+      "source_sha256": "dcd4ed4e74349db7090e8110ab4789ddfb7f4a010c7aeaae9ac5d8ee020e690b"
     },
     {
       "disposition": "product-only",
@@ -4134,21 +4158,15 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto submit_plan MCP tool description",
+      "source_path": "backend/strategies/prompt-submit-plan-tool-description.template.md",
+      "source_sha256": "43623a3f52f989fb725ce68a6059987630e7794ee69f6ee1f5d1d4a0a09acf70"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto resolved turn policy and source authorization",
       "source_path": "backend/strategies/prompt-turn-policy.template.md",
       "source_sha256": "dceff9353f240eeaa772cf144306ac4c995403cbca26422fd5c08cd2048d729b"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto incomplete delivery projection",
-      "source_path": "backend/strategies/report-runtime-delivery-appendix-en.template.md",
-      "source_sha256": "53f2893ad9bf3b403c61673d5c18f7b16dc2b13236dba71c4e306b890b2ce3d1"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto incomplete delivery projection",
-      "source_path": "backend/strategies/report-runtime-delivery-appendix-zh.template.md",
-      "source_sha256": "1a5902d6c0d56e3eeeca771b98e7d239b913faec720004edd09fe35fa9477ad8"
     },
     {
       "disposition": "product-only",
@@ -4264,7 +4282,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/runtime-correctness.strategy.md",
-      "source_sha256": "964d7900ab3c81df0495e18ae3f6ea732444ea903e2482196c089ccd3bfd5948"
+      "source_sha256": "58aa31b5a270948e88f0959f6a274e418f3608891fccdf930ce2fe6e1d53bde3"
     },
     {
       "disposition": "product-only",
@@ -4326,14 +4344,14 @@
       "destination": "references/generated/strategies/scroll-response.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scroll-response.strategy.md",
-      "source_sha256": "6680d84010bef5db61f723d5c148145d7db81c333104d81131233e4f917b1e40",
+      "source_sha256": "4cb9824fa8afc1d9bc28026e5c2f39af9dac33f6cf231933a605f23ea0b04661",
       "workflow": "scrolling"
     },
     {
       "destination": "references/generated/strategies/scrolling.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scrolling.strategy.md",
-      "source_sha256": "bd0ade5b94930214251b3461d84e54cccf1e77de3ccdc863bf4a44f30ddabdc2",
+      "source_sha256": "9106d618b4a2a3c91a6db52d924d6803f72bd2361da6dde0697bad4fca13b3be",
       "workflow": "scrolling"
     },
     {
@@ -4365,21 +4383,21 @@
       "destination": "references/generated/strategies/startup.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/startup.strategy.md",
-      "source_sha256": "fa57fbf467dcba356b998f0790a06fa8f1c87fd71be6b697fc17be71ead48746",
+      "source_sha256": "99498dc118e19b1232ec857a921b35aad1463caa1db3970d0314f457958542f1",
       "workflow": "startup"
     },
     {
       "destination": "references/generated/strategies/teaching.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/teaching.strategy.md",
-      "source_sha256": "2c6d8e6189a32916dcef23d5c0311c60db085173893c5cf07f453ed6eada2bd0",
+      "source_sha256": "ccada0457c74d33d3057f5d41b31458e3d435e76b0c938ecdfe7d47deb826009",
       "workflow": "trace-overview"
     },
     {
       "destination": "references/generated/strategies/touch-tracking.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/touch-tracking.strategy.md",
-      "source_sha256": "da1a7cfbcbd8391ed92d44d284f40658ad27654188530b2d8178db346bff01dc",
+      "source_sha256": "52b3c2bb17f6d7082dce681f37166c7f72618c03fd82aaa7ff29c475c2c3dca2",
       "workflow": "interaction"
     },
     {
@@ -4396,7 +4414,7 @@
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 105,
+    "product_only_strategy_sources": 108,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4407,7 +4425,7 @@
     },
     "skill_yaml_files": 257,
     "sql_fragments": 59,
-    "strategy_sources": 151,
+    "strategy_sources": 154,
     "vendor_overrides": 8
   },
   "vendor_overrides": [

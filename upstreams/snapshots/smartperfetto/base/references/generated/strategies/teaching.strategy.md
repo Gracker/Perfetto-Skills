@@ -1,14 +1,12 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/teaching.strategy.md
-Source SHA-256: 2c6d8e6189a32916dcef23d5c0311c60db085173893c5cf07f453ed6eada2bd0
+Source SHA-256: ccada0457c74d33d3057f5d41b31458e3d435e76b0c938ecdfe7d47deb826009
 
 # Teaching Strategy
 
 Portable methodology extracted from the SmartPerfetto strategy library.
 
 `execute_sql(...)` examples mean to run the contained SQL through `perfetto_query.py`; they do not require a product tool.
-
-`detect_architecture` steps mean: run the `rendering_pipeline_detection` Skill; the product tool only executes that Skill and maps its pipeline result to an architecture type.
 
 `invoke_skill("<name>", {...})` steps mean: run `python3 <skill-root>/scripts/perfetto_skill.py run TRACE --skill <name> --output-dir DIR` and pass each object field as `--param NAME=JSON`. Every Skill named this way is an exported, executable portable Skill, and every field is one of its declared inputs.
 
@@ -47,32 +45,6 @@ keywords:
 - 源码
 - source code
 - 这个slice
-plan_template:
-  mandatory_aspects:
-  - id: architecture_detection
-    match_keywords:
-    - detect_architecture
-    - architecture
-    - 架构
-    - pipeline
-    - 管线
-    - 教学
-    suggestion: 教学场景建议包含架构检测阶段 (detect_architecture)
-    required_expected_calls:
-    - tool: detect_architecture
-  - id: pipeline_teaching
-    match_keywords:
-    - teach
-    - explain
-    - 说明
-    - 解释
-    - thread
-    - 线程
-    - slice
-    - mermaid
-    required_expected_call_alternatives:
-    - skill_id: rendering_pipeline_detection
-    - skill_id: scene_reconstruction
 ```
 
 ## Investigation methodology

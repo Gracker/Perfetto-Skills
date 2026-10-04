@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/network.strategy.md
-Source SHA-256: 8001ee76f059bc8bf0f3cbf99545625b6e7e44843ad385849c86e3989d7a4b5f
+Source SHA-256: 94f092fedee04da64eb9cf396b60ccba41e1efd65a5b42e5308367ec2106e103
 
 # Network Strategy
 
@@ -157,96 +157,6 @@ final_report_contract:
       - confidence
       - 不能
       - 不可
-phase_hints:
-- id: network_packets
-  keywords:
-  - network
-  - traffic
-  - packet
-  - 网络
-  - 流量
-  - 数据包
-  - tcp
-  - udp
-  constraints: 优先调用 network_analysis。若 android_network_packets 不存在或为空，必须标注 trace 未启用 network_packets，不能解释为没有网络活动。
-  critical_tools:
-  - network_analysis
-  critical: true
-- id: network_power
-  keywords:
-  - battery
-  - power
-  - wakeup
-  - 耗电
-  - 唤醒
-  - 掉电
-  constraints: 网络耗电问题需要把 network_analysis 与 battery_drain_attribution / power_consumption_overview 组合，区分网络事件链和 rail 级功耗归因。
-  critical_tools:
-  - network_analysis
-  - battery_drain_attribution
-  - power_consumption_overview
-  critical: false
-- id: request_stage_boundary
-  keywords:
-  - DNS
-  - TLS
-  - TTFB
-  - HTTPDNS
-  - OkHttp
-  - Cronet
-  - HttpEngine
-  - EventListener
-  - APM
-  - request-stage
-  - 首包
-  - 首字节
-  constraints: request-stage 归因必须先说明 packet-level trace 只能证明包/接口/协议/活跃窗口；只有存在 OkHttp/Cronet/HttpEngine 事件、request_id、app trace
-    slice、接入层日志或 APM 且与当前时间窗对齐时，才能拆 DNS/connect/TLS/TTFB/body/decode/cache/retry。缺失时输出采集建议。
-  critical_tools:
-  - network_analysis
-  critical: false
-- id: network_state_policy_boundary
-  keywords:
-  - ECH
-  - Encrypted Client Hello
-  - Certificate Transparency
-  - HTTP/3
-  - QUIC
-  - NetworkCallback
-  - NetworkCapabilities
-  - validated
-  - metered
-  - local network permission
-  - ACCESS_LOCAL_NETWORK
-  - satellite
-  - constrained network
-  constraints: 网络栈/政策问题必须把当前 trace packet 证据、client stack/config、Android/API/targetSdk/Extension、NetworkCallback/NetworkCapabilities、dumpsys/connectivity、服务端支持和外部错误日志分开；版本或配置未知时不得提升为确定根因。
-  critical_tools:
-  - network_analysis
-  critical: false
-plan_template:
-  mandatory_aspects:
-  - id: network_data
-    match_keywords:
-    - network_analysis
-    - network
-    - 网络
-    - 流量
-    - packet
-    suggestion: 网络场景必须先调用 network_analysis 或明确说明 network_packets 数据缺失
-    required_expected_calls:
-    - skill_id: network_analysis
-  - id: network_power_context
-    match_keywords:
-    - battery_drain_attribution
-    - power_consumption_overview
-    - 耗电
-    - 唤醒
-    - power
-    suggestion: 网络耗电/唤醒问题需要补充功耗或唤醒上下文
-    required_expected_call_alternatives:
-    - skill_id: battery_drain_attribution
-    - skill_id: power_consumption_overview
 ```
 
 ## Investigation methodology

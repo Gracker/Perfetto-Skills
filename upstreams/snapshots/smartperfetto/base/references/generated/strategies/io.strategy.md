@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/io.strategy.md
-Source SHA-256: 21e19aa8e0f55105567e1d876ea035e840e48fd5fbb4b1fc7c8ccc2ef0fd0bb8
+Source SHA-256: 7712d6ee0e1bfe670171efa799a4e5dfbe3ff1855107ed9cdd5da3582bb30cf7
 
 # Io Strategy
 
@@ -159,83 +159,6 @@ final_report_contract:
       - 建议
       - missing
       - not
-phase_hints:
-- id: io_evidence_ladder
-  keywords:
-  - io
-  - i/o
-  - storage
-  - disk
-  - fsync
-  - fdatasync
-  - D-state
-  - page fault
-  - 存储
-  - 磁盘
-  - 页缺失
-  constraints: 先区分 block I/O、D-state 等待、主线程文件 I/O、page fault、容量/损坏/外部存储线索。缺少路径、线程、栈或 block 层证据时只能写数据缺口，不能把系统 I/O 压力直接升级为业务根因。
-  critical_tools:
-  - block_io_analysis
-  - io_pressure
-  - main_thread_file_io_in_range
-  - page_fault_in_range
-  critical: true
-- id: sqlite_sharedprefs_provider_boundary
-  keywords:
-  - sqlite
-  - room
-  - database
-  - db
-  - SharedPreferences
-  - QueuedWork
-  - ContentProvider
-  - CursorWindow
-  - MediaProvider
-  - 数据库
-  - 共享偏好
-  - 内容提供者
-  constraints: SQLite/Room、SharedPreferences/QueuedWork、ContentProvider/CursorWindow/MediaProvider 是不同证明路径。必须有 slice/stack/Binder/provider-side
-    evidence 才能命名；只有 D-state/fsync 时写成候选和补证建议。
-  critical_tools:
-  - blocking_chain_analysis
-  - main_thread_file_io_in_range
-  - binder_analysis
-  critical: false
-plan_template:
-  mandatory_aspects:
-  - id: io_evidence_ladder
-    match_keywords:
-    - block_io_analysis
-    - io_pressure
-    - main_thread_file_io_in_range
-    - page_fault_in_range
-    - D-state
-    - fsync
-    - 存储
-    - 磁盘
-    - 页缺失
-    suggestion: I/O 场景必须先区分 block I/O、D-state、主线程文件 I/O、页缺失和外部存储/容量证据
-    required_expected_call_alternatives:
-    - skill_id: block_io_analysis
-    - skill_id: io_pressure
-    - skill_id: main_thread_file_io_in_range
-    - skill_id: page_fault_in_range
-  - id: app_api_boundary
-    match_keywords:
-    - SQLite
-    - Room
-    - SharedPreferences
-    - QueuedWork
-    - ContentProvider
-    - CursorWindow
-    - MediaProvider
-    - 数据库
-    - Provider
-    - blocking_chain_analysis
-    suggestion: I/O 场景需要证明或明确缺失 SQLite/Room、SharedPreferences/QueuedWork、ContentProvider/CursorWindow 等 app API 边界
-    required_expected_call_alternatives:
-    - skill_id: main_thread_file_io_in_range
-    - skill_id: blocking_chain_analysis
 ```
 
 ## Investigation methodology

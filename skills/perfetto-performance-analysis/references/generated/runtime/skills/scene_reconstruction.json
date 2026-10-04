@@ -149,7 +149,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/scene_reconstruction.skill.yaml",
-    "sha256": "2dc3194fd8730e6ce16c5d4db97860cc8cdfccee8b6b2f23dfd11ddb3d752ab4"
+    "sha256": "59b4122937e29b04987a3c415c69cc1ce8120d970dcdd14b005ed5a34adbc22e"
   },
   "steps": [
     {
@@ -411,29 +411,6 @@
       "result_dependencies": [],
       "save_as": "timeline",
       "type": "atomic"
-    },
-    {
-      "displayed": true,
-      "id": "scene_summary",
-      "inputs": [
-        "trace_time_range",
-        "clean_timeline",
-        "screen_state_changes",
-        "top_app_changes",
-        "user_gestures",
-        "scroll_initiation",
-        "inertial_scrolls",
-        "idle_periods",
-        "app_launches",
-        "system_events",
-        "jank_events",
-        "device_state",
-        "app_state_tracking",
-        "operation_chain"
-      ],
-      "name": "场景还原报告",
-      "prompt": "你是一位 Android 性能分析专家，你的任务是帮助初学者理解 Trace 数据。\n请基于以下数据还原用户的完整操作场景，并用通俗易懂的语言解释。\n\n## Trace 时间范围\n${trace_time_range}\n\n## 干净时间线（主要参考）\n${clean_timeline}\n说明：这是经过质量过滤的事件时间线，请优先参考此数据构建叙述\n\n## 屏幕状态变化\n${screen_state_changes}\n\n## 应用切换记录\n${top_app_changes}\n\n## 用户手势操作\n${user_gestures}\n\n## 滑动启动时刻\n${scroll_initiation}\n说明：这里记录了每次滑动开始的精确时刻（手指按下后移动到第2个点时）\n\n## 惯性滑动区间\n${inertial_scrolls}\n说明：这里记录手指抬起（UP）后界面仍在滚动的区间，通常对应 Fling 惯性滚动\n\n## 未观测到输入的区间（采集完整性未确认）\n${idle_periods}\n说明：这里只记录未观测到输入的区间；采集完整性未确认，不能据此判断用户没有操作或设备空闲。\n\n## App 启动事件\n${app_launches}\n\n## 系统事件\n${system_events}\n\n## 掉帧/性能事件\n${jank_events}\n\n## 设备状态\n${device_state}\n说明：设备硬件状态快照，包括 CPU 频率范围、内存压力、温度、充电状态和前台应用\n\n## App 前后台状态变化\n${app_state_tracking}\n说明：应用的 oom_adj 变化记录，反映前台/可见/后台/缓存状态转换和进程创建事件\n\n## 操作链\n${operation_chain}\n说明：按时间顺序排列的所有用户可感知事件，用于构建完整操作时间线\n\n请按以下格式输出分析报告：\n\n## 场景概述\n用一段自然、流畅的中文描述用户在这段 Trace 期间做了什么。描述应该像讲故事一样，让读者能够清晰地想象用户的操作过程。\n\n## 操作时间线\n按时间顺序列出关键操作，格式：\n1. **0.0s** - 事件描述\n2. **1.2s** - 事件描述\n...\n（请合并相近的同类事件，避免过于琐碎）\n\n## 性能问题诊断\n如果发现掉帧或性能问题，请分析：\n- 问题发生在什么场景下\n- 可能的原因是什么\n- 对用户体验的影响\n\n如果没有明显性能问题，请说明\"整体流畅度良好\"。\n\n## 使用意图推断\n基于以上分析，推断用户可能的使用意图和目的。例如：\n- 用户可能在浏览社交媒体\n- 用户可能在查找某个联系人\n- 用户可能在切换应用完成某个任务\n",
-      "type": "ai_summary"
     }
   ],
   "type": "composite",
