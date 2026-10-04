@@ -410,6 +410,16 @@ class RuntimeExpressionExportTest(unittest.TestCase):
         self.assertEqual(self.normalize({**step, "filter": "name == 'ANDROID' AND brand != 'oracle'"})["filter"],
                          "name == 'ANDROID' && brand != 'oracle'")
 
+    def test_step_condition_is_published_as_written(self) -> None:
+        # SmartPerfetto evaluates a step condition as JavaScript and rejects
+        # SQL AND/OR there (condition_uses_sql_boolean_words); only iterator
+        # filters are rewritten.
+        step = {"id": "gated", "type": "skill", "skill": "child",
+                "condition": "rows.data?.length > 0 && rows.data[0].ok === 1"}
+        self.assertEqual(self.normalize(step)["condition"], step["condition"])
+        with self.assertRaisesRegex(exporter.ExportError, r"under_test\.gated"):
+            self.normalize({**step, "condition": "rows.data?.length > 0 AND rows.data[0].ok === 1"})
+
     def test_only_evaluated_parameters_are_parsed(self) -> None:
         step = {"id": "probe", "type": "skill", "skill": "child", "params": {
             "start_ts": "${ctx.data?.[0]?.window_start_ts ?? null}", "label": "a ? b : c", "top_k": 5}}

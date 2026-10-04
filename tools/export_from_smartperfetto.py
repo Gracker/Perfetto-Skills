@@ -1069,7 +1069,11 @@ _STRING_LITERAL = re.compile(r"'(?:\\.|[^'\\])*'|\"(?:\\.|[^\"\\])*\"")
 
 
 def normalize_condition(condition: str) -> str:
-    """Rewrite SmartPerfetto's AND/OR as && / ||.
+    """Rewrite an iterator filter's AND/OR as && / ||, as SmartPerfetto does.
+
+    SmartPerfetto rewrites AND/OR only in iterator filters; a step or rule
+    condition with them never compiles there and validate:skills rejects it
+    (condition_uses_sql_boolean_words), so conditions are published as written.
 
     SmartPerfetto rewrites every match, quoted text included, so an AND/OR
     inside a string literal already means something else there; refuse it.
@@ -1085,7 +1089,7 @@ def validate_conditions(value: object, label: str) -> int:
         for key, nested in value.items():
             if key == "condition" and isinstance(nested, str):
                 try:
-                    validate_expression(normalize_condition(nested))
+                    validate_expression(nested)
                 except ValueError as exc:
                     raise ExportError(f"Unsupported condition in {label}: {nested!r}: {exc}") from exc
                 count += 1
@@ -1584,10 +1588,9 @@ def normalize_step(
     # reads this Skill by default prefers a displayed step's data.
     if step_displayed(step):
         kept["displayed"] = True
-    # SmartPerfetto accepts AND/OR in step conditions and iterator filters.
-    for key in ("condition", "filter"):
-        if isinstance(kept.get(key), str):
-            kept[key] = normalize_condition(str(kept[key]))
+    # SmartPerfetto rewrites AND/OR in iterator filters only.
+    if isinstance(kept.get("filter"), str):
+        kept["filter"] = normalize_condition(str(kept["filter"]))
     validate_runtime_expressions(kept, f"{skill_id}.{step_id}")
     if "sql" not in step:
         return kept, None
