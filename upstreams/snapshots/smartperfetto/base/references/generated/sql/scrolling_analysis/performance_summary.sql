@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: d6a305ef49316a14b75752df739349112a9fd2424d1a2db9ecf3e8253e63be46
+-- Source SHA-256: 611a06dd906d52c4f70b68262fb7f661fe1ea8b92a26e8ebb2eac7714969c84a
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -153,35 +153,22 @@ valid_frame_intervals AS (
     AND present_ts - prev_present_ts <= (SELECT vsync_period_ns FROM timing_config) * 6
 ),
 -- App 报告的掉帧（旧逻辑，仅供参考）
+-- Present-interval columns come from present gaps only. Without a valid
+-- gap they are NULL: FrameTimeline dur is start-to-present latency, and
+-- under these labels it once read as a slow cadence.
 app_stats AS (
   SELECT
     COUNT(DISTINCT frame_key) as total,
     COUNT(DISTINCT CASE WHEN jank_type != 'None' THEN frame_key END) as app_janky_frames,
-    COALESCE(
-      (SELECT CAST(ROUND(AVG(frame_interval_ns)) AS INTEGER) FROM valid_frame_intervals),
-      CAST(ROUND(AVG(CASE WHEN dur > 0 THEN dur ELSE NULL END)) AS INTEGER),
-      0
-    ) as avg_present_interval,
-    COALESCE(
-      (SELECT CAST(MAX(frame_interval_ns) AS INTEGER) FROM valid_frame_intervals),
-      MAX(CASE WHEN dur > 0 THEN dur ELSE NULL END),
-      0
-    ) as max_present_interval,
-    COALESCE(
-      (SELECT CAST(ROUND(PERCENTILE(frame_interval_ns, 50)) AS INTEGER) FROM valid_frame_intervals),
-      CAST(ROUND(PERCENTILE(CASE WHEN dur > 0 THEN dur ELSE NULL END, 50)) AS INTEGER),
-      0
-    ) as median_present_interval,
-    COALESCE(
-      (SELECT CAST(ROUND(PERCENTILE(frame_interval_ns, 95)) AS INTEGER) FROM valid_frame_intervals),
-      CAST(ROUND(PERCENTILE(CASE WHEN dur > 0 THEN dur ELSE NULL END, 95)) AS INTEGER),
-      0
-    ) as p95_present_interval,
-    COALESCE(
-      (SELECT CAST(ROUND(PERCENTILE(frame_interval_ns, 99)) AS INTEGER) FROM valid_frame_intervals),
-      CAST(ROUND(PERCENTILE(CASE WHEN dur > 0 THEN dur ELSE NULL END, 99)) AS INTEGER),
-      0
-    ) as p99_present_interval
+    (SELECT CAST(ROUND(AVG(frame_interval_ns)) AS INTEGER) FROM valid_frame_intervals) as avg_present_interval,
+    (SELECT CAST(MAX(frame_interval_ns) AS INTEGER) FROM valid_frame_intervals) as max_present_interval,
+    (SELECT CAST(ROUND(PERCENTILE(frame_interval_ns, 50)) AS INTEGER) FROM valid_frame_intervals) as median_present_interval,
+    (SELECT CAST(ROUND(PERCENTILE(frame_interval_ns, 95)) AS INTEGER) FROM valid_frame_intervals) as p95_present_interval,
+    (SELECT CAST(ROUND(PERCENTILE(frame_interval_ns, 99)) AS INTEGER) FROM valid_frame_intervals) as p99_present_interval,
+    CASE WHEN EXISTS (SELECT 1 FROM valid_frame_intervals)
+      THEN 'frametimeline_present_gaps'
+      ELSE 'unmeasured_no_valid_present_gap'
+    END as present_interval_source
   FROM app_frame_rows
 ),
 -- Per-layer 帧序列：双信号混合检测基础数据
@@ -308,6 +295,7 @@ SELECT
   (SELECT median_present_interval FROM app_stats) as median_frame_dur,
   (SELECT p95_present_interval FROM app_stats) as p95_frame_dur,
   (SELECT p99_present_interval FROM app_stats) as p99_frame_dur,
+  (SELECT present_interval_source FROM app_stats) as present_interval_source,
   ROUND((SELECT duration_ns FROM time_range) / 1e9, 2) as duration_sec,
   MIN(
     ROUND(1e9 * (SELECT total FROM app_stats) / NULLIF((SELECT duration_ns FROM time_range), 0), 1),

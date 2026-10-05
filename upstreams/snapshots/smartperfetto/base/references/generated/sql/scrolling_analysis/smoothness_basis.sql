@@ -14,6 +14,84 @@ effective_target_processes AS (
   WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
 )
 ,
+-- Fragment: vsync_config
+-- Estimates VSync period using scoped then trace-wide VSYNC/FrameTimeline evidence.
+-- The explicit 16.67ms default is used only when the trace has no usable timing evidence.
+-- Snaps to nearest standard refresh rate (30/60/90/120/144/165 Hz) to avoid
+-- half-period toggle contamination and jitter-induced miscalculation.
+-- Params: ${start_ts}, ${end_ts}
+vsync_ticks AS (
+  SELECT c.ts, c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
+  FROM counter c
+  JOIN counter_track t ON c.track_id = t.id
+  WHERE t.name = 'VSYNC-sf'
+    AND (${start_ts} IS NULL OR c.ts >= ${start_ts} - 100000000)
+    AND (${end_ts} IS NULL OR c.ts < ${end_ts} + 100000000)
+),
+trace_vsync_ticks AS (
+  SELECT c.ts, c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
+  FROM counter c
+  JOIN counter_track t ON c.track_id = t.id
+  WHERE t.name = 'VSYNC-sf'
+),
+expected_frame_vsync AS (
+  SELECT CAST(PERCENTILE(dur, 50) AS INTEGER) as period_ns
+  FROM expected_frame_timeline_slice
+  WHERE dur > 5000000 AND dur < 50000000
+    AND (${start_ts} IS NULL OR ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR ts < ${end_ts})
+),
+trace_expected_frame_vsync AS (
+  SELECT CAST(PERCENTILE(dur, 50) AS INTEGER) as period_ns
+  FROM expected_frame_timeline_slice
+  WHERE dur > 5000000 AND dur < 50000000
+),
+raw_vsync_config AS (
+  SELECT
+    CAST(COALESCE(
+      (SELECT PERCENTILE(interval_ns, 50)
+       FROM vsync_ticks
+       WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      (SELECT period_ns FROM expected_frame_vsync WHERE period_ns > 0),
+      (SELECT PERCENTILE(interval_ns, 50)
+       FROM trace_vsync_ticks
+       WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      (SELECT period_ns FROM trace_expected_frame_vsync WHERE period_ns > 0),
+      16666667
+    ) AS INTEGER) as raw_ns,
+    CASE
+      WHEN (SELECT COUNT(*) FROM vsync_ticks WHERE interval_ns > 5500000 AND interval_ns < 50000000) > 0
+        THEN CASE
+          WHEN ${start_ts} IS NULL OR ${end_ts} IS NULL THEN 'trace_wide_vsync_counter'
+          ELSE 'scoped_vsync_counter'
+        END
+      WHEN (SELECT period_ns FROM expected_frame_vsync WHERE period_ns > 0) IS NOT NULL
+        THEN CASE
+          WHEN ${start_ts} IS NULL OR ${end_ts} IS NULL THEN 'trace_wide_expected_frame'
+          ELSE 'scoped_expected_frame'
+        END
+      WHEN (SELECT COUNT(*) FROM trace_vsync_ticks WHERE interval_ns > 5500000 AND interval_ns < 50000000) > 0
+        THEN 'trace_wide_vsync_counter'
+      WHEN (SELECT period_ns FROM trace_expected_frame_vsync WHERE period_ns > 0) IS NOT NULL
+        THEN 'trace_wide_expected_frame'
+      ELSE 'default_60hz_no_trace_timing'
+    END as vsync_source
+),
+vsync_config AS (
+  SELECT
+    CASE
+      WHEN raw_ns BETWEEN 5500000 AND 6500000 THEN 6060606
+      WHEN raw_ns BETWEEN 6500001 AND 7500000 THEN 6944444
+      WHEN raw_ns BETWEEN 7500001 AND 9500000 THEN 8333333
+      WHEN raw_ns BETWEEN 9500001 AND 12500000 THEN 11111111
+      WHEN raw_ns BETWEEN 12500001 AND 20000000 THEN 16666667
+      WHEN raw_ns BETWEEN 20000001 AND 35000000 THEN 33333333
+      ELSE raw_ns
+    END AS vsync_period_ns,
+    vsync_source
+  FROM raw_vsync_config
+)
+,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
 -- This file is part of SmartPerfetto. See LICENSE for details.
@@ -262,5 +340,208 @@ main_thread_work_cadence_output AS (
     'largest observed doFrame start intervals; request, deadline, presentation and missed frames are not inferred' AS evidence_scope
   FROM mtw_cadence_ranked WHERE interval_rank <= (SELECT top_k FROM mtw_config)
 )
-SELECT * FROM main_thread_work_cadence_output
-ORDER BY observed_start_interval_ms DESC, utid, CAST(start_ts AS INTEGER)
+,
+ft_frames AS MATERIALIZED (
+  SELECT a.id, a.upid, p.name AS process_name, a.layer_name, a.ts, a.dur,
+    a.surface_frame_token, a.jank_type, a.present_type
+  FROM actual_frame_timeline_slice a
+  JOIN effective_target_processes p ON a.upid = p.upid
+  WHERE (
+      ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
+      OR p.name = '${package}'
+      OR p.name GLOB '${package}:*'
+    )
+    AND p.name NOT LIKE '/system/%'
+    AND (${__process_scope.upid} IS NOT NULL OR '${package}' != '' OR p.name NOT LIKE 'com.android.systemui%')
+    AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR a.ts < ${end_ts})
+    AND COALESCE(a.display_frame_token, a.surface_frame_token) IS NOT NULL
+),
+-- The split period of scroll_sessions (VSYNC-sf median in the window,
+-- else 60Hz), so session ids and bounds match that list.
+session_split_intervals AS (
+  SELECT c.ts - LAG(c.ts) OVER (ORDER BY c.ts) as interval_ns
+  FROM counter c
+  JOIN counter_track t ON c.track_id = t.id
+  WHERE t.name = 'VSYNC-sf'
+    AND (${start_ts} IS NULL OR c.ts >= ${start_ts})
+    AND (${end_ts} IS NULL OR c.ts < ${end_ts})
+),
+session_split_config AS (
+  SELECT CASE
+    WHEN raw_ns BETWEEN 5500000 AND 6500000 THEN 6060606
+    WHEN raw_ns BETWEEN 6500001 AND 7500000 THEN 6944444
+    WHEN raw_ns BETWEEN 7500001 AND 9500000 THEN 8333333
+    WHEN raw_ns BETWEEN 9500001 AND 12500000 THEN 11111111
+    WHEN raw_ns BETWEEN 12500001 AND 20000000 THEN 16666667
+    WHEN raw_ns BETWEEN 20000001 AND 35000000 THEN 33333333
+    ELSE raw_ns
+  END AS vsync_period_ns
+  FROM (
+    SELECT CAST(COALESCE(
+      (SELECT PERCENTILE(interval_ns, 50)
+       FROM session_split_intervals
+       WHERE interval_ns > 5500000 AND interval_ns < 50000000),
+      16666667
+    ) AS INTEGER) AS raw_ns
+  )
+),
+session_markers AS (
+  SELECT upid, ts, dur,
+    CASE WHEN ts - LAG(ts + dur) OVER (PARTITION BY upid ORDER BY ts)
+        <= (SELECT vsync_period_ns * 6 FROM session_split_config)
+      THEN 0 ELSE 1 END AS new_session
+  FROM ft_frames WHERE dur > 0
+),
+session_bounds AS (
+  SELECT upid, session_id, MIN(ts) AS start_ts, MAX(ts + dur) AS end_ts
+  FROM (SELECT *, SUM(new_session) OVER (PARTITION BY upid ORDER BY ts) AS session_id
+    FROM session_markers)
+  GROUP BY upid, session_id
+  HAVING COUNT(*) >= 10 AND MAX(ts + dur) - MIN(ts) > 200000000
+),
+expected_frames AS (
+  SELECT upid, layer_name, surface_frame_token,
+    CASE WHEN COUNT(*) = 1 AND MIN(dur) > 0 THEN MAX(ts + dur) END AS expected_present_ts
+  FROM expected_frame_timeline_slice
+  WHERE upid IN (SELECT upid FROM ft_frames)
+  GROUP BY upid, layer_name, surface_frame_token
+),
+session_rows AS (
+  SELECT f.*, b.session_id,
+    CASE WHEN f.dur > 0 AND f.present_type != 'Dropped Frame' THEN f.ts + f.dur END AS present_ts,
+    CASE WHEN f.dur > 0 AND f.present_type != 'Dropped Frame'
+      THEN f.ts + f.dur - e.expected_present_ts END AS lateness_ns
+  FROM ft_frames f
+  JOIN session_bounds b ON b.upid = f.upid AND f.ts >= b.start_ts AND f.ts < b.end_ts
+    AND f.layer_name IS NOT NULL
+  LEFT JOIN expected_frames e ON e.upid = f.upid AND e.layer_name = f.layer_name
+    AND e.surface_frame_token = f.surface_frame_token
+),
+presented_neighbors AS (
+  SELECT *, present_ts - LAG(present_ts) OVER w AS gap_ns,
+    LEAD(present_ts) OVER w - present_ts AS next_gap_ns
+  FROM session_rows WHERE present_ts IS NOT NULL
+  WINDOW w AS (PARTITION BY upid, session_id, layer_name ORDER BY present_ts, id)
+),
+gap_stats AS (
+  SELECT upid, session_id, layer_name, COUNT(gap_ns) AS gap_count,
+    CAST(PERCENTILE(gap_ns, 50) AS INTEGER) AS gap_p50_ns,
+    CAST(PERCENTILE(gap_ns, 95) AS INTEGER) AS gap_p95_ns,
+    MAX(gap_ns) AS gap_max_ns,
+    SUM(CASE WHEN gap_ns > v.vsync_period_ns * 1.5 THEN 1 ELSE 0 END) AS gaps_over_budget,
+    SUM(CASE WHEN gap_ns BETWEEN v.vsync_period_ns * 0.75 AND v.vsync_period_ns * 1.25
+      THEN 1 ELSE 0 END) AS near_budget_gaps,
+    SUM(CASE WHEN present_type = 'Late Present' AND lateness_ns >= v.vsync_period_ns * 0.5
+      AND gap_ns BETWEEN v.vsync_period_ns * 0.75 AND v.vsync_period_ns * 1.25
+      AND next_gap_ns BETWEEN v.vsync_period_ns * 0.75 AND v.vsync_period_ns * 1.25
+      THEN 1 ELSE 0 END) AS steady_late_candidates
+  FROM presented_neighbors CROSS JOIN vsync_config v
+  GROUP BY upid, session_id, layer_name
+),
+layer_stats AS (
+  SELECT upid, process_name, session_id, layer_name,
+    MIN(ts) AS start_ts, MAX(ts + MAX(dur, 0)) AS end_ts, COUNT(*) AS frames,
+    CAST(PERCENTILE(CASE WHEN dur > 0 THEN dur END, 50) AS INTEGER) AS dur_p50_ns,
+    CAST(PERCENTILE(CASE WHEN dur > 0 THEN dur END, 95) AS INTEGER) AS dur_p95_ns,
+    MAX(CASE WHEN dur > 0 THEN dur END) AS dur_max_ns,
+    SUM(CASE WHEN jank_type GLOB '*Buffer Stuffing*' THEN 1 ELSE 0 END) AS buffer_stuffing_frames,
+    SUM(CASE WHEN present_type = 'Dropped Frame' THEN 1 ELSE 0 END) AS dropped_frames,
+    SUM(CASE WHEN dur IS NULL OR dur <= 0 THEN 1 ELSE 0 END) AS incomplete_frames
+  FROM session_rows
+  GROUP BY upid, session_id, layer_name
+),
+-- One row per observed doFrame start, read only when the target has no
+-- FrameTimeline frame in the window; a duration needs one complete marker.
+doframe_starts AS (
+  SELECT f.utid, f.raw_ts - f.previous_start_ts AS gap_ns,
+    CASE WHEN f.marker_count = 1 THEN f.execution_end_ts - f.raw_ts END AS dur_ns
+  FROM mtw_frame_sequence f
+  WHERE NOT EXISTS (SELECT 1 FROM ft_frames)
+),
+doframe_stats AS (
+  SELECT t.upid, t.process_name, t.window_start_ts, t.window_end_ts,
+    COUNT(*) AS frames, COUNT(d.gap_ns) AS gap_count,
+    CAST(PERCENTILE(d.gap_ns, 50) AS INTEGER) AS gap_p50_ns,
+    CAST(PERCENTILE(d.gap_ns, 95) AS INTEGER) AS gap_p95_ns,
+    MAX(d.gap_ns) AS gap_max_ns,
+    SUM(CASE WHEN d.gap_ns > v.vsync_period_ns * 1.5 THEN 1 ELSE 0 END) AS gaps_over_budget,
+    CAST(PERCENTILE(d.dur_ns, 50) AS INTEGER) AS dur_p50_ns,
+    CAST(PERCENTILE(d.dur_ns, 95) AS INTEGER) AS dur_p95_ns,
+    MAX(d.dur_ns) AS dur_max_ns
+  FROM doframe_starts d
+  JOIN mtw_threads t USING (utid)
+  CROSS JOIN vsync_config v
+  WHERE ${__process_scope.upid} IS NOT NULL OR '${package}' != ''
+    OR t.process_name NOT LIKE 'com.android.systemui%'
+  GROUP BY t.upid, t.utid
+  HAVING COUNT(d.gap_ns) > 0
+),
+basis_rows AS (
+  SELECT l.upid, l.process_name, l.session_id, l.layer_name, l.start_ts, l.end_ts, l.frames,
+    'frametimeline_present_gap' AS cadence_metric,
+    g.gap_count, g.gap_p50_ns, g.gap_p95_ns, g.gap_max_ns, g.gaps_over_budget,
+    'frametimeline_actual_dur_start_to_present' AS frame_dur_metric,
+    l.dur_p50_ns, l.dur_p95_ns, l.dur_max_ns,
+    l.buffer_stuffing_frames,
+    ROUND(100.0 * l.buffer_stuffing_frames / l.frames, 2) AS buffer_stuffing_pct,
+    CASE
+      WHEN v.vsync_source NOT IN ('scoped_vsync_counter', 'trace_wide_vsync_counter')
+        OR COALESCE(g.gap_count, 0) < 5
+        THEN 'insufficient_cadence_evidence'
+      WHEN g.near_budget_gaps = g.gap_count AND l.dropped_frames = 0 AND l.incomplete_frames = 0
+        THEN CASE WHEN g.steady_late_candidates > 0 THEN 'steady_late' ELSE 'steady_cadence' END
+      WHEN g.steady_late_candidates > 0 THEN 'steady_late_with_cadence_excursions'
+      ELSE 'variable_cadence'
+    END AS cadence_status,
+    CASE WHEN COALESCE(g.gap_count, 0) >= 5 THEN g.steady_late_candidates ELSE 0 END AS steady_late_frames,
+    l.dropped_frames,
+    'measured' AS presentation_status
+  FROM layer_stats l
+  LEFT JOIN gap_stats g USING (upid, session_id, layer_name)
+  CROSS JOIN vsync_config v
+  UNION ALL
+  SELECT upid, process_name, NULL, NULL, window_start_ts, window_end_ts, frames,
+    'doframe_start_gap',
+    gap_count, gap_p50_ns, gap_p95_ns, gap_max_ns, gaps_over_budget,
+    'doframe_main_thread_execution',
+    dur_p50_ns, dur_p95_ns, dur_max_ns,
+    NULL, NULL, 'presentation_unmeasured', NULL, NULL, 'unmeasured'
+  FROM doframe_stats
+),
+frame_timeline_coverage AS (
+  SELECT '${buffer_tx_coverage.data[0].coverage_status|probe_unavailable}' AS status
+),
+-- A cadence well faster than the budget contradicts the budget (a sparse
+-- VSync counter), so over-budget counts against it say nothing.
+budgeted_rows AS (
+  SELECT r.*, v.vsync_period_ns AS budget_ns, v.vsync_source AS budget_source, CASE
+      WHEN v.vsync_source = 'default_60hz_no_trace_timing' THEN 'assumed_default_no_trace_timing'
+      WHEN v.vsync_source NOT IN ('scoped_vsync_counter', 'trace_wide_vsync_counter')
+        THEN 'derived_from_expected_frames'
+      WHEN r.gap_p50_ns * 1.5 < v.vsync_period_ns THEN 'contradicted_by_observed_cadence'
+      ELSE 'measured'
+    END AS budget_status
+  FROM basis_rows r CROSS JOIN vsync_config v
+)
+SELECT r.upid, r.process_name, r.session_id, r.layer_name,
+  printf('%d', r.start_ts) AS start_ts, printf('%d', r.end_ts) AS end_ts, r.frames,
+  r.budget_ns, r.budget_source, r.cadence_metric,
+  r.gap_count AS cadence_gap_count, r.gap_p50_ns AS cadence_gap_p50_ns,
+  r.gap_p95_ns AS cadence_gap_p95_ns, r.gap_max_ns AS cadence_gap_max_ns,
+  r.gaps_over_budget AS cadence_gaps_over_1_5x_budget,
+  r.frame_dur_metric,
+  r.dur_p50_ns AS frame_dur_p50_ns, r.dur_p95_ns AS frame_dur_p95_ns, r.dur_max_ns AS frame_dur_max_ns,
+  r.buffer_stuffing_frames, r.buffer_stuffing_pct,
+  r.cadence_status, r.steady_late_frames, r.dropped_frames, r.presentation_status,
+  r.budget_status, c.status AS frame_timeline_coverage_status,
+  CASE
+    WHEN r.presentation_status = 'unmeasured' THEN 'doframe_start_gaps_presentation_unmeasured'
+    WHEN COALESCE(r.gap_count, 0) < 5 THEN 'insufficient_present_gaps'
+    WHEN r.budget_status != 'measured' THEN 'present_gaps_budget_unverified'
+    WHEN c.status IN ('partial_frame_timeline_coverage', 'no_frame_timeline_coverage')
+      THEN 'present_gaps_partial_frame_timeline'
+    ELSE 'present_gaps_vs_budget'
+  END AS verdict_basis
+FROM budgeted_rows r CROSS JOIN frame_timeline_coverage c
+ORDER BY r.upid, r.start_ts, r.layer_name

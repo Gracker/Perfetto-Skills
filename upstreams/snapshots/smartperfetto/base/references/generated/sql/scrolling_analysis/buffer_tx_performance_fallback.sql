@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: d6a305ef49316a14b75752df739349112a9fd2424d1a2db9ecf3e8253e63be46
+-- Source SHA-256: 611a06dd906d52c4f70b68262fb7f661fe1ea8b92a26e8ebb2eac7714969c84a
 
 WITH
 -- Fragment: vsync_config
@@ -213,6 +213,7 @@ SELECT
   NULL as median_frame_dur,
   NULL as p95_frame_dur,
   NULL as p99_frame_dur,
+  'unmeasured_buffer_tx_fallback' as present_interval_source,
   duration_sec,
   actual_fps,
   CAST(ROUND(1e9 / (SELECT vsync_period_ns FROM vsync_config)) AS INTEGER) as refresh_rate,

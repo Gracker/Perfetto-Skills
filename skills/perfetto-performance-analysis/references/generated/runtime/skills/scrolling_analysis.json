@@ -183,7 +183,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-    "sha256": "d6a305ef49316a14b75752df739349112a9fd2424d1a2db9ecf3e8253e63be46"
+    "sha256": "611a06dd906d52c4f70b68262fb7f661fe1ea8b92a26e8ebb2eac7714969c84a"
   },
   "steps": [
     {
@@ -395,6 +395,20 @@
       "query_id": "scrolling_analysis/buffer_tx_performance_fallback",
       "result_dependencies": [],
       "save_as": "perf_summary",
+      "type": "atomic"
+    },
+    {
+      "condition": "frame_timeline.data[0]?.has_frame_timeline === 1",
+      "displayed": true,
+      "id": "smoothness_basis",
+      "name": "流畅度口径对照",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "scrolling_analysis/smoothness_basis",
+      "result_dependencies": [],
+      "save_as": "smoothness_basis",
       "type": "atomic"
     },
     {

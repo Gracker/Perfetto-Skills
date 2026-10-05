@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: d6a305ef49316a14b75752df739349112a9fd2424d1a2db9ecf3e8253e63be46
+Source SHA-256: 611a06dd906d52c4f70b68262fb7f661fe1ea8b92a26e8ebb2eac7714969c84a
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1043,14 +1043,21 @@ display:
     type: number
   - name: avg_frame_dur
     label: 平均呈现间隔
+    label_i18n:
+      en: Mean present interval
     type: duration
     format: duration_ms
     unit: ns
   - name: p95_frame_dur
     label: P95 呈现间隔
+    label_i18n:
+      en: P95 present interval
     type: duration
     format: duration_ms
     unit: ns
+  - name: present_interval_source
+    label: 呈现间隔来源
+    type: string
   - name: rating
     label: 评级
     type: string
@@ -1137,6 +1144,9 @@ display:
   - name: evidence_status
     label: 可交付证据范围
     type: string
+  - name: present_interval_source
+    label: 呈现间隔来源
+    type: string
   - name: rating
     label: 证据边界
     type: string
@@ -1145,6 +1155,178 @@ process_scope:
   exact_unavailable: BufferTX track names do not identify a unique UPID; exact process evidence uses FrameTimeline only.
 save_as: perf_summary
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && buffer_tx_coverage.data[0]?.should_fallback === 1
+```
+### 流畅度口径对照
+
+- ID: `smoothness_basis`
+- Type: `atomic`
+- SQL: [`../sql/scrolling_analysis/smoothness_basis.sql`](../sql/scrolling_analysis/smoothness_basis.sql)
+
+```yaml
+id: smoothness_basis
+type: atomic
+display:
+  level: summary
+  layer: overview
+  title: 流畅度口径：呈现间隔 vs 帧时长 vs Buffer Stuffing
+  title_i18n:
+    en: 'Smoothness basis: present gaps vs frame duration vs Buffer Stuffing'
+  columns:
+  - name: process_name
+    label: 进程
+    type: string
+  - name: session_id
+    label: 区间
+    type: number
+  - name: layer_name
+    label: 图层
+    type: string
+  - name: verdict_basis
+    label: 流畅度判定依据
+    label_i18n:
+      en: Smoothness verdict basis
+    type: string
+  - name: cadence_metric
+    label: 节奏口径
+    label_i18n:
+      en: Cadence metric
+    type: string
+  - name: cadence_gap_p50_ns
+    label: 节奏间隔 P50
+    label_i18n:
+      en: Cadence gap P50
+    type: duration
+    format: duration_ms
+    unit: ns
+  - name: cadence_gap_p95_ns
+    label: 节奏间隔 P95
+    label_i18n:
+      en: Cadence gap P95
+    type: duration
+    format: duration_ms
+    unit: ns
+  - name: cadence_gap_max_ns
+    label: 节奏间隔最大
+    label_i18n:
+      en: Cadence gap max
+    type: duration
+    format: duration_ms
+    unit: ns
+  - name: cadence_gaps_over_1_5x_budget
+    label: 超过 1.5 倍预算的间隔
+    label_i18n:
+      en: Gaps over 1.5x budget
+    type: number
+  - name: cadence_gap_count
+    label: 间隔数
+    label_i18n:
+      en: Gap count
+    type: number
+  - name: budget_ns
+    label: VSync 预算
+    label_i18n:
+      en: VSync budget
+    type: duration
+    format: duration_ms
+    unit: ns
+  - name: budget_source
+    label: 预算来源
+    label_i18n:
+      en: Budget source
+    type: string
+  - name: budget_status
+    label: 预算可信度
+    label_i18n:
+      en: Budget status
+    type: string
+  - name: frame_dur_metric
+    label: 帧时长口径
+    label_i18n:
+      en: Frame duration metric
+    type: string
+  - name: frame_dur_p50_ns
+    label: 帧时长 P50（时延，非节奏）
+    label_i18n:
+      en: Frame duration P50 (latency, not cadence)
+    type: duration
+    format: duration_ms
+    unit: ns
+  - name: frame_dur_p95_ns
+    label: 帧时长 P95（时延，非节奏）
+    label_i18n:
+      en: Frame duration P95 (latency, not cadence)
+    type: duration
+    format: duration_ms
+    unit: ns
+  - name: frame_dur_max_ns
+    label: 帧时长最大（时延，非节奏）
+    label_i18n:
+      en: Frame duration max (latency, not cadence)
+    type: duration
+    format: duration_ms
+    unit: ns
+  - name: buffer_stuffing_pct
+    label: 原始 Buffer Stuffing 标签占比
+    label_i18n:
+      en: Raw Buffer Stuffing tag share
+    type: percentage
+    format: percentage
+  - name: buffer_stuffing_frames
+    label: 原始 Buffer Stuffing 标签帧
+    label_i18n:
+      en: Raw Buffer Stuffing tagged frames
+    type: number
+  - name: cadence_status
+    label: 呈现节奏核验
+    label_i18n:
+      en: Presentation cadence audit
+    type: string
+  - name: steady_late_frames
+    label: 匀速晚拍帧（信息性）
+    label_i18n:
+      en: Steady late frames (informational)
+    type: number
+  - name: dropped_frames
+    label: 丢弃帧
+    label_i18n:
+      en: Dropped frames
+    type: number
+  - name: presentation_status
+    label: 呈现数据
+    label_i18n:
+      en: Presentation data
+    type: string
+  - name: frames
+    label: 帧数
+    type: number
+  - name: frame_timeline_coverage_status
+    label: FrameTimeline 覆盖状态
+    type: string
+    hidden: true
+  - name: start_ts
+    label: 开始时间
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: end_ts
+    label: 结束时间
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: upid
+    label: UPID
+    type: number
+    hidden: true
+sql_fragments:
+- fragments/effective_target_processes.sql
+- fragments/vsync_config.sql
+- fragments/main_thread_work.sql
+- fragments/main_thread_work_cadence.sql
+process_scope:
+  role: target
+  binding: effective_target_processes
+save_as: smoothness_basis
+condition: frame_timeline.data[0]?.has_frame_timeline === 1
 ```
 ### Input 数据源回退视图
 
@@ -1396,12 +1578,16 @@ display:
     label: 假阳性
     type: number
   - name: total_dur
-    label: 总耗时
+    label: FrameTimeline 时长合计（起点→呈现）
+    label_i18n:
+      en: FrameTimeline duration sum (start to present)
     type: duration
     format: duration_ms
     unit: ns
   - name: avg_dur
-    label: 平均耗时
+    label: FrameTimeline 平均时长（起点→呈现，非呈现间隔）
+    label_i18n:
+      en: Mean FrameTimeline duration (start to present, not a present interval)
     type: duration
     format: duration_ms
     unit: ns
@@ -1475,12 +1661,16 @@ display:
     format: duration_ms
     unit: ns
   - name: avg_dur
-    label: 平均帧耗时
+    label: 平均 FrameTimeline 时长（起点→呈现）
+    label_i18n:
+      en: Mean FrameTimeline duration (start to present)
     type: duration
     format: duration_ms
     unit: ns
   - name: max_dur
-    label: 最大帧耗时
+    label: 最大 FrameTimeline 时长（起点→呈现）
+    label_i18n:
+      en: Max FrameTimeline duration (start to present)
     type: duration
     format: duration_ms
     unit: ns
