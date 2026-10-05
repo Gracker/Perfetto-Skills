@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 8016df273414d989f2aaa25e0e34647bbb695e925fcdcb07a400e74b9a806728
+-- Source SHA-256: d6a305ef49316a14b75752df739349112a9fd2424d1a2db9ecf3e8253e63be46
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 对齐的只有 direct-evidence（锁 / RT 同步）
@@ -1687,8 +1687,8 @@ layer_frames AS (
     -- flawless scrolling for an app that produced no frames at all: one
     -- device reported 31fps SystemUI frames as "优秀", another rated a
     -- 5-frame notification-shade window. Anyone analysing the system UI
-    -- deliberately names it and keeps these rows.
-    AND ('${package}' != '' OR p.name NOT LIKE 'com.android.systemui%')
+    -- deliberately names it, or selects it by UPID, and keeps these rows.
+    AND (${__process_scope.upid} IS NOT NULL OR '${package}' != '' OR p.name NOT LIKE 'com.android.systemui%')
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
     AND COALESCE(a.display_frame_token, a.surface_frame_token) IS NOT NULL

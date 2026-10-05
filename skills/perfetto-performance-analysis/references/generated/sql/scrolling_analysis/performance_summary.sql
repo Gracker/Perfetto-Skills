@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 8016df273414d989f2aaa25e0e34647bbb695e925fcdcb07a400e74b9a806728
+-- Source SHA-256: d6a305ef49316a14b75752df739349112a9fd2424d1a2db9ecf3e8253e63be46
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -68,8 +68,8 @@ app_frame_rows AS (
     -- flawless scrolling for an app that produced no frames at all: one
     -- device reported 31fps SystemUI frames as "优秀", another rated a
     -- 5-frame notification-shade window. Anyone analysing the system UI
-    -- deliberately names it and keeps these rows.
-    AND ('${package}' != '' OR p.name NOT LIKE 'com.android.systemui%')
+    -- deliberately names it, or selects it by UPID, and keeps these rows.
+    AND (${__process_scope.upid} IS NOT NULL OR '${package}' != '' OR p.name NOT LIKE 'com.android.systemui%')
     AND (${start_ts} IS NULL OR a.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR a.ts < ${end_ts})
     AND (a.display_frame_token IS NOT NULL OR a.surface_frame_token IS NOT NULL)
