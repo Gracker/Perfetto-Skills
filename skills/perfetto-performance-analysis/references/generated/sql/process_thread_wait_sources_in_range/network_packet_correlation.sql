@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml
--- Source SHA-256: a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1
+-- Source SHA-256: 61e2aa322937a94978c62f45418e45cb8ae7f2efd784c0e6fde242f860fdae8c
 
 -- 只有"网络角色线程 + irq 唤醒 + 唤醒前 2ms 内本进程有 rx 包"三者同时成立，
 -- 才把候选升级为 trace_direct:packet_activity。时间相关仍然不是因果证明：
@@ -220,16 +220,23 @@ target_threads AS (
 wake_source_scope AS (
   SELECT utid FROM target_threads
 ),
--- android_network_packets 只带 package_name：即使本次运行拿到了精确 upid，
--- 收包行也只能按包名筛，所以这一步的进程绑定弱于上面的线程绑定。
+-- 收包行只记 socket 所属 uid（socket_uid）和由它解析的包名，不记进程。
+-- 精确 upid 时按目标进程自己的 uid 取包，只由这个 upid 决定，不读 package 参数；
+-- 进程没有 uid 时不取任何包，候选保持候选。同 uid 的进程（同包 :worker 等）在收包
+-- 数据里本就分不开，所以这一步按 uid 绑定，弱于上面的线程绑定。
+-- 按名称运行时仍按包名筛。
 rx_packets AS (
   SELECT ts, packet_length, iface
   FROM android_network_packets
   WHERE direction = 'Received'
     AND (
-      '${package}' = ''
-      OR package_name = '${package}'
-      OR package_name GLOB '${package}:*'
+      (${__process_scope.upid} IS NOT NULL
+        AND socket_uid = (SELECT uid FROM process WHERE upid = ${__process_scope.upid}))
+      OR (${__process_scope.upid} IS NULL AND (
+        '${package}' = ''
+        OR package_name = '${package}'
+        OR package_name GLOB '${package}:*'
+      ))
     )
     AND ts < ${end_ts}
     AND ts + MAX(dur, 0) > ${start_ts}

@@ -71,7 +71,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "94f639861f7dbcc8a1374d79da7e49a50aa593fec0067ac518ebe15fc32ff312",
+      "sha256": "6a466248899103efa36f7ca2feea93c5b1ed070fcefb78798c5dcec687497f11",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -80,7 +80,7 @@
       "source": {
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
+        "sha256": "61e2aa322937a94978c62f45418e45cb8ae7f2efd784c0e6fde242f860fdae8c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -195,7 +195,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "0040d07e711949de33aaf976e0c9163722ddccad8d304137d917a6bbf452de80",
+      "sha256": "f98a1cbef24b44f42a2fe90317ef8cafa2d1471fb47ac689b7c596441cee9429",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -239,7 +239,7 @@
       "source": {
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
+        "sha256": "61e2aa322937a94978c62f45418e45cb8ae7f2efd784c0e6fde242f860fdae8c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -360,7 +360,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "3710b048d1ab3982caa397730941095bc32c63f62f4c69b1e97b5098124bd990",
+      "sha256": "a3b154815685589137e59dd4d8dda3e24567ee4e70fcf9e589dafbc5ff04d4cd",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -411,7 +411,7 @@
       "source": {
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
+        "sha256": "61e2aa322937a94978c62f45418e45cb8ae7f2efd784c0e6fde242f860fdae8c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -543,7 +543,7 @@
         "binding": "native_upid",
         "role": "target"
       },
-      "sha256": "44a71aea1cb7a989cea5a80e21875c6a5aec7d02a3d6c955ee09077e5a873850",
+      "sha256": "958d5c08214923c5dbce6d56ba07c7db535ac9838e7260d17273fc63e6c10623",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -594,7 +594,7 @@
       "source": {
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
+        "sha256": "61e2aa322937a94978c62f45418e45cb8ae7f2efd784c0e6fde242f860fdae8c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -725,13 +725,13 @@
       "process_scope": {
         "role": "global_context"
       },
-      "sha256": "e8ae0009c272641a9a76af7752090240a555d2dc4fec2a0b62441bc99a9445b2",
+      "sha256": "bf027f498c17ff305754f5ac09ca8058d6a62e648f3a9ca07624d3c0fc8be02b",
       "signal_patterns": [],
       "skill_id": "process_thread_wait_sources_in_range",
       "source": {
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
+        "sha256": "61e2aa322937a94978c62f45418e45cb8ae7f2efd784c0e6fde242f860fdae8c"
       },
       "sql_dependencies": {
         "creates": [],
@@ -838,11 +838,11 @@
       "process_scope": {
         "binding": "native_upid",
         "limitations": [
-          "android_network_packets 只带 package_name，无法按 upid 精确绑定收包行"
+          "收包行只按 socket uid 归属：同 uid 的进程（同包 :worker 等）共享收包证据，无法按 upid 区分"
         ],
         "role": "target"
       },
-      "sha256": "e7ac9b4145736c2c0cd56f1c8f8fd5f8241387732a04df5ec3b06a36f26bb050",
+      "sha256": "f8e0335ef4934aaa07cad0f263f2f896937578308b52efecdfbef0b7911c85d5",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -893,7 +893,7 @@
       "source": {
         "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
+        "sha256": "61e2aa322937a94978c62f45418e45cb8ae7f2efd784c0e6fde242f860fdae8c"
       },
       "sql_dependencies": {
         "creates": [],

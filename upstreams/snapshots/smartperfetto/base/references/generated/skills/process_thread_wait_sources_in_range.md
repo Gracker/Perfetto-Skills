@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml
-Source SHA-256: a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1
+Source SHA-256: 61e2aa322937a94978c62f45418e45cb8ae7f2efd784c0e6fde242f860fdae8c
 # 线程等待来源归因
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -427,7 +427,7 @@ process_scope:
   role: target
   binding: native_upid
   limitations:
-  - android_network_packets 只带 package_name，无法按 upid 精确绑定收包行
+  - 收包行只按 socket uid 归属：同 uid 的进程（同包 :worker 等）共享收包证据，无法按 upid 区分
 sql_fragments:
 - fragments/thread_role.sql
 - fragments/sleep_wake_source.sql

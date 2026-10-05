@@ -82,7 +82,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/process_thread_wait_sources_in_range.skill.yaml",
-    "sha256": "a63b33f91c961cf74a88510339a24499fc5a04d98ba04563ebe10ddd9bfc76e1"
+    "sha256": "61e2aa322937a94978c62f45418e45cb8ae7f2efd784c0e6fde242f860fdae8c"
   },
   "steps": [
     {
@@ -156,7 +156,7 @@
       "process_scope": {
         "binding": "native_upid",
         "limitations": [
-          "android_network_packets 只带 package_name，无法按 upid 精确绑定收包行"
+          "收包行只按 socket uid 归属：同 uid 的进程（同包 :worker 等）共享收包证据，无法按 upid 区分"
         ],
         "role": "target"
       },
