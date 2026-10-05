@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: 9106d618b4a2a3c91a6db52d924d6803f72bd2361da6dde0697bad4fca13b3be
+Source SHA-256: e94412b2b36db8fa4feb9c48c4c05355fe7429792da90a28ff997dd30022f150
 
 # Scrolling Strategy
 
@@ -169,7 +169,7 @@ Bind the actual scroll sessions and problematic intervals. Follow continuous mai
 
 ### scrolling_dependencies (dependency_chain)
 
-Connect Main/Render/raster/GPU/SF/present only with matching identities and timing. Explain separate app, system and pipeline evidence; a long frame or sleeping main thread is not itself the cause.
+Link Main/Render/raster/GPU/SF/present only by matching identity and timing; keep app, system and pipeline evidence apart. Smoothness is present gaps vs vsync budget; frame dur is latency; a long frame or sleeping main thread is not itself the cause.
 
 ### scrolling_buffer_backpressure (dependency_chain)
 

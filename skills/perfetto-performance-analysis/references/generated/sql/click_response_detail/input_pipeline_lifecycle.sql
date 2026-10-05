@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_detail.skill.yaml
--- Source SHA-256: 8b72b8641a859755014ddf9f6e540699d2560660bd13ffbd1cf2e6881f7dfeec
+-- Source SHA-256: 9e44f27b6343d60763ebf83af07b3dd5c2d9c22a357c8f8527c54a3f67b5e497
 
 -- 父 Skill 直接传入 android_input_events 的精确事件边界；不猜测相邻事件。
 -- Frame 阶段自 Perfetto 7b573c1 起由 _android_input_frames 扩展提供。
@@ -80,7 +80,8 @@ android_input_events_normalized AS NOT MATERIALIZED (
 target_event AS (
   SELECT *
   FROM android_input_events_normalized
-  WHERE process_name = '${process_name}'
+  WHERE (${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid})
+    AND (${__process_scope.upid} IS NOT NULL OR process_name = '${process_name}')
     AND dispatch_ts = ${event_ts}
     AND receive_ts + receive_dur = ${event_end_ts}
   ORDER BY input_event_id, event_channel

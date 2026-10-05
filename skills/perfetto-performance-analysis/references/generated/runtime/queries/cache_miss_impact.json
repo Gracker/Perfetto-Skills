@@ -45,8 +45,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": [
           "counters"
@@ -61,13 +60,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/cache_miss_impact/query.sql",
-      "sha256": "caea549eb73ac5cd5038052147565c014fd97db482ca66bd7e971b226948ced6",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "1975fed5f15d4933991a003b9993f5ace010c37120abd75f3d82ce916233d184",
       "signal_patterns": [],
       "skill_id": "cache_miss_impact",
       "source": {
         "path": "backend/skills/atomic/cache_miss_impact.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f98a68d85159deab48eb38133d87b1e7a9fc61e91b4b659e2210997d60da51b1"
+        "sha256": "a5e9c2ce0744ad86c74e38152e285cb285995961d91fb7b32c43d5f68844dad6"
       },
       "sql_dependencies": {
         "creates": [],

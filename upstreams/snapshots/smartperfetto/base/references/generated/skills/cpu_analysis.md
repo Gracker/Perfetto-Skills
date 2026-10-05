@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/cpu_analysis.skill.yaml
-Source SHA-256: 8b7cc6a037d9d5830182a4fd784d3aa536310fa9616c8b5e4397c1538b549ceb
+Source SHA-256: d92fc12306d640e35692ee32b71bec6aa951ed61f3d8f5b0f4f24b2bafacc9af
 # CPU 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -823,6 +823,8 @@ optional: true
 id: cache_counter_check
 type: atomic
 display: false
+process_scope:
+  role: global_context
 save_as: cache_counter_check
 condition: enable_expert_probes !== false && target_process.data.length > 0
 optional: true

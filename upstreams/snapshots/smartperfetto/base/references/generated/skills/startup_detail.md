@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_detail.skill.yaml
-Source SHA-256: ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f
+Source SHA-256: cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5
 # 启动详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -122,6 +122,8 @@ optional: true
 ```yaml
 id: startup_info
 type: atomic
+process_scope:
+  role: identity_metadata
 display:
   level: key
   layer: deep
@@ -914,6 +916,11 @@ display:
   - name: is_framework_wrapper
     label: 框架包裹切片
     type: boolean
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
 save_as: actionable_main_slices
 ```
 ### 主线程文件 IO

@@ -121,7 +121,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/startup_detail.skill.yaml",
-    "sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f"
+    "sha256": "cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5"
   },
   "steps": [
     {
@@ -136,6 +136,9 @@
       "displayed": true,
       "id": "startup_info",
       "name": "启动基本信息",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "startup_detail/startup_info",
       "result_dependencies": [],
       "save_as": "startup_basic",
@@ -292,6 +295,10 @@
       "displayed": true,
       "id": "actionable_main_thread_slices",
       "name": "主线程可操作热点",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
       "query_id": "startup_detail/actionable_main_thread_slices",
       "result_dependencies": [],
       "save_as": "actionable_main_slices",

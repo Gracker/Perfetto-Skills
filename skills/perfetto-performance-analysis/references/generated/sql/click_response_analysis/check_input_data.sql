@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
--- Source SHA-256: 6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68
+-- Source SHA-256: 03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -168,9 +168,24 @@ android_input_scoped_deliveries AS NOT MATERIALIZED (
   WHERE (${start_ts} IS NULL OR d.receive_ts + d.receive_dur > ${start_ts})
     AND (${end_ts} IS NULL OR d.dispatch_ts < ${end_ts})
 )
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- The scoped input deliveries a caller analyzes, under its process scope.
+-- Under an exact process scope: only that UPID's deliveries, analyzed per upid
+-- (analyzed_for_upid), so a same-named instance neither joins nor empties it.
+-- Otherwise: every delivery, analyzed per process name (analyzed_for_name),
+-- for a caller that then names its target process.
+-- Requires fragments/android_input_scoped_deliveries.sql listed before it.
+android_input_target_deliveries AS NOT MATERIALIZED (
+  SELECT d.*,
+    CASE WHEN ${__process_scope.upid} IS NULL THEN d.analyzed_for_name ELSE d.analyzed_for_upid END AS analyzed
+  FROM android_input_scoped_deliveries AS d
+  WHERE ${__process_scope.upid} IS NULL OR d.upid = ${__process_scope.upid}
+)
 SELECT
   COUNT(DISTINCT physical_event_key) as event_count,
   CASE WHEN COUNT(*) > 0 THEN 'available' ELSE 'unavailable' END as status
-FROM android_input_scoped_deliveries
-WHERE analyzed_for_name
-  AND ('${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*')
+FROM android_input_target_deliveries
+WHERE analyzed
+  AND (${__process_scope.upid} IS NOT NULL
+    OR '${package}' = '' OR process_name = '${package}' OR process_name GLOB '${package}:*')

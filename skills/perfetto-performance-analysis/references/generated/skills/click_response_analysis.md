@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_analysis.skill.yaml
-Source SHA-256: 6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68
+Source SHA-256: 03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371
 # 点击响应分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -144,10 +144,14 @@ display:
   - name: status
     label: 状态
     type: string
+process_scope:
+  role: target
+  binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 save_as: input_check
 ```
 ### 选择目标进程
@@ -180,10 +184,14 @@ display:
     type: duration
     format: duration_ms
     unit: ms
+process_scope:
+  role: target
+  binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 save_as: target_process
 condition: input_check.data[0]?.status === 'available'
 ```
@@ -275,10 +283,14 @@ display:
   - name: rating
     label: 评级
     type: string
+process_scope:
+  role: target
+  binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 save_as: latency_overview
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -337,10 +349,14 @@ display:
   - name: slow_events
     label: 慢事件数
     type: number
+process_scope:
+  role: target
+  binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 save_as: latency_by_type
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -395,10 +411,14 @@ display:
   - name: slow_events
     label: 慢事件数
     type: number
+process_scope:
+  role: target
+  binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 save_as: latency_by_window
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -506,10 +526,14 @@ display:
   - name: main_bottleneck
     label: 主要瓶颈
     type: string
+process_scope:
+  role: target
+  binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 save_as: slow_events
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -529,6 +553,7 @@ sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 - fragments/effective_target_processes.sql
 - fragments/system_thread_state_spans.sql
 optional: true
@@ -616,10 +641,18 @@ display:
   - name: main_thread_calls
     label: 主线程调用
     type: number
+process_scope:
+  role: target
+  binding: native_upid
+  context_fields:
+    peer_context:
+    - server_process
+    - aidl_name
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 save_as: input_binder
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -665,10 +698,14 @@ display:
   - name: rating
     label: 评级
     type: enum
+process_scope:
+  role: target
+  binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 save_as: input_to_frame
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```
@@ -707,10 +744,14 @@ display:
     label: 占比
     type: percentage
     format: percentage
+process_scope:
+  role: target
+  binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 - fragments/android_input_delivery_roles.sql
 - fragments/android_input_scoped_deliveries.sql
+- fragments/android_input_target_deliveries.sql
 save_as: latency_distribution
 condition: input_check.data[0]?.status === 'available' && target_process.data.length > 0
 ```

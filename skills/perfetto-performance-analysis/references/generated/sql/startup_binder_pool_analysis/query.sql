@@ -1,12 +1,25 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_binder_pool_analysis.skill.yaml
--- Source SHA-256: d4fc47a1ff64ab95374facdfd1b58e5a6d0867ba16d61590848524557fecae80
+-- Source SHA-256: 89f077e064e5a82c5b38e4601ec000cf53e5ac5e84cf735895b7ef5f5c86281a
 
-WITH binder_threads AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+binder_threads AS (
   SELECT t.utid, t.name as thread_name
   FROM thread t
-  JOIN process p ON t.upid = p.upid
-  WHERE ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+  JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL
+      OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND t.name GLOB 'Binder:*'
 ),
 pool_stats AS (

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/main_thread_file_io_in_range.skill.yaml
-Source SHA-256: 1e6721dae814a7a27fab828fb7d59ed2ed7389499b9e16178ec2690ef54d5ff5
+Source SHA-256: db85d5ef795370e46144f4a77826187da162576690574521104a414748ccd651
 # 主线程文件 IO (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

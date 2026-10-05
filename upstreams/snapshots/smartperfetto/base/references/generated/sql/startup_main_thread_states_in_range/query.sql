@@ -1,8 +1,19 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_main_thread_states_in_range.skill.yaml
--- Source SHA-256: 47e6b6e9b545b31fe26b0e29c8e3ab63e959a93d20dcd35c28f09facb3963b61
+-- Source SHA-256: 5f5e6461fef509f5bfe85842fa3a7f41ff171eb3cf7d1b0d3a3c2b607f6e5515
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
 
@@ -51,8 +62,10 @@ state_rows AS (
   FROM thread_state ts
   JOIN android_startup_threads st ON ts.utid = st.utid
   JOIN android_startups s ON st.startup_id = s.startup_id
+  JOIN effective_target_processes p ON st.upid = p.upid
   WHERE st.is_main_thread = 1
-    AND (('${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*') OR '${package}' = '')
+    AND (${__process_scope.upid} IS NOT NULL
+      OR '${package}' = '' OR s.package = '${package}' OR s.package GLOB '${package}:*')
     AND (${startup_id} IS NULL OR s.startup_id = ${startup_id})
     AND (${start_ts} IS NULL OR s.ts >= ${start_ts})
     AND (${end_ts} IS NULL OR s.ts + s.dur <= ${end_ts})

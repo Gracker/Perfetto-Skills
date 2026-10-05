@@ -1,8 +1,20 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thread_affinity_violation.skill.yaml
--- Source SHA-256: d66b29385d8481d5950b064fbc5c7fa8f18e83ee05c5ff08e5c5e9fa535469fb
+-- Source SHA-256: c6d2edaaa916a159e69330f72fc2845056d18fd1bc2df190b2cec25c01962309
 
-WITH target_threads AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+target_threads AS (
   SELECT
     t.utid,
     t.name as thread_name,
@@ -10,8 +22,9 @@ WITH target_threads AS (
     p.pid,
     t.tid
   FROM thread t
-  JOIN process p ON t.upid = p.upid
-  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
+  JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL
+      OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND (
       t.tid = p.pid
       OR t.name = 'RenderThread'

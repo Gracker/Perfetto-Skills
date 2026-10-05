@@ -45,8 +45,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -71,7 +70,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_jit_analysis/query.sql",
-      "sha256": "5e7a8d6b63eea1d62f57241a00c397633c6b7f76946a4584fe132b7b28e1f62c",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "2144294bbd5f0d2845ae704e76e8c9f19f929ee1d5bb6a0739779392b62994e4",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -86,23 +89,30 @@
       "source": {
         "path": "backend/skills/atomic/startup_jit_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ceeb85896261dfa2e0996f9b4e23ff635538913ec2cd0de9c5bb0b820fcc48f0"
+        "sha256": "b561682b7e303ed5f89648b3b2fd25c2528fe4cd9e5f4fe111646884bf4ea283"
       },
       "sql_dependencies": {
         "creates": [],
         "declared_modules": [],
         "drops": [],
         "required_tables": [],
-        "requires": [
-          "_cpu_topology"
-        ],
-        "setup_queries": [
-          "cpu_topology_view/create_topology_view"
-        ]
+        "requires": [],
+        "setup_queries": []
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "3176b87558e516c66bdca036137bb4b0782c6a6972a6924d7f22b10b9829a5fa"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/system_sched_spans.sql",
+            "source_sha256": "ebcdcc6f476c4109051e817bcd107b1e45351faea14ff238ba76fb3f53b0b032"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
@@ -113,7 +123,9 @@
         ],
         "result_dependencies": [],
         "result_references": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

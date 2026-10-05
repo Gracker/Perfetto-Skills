@@ -1,8 +1,19 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/main_thread_file_io_in_range.skill.yaml
--- Source SHA-256: 1e6721dae814a7a27fab828fb7d59ed2ed7389499b9e16178ec2690ef54d5ff5
+-- Source SHA-256: db85d5ef795370e46144f4a77826187da162576690574521104a414748ccd651
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
 
@@ -76,8 +87,9 @@ file_io_slice_name_exclusions(pattern) AS (
 main_thread AS (
   SELECT t.utid
   FROM thread t
-  JOIN process p ON t.upid = p.upid
-  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
+  JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL
+      OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND t.tid = p.pid
 ),
 io_slices AS (

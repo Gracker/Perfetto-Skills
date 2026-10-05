@@ -45,8 +45,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -71,7 +70,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_binder_pool_analysis/query.sql",
-      "sha256": "e9760cf94b068db312e99540301110dbb8e7641f43b738719e5e4dd8558a9c9c",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "7e420b4503f24a0d9f3ad1f2385404016d9cfa25846a32ea57e2dffe446e7815",
       "signal_patterns": [
         "${package}",
         "${package}:*",
@@ -81,7 +84,7 @@
       "source": {
         "path": "backend/skills/atomic/startup_binder_pool_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "d4fc47a1ff64ab95374facdfd1b58e5a6d0867ba16d61590848524557fecae80"
+        "sha256": "89f077e064e5a82c5b38e4601ec000cf53e5ac5e84cf735895b7ef5f5c86281a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -93,7 +96,13 @@
       },
       "step_id": "root",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
@@ -104,7 +113,9 @@
         ],
         "result_dependencies": [],
         "result_references": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

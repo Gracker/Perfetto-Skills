@@ -129,7 +129,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/cpu_analysis.skill.yaml",
-    "sha256": "8b7cc6a037d9d5830182a4fd784d3aa536310fa9616c8b5e4397c1538b549ceb"
+    "sha256": "d92fc12306d640e35692ee32b71bec6aa951ed61f3d8f5b0f4f24b2bafacc9af"
   },
   "steps": [
     {
@@ -305,6 +305,9 @@
       "id": "cache_counter_check",
       "name": "Cache Miss 计数器检测",
       "optional": true,
+      "process_scope": {
+        "role": "global_context"
+      },
       "query_id": "cpu_analysis/cache_counter_check",
       "result_dependencies": [],
       "save_as": "cache_counter_check",

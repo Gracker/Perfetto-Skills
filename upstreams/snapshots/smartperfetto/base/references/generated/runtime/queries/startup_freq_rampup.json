@@ -45,8 +45,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -59,13 +58,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_freq_rampup/query.sql",
-      "sha256": "a3a3dfad3dda5e55fbd655450c42d851a40eda7d4d6a5856f4320d294aa22321",
+      "process_scope": {
+        "role": "global_context"
+      },
+      "sha256": "4a21308c2d4a4fe8f9b444ea36576968d45f6a60a8db7e2c99000659f758f7f8",
       "signal_patterns": [],
       "skill_id": "startup_freq_rampup",
       "source": {
         "path": "backend/skills/atomic/startup_freq_rampup.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6f5c949fb38180d0c6f2fb90172a4357d8a192a449da1c88d7bfe8ebade4a876"
+        "sha256": "8e67f52a609189a07bbed61ef8c93023b6987fda5a06e18c23a943f083b09bd8"
       },
       "sql_dependencies": {
         "creates": [],

@@ -1,12 +1,25 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/startup_detail.skill.yaml
--- Source SHA-256: ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f
+-- Source SHA-256: cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5
 
-WITH main_thread AS (
+WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+main_thread AS (
   SELECT t.utid
   FROM thread t
-  JOIN process p ON t.upid = p.upid
-  WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
+  JOIN effective_target_processes p ON t.upid = p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL
+      OR '${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
     AND t.tid = p.pid
 ),
 slice_with_self AS (

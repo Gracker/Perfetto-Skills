@@ -22,7 +22,13 @@
   },
   "id": "startup_main_thread_states_in_range",
   "identity": {
-    "policy": "none"
+    "aliases": [
+      "package"
+    ],
+    "minConfidence": 50,
+    "policy": "verify_if_present",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
   },
   "inputs": [
     {
@@ -57,12 +63,16 @@
     ],
     "required_tables": []
   },
+  "process_scope": {
+    "binding": "effective_target_processes",
+    "role": "target"
+  },
   "query_id": "startup_main_thread_states_in_range/root",
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/startup_main_thread_states_in_range.skill.yaml",
-    "sha256": "47e6b6e9b545b31fe26b0e29c8e3ab63e959a93d20dcd35c28f09facb3963b61"
+    "sha256": "5f5e6461fef509f5bfe85842fa3a7f41ff171eb3cf7d1b0d3a3c2b607f6e5515"
   },
   "steps": [],
   "type": "atomic",

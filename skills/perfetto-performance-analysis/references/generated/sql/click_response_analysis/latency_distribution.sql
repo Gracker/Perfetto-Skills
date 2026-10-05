@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/click_response_analysis.skill.yaml
--- Source SHA-256: 6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68
+-- Source SHA-256: 03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -168,6 +168,20 @@ android_input_scoped_deliveries AS NOT MATERIALIZED (
   WHERE (${start_ts} IS NULL OR d.receive_ts + d.receive_dur > ${start_ts})
     AND (${end_ts} IS NULL OR d.dispatch_ts < ${end_ts})
 )
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- The scoped input deliveries a caller analyzes, under its process scope.
+-- Under an exact process scope: only that UPID's deliveries, analyzed per upid
+-- (analyzed_for_upid), so a same-named instance neither joins nor empties it.
+-- Otherwise: every delivery, analyzed per process name (analyzed_for_name),
+-- for a caller that then names its target process.
+-- Requires fragments/android_input_scoped_deliveries.sql listed before it.
+android_input_target_deliveries AS NOT MATERIALIZED (
+  SELECT d.*,
+    CASE WHEN ${__process_scope.upid} IS NULL THEN d.analyzed_for_name ELSE d.analyzed_for_upid END AS analyzed
+  FROM android_input_scoped_deliveries AS d
+  WHERE ${__process_scope.upid} IS NULL OR d.upid = ${__process_scope.upid}
+)
 SELECT
   CASE
     WHEN total_latency_dur / 1e6 < 16 THEN '<16ms (极快)'
@@ -181,9 +195,9 @@ SELECT
 -- 每个物理事件一行，按其最慢的分析投递分桶，事件数与 input_latency_overview 的事件总数一致。
 FROM (
   SELECT MAX(total_latency_dur) AS total_latency_dur
-  FROM android_input_scoped_deliveries
-  WHERE process_name = '${target_process.data[0].process_name}'
-    AND analyzed_for_name
+  FROM android_input_target_deliveries
+  WHERE (${__process_scope.upid} IS NOT NULL OR process_name = '${target_process.data[0].process_name}')
+    AND analyzed
   GROUP BY physical_event_key
 )
 GROUP BY latency_bucket

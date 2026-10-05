@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_thread_blocking_graph.skill.yaml
-Source SHA-256: 69238dda35542463041b9a6abaac5497e3ce646dd30ab5172692caa825eb5d2f
+Source SHA-256: 77123b3a58b09e2f5dffec6e40d9f3f6fcde05ecbd76db6aa935f4d3640f9456
 # 启动线程阻塞关系图
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

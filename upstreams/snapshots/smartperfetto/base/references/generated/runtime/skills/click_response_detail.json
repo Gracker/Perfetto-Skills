@@ -130,7 +130,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/click_response_detail.skill.yaml",
-    "sha256": "8b72b8641a859755014ddf9f6e540699d2560660bd13ffbd1cf2e6881f7dfeec"
+    "sha256": "9e44f27b6343d60763ebf83af07b3dd5c2d9c22a357c8f8527c54a3f67b5e497"
   },
   "steps": [
     {
@@ -197,6 +197,9 @@
       "displayed": true,
       "id": "event_info",
       "name": "事件基本信息",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
       "query_id": "click_response_detail/event_info",
       "result_dependencies": [],
       "save_as": "event_basic",
@@ -205,9 +208,25 @@
     {
       "displayed": true,
       "id": "input_dispatch_breakdown",
-      "name": "输入分发管线分解",
+      "name": "输入分发阶段",
       "optional": true,
+      "process_scope": {
+        "role": "peer_context"
+      },
       "query_id": "click_response_detail/input_dispatch_breakdown",
+      "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "input_app_receive",
+      "name": "应用端输入接收",
+      "optional": true,
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "query_id": "click_response_detail/input_app_receive",
       "result_dependencies": [],
       "type": "atomic"
     },
@@ -216,6 +235,10 @@
       "id": "input_pipeline_lifecycle",
       "name": "输入管线生命周期",
       "optional": true,
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
       "query_id": "click_response_detail/input_pipeline_lifecycle",
       "result_dependencies": [],
       "save_as": "input_lifecycle",

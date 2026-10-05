@@ -1,8 +1,19 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_thread_blocking_graph.skill.yaml
--- Source SHA-256: 69238dda35542463041b9a6abaac5497e3ce646dd30ab5172692caa825eb5d2f
+-- Source SHA-256: 77123b3a58b09e2f5dffec6e40d9f3f6fcde05ecbd76db6aa935f4d3640f9456
 
 WITH
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Keep the process table available for global/peer joins. Only an explicitly
+-- authored target relation consumes this trusted execution scope.
+effective_target_processes AS (
+  SELECT * FROM process
+  WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- Copyright (C) 2024-2026 Gracker (Chris)
 
@@ -40,8 +51,8 @@ process_threads AS (
       WHEN t.name GLOB '*HeapTaskDaemon*' OR t.name GLOB '*FinalizerDaemon*' THEN 'gc'
       WHEN t.name GLOB 'Jit thread pool*' THEN 'jit'
       WHEN t.name GLOB 'Binder:*' THEN 'binder' ELSE 'other' END AS role
-  FROM thread t JOIN process p ON t.upid=p.upid
-  WHERE ('${package}'='' OR p.name='${package}' OR p.name GLOB '${package}:*')
+  FROM thread t JOIN effective_target_processes p ON t.upid=p.upid
+  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}'='' OR p.name='${package}' OR p.name GLOB '${package}:*')
 ),
 system_windows AS (
   SELECT 0 AS window_id,${start_ts} AS window_start_ts,${end_ts} AS window_end_ts

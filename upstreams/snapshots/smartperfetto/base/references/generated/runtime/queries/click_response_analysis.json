@@ -45,8 +45,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -71,7 +70,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/check_input_data.sql",
-      "sha256": "bdb97d127e60f346638632cd9651126d533c884f994a4a02e32b41021eab4b12",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "6eda361d9f85767d927236309a550ea953ad733c4193f36a25815eecaf63206a",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -80,7 +83,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -115,6 +118,11 @@
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+          },
+          {
+            "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
           }
         ],
         "name_parameters": [
@@ -127,7 +135,9 @@
         ],
         "result_dependencies": [],
         "result_references": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -183,8 +193,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -209,7 +218,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/get_process.sql",
-      "sha256": "51ca33ac2cc34c1f885f593cb9a56db047594e4e5ef3757bec0fcd6db1719db5",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "0b4accd4f894b74b8124cdcf5b29320db722c456d373879bbc51154301e4471c",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -218,7 +231,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -253,6 +266,11 @@
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+          },
+          {
+            "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
           }
         ],
         "name_parameters": [
@@ -265,7 +283,9 @@
         ],
         "result_dependencies": [],
         "result_references": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -321,8 +341,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -347,7 +366,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_latency_overview.sql",
-      "sha256": "77d6f78c949da7be232a9209721d0269854e93998d9af77e00873badd33f61e6",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "8e61d166493857b1d4a3fa45b0d1b869f26ecd01df6772cf4c43d433800177d2",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
@@ -355,7 +378,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -390,6 +413,11 @@
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+          },
+          {
+            "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
           }
         ],
         "name_parameters": [],
@@ -405,7 +433,9 @@
         "result_references": [
           "target_process"
         ],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -461,8 +491,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -487,7 +516,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/latency_by_event_type.sql",
-      "sha256": "03f8fa46a6ab5a774dc1556aa77b8b5302f52e1d537aa6099d87396d8b25d7a1",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "47e9f44932937e06697f3610dae266a4a36acacf9dd40ec1d9f03b8a2d22001b",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
@@ -495,7 +528,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -530,6 +563,11 @@
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+          },
+          {
+            "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
           }
         ],
         "name_parameters": [],
@@ -544,7 +582,9 @@
         "result_references": [
           "target_process"
         ],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -600,8 +640,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -626,7 +665,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/latency_by_window.sql",
-      "sha256": "bca39524d2a9c01116b3a5bf3124acab8e37e3a388baf5cc580368ec5ba1b6c8",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "7d051f7610e4d744462af1368bb513da4d602073106944e5c39be10061306bcb",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
@@ -634,7 +677,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -669,6 +712,11 @@
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+          },
+          {
+            "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
           }
         ],
         "name_parameters": [],
@@ -683,7 +731,9 @@
         "result_references": [
           "target_process"
         ],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -739,8 +789,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -765,7 +814,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/slow_input_events.sql",
-      "sha256": "2c61ec2222ee3d2a13d6f54afeb3dc9548dcefe2ac990d6606e9d280d9281e00",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "9f71f36f6bec9cd3c166b1afea36f57fdda9febdc176da3575adbb6ca5ad5bd8",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
@@ -773,7 +826,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -808,6 +861,11 @@
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+          },
+          {
+            "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
           }
         ],
         "name_parameters": [],
@@ -823,7 +881,9 @@
         "result_references": [
           "target_process"
         ],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -908,7 +968,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "e7e8ddf8456fcc74345d1c85909f015031dae9611d5fa38d24a75e7d92012dd4",
+      "sha256": "1cf558ff690623787be77b85f09b795d33e4c4a221cd599a221698a9831ddb20",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
@@ -916,7 +976,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -954,11 +1014,16 @@
           },
           {
             "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
+          },
+          {
+            "order": 4,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
             "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
           },
           {
-            "order": 4,
+            "order": 5,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
             "source_sha256": "9731dae208d19f0f96bd0faaa948d92e4be07936331ccc5eb6de57f46b370a53"
           }
@@ -1033,8 +1098,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -1059,7 +1123,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_binder_calls.sql",
-      "sha256": "52516b7422d730676de20636a78c834624c32570aba925cbb069b94687fa4623",
+      "process_scope": {
+        "binding": "native_upid",
+        "context_fields": {
+          "peer_context": [
+            "server_process",
+            "aidl_name"
+          ]
+        },
+        "role": "target"
+      },
+      "sha256": "4dd2495f52bdb6199180989e416b19f5334541262c74b33fcf73a4fe2a6fcf70",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
@@ -1067,7 +1141,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1102,6 +1176,11 @@
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+          },
+          {
+            "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
           }
         ],
         "name_parameters": [],
@@ -1116,7 +1195,9 @@
         "result_references": [
           "target_process"
         ],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1172,8 +1253,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -1198,7 +1278,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/input_to_frame.sql",
-      "sha256": "8380c5c16b6fa94daaefd9952b5abeb99be29fdcd5f40bebbb868221041e9bce",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "e09eae02789d215391127aef8ff4a1fd1c80f563482bb1823333a6a51d8b8abe",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
@@ -1206,7 +1290,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1241,6 +1325,11 @@
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+          },
+          {
+            "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
           }
         ],
         "name_parameters": [],
@@ -1257,7 +1346,9 @@
         "result_references": [
           "target_process"
         ],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
@@ -1313,8 +1404,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -1339,7 +1429,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/click_response_analysis/latency_distribution.sql",
-      "sha256": "1a7b88c0789ac48854ffefb231c2265eb11a027cb291bfb276b609628c3f83e3",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "df7758ba713541da61de3a4204d12f75088f5a6446d9868e9fb078b6755d1d8f",
       "signal_patterns": [
         "${target_process.data[0].process_name}"
       ],
@@ -1347,7 +1441,7 @@
       "source": {
         "path": "backend/skills/composite/click_response_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "6d9b8d7751e14a4a990e7b9d80569a1195dfffe8f7c0f93e3a5c714f12b62a68"
+        "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
       },
       "sql_dependencies": {
         "creates": [],
@@ -1382,6 +1476,11 @@
             "order": 2,
             "source_path": "backend/skills/fragments/android_input_scoped_deliveries.sql",
             "source_sha256": "6b8512d6b952992fc42e947a2b764d087a0a87b9049c9a5d398db1fcef2b33e1"
+          },
+          {
+            "order": 3,
+            "source_path": "backend/skills/fragments/android_input_target_deliveries.sql",
+            "source_sha256": "e4b7c50fd061d5aded8523497d4df2bf88ba1c703b465439393bff53e6ae4382"
           }
         ],
         "name_parameters": [],
@@ -1395,7 +1494,9 @@
         "result_references": [
           "target_process"
         ],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

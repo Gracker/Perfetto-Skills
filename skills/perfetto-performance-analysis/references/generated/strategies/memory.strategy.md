@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
-Source SHA-256: 65644ec982e2a7cef39a9e2f32b6079cd5b6158e4a2994094a5f30ec05f15f38
+Source SHA-256: 5ae4fe91ce052a8b9c04b889ef95bab7ac2332f243c18c81da215da83fdc2408
 
 # Memory Strategy
 
@@ -29,6 +29,8 @@ required_capabilities:
 - gc_memory
 - memory_pressure
 optional_capabilities:
+- java_heap_graph
+- native_heap_profile
 - cpu_scheduling
 - binder_ipc
 - battery_counters
@@ -176,13 +178,13 @@ Select allocation, GC, reclaim, page-fault or LMK windows and their actual tasks
 
 ### memory_dependencies (dependency_chain)
 
-Keep memory growth, leakage, OOM/LMK, reclaim and GC evidence distinct. A high allocation count or concurrent pressure alone does not establish a latency or failure cause.
+Keep memory growth, leakage, OOM/LMK, reclaim and GC evidence distinct. A high allocation count or concurrent pressure alone does not establish a latency or failure cause. When the trace holds Java heap dumps (heap_graph_object) and no counters, read the dumps rather than reporting memory data missing. Across two or more dumps a leak needs reachable instances or retained size to grow; growth only in unreachable objects with a stable reachable set is allocation churn awaiting GC, not a leak.
 
 #### memory Core Strategy
 
 **Route card**: 内存 / memory / oom / 泄漏 / leak / lmk / 内存压力 / 内存不足 / low memory / out of memory
 
-**Capabilities**: required=[gc_memory, memory_pressure], optional=[cpu_scheduling, binder_ipc, battery_counters]
+**Capabilities**: required=[gc_memory, memory_pressure], optional=[java_heap_graph, native_heap_profile, cpu_scheduling, binder_ipc, battery_counters]
 
 **Mandatory aspects**
 - memory_trend_and_gc: 内存场景建议包含内存使用趋势和 GC 分析阶段 (memory_analysis) (required: invoke_skill(memory_analysis))

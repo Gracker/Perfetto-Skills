@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_detail.skill.yaml
-Source SHA-256: 8b72b8641a859755014ddf9f6e540699d2560660bd13ffbd1cf2e6881f7dfeec
+Source SHA-256: 9e44f27b6343d60763ebf83af07b3dd5c2d9c22a357c8f8527c54a3f67b5e497
 # 点击详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -181,6 +181,8 @@ optional: true
 ```yaml
 id: event_info
 type: atomic
+process_scope:
+  role: identity_metadata
 display:
   level: key
   layer: deep
@@ -231,7 +233,7 @@ display:
     type: string
 save_as: event_basic
 ```
-### 输入分发管线分解
+### 输入分发阶段
 
 - ID: `input_dispatch_breakdown`
 - Type: `atomic`
@@ -240,10 +242,51 @@ save_as: event_basic
 ```yaml
 id: input_dispatch_breakdown
 type: atomic
+process_scope:
+  role: peer_context
 display:
   level: detail
   layer: deep
-  title: 输入分发管线 (kernel→InputDispatcher→App)
+  title: 输入分发 (InputReader→InputDispatcher，system_server)
+  columns:
+  - name: stage
+    label: 管线阶段
+    type: string
+  - name: start_ts
+    label: 开始时间
+    type: timestamp
+    unit: ns
+    clickAction: navigate_timeline
+  - name: dur_ms
+    label: 耗时(ms)
+    type: duration
+    format: duration_ms
+  - name: thread_name
+    label: 线程
+    type: string
+  - name: detail
+    label: 详情
+    type: string
+optional: true
+```
+### 应用端输入接收
+
+- ID: `input_app_receive`
+- Type: `atomic`
+- SQL: [`../sql/click_response_detail/input_app_receive.sql`](../sql/click_response_detail/input_app_receive.sql)
+
+```yaml
+id: input_app_receive
+type: atomic
+process_scope:
+  role: target
+  binding: effective_target_processes
+sql_fragments:
+- fragments/effective_target_processes.sql
+display:
+  level: detail
+  layer: deep
+  title: 应用端输入接收 (aq:pending:deliver / deliverInputEvent)
   columns:
   - name: stage
     label: 管线阶段
@@ -338,6 +381,9 @@ display:
   - name: is_speculative_frame
     label: 推测帧
     type: boolean
+process_scope:
+  role: target
+  binding: native_upid
 sql_fragments:
 - fragments/android_input_events_normalized.sql
 save_as: input_lifecycle

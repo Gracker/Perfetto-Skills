@@ -68,12 +68,28 @@
     "modules": [],
     "required_tables": []
   },
+  "process_scope": {
+    "binding": "effective_target_processes",
+    "context_fields": {
+      "peer_context": [
+        "waker_utid",
+        "waker_upid",
+        "observed_waker_utid",
+        "waker_thread",
+        "waker_process",
+        "waker_current_slice",
+        "waker_slice_id",
+        "waker_slice_status"
+      ]
+    },
+    "role": "target"
+  },
   "query_id": "startup_thread_blocking_graph/root",
   "runtime_status": "executable",
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/startup_thread_blocking_graph.skill.yaml",
-    "sha256": "69238dda35542463041b9a6abaac5497e3ce646dd30ab5172692caa825eb5d2f"
+    "sha256": "77123b3a58b09e2f5dffec6e40d9f3f6fcde05ecbd76db6aa935f4d3640f9456"
   },
   "steps": [],
   "type": "atomic",

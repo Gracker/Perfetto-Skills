@@ -45,8 +45,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -66,13 +65,16 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/startup_info.sql",
-      "sha256": "1f6e7e8cadd5b5e486c2d13bb32ab3e2539677951dab5b615658cf55e63cabf0",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
+      "sha256": "035ea8356667fcacad3d6bf507ab5b4ce45d872ba052e2b8fa268e0bb1cdb046",
       "signal_patterns": [],
       "skill_id": "startup_detail",
       "source": {
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f"
+        "sha256": "cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5"
       },
       "sql_dependencies": {
         "creates": [],
@@ -188,7 +190,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "04ae8b5cb522847ffae6e3ddce8c8a57685ddd25aedfdd3ca8cbfc37cf527faa",
+      "sha256": "5bf29e531b334d41e91f17e7a9faa58c7fd62c437828298112ef2cebd9f17b4d",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -197,7 +199,7 @@
       "source": {
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f"
+        "sha256": "cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5"
       },
       "sql_dependencies": {
         "creates": [],
@@ -319,7 +321,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "b4f1e51229e70db3c5d7024983d36b0e9560e0f0c7b46767b6d2cbddfe8bc96c",
+      "sha256": "4ca1fd64d72af43e2a40b094e610bc2142336525d3fe66da6b84ab68a1fa036a",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -328,7 +330,7 @@
       "source": {
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f"
+        "sha256": "cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5"
       },
       "sql_dependencies": {
         "creates": [],
@@ -478,7 +480,7 @@
         },
         "role": "target"
       },
-      "sha256": "a35547adee0965cda1719ba512ad88950fdc4c76e312a692a33137577c979ba3",
+      "sha256": "84419d25fc440885ac58fdfdd36cc48ecce161278816d70b32a6617c899702c7",
       "signal_patterns": [
         "${package}:*"
       ],
@@ -486,7 +488,7 @@
       "source": {
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f"
+        "sha256": "cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5"
       },
       "sql_dependencies": {
         "creates": [],
@@ -627,7 +629,7 @@
         },
         "role": "target"
       },
-      "sha256": "b6ac1076774c5f5413d3fbc5a1858ae45bf00dbe19f1f28cc354ec18e281ef1a",
+      "sha256": "710178ff1c9dc4668baaf1f4ff7073e72b8df47652a47ccefec70ca376a06ee1",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -636,7 +638,7 @@
       "source": {
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f"
+        "sha256": "cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5"
       },
       "sql_dependencies": {
         "creates": [],
@@ -753,7 +755,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "67025a0960b554ae2b856b8809e9c8b980ffc099f7eb1223aa20d6373cf96b3b",
+      "sha256": "edce6a4e4cdb55f40e76d20b3112837d13ad5f1b4f1c6e2427557fe56d761187",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -762,7 +764,7 @@
       "source": {
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f"
+        "sha256": "cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5"
       },
       "sql_dependencies": {
         "creates": [],
@@ -865,8 +867,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -886,7 +887,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_detail/actionable_main_thread_slices.sql",
-      "sha256": "572add4bfe1b7cb6cc8d5bcf198389a7d8b83e7020b463a9b27f00d7997cf0cc",
+      "process_scope": {
+        "binding": "effective_target_processes",
+        "role": "target"
+      },
+      "sha256": "0a53a05e9f364bdb3893867376302c2716242e0298db3a61620246fed5d22710",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -895,7 +900,7 @@
       "source": {
         "path": "backend/skills/composite/startup_detail.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "ab23f1821efdb5d8bc383b3cad081335f3bca0d75816160f8acbb9496cbe043f"
+        "sha256": "cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5"
       },
       "sql_dependencies": {
         "creates": [],
@@ -913,7 +918,13 @@
       },
       "step_id": "actionable_main_thread_slices",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/effective_target_processes.sql",
+            "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
+          }
+        ],
         "name_parameters": [
           "package"
         ],
@@ -924,7 +935,9 @@
         ],
         "result_dependencies": [],
         "result_references": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",
