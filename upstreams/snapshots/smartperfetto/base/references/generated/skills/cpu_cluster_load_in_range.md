@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml
-Source SHA-256: aa2f4145af6db47f2b6928a496e665965dc44b69e487030be44ae5115b4d8054
+Source SHA-256: a5751409d29cad0c6725683a9f78734180f05324aafb0e6a12a212b00eecdf09
 # CPU 簇负载分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -9,7 +9,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: cpu_cluster_load_in_range
-version: '2.2'
+version: '2.3'
 type: composite
 category: cpu
 tier: B
@@ -75,6 +75,16 @@ display:
   columns:
   - name: cluster
     label: CPU 簇
+    type: string
+  - name: load_status
+    label: 负载测量状态
+    label_i18n:
+      en: Load measurement status
+    type: string
+  - name: clock_basis
+    label: 计时口径
+    label_i18n:
+      en: Clock basis
     type: string
   - name: core_count
     label: 核心数

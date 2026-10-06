@@ -671,9 +671,9 @@
       "name": "cpu_cluster_load_in_range",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/cpu_cluster_load_in_range.skill.yaml",
-      "source_sha256": "aa2f4145af6db47f2b6928a496e665965dc44b69e487030be44ae5115b4d8054",
+      "source_sha256": "a5751409d29cad0c6725683a9f78734180f05324aafb0e6a12a212b00eecdf09",
       "tier": "B",
-      "version": "2.2",
+      "version": "2.3",
       "workflow": "cpu-scheduling"
     },
     {
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "2482954d709357c6fa1e91e0c7e00df26e2bc888",
+    "commit": "eb5df50b24138019b26c9687717ff035db1704f5",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "1c7e73b3b1556c43d734b1ffe1525c05680e4cde72a2eacdde94ea987030bccd",
+    "policy_sha256": "4a8b084cbad82d33fa27b182e62577955ed6a59e3b528896b02c3fd3b5ac3415",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3139,7 +3139,7 @@
       "destination": "references/generated/runtime/fragments/cpu_cluster_load.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/cpu_cluster_load.sql",
-      "source_sha256": "3e04c9d00dd47d78215589a35a3e9ce80e803da7ed94fed3337daef51535f8b4"
+      "source_sha256": "aa7193d7d9d5e49617f93cebfab5479be5448769cf6433af878d393907f7d471"
     },
     {
       "destination": "references/generated/runtime/fragments/effective_target_processes.sql",
@@ -4025,6 +4025,18 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto runtime empty-body delivery continuation",
+      "source_path": "backend/strategies/prompt-runtime-empty-body-continuation-en.template.md",
+      "source_sha256": "b633b3ec16e763ac62e920c46cc63465553883d631d3b6a22751e9cd71c4544a"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto runtime empty-body delivery continuation",
+      "source_path": "backend/strategies/prompt-runtime-empty-body-continuation-zh.template.md",
+      "source_sha256": "070129a52c32cd0e96ed489aa4f93259f230eed62ab37554f98e7f1a8842dfd3"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto runtime session and memory orchestration",
       "source_path": "backend/strategies/prompt-runtime-fast-memory-en.template.md",
       "source_sha256": "76deb4351039be4c7e486a576b393cacd528cecc6999bb00cc02f06ee369a4b6"
@@ -4420,7 +4432,7 @@
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 108,
+    "product_only_strategy_sources": 110,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4431,7 +4443,7 @@
     },
     "skill_yaml_files": 257,
     "sql_fragments": 60,
-    "strategy_sources": 154,
+    "strategy_sources": 156,
     "vendor_overrides": 8
   },
   "vendor_overrides": [
