@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: 97b5a194de8fe894586b3b3c5a7663c00df02991d22f2574c0179c2e4be62e45
+Source SHA-256: d47839b1f5793674654d852c37f16448fda3b641a265aa4db616cb18b78eed29
 
 # Anr Strategy
 
@@ -110,7 +110,7 @@ Apply `causal_reasoning` version 1 from [shared investigation methods](investiga
 
 ### anr_critical_path (critical_path)
 
-Check recorded ANR type, target UPID and timeout window when available. If no ANR is recorded but the user asks about unresponsiveness, discover long main-thread waits with anr_main_thread_blocking without process_name/anr_ts, then correlate candidate UPID and exact wait window with target input dispatch and FINISHED acknowledgements; absence of an ANR anchor must not stop this investigation. Identify blocked task, main-thread work and relevant owner/peer tasks rather than equating the longest wait with the full timeout.
+Check recorded ANR type, target UPID and timeout window when available. Keep timer_delay (expiry-to-record delay, ns) separate from the ANR timeout/duration: 50000000 ns is 50 ms, not 50 s. If no ANR is recorded but the user asks about unresponsiveness, discover long main-thread waits with anr_main_thread_blocking without process_name/anr_ts, then correlate candidate UPID and exact wait window with target input dispatch and FINISHED acknowledgements; absence of an ANR anchor must not stop this investigation. Identify blocked task, main-thread work and relevant owner/peer tasks rather than equating the longest wait with the full timeout.
 
 ### anr_dependencies (dependency_chain)
 

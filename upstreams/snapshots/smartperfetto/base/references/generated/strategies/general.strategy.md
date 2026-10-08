@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/general.strategy.md
-Source SHA-256: fef91573be30e4fdecb914f0da889f850702899fac2e9b471571d18d10e2a4e6
+Source SHA-256: 20653ab254503073227200e5be19bde8f30e59b66e5a91f0b32a6bf88d6fa920
 
 # General Strategy
 
@@ -48,7 +48,7 @@ Bind the objects, process instances and windows in the current question before s
 
 ### general_dependencies (dependency_chain)
 
-Use domain-specific dependency evidence only where it explains the selected performance goal. Preserve unresolved scope and missing data instead of turning an ambiguous query into an automatic broad investigation.
+Use domain-specific dependency evidence only where it explains the selected performance goal. To explain an anomalous synchronous Binder call, inspect same-window server and available lock-owner evidence before leaving root-cause investigation as future work; existence-only questions do not require that drill-down. Preserve unresolved scope and missing data instead of turning an ambiguous query into an automatic broad investigation.
 
 #### general Core Strategy
 

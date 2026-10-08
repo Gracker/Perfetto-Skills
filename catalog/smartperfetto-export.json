@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "38d1410e3f4e94ccacf1e6e3a27bd0d8edf12126",
+    "commit": "ea1ccca20b2fd7ab38fc9b0604f31edae9812a05",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "4a8b084cbad82d33fa27b182e62577955ed6a59e3b528896b02c3fd3b5ac3415",
+    "policy_sha256": "a385f4d76d9404aa10a6068812c09464056c477d7a9513380a3237f3762e1160",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3447,7 +3447,7 @@
       "destination": "references/generated/strategies/anr.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/anr.strategy.md",
-      "source_sha256": "97b5a194de8fe894586b3b3c5a7663c00df02991d22f2574c0179c2e4be62e45",
+      "source_sha256": "d47839b1f5793674654d852c37f16448fda3b641a265aa4db616cb18b78eed29",
       "workflow": "anr-blocking"
     },
     {
@@ -3498,7 +3498,7 @@
       "destination": "references/generated/strategies/general.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/general.strategy.md",
-      "source_sha256": "fef91573be30e4fdecb914f0da889f850702899fac2e9b471571d18d10e2a4e6",
+      "source_sha256": "20653ab254503073227200e5be19bde8f30e59b66e5a91f0b32a6bf88d6fa920",
       "workflow": "trace-overview"
     },
     {
@@ -3526,7 +3526,7 @@
       "destination": "references/generated/knowledge/knowledge-binder-ipc.template.md",
       "disposition": "exported",
       "source_path": "backend/strategies/knowledge-binder-ipc.template.md",
-      "source_sha256": "fa9d2ad5a64f1768485f3f6324b57407b63d96678a6a50cede6747f71d1ae8bc",
+      "source_sha256": "1a258a801d3887493277d935ebd3481cf722a229aca59becdff071acd586d3dc",
       "workflow": "anr-blocking"
     },
     {
@@ -3793,7 +3793,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto conclusion declarations and captured evidence identifiers",
       "source_path": "backend/strategies/prompt-conclusion-contract-schema.template.md",
-      "source_sha256": "cb9e54ce442122de963038e281d6dfa0a51a39240ee12bc14b842aff7d9a21ca"
+      "source_sha256": "919acfc1838152c8e6552e86a6ac93d686de4d85b8e87aa494a117991ba18e99"
     },
     {
       "disposition": "product-only",
@@ -3931,13 +3931,25 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
       "source_path": "backend/strategies/prompt-native-declaration-completion-en.template.md",
-      "source_sha256": "9263433ede8889e97e11c35230fc6937d61cc432772309f81c5c0b0674393637"
+      "source_sha256": "5cae139b1f77b7280f6a9fe96b4fd9839ca3f85a67aa55c0cece5681c9ab6b0a"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
       "source_path": "backend/strategies/prompt-native-declaration-completion-zh.template.md",
-      "source_sha256": "2808b8ace5dc8dc01390879ae0cd19afbfd296f3422f2cee3b1aeee65464aadb"
+      "source_sha256": "b050914a2c16eaaead38399dfde4f0ce2bd07600985232599aae2391a14f6f55"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto native output-limit delivery recovery orchestration",
+      "source_path": "backend/strategies/prompt-native-output-completion-en.template.md",
+      "source_sha256": "a8a55a5ea3156954745f7fb901664330803314f2d381965dde458e1246d83356"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto native output-limit delivery recovery orchestration",
+      "source_path": "backend/strategies/prompt-native-output-completion-zh.template.md",
+      "source_sha256": "abb9cab6068d4a70dad6e58d39aeae5846d7b7d64faa3b1a157b9f169e62f554"
     },
     {
       "disposition": "product-only",
@@ -3991,13 +4003,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto native evidence relation candidate recovery protocol",
       "source_path": "backend/strategies/prompt-relation-proposal-recovery-en.template.md",
-      "source_sha256": "00c841ef74c178880c28d090f03d154ab3a4e4d0187a7ee476a9daa5f7d22f8d"
+      "source_sha256": "65ff6c2a512b5a5700ba89ec88b06b5e262aa504439d14e11c96eb54515758fc"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto native evidence relation candidate recovery protocol",
       "source_path": "backend/strategies/prompt-relation-proposal-recovery-zh.template.md",
-      "source_sha256": "776d47654be9faa28bad82f7e1e89bcb537c1dff2c55f70f764fec17c263146d"
+      "source_sha256": "a7c9ec0678f5e34c408af05b2748f9cf8a30f08f2a1525f3a38309e27980235b"
     },
     {
       "disposition": "product-only",
@@ -4432,7 +4444,7 @@
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 110,
+    "product_only_strategy_sources": 112,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4443,7 +4455,7 @@
     },
     "skill_yaml_files": 257,
     "sql_fragments": 60,
-    "strategy_sources": 156,
+    "strategy_sources": 158,
     "vendor_overrides": 8
   },
   "vendor_overrides": [
