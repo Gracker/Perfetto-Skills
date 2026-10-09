@@ -2141,6 +2141,7 @@ _PRODUCT_RUNTIME_TOKENS = (
     "lookup_knowledge", "submit_hypothesis", "resolve_hypothesis",
     "flag_uncertainty", "write_analysis_note",
     "lookup_sql_schema", "process_identity_resolver",
+    "entry_skill",
 )
 
 

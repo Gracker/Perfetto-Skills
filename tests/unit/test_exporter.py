@@ -206,6 +206,22 @@ class PortableSkillCallTest(unittest.TestCase):
             exporter.portable_skill_runtime(catalog, raw)
 
 
+class StrategyMetadataSanitizerTest(unittest.TestCase):
+    """Strategy frontmatter keys that name the product runtime stay private."""
+
+    def test_entry_skill_binding_is_dropped_and_portable_keys_survive(self) -> None:
+        sanitized = exporter.sanitize_strategy_metadata({
+            "workflow": "scrolling",
+            "keywords": ["jank", "frame"],
+            "entry_skill": "scrolling_analysis",
+            "nested": {"entry_skill": "scrolling_analysis", "priority": 2},
+        })
+        self.assertEqual(
+            sanitized,
+            {"workflow": "scrolling", "keywords": ["jank", "frame"], "nested": {"priority": 2}},
+        )
+
+
 class ProductOnlySqlFragmentTest(unittest.TestCase):
     """SmartPerfetto engines may own fragments that no portable Skill uses."""
 
