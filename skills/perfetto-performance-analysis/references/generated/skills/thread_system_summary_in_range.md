@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/thread_system_summary_in_range.skill.yaml
-Source SHA-256: 31a123f185507ef4507eccba97c35989dc3ab7c66b25bc6a4547216964c5cd8a
+Source SHA-256: e523b849bf1e8c93117737f0a334009b9877f6001a098b8e3eed2888cf077dac
 # 任务状态、摆核与调度观测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -195,6 +195,7 @@ columns:
 - name: avg_freq_khz
   label: avg_freq_khz
   type: number
+  unit: kHz
 - name: frequency_covered_ns
   label: frequency_covered_ns
   type: duration

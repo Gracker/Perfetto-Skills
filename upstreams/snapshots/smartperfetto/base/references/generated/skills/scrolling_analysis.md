@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 611a06dd906d52c4f70b68262fb7f661fe1ea8b92a26e8ebb2eac7714969c84a
+Source SHA-256: 03591cddcd2bd4a278369cc8089e92f224d405b0e9adf66f618e4e44a72056fd
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -844,6 +844,7 @@ display:
   title: 显示配置
   columns:
   - name: refresh_rate_hz
+    unit: Hz
     label: 刷新率
     type: number
     format: compact
@@ -856,6 +857,7 @@ display:
     label: 来源
     type: string
   - name: total_frames
+    unit: frames
     label: 总帧数
     type: number
     format: compact
@@ -888,17 +890,21 @@ display:
     en: Whole trace · all processes · raw FrameTimeline tags (jank tags include Buffer Stuffing)
   columns:
   - name: total_frames
+    unit: frames
     label: FrameTimeline 帧数（全部进程）
     type: number
     format: compact
   - name: jank_frames
+    unit: frames
     label: 带 jank 标签的帧（含 Buffer Stuffing，非感知掉帧）
     type: number
     format: compact
   - name: process_count
+    unit: count
     label: 有帧的进程数
     type: number
   - name: unattributed_frames
+    unit: frames
     label: 无进程归属的帧
     type: number
     format: compact
@@ -1007,38 +1013,47 @@ display:
   title: 滑动性能概览
   columns:
   - name: total_frames
+    unit: frames
     label: 总帧数
     type: number
     format: compact
   - name: perceived_jank_frames
+    unit: frames
     label: 感知掉帧
     type: number
     format: compact
   - name: jank_rate
+    unit: '%'
     label: 感知掉帧率
     type: percentage
     format: percentage
   - name: buffer_stuffing_frames
+    unit: frames
     label: Buffer Stuffing
     type: number
     format: compact
   - name: buffer_stuffing_rate
+    unit: '%'
     label: BS 占比
     type: percentage
     format: percentage
     hidden: true
   - name: app_janky_frames
+    unit: frames
     label: App 侧掉帧
     type: number
     format: compact
   - name: sf_jank_count
+    unit: frames
     label: SF 侧掉帧
     type: number
     format: compact
   - name: actual_fps
+    unit: fps
     label: 实际 FPS
     type: number
   - name: refresh_rate
+    unit: Hz
     label: 刷新率
     type: number
   - name: avg_frame_dur
@@ -1118,6 +1133,7 @@ display:
     type: number
     format: compact
   - name: actual_fps
+    unit: fps
     label: 实际 FPS
     type: number
   - name: duration_sec
@@ -1217,11 +1233,13 @@ display:
     label_i18n:
       en: Gaps over 1.5x budget
     type: number
+    unit: events
   - name: cadence_gap_count
     label: 间隔数
     label_i18n:
       en: Gap count
     type: number
+    unit: events
   - name: budget_ns
     label: VSync 预算
     label_i18n:
@@ -1270,12 +1288,14 @@ display:
     label_i18n:
       en: Raw Buffer Stuffing tag share
     type: percentage
+    unit: '%'
     format: percentage
   - name: buffer_stuffing_frames
     label: 原始 Buffer Stuffing 标签帧
     label_i18n:
       en: Raw Buffer Stuffing tagged frames
     type: number
+    unit: frames
   - name: cadence_status
     label: 呈现节奏核验
     label_i18n:
@@ -1286,11 +1306,13 @@ display:
     label_i18n:
       en: Steady late frames (informational)
     type: number
+    unit: frames
   - name: dropped_frames
     label: 丢弃帧
     label_i18n:
       en: Dropped frames
     type: number
+    unit: frames
   - name: presentation_status
     label: 呈现数据
     label_i18n:
@@ -1299,6 +1321,7 @@ display:
   - name: frames
     label: 帧数
     type: number
+    unit: frames
   - name: frame_timeline_coverage_status
     label: FrameTimeline 覆盖状态
     type: string
@@ -1361,18 +1384,22 @@ display:
     label: 状态
     type: string
   - name: total_input_events
+    unit: events
     label: 输入事件
     type: number
     format: compact
   - name: move_events
+    unit: events
     label: MOVE事件
     type: number
     format: compact
   - name: frame_matched_events
+    unit: events
     label: 关联帧事件
     type: number
     format: compact
   - name: target_processes
+    unit: count
     label: 进程数
     type: number
     format: compact
@@ -1426,10 +1453,12 @@ display:
     label: 目标进程
     type: string
   - name: total_input_events
+    unit: events
     label: 输入事件
     type: number
     format: compact
   - name: move_events
+    unit: events
     label: MOVE事件
     type: number
     format: compact
@@ -1454,14 +1483,17 @@ display:
     format: duration_ms
     unit: ms
   - name: slow_handling_events
+    unit: events
     label: 慢处理事件
     type: number
     format: compact
   - name: input_backlog_frames
+    unit: frames
     label: 输入堆积帧
     type: number
     format: compact
   - name: speculative_frame_matches
+    unit: events
     label: 推测帧关联
     type: number
     format: compact
@@ -1567,10 +1599,12 @@ display:
     label: 掉帧类型
     type: string
   - name: count
+    unit: frames
     label: 帧数
     type: number
     format: compact
   - name: real_jank_count
+    unit: frames
     label: 实际掉帧
     type: number
     format: compact
@@ -1599,6 +1633,7 @@ display:
     type: string
     hidden: true
   - name: frame_timeline_to_buffer_tx_ratio
+    unit: ratio
     label: FrameTimeline/BufferTX 帧数比
     type: number
     hidden: true
@@ -1728,26 +1763,32 @@ display:
     label: 区间
     type: number
   - name: frame_count
+    unit: frames
     label: 总帧数
     type: number
     format: compact
   - name: janky_count
+    unit: frames
     label: 感知掉帧
     type: number
     format: compact
   - name: jank_rate
+    unit: '%'
     label: 感知掉帧率
     type: percentage
     format: percentage
   - name: app_janky_count
+    unit: frames
     label: App 掉帧
     type: number
     format: compact
   - name: buffer_stuffing_count
+    unit: frames
     label: Buffer Stuffing
     type: number
     format: compact
   - name: max_vsync_missed
+    unit: count
     label: 最大跳帧
     type: number
   - name: jank_types
@@ -1869,6 +1910,7 @@ display:
     unit: ns
     hidden: true
   - name: dur_ms
+    unit: ms
     label: 帧耗时
     type: duration
     format: duration_ms
@@ -1876,6 +1918,7 @@ display:
     label: 掉帧类型
     type: string
   - name: vsync_missed
+    unit: count
     label: 跳帧数
     type: number
   - name: present_interval_ms
@@ -1891,6 +1934,7 @@ display:
     type: string
     hidden: true
   - name: frame_timeline_to_buffer_tx_ratio
+    unit: ratio
     label: FrameTimeline/BufferTX 帧数比
     type: number
     hidden: true
@@ -1899,21 +1943,25 @@ display:
     type: string
     hidden: true
   - name: root_cause_eligible_frame_count
+    unit: frames
     label: 可分析掉帧
     type: number
     format: compact
     hidden: true
   - name: root_cause_analyzed_frame_count
+    unit: frames
     label: 已分析掉帧
     type: number
     format: compact
     hidden: true
   - name: root_cause_coverage_ratio
+    unit: ratio
     label: 根因分析覆盖率
     type: percentage
     format: percentage
     hidden: true
   - name: root_cause_sample_limit_per_session
+    unit: frames
     label: 每 Session 采样上限
     type: number
     format: compact
@@ -1935,6 +1983,7 @@ display:
     label: 关键操作
     type: string
   - name: top_slice_ms
+    unit: ms
     label: 操作耗时
     type: duration
     format: duration_ms

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thread_system_summary_in_range.skill.yaml
--- Source SHA-256: 31a123f185507ef4507eccba97c35989dc3ab7c66b25bc6a4547216964c5cd8a
+-- Source SHA-256: e523b849bf1e8c93117737f0a334009b9877f6001a098b8e3eed2888cf077dac
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

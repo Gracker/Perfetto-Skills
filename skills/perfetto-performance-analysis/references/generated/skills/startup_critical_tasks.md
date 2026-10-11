@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_critical_tasks.skill.yaml
-Source SHA-256: 6d2a85573dfd730c95ae1db602444517d81d127c25e2c1c67015020fab6905d6
+Source SHA-256: aa06ec37f7a6cb2c578bd8c69ba1dd37f01fdbc6e3ea545366fb13943193abd0
 # 启动关键任务发现
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -93,6 +93,7 @@ columns:
 - name: total_observed_threads
   label: total_observed_threads
   type: number
+  unit: count
   hidden: true
 - name: upid
   label: UPID
@@ -163,10 +164,12 @@ columns:
 - name: running_pct
   label: 运行占比
   type: percentage
+  unit: '%'
   format: percentage
 - name: big_core_pct
   label: 大核占比
   type: percentage
+  unit: '%'
   format: percentage
 - name: observed_cross_cluster_migrations
   label: 已确认跨Cluster迁移
@@ -195,9 +198,11 @@ columns:
 - name: priority_value_count
   label: 观测 priority 值数
   type: number
+  unit: count
 - name: preemption_count
   label: 窗口内 R+ 切出次数
   type: number
+  unit: events
 - name: runnable_preempted_ms
   label: R+ 等待(ms)
   type: duration

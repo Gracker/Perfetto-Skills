@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_gc_in_range.skill.yaml
-Source SHA-256: 181360569e33efbdedc81db2d067b94dff889c7b6324b2c5ddae70db2ebc8208
+Source SHA-256: 7dce1b22485cd556843bf0cd7c97fe97cd4c0fa80467c795a47511d397edcf34
 # 启动 GC 分析 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -87,17 +87,21 @@ columns:
 - name: count
   label: 次数
   type: number
+  unit: events
   format: compact
 - name: total_dur_ms
   label: 总耗时
   type: duration
+  unit: ms
   format: duration_ms
 - name: avg_dur_ms
   label: 平均耗时
   type: duration
+  unit: ms
   format: duration_ms
 - name: percent_of_startup
   label: 启动占比
   type: percentage
+  unit: '%'
   format: percentage
 ```

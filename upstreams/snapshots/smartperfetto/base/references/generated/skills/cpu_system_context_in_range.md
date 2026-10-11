@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/cpu_system_context_in_range.skill.yaml
-Source SHA-256: 3710a589131ec1ee6dd86475a1c8d00a5b2cc57ed4a1ccead52b2dbaeb4b050d
+Source SHA-256: 474e3b45c7e46c65f6651350cf3496953e90ad29cd0d8c68475f9ba2edb6228e
 # 逐核系统供给与覆盖
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -108,12 +108,15 @@ columns:
 - name: avg_freq_khz
   label: avg_freq_khz
   type: number
+  unit: kHz
 - name: min_freq_khz
   label: min_freq_khz
   type: number
+  unit: kHz
 - name: observed_max_freq_khz
   label: observed_max_freq_khz
   type: number
+  unit: kHz
 - name: frequency_covered_ns
   label: frequency_covered_ns
   type: duration
@@ -143,6 +146,7 @@ columns:
 - name: busy_pct
   label: busy_pct
   type: percentage
+  unit: '%'
 - name: unfinished_sched_ns
   label: unfinished_sched_ns
   type: duration

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_detail.skill.yaml
-Source SHA-256: cdf73ddd0bc9f5f3d8d5cb1b130d4ac79a5a0f132ec3f473fdcd40b76e6309e5
+Source SHA-256: 88274021b675057f840219ba6e6cc0e5f2d83d927051fded2044a10fbb8ab9b3
 # 启动详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -216,10 +216,12 @@ display:
   - name: big_core_pct
     label: 大核占比(%)
     type: percentage
+    unit: '%'
     format: percentage
   - name: little_core_pct
     label: 小核占比(%)
     type: percentage
+    unit: '%'
     format: percentage
   - name: used_cpus
     label: 使用CPU
@@ -235,13 +237,16 @@ display:
   - name: unknown_core_pct
     label: 未知核类型占比
     type: percentage
+    unit: '%'
   - name: unknown_core_ns
     label: 未知核运行(ns)
     type: number
+    unit: ns
     hidden: true
   - name: main_thread_count
     label: 主线程数
     type: number
+    unit: count
     hidden: true
   - name: big_core_pct_definition
     label: 大核占比口径
@@ -275,12 +280,15 @@ display:
   - name: avg_freq_mhz
     label: 平均频率(MHz)
     type: number
+    unit: MHz
   - name: max_freq_mhz
     label: 最高频率(MHz)
     type: number
+    unit: MHz
   - name: min_freq_mhz
     label: 最低频率(MHz)
     type: number
+    unit: MHz
   - name: classify_method
     label: 核判定来源
     type: string
@@ -369,12 +377,15 @@ display:
   - name: avg_freq_mhz
     label: 窗口加权均频(MHz)
     type: number
+    unit: MHz
   - name: min_freq_mhz
     label: 最低频率(MHz)
     type: number
+    unit: MHz
   - name: max_freq_mhz
     label: 最高频率(MHz)
     type: number
+    unit: MHz
   - name: freq_coverage_ms
     label: 频率覆盖(ms)
     type: duration
@@ -383,6 +394,7 @@ display:
   - name: freq_coverage_pct
     label: 频率覆盖比例
     type: percentage
+    unit: '%'
   - name: sched_coverage_ms
     label: 调度记录覆盖(ms)
     type: duration
@@ -396,6 +408,7 @@ display:
   - name: system_busy_pct
     label: 系统忙碌/窗口
     type: percentage
+    unit: '%'
   - name: target_main_running_ms
     label: 目标主线程运行(ms)
     type: duration
@@ -842,6 +855,7 @@ display:
   - name: count
     label: 次数
     type: number
+    unit: events
     format: compact
   - name: total_ms
     label: 总耗时
@@ -861,6 +875,7 @@ display:
   - name: percent
     label: 区间占比
     type: percentage
+    unit: '%'
     format: percentage
 save_as: main_slices
 ```
@@ -1232,6 +1247,7 @@ display:
   - name: total_observed_threads
     label: total_observed_threads
     type: number
+    unit: count
     hidden: true
   - name: thread_name
     label: 线程
@@ -1273,10 +1289,12 @@ display:
   - name: running_pct
     label: 运行占比
     type: percentage
+    unit: '%'
     format: percentage
   - name: big_core_pct
     label: 大核占比
     type: percentage
+    unit: '%'
     format: percentage
   - name: migrations
     label: 核迁移
@@ -1308,9 +1326,11 @@ display:
   - name: priority_value_count
     label: priority 值数
     type: number
+    unit: count
   - name: preemption_count
     label: 窗口内 R+ 切出次数
     type: number
+    unit: events
   - name: runnable_preempted_ms
     label: R+ 等待(ms)
     type: duration

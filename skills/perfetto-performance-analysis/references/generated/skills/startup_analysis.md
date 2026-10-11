@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_analysis.skill.yaml
-Source SHA-256: 8c1bf5a38d906e39a6f1d4430b5946930f50b15a3a389f49dcebb63d8e74b2bf
+Source SHA-256: b0199e004e16cb982d3bf5948b1f9d804cafdea85b0a441def44b04b467db7f2
 # 应用启动分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -369,6 +369,7 @@ display:
   - name: count
     label: 次数
     type: number
+    unit: events
     format: compact
   - name: total_dur_ms
     label: 总耗时
@@ -388,6 +389,7 @@ display:
   - name: percent_of_startup
     label: 启动占比
     type: percentage
+    unit: '%'
     format: percentage
   - name: startup_type
     label: 启动类型
@@ -524,6 +526,7 @@ display:
   - name: call_count
     label: 调用次数
     type: number
+    unit: events
     format: compact
   - name: total_dur_ms
     label: 总耗时
@@ -543,13 +546,16 @@ display:
   - name: main_thread_calls
     label: 主线程调用
     type: number
+    unit: events
   - name: percent_of_startup
     label: 启动占比
     type: percentage
+    unit: '%'
     format: percentage
   - name: all_percent_of_startup
     label: 全部 Binder 启动占比
     type: number
+    unit: '%'
     hidden: true
 params:
   package: ${package}
@@ -794,6 +800,7 @@ display:
   - name: count
     label: 次数
     type: number
+    unit: events
     format: compact
   - name: total_dur_ms
     label: 总耗时
@@ -808,6 +815,7 @@ display:
   - name: percent_of_startup
     label: 启动占比
     type: percentage
+    unit: '%'
     format: percentage
 params:
   package: ${package}
