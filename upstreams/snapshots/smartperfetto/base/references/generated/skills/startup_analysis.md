@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_analysis.skill.yaml
-Source SHA-256: 1c29d77206e96bcebd17d2eb78ff8f36ef33384e61393103588476b8d1b923de
+Source SHA-256: 8c1bf5a38d906e39a6f1d4430b5946930f50b15a3a389f49dcebb63d8e74b2bf
 # 应用启动分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -471,6 +471,7 @@ display:
   - name: all_total_dur_ms
     label: 全部文件 IO 总耗时
     type: number
+    unit: ms
     hidden: true
 params:
   package: ${package}

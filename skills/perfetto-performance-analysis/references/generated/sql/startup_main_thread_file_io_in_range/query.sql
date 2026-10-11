@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_main_thread_file_io_in_range.skill.yaml
--- Source SHA-256: 77d5bc6d4a5f3e1318e51c1416e53dcafd7e9ce1378d2e1f7cad524529e7a0b2
+-- Source SHA-256: 339af7b0f12c8f2d22177026b1aaf2cb39f860016191544bf28833db40d9a076
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

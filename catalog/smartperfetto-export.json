@@ -2426,7 +2426,7 @@
       "name": "startup_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/startup_analysis.skill.yaml",
-      "source_sha256": "1c29d77206e96bcebd17d2eb78ff8f36ef33384e61393103588476b8d1b923de",
+      "source_sha256": "8c1bf5a38d906e39a6f1d4430b5946930f50b15a3a389f49dcebb63d8e74b2bf",
       "tier": "S",
       "version": "1.0",
       "workflow": "startup"
@@ -2438,7 +2438,7 @@
       "name": "startup_binder_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_binder_in_range.skill.yaml",
-      "source_sha256": "a924e41844bc13e2c2d600873730aff1e3f144c87cc03253261784d0ce7ad078",
+      "source_sha256": "f8501871e41d8a520b4e178ae2e1ca95ebcb94eae09be26d6bca6f380a5eee86",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -2594,7 +2594,7 @@
       "name": "startup_main_thread_file_io_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_main_thread_file_io_in_range.skill.yaml",
-      "source_sha256": "77d5bc6d4a5f3e1318e51c1416e53dcafd7e9ce1378d2e1f7cad524529e7a0b2",
+      "source_sha256": "339af7b0f12c8f2d22177026b1aaf2cb39f860016191544bf28833db40d9a076",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "ea1ccca20b2fd7ab38fc9b0604f31edae9812a05",
+    "commit": "987c61bdba8af467205ba5166aae56b6d41418da",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "a385f4d76d9404aa10a6068812c09464056c477d7a9513380a3237f3762e1160",
+    "policy_sha256": "13a3b23f020bbc6d5767f02ec6ea1710a1e025b83a784ee91159dd18fa778b7f",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3447,7 +3447,7 @@
       "destination": "references/generated/strategies/anr.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/anr.strategy.md",
-      "source_sha256": "d47839b1f5793674654d852c37f16448fda3b641a265aa4db616cb18b78eed29",
+      "source_sha256": "618a27841cbc74ff326f318963c297125d39fdcabd7911f3da34e603ea0031a9",
       "workflow": "anr-blocking"
     },
     {
@@ -3679,7 +3679,7 @@
       "destination": "references/generated/strategies/memory.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/memory.strategy.md",
-      "source_sha256": "5ae4fe91ce052a8b9c04b889ef95bab7ac2332f243c18c81da215da83fdc2408",
+      "source_sha256": "b6b2da177191645c3aacb9a44d7f8a78be21eefcec7b5a1e669f449eaa311176",
       "workflow": "memory"
     },
     {
@@ -3793,7 +3793,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto conclusion declarations and captured evidence identifiers",
       "source_path": "backend/strategies/prompt-conclusion-contract-schema.template.md",
-      "source_sha256": "919acfc1838152c8e6552e86a6ac93d686de4d85b8e87aa494a117991ba18e99"
+      "source_sha256": "2da6856bf52ede77ea5f90cd4eedbca91681f6718692c6653fa42de0654136f3"
     },
     {
       "disposition": "product-only",
@@ -3829,7 +3829,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto current-trace MCP tool description and runtime schema lookup",
       "source_path": "backend/strategies/prompt-execute-sql-tool-description.template.md",
-      "source_sha256": "3eeed79b58f43f880917abac72866de1db2b3c37dd1f1477dad99984bfda760f"
+      "source_sha256": "5da49d431db710fa4f4aa7be019643a7280f2dfca25574d8f5049e458bef9549"
     },
     {
       "disposition": "product-only",
@@ -3871,7 +3871,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto finalization semantic assessment protocol",
       "source_path": "backend/strategies/prompt-final-semantic-assessment.template.md",
-      "source_sha256": "9c7a453218faf2b77e8196cb7b6409f1a0bbcaea7675b36dab307619bed5a2e6"
+      "source_sha256": "44af152a5f833c38ff3682955c9f9c60f1e02042af166649299b3a5a46f429e0"
     },
     {
       "disposition": "product-only",
@@ -3895,7 +3895,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto MCP artifact projection and exact process handoff guidance",
       "source_path": "backend/strategies/prompt-invoke-skill-tool-description.template.md",
-      "source_sha256": "c123de11a688199d91a470e8e1976c0d80ecc3e9f80c2a3c6da2616e72616255"
+      "source_sha256": "39fa3242cfb04c391abd7bfef0c1651b6b46c1c36393d1bce117108d4417ca5a"
     },
     {
       "disposition": "product-only",
@@ -3931,13 +3931,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
       "source_path": "backend/strategies/prompt-native-declaration-completion-en.template.md",
-      "source_sha256": "5cae139b1f77b7280f6a9fe96b4fd9839ca3f85a67aa55c0cece5681c9ab6b0a"
+      "source_sha256": "2720c48aa7a94b143d8001a5048de0be7472d04fe8a0a0e6cca4e09a960b22f9"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
       "source_path": "backend/strategies/prompt-native-declaration-completion-zh.template.md",
-      "source_sha256": "b050914a2c16eaaead38399dfde4f0ce2bd07600985232599aae2391a14f6f55"
+      "source_sha256": "11e8e1c5fd59ed90b1e9e5e2efc72f3571410bd07a39b7bb91bb28741e80593e"
     },
     {
       "disposition": "product-only",
@@ -4118,6 +4118,12 @@
       "reason": "SmartPerfetto runtime turn completion and session continuity orchestration",
       "source_path": "backend/strategies/prompt-runtime-turn-closeout-zh.template.md",
       "source_sha256": "6cffb7770bf6ef0d03b182799f1c19fe62924d591608fd607ed790331cd35e63"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto product-owned scene entry evidence prompt segment",
+      "source_path": "backend/strategies/prompt-scene-evidence.template.md",
+      "source_sha256": "ae4ac53ce34799facf5e4f17f326962ae86218131bd18d96ebe1232b5e5f8be2"
     },
     {
       "disposition": "product-only",
@@ -4381,7 +4387,7 @@
       "destination": "references/generated/strategies/scrolling.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scrolling.strategy.md",
-      "source_sha256": "27c8ed6f754918eb6685dae535e06aaa6ca22f2eb45832adb6c01519dec3a614",
+      "source_sha256": "6d7e734b897c0ac757cc9f8b6f84e9d804ab367008362444005436d50373773c",
       "workflow": "scrolling"
     },
     {
@@ -4413,7 +4419,7 @@
       "destination": "references/generated/strategies/startup.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/startup.strategy.md",
-      "source_sha256": "99498dc118e19b1232ec857a921b35aad1463caa1db3970d0314f457958542f1",
+      "source_sha256": "8b280bf526c330f09b1d2eae98c4c6be4acba5a1daa49d250af0e11d38a44f72",
       "workflow": "startup"
     },
     {
@@ -4444,7 +4450,7 @@
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 112,
+    "product_only_strategy_sources": 113,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4455,7 +4461,7 @@
     },
     "skill_yaml_files": 257,
     "sql_fragments": 60,
-    "strategy_sources": 158,
+    "strategy_sources": 159,
     "vendor_overrides": 8
   },
   "vendor_overrides": [

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_binder_in_range.skill.yaml
-Source SHA-256: a924e41844bc13e2c2d600873730aff1e3f144c87cc03253261784d0ce7ad078
+Source SHA-256: f8501871e41d8a520b4e178ae2e1ca95ebcb94eae09be26d6bca6f380a5eee86
 # 启动 Binder 总览 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -90,14 +90,17 @@ columns:
   label: 总耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: avg_dur_ms
   label: 平均耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: max_dur_ms
   label: 最大耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: main_thread_calls
   label: 主线程调用
   type: number
