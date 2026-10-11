@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_detail.skill.yaml
-Source SHA-256: 88274021b675057f840219ba6e6cc0e5f2d83d927051fded2044a10fbb8ab9b3
+Source SHA-256: 4892e80cff5fa2a747e968f6a61d5298f2e68f5e1f20aba97e9eba7b399f5e8b
 # 启动详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -620,12 +620,15 @@ display:
   - name: early_avg_freq_mhz
     label: 初期均频(MHz)
     type: number
+    unit: MHz
   - name: steady_avg_freq_mhz
     label: 后段均频(MHz)
     type: number
+    unit: MHz
   - name: max_freq_mhz
     label: 观测峰值(MHz)
     type: number
+    unit: MHz
   - name: early_covered_ns
     label: 初期覆盖时长
     type: duration
@@ -646,6 +649,7 @@ display:
     label: 后段相对变化(%)
     type: percentage
     format: percentage
+    unit: '%'
   - name: assessment
     label: 评估
     type: string
@@ -899,6 +903,7 @@ display:
   - name: count
     label: 次数
     type: number
+    unit: count
     format: compact
   - name: total_ms
     label: 总耗时(wall)
@@ -923,10 +928,12 @@ display:
   - name: percent
     label: 区间占比(wall)
     type: percentage
+    unit: '%'
     format: percentage
   - name: self_percent
     label: 区间占比(self)
     type: percentage
+    unit: '%'
     format: percentage
   - name: is_framework_wrapper
     label: 框架包裹切片
@@ -1299,18 +1306,22 @@ display:
   - name: migrations
     label: 核迁移
     type: number
+    unit: count
   - name: observed_cross_cluster_migrations
     label: 已确认跨 cluster 迁移
     type: number
+    unit: count
   - name: unknown_cluster_migrations
     label: cluster 身份未知的迁移
     type: number
+    unit: count
   - name: migration_evidence
     label: 迁移证据覆盖
     type: string
   - name: cross_cluster_migrations
     label: 跨 cluster
     type: number
+    unit: count
   - name: upid
     label: UPID
     type: number
@@ -1669,6 +1680,7 @@ display:
   - name: state_pct
     label: 状态占比
     type: percentage
+    unit: '%'
     format: percentage
   - name: state_coverage_ms
     label: 状态覆盖
@@ -1678,6 +1690,7 @@ display:
   - name: state_coverage_pct
     label: 状态覆盖率
     type: percentage
+    unit: '%'
     format: percentage
   - name: uncovered_ms
     label: 未覆盖时长

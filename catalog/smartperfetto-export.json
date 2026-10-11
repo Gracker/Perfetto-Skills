@@ -2498,7 +2498,7 @@
       "name": "startup_critical_tasks",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_critical_tasks.skill.yaml",
-      "source_sha256": "aa06ec37f7a6cb2c578bd8c69ba1dd37f01fdbc6e3ea545366fb13943193abd0",
+      "source_sha256": "2892bd4ea0df88511e77eae5056bc83721d2b616006557df1e34b460de0117d0",
       "tier": "A",
       "version": "1.0",
       "workflow": "startup"
@@ -2510,7 +2510,7 @@
       "name": "startup_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/startup_detail.skill.yaml",
-      "source_sha256": "88274021b675057f840219ba6e6cc0e5f2d83d927051fded2044a10fbb8ab9b3",
+      "source_sha256": "4892e80cff5fa2a747e968f6a61d5298f2e68f5e1f20aba97e9eba7b399f5e8b",
       "tier": "S",
       "version": "2.0",
       "workflow": "startup"
@@ -2534,7 +2534,7 @@
       "name": "startup_freq_rampup",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_freq_rampup.skill.yaml",
-      "source_sha256": "8e67f52a609189a07bbed61ef8c93023b6987fda5a06e18c23a943f083b09bd8",
+      "source_sha256": "011053ea01a28560b122bfe75cfe479456947440d688985ff938fcad6c2e9220",
       "tier": "B",
       "version": "1.1",
       "workflow": "startup"
@@ -2558,7 +2558,7 @@
       "name": "startup_hot_slice_states",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_hot_slice_states.skill.yaml",
-      "source_sha256": "d87bcfb1ca39ddc75d8a3175c3e44a4155e55a79ca1c50e34de7315d83bc1517",
+      "source_sha256": "f3d7cacef75793ddfc30b4ff294c85f7b8c950952b145739ee06287eda7af967",
       "tier": "B",
       "version": "1.0",
       "workflow": "startup"
@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "6da15fc7fa50c1ebe7a7bd03fa37db404ad2337b",
+    "commit": "5f439fa7f8d8aa30d60d416a3fd2531782b4c20b",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "c113f933a6662b0b83e3baad5b8de7f1da02a707693906b2e66ccd53ccb25dff",
+    "policy_sha256": "1e9db7207e6c98a435d9ad4c9a75219c4d7c6d801179e0407bdbea9e5c77d9d1",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3793,7 +3793,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto conclusion declarations and captured evidence identifiers",
       "source_path": "backend/strategies/prompt-conclusion-contract-schema.template.md",
-      "source_sha256": "ae1ac26ce6294f931d590bd2fa4292ca078567fc72868ea687ae53e8d72b85e8"
+      "source_sha256": "2a9a4bbb18b803454b19939dcd4333ddc0544c3f0f488c0b37c87cd5305ef82d"
     },
     {
       "disposition": "product-only",
@@ -3821,9 +3821,15 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto draft diagnostic result guidance over authorized product evidence captures",
+      "source_path": "backend/strategies/prompt-draft-declaration-diagnostics-feedback.template.md",
+      "source_sha256": "0001eb553bba00a3880a61a8664d3ba29418b0e54c87a7e92e1b1e6a7ae68b67"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto draft diagnostic MCP tool over authorized product evidence captures",
       "source_path": "backend/strategies/prompt-draft-declaration-diagnostics-tool-description.template.md",
-      "source_sha256": "272b3b42ff17c5f55d918967619d117d50e89bef28844b44fec025abf25ba77f"
+      "source_sha256": "d19ba46756b1f8a4c234cb584a5ed569747b8d3e14aa166bccf2f72e7b06c544"
     },
     {
       "disposition": "product-only",
@@ -3877,7 +3883,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto finalization semantic assessment protocol",
       "source_path": "backend/strategies/prompt-final-semantic-assessment.template.md",
-      "source_sha256": "0c15b560e64f11f322a60be110c506372c0e91774b6794338c84c94f9fdd150a"
+      "source_sha256": "3a7ff445b473b64ebbc7f898ba90a0e0e340dc58ff1f7e599e665d5733bbf4de"
     },
     {
       "disposition": "product-only",
@@ -3949,13 +3955,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto native output-limit delivery recovery orchestration",
       "source_path": "backend/strategies/prompt-native-output-completion-en.template.md",
-      "source_sha256": "a8a55a5ea3156954745f7fb901664330803314f2d381965dde458e1246d83356"
+      "source_sha256": "e87726c70d89d635524ce5bed3e580af3f871ef40d1cadd8f3e36269484c00d0"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto native output-limit delivery recovery orchestration",
       "source_path": "backend/strategies/prompt-native-output-completion-zh.template.md",
-      "source_sha256": "abb9cab6068d4a70dad6e58d39aeae5846d7b7d64faa3b1a157b9f169e62f554"
+      "source_sha256": "3a8b510836f04e14df59767bedc22335d2de229363a7a49a82c9d3c2211c9798"
     },
     {
       "disposition": "product-only",
@@ -4456,7 +4462,7 @@
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 114,
+    "product_only_strategy_sources": 115,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4467,7 +4473,7 @@
     },
     "skill_yaml_files": 257,
     "sql_fragments": 60,
-    "strategy_sources": 160,
+    "strategy_sources": 161,
     "vendor_overrides": 8
   },
   "vendor_overrides": [

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_critical_tasks.skill.yaml
-Source SHA-256: aa06ec37f7a6cb2c578bd8c69ba1dd37f01fdbc6e3ea545366fb13943193abd0
+Source SHA-256: 2892bd4ea0df88511e77eae5056bc83721d2b616006557df1e34b460de0117d0
 # 启动关键任务发现
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -175,10 +175,12 @@ columns:
   label: 已确认跨Cluster迁移
   type: number
   hidden: true
+  unit: count
 - name: unknown_cluster_migrations
   label: Cluster关系未知迁移
   type: number
   hidden: true
+  unit: count
 - name: migration_evidence
   label: 迁移证据范围
   type: string
@@ -186,9 +188,11 @@ columns:
 - name: migrations
   label: 核迁移次数
   type: number
+  unit: count
 - name: cross_cluster_migrations
   label: 跨 cluster 迁移
   type: number
+  unit: count
 - name: priority_min
   label: 最小 kernel priority
   type: number

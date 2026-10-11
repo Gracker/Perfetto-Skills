@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_hot_slice_states.skill.yaml
--- Source SHA-256: d87bcfb1ca39ddc75d8a3175c3e44a4155e55a79ca1c50e34de7315d83bc1517
+-- Source SHA-256: f3d7cacef75793ddfc30b4ff294c85f7b8c950952b145739ee06287eda7af967
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

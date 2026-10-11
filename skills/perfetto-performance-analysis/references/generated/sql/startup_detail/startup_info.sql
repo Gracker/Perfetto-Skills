@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/startup_detail.skill.yaml
--- Source SHA-256: 88274021b675057f840219ba6e6cc0e5f2d83d927051fded2044a10fbb8ab9b3
+-- Source SHA-256: 4892e80cff5fa2a747e968f6a61d5298f2e68f5e1f20aba97e9eba7b399f5e8b
 
 SELECT
   ${startup_id} as startup_id,

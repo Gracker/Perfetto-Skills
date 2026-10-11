@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_hot_slice_states.skill.yaml
-Source SHA-256: d87bcfb1ca39ddc75d8a3175c3e44a4155e55a79ca1c50e34de7315d83bc1517
+Source SHA-256: f3d7cacef75793ddfc30b4ff294c85f7b8c950952b145739ee06287eda7af967
 # 热点 Slice 线程状态分布
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -152,6 +152,7 @@ columns:
 - name: state_pct
   label: 状态占比
   type: percentage
+  unit: '%'
   format: percentage
 - name: state_coverage_ms
   label: 状态覆盖
@@ -161,6 +162,7 @@ columns:
 - name: state_coverage_pct
   label: 状态覆盖率
   type: percentage
+  unit: '%'
   format: percentage
 - name: uncovered_ms
   label: 未覆盖时长

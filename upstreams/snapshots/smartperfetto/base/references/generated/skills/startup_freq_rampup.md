@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_freq_rampup.skill.yaml
-Source SHA-256: 8e67f52a609189a07bbed61ef8c93023b6987fda5a06e18c23a943f083b09bd8
+Source SHA-256: 011053ea01a28560b122bfe75cfe479456947440d688985ff938fcad6c2e9220
 # 启动 CPU 频率爬升
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -77,12 +77,15 @@ columns:
 - name: early_avg_freq_mhz
   label: 初期均频(MHz)
   type: number
+  unit: MHz
 - name: steady_avg_freq_mhz
   label: 后段均频(MHz)
   type: number
+  unit: MHz
 - name: max_freq_mhz
   label: 观测峰值(MHz)
   type: number
+  unit: MHz
 - name: early_covered_ns
   label: 初期覆盖时长
   type: duration
@@ -103,6 +106,7 @@ columns:
   label: 后段相对变化(%)
   type: percentage
   format: percentage
+  unit: '%'
 - name: assessment
   label: 评估
   type: string
