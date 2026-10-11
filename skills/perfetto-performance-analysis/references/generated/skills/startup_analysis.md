@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_analysis.skill.yaml
-Source SHA-256: b0199e004e16cb982d3bf5948b1f9d804cafdea85b0a441def44b04b467db7f2
+Source SHA-256: 14530d7c621f830e66c59b8e2fa47be7e7c4d9a3035b10ab724d1b3cd541d5e1
 # 应用启动分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -245,12 +245,15 @@ display:
   - name: sample_count
     label: 样本数
     type: number
+    unit: events
   - name: blocker_count
     label: 阻断问题
     type: number
+    unit: count
   - name: warning_count
     label: 告警问题
     type: number
+    unit: count
   - name: quality_status
     label: 门禁状态
     type: string
@@ -294,6 +297,7 @@ display:
   - name: count
     label: 次数
     type: number
+    unit: events
     format: compact
   - name: total_dur_ms
     label: 总耗时
@@ -313,6 +317,7 @@ display:
   - name: percent
     label: 占比
     type: percentage
+    unit: '%'
     format: percentage
   - name: category
     label: 类别
@@ -320,6 +325,7 @@ display:
   - name: category_percent
     label: 类别占比
     type: percentage
+    unit: '%'
     format: percentage
 params:
   package: ${package}
@@ -443,6 +449,7 @@ display:
   - name: count
     label: 次数
     type: number
+    unit: events
     format: compact
   - name: total_dur_ms
     label: 总耗时
@@ -462,6 +469,7 @@ display:
   - name: percent_of_startup
     label: 启动占比
     type: percentage
+    unit: '%'
     format: percentage
   - name: startup_type
     label: 启动类型
@@ -469,6 +477,7 @@ display:
   - name: all_percent_of_startup
     label: 全部文件 IO 启动占比
     type: number
+    unit: '%'
     hidden: true
   - name: all_total_dur_ms
     label: 全部文件 IO 总耗时
@@ -591,6 +600,7 @@ display:
   - name: call_count
     label: 调用次数
     type: number
+    unit: events
     format: compact
   - name: total_dur_ms
     label: 总耗时
@@ -610,10 +620,12 @@ display:
   - name: percent_of_startup
     label: 启动占比
     type: percentage
+    unit: '%'
     format: percentage
   - name: all_percent_of_startup
     label: 全部主线程同步 Binder 启动占比
     type: number
+    unit: '%'
     hidden: true
 params:
   package: ${package}
@@ -706,10 +718,12 @@ display:
   - name: percent
     label: 占比
     type: percentage
+    unit: '%'
     format: percentage
   - name: count
     label: 次数
     type: number
+    unit: events
     format: compact
   - name: blocked_functions
     label: 阻塞函数
@@ -748,6 +762,7 @@ display:
   - name: count
     label: 次数
     type: number
+    unit: events
     format: compact
   - name: total_dur_ms
     label: 总耗时
@@ -762,6 +777,7 @@ display:
   - name: percent_of_startup
     label: 启动占比
     type: percentage
+    unit: '%'
     format: percentage
 params:
   package: ${package}
@@ -848,6 +864,7 @@ display:
   - name: count
     label: 次数
     type: number
+    unit: events
     format: compact
   - name: total_wait_ms
     label: 总等待
@@ -867,13 +884,16 @@ display:
   - name: severe_delays
     label: 严重延迟次数
     type: number
+    unit: events
   - name: all_severe_delays
     label: 全部状态严重延迟次数
     type: number
+    unit: events
     hidden: true
   - name: all_max_wait_ms
     label: 全部状态最大等待
     type: number
+    unit: ms
     hidden: true
 params:
   package: ${package}

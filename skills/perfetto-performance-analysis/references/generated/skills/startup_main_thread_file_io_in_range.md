@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_main_thread_file_io_in_range.skill.yaml
-Source SHA-256: 339af7b0f12c8f2d22177026b1aaf2cb39f860016191544bf28833db40d9a076
+Source SHA-256: 1758e01e0131dd537bf51241dbbd7b77325dcd001f20ddfb0a1a8718cd1ca6f7
 # 启动主线程文件 IO (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -87,6 +87,7 @@ columns:
 - name: count
   label: 次数
   type: number
+  unit: events
   format: compact
 - name: total_dur_ms
   label: 总耗时
@@ -106,6 +107,7 @@ columns:
 - name: percent_of_startup
   label: 启动占比
   type: percentage
+  unit: '%'
   format: percentage
 - name: startup_type
   label: 启动类型
@@ -113,6 +115,7 @@ columns:
 - name: all_percent_of_startup
   label: 全部文件 IO 启动占比
   type: number
+  unit: '%'
   hidden: true
 - name: all_total_dur_ms
   label: 全部文件 IO 总耗时

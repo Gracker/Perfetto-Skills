@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_breakdown_in_range.skill.yaml
-Source SHA-256: 875c769a1b5142a0c856926f49058a4195a3d98f9ee8e50d00d497a4b0651286
+Source SHA-256: 7c9a0f3b53bc7b0ee86695eed3190733910353eb4499b62b6d16ea65dbff9a70
 # 启动归因分解 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -81,6 +81,7 @@ columns:
 - name: count
   label: 次数
   type: number
+  unit: events
   format: compact
 - name: total_dur_ms
   label: 总耗时
@@ -100,6 +101,7 @@ columns:
 - name: percent
   label: 占比
   type: percentage
+  unit: '%'
   format: percentage
 - name: category
   label: 类别
@@ -107,5 +109,6 @@ columns:
 - name: category_percent
   label: 类别占比
   type: percentage
+  unit: '%'
   format: percentage
 ```

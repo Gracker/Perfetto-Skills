@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_main_thread_binder_blocking_in_range.skill.yaml
-Source SHA-256: fa1c46b5cd242ec0ea44c94e5a2bb4126e4a8da0d846bd67e74402d88452d20c
+Source SHA-256: 0a86d35ba10cb270d8317499fb22ceaad5f0b276f3004138b97f72236deff6bc
 # 启动主线程 Binder 阻塞 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -90,6 +90,7 @@ columns:
   label: 耗时
   type: duration
   format: duration_ms
+  unit: ms
 - name: state
   label: 阻塞状态
   type: string

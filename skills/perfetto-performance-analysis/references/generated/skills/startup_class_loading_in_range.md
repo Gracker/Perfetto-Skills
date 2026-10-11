@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_class_loading_in_range.skill.yaml
-Source SHA-256: 664d113170724cd4624484f648f9f4570e1b77552d7e57bbb821ac28786465ea
+Source SHA-256: be6d2506ccfd0eec93cf4c59b3b356fa47ff75f5067ae66e51d41fe85e06c739
 # 启动类加载分析 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -84,17 +84,21 @@ columns:
 - name: count
   label: 次数
   type: number
+  unit: events
   format: compact
 - name: total_dur_ms
   label: 总耗时
   type: duration
+  unit: ms
   format: duration_ms
 - name: avg_dur_ms
   label: 平均耗时
   type: duration
+  unit: ms
   format: duration_ms
 - name: percent_of_startup
   label: 启动占比
   type: percentage
+  unit: '%'
   format: percentage
 ```

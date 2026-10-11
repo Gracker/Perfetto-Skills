@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/startup_breakdown_in_range.skill.yaml
--- Source SHA-256: 875c769a1b5142a0c856926f49058a4195a3d98f9ee8e50d00d497a4b0651286
+-- Source SHA-256: 7c9a0f3b53bc7b0ee86695eed3190733910353eb4499b62b6d16ea65dbff9a70
 
 -- reason is a closed set: the stdlib names a startup slice
 -- (_normalize_android_string), blames io_wait as io and irq as irq, and
