@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the complete independent Perfetto-Skills verification gate."""
+"""Run independent Perfetto-Skills verification or a scoped development check."""
 
 from __future__ import annotations
 
@@ -26,25 +26,30 @@ FIXTURE_MANIFEST = ROOT / "fixtures" / "manifest.json"
 FIXTURE_LOCK = ROOT / "upstreams" / "fixture-pack.lock.json"
 
 
-def build_commands(smartperfetto: Path | None = None) -> list[list[str]]:
+def build_commands(
+    smartperfetto: Path | None = None,
+    *,
+    tier: str = "full",
+    tests: list[str] | None = None,
+) -> list[list[str]]:
     commands = [
         [sys.executable, "tools/upstream_locks.py"],
         [sys.executable, "tools/compile_skill.py", "--check"],
         # Static only: FixtureManifestTest executes the same owned assertions
         # against the same processor, and each costs full trace parses.
         [sys.executable, "tools/validate_all_queries.py"],
-        [
-            sys.executable,
-            "-m",
-            "unittest",
-            "discover",
-            "-s",
-            "tests",
-            "-p",
-            "test_*.py",
-        ],
         ["agentskills", "validate", "skills/perfetto-performance-analysis"],
     ]
+    if tier != "static":
+        test_command = [sys.executable, "-m", "unittest"]
+        if tests:
+            test_command = [sys.executable, "tools/run_selected_tests.py", *tests]
+        else:
+            test_command.extend(["discover", "-s", "tests/unit" if tier == "unit" else "tests"])
+            if tier == "unit":
+                test_command.extend(["-t", "."])
+            test_command.extend(["-p", "test_*.py"])
+        commands.insert(3, test_command)
     if smartperfetto is not None:
         commands.extend(
             [
@@ -192,6 +197,14 @@ def run(command: list[str], *, env: Mapping[str, str]) -> None:
 def main(arguments: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--tier", choices=("static", "unit", "full"), default="full",
+        help="Default full gate; static/unit checks do not prepare real traces or a processor.",
+    )
+    parser.add_argument(
+        "--test", action="append", default=[], metavar="TEST_ID",
+        help="Run a qualified tests.unit/tests.integration module, class or method (repeatable); scoped check only.",
+    )
+    parser.add_argument(
         "--smartperfetto",
         type=Path,
         help="Explicit SmartPerfetto checkout used only for import drift checks.",
@@ -211,28 +224,50 @@ def main(arguments: list[str] | None = None) -> int:
     args = parser.parse_args(arguments)
     if args.offline and args.fixtures:
         parser.error("--offline and --fixtures are mutually exclusive")
+    if args.tier != "full" and (args.offline or args.fixtures):
+        parser.error("--offline and --fixtures require --tier full")
+    if args.tier == "static" and args.test:
+        parser.error("--test requires --tier unit or full")
+    for target in args.test:
+        if not re.fullmatch(r"tests\.(?:unit|integration)\.test_\w+(?:\.\w+)*", target):
+            parser.error(f"not a qualified repository test: {target}")
+        if args.tier == "unit" and not target.startswith("tests.unit."):
+            parser.error("integration tests require --tier full")
+    needs_real_traces = args.tier == "full" and (
+        not args.test or any(target.startswith("tests.integration.") for target in args.test)
+    )
+    if not needs_real_traces and (args.offline or args.fixtures):
+        parser.error("fixture options require real-trace test coverage")
 
-    processor = resolve_trace_processor(args.processor_cache)
-    fixtures = resolve_fixture_root(
-        args.fixtures,
-        offline=args.offline,
-        cache=args.fixture_cache,
-    )
-    environment = verification_environment(
-        fixtures,
-        processor,
-        tier="offline" if args.offline else "full",
-    )
+    environment = dict(os.environ)
+    for name in (
+        "PERFETTO_FIXTURE_ROOT", "PERFETTO_FIXTURE_TIER", "PERFETTO_TRACE_PROCESSOR",
+        "SMARTPERFETTO_TEST_TRACES", "SMARTPERFETTO_SOURCE",
+    ):
+        environment.pop(name, None)
     source = args.smartperfetto.expanduser().resolve() if args.smartperfetto else None
-    for command in build_commands(source):
+    for command in build_commands(source, tier=args.tier, tests=args.test):
+        if needs_real_traces and (
+            "unittest" in command or "tools/run_selected_tests.py" in command
+        ):
+            processor = resolve_trace_processor(args.processor_cache)
+            fixtures = resolve_fixture_root(
+                args.fixtures, offline=args.offline, cache=args.fixture_cache,
+            )
+            environment = verification_environment(
+                fixtures, processor, tier="offline" if args.offline else "full",
+            )
         run(command, env=environment)
     print(
         json.dumps(
             {
                 "status": "verified",
-                "fixture_tier": environment["PERFETTO_FIXTURE_TIER"],
-                "fixture_root": environment["PERFETTO_FIXTURE_ROOT"],
-                "trace_processor": environment["PERFETTO_TRACE_PROCESSOR"],
+                "verification_tier": args.tier,
+                "complete_gate": args.tier == "full" and not args.offline and not args.test,
+                "tests": args.test or None,
+                "fixture_tier": environment.get("PERFETTO_FIXTURE_TIER"),
+                "fixture_root": environment.get("PERFETTO_FIXTURE_ROOT"),
+                "trace_processor": environment.get("PERFETTO_TRACE_PROCESSOR"),
                 "smartperfetto_sync": str(source) if source else None,
             },
             indent=2,

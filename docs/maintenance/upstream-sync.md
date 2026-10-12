@@ -55,7 +55,9 @@ add its native tests, then regenerate the public projection if appropriate.
    local overlays with `uv run python tools/compile_skill.py --apply`. If a base
    hash changed, review and rebase the affected overlay and its dependencies
    before compiling; do not discard local changes to clear the conflict.
-5. Run the complete independent gate and the explicit pinned upstream gate.
+5. Run `uv run python tools/verify.py --smartperfetto PATH`. This runs the
+   complete independent gate and pinned import/catalog checks together;
+   there is no need to run the unchanged independent suite a second time.
    Record the cross-repository impact decision and paired commit when required.
 
 The portable executor evaluates step `condition`, iterator `filter`, Skill

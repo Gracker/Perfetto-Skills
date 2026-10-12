@@ -156,11 +156,14 @@ uv sync --extra dev
 uv run python tools/verify.py
 ```
 
-`uv run python tools/verify.py --offline` 只运行提交进 Git 的真实 smoke Trace。
+迭代时可用 `--tier static`、`--tier unit` 或 `--test` 指定测试，详见
+[本地验证](docs/maintenance/verification.md)。这些入口不替代 push 前的默认完整门禁。
+`uv run python tools/verify.py --offline` 使用提交进 Git 的真实 smoke Trace，
+也不代表完整验证通过。
 SmartPerfetto 只在显式、锁定版本的导入检查中使用。三类上游同步与本地 SQL
 red-green 修改流程见[上游同步文档](docs/maintenance/upstream-sync.md)。
 
-运行清单按 Skill 分片，Agent 分析启动、滑动或 ANR 时不必加载全部 230 个定义。
+运行清单按 Skill 分片，Agent 分析启动、滑动或 ANR 时只需加载所选工作流。
 更多信息见 [架构](docs/architecture.md)、[兼容性](docs/compatibility.md) 和
 [迁移覆盖](docs/migration-coverage.md)。
 

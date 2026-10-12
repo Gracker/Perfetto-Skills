@@ -19,6 +19,11 @@ uv sync --extra dev
 uv run python tools/verify.py
 ```
 
-Changes should include a failing test before implementation when behavior is
-added or corrected. Keep the main `SKILL.md` concise and place detailed domain
-knowledge in directly linked references.
+During iteration, use the applicable static, unit, or selected-test command in
+[local verification](docs/maintenance/verification.md). The default command
+above remains the complete gate before push; scoped checks and offline smoke
+do not replace it. Behavior corrections need focused regression coverage;
+documentation-only changes do not need an artificial failing test.
+
+Keep the main `SKILL.md` concise and place detailed domain knowledge in directly
+linked references.

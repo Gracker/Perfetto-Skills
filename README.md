@@ -131,8 +131,11 @@ uv sync --extra dev
 uv run python tools/verify.py
 ```
 
+Use `--tier static`, `--tier unit`, or qualified `--test` targets for scoped
+iteration checks; see [local verification](docs/maintenance/verification.md).
 Use `uv run python tools/verify.py --offline` for the committed real smoke
-trace. SmartPerfetto is needed only for an explicit pinned import review; the
+trace. These checks do not replace the default full gate before push.
+SmartPerfetto is needed only for an explicit pinned import review; the
 three upstream sync procedures and local SQL red-green workflow are documented
 in [upstream synchronization](docs/maintenance/upstream-sync.md).
 
