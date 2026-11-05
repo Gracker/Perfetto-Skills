@@ -73,7 +73,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/game_fps_analysis/detect_target_fps.sql",
-      "sha256": "a9acf3087cc3f7f4b8dc9ef548b2ab41d4f03afea26072489cad5d596c83ab3d",
+      "sha256": "7483d8296b67b68bb0098d3985c11d60b9d3fe9f6998940b9c51814a0dadf069",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -82,7 +82,7 @@
       "source": {
         "path": "backend/skills/atomic/game_fps_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "afe29e2e27d3fbd6899c8b09c61c286650fe26e2f3f9585158f7f3d7818a7966"
+        "sha256": "f104c2ead1d211e29902fa0d4c1b768f407c2f8d942c1076311f373222ff92ab"
       },
       "sql_dependencies": {
         "creates": [],
@@ -106,7 +106,8 @@
         "parameters": [
           "end_ts",
           "package",
-          "start_ts"
+          "start_ts",
+          "target_fps"
         ],
         "result_dependencies": [],
         "result_references": [],
@@ -194,7 +195,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/game_fps_analysis/frame_interval_stats.sql",
-      "sha256": "67bd2f7316ce0d1d566419266812eb256dead87046f73f3c8ba4395ee95b3429",
+      "sha256": "bfa0373468c6a81efcf5ea82e19b63fcb42579493260c7e4c977be52b77133fc",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -203,7 +204,7 @@
       "source": {
         "path": "backend/skills/atomic/game_fps_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "afe29e2e27d3fbd6899c8b09c61c286650fe26e2f3f9585158f7f3d7818a7966"
+        "sha256": "f104c2ead1d211e29902fa0d4c1b768f407c2f8d942c1076311f373222ff92ab"
       },
       "sql_dependencies": {
         "creates": [],
@@ -315,7 +316,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/game_fps_analysis/jank_detection.sql",
-      "sha256": "fac041d3c83b64792d82bd92d90f376eb79bbb14172318186a4e8610d3ce8eee",
+      "sha256": "19d526acc42acfc33d18ab67047ae23ef8b6b922bd53f481c9458a8696b1f436",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -324,7 +325,7 @@
       "source": {
         "path": "backend/skills/atomic/game_fps_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "afe29e2e27d3fbd6899c8b09c61c286650fe26e2f3f9585158f7f3d7818a7966"
+        "sha256": "f104c2ead1d211e29902fa0d4c1b768f407c2f8d942c1076311f373222ff92ab"
       },
       "sql_dependencies": {
         "creates": [],
@@ -348,11 +349,12 @@
         "parameters": [
           "end_ts",
           "package",
-          "start_ts",
-          "target_fps"
+          "start_ts"
         ],
         "result_dependencies": [],
-        "result_references": [],
+        "result_references": [
+          "fps_detection"
+        ],
         "runtime_bindings": []
       },
       "validation": {

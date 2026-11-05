@@ -2141,7 +2141,7 @@ _PRODUCT_RUNTIME_TOKENS = (
     "lookup_knowledge", "submit_hypothesis", "resolve_hypothesis",
     "flag_uncertainty", "write_analysis_note",
     "lookup_sql_schema", "process_identity_resolver",
-    "entry_skill",
+    "entry_skill", "scene_evidence",
 )
 
 
@@ -2365,6 +2365,34 @@ def investigation_version(value: Any) -> int:
 
 
 INVESTIGATION_EVIDENCE_OPERATORS = frozenset({"gt", "gte", "lt", "lte"})
+INVESTIGATION_ENTRY_BINDINGS = frozenset({"selected_start", "selected_end", "selected_upid", "selected_utid"})
+
+
+def parse_investigation_entry_acquisition(value: Any, evidence_metrics: list[str]) -> dict[str, Any]:
+    entry = investigation_mapping(value, {"schema_version", "metric_id", "subject_binding", "params"}, "entry acquisition")
+    if type(entry.get("schema_version")) not in (int, float) or entry["schema_version"] != 1:
+        raise ExportError("Unsupported investigation entry acquisition schema")
+    metric = investigation_text(entry.get("metric_id"), "entry acquisition metric")
+    if metric not in evidence_metrics:
+        raise ExportError("Investigation entry acquisition metric is not declared")
+    if entry.get("subject_binding") != "selected_thread_interval":
+        raise ExportError("Unsupported investigation entry acquisition subject")
+    params = entry.get("params")
+    # These are private input names, not rendered prose. Do not apply the
+    # product-runtime text filter (e.g. entry_skill_start is a valid name).
+    if (not isinstance(params, dict) or len(params) != len(INVESTIGATION_ENTRY_BINDINGS)
+            or any(not isinstance(name, str) or not re.fullmatch(r"[a-z][a-z0-9_]*", name)
+                   for name in params)
+            or any(not isinstance(binding, str) for binding in params.values())
+            or set(params.values()) != INVESTIGATION_ENTRY_BINDINGS):
+        raise ExportError("Invalid investigation entry acquisition params")
+    return {"schema_version": 1, "metric_id": metric, "subject_binding": "selected_thread_interval",
+            "params": dict(params)}
+
+
+def validate_single_investigation_entry(requirements: list[dict[str, Any]]) -> None:
+    if sum("entry_acquisition" in requirement for requirement in requirements) > 1:
+        raise ExportError("Multiple investigation entry acquisitions")
 
 
 def parse_investigation_condition(value: Any) -> dict[str, Any]:
@@ -2394,7 +2422,7 @@ def parse_investigation_requirements(value: Any) -> list[dict[str, Any]]:
     seen: set[str] = set()
     for raw in value:
         requirement = investigation_mapping(raw, {
-            "id", "domain", "description", "required", "condition", "evidence_metrics",
+            "id", "domain", "description", "required", "condition", "evidence_metrics", "entry_acquisition",
         }, "requirement")
         identity = investigation_text(requirement.get("id"), "requirement ID", identifier=True)
         if identity in seen:
@@ -2416,7 +2444,13 @@ def parse_investigation_requirements(value: Any) -> list[dict[str, Any]]:
                 raise ExportError("Duplicate investigation evidence metric")
         if "condition" in requirement:
             normalized["condition"] = parse_investigation_condition(requirement["condition"])
+        if "entry_acquisition" in requirement:
+            # Retain private acquisition bindings through same-ID conflict
+            # detection; render_investigation_requirements omits them.
+            normalized["entry_acquisition"] = parse_investigation_entry_acquisition(
+                requirement["entry_acquisition"], normalized.get("evidence_metrics", []))
         requirements.append(normalized)
+    validate_single_investigation_entry(requirements)
     return requirements
 
 
@@ -2501,6 +2535,7 @@ def render_investigation_contract(value: Any, source: Path) -> str:
     rendered.append(render_investigation_requirements([requirement for requirement in local if append(requirement)]))
     if not merged:
         raise ExportError("Empty investigation contract")
+    validate_single_investigation_entry(list(merged.values()))
     return "\n".join(rendered)
 
 

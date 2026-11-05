@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/network.strategy.md
-Source SHA-256: 94f092fedee04da64eb9cf396b60ccba41e1efd65a5b42e5308367ec2106e103
+Source SHA-256: 913605f6aa8910f641c2ae5949c421b3cba8a8b193e1c2f4ab54dfcaf2b6cc26
 
 # Network Strategy
 
@@ -161,7 +161,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

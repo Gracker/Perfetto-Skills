@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/pipeline.strategy.md
-Source SHA-256: c5e2812baf359102bc6a0224f385315a57fcd2193d69548601e08bb16058d4a8
+Source SHA-256: 1fe26c8072f05ab0df178590cb19f12492b48c76a9b747eee9ad5c2ac3b1f0a8
 
 # Pipeline Strategy
 
@@ -152,7 +152,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/android_process_state_residency.skill.yaml
-Source SHA-256: f785279fb41abf9e40451b7089d02655c17180229724e8a28759af866c6347cf
+Source SHA-256: 226abdc8bd617a35c5005014a5020538455aa88290a2d96fa911645bbb2387b1
 # 进程状态驻留与切换
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -9,7 +9,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: android_process_state_residency
-version: '1.0'
+version: '1.1'
 type: atomic
 category: memory
 tier: B
@@ -19,7 +19,10 @@ tier: B
 
 ```yaml
 display_name: 进程状态驻留与切换
-description: Framework 进程状态（TOP/前台服务/CACHED 等）的驻留时长、切换序列与最后观测状态；用于 LMK、后台与内存压力分析，旧 trace processor 显式降级
+description: Framework 进程状态驻留、切换与启动/退出元数据；区分 OomAdjuster 状态变更原因和进程退出原因，用于 LMK、后台与内存压力分析
+description_i18n:
+  en: Framework process-state residency and transitions with recorded start and exit metadata; state-change reasons remain
+    distinct from exit reasons.
 icon: swap_vert
 tags:
 - memory
@@ -207,6 +210,8 @@ display:
   level: detail
   layer: list
   title: 进程状态切换序列
+  title_i18n:
+    en: Process State and Lifecycle Transitions
   columns:
   - name: process_name
     label: 进程
@@ -231,6 +236,45 @@ display:
     type: string
   - name: lifecycle
     label: 生命周期
+    type: string
+  - name: hosting_type
+    label: 启动宿主类型
+    label_i18n:
+      en: Hosting Type
+    type: string
+  - name: hosting_name
+    label: 启动宿主
+    label_i18n:
+      en: Hosting Name
+    type: string
+  - name: trigger_type
+    label: 启动触发类型
+    label_i18n:
+      en: Start Trigger
+    type: string
+  - name: bind_application_delay_ms
+    label: 绑定应用延迟
+    label_i18n:
+      en: Bind Application Delay
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: process_start_delay_ms
+    label: 进程启动延迟
+    label_i18n:
+      en: Process Start Delay
+    type: duration
+    format: duration_ms
+    unit: ms
+  - name: exit_reason
+    label: 退出原因
+    label_i18n:
+      en: Exit Reason
+    type: string
+  - name: exit_subreason
+    label: 退出补充原因
+    label_i18n:
+      en: Exit Subreason
     type: string
 sql_fragments:
 - fragments/process_state_scoped_intervals.sql
@@ -282,8 +326,8 @@ save_as: process_state_last_observed
 format: structured
 fields:
 - name: process_state_capability
-  description: 'Runtime support: runtime_lacks_process_state on trace processors up to v58.2, which cannot read this data
-    at all'
+  description: 'Runtime support: missing process-state parsing, module, or pinned lifecycle columns is reported explicitly;
+    only runtime_supported runs the evidence queries'
 - name: process_state_data
   description: Whether the trace carries android.process_state snapshot or state-change events, and whether any belong to
     the requested process
@@ -291,8 +335,9 @@ fields:
   description: Per process and framework state, time spent while alive within the window and its share of alive time; EXITED/NONEXISTENT
     markers are excluded
 - name: process_state_transitions
-  description: Ordered state changes with the previous state's duration and the OomAdjuster reason; initial_state rows are
-    backfilled from snapshots
+  description: Ordered state changes and lifecycle markers. reason is the OomAdjuster state-change reason. NONEXISTENT carries
+    recorded hosting/trigger and start delays; EXITED carries exit reasons at the process end, even when the reason event
+    arrives later. Missing metadata stays null.
 - name: process_state_last_observed
   description: Last alive state per process and whether the process ended, for comparing with LMK kills and oom_score_adj
 ```

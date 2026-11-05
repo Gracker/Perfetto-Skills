@@ -98,15 +98,15 @@ Agent 客户端，然后让它用 `$perfetto-performance-analysis` 分析本地 
 ## 这次真正带走了什么
 
 - 一个标准 `perfetto-performance-analysis` 路由和 14 个领域工作流。
-- 230 个 SmartPerfetto 定义：198 个确定性可执行 Skill，31 个 pipeline 定义和
-  1 个 comparison 契约明确标为 knowledge-only，不伪装成单 Trace 可执行 Skill。
-- 637 条 SmartPerfetto 自研 SQL；每条都有来源、哈希、许可证、模块/fragment
+- SmartPerfetto 定义包括确定性可执行 Skill，以及明确标为 knowledge-only 的
+  pipeline 定义和 comparison 契约；知识类不伪装成单 Trace 可执行 Skill。
+- SmartPerfetto 自研 SQL；每条都有来源、哈希、许可证、模块/fragment
   依赖、Android API 28–37 状态和四个独立验证轴。
 - 便携执行层：输入/default、前置条件、身份门禁、`save_as`、条件、optional、
   empty/error 区分、`on_empty`、子 Skill、bounded iterator、确定性诊断和显式
   `agent_action_required` AI handoff。
-- 3 个 SQL fragment、8 个 advisory-only 厂商启动 override、65 份 Strategy 来源、
-  32 份渲染管线文档，以及带 SHA-256 锁定的跨平台 Trace Processor bootstrap。
+- SQL fragment、advisory-only 厂商启动 override、Strategy 来源、渲染管线文档，
+  以及带 SHA-256 锁定的跨平台 Trace Processor bootstrap。
 - 一套项目自有真实 Trace fixture pack：来源、隐私扫描、逐文件哈希均不可变，另有
   一个提交进 Git、可离线运行的真实 smoke Trace。
 
@@ -131,12 +131,12 @@ Android 版本不是 Trace schema 版本。系统 API、QPR、OEM、内核、Mai
 
 ## SQL 准确性怎么保证
 
-637 条 SQL 来自 SmartPerfetto，不是“官方 Perfetto SQL”。官方仓库能保证的是
+导出的 SQL 来自 SmartPerfetto，不是“官方 Perfetto SQL”。官方仓库能保证的是
 锁定的 Trace Processor、RPC API、stdlib 与 schema 真相，不能替代逐条语义验证。
 本项目把保证拆成四个轴：
 
 - `static_valid`：参数、fragment、依赖图、module 和表达式闭合；
-- `runtime_compatible`：在 `trace-processor-lock.json` 锁定的 runtime（当前 v58.3 / RPC API 14）上可解析、可执行；
+- `runtime_compatible`：在 `trace-processor-lock.json` 锁定的 runtime（当前 v59.1 / RPC API 14）上可解析、可执行；
 - `execution_verified`：在有哈希的真实 fixture 上实际运行过；
 - `semantic_verified`：fixture 还有列、值或关系断言，不只是“没有报错”。
 

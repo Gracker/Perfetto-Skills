@@ -115,7 +115,8 @@ number reads as that number, as the CSV path always did, because Skills print
 64-bit timestamps with `printf('%d')` for SmartPerfetto's JavaScript, which
 coerces such text where this runtime's evaluator does not. A processor that
 cannot serve stdio RPC falls back to the `query` CLI and its six-decimal
-doubles.
+doubles. Machine query calls explicitly use `--format csv --no-agent`, so an
+AI Agent environment cannot switch the result to truncated Markdown tables.
 
 Process identity follows SmartPerfetto's contract. The exporter records each
 Skill's effective identity policy: an explicit `identity` with SmartPerfetto's

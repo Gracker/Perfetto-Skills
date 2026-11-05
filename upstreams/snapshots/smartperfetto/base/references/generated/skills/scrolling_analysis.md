@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: 03591cddcd2bd4a278369cc8089e92f224d405b0e9adf66f618e4e44a72056fd
+Source SHA-256: 6477646cef570e1307827660c7b299ca4ecfebabb1a1b3995ac27b00129919a2
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -88,7 +88,11 @@ modules:
 - name: package
   type: string
   required: false
-  description: 应用包名（可选，不填则分析所有应用）
+  description: 应用包名（可选；未提供任何目标选择器时分析所有应用）
+- name: upid
+  type: integer
+  required: false
+  description: 证据选定的 trace 内唯一进程 ID；用于消除同名实例歧义，仍须通过身份门禁
 - name: start_ts
   type: timestamp
   required: false

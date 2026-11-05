@@ -101,16 +101,16 @@ installation, refresh the client and ask it to use
 ## What is included
 
 - One standard `perfetto-performance-analysis` router and 14 workflows.
-- 230 SmartPerfetto definitions: 198 deterministic executable Skills and 32
+- SmartPerfetto definitions covering deterministic executable Skills and
   knowledge-only pipeline/comparison contracts.
-- 637 SmartPerfetto-authored SQL queries, each with source/hash/license,
+- SmartPerfetto-authored SQL queries, each with source/hash/license,
   module/fragment dependencies, Android API 28–37 status, and four independent
   validation axes.
 - A safe expression runtime for all authored conditions, child-Skill calls,
   bounded iterators, diagnostics, explicit AI handoffs, evidence sidecars, and
   report validation.
-- Three SQL fragments, eight advisory-only OEM startup overrides, 65 strategy
-  sources, and 32 rendering-pipeline documents.
+- SQL fragments, advisory-only OEM startup overrides, strategy sources, and
+  rendering-pipeline documents.
 - A checksum-pinned cross-platform trace processor bootstrap.
 - A project-owned real-trace fixture pack with immutable provenance, privacy
   scan evidence, per-file hashes, and a committed offline smoke trace.

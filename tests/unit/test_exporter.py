@@ -106,6 +106,12 @@ class PortableSkillCallTest(unittest.TestCase):
         ),
         "pipeline_compose_standard": exporter.PortableSkill("knowledge_only", frozenset()),
         "engine_only": exporter.PortableSkill("product-only", frozenset()),
+        "scrolling_analysis": exporter.PortableSkill(
+            "executable", frozenset({"upid", "start_ts", "end_ts"})
+        ),
+        "process_identity_resolver": exporter.PortableSkill(
+            "executable", frozenset({"process_name", "start_ts", "end_ts"})
+        ),
     }
 
     def strip(self, body: str) -> tuple[str, int, list[str]]:
@@ -140,6 +146,9 @@ class PortableSkillCallTest(unittest.TestCase):
             'expectedCalls: [{ tool: "invoke_skill", skillId: "cpu_analysis" }]',
             "invoke_skill(skill_id, params)",
             '`invoke_skill("cpu_analysis", { package: fetch_artifact(id) })`',
+            'scene_evidence({ start_ts, end_ts })',
+            '`scene_evidence` then `invoke_skill("cpu_analysis")`',
+            '`invoke_skill("cpu_analysis", { package: "scene_evidence" })`',
         ):
             with self.subTest(paragraph=paragraph):
                 self.assertEqual(self.strip(f"keep\n\n{paragraph}"), ("keep", 1, []))
@@ -161,8 +170,10 @@ class PortableSkillCallTest(unittest.TestCase):
         )
 
     def test_unclassified_skill_name_fails_the_export(self) -> None:
-        with self.assertRaisesRegex(exporter.ExportError, "unclassified Skill.*cpu_analysys"):
-            self.strip('`invoke_skill("cpu_analysys")`')
+        for name in ("cpu_analysys", "scene_evidence"):
+            with self.subTest(name=name):
+                with self.assertRaisesRegex(exporter.ExportError, f"unclassified Skill.*{name}"):
+                    self.strip(f'`invoke_skill("{name}")`')
 
     def render(self, body: str) -> tuple[str, list[dict]]:
         with tempfile.TemporaryDirectory() as tmp:
@@ -178,6 +189,39 @@ class PortableSkillCallTest(unittest.TestCase):
         self.assertIn('Route: `invoke_skill("cpu_analysis")`.', rendered)
         self.assertLess(rendered.index(note), rendered.index("## Portable execution commands"))
         self.assertEqual(changes, [])
+
+    def test_scene_entry_paragraph_is_removed_without_losing_portable_identity_rules(self) -> None:
+        # R5 has no blank line between its product entry paragraph and these
+        # three triggers. They are one removal unit; the later rules are not.
+        triggers = [
+            "- `process_name` 来自自动焦点检测，而不是用户明确指定",
+            "- 用户反馈 Perfetto UI 里进程名不对、线程名/layer 看起来对",
+            "- `scrolling_analysis`、架构专属 Skill 或自定义 SQL 返回空结果，但 FrameTimeline/layer/线程名明显有目标应用信号",
+        ]
+        product_paragraph = (
+            "系统会在进程级 Skill 执行前自动做身份准入。准入返回 ambiguous/blocked（包括 `scene_evidence` 未执行）时，先读取已有候选；缺少消歧证据时调用 "
+            '`invoke_skill("process_identity_resolver", { process_name, start_ts, end_ts })`。以下情况也需要核对身份：\n'
+            + "\n".join(triggers)
+        )
+        identity_rules = (
+            "处理规则：\n"
+            "- 对照用户目标、候选的 process/cmdline、线程/layer 关联及原分析窗口内活动，确认实际进程实例。排名第一、同名或高分都不能单独消除歧义；同名重启实例要按 trace 内 `upid` 区分。\n"
+            "- 只有证据足以选定目标时，从该候选行原样取正整数 `upid`，保留原分析窗口重试：\n\n"
+            "  ```\n"
+            '  invoke_skill("scrolling_analysis", { upid: <选定候选行的 upid>, start_ts, end_ts })\n'
+            "  ```\n\n"
+            "  后续目标级 Skill 继续携带这个 `upid`；名称按各 Skill 声明的输入传递，不把 `canonical_package_name` 或 `recommended_process_name_param` 当成唯一实例标识，也不推测 UPID。\n"
+            "- 显式 UPID 仍须通过门禁；shared UID、包名冲突或 `weak_match` 未解决时，说明候选与缺口，必要时请用户明确目标。不得删除目标过滤、盲选第一名或反复按同一个名字重试。\n"
+            "- SQL 可用于补充消歧和独立证据，但查询成功不代表身份已验证。目标级 SQL 必须保留已确认的 UPID 与原时间范围；身份仍不确定时交付明确标注范围的系统/候选观察，不能归为已确认的目标 App 结论，也不能声称未执行的 Skill 已产出指标。局部身份或核验缺口不阻塞其余有效证据和正文交付；逐项说明限制。"
+        )
+        rendered, changes = self.render(f"# Probe\n\n{product_paragraph}\n\n{identity_rules}\n")
+        self.assertNotIn("scene_evidence", rendered)
+        self.assertNotIn("系统会在进程级 Skill 执行前自动做身份准入", rendered)
+        for trigger in triggers:
+            self.assertNotIn(trigger, rendered)
+        self.assertIn(identity_rules, rendered)
+        self.assertIn(exporter.SKILL_CALL_NOTE, rendered)
+        self.assertEqual(changes[0]["removed_lines"], 4)
 
     def test_rejected_calls_are_recorded_in_the_transformation(self) -> None:
         rendered, changes = self.render('# Probe\n\nRoute: `invoke_skill("engine_only")`.\n')
@@ -219,6 +263,17 @@ class StrategyMetadataSanitizerTest(unittest.TestCase):
         self.assertEqual(
             sanitized,
             {"workflow": "scrolling", "keywords": ["jank", "frame"], "nested": {"priority": 2}},
+        )
+
+    def test_scene_evidence_keys_and_values_remain_product_only(self) -> None:
+        self.assertEqual(
+            exporter.sanitize_strategy_metadata({
+                "workflow": "scrolling",
+                "scene_evidence": {"required": True},
+                "keywords": ["jank", "scene_evidence"],
+                "nested": {"entry": "run scene_evidence first", "priority": 2},
+            }),
+            {"workflow": "scrolling", "keywords": ["jank"], "nested": {"priority": 2}},
         )
 
 
@@ -938,6 +993,149 @@ class InvestigationMethodologyExportTest(unittest.TestCase):
         requirement["domain"] = " domain with spaces "
         profile["profiles"]["system_execution"]["version"] = 1.0
         self.assertIn("domain with spaces", self.render("investigation-profiles.yaml", json.dumps(profile)))
+
+    def entry_acquisition(self, **changes):
+        entry = {"schema_version": 1, "metric_id": "system.thread.state.duration",
+                 "subject_binding": "selected_thread_interval",
+                 "params": {"start_ts": "selected_start", "end_ts": "selected_end",
+                            "upid": "selected_upid", "utid": "selected_utid"}}
+        entry.update(changes)
+        return entry
+
+    def entry_profile(self):
+        profile = self.profile()
+        profile["profiles"]["system_execution"]["version"] = 2
+        profile["profiles"]["system_execution"]["requirements"][0]["entry_acquisition"] = self.entry_acquisition()
+        return profile
+
+    def test_entry_acquisition_is_validated_but_only_methodology_is_rendered(self):
+        profile = self.entry_profile()
+        requirement = profile["profiles"]["system_execution"]["requirements"][0]
+        # Private parameter names are not portable prose and must not pass
+        # through contains_product_runtime's presentation filter.
+        requirement["entry_acquisition"]["params"]["entry_skill_start"] = (
+            requirement["entry_acquisition"]["params"].pop("start_ts"))
+        rendered = self.render("investigation-profiles.yaml", json.dumps(profile))
+        without_entry = json.loads(json.dumps(profile))
+        del without_entry["profiles"]["system_execution"]["requirements"][0]["entry_acquisition"]
+        old_rendered = self.render("investigation-profiles.yaml", json.dumps(without_entry))
+        # Actual source hashes change; product acquisition does not change the
+        # portable methodology or replace full-source provenance with a hash of
+        # the sanitized projection.
+        self.assertNotEqual(rendered.splitlines()[2], old_rendered.splitlines()[2])
+        self.assertEqual(rendered.splitlines()[3:], old_rendered.splitlines()[3:])
+        contract = {"schema_version": 1, "profiles": [{"id": "system_execution", "version": 2}],
+                    "requirements": [requirement]}
+        scene = self.render_contract(contract, profile)
+        self.assertIn("Apply `system_execution` version 2", scene)
+        self.assertIn("Body.", scene)
+        for private in ("entry_acquisition", "entry_skill_start", "selected_thread_interval", "selected_start",
+                        "selected_end", "selected_upid", "selected_utid", "system.thread.state.duration"):
+            self.assertNotIn(private, rendered)
+            self.assertNotIn(private, scene)
+        contract["profiles"][0]["version"] = 1
+        with self.assertRaises(exporter.ExportError):
+            self.render_contract(contract, profile)
+
+    def test_invalid_entry_acquisition_schema_fails_before_projection(self):
+        invalid = [None, [], {}, *[self.entry_acquisition(**change) for change in (
+            {"schema_version": True}, {"schema_version": "1"}, {"schema_version": 2},
+            {"metric_id": ""}, {"metric_id": 4}, {"metric_id": "unlisted.metric"},
+            {"subject_binding": "area"}, {"subject_binding": ["selected_thread_interval"]},
+            {"params": None}, {"params": []}, {"params": {}}, {"fetch_artifact": "hidden"},
+        )]]
+        for missing in ("schema_version", "metric_id", "subject_binding", "params"):
+            entry = self.entry_acquisition()
+            del entry[missing]
+            invalid.append(entry)
+        for params in (
+            {"start_ts": "selected_start", "end_ts": "selected_end", "upid": "selected_upid"},
+            {**self.entry_acquisition()["params"], "extra": "selected_start"},
+            {**self.entry_acquisition()["params"], "utid": "selected_upid"},
+            {**self.entry_acquisition()["params"], "utid": "package"},
+            {**self.entry_acquisition()["params"], "utid": 123},
+            {**self.entry_acquisition()["params"], "utid": ["selected_utid"]},
+            {**self.entry_acquisition()["params"], "utid": "${selected_utid}"},
+        ):
+            invalid.append(self.entry_acquisition(params=params))
+        for bad_name in ("", " start_ts", "a.b", "a-b", "1start", "Start_ts", "startTs", "_start_ts"):
+            params = self.entry_acquisition()["params"]
+            params[bad_name] = params.pop("start_ts")
+            invalid.append(self.entry_acquisition(params=params))
+        for entry in invalid:
+            profile = self.entry_profile()
+            profile["profiles"]["system_execution"]["requirements"][0]["entry_acquisition"] = entry
+            with self.subTest(entry=entry), self.assertRaises(exporter.ExportError):
+                self.render("investigation-profiles.yaml", json.dumps(profile))
+        profile = self.entry_profile()
+        del profile["profiles"]["system_execution"]["requirements"][0]["evidence_metrics"]
+        with self.assertRaises(exporter.ExportError):
+            self.render("investigation-profiles.yaml", json.dumps(profile))
+
+    def test_identical_entry_acquisition_is_deduplicated_before_uniqueness_check(self):
+        profile = self.entry_profile()
+        repeated = json.loads(json.dumps(profile["profiles"]["system_execution"]))
+        entry = repeated["requirements"][0]["entry_acquisition"]
+        entry["schema_version"] = 1.0
+        entry["metric_id"] += "  "
+        entry["params"] = dict(reversed(list(entry["params"].items())))
+        profile["profiles"]["secondary"] = repeated
+        contract = {"schema_version": 1,
+                    "profiles": [{"id": "system_execution", "version": 2}, {"id": "secondary", "version": 2}],
+                    "requirements": repeated["requirements"]}
+        self.assertIn("Apply `secondary` version 2", self.render_contract(contract, profile))
+        repeated["requirements"] *= 2
+        with self.assertRaises(exporter.ExportError):
+            self.render("investigation-profiles.yaml", json.dumps(profile))
+
+    def test_entry_acquisition_conflicts_are_not_hidden_by_projection(self):
+        for change in ("metric", "params", "missing"):
+            for location in ("local", "profile"):
+                profile = self.entry_profile()
+                profile["profiles"]["system_execution"]["requirements"][0]["evidence_metrics"].append("other.metric")
+                conflicting = json.loads(json.dumps(profile["profiles"]["system_execution"]))
+                requirement = conflicting["requirements"][0]
+                if change == "metric":
+                    requirement["entry_acquisition"]["metric_id"] = "other.metric"
+                elif change == "params":
+                    params = requirement["entry_acquisition"]["params"]
+                    params["other_start"] = params.pop("start_ts")
+                else:
+                    del requirement["entry_acquisition"]
+                # Both sides are independently valid. Only their same-ID
+                # conflict should reject the merged contract.
+                self.render("investigation-profiles.yaml", json.dumps(profile))
+                self.render("investigation-profiles.yaml", json.dumps({"schema_version": 1,
+                            "profiles": {"secondary": conflicting}}))
+                contract = {"schema_version": 1, "profiles": [{"id": "system_execution", "version": 2}]}
+                if location == "local":
+                    contract["requirements"] = conflicting["requirements"]
+                else:
+                    profile["profiles"]["secondary"] = conflicting
+                    contract["profiles"].append({"id": "secondary", "version": 2})
+                with self.subTest(change=change, location=location), self.assertRaisesRegex(
+                        exporter.ExportError, "Conflicting investigation requirement"):
+                    self.render_contract(contract, profile)
+
+    def test_distinct_entry_acquisitions_fail_in_profiles_and_merged_contracts(self):
+        for location in ("same_profile", "local", "other_profile"):
+            profile = self.entry_profile()
+            other = json.loads(json.dumps(profile["profiles"]["system_execution"]["requirements"][0]))
+            other["id"] = "other_requirement"
+            contract = {"schema_version": 1, "profiles": [{"id": "system_execution", "version": 2}]}
+            if location == "same_profile":
+                profile["profiles"]["system_execution"]["requirements"].append(other)
+            elif location == "local":
+                contract["requirements"] = [other]
+            else:
+                profile["profiles"]["secondary"] = {"version": 2, "requirements": [other]}
+                contract["profiles"].append({"id": "secondary", "version": 2})
+            with self.subTest(location=location), self.assertRaisesRegex(
+                    exporter.ExportError, "Multiple investigation entry acquisitions"):
+                if location == "same_profile":
+                    self.render("investigation-profiles.yaml", json.dumps(profile))
+                else:
+                    self.render_contract(contract, profile)
 
 
 class ProcessScopeExportTest(unittest.TestCase):

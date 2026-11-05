@@ -155,18 +155,18 @@ class V02ContractTest(unittest.TestCase):
             (runtime / "perfetto-source-lock.json").read_text(encoding="utf-8")
         )
         self.assertEqual(source_lock["schema_version"], 2)
-        self.assertEqual(source_lock["official_reference"]["tag"], "v58.2")
+        self.assertEqual(source_lock["official_reference"]["tag"], "v59.1")
         self.assertEqual(
             source_lock["official_reference"]["commit"],
-            "add693d8b338ba9599dbcbc3e300b1ab8c000897",
+            "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
         )
         self.assertEqual(
             source_lock["runtime"]["revision"],
-            "99234d73fe356bf7edf6b2cb7afcf2a9eefc5368",
+            "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
         )
         self.assertEqual(
             source_lock["runtime"]["stdlib_tree"],
-            "c4ed7bdb0dfc5c21fb00e3982220d39abe2911bf",
+            "5a9a1eb9ef4de45444fa2445820405456215c01e",
         )
         self.assertEqual(
             source_lock["official_reference"]["skill"]["role"], "gap_check_only"

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/touch-tracking.strategy.md
-Source SHA-256: 52b3c2bb17f6d7082dce681f37166c7f72618c03fd82aaa7ff29c475c2c3dca2
+Source SHA-256: 51614639f7ac6c6bd308a44f5e1766c4d86df1818748ca92ced7d757eb402c98
 
 # Touch Tracking Strategy
 
@@ -52,7 +52,7 @@ keywords:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

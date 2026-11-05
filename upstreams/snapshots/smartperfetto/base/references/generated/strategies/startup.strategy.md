@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/startup.strategy.md
-Source SHA-256: e2b03d0bc15f9779454cf5635359b68939981863b53eb9dbf581bc9568c70edc
+Source SHA-256: 2d0f7ec9acc4d453e8044cc9a8321ec98499192dc9ab6fe26284c3989dba7e97
 
 # Startup Strategy
 
@@ -198,7 +198,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/power.strategy.md
-Source SHA-256: f76bc14650a8408b1ef076b9f3f778a1c9ce3ed7c47d1f5032dedb2ea1e7c70d
+Source SHA-256: 67d4f56c288d85accfb9e9ab6251a146a53125b84293b98b235da2a4b1723742
 
 # Power Strategy
 
@@ -164,7 +164,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

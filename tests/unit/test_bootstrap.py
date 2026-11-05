@@ -171,13 +171,13 @@ class BootstrapTest(unittest.TestCase):
         lock = json.loads(lock_path.read_text(encoding="utf-8"))
         self.assertEqual(
             lock["revision"],
-            "99234d73fe356bf7edf6b2cb7afcf2a9eefc5368",
+            "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
         )
         self.assertEqual(lock["schema_version"], 2)
-        self.assertNotIn("artifact_version", lock)
-        self.assertEqual(lock["reported_version"], "v58.3")
+        self.assertEqual(lock["artifact_version"], "v59.1")
+        self.assertEqual(lock["reported_version"], "v59.1")
         for key, entry in lock["platforms"].items():
-            self.assertTrue(entry["path"].startswith(f"{lock['revision']}/{key}/"))
+            self.assertTrue(entry["path"].startswith(f"{lock['artifact_version']}/{key}/"))
         self.assertEqual(lock["rpc_api_version"], 14)
         self.assertEqual(
             set(lock["platforms"]),

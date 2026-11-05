@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/game_fps_analysis.skill.yaml
--- Source SHA-256: afe29e2e27d3fbd6899c8b09c61c286650fe26e2f3f9585158f7f3d7818a7966
+-- Source SHA-256: f104c2ead1d211e29902fa0d4c1b768f407c2f8d942c1076311f373222ff92ab
 
 WITH
 time_bounds AS (
@@ -9,22 +9,9 @@ time_bounds AS (
     COALESCE(${end_ts}, MAX(ts + dur)) as end_ts
   FROM actual_frame_timeline_slice
 ),
--- 自动检测目标帧间隔
+-- Reuse the selected target from the same-window detection step.
 target_config AS (
-  SELECT
-    CASE
-      WHEN ${target_fps} IS NOT NULL THEN 1e9 / ${target_fps}
-      ELSE (
-        SELECT CAST(PERCENTILE(interval_ns, 50) AS INTEGER)
-        FROM (
-          SELECT a.ts - LAG(a.ts) OVER (ORDER BY a.ts) as interval_ns
-          FROM actual_frame_timeline_slice a
-          LEFT JOIN process p ON a.upid = p.upid
-          WHERE (('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*') OR '${package}' = '')
-        )
-        WHERE interval_ns > 5000000 AND interval_ns < 100000000
-      )
-    END as target_interval_ns
+  SELECT ${fps_detection.data[0].target_interval_ns|NULL} AS target_interval_ns
 ),
 frame_intervals AS (
   SELECT
@@ -41,11 +28,14 @@ jank_stats AS (
   SELECT
     COUNT(*) as total_frames,
     -- 帧间隔超过目标 1.5 倍视为掉帧
-    SUM(CASE WHEN interval_ns > (SELECT target_interval_ns FROM target_config) * 1.5 THEN 1 ELSE 0 END) as jank_count,
+    CASE WHEN (SELECT target_interval_ns FROM target_config) IS NOT NULL
+      THEN SUM(CASE WHEN interval_ns > (SELECT target_interval_ns FROM target_config) * 1.5 THEN 1 ELSE 0 END) END as jank_count,
     -- 帧间隔超过目标 2 倍视为严重掉帧
-    SUM(CASE WHEN interval_ns > (SELECT target_interval_ns FROM target_config) * 2 THEN 1 ELSE 0 END) as severe_jank_count,
+    CASE WHEN (SELECT target_interval_ns FROM target_config) IS NOT NULL
+      THEN SUM(CASE WHEN interval_ns > (SELECT target_interval_ns FROM target_config) * 2 THEN 1 ELSE 0 END) END as severe_jank_count,
     -- 帧间隔超过目标 3 倍视为卡顿
-    SUM(CASE WHEN interval_ns > (SELECT target_interval_ns FROM target_config) * 3 THEN 1 ELSE 0 END) as freeze_count
+    CASE WHEN (SELECT target_interval_ns FROM target_config) IS NOT NULL
+      THEN SUM(CASE WHEN interval_ns > (SELECT target_interval_ns FROM target_config) * 3 THEN 1 ELSE 0 END) END as freeze_count
   FROM frame_intervals
   WHERE interval_ns IS NOT NULL
     AND interval_ns > 5000000
@@ -60,6 +50,7 @@ SELECT
   ROUND((SELECT target_interval_ns FROM target_config) / 1e6, 2) as target_interval_ms,
   ROUND(1e9 / (SELECT target_interval_ns FROM target_config), 0) as target_fps,
   CASE
+    WHEN (SELECT target_interval_ns FROM target_config) IS NULL OR total_frames = 0 THEN NULL
     WHEN 100.0 * jank_count / NULLIF(total_frames, 0) < 1 THEN '优秀'
     WHEN 100.0 * jank_count / NULLIF(total_frames, 0) < 5 THEN '良好'
     WHEN 100.0 * jank_count / NULLIF(total_frames, 0) < 10 THEN '一般'

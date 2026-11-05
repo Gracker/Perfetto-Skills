@@ -376,7 +376,7 @@ def run_query(
         result = _run_rpc_once(binary, trace, text, limits)
     if result is None:
         result = _run_processor(
-            (str(binary), "query", "--extra-checks"),
+            (str(binary), "query", "--extra-checks", "--format", "csv", "--no-agent"),
             (str(trace),),
             sql=sql,
             sql_file=query_path,

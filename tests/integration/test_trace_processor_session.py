@@ -35,7 +35,8 @@ class TraceProcessorSessionTest(unittest.TestCase):
         """What `trace_processor_shell query` itself prints for `sql`."""
         limits = self.common._ProcessorLimits(time.monotonic() + 60, 60, 1 << 24)
         return self.common._run_processor(
-            (self.processor, "query", "--extra-checks"), (str(TRACE),), sql=sql, sql_file=None, limits=limits,
+            (self.processor, "query", "--extra-checks", "--format", "csv", "--no-agent"),
+            (str(TRACE),), sql=sql, sql_file=None, limits=limits,
         ).stdout
 
     def query(self, sql: str | None = None, *, trace: Path = TRACE, **options: object):
@@ -207,6 +208,56 @@ class TraceProcessorSessionTest(unittest.TestCase):
         self.assertEqual(self.query("SELECT 1 AS a; SELECT 2 AS b;").stdout, '"a"\n1\n\n"b"\n2\n')
         with self.assertRaisesRegex(self.common.QueryError, "No valid SQL to run"):
             self.query("-- nothing\n")
+
+    def test_cli_fallback_keeps_machine_csv_under_agent_environment(self) -> None:
+        cases = [
+            ("SELECT NULL AS n, 'a,b' AS s, -3 AS i, 9223372036854775807 AS big;",
+             '"n","s","i","big"\n"[NULL]","a,b",-3,9223372036854775807\n'),
+            ("SELECT 1 AS empty WHERE 0;", '"empty"\n'),
+            ("SELECT 1 AS a; SELECT 2 AS b;", '"a"\n1\n\n"b"\n2\n'),
+            # CLI's historical six-decimal format is deliberately distinct
+            # from RPC's exact doubles; setting agent env must not change it.
+            ("SELECT 1.0 / 3 AS third, 1e-7 AS tiny;", '"third","tiny"\n0.333333,0.000000\n'),
+        ]
+        for marker in ("AI_AGENT", "CLAUDECODE"):
+            with mock.patch.dict(os.environ, {marker: "1"}), mock.patch.object(
+                self.common, "_RPC_SUPPORTED", False,
+            ), mock.patch.object(self.common, "_run_rpc_once") as rpc:
+                for sql, expected in cases:
+                    with self.subTest(marker=marker, sql=sql):
+                        result = self.query(sql)
+                        self.assertEqual(result.stdout, expected)
+                        self.assertIsNone(result.rows)
+                        self.assertEqual(result.command[1:6], ("query", "--extra-checks", "--format", "csv", "--no-agent"))
+                rpc.assert_not_called()
+
+    def test_cli_fallback_does_not_apply_agent_display_limits(self) -> None:
+        sql = (
+            "WITH RECURSIVE numbers(i) AS (SELECT 1 UNION ALL "
+            "SELECT i + 1 FROM numbers WHERE i < 1100) "
+            "SELECT i, 'x' || printf('%0599d', 0) AS text FROM numbers ORDER BY i;"
+        )
+        with mock.patch.dict(os.environ, {"AI_AGENT": "1", "CLAUDECODE": "1"}), mock.patch.object(
+            self.common, "_RPC_SUPPORTED", False,
+        ), mock.patch.object(self.common, "_run_rpc_once") as rpc:
+            result = self.query(sql)
+        rpc.assert_not_called()
+        self.assertIsNone(result.rows)
+        rows = self.common.query_rows(result)
+        self.assertEqual(len(rows), 1100)
+        self.assertEqual(rows[-1], {"i": 1100, "text": "x" + "0" * 599})
+        self.assertTrue(all(len(row["text"]) == 600 for row in rows))
+
+    def test_cli_fallback_keeps_query_errors_under_agent_environment(self) -> None:
+        with mock.patch.dict(os.environ, {"AI_AGENT": "1", "CLAUDECODE": "1"}), mock.patch.object(
+            self.common, "_RPC_SUPPORTED", False,
+        ), mock.patch.object(self.common, "_run_rpc_once") as rpc:
+            with self.assertRaises(self.common.QueryError) as failure:
+                self.query("SELECT * FROM machine_format_missing_table;")
+        rpc.assert_not_called()
+        self.assertIn("no such table: machine_format_missing_table", str(failure.exception))
+        self.assertIn(" --> query:1:1\n", str(failure.exception))
+        self.assertNotIn('"error":', str(failure.exception))
 
     def test_rows_keep_cell_identity_over_rpc(self) -> None:
         result = self.query(

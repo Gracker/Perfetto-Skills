@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/investigation-profiles.yaml
-Source SHA-256: a6bd593f1a512a72d61da7c61cf80e9f7aee0b927d6aed49e940f11acbaf41b9
+Source SHA-256: a3a652d40027d23d94b9d285d6c0d93a5d74eed414ecd83bac559a1752eb371e
 
 # Investigation Profiles Yaml
 
@@ -16,7 +16,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
 - Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
 
-## system_execution (version 1)
+## system_execution (version 2)
 
 ### cpu_frequency (cpu_frequency)
 

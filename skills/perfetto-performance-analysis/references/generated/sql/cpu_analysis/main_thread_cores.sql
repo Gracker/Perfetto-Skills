@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_analysis.skill.yaml
--- Source SHA-256: d92fc12306d640e35692ee32b71bec6aa951ed61f3d8f5b0f4f24b2bafacc9af
+-- Source SHA-256: d9d9bcda96cb9471278f153d74bd7bf5116d197b1f29e700e4ac9681d930e619
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -78,7 +78,9 @@ main_thread AS (
   SELECT t.utid
   FROM thread t
   JOIN effective_target_processes p ON t.upid = p.upid
-  WHERE p.upid = ${target_process.data[0].upid} AND t.tid = p.pid
+  WHERE p.upid = ${target_process.data[0].upid}
+  AND ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
+  AND t.tid = p.pid
   LIMIT 1
 )
 SELECT

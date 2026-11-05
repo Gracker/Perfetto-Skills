@@ -71,7 +71,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_process_state_residency/process_state_capability.sql",
-      "sha256": "17a64fe0621ccb50a0f5134ba327c3b447251869f91ae8a3d80afc64388af87f",
+      "sha256": "e3225d58bd0e1b85dd086638493e29be7847db43bd3b3c4a021942cca830279a",
       "signal_patterns": [
         "_android_process_state_intervals"
       ],
@@ -79,7 +79,7 @@
       "source": {
         "path": "backend/skills/atomic/android_process_state_residency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f785279fb41abf9e40451b7089d02655c17180229724e8a28759af866c6347cf"
+        "sha256": "226abdc8bd617a35c5005014a5020538455aa88290a2d96fa911645bbb2387b1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -180,13 +180,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_process_state_residency/process_state_data.sql",
-      "sha256": "b1155da78ac52e56e42f313ddf46e0c932fb8356bb6ff512bfcbec44e6b247ef",
+      "sha256": "eb22a891122d7fedd58f36e92c8d424ee68270db10ba4740fce2fe3ad4d84702",
       "signal_patterns": [],
       "skill_id": "android_process_state_residency",
       "source": {
         "path": "backend/skills/atomic/android_process_state_residency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f785279fb41abf9e40451b7089d02655c17180229724e8a28759af866c6347cf"
+        "sha256": "226abdc8bd617a35c5005014a5020538455aa88290a2d96fa911645bbb2387b1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -204,7 +204,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/process_state_scoped_intervals.sql",
-            "source_sha256": "af3414537aa1a703e9b854a6abda6fa0df8ae3488f58c8cf650ecb2647cd802f"
+            "source_sha256": "468e2aab5dd8625c2e72f168c46f7fa23b10ddc293ad5cd434e1ab30db8857a5"
           }
         ],
         "name_parameters": [
@@ -298,13 +298,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_process_state_residency/process_state_residency.sql",
-      "sha256": "638a86bed999c14a232c810f915974df6a0e0da036b5ade6b99cdd86adf0227f",
+      "sha256": "aa244e427d8a15caf6255a37598a4f214c30c64df31471f624e0024a79f35842",
       "signal_patterns": [],
       "skill_id": "android_process_state_residency",
       "source": {
         "path": "backend/skills/atomic/android_process_state_residency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f785279fb41abf9e40451b7089d02655c17180229724e8a28759af866c6347cf"
+        "sha256": "226abdc8bd617a35c5005014a5020538455aa88290a2d96fa911645bbb2387b1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -322,7 +322,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/process_state_scoped_intervals.sql",
-            "source_sha256": "af3414537aa1a703e9b854a6abda6fa0df8ae3488f58c8cf650ecb2647cd802f"
+            "source_sha256": "468e2aab5dd8625c2e72f168c46f7fa23b10ddc293ad5cd434e1ab30db8857a5"
           }
         ],
         "name_parameters": [
@@ -418,13 +418,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_process_state_residency/process_state_transitions.sql",
-      "sha256": "ff6e83c407b51cdababf9c40554a06c6d5b039998c003f2c60b5be987f5e436a",
+      "sha256": "7a45ebe41cef1d820f90898e6038f0fffef419005ec6a1427398989a6ffd6dc5",
       "signal_patterns": [],
       "skill_id": "android_process_state_residency",
       "source": {
         "path": "backend/skills/atomic/android_process_state_residency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f785279fb41abf9e40451b7089d02655c17180229724e8a28759af866c6347cf"
+        "sha256": "226abdc8bd617a35c5005014a5020538455aa88290a2d96fa911645bbb2387b1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -442,7 +442,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/process_state_scoped_intervals.sql",
-            "source_sha256": "af3414537aa1a703e9b854a6abda6fa0df8ae3488f58c8cf650ecb2647cd802f"
+            "source_sha256": "468e2aab5dd8625c2e72f168c46f7fa23b10ddc293ad5cd434e1ab30db8857a5"
           }
         ],
         "name_parameters": [
@@ -539,13 +539,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/android_process_state_residency/process_state_last_observed.sql",
-      "sha256": "8fef064d2189c691e1f8506a3eb764a9d57732f2b1563416f95742b1292f6783",
+      "sha256": "c716ae35137126ab66919910636d9ca0b5585181955fca893dd03da719a51cbd",
       "signal_patterns": [],
       "skill_id": "android_process_state_residency",
       "source": {
         "path": "backend/skills/atomic/android_process_state_residency.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "f785279fb41abf9e40451b7089d02655c17180229724e8a28759af866c6347cf"
+        "sha256": "226abdc8bd617a35c5005014a5020538455aa88290a2d96fa911645bbb2387b1"
       },
       "sql_dependencies": {
         "creates": [],
@@ -563,7 +563,7 @@
           {
             "order": 0,
             "source_path": "backend/skills/fragments/process_state_scoped_intervals.sql",
-            "source_sha256": "af3414537aa1a703e9b854a6abda6fa0df8ae3488f58c8cf650ecb2647cd802f"
+            "source_sha256": "468e2aab5dd8625c2e72f168c46f7fa23b10ddc293ad5cd434e1ab30db8857a5"
           }
         ],
         "name_parameters": [

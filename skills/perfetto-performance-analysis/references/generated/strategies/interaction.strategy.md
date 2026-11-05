@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/interaction.strategy.md
-Source SHA-256: e3c710af622d1e64c23c43d1c6e1a40788c8b81f0446a6c7a79ff26323b4a02a
+Source SHA-256: 5575cc0f85822a6abfe33657a24e50986a04b6509564f8f607fc5fb44f91ced7
 
 # Interaction Strategy
 
@@ -148,7 +148,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

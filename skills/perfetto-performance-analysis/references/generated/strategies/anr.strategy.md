@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: 618a27841cbc74ff326f318963c297125d39fdcabd7911f3da34e603ea0031a9
+Source SHA-256: a80441d2100079e984e914b910e32b4a8aa5a6d6b6abadd8141c178d02e4a0ed
 
 # Anr Strategy
 
@@ -104,7 +104,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/linux.strategy.md
-Source SHA-256: ea6c15dd398fff318bb92d96fc3e09d94f05a2cd424cf43386da0d7981a67a9b
+Source SHA-256: 983fc39c2374159efc0ad6647089c8546b05a710cd8b67cbc117a74fcf874eb7
 
 # Linux Strategy
 
@@ -52,7 +52,7 @@ keywords:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

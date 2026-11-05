@@ -339,6 +339,8 @@ class SessionFallbackTest(unittest.TestCase):
                 "import sys\n"
                 "if sys.argv[1] != 'query':\n"
                 "    sys.exit(2)\n"
+                "if '--no-agent' not in sys.argv or '--format' not in sys.argv or sys.argv[sys.argv.index('--format') + 1] != 'csv':\n"
+                "    sys.exit('machine CSV flags required')\n"
                 "print('\"value\"')\n"
                 "print(1)\n",
                 encoding="utf-8",
@@ -355,7 +357,7 @@ class SessionFallbackTest(unittest.TestCase):
                 self.assertTrue(session.unavailable)
                 self.assertEqual(session.start_count, 0)
             for result in results:
-                self.assertEqual(result.command[1], "query")
+                self.assertEqual(result.command[1:6], ("query", "--extra-checks", "--format", "csv", "--no-agent"))
                 self.assertEqual(self.common.parse_csv_output(result.stdout), [{"value": 1}])
 
 

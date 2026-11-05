@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/thread_system_summary_in_range.skill.yaml
-Source SHA-256: e523b849bf1e8c93117737f0a334009b9877f6001a098b8e3eed2888cf077dac
+Source SHA-256: 5dc870799473652b620c8e5763fa0cafaa0f92b1c6fa3c8c84cdd21017a617b4
 # 任务状态、摆核与调度观测
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -9,7 +9,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: thread_system_summary_in_range
-version: '1.0'
+version: '1.1'
 type: atomic
 category: kernel
 tier: B
@@ -121,9 +121,11 @@ columns:
 - name: total_target_threads
   label: total_target_threads
   type: number
+  unit: count
 - name: state_count
   label: state_count
   type: number
+  unit: count
 - name: state_covered_ns
   label: state_covered_ns
   type: duration
@@ -212,6 +214,7 @@ columns:
 - name: priority_value_count
   label: priority_value_count
   type: number
+  unit: count
 - name: priority_evidence
   label: priority_evidence
   type: string
@@ -230,12 +233,14 @@ columns:
 - name: preemption_count
   label: preemption_count
   type: number
+  unit: count
 - name: preemption_evidence
   label: preemption_evidence
   type: string
 - name: migrations
   label: migrations
   type: number
+  unit: count
 - name: evidence_scope
   label: evidence_scope
   type: string
