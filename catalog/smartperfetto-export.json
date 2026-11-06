@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "98a84af907b693fd0df0ad01adbd2eb05decf227",
+    "commit": "4f829c506fe737799bcec018d8f71a9955921408",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "899d04774771c4628f93fb460198eb2dbdffccf29ce0fb1eb4ed580d8c57a8f9",
+    "policy_sha256": "d7b14d7cd7178d5979401df5dca83ea850c6097f1d5592139d8045bf35a6b533",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3773,6 +3773,18 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto private typed final submission tool transport",
+      "source_path": "backend/strategies/prompt-authored-final-submission-delivery.template.md",
+      "source_sha256": "98830392946723cad31ce32f41c420b4f7f40e5ec1c0883d91a784e9139f2e6d"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto private authored document representation and captured evidence references",
+      "source_path": "backend/strategies/prompt-authored-final-submission-framing.template.md",
+      "source_sha256": "2cb3e432c3bd72a2c65194e3ea0b022c4ead18b06459430851caba1a6c02a073"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto source lookup tools and codebase-aware report orchestration",
       "source_path": "backend/strategies/prompt-code-reference-contract-en.template.md",
       "source_sha256": "8f2940eec22adee76d93f2ed12f09dcf4638d4810093f465e37b394555e1f5bd"
@@ -3791,6 +3803,12 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto assistant-text acknowledgement declaration exemption",
+      "source_path": "backend/strategies/prompt-conclusion-ack-rule.template.md",
+      "source_sha256": "e0602d87426503460f72c9b28e490dc0373981088dd7d7c0c1e367280dd821c3"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto private declaration authoring transport and captured evidence references",
       "source_path": "backend/strategies/prompt-conclusion-authoring-framing.template.md",
       "source_sha256": "f50c2dbe967cfbd4777d13ba303db5ca480ff86b0407e13e832c81ec42b9019f"
@@ -3805,7 +3823,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto conclusion declarations and captured evidence identifiers",
       "source_path": "backend/strategies/prompt-conclusion-contract-schema.template.md",
-      "source_sha256": "1ad36d43b93d55e703d5cc6480fe7bd044a04a41193e920a70f195659c797a35"
+      "source_sha256": "ec4aa074e45ccb6242ab60634399ab39e8c7d0cfbef3d41c9c73ebf70b002d44"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto canonical and authoring declaration delivery protocol",
+      "source_path": "backend/strategies/prompt-conclusion-delivery.template.md",
+      "source_sha256": "390f73942669bef3d9b060112002aef480c06817896348863e452dcf48575fbd"
     },
     {
       "disposition": "product-only",
@@ -4296,6 +4320,12 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto experimental authored final submission tool transport and pending acknowledgement contract",
+      "source_path": "backend/strategies/prompt-submit-final-document-tool-description.template.md",
+      "source_sha256": "f7d6f1e31764b9fd36949a9431d2943c29c2e23b21bf2c90d4f1bae1dcc4d92e"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto submit_plan MCP tool description",
       "source_path": "backend/strategies/prompt-submit-plan-tool-description.template.md",
       "source_sha256": "43623a3f52f989fb725ce68a6059987630e7794ee69f6ee1f5d1d4a0a09acf70"
@@ -4552,7 +4582,7 @@
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 130,
+    "product_only_strategy_sources": 135,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4563,7 +4593,7 @@
     },
     "skill_yaml_files": 257,
     "sql_fragments": 60,
-    "strategy_sources": 176,
+    "strategy_sources": 181,
     "vendor_overrides": 8
   },
   "vendor_overrides": [
