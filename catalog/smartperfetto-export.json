@@ -3074,10 +3074,10 @@
     }
   ],
   "source": {
-    "commit": "27c59e408674ea4a3fe89de016eb17997f61cdff",
+    "commit": "e31030a2e1e9ce913a90c7c59cccc33441f0215a",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "d7b14d7cd7178d5979401df5dca83ea850c6097f1d5592139d8045bf35a6b533",
+    "policy_sha256": "1f124c116f2332465e357c137376c6d6f417c3b2ad569402ef09c583de2e50b2",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3785,6 +3785,18 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto private native object final submission transport",
+      "source_path": "backend/strategies/prompt-authored-final-submission-v2-delivery.template.md",
+      "source_sha256": "b06524f381adf185fd3efb7d665514b37f8a231913097d8a0a1f60340df89e58"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto native authored document grammar and private deterministic projection",
+      "source_path": "backend/strategies/prompt-authored-final-submission-v2-framing.template.md",
+      "source_sha256": "a3c1882819d16106c5526a1e9be182eea4a15b24b64fb2f2913fc60681750009"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto source lookup tools and codebase-aware report orchestration",
       "source_path": "backend/strategies/prompt-code-reference-contract-en.template.md",
       "source_sha256": "8f2940eec22adee76d93f2ed12f09dcf4638d4810093f465e37b394555e1f5bd"
@@ -4326,6 +4338,12 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto native object final tool and pending acknowledgement contract",
+      "source_path": "backend/strategies/prompt-submit-final-document-v2-tool-description.template.md",
+      "source_sha256": "2485991f2227503b9e7a28b4c53de370d1001f73262b7cba742913e3b08a353b"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto submit_plan MCP tool description",
       "source_path": "backend/strategies/prompt-submit-plan-tool-description.template.md",
       "source_sha256": "43623a3f52f989fb725ce68a6059987630e7794ee69f6ee1f5d1d4a0a09acf70"
@@ -4582,7 +4600,7 @@
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 135,
+    "product_only_strategy_sources": 138,
     "runtime_candidates": 252,
     "runtime_types": {
       "atomic": 132,
@@ -4593,7 +4611,7 @@
     },
     "skill_yaml_files": 257,
     "sql_fragments": 60,
-    "strategy_sources": 181,
+    "strategy_sources": 184,
     "vendor_overrides": 8
   },
   "vendor_overrides": [
