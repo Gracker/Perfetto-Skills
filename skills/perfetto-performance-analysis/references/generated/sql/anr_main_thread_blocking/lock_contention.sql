@@ -1,21 +1,10 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
--- Source SHA-256: e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349
+-- Source SHA-256: 125f6c0f585e4fb4e02d376ddf8c103f5229e42fbdff3be9b176133960f18834
 
 -- stdlib android_monitor_contention 提供 blocking_method + blocking_thread
 -- futex 部分保留手动 GLOB（stdlib 不覆盖）
-WITH analysis_window AS (
-  SELECT
-    COALESCE(${start_ts},
-      CASE WHEN ${anr_ts} IS NOT NULL THEN ${anr_ts} - 5000000000 ELSE NULL END,
-      (SELECT MIN(ts) FROM slice)
-    ) as w_start,
-    COALESCE(${end_ts},
-      CASE WHEN ${anr_ts} IS NOT NULL THEN ${anr_ts} + 1000000000 ELSE NULL END,
-      (SELECT MAX(ts + dur) FROM slice)
-    ) as w_end
-),
-main_thread AS (
+WITH main_thread AS (
   SELECT t.utid
   FROM thread t
   JOIN process p ON t.upid = p.upid
@@ -32,10 +21,9 @@ monitor_locks AS (
     mc.dur,
     mc.blocked_thread_name as thread_name
   FROM android_monitor_contention mc
-  CROSS JOIN analysis_window aw
   WHERE mc.blocked_utid = (SELECT utid FROM main_thread)
-    AND mc.ts >= aw.w_start
-    AND mc.ts + mc.dur <= aw.w_end
+    AND mc.ts >= ${analysis_window.data[0].start_ts|NULL}
+    AND mc.ts + mc.dur <= ${analysis_window.data[0].end_ts|NULL}
 ),
 -- futex: stdlib 不覆盖，保留手动 GLOB
 futex_locks AS (
@@ -48,12 +36,11 @@ futex_locks AS (
   FROM slice s
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
-  CROSS JOIN analysis_window aw
   CROSS JOIN main_thread mt
   WHERE tt.utid = mt.utid
     AND s.name GLOB '*futex*'
-    AND s.ts >= aw.w_start
-    AND s.ts + s.dur <= aw.w_end
+    AND s.ts >= ${analysis_window.data[0].start_ts|NULL}
+    AND s.ts + s.dur <= ${analysis_window.data[0].end_ts|NULL}
 )
 SELECT
   printf('%d', ts) as ts,

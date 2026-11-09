@@ -58,7 +58,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/framework/art_module.skill.yaml",
-    "sha256": "420e56403b3df38fd4f2d2f938b611c484252d3bc7f733ba7b956813c7a02fcf"
+    "sha256": "ccf7ffb32cfd7c7aec9b11b5f2ea46b43afcc7223ca47f28d55eff74b710bb95"
   },
   "steps": [
     {
@@ -127,6 +127,7 @@
             "gc_totals.data[0].main_thread_wait_count",
             "gc_totals.data[0].main_thread_gc_ms"
           ],
+          "id": "art.main_thread_gc",
           "suggestions": [
             "减少临时对象分配",
             "使用对象池复用对象"
@@ -140,6 +141,7 @@
             "gc_totals.data[0].collection_ms",
             "gc_totals.data[0].collection_count"
           ],
+          "id": "art.gc_collection_total_long",
           "suggestions": [
             "检查是否有内存泄漏",
             "优化数据结构减少内存使用"
@@ -153,6 +155,7 @@
             "gc_events.data[0].dur_ms",
             "gc_events.data[0].gc_type"
           ],
+          "id": "art.gc_collection_long",
           "suggestions": [
             "增加堆大小",
             "避免在关键路径分配大对象"
@@ -165,6 +168,7 @@
           "evidence_fields": [
             "jit_events.data[0].total_ms"
           ],
+          "id": "art.jit_compile_long",
           "suggestions": [
             "考虑 AOT 编译优化",
             "检查是否有热点方法未被编译"

@@ -76,7 +76,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/framework/surfaceflinger_module.skill.yaml",
-    "sha256": "e3f857a0ef0e7ea322a5a6f0f6e2f13149fe4684ded79833c5a1421a53b93124"
+    "sha256": "1ab8ca32abdfd4935e0a65eb1c83e73cb7d16dfac3a75a9ff0e24508f75769ba"
   },
   "steps": [
     {
@@ -133,6 +133,7 @@
             "frame_stats.data[0].jank_rate",
             "frame_stats.data[0].jank_count"
           ],
+          "id": "surfaceflinger.jank_rate_high",
           "suggestions": [
             "分析具体卡顿帧找出根因",
             "减少主线程工作量"
@@ -146,6 +147,7 @@
             "thread_stats.data[0].avg_ms",
             "thread_stats.data[0].overrun_count"
           ],
+          "id": "surfaceflinger.main_thread_overrun",
           "suggestions": [
             "检查主线程是否有耗时操作",
             "将耗时操作移至后台线程"
@@ -159,6 +161,7 @@
             "thread_stats.data[1].avg_ms",
             "thread_stats.data[1].overrun_count"
           ],
+          "id": "surfaceflinger.render_thread_overrun",
           "suggestions": [
             "减少过度绘制",
             "优化 View 层级"
@@ -172,6 +175,7 @@
             "jank_types.data[0].jank_cause",
             "jank_types.data[0].count"
           ],
+          "id": "surfaceflinger.binder_jank",
           "suggestions": [
             "检查帧渲染期间的 Binder 调用",
             "考虑缓存或异步处理"

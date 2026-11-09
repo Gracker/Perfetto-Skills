@@ -53,7 +53,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/cpu_module.skill.yaml",
-    "sha256": "4a9d6de50b0314b731792232ca2a3ac602c68e7c870a4e4a3d95f97d9f84a688"
+    "sha256": "71a1d8cdf84e0180782c8c25b1f85eb615aea52e66ee0a8ed675fb1a0634b309"
   },
   "steps": [
     {
@@ -118,6 +118,7 @@
             "freq_overview.data[0].avg_freq_mhz",
             "freq_overview.data[0].max_freq_mhz"
           ],
+          "id": "cpu.big_core_freq_low",
           "suggestions": [
             "是否限频以同窗口的 CPU 限频证据（cpu_throttling_in_range）为准",
             "检查是否开启省电模式"
@@ -130,6 +131,7 @@
           "evidence_fields": [
             "throttle_events.data.length"
           ],
+          "id": "cpu.freq_change_frequent",
           "suggestions": [
             "检查 governor 设置",
             "检查是否有功耗抖动"
@@ -142,6 +144,7 @@
           "evidence_fields": [
             "freq_overview.data[0].avg_freq_mhz"
           ],
+          "id": "cpu.little_above_big_freq",
           "suggestions": [
             "是否限频以同窗口的 CPU 限频证据（cpu_throttling_in_range）为准",
             "检查 CPU affinity 设置"

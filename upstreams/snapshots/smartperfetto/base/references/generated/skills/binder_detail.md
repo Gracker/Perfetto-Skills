@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/binder_detail.skill.yaml
-Source SHA-256: eeadbc879f3b3e4118c66913d5a022ebec45f310e3ea34a03306d58cb80b9141
+Source SHA-256: a769c1e7ae5e961d54f665ec8b4d7c8b6d56c5b0e20f816f67150ffcf6413197
 # Binder 详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -290,21 +290,24 @@ inputs:
 - quadrant
 - blocking
 rules:
-- condition: quadrant.data[0]?.sleeping_pct > 90
+- id: binder_detail.main_thread_sleeping_on_reply
+  condition: quadrant.data[0]?.sleeping_pct > 90
   severity: info
   diagnosis: 主线程在等待 Binder 回复 (${quadrant.data[0].sleeping_pct}% Sleeping)
   confidence: high
   suggestions:
   - 服务端处理时间过长
   - 考虑使用异步 Binder
-- condition: cpu_core.data[0]?.running_pct > 30
+- id: binder_detail.main_thread_running
+  condition: cpu_core.data[0]?.running_pct > 30
   severity: info
   diagnosis: Binder 期间主线程 Running 占比 ${cpu_core.data[0].running_pct}%
   confidence: medium
   suggestions:
   - 可能存在客户端序列化开销
   - 检查传输数据大小
-- condition: quadrant.data[0]?.q3_runnable_ms > 5
+- id: binder_detail.main_thread_runnable_wait
+  condition: quadrant.data[0]?.q3_runnable_ms > 5
   severity: warning
   diagnosis: 主线程 Runnable 等待 ${quadrant.data[0].q3_runnable_ms}ms
   confidence: medium

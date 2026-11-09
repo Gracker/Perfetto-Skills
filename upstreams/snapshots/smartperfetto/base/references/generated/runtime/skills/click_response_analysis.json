@@ -135,7 +135,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/click_response_analysis.skill.yaml",
-    "sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371"
+    "sha256": "96cdbe5a4f10221d92c7760411a1985dcbb03f48d8f5250f002bb12d2aecf818"
   },
   "steps": [
     {
@@ -339,6 +339,7 @@
           "condition": "latency_overview.data[0]?.avg_total_ms > ${avg_latency_critical_ms|100}",
           "confidence": "high",
           "diagnosis": "平均输入延迟过高 (${latency_overview.data[0].avg_total_ms}ms)",
+          "id": "click_response.avg_latency_high",
           "severity": "critical",
           "suggestions": [
             "检查主线程是否有耗时操作",
@@ -350,6 +351,7 @@
           "condition": "latency_overview.data[0]?.avg_handling_ms > ${avg_handling_warning_ms|50}",
           "confidence": "high",
           "diagnosis": "应用处理延迟偏高 (${latency_overview.data[0].avg_handling_ms}ms)",
+          "id": "click_response.avg_handling_high",
           "severity": "warning",
           "suggestions": [
             "优化 onClick/onTouchEvent 处理",
@@ -360,6 +362,7 @@
           "condition": "latency_overview.data[0]?.avg_dispatch_ms > ${avg_dispatch_warning_ms|20}",
           "confidence": "medium",
           "diagnosis": "系统分发延迟偏高 (${latency_overview.data[0].avg_dispatch_ms}ms)",
+          "id": "click_response.avg_dispatch_high",
           "severity": "warning",
           "suggestions": [
             "可能是系统负载过高",
@@ -370,6 +373,7 @@
           "condition": "slow_events.data[0]?.total_ms > ${critical_event_threshold_ms|200}",
           "confidence": "high",
           "diagnosis": "存在严重慢输入事件 (${slow_events.data[0].total_ms}ms)",
+          "id": "click_response.slow_event_critical",
           "severity": "critical",
           "suggestions": [
             "分析该事件期间主线程状态",
@@ -380,6 +384,7 @@
           "condition": "input_binder.data[0]?.total_dur_ms > ${binder_blocking_threshold_ms|30}",
           "confidence": "high",
           "diagnosis": "输入期间存在 Binder 阻塞 (${input_binder.data[0].total_dur_ms}ms)",
+          "id": "click_response.input_binder_blocking",
           "severity": "warning",
           "suggestions": [
             "将 Binder 调用移到后台线程",

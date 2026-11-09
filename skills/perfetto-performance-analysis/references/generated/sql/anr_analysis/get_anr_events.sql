@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_analysis.skill.yaml
--- Source SHA-256: 1fa589ef5136298372b33fb125b7e0ffa15108e83ecabe89690df65f9bf71ed2
+-- Source SHA-256: f5a02f9bd8e59acab9537e22bc5ddcc6db2828930cd8fab0d630eb4ae1e079a2
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -164,6 +164,7 @@ SELECT
   anr_type,
   trigger_type,
   ROUND(anr_dur_ms, 2) as anr_dur_ms,
+  timer_delay,
   ROUND(analysis_timeout_ms, 2) as timeout_ms,
   printf('%d', ts) as anr_ts,
   printf('%d', CAST(analysis_timeout_ms * 1e6 AS INTEGER)) as timeout_ns,
@@ -198,6 +199,7 @@ SELECT
     WHEN 'gpu_hang' THEN 'RenderThread/SF/fence 旁证'
     ELSE '确认触发类型后再定根因边界'
   END AS analysis_focus,
-  root_cause_pattern_hints
+  root_cause_pattern_hints,
+  CASE WHEN timer_delay IS NULL THEN 'not_recorded' ELSE 'observed' END AS timer_delay_status
 FROM normalized
 ORDER BY ts ASC

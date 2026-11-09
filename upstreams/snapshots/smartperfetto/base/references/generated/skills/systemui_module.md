@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/app/systemui_module.skill.yaml
-Source SHA-256: 878a322c6ecb8d008c5c1eb3a818f63e55dfb38cdd5a00236fef47da90c6bd0a
+Source SHA-256: 7bad353475730c50d78e32f5389eef8a18f13d37f2838d318c9d9bfe0c0a577a
 # SystemUI 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -232,7 +232,8 @@ inputs:
 - navigation_activities
 - systemui_binder
 rules:
-- condition: systemui_frames.data[0]?.jank_rate_pct > 5
+- id: systemui.jank_rate_high
+  condition: systemui_frames.data[0]?.jank_rate_pct > 5
   diagnosis: SystemUI 卡顿率 ${systemui_frames.data[0]?.jank_rate_pct}%，影响系统 UI 体验
   confidence: high
   suggestions:
@@ -243,7 +244,8 @@ rules:
   - systemui_frames.data[0]?.jank_rate_pct
   - systemui_frames.data[0]?.jank_frames
   - systemui_frames.data[0]?.total_frames
-- condition: systemui_main_thread.data[0]?.max_ms > 100
+- id: systemui.main_thread_long_activity
+  condition: systemui_main_thread.data[0]?.max_ms > 100
   diagnosis: 'SystemUI 主线程存在耗时操作: ${systemui_main_thread.data[0]?.activity} 最长 ${systemui_main_thread.data[0]?.max_ms}ms'
   confidence: high
   suggestions:
@@ -252,7 +254,8 @@ rules:
   evidence_fields:
   - systemui_main_thread.data[0]?.activity
   - systemui_main_thread.data[0]?.max_ms
-- condition: notification_shade.data[0]?.max_ms > 50
+- id: systemui.notification_shade_long
+  condition: notification_shade.data[0]?.max_ms > 50
   diagnosis: '通知中心活动耗时较高: ${notification_shade.data[0]?.shade_event} 最长 ${notification_shade.data[0]?.max_ms}ms'
   confidence: medium
   suggestions:
@@ -262,7 +265,8 @@ rules:
   evidence_fields:
   - notification_shade.data[0]?.shade_event
   - notification_shade.data[0]?.max_ms
-- condition: quick_settings.data[0]?.max_ms > 50
+- id: systemui.quick_settings_long
+  condition: quick_settings.data[0]?.max_ms > 50
   diagnosis: '快捷设置耗时较高: ${quick_settings.data[0]?.qs_event} 最长 ${quick_settings.data[0]?.max_ms}ms'
   confidence: medium
   suggestions:
@@ -271,7 +275,8 @@ rules:
   evidence_fields:
   - quick_settings.data[0]?.qs_event
   - quick_settings.data[0]?.max_ms
-- condition: navigation_activities.data[0]?.max_ms > 32
+- id: systemui.navigation_gesture_slow
+  condition: navigation_activities.data[0]?.max_ms > 32
   diagnosis: '导航手势响应较慢: ${navigation_activities.data[0]?.nav_event} 最长 ${navigation_activities.data[0]?.max_ms}ms'
   confidence: medium
   suggestions:
@@ -280,7 +285,8 @@ rules:
   evidence_fields:
   - navigation_activities.data[0]?.nav_event
   - navigation_activities.data[0]?.max_ms
-- condition: systemui_binder.data[0]?.max_ms > 50
+- id: systemui.binder_call_long
+  condition: systemui_binder.data[0]?.max_ms > 50
   diagnosis: 'SystemUI 存在耗时 Binder 调用: ${systemui_binder.data[0]?.binder_call} 最长 ${systemui_binder.data[0]?.max_ms}ms'
   confidence: medium
   suggestions:

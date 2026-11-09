@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/ams_module.skill.yaml
-Source SHA-256: bfd2cd1f208acc814f9da8ed0ec0b02c0d5fd7226da25bec898e8de516e315cd
+Source SHA-256: 3793610c048eb2cd2f719edc363d9f5cf72702f7b6b45fd0845449fba3423cd1
 # AMS 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -132,7 +132,8 @@ inputs:
 - phases
 - broadcasts
 rules:
-- condition: startup_data.data[0]?.total_ms > 1000 && startup_data.data[0]?.launch_type === 'cold'
+- id: ams.cold_start_long
+  condition: startup_data.data[0]?.total_ms > 1000 && startup_data.data[0]?.launch_type === 'cold'
   diagnosis: 冷启动耗时过长 (${startup_data.data[0]?.total_ms}ms)，超过 1 秒阈值
   confidence: high
   suggestions:
@@ -141,7 +142,8 @@ rules:
   evidence_fields:
   - startup_data.data[0].total_ms
   - startup_data.data[0].launch_type
-- condition: startup_data.data[0]?.total_ms > 500 && startup_data.data[0]?.launch_type === 'warm'
+- id: ams.warm_start_long
+  condition: startup_data.data[0]?.total_ms > 500 && startup_data.data[0]?.launch_type === 'warm'
   diagnosis: 温启动耗时过长 (${startup_data.data[0]?.total_ms}ms)，超过 500ms 阈值
   confidence: medium
   suggestions:
@@ -149,7 +151,8 @@ rules:
   - 优化布局复杂度
   evidence_fields:
   - startup_data.data[0].total_ms
-- condition: broadcasts.data[0]?.dur_ms > 50
+- id: ams.broadcast_slow
+  condition: broadcasts.data[0]?.dur_ms > 50
   diagnosis: 广播接收器延迟启动 (${broadcasts.data[0]?.broadcast_action} 耗时 ${broadcasts.data[0]?.dur_ms}ms)
   confidence: medium
   suggestions:

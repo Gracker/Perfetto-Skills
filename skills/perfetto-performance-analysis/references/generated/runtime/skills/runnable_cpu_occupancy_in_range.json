@@ -1,0 +1,90 @@
+{
+  "android": {
+    "adapters": [
+      {
+        "id": "kernel_tracepoints",
+        "selection": "available events, trace config/setup errors, schema, then rows"
+      }
+    ],
+    "selection_order": [
+      "device_capability",
+      "trace_config_and_setup_errors",
+      "engine_module_and_schema",
+      "target_range_row_coverage",
+      "api_hint"
+    ],
+    "signal_patterns": []
+  },
+  "id": "runnable_cpu_occupancy_in_range",
+  "identity": {
+    "aliases": [
+      "package"
+    ],
+    "minConfidence": 50,
+    "policy": "verify_if_present",
+    "rewriteTo": "recommended_process_name_param",
+    "scope": "process"
+  },
+  "inputs": [
+    {
+      "description": "窗口起点(ns)",
+      "name": "start_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "窗口终点(ns)",
+      "name": "end_ts",
+      "required": true,
+      "type": "timestamp"
+    },
+    {
+      "description": "目标进程名（精确匹配，含 name:* 子进程）",
+      "name": "package",
+      "required": false,
+      "type": "string"
+    },
+    {
+      "description": "只看这一个目标线程（可选）",
+      "name": "utid",
+      "required": false,
+      "type": "number"
+    },
+    {
+      "default": 4,
+      "description": "按窗口内 Runnable 时长保留的非主线程目标数；主线程另计，同样按此上限（至少 1 个）保留",
+      "name": "max_targets",
+      "required": false,
+      "type": "integer"
+    },
+    {
+      "default": 5,
+      "description": "每个目标线程 × CPU 单独列出的占用任务数，其余合并为 other_tasks 行",
+      "name": "max_occupants",
+      "required": false,
+      "type": "integer"
+    }
+  ],
+  "prerequisites": {
+    "modules": [
+      "linux.threads",
+      "intervals.intersect"
+    ],
+    "required_tables": []
+  },
+  "process_scope": {
+    "binding": "effective_target_processes",
+    "role": "target"
+  },
+  "query_id": "runnable_cpu_occupancy_in_range/root",
+  "runtime_status": "executable",
+  "schema_version": 1,
+  "source": {
+    "path": "backend/skills/atomic/runnable_cpu_occupancy_in_range.skill.yaml",
+    "sha256": "a49f4b9043c7f6d13ecf147f6202d2d1ffa887e62e7a71c78d89663a5717587f"
+  },
+  "steps": [],
+  "type": "atomic",
+  "version": "1.0",
+  "workflow": "cpu-scheduling"
+}

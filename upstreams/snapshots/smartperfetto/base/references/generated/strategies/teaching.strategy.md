@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/teaching.strategy.md
-Source SHA-256: ccada0457c74d33d3057f5d41b31458e3d435e76b0c938ecdfe7d47deb826009
+Source SHA-256: 8fcd668fe2208a6d5065d73d6652629d0adbfcc01f33dde03bea3f7c81634b26
 
 # Teaching Strategy
 
@@ -49,7 +49,7 @@ keywords:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

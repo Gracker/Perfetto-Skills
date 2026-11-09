@@ -97,7 +97,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/io_pressure.skill.yaml",
-    "sha256": "abd029a09336e7e2a849db7fba8b0e13357e976e20c5bd6fd7290e1997a29298"
+    "sha256": "43c67fe077b6a53000da236d4dfc90929b32b925511df0c99eb62ea61a241c0e"
   },
   "steps": [
     {
@@ -186,6 +186,7 @@
           "condition": "(io_overview?.data?.[0]?.severity) === 'critical'",
           "confidence": "low",
           "diagnosis": "IO 压力严重: 总等待 ${io_overview.data[0].total_io_wait_ms}ms, 影响 ${io_overview.data[0].affected_threads} 个线程",
+          "id": "io_pressure.pressure_critical",
           "severity": "critical",
           "suggestions": [
             "检查是否存在大文件读写或频繁的小文件操作",
@@ -197,6 +198,7 @@
           "condition": "(io_overview?.data?.[0]?.severity) === 'warning'",
           "confidence": "low",
           "diagnosis": "IO 压力偏高: 总等待 ${io_overview.data[0].total_io_wait_ms}ms",
+          "id": "io_pressure.pressure_warning",
           "severity": "warning",
           "suggestions": [
             "分析阻塞函数，定位 IO 热点",
@@ -207,6 +209,7 @@
           "condition": "(root_cause?.data?.[0]?.root_cause_type) === 'IO_FS_BOUND'",
           "confidence": "low",
           "diagnosis": "文件系统操作是主要 IO 瓶颈 (${root_cause.data[0].primary_pct}%)",
+          "id": "io_pressure.root_cause_fs_bound",
           "severity": "warning",
           "suggestions": [
             "优化文件读写模式，减少小文件操作",
@@ -217,6 +220,7 @@
           "condition": "(root_cause?.data?.[0]?.root_cause_type) === 'IO_SYNC_BOUND'",
           "confidence": "low",
           "diagnosis": "同步操作频繁导致 IO 等待 (${root_cause.data[0].primary_pct}%)",
+          "id": "io_pressure.root_cause_sync_bound",
           "severity": "warning",
           "suggestions": [
             "减少 fsync 调用频率",
@@ -227,6 +231,7 @@
           "condition": "(io_overview?.data?.[0]?.severity) === 'normal' || (io_overview?.data?.[0]?.severity) === 'info'",
           "confidence": "low",
           "diagnosis": "IO 压力在正常范围内 (${io_overview.data[0].total_io_wait_ms}ms)",
+          "id": "io_pressure.pressure_normal",
           "severity": "info"
         }
       ],

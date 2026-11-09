@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/binder_analysis.skill.yaml
-Source SHA-256: fc34e062a7ce8185abceac60b9171ac039d0e631ee0ef1646f3d6ef0369cbeee
+Source SHA-256: afbc66c5633332309054bf23e4dc7bbebfec5f12bd9b6b494e68f270b19f8755
 # Binder 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -572,7 +572,8 @@ inputs:
 - binder_blocking
 - server_response
 rules:
-- condition: binder_check?.data?.[0]?.status !== 'available'
+- id: binder.data_unavailable
+  condition: binder_check?.data?.[0]?.status !== 'available'
   severity: warning
   diagnosis: unable_to_determine：缺少 android_binder_txns 或目标时段无 Binder 数据
   confidence: low
@@ -581,7 +582,8 @@ rules:
   - '[Verify] 重新执行 binder_analysis，确认 binder_check.status=available'
   evidence_fields:
   - binder_check.data
-- condition: main_thread_binder.data[0]?.dur_ms > (slow_binder_critical_ms ?? 50)
+- id: binder.main_thread_slow_call_critical
+  condition: main_thread_binder.data[0]?.dur_ms > (slow_binder_critical_ms ?? 50)
   severity: critical
   diagnosis: 主线程存在严重慢 Binder 调用 (${main_thread_binder.data[0].dur_ms}ms)
   confidence: high
@@ -592,7 +594,8 @@ rules:
   evidence_fields:
   - main_thread_binder.data
   - binder_overview.data
-- condition: main_thread_binder.data[0]?.dur_ms > (slow_binder_warning_ms ?? 16)
+- id: binder.main_thread_slow_call_over_frame
+  condition: main_thread_binder.data[0]?.dur_ms > (slow_binder_warning_ms ?? 16)
   severity: warning
   diagnosis: 主线程 Binder 调用超过一帧时间 (${main_thread_binder.data[0].dur_ms}ms)
   confidence: high
@@ -601,7 +604,8 @@ rules:
   - '[Verify] 对比优化前后关键场景帧时长与 Binder P95'
   evidence_fields:
   - main_thread_binder.data
-- condition: binder_overview.data[0]?.main_thread_txns > (main_thread_txn_warning ?? 50)
+- id: binder.main_thread_call_count_high
+  condition: binder_overview.data[0]?.main_thread_txns > (main_thread_txn_warning ?? 50)
   severity: warning
   diagnosis: 主线程发起 ${binder_overview.data[0].main_thread_txns} 次 Binder 调用
   confidence: medium
@@ -610,7 +614,8 @@ rules:
   - '[Verify] 复测 main_thread_txns 和 slow_calls_count'
   evidence_fields:
   - binder_overview.data
-- condition: server_response.data[0]?.avg_server_dur_ms > (server_response_warning_ms ?? 20)
+- id: binder.server_response_slow
+  condition: server_response.data[0]?.avg_server_dur_ms > (server_response_warning_ms ?? 20)
   severity: warning
   diagnosis: 服务端平均处理时间较长 (${server_response.data[0].avg_server_dur_ms}ms)
   confidence: medium
@@ -620,7 +625,8 @@ rules:
   - '[Verify] 复测 avg_server_dur_ms 与接口耗时分布'
   evidence_fields:
   - server_response.data
-- condition: binder_blocking.data.find(b => b.state === 'D')?.state_percent > 50
+- id: binder.blocking_io_wait
+  condition: binder_blocking.data.find(b => b.state === 'D')?.state_percent > 50
   severity: warning
   diagnosis: Binder 阻塞期间存在大量 IO 等待
   confidence: medium

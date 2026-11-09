@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/main_thread_frame_work.skill.yaml
-Source SHA-256: 335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0
+Source SHA-256: afd9012024e1d46194fffd127e3507c4594bc3eb0990c1d19ced0b57f795a490
 # 主线程连续工作分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -160,6 +160,25 @@ params:
   end_ts: ${system_context_window.data[0].end_ts}
   package: ${package}
 save_as: system_task_handoffs
+display:
+  level: detail
+  layer: deep
+```
+### Runnable 等待期间目标 CPU 占用
+
+- ID: `system_runnable_cpu_occupancy`
+- Type: `skill`
+
+```yaml
+id: system_runnable_cpu_occupancy
+type: skill
+skill: runnable_cpu_occupancy_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${package}
+save_as: system_runnable_cpu_occupancy
 display:
   level: detail
   layer: deep

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/memory_analysis.skill.yaml
--- Source SHA-256: 1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1
+-- Source SHA-256: 84ac77ef776250708d0bca27901eb5ceace572351055c4b6bf86dcd84986a1d0
 
 -- One row per main-thread GC, over the frames of the process that ran
 -- it; a frame of another process at the same time says nothing about it.

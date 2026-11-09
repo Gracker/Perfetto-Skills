@@ -43,16 +43,16 @@ class UpstreamLockTest(unittest.TestCase):
         )
         self.assertEqual(base_catalog["source_commit"], smart["commit"])
         self.assertEqual(google["schema_version"], 2)
-        self.assertEqual(google["official_reference"]["tag"], "v58.2")
+        self.assertEqual(google["official_reference"]["tag"], "v59.1")
         self.assertEqual(
             google["official_reference"]["commit"],
-            "add693d8b338ba9599dbcbc3e300b1ab8c000897",
+            "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
         )
         self.assertEqual(
             google["runtime"]["revision"],
-            "99234d73fe356bf7edf6b2cb7afcf2a9eefc5368",
+            "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
         )
-        self.assertEqual(google["runtime"]["reported_version"], "v58.3")
+        self.assertEqual(google["runtime"]["reported_version"], "v59.1")
         self.assertEqual(
             google["official_reference"]["skill"]["role"], "gap_check_only"
         )

@@ -74,17 +74,51 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "7e420b4503f24a0d9f3ad1f2385404016d9cfa25846a32ea57e2dffe446e7815",
+      "sha256": "5d0210080a2591bd14a6afdc2a514b52218eddc323941cd1d5b00c55d84e70ab",
       "signal_patterns": [
         "${package}",
         "${package}:*",
-        "Binder:*"
+        "*Decode*",
+        "*Dispatcher*",
+        "*Executor*",
+        "*Network*",
+        "*Worker*",
+        "*decode*",
+        "1.raster",
+        "1.ui",
+        "AsyncTask*",
+        "Binder:*",
+        "ChromiumNet*",
+        "Coil*",
+        "CrRendererMain*",
+        "Cronet*",
+        "DefaultDispatcher*",
+        "Dispatchers.Default*",
+        "FinalizerDaemon*",
+        "Fresco*",
+        "Glide*",
+        "HeapTaskDaemon*",
+        "HwBinder:*",
+        "Jit thread pool*",
+        "NetworkThread*",
+        "OkHttp*",
+        "Okio*",
+        "Profile Saver*",
+        "ReferenceQueueD*",
+        "RenderThread*",
+        "RxCached*",
+        "Signal Catcher*",
+        "arch_disk_io*",
+        "binder:*",
+        "glide*",
+        "hwbinder:*",
+        "pool-*"
       ],
       "skill_id": "startup_binder_pool_analysis",
       "source": {
         "path": "backend/skills/atomic/startup_binder_pool_analysis.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "89f077e064e5a82c5b38e4601ec000cf53e5ac5e84cf735895b7ef5f5c86281a"
+        "sha256": "6dc1ad094f6c5fa3d93f9e8bbc7c45845c041036651a7db899ed9a646e2d9f0e"
       },
       "sql_dependencies": {
         "creates": [],
@@ -101,6 +135,11 @@
             "order": 0,
             "source_path": "backend/skills/fragments/effective_target_processes.sql",
             "source_sha256": "97c3b0c802ef7557d8fbd34439ec89e077945f2d24bdb32ad007c3c5cf823597"
+          },
+          {
+            "order": 1,
+            "source_path": "backend/skills/fragments/thread_role.sql",
+            "source_sha256": "1948b35a9c439573c6a033b466a97bc5125c1d27db39a640e955ef9689517751"
           }
         ],
         "name_parameters": [

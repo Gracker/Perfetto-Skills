@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/art_module.skill.yaml
--- Source SHA-256: 420e56403b3df38fd4f2d2f938b611c484252d3bc7f733ba7b956813c7a02fcf
+-- Source SHA-256: ccf7ffb32cfd7c7aec9b11b5f2ea46b43afcc7223ca47f28d55eff74b710bb95
 
 SELECT
   slice.name AS jit_event,

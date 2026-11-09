@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/irq_analysis.skill.yaml
--- Source SHA-256: fea29723032ba827d7c7b294e22ea8ff4633c9c6e8abb832895f9a9642a6e595
+-- Source SHA-256: c70a064eb46aa65eea1e0e328d49c99c3713553733e4f2f3d1731bce766da30b
 
 SELECT
   printf('%d', li.ts) as ts,

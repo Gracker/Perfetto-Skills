@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_analysis.skill.yaml
-Source SHA-256: 03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371
+Source SHA-256: 96cdbe5a4f10221d92c7760411a1985dcbb03f48d8f5250f002bb12d2aecf818
 # 点击响应分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -814,7 +814,8 @@ inputs:
 - input_thread_state
 - input_binder
 rules:
-- condition: latency_overview.data[0]?.avg_total_ms > ${avg_latency_critical_ms|100}
+- id: click_response.avg_latency_high
+  condition: latency_overview.data[0]?.avg_total_ms > ${avg_latency_critical_ms|100}
   severity: critical
   diagnosis: 平均输入延迟过高 (${latency_overview.data[0].avg_total_ms}ms)
   confidence: high
@@ -822,28 +823,32 @@ rules:
   - 检查主线程是否有耗时操作
   - 优化事件处理逻辑
   - 将耗时操作移到后台线程
-- condition: latency_overview.data[0]?.avg_handling_ms > ${avg_handling_warning_ms|50}
+- id: click_response.avg_handling_high
+  condition: latency_overview.data[0]?.avg_handling_ms > ${avg_handling_warning_ms|50}
   severity: warning
   diagnosis: 应用处理延迟偏高 (${latency_overview.data[0].avg_handling_ms}ms)
   confidence: high
   suggestions:
   - 优化 onClick/onTouchEvent 处理
   - 避免在事件处理中进行 IO 操作
-- condition: latency_overview.data[0]?.avg_dispatch_ms > ${avg_dispatch_warning_ms|20}
+- id: click_response.avg_dispatch_high
+  condition: latency_overview.data[0]?.avg_dispatch_ms > ${avg_dispatch_warning_ms|20}
   severity: warning
   diagnosis: 系统分发延迟偏高 (${latency_overview.data[0].avg_dispatch_ms}ms)
   confidence: medium
   suggestions:
   - 可能是系统负载过高
   - 检查输入系统是否有瓶颈
-- condition: slow_events.data[0]?.total_ms > ${critical_event_threshold_ms|200}
+- id: click_response.slow_event_critical
+  condition: slow_events.data[0]?.total_ms > ${critical_event_threshold_ms|200}
   severity: critical
   diagnosis: 存在严重慢输入事件 (${slow_events.data[0].total_ms}ms)
   confidence: high
   suggestions:
   - 分析该事件期间主线程状态
   - 检查是否有 Binder/IO 阻塞
-- condition: input_binder.data[0]?.total_dur_ms > ${binder_blocking_threshold_ms|30}
+- id: click_response.input_binder_blocking
+  condition: input_binder.data[0]?.total_dur_ms > ${binder_blocking_threshold_ms|30}
   severity: warning
   diagnosis: 输入期间存在 Binder 阻塞 (${input_binder.data[0].total_dur_ms}ms)
   confidence: high

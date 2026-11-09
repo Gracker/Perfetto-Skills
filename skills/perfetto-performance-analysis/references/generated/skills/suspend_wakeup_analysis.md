@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/suspend_wakeup_analysis.skill.yaml
-Source SHA-256: cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee
+Source SHA-256: 4a2128e808996386dac3b72b899746989b84cc0117844e75b30b84dc52c4a367
 # 休眠唤醒分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -552,7 +552,8 @@ inputs:
 - wakeup_source_ranking
 - suspend_backoff
 rules:
-- condition: wakeup_source_ranking.data[0]?.wakeup_count > ${frequent_wakeup_critical|50}
+- id: suspend_wakeup.frequent_wakeup_critical
+  condition: wakeup_source_ranking.data[0]?.wakeup_count > ${frequent_wakeup_critical|50}
   severity: critical
   diagnosis: FREQUENT_WAKEUP - 唤醒源 '${wakeup_source_ranking.data[0].wakeup_source}' 唤醒 ${wakeup_source_ranking.data[0].wakeup_count}
     次
@@ -561,7 +562,8 @@ rules:
   - 检查该唤醒源对应的驱动或服务
   - 减少不必要的定时唤醒
   - 使用 AlarmManager 合并唤醒请求
-- condition: wakeup_source_ranking.data[0]?.wakeup_count > ${frequent_wakeup_warning|20}
+- id: suspend_wakeup.frequent_wakeup_warning
+  condition: wakeup_source_ranking.data[0]?.wakeup_count > ${frequent_wakeup_warning|20}
   severity: warning
   diagnosis: FREQUENT_WAKEUP - 唤醒源 '${wakeup_source_ranking.data[0].wakeup_source}' 唤醒 ${wakeup_source_ranking.data[0].wakeup_count}
     次
@@ -569,7 +571,8 @@ rules:
   suggestions:
   - 检查唤醒频率是否合理
   - 考虑延长唤醒间隔
-- condition: suspend_quality.data[0]?.abort_pct > ${abort_pct_critical|30}
+- id: suspend_wakeup.abort_rate_critical
+  condition: suspend_quality.data[0]?.abort_pct > ${abort_pct_critical|30}
   severity: critical
   diagnosis: LONG_SUSPEND - Suspend 中止率高达 ${suspend_quality.data[0].abort_pct}%，设备难以进入休眠
   confidence: high
@@ -577,21 +580,24 @@ rules:
   - 检查阻止 suspend 的内核模块或驱动
   - 检查 wakelock 持有情况
   - 排查 suspend_quality = 'bad' 的唤醒事件
-- condition: suspend_quality.data[0]?.abort_pct > ${abort_pct_warning|10}
+- id: suspend_wakeup.abort_rate_warning
+  condition: suspend_quality.data[0]?.abort_pct > ${abort_pct_warning|10}
   severity: warning
   diagnosis: LONG_SUSPEND - Suspend 中止率 ${suspend_quality.data[0].abort_pct}%
   confidence: medium
   suggestions:
   - 检查 suspend 失败的 backoff 原因
   - 排查是否有持续持有 wakelock 的进程
-- condition: suspend_quality.data[0]?.suspend_pct < ${low_suspend_pct|30}
+- id: suspend_wakeup.suspend_share_low
+  condition: suspend_quality.data[0]?.suspend_pct < ${low_suspend_pct|30}
   severity: warning
   diagnosis: LONG_SUSPEND - 休眠时间占比仅 ${suspend_quality.data[0].suspend_pct}%
   confidence: medium
   suggestions:
   - 设备大部分时间处于唤醒状态
   - 检查是否有后台活动阻止休眠
-- condition: suspend_quality.data[0]?.suspend_pct >= 50 && suspend_quality.data[0]?.abort_pct <= ${abort_pct_warning|10}
+- id: suspend_wakeup.normal
+  condition: suspend_quality.data[0]?.suspend_pct >= 50 && suspend_quality.data[0]?.abort_pct <= ${abort_pct_warning|10}
   severity: info
   diagnosis: SUSPEND_NORMAL - 休眠质量正常（休眠占比 ${suspend_quality.data[0].suspend_pct}%，中止率 ${suspend_quality.data[0].abort_pct}%）
   confidence: high
@@ -623,7 +629,8 @@ inputs:
 - suspend_check
 - suspend_slice_check
 rules:
-- condition: suspend_check.data[0]?.status === 'unavailable' && (!suspend_slice_check.data || suspend_slice_check.data[0]?.status
+- id: suspend_wakeup.data_unavailable
+  condition: suspend_check.data[0]?.status === 'unavailable' && (!suspend_slice_check.data || suspend_slice_check.data[0]?.status
     === 'unavailable')
   severity: info
   diagnosis: 未检测到休眠唤醒数据。Trace 中未包含 android.suspend 模块数据，也未发现 suspend/wakeup 相关 Slice。如需分析休眠问题，请在录制 Trace 时启用 power 相关数据源。

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scrolling.strategy.md
-Source SHA-256: b272680f9210641af343747bf05167b7abe75f268ee6028aed95eaee5e91136a
+Source SHA-256: 964627d9578c1f8c601afc787846c1c55ffeaebe11f525c2311a97c80e0d94af
 
 # Scrolling Strategy
 
@@ -159,7 +159,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 
@@ -182,6 +182,12 @@ Apply when: Raw Buffer Stuffing tags account for more than half of the analysed 
 Speculative input-frame matches (is_speculative_frame=1) are unproven candidates; count input backlog only from exact matches. NULL input-to-present latency is unmeasured, not zero or normal; without app FrameTimeline/present (e.g. Flutter SurfaceView) it is unmeasurable.
 
 Apply when: Applies when citing input-frame association, input backlog or input-to-present latency.
+
+### runnable_cpu_occupancy (cpu_capacity)
+
+When a frame-critical thread (main, render or raster) waits Runnable in a problematic interval, read which tasks occupied the CPU it later ran on during those waits (runnable_cpu_occupancy_in_range). Occupants, idle and unattributed time conserve the wait; an occupant is an observation of who ran there, not a preemption motive or the whole cause.
+
+Apply when: Applies when a frame-critical thread spends material time Runnable (R/R+) in a problematic interval.
 
 #### Scrolling Core Strategy
 
@@ -271,15 +277,22 @@ Apply when: Applies when citing input-frame association, input backlog or input-
 
 **Phase 1.6 — 进程身份交叉确认（当 process_name 可能不可靠时）：**
 
-系统会在进程级 Skill 执行前自动做身份准入。满足任一条件时，若准入返回 ambiguous/blocked，调用 `invoke_skill("process_identity_resolver", { process_name, start_ts, end_ts })` 查看候选进程，再继续深钻：
+系统会在进程级 Skill 执行前自动做身份准入。准入返回 ambiguous/blocked（包括 `scene_evidence` 未执行）时，先读取已有候选；缺少消歧证据时调用 `invoke_skill("process_identity_resolver", { process_name, start_ts, end_ts })`。以下情况也需要核对身份：
 - `process_name` 来自自动焦点检测，而不是用户明确指定
 - 用户反馈 Perfetto UI 里进程名不对、线程名/layer 看起来对
 - `scrolling_analysis`、架构专属 Skill 或自定义 SQL 返回空结果，但 FrameTimeline/layer/线程名明显有目标应用信号
 
 处理规则：
-- 使用 resolver 第一名候选的 `recommended_process_name_param` 作为后续 `scrolling_analysis` / `jank_frame_detail` / `frame_blocking_calls` 的 `process_name`
-- 在结论中把 `canonical_package_name` 当作用户可读的目标应用身份；不要把它和旧 Skill 的 `process_name` 参数混为一谈
-- 如果 resolver 只有 `weak_match` 或提示 shared UID，多抓取候选行并说明身份不确定性；必要时先不传 `process_name` 跑全量概览，再按 `upid`/线程/layer 过滤
+- 对照用户目标、候选的 process/cmdline、线程/layer 关联及原分析窗口内活动，确认实际进程实例。排名第一、同名或高分都不能单独消除歧义；同名重启实例要按 trace 内 `upid` 区分。
+- 只有证据足以选定目标时，从该候选行原样取正整数 `upid`，保留原分析窗口重试：
+
+  ```
+  invoke_skill("scrolling_analysis", { upid: <选定候选行的 upid>, start_ts, end_ts })
+  ```
+
+  后续目标级 Skill 继续携带这个 `upid`；名称按各 Skill 声明的输入传递，不把 `canonical_package_name` 或 `recommended_process_name_param` 当成唯一实例标识，也不推测 UPID。
+- 显式 UPID 仍须通过门禁；shared UID、包名冲突或 `weak_match` 未解决时，说明候选与缺口，必要时请用户明确目标。不得删除目标过滤、盲选第一名或反复按同一个名字重试。
+- SQL 可用于补充消歧和独立证据，但查询成功不代表身份已验证。目标级 SQL 必须保留已确认的 UPID 与原时间范围；身份仍不确定时交付明确标注范围的系统/候选观察，不能归为已确认的目标 App 结论，也不能声称未执行的 Skill 已产出指标。局部身份或核验缺口不阻塞其余有效证据和正文交付；逐项说明限制。
 <!-- /strategy-detail -->
 
 <!-- strategy-detail id="root_cause_drill" title="滑动根因分支深钻和 display pipeline 边界" keywords="root cause,reason_code,jank_frame_detail,frame_blocking_calls,blocking_chain_analysis,SurfaceFlinger,Fence,BufferQueue" -->

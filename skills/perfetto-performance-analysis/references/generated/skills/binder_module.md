@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/binder_module.skill.yaml
-Source SHA-256: e374d828a42b45b2f0c2de0b02ca10fd40049073b3e8b52aedb4724592469f73
+Source SHA-256: a0d3130ef46dca29cdc90ca4ef4288c06f405f36121cc8c58ee997b455134811
 # Binder IPC 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -127,7 +127,8 @@ inputs:
 - long_calls
 - blocking_data
 rules:
-- condition: long_calls.data[0]?.dur_ms > 16
+- id: binder.long_call
+  condition: long_calls.data[0]?.dur_ms > 16
   diagnosis: '发现长耗时 Binder 调用: ${long_calls.data[0]?.interface} (${long_calls.data[0]?.dur_ms}ms)，主线程被阻塞'
   confidence: high
   suggestions:
@@ -137,7 +138,8 @@ rules:
   - long_calls.data[0].interface
   - long_calls.data[0].dur_ms
   - long_calls.data[0].server_process
-- condition: binder_stats.data[0]?.sync_count > 20
+- id: binder.sync_call_count_high
+  condition: binder_stats.data[0]?.sync_count > 20
   diagnosis: 'Binder 同步调用次数过多: ${binder_stats.data[0]?.interface} (${binder_stats.data[0]?.sync_count} 次)'
   confidence: medium
   suggestions:
@@ -147,7 +149,8 @@ rules:
   - binder_stats.data[0].interface
   - binder_stats.data[0].sync_count
   - binder_stats.data[0].total_ms
-- condition: blocking_data.data[0]?.total_block_ms > 50
+- id: binder.blocking_total_long
+  condition: blocking_data.data[0]?.total_block_ms > 50
   diagnosis: 'Binder 调用累计阻塞时间过长: ${blocking_data.data[0]?.server_process} (${blocking_data.data[0]?.total_block_ms}ms)'
   confidence: medium
   suggestions:

@@ -125,7 +125,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/thermal_throttling.skill.yaml",
-    "sha256": "03d5214cde82b7f701aaf49433f9e9dd86053d0c50cd7845247da2506662c32e"
+    "sha256": "620dd9f223481611ba06792821dc77d4665abcd5d4727f571688f31742da6903"
   },
   "steps": [
     {
@@ -290,6 +290,7 @@
           "condition": "root_cause.data[0]?.classification === 'THERMAL_LIMIT_CONFIRMED'",
           "confidence": "high",
           "diagnosis": "已核验热限频：${direct_limit_evidence.data[0].cooling_confirmed_episodes} 段限频区段中有限频写入紧跟在与该 policy 时序关联的内核散热设备升档之后（最大深度 ${direct_limit_evidence.data[0].deepest_depth_pct}%；逐次写入分类 ${direct_limit_evidence.data[0].onset_trigger_mix}）",
+          "id": "thermal_throttling.limit_confirmed",
           "severity": "warning",
           "suggestions": [
             "用 cpu_frequency_limit_attribution 查看谁触发了限频、限频前的负载归因与异常线程",
@@ -300,6 +301,7 @@
           "condition": "root_cause.data[0]?.thermal_throttling_evidence === 'limit_observed_cause_unverified'",
           "confidence": "medium",
           "diagnosis": "观测到 ${direct_limit_evidence.data[0].episode_count} 段限频区段，但没有一次限频写入由关联散热设备施加（分类 ${direct_limit_evidence.data[0].freq_limit_classification}）；限频原因未核验",
+          "id": "thermal_throttling.limit_observed_cause_unverified",
           "severity": "info",
           "suggestions": [
             "用 cpu_frequency_limit_attribution 判断是用户态温控守护进程、非热策略限频，还是采集缺少 thermal/cdev_update"
@@ -309,6 +311,7 @@
           "condition": "root_cause.data[0]?.classification === 'DATA_SUSPECT'",
           "confidence": "low",
           "diagnosis": "温度数据可疑或传感器不可直接比较；峰值仅来自通过质量筛选的轨道，不能确定热节流",
+          "id": "thermal_throttling.data_suspect",
           "severity": "warning",
           "suggestions": [
             "检查各轨道 sample_quality、unit_basis 和传感器位置，勿将皮肤温度视为 CPU 结温"
@@ -318,24 +321,28 @@
           "condition": "root_cause.data[0]?.classification === 'THERMAL_DATA_UNAVAILABLE'",
           "confidence": "low",
           "diagnosis": "没有足够可靠的温度数据，热状态不可判定",
+          "id": "thermal_throttling.data_unavailable",
           "severity": "info"
         },
         {
           "condition": "root_cause.data[0]?.classification === 'HIGH_TEMP_OBSERVED'",
           "confidence": "medium",
           "diagnosis": "观测到高温 ${root_cause.data[0].peak_temp_c}C；需要持续时间和直接限频证据才能判断热节流",
+          "id": "thermal_throttling.high_temp_observed",
           "severity": "warning"
         },
         {
           "condition": "root_cause.data[0]?.classification === 'FREQ_INSTABILITY'",
           "confidence": "medium",
           "diagnosis": "观测到 ${root_cause.data[0].severe_drop_count} 次频率下降，负载或空闲 DVFS 均可解释，热原因未核验",
+          "id": "thermal_throttling.freq_instability",
           "severity": "info"
         },
         {
           "condition": "root_cause.data[0]?.classification === 'THERMAL_NORMAL'",
           "confidence": "medium",
           "diagnosis": "有效传感器未见高温；不代表所有 CPU 结温均可观测",
+          "id": "thermal_throttling.normal",
           "severity": "info"
         }
       ],

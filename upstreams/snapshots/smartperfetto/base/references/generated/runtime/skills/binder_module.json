@@ -63,7 +63,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/kernel/binder_module.skill.yaml",
-    "sha256": "e374d828a42b45b2f0c2de0b02ca10fd40049073b3e8b52aedb4724592469f73"
+    "sha256": "a0d3130ef46dca29cdc90ca4ef4288c06f405f36121cc8c58ee997b455134811"
   },
   "steps": [
     {
@@ -112,6 +112,7 @@
             "long_calls.data[0].dur_ms",
             "long_calls.data[0].server_process"
           ],
+          "id": "binder.long_call",
           "suggestions": [
             "考虑将该 Binder 调用移至后台线程",
             "检查服务端处理是否有性能问题"
@@ -126,6 +127,7 @@
             "binder_stats.data[0].sync_count",
             "binder_stats.data[0].total_ms"
           ],
+          "id": "binder.sync_call_count_high",
           "suggestions": [
             "考虑批量处理减少调用次数",
             "使用异步 Binder 调用"
@@ -139,6 +141,7 @@
             "blocking_data.data[0].server_process",
             "blocking_data.data[0].total_block_ms"
           ],
+          "id": "binder.blocking_total_long",
           "suggestions": [
             "检查服务端进程是否繁忙",
             "考虑缓存调用结果"

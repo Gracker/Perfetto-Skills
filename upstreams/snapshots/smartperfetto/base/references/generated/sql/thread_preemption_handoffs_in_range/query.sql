@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thread_preemption_handoffs_in_range.skill.yaml
--- Source SHA-256: 0d6aa446f7bc33de7c1867ce6be9c1042f9c3ba2c3da5fa80100744c268332ef
+-- Source SHA-256: 314a8d9538add55e06340510e604aa7f4d35524ca0aea870a0beb3f4b859ea10
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -14,17 +14,33 @@ effective_target_processes AS (
   WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
 )
 ,
-system_windows AS (
-  SELECT 0 AS window_id, ${start_ts} AS window_start_ts, ${end_ts} AS window_end_ts
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Input: system_windows(window_id, window_start_ts, window_end_ts). Requires
+-- fragments/effective_target_processes.sql. Parameters: package (the process
+-- name or its name:* subprocesses, '' for any), utid (one thread, else NULL).
+-- An exact process scope binds the UPID and ignores package.
+--   system_target_processes  window x target process (upid, pid, name)
+--   system_target_threads    window x target thread; role is main for the
+--                            thread whose tid is the process pid, else target
+system_target_processes AS (
+  SELECT w.window_id, p.upid, p.pid, p.name
+  FROM system_windows w CROSS JOIN effective_target_processes p
+  WHERE ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
+    OR p.name = '${package}' OR p.name GLOB '${package}:*'
 ),
 system_target_threads AS (
-  SELECT w.window_id, p.upid, t.utid,
-    CASE WHEN t.tid = p.pid THEN 'main' ELSE 'target' END AS role
-  FROM system_windows w CROSS JOIN effective_target_processes p
-  JOIN thread t ON t.upid = p.upid
-  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = ''
-    OR p.name = '${package}' OR p.name GLOB '${package}:*')
-    AND (${utid} IS NULL OR t.utid = ${utid})
+  SELECT tp.window_id, tp.upid, t.utid,
+    CASE WHEN t.tid = tp.pid THEN 'main' ELSE 'target' END AS role
+  FROM system_target_processes tp
+  JOIN thread t ON t.upid = tp.upid
+  WHERE ${utid} IS NULL OR t.utid = ${utid}
+)
+,
+system_windows AS (
+  SELECT 0 AS window_id, ${start_ts} AS window_start_ts, ${end_ts} AS window_end_ts
 )
 SELECT w.window_id,w.window_start_ts,w.window_end_ts,w.window_end_ts-w.window_start_ts AS window_dur_ns,
   tt.upid,p.pid,p.name AS process_name,tt.utid,t.tid,t.name AS thread_name,tt.role,

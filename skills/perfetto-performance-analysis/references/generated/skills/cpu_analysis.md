@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/cpu_analysis.skill.yaml
-Source SHA-256: d92fc12306d640e35692ee32b71bec6aa951ed61f3d8f5b0f4f24b2bafacc9af
+Source SHA-256: a92fcecfaa391bf3e79d99fde999b7dcf21a49dfcd0fb35c65bbcd41af2d04b9
 # CPU 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -905,7 +905,8 @@ inputs:
 - affinity_probe
 - cache_miss_probe
 rules:
-- condition: '(core_stats?.data?.length || 0) === 0 &&
+- id: cpu.data_unavailable
+  condition: '(core_stats?.data?.length || 0) === 0 &&
 
     (main_thread_states?.data?.length || 0) === 0 &&
 
@@ -925,7 +926,8 @@ rules:
   - main_thread_states.data
   - runnable_delays.data
   - blocked_functions.data
-- condition: '(core_stats?.data?.length || 0) > 0 &&
+- id: cpu.big_group_usage_low
+  condition: '(core_stats?.data?.length || 0) > 0 &&
 
     core_stats.data[0].unknown_time_ns === 0 &&
 
@@ -941,7 +943,8 @@ rules:
   - '[Verify] 对比优化前后大核组（超大/大/中核）占比与帧稳定性'
   evidence_fields:
   - core_stats.data
-- condition: '(main_thread_states?.data?.length || 0) > 0 &&
+- id: cpu.main_thread_running_low
+  condition: '(main_thread_states?.data?.length || 0) > 0 &&
 
     ((main_thread_states.data.find(s => s.state === ''Running'')?.percent) || 0) < (running_threshold_pct || 50)
 
@@ -954,7 +957,8 @@ rules:
   - '[Verify] 复测 Running 比例与可交互场景帧时长'
   evidence_fields:
   - main_thread_states.data
-- condition: ((runnable_delays?.data?.[0]?.wait_ms) || 0) > (sched_delay_critical_ms || 16)
+- id: cpu.sched_delay_severe
+  condition: ((runnable_delays?.data?.[0]?.wait_ms) || 0) > (sched_delay_critical_ms || 16)
   severity: critical
   diagnosis: 存在严重调度延迟 (${runnable_delays?.data?.[0]?.wait_ms}ms)
   confidence: high
@@ -964,7 +968,8 @@ rules:
   - '[Verify] 复测 runnable wait P95 与关键路径帧时间'
   evidence_fields:
   - runnable_delays.data
-- condition: (runnable_delays?.data?.length || 0) > 10
+- id: cpu.sched_delay_frequent
+  condition: (runnable_delays?.data?.length || 0) > 10
   severity: warning
   diagnosis: 调度延迟频繁发生 (${runnable_delays?.data?.length} 次 >1ms)
   confidence: medium
@@ -973,7 +978,8 @@ rules:
   - '[Verify] 对比调优前后 delay 次数与上下文切换指标'
   evidence_fields:
   - runnable_delays.data
-- condition: ((blocked_functions?.data?.[0]?.total_dur_ms) || 0) > (blocked_function_threshold_ms || 50)
+- id: cpu.blocked_function
+  condition: ((blocked_functions?.data?.[0]?.total_dur_ms) || 0) > (blocked_function_threshold_ms || 50)
   severity: warning
   diagnosis: 主线程 kernel blocked_function/wchan 候选为 ${blocked_functions?.data?.[0]?.blocked_function}，累计 ${blocked_functions?.data?.[0]?.total_dur_ms}ms；它是单帧阻塞点，需结合
     app slice、文件/DB、Binder 或锁链证据后再定业务根因
@@ -983,7 +989,8 @@ rules:
   - '[Verify] 复测 blocked_function/io_wait 总耗时和主线程可运行占比'
   evidence_fields:
   - blocked_functions.data
-- condition: ((affinity_probe?.data?.[0]?.migration_ratio_pct) || 0) >= (affinity_violation_warning_threshold_pct || 35)
+- id: cpu.thread_migration_frequent
+  condition: ((affinity_probe?.data?.[0]?.migration_ratio_pct) || 0) >= (affinity_violation_warning_threshold_pct || 35)
   severity: warning
   diagnosis: 线程 ${affinity_probe?.data?.[0]?.thread_name} 迁核占比 ${affinity_probe?.data?.[0]?.migration_ratio_pct}% ，存在亲和性抖动
   confidence: medium
@@ -992,7 +999,8 @@ rules:
   - '[Verify] 复测 migration_ratio_pct 与帧稳定性'
   evidence_fields:
   - affinity_probe.data
-- condition: (cache_miss_probe?.data?.find(r => r.impact_level === 'high')?.avg_miss_delta || 0) > 0
+- id: cpu.cache_miss_pressure
+  condition: (cache_miss_probe?.data?.find(r => r.impact_level === 'high')?.avg_miss_delta || 0) > 0
   severity: warning
   diagnosis: 检测到高缓存未命中压力 (${cache_miss_probe.data.find(r => r.impact_level === 'high').counter_name})
   confidence: medium

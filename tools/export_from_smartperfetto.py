@@ -2394,7 +2394,7 @@ def parse_investigation_requirements(value: Any) -> list[dict[str, Any]]:
     seen: set[str] = set()
     for raw in value:
         requirement = investigation_mapping(raw, {
-            "id", "domain", "description", "required", "condition", "evidence_metrics",
+            "id", "domain", "description", "required", "condition", "evidence_metrics", "entry_acquisition",
         }, "requirement")
         identity = investigation_text(requirement.get("id"), "requirement ID", identifier=True)
         if identity in seen:
@@ -2414,6 +2414,9 @@ def parse_investigation_requirements(value: Any) -> list[dict[str, Any]]:
             normalized["evidence_metrics"] = [investigation_text(metric, "metric") for metric in metrics]
             if len(set(normalized["evidence_metrics"])) != len(metrics):
                 raise ExportError("Duplicate investigation evidence metric")
+        # A product acquisition binding: kept for conflict detection like the metrics, never rendered.
+        if "entry_acquisition" in requirement:
+            normalized["entry_acquisition"] = requirement["entry_acquisition"]
         if "condition" in requirement:
             normalized["condition"] = parse_investigation_condition(requirement["condition"])
         requirements.append(normalized)

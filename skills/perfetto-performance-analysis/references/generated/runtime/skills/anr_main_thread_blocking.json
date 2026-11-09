@@ -96,9 +96,20 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
-    "sha256": "e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349"
+    "sha256": "125f6c0f585e4fb4e02d376ddf8c103f5229e42fbdff3be9b176133960f18834"
   },
   "steps": [
+    {
+      "id": "analysis_window",
+      "name": "分析窗口",
+      "process_scope": {
+        "role": "identity_metadata"
+      },
+      "query_id": "anr_main_thread_blocking/analysis_window",
+      "result_dependencies": [],
+      "save_as": "analysis_window",
+      "type": "atomic"
+    },
     {
       "displayed": true,
       "id": "main_thread_state",
@@ -137,6 +148,21 @@
       "result_dependencies": [],
       "save_as": "binder_blocking",
       "type": "atomic"
+    },
+    {
+      "condition": "Boolean(process_name)",
+      "displayed": true,
+      "id": "binder_pool_saturation",
+      "name": "Binder 线程池饱和",
+      "optional": true,
+      "params": {
+        "end_ts": "${analysis_window.data[0].end_ts}",
+        "package": "${process_name}",
+        "start_ts": "${analysis_window.data[0].start_ts}"
+      },
+      "save_as": "binder_pool_saturation",
+      "skill": "binder_pool_saturation_in_range",
+      "type": "skill"
     },
     {
       "displayed": true,

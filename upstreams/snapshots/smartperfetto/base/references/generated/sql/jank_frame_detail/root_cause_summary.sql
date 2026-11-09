@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/jank_frame_detail.skill.yaml
--- Source SHA-256: a0211e3d982714457a51437e411533797d8d6b214b85d9f67ce0d80ba4ad4c61
+-- Source SHA-256: d6ebc3c422f3b26600c2d705b90bc6dcfc6723fb3f9e259a094e207326d3915f
 
 -- 根因分析: 综合四象限、CPU频率、耗时操作等数据，输出明确的根因结论
 -- CTEs vsync_ticks, vsync_config, target_threads, thread_states injected via sql_fragments

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/hardware/gpu_module.skill.yaml
--- Source SHA-256: 579fe2d70ef30c53d7a5e32a06732ef2872ce8b45c31aea88cb079bf2a45c9e0
+-- Source SHA-256: b886833bb0a8ce73f11e481eb087092418db60082fdec57dda4d24dd6c000658
 
 SELECT
   slice.ts,

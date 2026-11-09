@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/game_fps_analysis.skill.yaml
--- Source SHA-256: afe29e2e27d3fbd6899c8b09c61c286650fe26e2f3f9585158f7f3d7818a7966
+-- Source SHA-256: f104c2ead1d211e29902fa0d4c1b768f407c2f8d942c1076311f373222ff92ab
 
 WITH
 time_bounds AS (
@@ -42,32 +42,31 @@ bucket_counts AS (
   FROM interval_buckets
   GROUP BY fps_bucket
   ORDER BY cnt DESC
+), selected_target AS (
+  SELECT CASE WHEN ${target_fps} > 0 THEN ${target_fps}
+    ELSE CASE (SELECT fps_bucket FROM bucket_counts LIMIT 1)
+      WHEN '30fps' THEN 30 WHEN '45fps' THEN 45
+      WHEN '60fps' THEN 60 WHEN '90fps' THEN 90
+      WHEN '120fps' THEN 120 WHEN '144fps' THEN 144
+      WHEN '165fps' THEN 165 END END AS target_fps
+), target_config AS (
+  SELECT target_fps,
+    -- Retain the existing preset buckets; other explicit targets have
+    -- no bucket-based hit count, but still define the jank threshold.
+    CASE WHEN target_fps IN (30, 45, 60, 90, 120, 144, 165)
+      THEN CAST(target_fps AS TEXT) || 'fps' END AS target_bucket
+  FROM selected_target
 )
 SELECT
-  COALESCE(
-    (SELECT fps_bucket FROM bucket_counts LIMIT 1),
-    'variable'
-  ) as detected_fps_mode,
-  CASE (SELECT fps_bucket FROM bucket_counts LIMIT 1)
-    WHEN '30fps' THEN 33333333
-    WHEN '45fps' THEN 22222222
-    WHEN '60fps' THEN 16666666
-    WHEN '90fps' THEN 11111111
-    WHEN '120fps' THEN 8333333
-    WHEN '144fps' THEN 6944444
-    WHEN '165fps' THEN 6060606
-    ELSE 8333333
-  END as target_interval_ns,
-  CASE (SELECT fps_bucket FROM bucket_counts LIMIT 1)
-    WHEN '30fps' THEN 30
-    WHEN '45fps' THEN 45
-    WHEN '60fps' THEN 60
-    WHEN '90fps' THEN 90
-    WHEN '120fps' THEN 120
-    WHEN '144fps' THEN 144
-    WHEN '165fps' THEN 165
-    ELSE 120
-  END as target_fps,
-  (SELECT cnt FROM bucket_counts LIMIT 1) as frames_at_target,
-  (SELECT SUM(cnt) FROM bucket_counts) as total_frames,
-  ROUND(100.0 * (SELECT cnt FROM bucket_counts LIMIT 1) / NULLIF((SELECT SUM(cnt) FROM bucket_counts), 0), 1) as target_hit_rate
+  COALESCE((SELECT fps_bucket FROM bucket_counts LIMIT 1), 'variable') AS detected_fps_mode,
+  1e9 / target_fps AS target_interval_ns,
+  target_fps,
+  CASE WHEN target_bucket IS NOT NULL THEN
+    COALESCE((SELECT cnt FROM bucket_counts WHERE fps_bucket = target_bucket), 0)
+  END AS frames_at_target,
+  (SELECT COUNT(*) FROM interval_buckets) AS total_frames,
+  CASE WHEN target_bucket IS NOT NULL THEN
+    ROUND(100.0 * COALESCE((SELECT cnt FROM bucket_counts WHERE fps_bucket = target_bucket), 0)
+      / NULLIF((SELECT COUNT(*) FROM interval_buckets), 0), 1)
+  END AS target_hit_rate
+FROM target_config

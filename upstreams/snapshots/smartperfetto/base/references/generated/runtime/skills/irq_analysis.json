@@ -80,7 +80,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/irq_analysis.skill.yaml",
-    "sha256": "fea29723032ba827d7c7b294e22ea8ff4633c9c6e8abb832895f9a9642a6e595"
+    "sha256": "c70a064eb46aa65eea1e0e328d49c99c3713553733e4f2f3d1731bce766da30b"
   },
   "steps": [
     {
@@ -182,6 +182,7 @@
           "condition": "root_cause.data[0]?.classification === 'IRQ_LATENCY'",
           "confidence": "high",
           "diagnosis": "检测到异常长耗时中断 (硬中断 ${root_cause.data[0].long_hard_irq_count} 次 >1ms，软中断 ${root_cause.data[0].long_soft_irq_count} 次 >10ms)",
+          "id": "irq.latency",
           "severity": "critical",
           "suggestions": [
             "检查长耗时硬中断对应的设备驱动",
@@ -193,6 +194,7 @@
           "condition": "root_cause.data[0]?.classification === 'IRQ_HEAVY'",
           "confidence": "high",
           "diagnosis": "中断负载较重 (总计 ${root_cause.data[0].total_irq_count} 次，耗时 ${root_cause.data[0].total_dur_ms}ms)",
+          "id": "irq.heavy_load",
           "severity": "warning",
           "suggestions": [
             "检查高频中断源，评估是否可以合并或降低其触发频率",
@@ -204,6 +206,7 @@
           "condition": "root_cause.data[0]?.classification === 'IRQ_NORMAL'",
           "confidence": "high",
           "diagnosis": "中断负载正常，无异常",
+          "id": "irq.normal",
           "severity": "info",
           "suggestions": [
             "当前中断状态良好"

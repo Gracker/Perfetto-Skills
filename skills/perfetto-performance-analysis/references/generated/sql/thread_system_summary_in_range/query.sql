@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/thread_system_summary_in_range.skill.yaml
--- Source SHA-256: e523b849bf1e8c93117737f0a334009b9877f6001a098b8e3eed2888cf077dac
+-- Source SHA-256: e6358509d8a9a3186ecf03f06c455ee186afe0bab18fb1b34f58173e2ac3584a
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -12,6 +12,31 @@ WITH
 effective_target_processes AS (
   SELECT * FROM process
   WHERE ${__process_scope.upid} IS NULL OR upid = ${__process_scope.upid}
+)
+,
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- Copyright (C) 2024-2026 Gracker (Chris)
+-- This file is part of SmartPerfetto. See LICENSE for details.
+
+-- Input: system_windows(window_id, window_start_ts, window_end_ts). Requires
+-- fragments/effective_target_processes.sql. Parameters: package (the process
+-- name or its name:* subprocesses, '' for any), utid (one thread, else NULL).
+-- An exact process scope binds the UPID and ignores package.
+--   system_target_processes  window x target process (upid, pid, name)
+--   system_target_threads    window x target thread; role is main for the
+--                            thread whose tid is the process pid, else target
+system_target_processes AS (
+  SELECT w.window_id, p.upid, p.pid, p.name
+  FROM system_windows w CROSS JOIN effective_target_processes p
+  WHERE ${__process_scope.upid} IS NOT NULL OR '${package}' = ''
+    OR p.name = '${package}' OR p.name GLOB '${package}:*'
+),
+system_target_threads AS (
+  SELECT tp.window_id, tp.upid, t.utid,
+    CASE WHEN t.tid = tp.pid THEN 'main' ELSE 'target' END AS role
+  FROM system_target_processes tp
+  JOIN thread t ON t.upid = tp.upid
+  WHERE ${utid} IS NULL OR t.utid = ${utid}
 )
 ,
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -134,20 +159,12 @@ system_cpu_frequency_spans AS (
 system_windows AS (
   SELECT 0 AS window_id, ${start_ts} AS window_start_ts, ${end_ts} AS window_end_ts
 ),
-system_target_threads AS (
-  SELECT w.window_id, p.upid, t.utid,
-    CASE WHEN t.tid = p.pid THEN 'main' ELSE 'target' END AS role
-  FROM system_windows w CROSS JOIN effective_target_processes p
-  JOIN thread t ON t.upid = p.upid
-  WHERE (${__process_scope.upid} IS NOT NULL OR '${package}' = ''
-    OR p.name = '${package}' OR p.name GLOB '${package}:*')
-    AND (${utid} IS NULL OR t.utid = ${utid})
-),
 states AS (
   SELECT window_id, utid, COUNT(*) AS state_count, SUM(dur_ns) AS state_covered_ns,
     SUM(CASE WHEN state='Running' THEN dur_ns ELSE 0 END) AS running_ns,
     SUM(CASE WHEN state IN ('R','R+') THEN dur_ns ELSE 0 END) AS runnable_ns,
     SUM(CASE WHEN state='R+' THEN dur_ns ELSE 0 END) AS runnable_preempted_ns,
+    SUM(CASE WHEN state='R' THEN dur_ns ELSE 0 END) AS runnable_non_preempted_ns,
     SUM(CASE WHEN state IN ('S','I') THEN dur_ns ELSE 0 END) AS sleeping_ns,
     SUM(CASE WHEN state IN ('D','DK') THEN dur_ns ELSE 0 END) AS uninterruptible_ns,
     SUM(CASE WHEN state NOT IN ('Running','R','R+','S','I','D','DK') THEN dur_ns ELSE 0 END) AS other_state_ns,
@@ -193,7 +210,7 @@ SELECT w.window_id,w.window_start_ts,w.window_end_ts,w.window_end_ts-w.window_st
   tt.upid,p.pid,p.name AS process_name,tt.utid,t.tid,t.name AS thread_name,tt.role,
   COUNT(*) OVER (PARTITION BY w.window_id) AS total_target_threads,
   COALESCE(st.state_count,0) AS state_count,COALESCE(st.state_covered_ns,0) AS state_covered_ns,
-  st.running_ns, st.runnable_ns, st.runnable_preempted_ns, st.sleeping_ns, st.uninterruptible_ns, st.other_state_ns, st.unfinished_state_ns,
+  st.running_ns, st.runnable_ns, st.runnable_preempted_ns, st.runnable_non_preempted_ns, st.sleeping_ns, st.uninterruptible_ns, st.other_state_ns, st.unfinished_state_ns,
   CASE WHEN st.state_count IS NULL THEN 'unavailable'
     WHEN st.state_covered_ns>w.window_end_ts-w.window_start_ts THEN 'unsupported'
     WHEN st.state_covered_ns<w.window_end_ts-w.window_start_ts THEN 'partial' ELSE 'observed' END AS state_evidence,

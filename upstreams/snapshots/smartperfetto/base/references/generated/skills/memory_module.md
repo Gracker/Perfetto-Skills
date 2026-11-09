@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/memory_module.skill.yaml
-Source SHA-256: b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff
+Source SHA-256: f00717aba46f44cda52a71b3aac619d9a3dabf1eea6b54e5757a38a480c000bc
 # 内存分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -219,7 +219,8 @@ inputs:
 - memory_psi
 - process_memory
 rules:
-- condition: lmk_events.data.length > 0
+- id: memory.lmk_events
+  condition: lmk_events.data.length > 0
   diagnosis: 检测到 ${lmk_events.data.length} 个 LMK 事件，系统内存压力大
   severity: critical
   confidence: high
@@ -230,7 +231,8 @@ rules:
   evidence_fields:
   - lmk_events.data.length
   - lmk_events.data[0]?.lmk_event
-- condition: dmabuf_usage.data[0]?.growth_mb > 50
+- id: memory.dmabuf_growth
+  condition: dmabuf_usage.data[0]?.growth_mb > 50
   diagnosis: dmabuf 内存增长 ${dmabuf_usage.data[0]?.growth_mb}MB，可能存在泄漏
   confidence: high
   suggestions:
@@ -240,7 +242,8 @@ rules:
   evidence_fields:
   - dmabuf_usage.data[0]?.growth_mb
   - dmabuf_usage.data[0]?.max_mb
-- condition: memory_psi.data[0]?.avg_value > 30
+- id: memory.psi_high
+  condition: memory_psi.data[0]?.avg_value > 30
   diagnosis: '内存压力指标偏高: PSI 平均 ${memory_psi.data[0]?.avg_value}%'
   confidence: high
   suggestions:
@@ -250,7 +253,8 @@ rules:
   evidence_fields:
   - memory_psi.data[0]?.avg_value
   - memory_psi.data[0]?.max_value
-- condition: memory_overview.data.find(m => m.memory_type.includes('Free'))?.min_mb < 100
+- id: memory.free_memory_low
+  condition: memory_overview.data.find(m => m.memory_type.includes('Free'))?.min_mb < 100
   diagnosis: 可用内存最低降至 ${memory_overview.data.find(m => m.memory_type.includes('Free'))?.min_mb}MB
   confidence: high
   suggestions:
@@ -258,7 +262,8 @@ rules:
   - 检查大内存消耗进程
   evidence_fields:
   - memory_overview.data[0]?.min_mb
-- condition: process_memory.data[0]?.max_mb > 500
+- id: memory.process_peak_high
+  condition: process_memory.data[0]?.max_mb > 500
   diagnosis: 进程 ${process_memory.data[0]?.process_name} 内存峰值 ${process_memory.data[0]?.max_mb}MB
   confidence: medium
   suggestions:

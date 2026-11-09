@@ -47,7 +47,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
-    "sha256": "704e180a6465afd151d94ae86efccee580680462a62262896290e7844e46f481"
+    "sha256": "fe7a3a653181e5bd0aa0efdbaae32faaec177c0cf2d8bd446618e66cde9eb944"
   },
   "steps": [
     {
@@ -125,6 +125,7 @@
             "temp_overview.data[0]?.sensor_name",
             "temp_overview.data[0]?.max_temp"
           ],
+          "id": "thermal.critical_temperature",
           "severity": "critical",
           "suggestions": [
             "检查设备散热条件",
@@ -140,6 +141,7 @@
             "throttling_events.data.length",
             "throttling_events.data[0]?.drop_pct"
           ],
+          "id": "thermal.frequency_drops",
           "suggestions": [
             "降频原因需结合直接 thermal throttling/cooling 事件和同窗口工作负载判断",
             "考虑分散计算任务",
@@ -155,6 +157,7 @@
             "high_temp_periods.data[0]?.duration_sec",
             "high_temp_periods.data[0]?.peak_temp"
           ],
+          "id": "thermal.high_temp_span",
           "suggestions": [
             "持续高温时是否已触发频率上限，以 cpufreq 限频证据为准",
             "检查设备是否被遮挡",
@@ -168,6 +171,7 @@
           "evidence_fields": [
             "thermal_cpu_correlation.data.filter(t => t.status === 'high_temperature_with_low_sampled_frequency').length"
           ],
+          "id": "thermal.high_temp_low_frequency_samples",
           "suggestions": [
             "查找温控限制、冷却状态或限频事件的直接证据",
             "结合目标任务窗口和负载变化检验性能影响"
@@ -181,6 +185,7 @@
             "temp_overview.data[0]?.sensor_name",
             "temp_overview.data[0]?.temp_range"
           ],
+          "id": "thermal.temperature_range_wide",
           "suggestions": [
             "工作负载不均匀",
             "检查是否有突发计算任务"

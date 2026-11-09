@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/surfaceflinger_module.skill.yaml
--- Source SHA-256: e3f857a0ef0e7ea322a5a6f0f6e2f13149fe4684ded79833c5a1421a53b93124
+-- Source SHA-256: 1ab8ca32abdfd4935e0a65eb1c83e73cb7d16dfac3a75a9ff0e24508f75769ba
 
 WITH frames AS (
   SELECT

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/io.strategy.md
-Source SHA-256: 7712d6ee0e1bfe670171efa799a4e5dfbe3ff1855107ed9cdd5da3582bb30cf7
+Source SHA-256: 393a14051569daaa23e2f5b3e74da8377ba8bc89df98424046dff489653845e4
 
 # Io Strategy
 
@@ -163,7 +163,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

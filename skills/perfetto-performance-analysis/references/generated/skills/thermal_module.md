@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/thermal_module.skill.yaml
-Source SHA-256: 704e180a6465afd151d94ae86efccee580680462a62262896290e7844e46f481
+Source SHA-256: fe7a3a653181e5bd0aa0efdbaae32faaec177c0cf2d8bd446618e66cde9eb944
 # 热管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -185,7 +185,8 @@ inputs:
 - throttling_events
 - thermal_cpu_correlation
 rules:
-- condition: temp_overview.data.filter(t => t.status === 'critical').length > 0
+- id: thermal.critical_temperature
+  condition: temp_overview.data.filter(t => t.status === 'critical').length > 0
   diagnosis: '检测到严重高温: ${temp_overview.data.filter(t => t.status === ''critical'')[0]?.sensor_name} 最高 ${temp_overview.data.filter(t
     => t.status === ''critical'')[0]?.max_temp}°C'
   severity: critical
@@ -197,7 +198,8 @@ rules:
   evidence_fields:
   - temp_overview.data[0]?.sensor_name
   - temp_overview.data[0]?.max_temp
-- condition: throttling_events.data.length > 10
+- id: thermal.frequency_drops
+  condition: throttling_events.data.length > 10
   diagnosis: 检测到 ${throttling_events.data.length} 次频率骤降；尚不能据此确定热节流或性能影响
   confidence: high
   suggestions:
@@ -207,7 +209,8 @@ rules:
   evidence_fields:
   - throttling_events.data.length
   - throttling_events.data[0]?.drop_pct
-- condition: high_temp_periods.data[0]?.duration_sec > 30
+- id: thermal.high_temp_span
+  condition: high_temp_periods.data[0]?.duration_sec > 30
   diagnosis: 高温样本首尾跨度 ${high_temp_periods.data[0]?.duration_sec} 秒；不代表连续高温或散热不足
   confidence: high
   suggestions:
@@ -218,7 +221,8 @@ rules:
   - high_temp_periods.data[0]?.sensor_name
   - high_temp_periods.data[0]?.duration_sec
   - high_temp_periods.data[0]?.peak_temp
-- condition: thermal_cpu_correlation.data.filter(t => t.status === 'high_temperature_with_low_sampled_frequency').length >
+- id: thermal.high_temp_low_frequency_samples
+  condition: thermal_cpu_correlation.data.filter(t => t.status === 'high_temperature_with_low_sampled_frequency').length >
     5
   diagnosis: 同一秒内观测到高温和较低的频率样本；这种并存不能证明热节流或负相关
   confidence: high
@@ -227,7 +231,8 @@ rules:
   - 结合目标任务窗口和负载变化检验性能影响
   evidence_fields:
   - thermal_cpu_correlation.data.filter(t => t.status === 'high_temperature_with_low_sampled_frequency').length
-- condition: temp_overview.data[0]?.temp_range > 20
+- id: thermal.temperature_range_wide
+  condition: temp_overview.data[0]?.temp_range > 20
   diagnosis: 温度计数器样本变化范围 ${temp_overview.data[0]?.temp_range}，原始单位 ${temp_overview.data[0]?.source_unit}
   confidence: medium
   suggestions:

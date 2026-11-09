@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/anr_context_in_range.skill.yaml
-Source SHA-256: 4a14d85ad7cd54b07f817c9c76948eefd985a4e2af90e0864f7f4360abc171d3
+Source SHA-256: 2638bf278c4e442b3598989e310d9d4e540c575851799a40ddf09111ca78f376
 # ANR 上下文提取
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -88,6 +88,13 @@ columns:
 - name: timeout_source
   label: 超时来源
   type: string
+- name: timer_delay
+  label: ANR 计时器到期→ANR 记录延迟（非超时时长）
+  label_i18n:
+    en: ANR timer expiry → ANR record delay (not the ANR timeout)
+  type: duration
+  unit: ns
+  semantics_ref: android_anrs.timer_delay
 - name: process_name
   label: 进程名
   type: string
@@ -97,4 +104,8 @@ columns:
 - name: anr_type
   label: ANR 类型
   type: string
+- name: timer_delay_status
+  label: timer_delay_status
+  type: string
+  hidden: true
 ```

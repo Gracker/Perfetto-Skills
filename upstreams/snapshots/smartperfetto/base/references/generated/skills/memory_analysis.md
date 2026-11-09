@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/memory_analysis.skill.yaml
-Source SHA-256: 1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1
+Source SHA-256: 84ac77ef776250708d0bca27901eb5ceace572351055c4b6bf86dcd84986a1d0
 # 内存性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -699,7 +699,8 @@ inputs:
 - long_gc
 - gc_intervals
 rules:
-- condition: gc_overview.data[0]?.total_gc_count > (gc_count_critical ?? 100)
+- id: memory.gc_count_critical
+  condition: gc_overview.data[0]?.total_gc_count > (gc_count_critical ?? 100)
   severity: critical
   diagnosis: GC 频率过高 (${gc_overview.data[0].total_gc_count} 次)
   confidence: high
@@ -707,14 +708,16 @@ rules:
   - 检查是否有频繁的对象创建和销毁
   - 使用对象池重用对象
   - 避免在循环中创建对象
-- condition: gc_overview.data[0]?.total_gc_count > (gc_count_warning ?? 50)
+- id: memory.gc_count_warning
+  condition: gc_overview.data[0]?.total_gc_count > (gc_count_warning ?? 50)
   severity: warning
   diagnosis: GC 频率较高 (${gc_overview.data[0].total_gc_count} 次)
   confidence: medium
   suggestions:
   - 检查内存分配热点
   - 优化临时对象使用
-- condition: gc_overview.data[0]?.total_gc_time_ms > (gc_total_time_critical_ms ?? 2000)
+- id: memory.gc_total_time_long
+  condition: gc_overview.data[0]?.total_gc_time_ms > (gc_total_time_critical_ms ?? 2000)
   severity: critical
   diagnosis: GC 总耗时过长 (${gc_overview.data[0].total_gc_time_ms}ms)
   confidence: high
@@ -722,28 +725,32 @@ rules:
   - 减少内存分配频率
   - 检查大对象分配
   - 考虑调整堆大小
-- condition: gc_overview.data[0]?.main_thread_gc_count > (main_thread_gc_critical ?? 10)
+- id: memory.main_thread_gc_count
+  condition: gc_overview.data[0]?.main_thread_gc_count > (main_thread_gc_critical ?? 10)
   severity: critical
   diagnosis: 主线程发生 ${gc_overview.data[0].main_thread_gc_count} 次 GC
   confidence: high
   suggestions:
   - 将内存密集型操作移到后台线程
   - 避免在 UI 线程分配大量内存
-- condition: gc_overview.data[0]?.main_thread_gc_wait_ms > (main_thread_gc_wait_warning_ms ?? 50)
+- id: memory.main_thread_gc_wait
+  condition: gc_overview.data[0]?.main_thread_gc_wait_ms > (main_thread_gc_wait_warning_ms ?? 50)
   severity: warning
   diagnosis: 主线程等待 GC 完成 ${gc_overview.data[0].main_thread_gc_wait_count} 次，共 ${gc_overview.data[0].main_thread_gc_wait_ms}ms
   confidence: high
   suggestions:
   - 减少主线程分配，避免触发 Alloc GC 后同步等待
   - 检查 ProfileSaver 等 GC 临界区与主线程的重叠
-- condition: long_gc.data[0]?.dur_ms > (single_gc_warning_ms ?? 50)
+- id: memory.single_gc_long
+  condition: long_gc.data[0]?.dur_ms > (single_gc_warning_ms ?? 50)
   severity: warning
   diagnosis: 单次 GC 回收过长 (${long_gc.data[0].dur_ms}ms)
   confidence: medium
   suggestions:
   - 检查大对象分配
   - 考虑调整堆大小
-- condition: gc_intervals.data.find(i => i.interval_bucket === '<100ms (频繁)')?.count > 10
+- id: memory.gc_churn
+  condition: gc_intervals.data.find(i => i.interval_bucket === '<100ms (频繁)')?.count > 10
   severity: critical
   diagnosis: 检测到内存抖动（GC 间隔 <100ms）
   confidence: high

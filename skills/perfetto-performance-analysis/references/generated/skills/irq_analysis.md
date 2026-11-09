@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/irq_analysis.skill.yaml
-Source SHA-256: fea29723032ba827d7c7b294e22ea8ff4633c9c6e8abb832895f9a9642a6e595
+Source SHA-256: c70a064eb46aa65eea1e0e328d49c99c3713553733e4f2f3d1731bce766da30b
 # IRQ 中断分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -488,7 +488,8 @@ inputs:
 - long_irq_events
 - root_cause
 rules:
-- condition: root_cause.data[0]?.classification === 'IRQ_LATENCY'
+- id: irq.latency
+  condition: root_cause.data[0]?.classification === 'IRQ_LATENCY'
   severity: critical
   diagnosis: 检测到异常长耗时中断 (硬中断 ${root_cause.data[0].long_hard_irq_count} 次 >1ms，软中断 ${root_cause.data[0].long_soft_irq_count}
     次 >10ms)
@@ -497,7 +498,8 @@ rules:
   - 检查长耗时硬中断对应的设备驱动
   - 分析软中断堆积原因 (NET_RX/TIMER 等)
   - 考虑将中断绑定到特定 CPU 核心避免影响关键任务
-- condition: root_cause.data[0]?.classification === 'IRQ_HEAVY'
+- id: irq.heavy_load
+  condition: root_cause.data[0]?.classification === 'IRQ_HEAVY'
   severity: warning
   diagnosis: 中断负载较重 (总计 ${root_cause.data[0].total_irq_count} 次，耗时 ${root_cause.data[0].total_dur_ms}ms)
   confidence: high
@@ -505,7 +507,8 @@ rules:
   - 检查高频中断源，评估是否可以合并或降低其触发频率
   - 使用 IRQ affinity 分散中断负载
   - 检查网络和存储 IO 是否导致过多中断
-- condition: root_cause.data[0]?.classification === 'IRQ_NORMAL'
+- id: irq.normal
+  condition: root_cause.data[0]?.classification === 'IRQ_NORMAL'
   severity: info
   diagnosis: 中断负载正常，无异常
   confidence: high

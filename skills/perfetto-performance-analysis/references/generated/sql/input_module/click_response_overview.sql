@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/input_module.skill.yaml
--- Source SHA-256: e514d3ba027d776732f4f451e54e709f259d7b79e371ab403971fb4925dfa977
+-- Source SHA-256: 44cab906fb8f37dddce79e2c7407f2cef7d4c52307cb65f9890df0a5aaad681d
 
 SELECT
   COUNT(*) AS total_clicks,

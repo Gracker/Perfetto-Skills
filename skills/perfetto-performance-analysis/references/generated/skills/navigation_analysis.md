@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/navigation_analysis.skill.yaml
-Source SHA-256: c8bbe81d2a904151402e873ca39bfb964e77a0287f268961fbb540b88648da48
+Source SHA-256: 5fe3a593785fdcd214084bbc644f0d6572cb21d9c8347976dd48bff48b31080e
 # 界面跳转分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -598,7 +598,8 @@ inputs:
 - layout_inflation
 - nav_binder
 rules:
-- condition: (layout_inflation?.data?.length || 0) > 0 && layout_inflation.data[0]?.dur_ms > ${inflate_critical_ms|100}
+- id: navigation.slow_inflate
+  condition: (layout_inflation?.data?.length || 0) > 0 && layout_inflation.data[0]?.dur_ms > ${inflate_critical_ms|100}
   severity: critical
   diagnosis: 'SLOW_INFLATE: 布局膨胀严重 (${layout_inflation.data[0].dur_ms}ms)，是跳转耗时主因'
   confidence: high
@@ -606,7 +607,8 @@ rules:
   - 减少布局嵌套层级，使用 ConstraintLayout
   - 使用 ViewStub 延迟加载非首屏布局
   - 考虑使用异步布局膨胀 (AsyncLayoutInflater)
-- condition: (nav_binder?.data?.length || 0) > 0 && nav_binder.data[0]?.max_dur_ms > ${binder_blocking_ms|16} && nav_binder.data[0]?.main_thread_calls
+- id: navigation.slow_binder
+  condition: (nav_binder?.data?.length || 0) > 0 && nav_binder.data[0]?.max_dur_ms > ${binder_blocking_ms|16} && nav_binder.data[0]?.main_thread_calls
     > 0
   severity: warning
   diagnosis: 'SLOW_BINDER: 跳转期间主线程 Binder 阻塞 (最大 ${nav_binder.data[0].max_dur_ms}ms)'
@@ -615,7 +617,8 @@ rules:
   - 将 Binder 调用移到后台线程
   - 使用异步 Binder 接口
   - 缓存服务调用结果
-- condition: (blocking_ops?.data?.length || 0) > 0 && blocking_ops.data.find(b => b.block_type === 'file_io' || b.block_type
+- id: navigation.slow_io
+  condition: (blocking_ops?.data?.length || 0) > 0 && blocking_ops.data.find(b => b.block_type === 'file_io' || b.block_type
     === 'database' || b.block_type === 'shared_prefs')?.dur_ms > ${binder_blocking_ms|16}
   severity: warning
   diagnosis: 'SLOW_IO: 跳转期间存在 IO 阻塞 (${blocking_ops.data.find(b => b.block_type === ''file_io'' || b.block_type === ''database''
@@ -625,7 +628,8 @@ rules:
   - 将 IO 操作移到后台线程
   - 使用 ViewModel 预加载数据
   - 使用内存缓存减少磁盘读取
-- condition: (lifecycle_phases?.data?.length || 0) > 0 && (lifecycle_phases.data.find(p => p.phase === 'onCreate')?.max_dur_ms
+- id: navigation.slow_oncreate
+  condition: (lifecycle_phases?.data?.length || 0) > 0 && (lifecycle_phases.data.find(p => p.phase === 'onCreate')?.max_dur_ms
     || 0) > ${oncreate_slow_ms|200}
   severity: warning
   diagnosis: 'SLOW_ONCREATE: Activity onCreate 耗时过长 (${lifecycle_phases.data.find(p => p.phase === ''onCreate'')?.max_dur_ms}ms)'
@@ -634,7 +638,8 @@ rules:
   - 延迟初始化非必要组件
   - 将数据加载移到后台线程
   - 使用 Jetpack App Startup 优化初始化顺序
-- condition: (nav_overview?.data?.[0]?.avg_nav_dur_ms || 0) <= ${slow_navigation_ms|400}
+- id: navigation.normal
+  condition: (nav_overview?.data?.[0]?.avg_nav_dur_ms || 0) <= ${slow_navigation_ms|400}
   severity: info
   diagnosis: 'NAVIGATION_NORMAL: 跳转性能正常 (平均 ${nav_overview?.data?.[0]?.avg_nav_dur_ms}ms)'
   confidence: high

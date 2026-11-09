@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_binder_pool_analysis.skill.yaml
-Source SHA-256: 89f077e064e5a82c5b38e4601ec000cf53e5ac5e84cf735895b7ef5f5c86281a
+Source SHA-256: 6dc1ad094f6c5fa3d93f9e8bbc7c45845c041036651a7db899ed9a646e2d9f0e
 # Binder 线程池分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -9,7 +9,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: startup_binder_pool_analysis
-version: '1.0'
+version: '1.1'
 type: atomic
 category: app_lifecycle
 tier: B

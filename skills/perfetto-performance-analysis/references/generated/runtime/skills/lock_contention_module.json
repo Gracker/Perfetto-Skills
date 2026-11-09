@@ -84,7 +84,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
-    "sha256": "106819ab92ac89738c756cd296dd1da8aac142910477fdb313a8dc616a50bd08"
+    "sha256": "d07a8840cdaf1f8b7ef019cfc13abd3529dc7873f677593f06d5892a1ddf859a"
   },
   "steps": [
     {
@@ -173,6 +173,7 @@
             "main_thread_locks.data[0]?.lock_event",
             "main_thread_locks.data[0]?.wait_ms"
           ],
+          "id": "lock_contention.main_thread_waits",
           "severity": "info",
           "suggestions": [
             "主线程不应等待锁",
@@ -188,6 +189,7 @@
             "lock_overview.data[0]?.lock_event",
             "lock_overview.data[0]?.total_wait_ms"
           ],
+          "id": "lock_contention.total_wait_long",
           "suggestions": [
             "减少临界区代码",
             "考虑使用细粒度锁",
@@ -203,6 +205,7 @@
             "monitor_contention.data[0]?.wait_ms",
             "monitor_contention.data[0]?.waiting_thread"
           ],
+          "id": "lock_contention.monitor_contention",
           "suggestions": [
             "检查 synchronized 块的必要性",
             "考虑使用 ReentrantLock 提供更好的控制",
@@ -216,6 +219,7 @@
           "evidence_fields": [
             "blocked_threads.data.filter(t => t.state === 'D').length"
           ],
+          "id": "lock_contention.uninterruptible_threads",
           "suggestions": [
             "检查是否有 I/O 阻塞",
             "检查是否有内核锁竞争"
@@ -229,6 +233,7 @@
             "thread_contention_pairs.data[0]?.thread_name",
             "thread_contention_pairs.data[0]?.blocked_pct"
           ],
+          "id": "lock_contention.thread_blocked_share_high",
           "suggestions": [
             "该线程大部分时间在等待",
             "分析其等待的资源"

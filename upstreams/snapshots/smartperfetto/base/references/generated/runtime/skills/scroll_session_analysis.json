@@ -109,7 +109,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
-    "sha256": "59e06a212efc4660c3d1eb10335f4fc1f33c7120448effb115823ec96915d9b5"
+    "sha256": "1e937837e79fae2d38ba4a154c578122e18b6005033d677ef55b78cf8d0c9a57"
   },
   "steps": [
     {
@@ -162,6 +162,20 @@
       },
       "save_as": "system_task_handoffs",
       "skill": "thread_preemption_handoffs_in_range",
+      "type": "skill"
+    },
+    {
+      "displayed": true,
+      "id": "system_runnable_cpu_occupancy",
+      "name": "Runnable 等待期间目标 CPU 占用",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${package}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_runnable_cpu_occupancy",
+      "skill": "runnable_cpu_occupancy_in_range",
       "type": "skill"
     },
     {
@@ -249,6 +263,7 @@
           "condition": "full_stats.data[0].jank_rate > 15",
           "confidence": "high",
           "diagnosis": "滑动掉帧率过高 (${full_stats.data[0].jank_rate}%)",
+          "id": "scroll_session.jank_rate_high",
           "severity": "critical",
           "suggestions": [
             "检查主线程耗时操作",
@@ -260,6 +275,7 @@
           "condition": "full_stats.data[0].jank_rate > 5",
           "confidence": "medium",
           "diagnosis": "滑动存在掉帧 (${full_stats.data[0].jank_rate}%)",
+          "id": "scroll_session.jank_present",
           "severity": "warning",
           "suggestions": [
             "检查 onBindViewHolder 耗时",
@@ -270,6 +286,7 @@
           "condition": "full_stats.data[0].max_frame_ms > 100",
           "confidence": "high",
           "diagnosis": "存在严重卡顿帧 (最大 ${full_stats.data[0].max_frame_ms}ms)",
+          "id": "scroll_session.max_frame_severe",
           "severity": "critical",
           "suggestions": [
             "检查是否有 IO 操作在主线程",
@@ -281,6 +298,7 @@
           "condition": "touch_stats.data[0].jank_rate > ${fling_stats.data[0].jank_rate} * 2",
           "confidence": "medium",
           "diagnosis": "按压滑动阶段掉帧更严重",
+          "id": "scroll_session.touch_phase_worse",
           "severity": "warning",
           "suggestions": [
             "检查 dispatchTouchEvent 链路",
@@ -291,6 +309,7 @@
           "condition": "fling_stats.data[0].jank_rate > ${touch_stats.data[0].jank_rate} * 2",
           "confidence": "medium",
           "diagnosis": "Fling 阶段掉帧更严重",
+          "id": "scroll_session.fling_phase_worse",
           "severity": "warning",
           "suggestions": [
             "检查 Fling 动画计算",
@@ -301,6 +320,7 @@
           "condition": "full_stats.data[0].estimated_fps < 50",
           "confidence": "medium",
           "diagnosis": "帧率偏低 (${full_stats.data[0].estimated_fps} fps)",
+          "id": "scroll_session.fps_low",
           "severity": "warning",
           "suggestions": [
             "优化 onDraw 方法",

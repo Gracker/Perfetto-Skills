@@ -102,10 +102,16 @@
       "type": "number"
     },
     {
-      "description": "应用包名（可选，不填则分析所有应用）",
+      "description": "应用包名（可选；未提供任何目标选择器时分析所有应用）",
       "name": "package",
       "required": false,
       "type": "string"
+    },
+    {
+      "description": "证据选定的 trace 内唯一进程 ID；用于消除同名实例歧义，仍须通过身份门禁",
+      "name": "upid",
+      "required": false,
+      "type": "integer"
     },
     {
       "description": "分析起始时间戳（纳秒，可选）",
@@ -183,7 +189,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-    "sha256": "03591cddcd2bd4a278369cc8089e92f224d405b0e9adf66f618e4e44a72056fd"
+    "sha256": "ca7c1326c0ca6eac9e485114bd94fbfd81e9c8db2f3d8c65974d46831f8db084"
   },
   "steps": [
     {
@@ -236,6 +242,20 @@
       },
       "save_as": "system_task_handoffs",
       "skill": "thread_preemption_handoffs_in_range",
+      "type": "skill"
+    },
+    {
+      "displayed": true,
+      "id": "system_runnable_cpu_occupancy",
+      "name": "Runnable 等待期间目标 CPU 占用",
+      "optional": true,
+      "params": {
+        "end_ts": "${system_context_window.data[0].end_ts}",
+        "package": "${package}",
+        "start_ts": "${system_context_window.data[0].start_ts}"
+      },
+      "save_as": "system_runnable_cpu_occupancy",
+      "skill": "runnable_cpu_occupancy_in_range",
       "type": "skill"
     },
     {

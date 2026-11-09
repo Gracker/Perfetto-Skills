@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/wms_module.skill.yaml
--- Source SHA-256: 4bd2c147a32250b3c3ae71af00fb8bbfb8b99256c68cc8fa44a0131ebe25d794
+-- Source SHA-256: c52bd0ea0df3f2c51b66d81b1951baa545c62d35b7e103541c2e25cf88051e39
 
 SELECT
   s.name AS draw_event,

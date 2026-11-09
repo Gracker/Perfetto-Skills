@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: 03591cddcd2bd4a278369cc8089e92f224d405b0e9adf66f618e4e44a72056fd
+-- Source SHA-256: ca7c1326c0ca6eac9e485114bd94fbfd81e9c8db2f3d8c65974d46831f8db084
 
 -- 批量帧根因分类：对采样上限内的消费端真实掉帧执行简化版根因决策树
 -- 与 jank_frame_detail 的 root_cause_summary 对齐的只有 direct-evidence（锁 / RT 同步）

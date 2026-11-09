@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/app/launcher_module.skill.yaml
-Source SHA-256: 4c0d82a72e79c8ac5f42f5c57ff618e5bc0211d2d8f4c88c79642fbddd4ac263
+Source SHA-256: a90057ce86d59a8bc077f03215ec72166ba59b83b7bdc56297cdec0a28e38622
 # Launcher 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -207,7 +207,8 @@ inputs:
 - widget_activities
 - launcher_binder_calls
 rules:
-- condition: launcher_frames.data[0]?.jank_rate_pct > 5
+- id: launcher.jank_rate_high
+  condition: launcher_frames.data[0]?.jank_rate_pct > 5
   diagnosis: Launcher 卡顿率 ${launcher_frames.data[0]?.jank_rate_pct}%，影响桌面体验
   confidence: high
   suggestions:
@@ -218,7 +219,8 @@ rules:
   - launcher_frames.data[0]?.jank_rate_pct
   - launcher_frames.data[0]?.jank_frames
   - launcher_frames.data[0]?.total_frames
-- condition: launcher_main_thread.data[0]?.max_ms > 100
+- id: launcher.main_thread_long_activity
+  condition: launcher_main_thread.data[0]?.max_ms > 100
   diagnosis: 'Launcher 主线程存在耗时操作: ${launcher_main_thread.data[0]?.activity} 最长 ${launcher_main_thread.data[0]?.max_ms}ms'
   confidence: high
   suggestions:
@@ -227,7 +229,8 @@ rules:
   evidence_fields:
   - launcher_main_thread.data[0]?.activity
   - launcher_main_thread.data[0]?.max_ms
-- condition: widget_activities.data[0]?.total_ms > 100
+- id: launcher.widget_activity_long
+  condition: widget_activities.data[0]?.total_ms > 100
   diagnosis: 'Widget 活动耗时较高: ${widget_activities.data[0]?.widget_activity} 共 ${widget_activities.data[0]?.total_ms}ms'
   confidence: medium
   suggestions:
@@ -237,7 +240,8 @@ rules:
   evidence_fields:
   - widget_activities.data[0]?.widget_activity
   - widget_activities.data[0]?.total_ms
-- condition: launcher_binder_calls.data[0]?.max_ms > 50
+- id: launcher.binder_call_long
+  condition: launcher_binder_calls.data[0]?.max_ms > 50
   diagnosis: 'Launcher 存在耗时 Binder 调用: ${launcher_binder_calls.data[0]?.binder_call} 最长 ${launcher_binder_calls.data[0]?.max_ms}ms'
   confidence: medium
   suggestions:

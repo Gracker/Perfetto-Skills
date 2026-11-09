@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/cpu_analysis.skill.yaml
--- Source SHA-256: d92fc12306d640e35692ee32b71bec6aa951ed61f3d8f5b0f4f24b2bafacc9af
+-- Source SHA-256: a92fcecfaa391bf3e79d99fde999b7dcf21a49dfcd0fb35c65bbcd41af2d04b9
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -92,6 +92,7 @@ JOIN thread t ON ss.utid = t.utid
 JOIN effective_target_processes p ON t.upid = p.upid
 LEFT JOIN system_cpu_topology ct ON ss.ucpu = ct.ucpu
 WHERE p.upid = ${target_process.data[0].upid}
+  AND ('${package}' = '' OR p.name = '${package}' OR p.name GLOB '${package}:*')
   AND (${start_ts} IS NULL OR ss.ts + ss.dur > ${start_ts})
   AND (${end_ts} IS NULL OR ss.ts < ${end_ts})
 GROUP BY t.utid

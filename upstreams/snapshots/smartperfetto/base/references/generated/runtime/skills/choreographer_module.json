@@ -77,7 +77,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
-    "sha256": "50ab26350db4695faed48050143b69a472c511af5a36fcc610e6e6b192860e66"
+    "sha256": "8311748b218989a899350adda0f5f535baf90c25d78f68faff7ac6657d241226"
   },
   "steps": [
     {
@@ -162,6 +162,7 @@
             "doframe_overview.data[0]?.jank_frames",
             "doframe_overview.data[0]?.total_frames"
           ],
+          "id": "choreographer.jank_rate_high",
           "severity": "critical",
           "suggestions": [
             "分析卡顿帧的具体原因",
@@ -176,6 +177,7 @@
           "evidence_fields": [
             "doframe_overview.data[0]?.max_dur_ms"
           ],
+          "id": "choreographer.max_frame_long",
           "severity": "critical",
           "suggestions": [
             "分析该帧的详细调用栈",
@@ -189,6 +191,7 @@
           "evidence_fields": [
             "callback_breakdown.data.find(c => c.callback_type === 'traversal')?.avg_ms"
           ],
+          "id": "choreographer.traversal_slow",
           "suggestions": [
             "减少 View 层级",
             "使用 ConstraintLayout 替代嵌套布局",
@@ -202,6 +205,7 @@
           "evidence_fields": [
             "view_traversal.data.find(v => v.traversal_phase === 'measure')?.max_ms"
           ],
+          "id": "choreographer.measure_slow",
           "suggestions": [
             "检查 View 树复杂度",
             "避免在 onMeasure 中进行耗时计算"
@@ -214,6 +218,7 @@
           "evidence_fields": [
             "long_frames.data.filter(f => f.jank_severity === 'jank_5plus_frames').length"
           ],
+          "id": "choreographer.jank_5plus_frames",
           "severity": "critical",
           "suggestions": [
             "这些帧可能导致明显卡顿感知",

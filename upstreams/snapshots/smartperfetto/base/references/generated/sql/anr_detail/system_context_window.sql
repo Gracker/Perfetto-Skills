@@ -1,5 +1,5 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/anr_detail.skill.yaml
--- Source SHA-256: 74e651ef4fa4d3949dacf7c4db5b28bd3f522b40e1ff76c40cb2829ea17d44a5
+-- Source SHA-256: 163b0bfbab7564b735a5ceffe7d26e5eb48238a44ba9247b121603efb1463762
 
 SELECT ${anr_ts} - ${timeout_ns} AS start_ts, ${anr_ts} AS end_ts

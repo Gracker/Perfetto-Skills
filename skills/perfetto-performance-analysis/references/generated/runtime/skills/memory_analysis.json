@@ -109,7 +109,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/memory_analysis.skill.yaml",
-    "sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1"
+    "sha256": "84ac77ef776250708d0bca27901eb5ceace572351055c4b6bf86dcd84986a1d0"
   },
   "steps": [
     {
@@ -318,6 +318,7 @@
           "condition": "gc_overview.data[0]?.total_gc_count > (gc_count_critical ?? 100)",
           "confidence": "high",
           "diagnosis": "GC 频率过高 (${gc_overview.data[0].total_gc_count} 次)",
+          "id": "memory.gc_count_critical",
           "severity": "critical",
           "suggestions": [
             "检查是否有频繁的对象创建和销毁",
@@ -329,6 +330,7 @@
           "condition": "gc_overview.data[0]?.total_gc_count > (gc_count_warning ?? 50)",
           "confidence": "medium",
           "diagnosis": "GC 频率较高 (${gc_overview.data[0].total_gc_count} 次)",
+          "id": "memory.gc_count_warning",
           "severity": "warning",
           "suggestions": [
             "检查内存分配热点",
@@ -339,6 +341,7 @@
           "condition": "gc_overview.data[0]?.total_gc_time_ms > (gc_total_time_critical_ms ?? 2000)",
           "confidence": "high",
           "diagnosis": "GC 总耗时过长 (${gc_overview.data[0].total_gc_time_ms}ms)",
+          "id": "memory.gc_total_time_long",
           "severity": "critical",
           "suggestions": [
             "减少内存分配频率",
@@ -350,6 +353,7 @@
           "condition": "gc_overview.data[0]?.main_thread_gc_count > (main_thread_gc_critical ?? 10)",
           "confidence": "high",
           "diagnosis": "主线程发生 ${gc_overview.data[0].main_thread_gc_count} 次 GC",
+          "id": "memory.main_thread_gc_count",
           "severity": "critical",
           "suggestions": [
             "将内存密集型操作移到后台线程",
@@ -360,6 +364,7 @@
           "condition": "gc_overview.data[0]?.main_thread_gc_wait_ms > (main_thread_gc_wait_warning_ms ?? 50)",
           "confidence": "high",
           "diagnosis": "主线程等待 GC 完成 ${gc_overview.data[0].main_thread_gc_wait_count} 次，共 ${gc_overview.data[0].main_thread_gc_wait_ms}ms",
+          "id": "memory.main_thread_gc_wait",
           "severity": "warning",
           "suggestions": [
             "减少主线程分配，避免触发 Alloc GC 后同步等待",
@@ -370,6 +375,7 @@
           "condition": "long_gc.data[0]?.dur_ms > (single_gc_warning_ms ?? 50)",
           "confidence": "medium",
           "diagnosis": "单次 GC 回收过长 (${long_gc.data[0].dur_ms}ms)",
+          "id": "memory.single_gc_long",
           "severity": "warning",
           "suggestions": [
             "检查大对象分配",
@@ -380,6 +386,7 @@
           "condition": "gc_intervals.data.find(i => i.interval_bucket === '<100ms (频繁)')?.count > 10",
           "confidence": "high",
           "diagnosis": "检测到内存抖动（GC 间隔 <100ms）",
+          "id": "memory.gc_churn",
           "severity": "critical",
           "suggestions": [
             "检查是否有频繁的对象创建销毁",

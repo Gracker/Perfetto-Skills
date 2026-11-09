@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/media.strategy.md
-Source SHA-256: 741df6a282da351455c783692f856cca062c2f3bcc462cf2224def0d350930a4
+Source SHA-256: b66dd787716715789442374ecf3105f5cfb2b379b7c71a8012caf1739b730f66
 
 # Media Strategy
 
@@ -50,7 +50,7 @@ keywords:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

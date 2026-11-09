@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_context_in_range.skill.yaml
--- Source SHA-256: 4a14d85ad7cd54b07f817c9c76948eefd985a4e2af90e0864f7f4360abc171d3
+-- Source SHA-256: 2638bf278c4e442b3598989e310d9d4e540c575851799a40ddf09111ca78f376
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -52,11 +52,13 @@ SELECT
   printf('%d', ts - CAST(analysis_timeout_ms * 1e6 AS INTEGER)) as window_start_ts,
   ROUND(analysis_timeout_ms, 2) as timeout_ms,
   timeout_source,
+  timer_delay,
   process_name,
   pid,
   upid,
   anr_type,
-  error_id
+  error_id,
+  CASE WHEN timer_delay IS NULL THEN 'not_recorded' ELSE 'observed' END as timer_delay_status
 FROM anr_matched
 ORDER BY ts ASC
 LIMIT 1

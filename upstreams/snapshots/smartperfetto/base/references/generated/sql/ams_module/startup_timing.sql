@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/framework/ams_module.skill.yaml
--- Source SHA-256: bfd2cd1f208acc814f9da8ed0ec0b02c0d5fd7226da25bec898e8de516e315cd
+-- Source SHA-256: 3793610c048eb2cd2f719edc363d9f5cf72702f7b6b45fd0845449fba3423cd1
 
 SELECT
   s.package AS package_name,

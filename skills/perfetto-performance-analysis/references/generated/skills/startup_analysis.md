@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/startup_analysis.skill.yaml
-Source SHA-256: 14530d7c621f830e66c59b8e2fa47be7e7c4d9a3035b10ab724d1b3cd541d5e1
+Source SHA-256: c04d04c381b7112ebe215f07da517fabf6e7d25f71f0e18e3173af2eece326c2
 # 应用启动分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -975,7 +975,8 @@ inputs:
 - sched_latency
 condition: startups.data.length > 0 && '${analysis_mode|full}' !== 'overview'
 rules:
-- condition: ((startup_quality?.data?.[0]?.blocker_count) || 0) > 0
+- id: startup.data_quality_blocker
+  condition: ((startup_quality?.data?.[0]?.blocker_count) || 0) > 0
   severity: critical
   diagnosis: 启动数据质量存在阻断问题（${startup_quality?.data?.[0]?.issue_codes || 'unknown'}），深度分析已跳过
   confidence: high
@@ -983,7 +984,8 @@ rules:
   - 优先核对 dur_ms/start_ts/end_ts 的单位与换算逻辑，统一为 ms 展示
   - 检查 TTID/TTFD 字段来源和单位，确认没有误用 us/ns
   - 修复数据口径后重新执行启动分析
-- condition: (startups?.data?.[0]?.ttid_ms || 0) > (startups?.data?.[0]?.dur_ms || 0) + 50
+- id: startup.ttid_exceeds_duration
+  condition: (startups?.data?.[0]?.ttid_ms || 0) > (startups?.data?.[0]?.dur_ms || 0) + 50
   severity: warning
   diagnosis: TTID (${startups?.data?.[0]?.ttid_ms}ms) 超出启动总时长 (${startups?.data?.[0]?.dur_ms}ms)，首帧渲染可能在 Perfetto 认定的启动结束后才完成
   confidence: medium
@@ -992,7 +994,8 @@ rules:
   - 检查启动区间结束后是否有较长的 Choreographer#doFrame 或 DrawFrame
   - 如果 TTID 代表真实首帧时间，优化方向应以 TTID 而非 dur 为目标
   - 建议在 Perfetto UI 中检查 startup 结束时间戳附近的帧渲染情况
-- condition: ((startup_quality?.data?.[0]?.warning_count) || 0) > 0 && !((startup_quality?.data?.[0]?.issue_codes || '').includes('R008_TTID_GT_DUR')
+- id: startup.data_quality_warning
+  condition: ((startup_quality?.data?.[0]?.warning_count) || 0) > 0 && !((startup_quality?.data?.[0]?.issue_codes || '').includes('R008_TTID_GT_DUR')
     && (startup_quality?.data?.[0]?.warning_count || 0) === 1)
   severity: info
   diagnosis: 启动数据存在告警项（${startup_quality?.data?.[0]?.issue_codes || 'none'}），结论需结合原始 Trace 复核
@@ -1000,7 +1003,8 @@ rules:
   suggestions:
   - 重点复核 TTID/TTFD 与启动总时长关系是否合理
   - 保留本次结论作为线索，不直接作为最终定论
-- condition: (startups?.data?.[0]?.type_reclassified || 0) === 1
+- id: startup.type_reclassified
+  condition: (startups?.data?.[0]?.type_reclassified || 0) === 1
   severity: info
   diagnosis: 启动类型已从 ${startups?.data?.[0]?.original_type} 修正为 ${startups?.data?.[0]?.startup_type}。判定依据：bindApplication 存在→cold，仅
     performCreate 存在→warm，均不存在→保持原始分类。评级已按修正后类型重新计算。
@@ -1008,7 +1012,8 @@ rules:
   suggestions:
   - Perfetto 的 startup_type 来自框架层 atrace 标记，在某些场景下可能误报
   - bindApplication 是进程新建（冷启动）的可靠信号，performCreate 是 Activity 重建（温启动）的可靠信号
-- condition: ((startups?.data?.[0]?.dur_ms) || 0) > 2000 && startups?.data?.[0]?.startup_type === 'cold'
+- id: startup.cold.over_2s
+  condition: ((startups?.data?.[0]?.dur_ms) || 0) > 2000 && startups?.data?.[0]?.startup_type === 'cold'
   severity: critical
   diagnosis: 冷启动时间过长 (${startups?.data?.[0]?.dur_ms}ms)
   confidence: high
@@ -1016,7 +1021,8 @@ rules:
   - 检查 Application.onCreate() 中的初始化逻辑
   - 使用 App Startup 库延迟初始化
   - 将耗时操作移到后台线程
-- condition: ((startups?.data?.[0]?.dur_ms) || 0) > 1000 && ((startups?.data?.[0]?.dur_ms) || 0) <= 2000 && startups?.data?.[0]?.startup_type
+- id: startup.cold.over_1s
+  condition: ((startups?.data?.[0]?.dur_ms) || 0) > 1000 && ((startups?.data?.[0]?.dur_ms) || 0) <= 2000 && startups?.data?.[0]?.startup_type
     === 'cold'
   severity: warning
   diagnosis: 冷启动时间偏长 (${startups?.data?.[0]?.dur_ms}ms)，建议优化
@@ -1025,7 +1031,8 @@ rules:
   - 检查 Application.onCreate() 和 Activity.onCreate() 中的耗时操作
   - 将非关键初始化延迟到首帧之后
   - 使用 Baseline Profile 加速类加载和 JIT
-- condition: ((startups?.data?.[0]?.dur_ms) || 0) > 1000 && startups?.data?.[0]?.startup_type === 'warm'
+- id: startup.warm.over_1s
+  condition: ((startups?.data?.[0]?.dur_ms) || 0) > 1000 && startups?.data?.[0]?.startup_type === 'warm'
   severity: critical
   diagnosis: 温启动时间严重偏长 (${startups?.data?.[0]?.dur_ms}ms)，接近甚至超过正常冷启动水平
   confidence: high
@@ -1033,7 +1040,8 @@ rules:
   - 温启动进程已存在，不应有 Application.onCreate 开销
   - 检查 Activity.onCreate() 和 onStart()/onResume() 中是否重复执行初始化
   - 将 View 绑定、数据加载等操作移到后台线程
-- condition: ((startups?.data?.[0]?.dur_ms) || 0) > 500 && ((startups?.data?.[0]?.dur_ms) || 0) <= 1000 && startups?.data?.[0]?.startup_type
+- id: startup.warm.over_500ms
+  condition: ((startups?.data?.[0]?.dur_ms) || 0) > 500 && ((startups?.data?.[0]?.dur_ms) || 0) <= 1000 && startups?.data?.[0]?.startup_type
     === 'warm'
   severity: warning
   diagnosis: 温启动时间偏长 (${startups?.data?.[0]?.dur_ms}ms)，建议优化
@@ -1042,14 +1050,16 @@ rules:
   - 检查 Activity.onCreate()/onResume() 中的耗时操作
   - 使用 ViewStub 延迟加载非首屏视图
   - 减少 Activity 重建时的数据库/网络查询
-- condition: ((startups?.data?.[0]?.dur_ms) || 0) > 500 && startups?.data?.[0]?.startup_type === 'hot'
+- id: startup.hot.over_500ms
+  condition: ((startups?.data?.[0]?.dur_ms) || 0) > 500 && startups?.data?.[0]?.startup_type === 'hot'
   severity: critical
   diagnosis: 热启动时间严重偏长 (${startups?.data?.[0]?.dur_ms}ms)，热启动应在 200ms 内完成
   confidence: high
   suggestions:
   - 热启动只需 onResume() → 首帧，检查是否有不必要的数据重载
   - 排查 onResume() 中的同步 Binder 或 IO 阻塞
-- condition: ((startups?.data?.[0]?.dur_ms) || 0) > 200 && ((startups?.data?.[0]?.dur_ms) || 0) <= 500 && startups?.data?.[0]?.startup_type
+- id: startup.hot.over_200ms
+  condition: ((startups?.data?.[0]?.dur_ms) || 0) > 200 && ((startups?.data?.[0]?.dur_ms) || 0) <= 500 && startups?.data?.[0]?.startup_type
     === 'hot'
   severity: warning
   diagnosis: 热启动时间偏长 (${startups?.data?.[0]?.dur_ms}ms)，建议优化
@@ -1057,7 +1067,8 @@ rules:
   suggestions:
   - 检查 onResume() 中是否有不必要的数据刷新或视图重建
   - 减少热启动路径上的同步调用
-- condition: (startup_binder?.data?.length || 0) > 0 && ((startup_binder.data[0]?.all_percent_of_startup) || 0) > 20 && startup_binder.data.find(r
+- id: startup.binder_share_high
+  condition: (startup_binder?.data?.length || 0) > 0 && ((startup_binder.data[0]?.all_percent_of_startup) || 0) > 20 && startup_binder.data.find(r
     => r.main_thread_calls > 0) && ((((main_sync_binder?.data?.[0]?.all_percent_of_startup) || 0) > 5) || (((main_binder_blocking?.data?.[0]?.dur_ms)
     || 0) > 8) || (((main_thread_states?.data?.find(s => s.state === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s
     => s.state === 'S')?.percent) || 0) > 20))
@@ -1068,7 +1079,8 @@ rules:
   - 减少启动期间的 IPC 调用
   - 将非必要的服务调用延迟到启动后
   - 使用异步 Binder 调用
-- condition: (main_sync_binder?.data?.length || 0) > 0 && ((main_sync_binder.data[0]?.all_percent_of_startup) || 0) > 8 &&
+- id: startup.main_sync_binder_share_high
+  condition: (main_sync_binder?.data?.length || 0) > 0 && ((main_sync_binder.data[0]?.all_percent_of_startup) || 0) > 8 &&
     ((((main_binder_blocking?.data?.[0]?.dur_ms) || 0) > 16) || (((main_thread_states?.data?.find(s => s.state === 'D')?.percent)
     || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))
   severity: warning
@@ -1077,7 +1089,8 @@ rules:
   suggestions:
   - 优先将同步 Binder 调用迁移到后台线程
   - 首屏前只保留必要 IPC，其余延后到首帧后
-- condition: (main_thread_file_io?.data?.length || 0) > 0 && (((main_thread_file_io.data[0]?.all_percent_of_startup) || 0)
+- id: startup.main_thread_file_io_share_high
+  condition: (main_thread_file_io?.data?.length || 0) > 0 && (((main_thread_file_io.data[0]?.all_percent_of_startup) || 0)
     > 5 || ((main_thread_file_io.data[0]?.all_total_dur_ms) || 0) > 50) && ((((main_thread_states?.data?.find(s => s.state
     === 'D')?.percent) || 0) > 5) || (((main_thread_states?.data?.find(s => s.state === 'S')?.percent) || 0) > 20))
   severity: warning
@@ -1086,7 +1099,8 @@ rules:
   suggestions:
   - 将文件读取与数据库初始化前移到预热阶段或改为异步
   - 减少启动阶段小文件随机 IO，合并为批量顺序读取
-- condition: (main_thread_states?.data?.length || 0) > 0 && ((main_thread_states.data.find(s => s.state === 'Running')?.percent)
+- id: startup.main_thread_running_low
+  condition: (main_thread_states?.data?.length || 0) > 0 && ((main_thread_states.data.find(s => s.state === 'Running')?.percent)
     || 0) < 50 && ((((main_thread_states.data.find(s => s.state === 'R')?.percent) || 0) + ((main_thread_states.data.find(s
     => s.state === 'R+')?.percent) || 0)) > 20 || ((((main_thread_states.data.find(s => s.state === 'D')?.percent) || 0) +
     ((main_thread_states.data.find(s => s.state === 'S')?.percent) || 0)) > 30) || ((((sched_latency?.data?.find(s => s.state
@@ -1097,7 +1111,8 @@ rules:
   suggestions:
   - 分析阻塞原因：IO 等待、锁竞争、调度延迟
   - 将阻塞操作移到后台线程
-- condition: (gc_during_startup?.data?.length || 0) > 0 && ((gc_during_startup.data.find(g => g.is_main_thread === 1)?.percent_of_startup)
+- id: startup.main_thread_gc_share
+  condition: (gc_during_startup?.data?.length || 0) > 0 && ((gc_during_startup.data.find(g => g.is_main_thread === 1)?.percent_of_startup)
     || 0) > 3
   severity: warning
   diagnosis: 主线程 GC 占启动时间 ${gc_during_startup?.data?.find(g => g.is_main_thread === 1)?.percent_of_startup}%
@@ -1105,7 +1120,8 @@ rules:
   suggestions:
   - 减少启动期间的对象分配
   - 避免在启动时创建大量临时对象
-- condition: (sched_latency?.data?.length || 0) > 0 && ((((sched_latency.data.find(s => s.state === 'R')?.severe_delays) ||
+- id: startup.main_thread_sched_latency
+  condition: (sched_latency?.data?.length || 0) > 0 && ((((sched_latency.data.find(s => s.state === 'R')?.severe_delays) ||
     0) + ((sched_latency.data.find(s => s.state === 'R+')?.severe_delays) || 0)) > 3) && (((sched_latency.data.find(s => s.state
     === 'R')?.max_wait_ms) || 0) > 8 || ((sched_latency.data.find(s => s.state === 'R+')?.max_wait_ms) || 0) > 8)
   severity: warning
@@ -1115,7 +1131,8 @@ rules:
   suggestions:
   - 降低启动阶段后台并发，避免与主线程争抢 CPU
   - 检查系统级负载和高优先级抢占线程
-- condition: (breakdown?.data?.length || 0) > 0 && ((breakdown.data.find(b => b.category === 'ClassLoading')?.category_percent)
+- id: startup.class_loading_share_high
+  condition: (breakdown?.data?.length || 0) > 0 && ((breakdown.data.find(b => b.category === 'ClassLoading')?.category_percent)
     || 0) > 15 && (class_loading?.data?.length || 0) > 0 && ((class_loading.data[0]?.percent_of_startup) || 0) > 5
   severity: info
   diagnosis: 类加载占比较高（breakdown ${breakdown?.data?.find(b => b.category === 'ClassLoading')?.category_percent}%）

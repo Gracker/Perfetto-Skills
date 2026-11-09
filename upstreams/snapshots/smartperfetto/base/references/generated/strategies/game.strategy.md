@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/game.strategy.md
-Source SHA-256: bf79124f20f00d3a74c57dbae05915cd39d554116803611cfdb2a2a1b6912c9f
+Source SHA-256: ff5181050c5aaea09aebad4600acb34d113310750b1219292eab809ff8a6aa33
 
 # Game Strategy
 
@@ -51,7 +51,7 @@ keywords:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 
