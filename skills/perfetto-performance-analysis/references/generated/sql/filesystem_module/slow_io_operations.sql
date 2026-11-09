@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/modules/kernel/filesystem_module.skill.yaml
--- Source SHA-256: 18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3
+-- Source SHA-256: 435ec320f775e53fe918bea24a31a4c5584c3de7cb0e64c367fca92695457fa4
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

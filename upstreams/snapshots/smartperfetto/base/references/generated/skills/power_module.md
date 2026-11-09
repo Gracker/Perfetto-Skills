@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/power_module.skill.yaml
-Source SHA-256: b1684cac1874ae453391ccfe88614289405b052dad8ab7ec594255347bb37acb
+Source SHA-256: cd2beb4f76696242a572e25220b5f4bfb755d932498796fb7b3098dd5759ec18
 # 电源管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -194,7 +194,8 @@ inputs:
 - suspend_resume
 - wakeup_sources
 rules:
-- condition: long_wakelocks.data.length > 0
+- id: power.long_wakelocks
+  condition: long_wakelocks.data.length > 0
   diagnosis: 检测到 ${long_wakelocks.data.length} 个长时间持有的 Wakelock，最长 ${long_wakelocks.data[0]?.dur_ms}ms
   confidence: high
   suggestions:
@@ -205,7 +206,8 @@ rules:
   - long_wakelocks.data.length
   - long_wakelocks.data[0]?.wakelock_name
   - long_wakelocks.data[0]?.dur_ms
-- condition: wakelock_overview.data[0]?.total_ms > 10000
+- id: power.wakelock_total_long
+  condition: wakelock_overview.data[0]?.total_ms > 10000
   diagnosis: Wakelock 总持有时间 ${wakelock_overview.data[0]?.total_ms}ms，电量消耗较高
   confidence: high
   suggestions:
@@ -214,7 +216,8 @@ rules:
   evidence_fields:
   - wakelock_overview.data[0]?.wakelock_event
   - wakelock_overview.data[0]?.total_ms
-- condition: wakeup_sources.data[0]?.wakeup_count > 20
+- id: power.wakeup_count_high
+  condition: wakeup_sources.data[0]?.wakeup_count > 20
   diagnosis: '唤醒次数过多: ${wakeup_sources.data[0]?.wakeup_source} 唤醒了 ${wakeup_sources.data[0]?.wakeup_count} 次'
   confidence: medium
   suggestions:
@@ -223,7 +226,8 @@ rules:
   evidence_fields:
   - wakeup_sources.data[0]?.wakeup_source
   - wakeup_sources.data[0]?.wakeup_count
-- condition: suspend_resume.data.length < 2
+- id: power.no_deep_suspend
+  condition: suspend_resume.data.length < 2
   diagnosis: 设备未进入深度休眠，电量消耗增加
   confidence: medium
   suggestions:
@@ -231,7 +235,8 @@ rules:
   - 检查 Wakelock 使用情况
   evidence_fields:
   - suspend_resume.data.length
-- condition: cpu_idle_states.data[0]?.avg_value < 50
+- id: power.cpu_idle_low
+  condition: cpu_idle_states.data[0]?.avg_value < 50
   diagnosis: CPU 空闲状态使用不充分
   confidence: medium
   suggestions:

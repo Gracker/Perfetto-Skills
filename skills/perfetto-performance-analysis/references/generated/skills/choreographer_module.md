@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/choreographer_module.skill.yaml
-Source SHA-256: 50ab26350db4695faed48050143b69a472c511af5a36fcc610e6e6b192860e66
+Source SHA-256: 8311748b218989a899350adda0f5f535baf90c25d78f68faff7ac6657d241226
 # Choreographer 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -198,7 +198,8 @@ inputs:
 - long_frames
 - view_traversal
 rules:
-- condition: doframe_overview.data[0]?.jank_rate_pct > 10
+- id: choreographer.jank_rate_high
+  condition: doframe_overview.data[0]?.jank_rate_pct > 10
   diagnosis: 卡顿率 ${doframe_overview.data[0]?.jank_rate_pct}%，超过 10% 阈值
   severity: critical
   confidence: high
@@ -210,7 +211,8 @@ rules:
   - doframe_overview.data[0]?.jank_rate_pct
   - doframe_overview.data[0]?.jank_frames
   - doframe_overview.data[0]?.total_frames
-- condition: doframe_overview.data[0]?.max_dur_ms > 100
+- id: choreographer.max_frame_long
+  condition: doframe_overview.data[0]?.max_dur_ms > 100
   diagnosis: 最长帧时间 ${doframe_overview.data[0]?.max_dur_ms}ms，严重影响体验
   severity: critical
   confidence: high
@@ -219,7 +221,8 @@ rules:
   - 检查是否有 ANR 风险
   evidence_fields:
   - doframe_overview.data[0]?.max_dur_ms
-- condition: callback_breakdown.data.find(c => c.callback_type === 'traversal')?.avg_ms > 10
+- id: choreographer.traversal_slow
+  condition: callback_breakdown.data.find(c => c.callback_type === 'traversal')?.avg_ms > 10
   diagnosis: View 遍历平均耗时 ${callback_breakdown.data.find(c => c.callback_type === 'traversal')?.avg_ms}ms
   confidence: high
   suggestions:
@@ -228,7 +231,8 @@ rules:
   - 避免在 onDraw 中分配对象
   evidence_fields:
   - callback_breakdown.data.find(c => c.callback_type === 'traversal')?.avg_ms
-- condition: view_traversal.data.find(v => v.traversal_phase === 'measure')?.max_ms > 8
+- id: choreographer.measure_slow
+  condition: view_traversal.data.find(v => v.traversal_phase === 'measure')?.max_ms > 8
   diagnosis: Measure 阶段最大耗时 ${view_traversal.data.find(v => v.traversal_phase === 'measure')?.max_ms}ms
   confidence: medium
   suggestions:
@@ -236,7 +240,8 @@ rules:
   - 避免在 onMeasure 中进行耗时计算
   evidence_fields:
   - view_traversal.data.find(v => v.traversal_phase === 'measure')?.max_ms
-- condition: long_frames.data.filter(f => f.jank_severity === 'jank_5plus_frames').length > 0
+- id: choreographer.jank_5plus_frames
+  condition: long_frames.data.filter(f => f.jank_severity === 'jank_5plus_frames').length > 0
   diagnosis: 检测到 ${long_frames.data.filter(f => f.jank_severity === 'jank_5plus_frames').length} 个严重卡顿帧 (丢失 5+ 帧)
   severity: critical
   confidence: high

@@ -88,7 +88,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/framework/wms_module.skill.yaml",
-    "sha256": "4bd2c147a32250b3c3ae71af00fb8bbfb8b99256c68cc8fa44a0131ebe25d794"
+    "sha256": "c52bd0ea0df3f2c51b66d81b1951baa545c62d35b7e103541c2e25cf88051e39"
   },
   "steps": [
     {
@@ -156,6 +156,7 @@
             "slow_animations.data[0]?.dur_ms",
             "slow_animations.data[0]?.animation_type"
           ],
+          "id": "wms.slow_window_animation",
           "suggestions": [
             "检查动画期间是否有主线程阻塞",
             "检查 GPU 渲染负载",
@@ -170,6 +171,7 @@
             "transitions.data[0]?.dur_ms",
             "transitions.data[0]?.transition_type"
           ],
+          "id": "wms.slow_activity_transitions",
           "suggestions": [
             "检查 Activity 生命周期中的耗时操作",
             "优化首帧渲染性能"
@@ -183,6 +185,7 @@
             "animation_overview.data[0]?.animation_type",
             "animation_overview.data[0]?.max_dur_ms"
           ],
+          "id": "wms.animation_max_long",
           "suggestions": [
             "分析具体动画场景",
             "检查系统负载情况"
@@ -196,6 +199,7 @@
             "draw_latency.data[0]?.draw_event",
             "draw_latency.data[0]?.avg_dur_ms"
           ],
+          "id": "wms.window_draw_slow",
           "suggestions": [
             "优化 onDraw 实现",
             "减少过度绘制",

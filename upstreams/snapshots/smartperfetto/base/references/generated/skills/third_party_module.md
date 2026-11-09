@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/app/third_party_module.skill.yaml
-Source SHA-256: 187161c0bb28c5b2c3fc7793981fd519e399d3a17ee5a07d05ea9d64daf388b5
+Source SHA-256: 39751b02d647c86152142d1d75ba69d8b950f6ea97c884c16908e3696104804b
 # 应用分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -146,7 +146,8 @@ inputs:
 - long_slices
 - render_thread_state
 rules:
-- condition: main_thread_state.data.find(s => s.state === 'Running')?.pct > 80
+- id: third_party.main_thread_running_high
+  condition: main_thread_state.data.find(s => s.state === 'Running')?.pct > 80
   diagnosis: 主线程 CPU 占用过高 (${main_thread_state.data.find(s => s.state === 'Running')?.pct}%)，可能导致 UI 响应慢
   confidence: high
   suggestions:
@@ -155,7 +156,8 @@ rules:
   evidence_fields:
   - main_thread_state.data[0].pct
   - main_thread_state.data[0].dur_ms
-- condition: main_thread_state.data.find(s => s.state === 'R')?.pct > 10
+- id: third_party.main_thread_runnable_high
+  condition: main_thread_state.data.find(s => s.state === 'R')?.pct > 10
   diagnosis: 主线程 Runnable 等待过长 (${main_thread_state.data.find(s => s.state === 'R')?.pct}%)，存在 CPU 竞争
   confidence: high
   suggestions:
@@ -163,7 +165,8 @@ rules:
   - 检查是否有后台进程占用 CPU
   evidence_fields:
   - main_thread_state.data.find(s => s.state === 'R')?.pct
-- condition: long_slices.data[0]?.dur_ms > 16
+- id: third_party.main_thread_long_task
+  condition: long_slices.data[0]?.dur_ms > 16
   diagnosis: '发现耗时主线程任务: ${long_slices.data[0]?.task_name} (${long_slices.data[0]?.dur_ms}ms)'
   confidence: high
   suggestions:
@@ -172,7 +175,8 @@ rules:
   evidence_fields:
   - long_slices.data[0].task_name
   - long_slices.data[0].dur_ms
-- condition: thread_overview.data.length > 30
+- id: third_party.thread_count_high
+  condition: thread_overview.data.length > 30
   diagnosis: 应用线程数过多 (${thread_overview.data.length} 个活跃线程)
   confidence: medium
   suggestions:

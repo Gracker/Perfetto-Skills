@@ -59,7 +59,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_module/gpu_frequency_overview.sql",
-      "sha256": "c8c64b00fa5c15e159ddf864a5c4cd43f4fdeed309d52c0e72b83691f7f51212",
+      "sha256": "1c07e6b0b8f375ac889ad7011289237c1950654295a84f868f81ceeab539ab73",
       "signal_patterns": [
         "gpufreq"
       ],
@@ -67,7 +67,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/gpu_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "579fe2d70ef30c53d7a5e32a06732ef2872ce8b45c31aea88cb079bf2a45c9e0"
+        "sha256": "b886833bb0a8ce73f11e481eb087092418db60082fdec57dda4d24dd6c000658"
       },
       "sql_dependencies": {
         "creates": [],
@@ -165,7 +165,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_module/gpu_utilization.sql",
-      "sha256": "be3a684cf8e0a379a35dd845d713e2db884ed8130b44aa94095623d14fd93741",
+      "sha256": "48084fd9a2440faa7da8e369a7d89a90f3688b319dff818b6df3a507679e92f7",
       "signal_patterns": [
         "%busy%",
         "%load%",
@@ -175,7 +175,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/gpu_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "579fe2d70ef30c53d7a5e32a06732ef2872ce8b45c31aea88cb079bf2a45c9e0"
+        "sha256": "b886833bb0a8ce73f11e481eb087092418db60082fdec57dda4d24dd6c000658"
       },
       "sql_dependencies": {
         "creates": [],
@@ -262,7 +262,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_module/render_thread_gpu.sql",
-      "sha256": "fa7d08728363cfe9b2a10539e9c7508e7b305ac1c71704f0a792224391260404",
+      "sha256": "0803fb03ed497ea46e2016fce0e8587e3023efa6cdcab0d37f43819bd70a62b0",
       "signal_patterns": [
         "%draw%",
         "%flush%",
@@ -273,7 +273,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/gpu_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "579fe2d70ef30c53d7a5e32a06732ef2872ce8b45c31aea88cb079bf2a45c9e0"
+        "sha256": "b886833bb0a8ce73f11e481eb087092418db60082fdec57dda4d24dd6c000658"
       },
       "sql_dependencies": {
         "creates": [],
@@ -360,7 +360,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/gpu_module/slow_gpu_operations.sql",
-      "sha256": "6f030af9b929c076b93f705fbe55581aa3e9fc9aac2b42ed2ee5e92ebb5f77b5",
+      "sha256": "52b3cb9d50e7c708d218b1af9f5e138fd672be8b858e88637c2dc95384946ab0",
       "signal_patterns": [
         "%draw%",
         "%eglSwap%",
@@ -370,7 +370,7 @@
       "source": {
         "path": "backend/skills/modules/hardware/gpu_module.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "579fe2d70ef30c53d7a5e32a06732ef2872ce8b45c31aea88cb079bf2a45c9e0"
+        "sha256": "b886833bb0a8ce73f11e481eb087092418db60082fdec57dda4d24dd6c000658"
       },
       "sql_dependencies": {
         "creates": [],

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/wms_module.skill.yaml
-Source SHA-256: 4bd2c147a32250b3c3ae71af00fb8bbfb8b99256c68cc8fa44a0131ebe25d794
+Source SHA-256: c52bd0ea0df3f2c51b66d81b1951baa545c62d35b7e103541c2e25cf88051e39
 # WMS 窗口管理分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -172,7 +172,8 @@ inputs:
 - slow_animations
 - draw_latency
 rules:
-- condition: slow_animations.data.length > 0
+- id: wms.slow_window_animation
+  condition: slow_animations.data.length > 0
   diagnosis: 检测到 ${slow_animations.data.length} 个慢窗口动画，最长 ${slow_animations.data[0]?.dur_ms}ms
   confidence: high
   suggestions:
@@ -183,7 +184,8 @@ rules:
   - slow_animations.data.length
   - slow_animations.data[0]?.dur_ms
   - slow_animations.data[0]?.animation_type
-- condition: transitions.data.filter(t => t.quality === 'very_slow').length > 3
+- id: wms.slow_activity_transitions
+  condition: transitions.data.filter(t => t.quality === 'very_slow').length > 3
   diagnosis: 多个 Activity 转场过慢 (>500ms)
   confidence: high
   suggestions:
@@ -192,7 +194,8 @@ rules:
   evidence_fields:
   - transitions.data[0]?.dur_ms
   - transitions.data[0]?.transition_type
-- condition: animation_overview.data[0]?.max_dur_ms > 500
+- id: wms.animation_max_long
+  condition: animation_overview.data[0]?.max_dur_ms > 500
   diagnosis: 窗口动画最大耗时 ${animation_overview.data[0]?.max_dur_ms}ms，超过 500ms 阈值
   confidence: medium
   suggestions:
@@ -201,7 +204,8 @@ rules:
   evidence_fields:
   - animation_overview.data[0]?.animation_type
   - animation_overview.data[0]?.max_dur_ms
-- condition: draw_latency.data[0]?.avg_dur_ms > 16
+- id: wms.window_draw_slow
+  condition: draw_latency.data[0]?.avg_dur_ms > 16
   diagnosis: 应用窗口绘制平均耗时 ${draw_latency.data[0]?.avg_dur_ms}ms，超过 16ms 帧时间
   confidence: medium
   suggestions:

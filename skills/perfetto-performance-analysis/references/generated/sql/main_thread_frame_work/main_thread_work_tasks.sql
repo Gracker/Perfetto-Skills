@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/main_thread_frame_work.skill.yaml
--- Source SHA-256: 335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0
+-- Source SHA-256: afd9012024e1d46194fffd127e3507c4594bc3eb0990c1d19ced0b57f795a490
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

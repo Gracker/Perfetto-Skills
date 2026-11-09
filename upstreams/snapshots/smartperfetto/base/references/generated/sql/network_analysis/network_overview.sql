@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/network_analysis.skill.yaml
--- Source SHA-256: b0d6f1c51fe5e8687db9cc5ec9b1df231029151ee389c92bfb42f096e1ac13e0
+-- Source SHA-256: 390c291f6c2a0149d466965148a169836930c1d3393129ea790511f28db54319
 
 SELECT
   COUNT(*) as total_events,

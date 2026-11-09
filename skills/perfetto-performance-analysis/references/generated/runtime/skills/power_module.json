@@ -73,7 +73,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/power_module.skill.yaml",
-    "sha256": "b1684cac1874ae453391ccfe88614289405b052dad8ab7ec594255347bb37acb"
+    "sha256": "cd2beb4f76696242a572e25220b5f4bfb755d932498796fb7b3098dd5759ec18"
   },
   "steps": [
     {
@@ -162,6 +162,7 @@
             "long_wakelocks.data[0]?.wakelock_name",
             "long_wakelocks.data[0]?.dur_ms"
           ],
+          "id": "power.long_wakelocks",
           "suggestions": [
             "检查 Wakelock 是否必要",
             "确保在完成任务后释放 Wakelock",
@@ -176,6 +177,7 @@
             "wakelock_overview.data[0]?.wakelock_event",
             "wakelock_overview.data[0]?.total_ms"
           ],
+          "id": "power.wakelock_total_long",
           "suggestions": [
             "优化 Wakelock 使用策略",
             "减少不必要的唤醒"
@@ -189,6 +191,7 @@
             "wakeup_sources.data[0]?.wakeup_source",
             "wakeup_sources.data[0]?.wakeup_count"
           ],
+          "id": "power.wakeup_count_high",
           "suggestions": [
             "合并定时任务减少唤醒",
             "使用 AlarmManager.setInexactRepeating()"
@@ -201,6 +204,7 @@
           "evidence_fields": [
             "suspend_resume.data.length"
           ],
+          "id": "power.no_deep_suspend",
           "suggestions": [
             "检查是否有前台服务阻止休眠",
             "检查 Wakelock 使用情况"
@@ -214,6 +218,7 @@
             "cpu_idle_states.data[0]?.idle_state",
             "cpu_idle_states.data[0]?.avg_value"
           ],
+          "id": "power.cpu_idle_low",
           "suggestions": [
             "检查后台任务是否过多",
             "优化定时器触发频率"

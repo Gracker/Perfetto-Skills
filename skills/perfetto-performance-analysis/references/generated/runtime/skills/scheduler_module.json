@@ -70,7 +70,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
-    "sha256": "67ddcf3a040cfc8fb5ace854ca824d699330c03bfd3894272d6df7d804f91677"
+    "sha256": "0ed2dae7a8e3c77d9cae3d3a2266333ae7ca980b3f7bc1efdb94ae5a00ca5b37"
   },
   "steps": [
     {
@@ -137,6 +137,7 @@
             "runnable_data.data[0].thread_name",
             "runnable_data.data[0].runnable_ms"
           ],
+          "id": "scheduler.runnable_wait_long",
           "suggestions": [
             "检查是否有后台线程占用 CPU",
             "核对已采集的调度策略、优先级与对端任务"
@@ -150,6 +151,7 @@
             "freq_data.data[0].avg_freq_mhz",
             "freq_data.data[0].max_freq_mhz"
           ],
+          "id": "scheduler.big_core_freq_low",
           "suggestions": [
             "是否限频以同窗口的 CPU 限频证据（cpu_throttling_in_range）为准",
             "检查电池状态和功耗策略"
@@ -163,6 +165,7 @@
             "core_data.data[0].thread_name",
             "core_data.data[0].small_core_pct"
           ],
+          "id": "scheduler.little_core_residency",
           "suggestions": [
             "检查 CPU 亲和性设置",
             "若采集缺少 affinity/cgroup/uclamp，明确证据缺口，不据此修改调度策略"

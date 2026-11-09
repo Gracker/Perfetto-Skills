@@ -122,7 +122,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/anr_analysis.skill.yaml",
-    "sha256": "1fa589ef5136298372b33fb125b7e0ffa15108e83ecabe89690df65f9bf71ed2"
+    "sha256": "f5a02f9bd8e59acab9537e22bc5ddcc6db2828930cd8fab0d630eb4ae1e079a2"
   },
   "steps": [
     {
@@ -156,6 +156,15 @@
       "query_id": "anr_analysis/anr_detection",
       "result_dependencies": [],
       "save_as": "detection",
+      "type": "atomic"
+    },
+    {
+      "condition": "detection.data[0]?.total_anr_count > 0",
+      "displayed": true,
+      "id": "anr_event_brief",
+      "name": "ANR 事件摘要",
+      "query_id": "anr_analysis/anr_event_brief",
+      "result_dependencies": [],
       "type": "atomic"
     },
     {
@@ -285,6 +294,22 @@
       "type": "atomic"
     },
     {
+      "condition": "detection.data[0]?.total_anr_count > 0 && anr_ctx.data?.length > 0",
+      "displayed": true,
+      "id": "first_anr_binder_pool_saturation",
+      "name": "首个 ANR 窗口 Binder 线程池饱和",
+      "optional": true,
+      "params": {
+        "end_ts": "${anr_ctx.data[0].anr_ts}",
+        "package": "${anr_ctx.data[0].process_name}",
+        "start_ts": "${anr_ctx.data[0].window_start_ts}"
+      },
+      "save_as": "first_anr_binder_pool",
+      "save_from": "pool_saturation",
+      "skill": "binder_pool_saturation_in_range",
+      "type": "skill"
+    },
+    {
       "condition": "detection.data[0]?.total_anr_count > 0 && enable_detail_analysis !== false",
       "displayed": true,
       "id": "analyze_anr_events",
@@ -321,7 +346,8 @@
         "freeze_check",
         "overview",
         "anr_events",
-        "top_processes"
+        "top_processes",
+        "first_anr_binder_pool"
       ],
       "name": "ANR 诊断",
       "rules": [
@@ -329,6 +355,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && freeze_check.data[0]?.freeze_verdict === 'system_server_freeze'",
           "confidence": "high",
           "diagnosis": "system_server 主线程 ${freeze_check.data[0].system_server_stalled_pct}% 的存活时间处于可运行等待或不可中断等待（系统服务停滞）",
+          "id": "anr.system_server_freeze",
           "severity": "critical",
           "suggestions": [
             "这是系统级问题，优先排查 system_server 调度阻塞",
@@ -340,6 +367,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && freeze_check.data[0]?.freeze_verdict === 'system_freeze'",
           "confidence": "high",
           "diagnosis": "系统级停滞：${freeze_check.data[0].stalled_apps}/${freeze_check.data[0].demanding_apps} 个有运行需求的应用主线程过半存活时间处于可运行等待或不可中断等待",
+          "id": "anr.system_freeze",
           "severity": "critical",
           "suggestions": [
             "这是系统级问题，非单个应用问题",
@@ -351,6 +379,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) > 1 && freeze_check.data[0]?.freeze_verdict === 'system_server_freeze'",
           "confidence": "medium",
           "diagnosis": "首个 ANR 窗口 baseline 显示 system_server 主线程 ${freeze_check.data[0].system_server_stalled_pct}% 存活时间停滞，需逐 ANR 复核后才能升级为系统根因",
+          "id": "anr.multi.first_window_system_server_freeze",
           "severity": "warning",
           "suggestions": [
             "该 freeze_check 只覆盖首个 ANR 窗口",
@@ -362,6 +391,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) > 1 && freeze_check.data[0]?.freeze_verdict === 'system_freeze'",
           "confidence": "medium",
           "diagnosis": "首个 ANR 窗口 baseline 显示 ${freeze_check.data[0].stalled_apps}/${freeze_check.data[0].demanding_apps} 个有运行需求的应用主线程停滞，需逐 ANR 复核后才能升级为系统根因",
+          "id": "anr.multi.first_window_system_freeze",
           "severity": "warning",
           "suggestions": [
             "该 freeze_check 只覆盖首个 ANR 窗口",
@@ -373,6 +403,7 @@
           "condition": "detection.data[0]?.total_anr_count > (multi_anr_threshold || 3) && detection.data[0]?.anr_span_seconds < (multi_anr_span_seconds || 10)",
           "confidence": "high",
           "diagnosis": "短时间内发生 ${detection.data[0].total_anr_count} 个 ANR，间隔仅 ${detection.data[0].anr_span_seconds}s",
+          "id": "anr.multi.burst",
           "severity": "critical",
           "suggestions": [
             "多个 ANR 集中发生通常指向系统级问题",
@@ -383,6 +414,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && memory_pressure.data?.length > 0",
           "confidence": "high",
           "diagnosis": "ANR 期间发生 LMK 杀进程，系统内存压力大",
+          "id": "anr.lmk_during_window",
           "severity": "critical",
           "suggestions": [
             "内存不足导致系统繁忙，影响应用响应",
@@ -394,6 +426,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && cpu_health.data?.find(r => r.status === 'overloaded')",
           "confidence": "high",
           "diagnosis": "CPU ${cpu_health.data.find(r => r.status === 'overloaded').core_type} 核过载 (${cpu_health.data.find(r => r.status === 'overloaded').avg_util_pct}%)",
+          "id": "anr.cpu_overloaded",
           "severity": "critical",
           "suggestions": [
             "CPU 资源严重不足",
@@ -405,6 +438,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && (anr_io_wait.data?.[0]?.main_thread_uninterruptible_ms || 0) > (uninterruptible_wait_threshold_ms || io_wait_threshold_ms || 500)",
           "confidence": "low",
           "diagnosis": "ANR 进程 ${anr_io_wait.data[0].process_name} 主线程在 ANR 窗口内 D-state 不可中断等待 ${anr_io_wait.data[0].main_thread_uninterruptible_ms}ms",
+          "id": "anr.main_thread_uninterruptible_wait",
           "severity": "warning",
           "suggestions": [
             "D-state 只能说明不可中断等待，不能单独证明磁盘 IO",
@@ -415,6 +449,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && (lock_waits?.data?.find(r => r.wait_type === 'futex')?.p95_wait_ms || 0) > (lock_contention_futex_p95_critical_ms || 20)",
           "confidence": "medium",
           "diagnosis": "ANR 窗口 Futex P95 等待 ${lock_waits.data.find(r => r.wait_type === 'futex').p95_wait_ms}ms，存在锁等待候选信号",
+          "id": "anr.lock.futex_p95_wait",
           "severity": "warning",
           "suggestions": [
             "这是包名级专家探针，不能作为最终根因",
@@ -426,6 +461,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && (lock_waits?.data?.find(r => r.wait_type === 'mutex')?.p95_wait_ms || 0) > (lock_contention_mutex_p95_warning_ms || 10)",
           "confidence": "medium",
           "diagnosis": "ANR 窗口 Mutex P95 等待 ${lock_waits.data.find(r => r.wait_type === 'mutex').p95_wait_ms}ms，锁等待偏高",
+          "id": "anr.lock.mutex_p95_wait",
           "severity": "warning",
           "suggestions": [
             "按热点函数重构锁粒度，降低串行化路径",
@@ -436,6 +472,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'no_focus_window')",
           "confidence": "medium",
           "diagnosis": "触发类型分流：无焦点窗口输入超时，需要窗口焦点链证据闭环",
+          "id": "anr.trigger.no_focus_window",
           "severity": "warning",
           "suggestions": [
             "按 Activity resume → relayout → draw/focus 顺序检查窗口建立链路",
@@ -447,6 +484,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'job_scheduler_timeout')",
           "confidence": "medium",
           "diagnosis": "触发类型分流：JobScheduler 相关 ANR，需要 JobService 回调或绑定链路证据",
+          "id": "anr.trigger.job_scheduler_timeout",
           "severity": "warning",
           "suggestions": [
             "检查 onStartJob/onStopJob/onBind 是否在主线程执行耗时操作",
@@ -458,6 +496,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'system_watchdog_swt')",
           "confidence": "medium",
           "diagnosis": "触发类型分流：system_server Watchdog/SWT，需要系统服务线程证据闭环",
+          "id": "anr.trigger.system_watchdog_swt",
           "severity": "warning",
           "suggestions": [
             "优先排查 system_server Handler、锁和 Binder 线程池",
@@ -469,6 +508,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && top_processes.data?.find(p => p.process_name === anr_events.data?.[0]?.process_name && p.cpu_pct > 85)",
           "confidence": "medium",
           "diagnosis": "目标进程在 ANR 窗口 CPU 占比 ${top_processes.data.find(p => p.process_name === anr_events.data?.[0]?.process_name && p.cpu_pct > 85).cpu_pct}%",
+          "id": "anr.target_process_cpu_high",
           "severity": "warning",
           "suggestions": [
             "这是 high_load_anr 候选证据，需要和主线程热点、调度延迟或 GC/内存压力交叉验证",
@@ -480,6 +520,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'input_dispatching_timeout')",
           "confidence": "medium",
           "diagnosis": "触发类型分流：输入事件超时，需要 direct_blocker/线程状态/日志证据闭环",
+          "id": "anr.trigger.input_dispatching_timeout",
           "severity": "warning",
           "suggestions": [
             "主线程 5 秒未处理输入是触发机制，不是最终根因",
@@ -491,6 +532,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'broadcast_timeout')",
           "confidence": "medium",
           "diagnosis": "触发类型分流：广播处理超时，需要 onReceive/goAsync/finish 链路证据",
+          "id": "anr.trigger.broadcast_timeout",
           "severity": "warning",
           "suggestions": [
             "广播超时只说明超时入口，不能直接等同业务代码根因",
@@ -502,6 +544,7 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'service_timeout')",
           "confidence": "medium",
           "diagnosis": "触发类型分流：服务生命周期超时，需要 Service/FGS 链路证据",
+          "id": "anr.trigger.service_timeout",
           "severity": "warning",
           "suggestions": [
             "Service/FGS 超时是触发类型，不能单独作为最终根因",
@@ -513,11 +556,45 @@
           "condition": "(detection.data[0]?.total_anr_count || 0) === 1 && trigger_classification.data?.find(r => r.trigger_type === 'content_provider_timeout')",
           "confidence": "medium",
           "diagnosis": "触发类型分流：ContentProvider 超时，需要 provider 发布/查询链路证据",
+          "id": "anr.trigger.content_provider_timeout",
           "severity": "warning",
           "suggestions": [
             "ContentProvider not responding 只说明触发入口",
             "检查 provider 主线程、Binder 线程、数据库/文件 IO 和调用方等待",
             "没有逐事件阻塞证据时不要写成最终根因"
+          ]
+        },
+        {
+          "binds": [
+            {
+              "field": "first_anr_binder_pool.data.find(r => r.saturation_evidence === 'saturated_observed').process_name",
+              "name": "process_name"
+            },
+            {
+              "field": "first_anr_binder_pool.data.find(r => r.saturation_evidence === 'saturated_observed').target_role",
+              "name": "target_role"
+            },
+            {
+              "field": "first_anr_binder_pool.data.find(r => r.saturation_evidence === 'saturated_observed').pool_size",
+              "name": "pool_size"
+            },
+            {
+              "field": "first_anr_binder_pool.data.find(r => r.saturation_evidence === 'saturated_observed').peak_busy_threads",
+              "name": "peak_busy_threads"
+            },
+            {
+              "field": "first_anr_binder_pool.data.find(r => r.saturation_evidence === 'saturated_observed').saturated_ns",
+              "name": "saturated_ns"
+            }
+          ],
+          "condition": "first_anr_binder_pool.data?.find(r => r.saturation_evidence === 'saturated_observed')",
+          "confidence": "medium",
+          "diagnosis": "首个 ANR 窗口内 ${first_anr_binder_pool.data.find(r => r.saturation_evidence === 'saturated_observed').process_name} 的 Binder 线程池（观测到 ${first_anr_binder_pool.data.find(r => r.saturation_evidence === 'saturated_observed').pool_size} 个活跃线程）全部忙碌共 ${first_anr_binder_pool.data.find(r => r.saturation_evidence === 'saturated_observed').saturated_ns} ns，并发忙碌峰值 ${first_anr_binder_pool.data.find(r => r.saturation_evidence === 'saturated_observed').peak_busy_threads}",
+          "id": "anr.binder_pool_saturated",
+          "severity": "warning",
+          "suggestions": [
+            "线程池大小是 trace 中观测到的活跃线程数，不是配置上限",
+            "结合主线程同步 Binder 等待与对端 reply 时间判断是否排队，饱和本身不证明等待由排队造成"
           ]
         }
       ],

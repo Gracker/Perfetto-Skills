@@ -376,7 +376,7 @@ def run_query(
         result = _run_rpc_once(binary, trace, text, limits)
     if result is None:
         result = _run_processor(
-            (str(binary), "query", "--extra-checks"),
+            (str(binary), *PROCESSOR_QUERY_COMMAND),
             (str(trace),),
             sql=sql,
             sql_file=query_path,
@@ -406,6 +406,10 @@ class _ProcessorLimits:
 def query_rows(result: QueryResult) -> list[dict[str, str | int | float | None]]:
     """A query's rows: the RPC cells when read over RPC, else the parsed CLI CSV."""
     return [dict(row) for row in result.rows] if result.rows is not None else parse_csv_output(result.stdout)
+
+
+# v59 defaults to Markdown and truncated results when it detects an agent; parsers need the whole CSV.
+PROCESSOR_QUERY_COMMAND = ("query", "--no-agent", "--format", "csv", "--extra-checks")
 
 
 def _run_processor(

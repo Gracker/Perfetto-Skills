@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/thermal_throttling.skill.yaml
--- Source SHA-256: 03d5214cde82b7f701aaf49433f9e9dd86053d0c50cd7845247da2506662c32e
+-- Source SHA-256: 620dd9f223481611ba06792821dc77d4665abcd5d4727f571688f31742da6903
 
 SELECT
   cct.cpu as cpu_id,

@@ -35,7 +35,7 @@ class TraceProcessorSessionTest(unittest.TestCase):
         """What `trace_processor_shell query` itself prints for `sql`."""
         limits = self.common._ProcessorLimits(time.monotonic() + 60, 60, 1 << 24)
         return self.common._run_processor(
-            (self.processor, "query", "--extra-checks"), (str(TRACE),), sql=sql, sql_file=None, limits=limits,
+            (self.processor, *self.common.PROCESSOR_QUERY_COMMAND), (str(TRACE),), sql=sql, sql_file=None, limits=limits,
         ).stdout
 
     def query(self, sql: str | None = None, *, trace: Path = TRACE, **options: object):

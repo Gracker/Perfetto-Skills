@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/scroll-response.strategy.md
-Source SHA-256: 4cb9824fa8afc1d9bc28026e5c2f39af9dac33f6cf231933a605f23ea0b04661
+Source SHA-256: 56ef0f051b813aadbd0216d391d514580185291484ae5827b07874a7b36ce8c9
 
 # Scroll Response Strategy
 
@@ -131,7 +131,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

@@ -91,7 +91,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
-    "sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee"
+    "sha256": "4a2128e808996386dac3b72b899746989b84cc0117844e75b30b84dc52c4a367"
   },
   "steps": [
     {
@@ -225,6 +225,7 @@
           "condition": "wakeup_source_ranking.data[0]?.wakeup_count > ${frequent_wakeup_critical|50}",
           "confidence": "high",
           "diagnosis": "FREQUENT_WAKEUP - 唤醒源 '${wakeup_source_ranking.data[0].wakeup_source}' 唤醒 ${wakeup_source_ranking.data[0].wakeup_count} 次",
+          "id": "suspend_wakeup.frequent_wakeup_critical",
           "severity": "critical",
           "suggestions": [
             "检查该唤醒源对应的驱动或服务",
@@ -236,6 +237,7 @@
           "condition": "wakeup_source_ranking.data[0]?.wakeup_count > ${frequent_wakeup_warning|20}",
           "confidence": "medium",
           "diagnosis": "FREQUENT_WAKEUP - 唤醒源 '${wakeup_source_ranking.data[0].wakeup_source}' 唤醒 ${wakeup_source_ranking.data[0].wakeup_count} 次",
+          "id": "suspend_wakeup.frequent_wakeup_warning",
           "severity": "warning",
           "suggestions": [
             "检查唤醒频率是否合理",
@@ -246,6 +248,7 @@
           "condition": "suspend_quality.data[0]?.abort_pct > ${abort_pct_critical|30}",
           "confidence": "high",
           "diagnosis": "LONG_SUSPEND - Suspend 中止率高达 ${suspend_quality.data[0].abort_pct}%，设备难以进入休眠",
+          "id": "suspend_wakeup.abort_rate_critical",
           "severity": "critical",
           "suggestions": [
             "检查阻止 suspend 的内核模块或驱动",
@@ -257,6 +260,7 @@
           "condition": "suspend_quality.data[0]?.abort_pct > ${abort_pct_warning|10}",
           "confidence": "medium",
           "diagnosis": "LONG_SUSPEND - Suspend 中止率 ${suspend_quality.data[0].abort_pct}%",
+          "id": "suspend_wakeup.abort_rate_warning",
           "severity": "warning",
           "suggestions": [
             "检查 suspend 失败的 backoff 原因",
@@ -267,6 +271,7 @@
           "condition": "suspend_quality.data[0]?.suspend_pct < ${low_suspend_pct|30}",
           "confidence": "medium",
           "diagnosis": "LONG_SUSPEND - 休眠时间占比仅 ${suspend_quality.data[0].suspend_pct}%",
+          "id": "suspend_wakeup.suspend_share_low",
           "severity": "warning",
           "suggestions": [
             "设备大部分时间处于唤醒状态",
@@ -277,6 +282,7 @@
           "condition": "suspend_quality.data[0]?.suspend_pct >= 50 && suspend_quality.data[0]?.abort_pct <= ${abort_pct_warning|10}",
           "confidence": "high",
           "diagnosis": "SUSPEND_NORMAL - 休眠质量正常（休眠占比 ${suspend_quality.data[0].suspend_pct}%，中止率 ${suspend_quality.data[0].abort_pct}%）",
+          "id": "suspend_wakeup.normal",
           "severity": "info",
           "suggestions": [
             "休眠唤醒行为在正常范围内"
@@ -299,6 +305,7 @@
           "condition": "suspend_check.data[0]?.status === 'unavailable' && (!suspend_slice_check.data || suspend_slice_check.data[0]?.status === 'unavailable')",
           "confidence": "high",
           "diagnosis": "未检测到休眠唤醒数据。Trace 中未包含 android.suspend 模块数据，也未发现 suspend/wakeup 相关 Slice。如需分析休眠问题，请在录制 Trace 时启用 power 相关数据源。",
+          "id": "suspend_wakeup.data_unavailable",
           "severity": "info",
           "suggestions": [
             "录制 Trace 时启用 android.suspend 和 android.wakeups 模块",

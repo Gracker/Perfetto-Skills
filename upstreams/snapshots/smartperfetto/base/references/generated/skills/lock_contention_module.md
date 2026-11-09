@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/lock_contention_module.skill.yaml
-Source SHA-256: 106819ab92ac89738c756cd296dd1da8aac142910477fdb313a8dc616a50bd08
+Source SHA-256: d07a8840cdaf1f8b7ef019cfc13abd3529dc7873f677593f06d5892a1ddf859a
 # 锁竞争分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -206,7 +206,8 @@ inputs:
 - main_thread_locks
 - thread_contention_pairs
 rules:
-- condition: main_thread_locks.data.length > 0
+- id: lock_contention.main_thread_waits
+  condition: main_thread_locks.data.length > 0
   diagnosis: 主线程检测到 ${main_thread_locks.data.length} 次锁等待，最长 ${main_thread_locks.data[0]?.wait_ms}ms
   severity: info
   confidence: low
@@ -218,7 +219,8 @@ rules:
   - main_thread_locks.data.length
   - main_thread_locks.data[0]?.lock_event
   - main_thread_locks.data[0]?.wait_ms
-- condition: lock_overview.data[0]?.total_wait_ms > 100
+- id: lock_contention.total_wait_long
+  condition: lock_overview.data[0]?.total_wait_ms > 100
   diagnosis: 锁竞争总等待时间 ${lock_overview.data[0]?.total_wait_ms}ms
   confidence: high
   suggestions:
@@ -228,7 +230,8 @@ rules:
   evidence_fields:
   - lock_overview.data[0]?.lock_event
   - lock_overview.data[0]?.total_wait_ms
-- condition: monitor_contention.data[0]?.wait_ms > 10
+- id: lock_contention.monitor_contention
+  condition: monitor_contention.data[0]?.wait_ms > 10
   diagnosis: 'Java Monitor 竞争: ${monitor_contention.data[0]?.monitor_event} 等待 ${monitor_contention.data[0]?.wait_ms}ms'
   confidence: high
   suggestions:
@@ -239,7 +242,8 @@ rules:
   - monitor_contention.data[0]?.monitor_event
   - monitor_contention.data[0]?.wait_ms
   - monitor_contention.data[0]?.waiting_thread
-- condition: blocked_threads.data.filter(t => t.state === 'D').length > 3
+- id: lock_contention.uninterruptible_threads
+  condition: blocked_threads.data.filter(t => t.state === 'D').length > 3
   diagnosis: 多个线程处于不可中断阻塞状态，可能存在 I/O 或锁等待
   confidence: medium
   suggestions:
@@ -247,7 +251,8 @@ rules:
   - 检查是否有内核锁竞争
   evidence_fields:
   - blocked_threads.data.filter(t => t.state === 'D').length
-- condition: thread_contention_pairs.data[0]?.blocked_pct > 30
+- id: lock_contention.thread_blocked_share_high
+  condition: thread_contention_pairs.data[0]?.blocked_pct > 30
   diagnosis: 线程 ${thread_contention_pairs.data[0]?.thread_name} 阻塞时间占比 ${thread_contention_pairs.data[0]?.blocked_pct}%
   confidence: medium
   suggestions:

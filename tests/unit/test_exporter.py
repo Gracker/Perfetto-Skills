@@ -772,6 +772,17 @@ class InvestigationMethodologyExportTest(unittest.TestCase):
         self.assertNotIn("system.thread.state.duration", rendered)
         self.assertNotIn("```yaml", rendered)
 
+    def test_profiles_keep_entry_acquisition_out_of_public_text(self):
+        document = self.profile()
+        document["profiles"]["system_execution"]["requirements"][0]["entry_acquisition"] = {
+            "schema_version": 1, "metric_id": "system.thread.state.duration",
+            "subject_binding": "selected_thread_interval", "params": {"utid": "selected_utid"},
+        }
+        rendered = self.render("investigation-profiles.yaml", json.dumps(document))
+        self.assertIn("Explain R/R+ delay; missing coverage is unknown.", rendered)
+        self.assertNotIn("entry_acquisition", rendered)
+        self.assertNotIn("selected_thread_interval", rendered)
+
     def test_unknown_schema_fields_and_duplicate_requirements_fail_closed(self):
         invalid = []
         value = self.profile()

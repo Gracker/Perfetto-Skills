@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/anr.strategy.md
-Source SHA-256: 618a27841cbc74ff326f318963c297125d39fdcabd7911f3da34e603ea0031a9
+Source SHA-256: 2e6dddc85a333c62cef549cda7a159537ebad4c2bc2fd6a7b113c25c20781576
 
 # Anr Strategy
 
@@ -104,7 +104,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 
@@ -115,6 +115,18 @@ Check recorded ANR type, target UPID and timeout window when available. Keep tim
 ### anr_dependencies (dependency_chain)
 
 Trace Binder transactions, lock ownership, IO and wakeup dependencies where available; distinguish observed waiting from an established blocking chain and from ANR trigger attribution.
+
+### anr_binder_pool (dependency_chain)
+
+When the ANR main thread waits in synchronous binder calls, check whether the server's binder pool was saturated in the same window (binder_pool_saturation_in_range; anr_main_thread_blocking binder_blocking). The pool is the observed active binder threads, not the configured maximum; all-busy time is an observation about the pool and does not by itself prove the client queued.
+
+Apply when: Applies when the ANR window shows main-thread synchronous binder waits or the question concerns binder servers or thread pools.
+
+### runnable_cpu_occupancy (cpu_capacity)
+
+When a critical thread waits Runnable, read which tasks occupied the CPU it later ran on during those waits (runnable_cpu_occupancy_in_range). Occupants, idle and unattributed time conserve the wait; an occupant is an observation of who ran there, not a preemption motive or the whole cause.
+
+Apply when: Applies when a critical thread spends material time Runnable (R/R+) in the ANR window.
 
 #### anr Core Strategy
 

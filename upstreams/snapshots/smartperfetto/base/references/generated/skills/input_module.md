@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/input_module.skill.yaml
-Source SHA-256: e514d3ba027d776732f4f451e54e709f259d7b79e371ab403971fb4925dfa977
+Source SHA-256: 44cab906fb8f37dddce79e2c7407f2cef7d4c52307cb65f9890df0a5aaad681d
 # Input 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -129,7 +129,8 @@ inputs:
 - slow_inputs
 - dispatch_timing
 rules:
-- condition: click_stats.data[0]?.avg_latency_ms > 100
+- id: input.click_latency_high
+  condition: click_stats.data[0]?.avg_latency_ms > 100
   diagnosis: 平均点击响应延迟过高 (${click_stats.data[0]?.avg_latency_ms}ms)，超过 100ms 阈值
   confidence: high
   suggestions:
@@ -138,7 +139,8 @@ rules:
   evidence_fields:
   - click_stats.data[0].avg_latency_ms
   - click_stats.data[0].slow_clicks
-- condition: click_stats.data[0]?.slow_clicks > 5
+- id: input.slow_clicks
+  condition: click_stats.data[0]?.slow_clicks > 5
   diagnosis: 存在 ${click_stats.data[0]?.slow_clicks} 次慢响应点击事件
   confidence: high
   suggestions:
@@ -147,7 +149,8 @@ rules:
   evidence_fields:
   - click_stats.data[0].slow_clicks
   - click_stats.data[0].max_latency_ms
-- condition: dispatch_timing.data.find(s => s.stage === 'InputDispatcher')?.avg_ms > 5
+- id: input.dispatcher_delay
+  condition: dispatch_timing.data.find(s => s.stage === 'InputDispatcher')?.avg_ms > 5
   diagnosis: InputDispatcher 派发延迟 (${dispatch_timing.data.find(s => s.stage === 'InputDispatcher')?.avg_ms}ms)
   confidence: medium
   suggestions:

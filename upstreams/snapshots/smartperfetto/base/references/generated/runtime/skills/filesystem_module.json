@@ -63,7 +63,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
-    "sha256": "18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3"
+    "sha256": "435ec320f775e53fe918bea24a31a4c5584c3de7cb0e64c367fca92695457fa4"
   },
   "steps": [
     {
@@ -141,6 +141,7 @@
             "main_thread_io.data[0]?.dur_ms",
             "main_thread_io.data[0]?.io_operation"
           ],
+          "id": "filesystem.main_thread_io_slices",
           "suggestions": [
             "将 I/O 操作移至后台线程",
             "使用 Kotlin 协程或 RxJava 异步处理",
@@ -155,6 +156,7 @@
             "db_operations.data[0]?.db_operation",
             "db_operations.data[0]?.dur_ms"
           ],
+          "id": "filesystem.main_thread_db_slices",
           "suggestions": [
             "数据库查询应在后台线程执行",
             "使用 Room 的 @Query 配合 LiveData/Flow",
@@ -169,6 +171,7 @@
             "io_wait_state.data[0]?.thread_name",
             "io_wait_state.data[0]?.io_wait_ms"
           ],
+          "id": "filesystem.io_wait_long",
           "suggestions": [
             "检查存储设备性能",
             "减少同步 I/O 操作",
@@ -183,6 +186,7 @@
             "slow_io.data[0]?.operation",
             "slow_io.data[0]?.dur_ms"
           ],
+          "id": "filesystem.slow_io_critical",
           "suggestions": [
             "确认该切片是否代表真实同步文件 I/O，再决定是否移至后台",
             "若它持续阻塞主线程并超过响应阈值，再结合调度状态评估 ANR 风险"
@@ -196,6 +200,7 @@
             "io_overview.data[0]?.io_type",
             "io_overview.data[0]?.total_ms"
           ],
+          "id": "filesystem.io_total_long",
           "suggestions": [
             "优化 I/O 访问模式",
             "使用批量读写减少系统调用",

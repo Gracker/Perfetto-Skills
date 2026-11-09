@@ -129,7 +129,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/cpu_analysis.skill.yaml",
-    "sha256": "d92fc12306d640e35692ee32b71bec6aa951ed61f3d8f5b0f4f24b2bafacc9af"
+    "sha256": "a92fcecfaa391bf3e79d99fde999b7dcf21a49dfcd0fb35c65bbcd41af2d04b9"
   },
   "steps": [
     {
@@ -352,6 +352,7 @@
             "runnable_delays.data",
             "blocked_functions.data"
           ],
+          "id": "cpu.data_unavailable",
           "severity": "warning",
           "suggestions": [
             "[Owner] Perf/Infra | [Priority] P0 | [Action] 采集包含 sched 与 thread_state 的完整 trace（覆盖目标场景）",
@@ -365,6 +366,7 @@
           "evidence_fields": [
             "core_stats.data"
           ],
+          "id": "cpu.big_group_usage_low",
           "severity": "warning",
           "suggestions": [
             "[Owner] Runtime/App | [Priority] P1 | [Action] 检查关键线程优先级与调度组",
@@ -379,6 +381,7 @@
           "evidence_fields": [
             "main_thread_states.data"
           ],
+          "id": "cpu.main_thread_running_low",
           "severity": "warning",
           "suggestions": [
             "[Owner] App | [Priority] P1 | [Action] 排查主线程等待/阻塞来源（锁、IO、Binder）",
@@ -392,6 +395,7 @@
           "evidence_fields": [
             "runnable_delays.data"
           ],
+          "id": "cpu.sched_delay_severe",
           "severity": "critical",
           "suggestions": [
             "[Owner] Perf/System | [Priority] P0 | [Action] 检查高负载与抢占来源，控制后台并发",
@@ -406,6 +410,7 @@
           "evidence_fields": [
             "runnable_delays.data"
           ],
+          "id": "cpu.sched_delay_frequent",
           "severity": "warning",
           "suggestions": [
             "[Owner] App | [Priority] P1 | [Action] 优化线程模型，减少线程切换",
@@ -419,6 +424,7 @@
           "evidence_fields": [
             "blocked_functions.data"
           ],
+          "id": "cpu.blocked_function",
           "severity": "warning",
           "suggestions": [
             "[Owner] Perf | [Priority] P1 | [Action] 交叉检查对应时间窗的 app slice、文件/DB、Binder 或 lock contention 证据",
@@ -432,6 +438,7 @@
           "evidence_fields": [
             "affinity_probe.data"
           ],
+          "id": "cpu.thread_migration_frequent",
           "severity": "warning",
           "suggestions": [
             "[Owner] Runtime/System | [Priority] P1 | [Action] 调整关键线程亲和性与调度优先级",
@@ -445,6 +452,7 @@
           "evidence_fields": [
             "cache_miss_probe.data"
           ],
+          "id": "cpu.cache_miss_pressure",
           "severity": "warning",
           "suggestions": [
             "[Owner] App | [Priority] P1 | [Action] 优化数据局部性并减少 cache thrashing",

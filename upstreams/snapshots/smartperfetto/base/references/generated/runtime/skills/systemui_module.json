@@ -83,7 +83,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/app/systemui_module.skill.yaml",
-    "sha256": "878a322c6ecb8d008c5c1eb3a818f63e55dfb38cdd5a00236fef47da90c6bd0a"
+    "sha256": "7bad353475730c50d78e32f5389eef8a18f13d37f2838d318c9d9bfe0c0a577a"
   },
   "steps": [
     {
@@ -200,6 +200,7 @@
             "systemui_frames.data[0]?.jank_frames",
             "systemui_frames.data[0]?.total_frames"
           ],
+          "id": "systemui.jank_rate_high",
           "suggestions": [
             "检查通知中心动画性能",
             "优化快捷设置 Tile 响应",
@@ -214,6 +215,7 @@
             "systemui_main_thread.data[0]?.activity",
             "systemui_main_thread.data[0]?.max_ms"
           ],
+          "id": "systemui.main_thread_long_activity",
           "suggestions": [
             "将耗时操作移至后台线程",
             "优化 UI 更新逻辑"
@@ -227,6 +229,7 @@
             "notification_shade.data[0]?.shade_event",
             "notification_shade.data[0]?.max_ms"
           ],
+          "id": "systemui.notification_shade_long",
           "suggestions": [
             "优化通知渲染",
             "减少通知展开时的计算",
@@ -241,6 +244,7 @@
             "quick_settings.data[0]?.qs_event",
             "quick_settings.data[0]?.max_ms"
           ],
+          "id": "systemui.quick_settings_long",
           "suggestions": [
             "优化 Tile 状态查询",
             "减少 Tile 刷新频率"
@@ -254,6 +258,7 @@
             "navigation_activities.data[0]?.nav_event",
             "navigation_activities.data[0]?.max_ms"
           ],
+          "id": "systemui.navigation_gesture_slow",
           "suggestions": [
             "检查手势检测逻辑",
             "优化动画实现"
@@ -267,6 +272,7 @@
             "systemui_binder.data[0]?.binder_call",
             "systemui_binder.data[0]?.max_ms"
           ],
+          "id": "systemui.binder_call_long",
           "suggestions": [
             "检查是否可以异步执行",
             "缓存 Binder 调用结果"

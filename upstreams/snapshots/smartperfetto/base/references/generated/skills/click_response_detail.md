@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/click_response_detail.skill.yaml
-Source SHA-256: 9e44f27b6343d60763ebf83af07b3dd5c2d9c22a357c8f8527c54a3f67b5e497
+Source SHA-256: adfdbf3a5aa0331ce9b3f554c31808a1998d10e09d2ad8c9c50bf55086b473c6
 # 点击详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -155,6 +155,25 @@ params:
   end_ts: ${system_context_window.data[0].end_ts}
   package: ${process_name}
 save_as: system_task_handoffs
+display:
+  level: detail
+  layer: deep
+```
+### Runnable 等待期间目标 CPU 占用
+
+- ID: `system_runnable_cpu_occupancy`
+- Type: `skill`
+
+```yaml
+id: system_runnable_cpu_occupancy
+type: skill
+skill: runnable_cpu_occupancy_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${process_name}
+save_as: system_runnable_cpu_occupancy
 display:
   level: detail
   layer: deep
@@ -800,14 +819,16 @@ inputs:
 - sched_delay
 - main_file_io
 rules:
-- condition: quadrant.data[0]?.q3_runnable_ms > 20 && (sched_delay.data[0]?.severe_count || 0) > 0
+- id: click_response_detail.runnable_wait_with_sched_delay
+  condition: quadrant.data[0]?.q3_runnable_ms > 20 && (sched_delay.data[0]?.severe_count || 0) > 0
   severity: warning
   diagnosis: 主线程 Runnable 等待 ${quadrant.data[0].q3_runnable_ms}ms，且存在 ${sched_delay.data[0].severe_count} 次 >8ms 调度延迟
   confidence: high
   suggestions:
   - CPU 资源争抢，检查后台线程负载
   - 减少并发任务
-- condition: quadrant.data[0]?.sleeping_pct > 50 && ((main_file_io.data[0]?.percent || 0) > 2 || ((main_sync_binder?.data?.find(r
+- id: click_response_detail.sleeping_with_io_or_binder
+  condition: quadrant.data[0]?.sleeping_pct > 50 && ((main_file_io.data[0]?.percent || 0) > 2 || ((main_sync_binder?.data?.find(r
     => r.is_main_blocked === 1)?.total_block_ms) || 0) > 15)
   severity: warning
   diagnosis: 主线程 Sleeping 占比 ${quadrant.data[0].sleeping_pct}% 且存在 IO/Binder 阻塞证据
@@ -815,7 +836,8 @@ rules:
   suggestions:
   - 检查主线程阻塞原因
   - 将阻塞操作移到后台线程
-- condition: cpu_core.data[0]?.unknown_core_ns === 0 && cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms
+- id: click_response_detail.big_core_share_low_with_runnable
+  condition: cpu_core.data[0]?.unknown_core_ns === 0 && cpu_core.data[0]?.big_core_pct < 20 && cpu_core.data[0]?.total_running_ms
     > 20 && quadrant.data[0]?.q3_runnable_ms > 20 && (sched_delay.data[0]?.severe_count || 0) > 0 && !(cpu_core.data[0]?.classify_method
     || '').includes('cpu_id_fallback')
   severity: warning
@@ -824,13 +846,15 @@ rules:
   suggestions:
   - 检查是否有高优先级线程长期占用大核
   - 减少点击关键路径中的并发争抢
-- condition: (cpu_core.data[0]?.classify_method || '').includes('cpu_id_fallback')
+- id: click_response_detail.core_type_fallback
+  condition: (cpu_core.data[0]?.classify_method || '').includes('cpu_id_fallback')
   severity: info
   diagnosis: 核类型判定回退到 CPU 编号阈值，大小核相关结论置信度有限
   confidence: medium
   suggestions:
   - 补充或检查 cpu_frequency/cpu capacity 数据后再判断大小核调度问题
-- condition: (main_file_io.data[0]?.total_ms > 20 || main_file_io.data[0]?.percent > 5) && (quadrant.data[0]?.sleeping_pct
+- id: click_response_detail.main_thread_file_io
+  condition: (main_file_io.data[0]?.total_ms > 20 || main_file_io.data[0]?.percent > 5) && (quadrant.data[0]?.sleeping_pct
     || 0) > 20
   severity: warning
   diagnosis: 主线程文件 IO '${main_file_io.data[0].io_slice}' 耗时 ${main_file_io.data[0].total_ms}ms（占比 ${main_file_io.data[0].percent}%）
@@ -838,7 +862,8 @@ rules:
   suggestions:
   - 避免在点击关键路径执行同步文件读写
   - 将数据库/文件访问改为异步或延后
-- condition: binder_calls.data[0]?.total_client_ms > 30 && ((main_sync_binder?.data?.find(r => r.is_main_blocked === 1)?.total_block_ms)
+- id: click_response_detail.binder_blocking
+  condition: binder_calls.data[0]?.total_client_ms > 30 && ((main_sync_binder?.data?.find(r => r.is_main_blocked === 1)?.total_block_ms)
     || 0) > 10
   severity: warning
   diagnosis: Binder 调用 ${binder_calls.data[0].server_process} 耗时 ${binder_calls.data[0].total_client_ms}ms，且主线程同步 Binder 阻塞明显

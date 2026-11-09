@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/investigation-profiles.yaml
-Source SHA-256: a6bd593f1a512a72d61da7c61cf80e9f7aee0b927d6aed49e940f11acbaf41b9
+Source SHA-256: 480b64f0a2185966b168bdb81d19b3a96896732a32992b1e050943973be07364
 
 # Investigation Profiles Yaml
 
@@ -16,7 +16,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 - Compare side summaries: `python3 <skill-root>/scripts/perfetto_compare.py --side NAME=SUMMARY.json --baseline NAME`.
 - Read and write evidence as ordinary local JSON files; no artifact, session, snapshot, or host-tool API exists.
 
-## system_execution (version 1)
+## system_execution (version 2)
 
 ### cpu_frequency (cpu_frequency)
 
@@ -58,7 +58,7 @@ Apply when: Relevant to a scheduling or placement explanation about identified t
 
 ### finding_coverage (causal_reasoning)
 
-In the visible answer, explain every distinct material application phase/task, related system effect and anomaly supported by returned evidence within the requested scope. Each finding has adjacent readable evidence (interval, identity, measurement/unit/denominator and operation/state), mechanism or explicit uncertainty, and performance impact. Include actual source-based explanations when available; hidden declarations or aggregate tables alone do not fulfill this obligation. Preserve unresolved findings and explain rejected/superseded ones. Do not inflate alerts into causes or require an arbitrary finding count, fixed format or unrelated scene-wide investigation.
+In the visible answer, explain every distinct material application phase/task, related system effect and anomaly supported by returned evidence within the requested scope. Each finding has adjacent readable evidence (interval, identity, measurement/unit/denominator and operation/state), mechanism or explicit uncertainty, and performance impact. Include actual source-based explanations when available; aggregate tables alone do not fulfill this obligation. Preserve unresolved findings and explain rejected/superseded ones. Do not inflate alerts into causes or require an arbitrary finding count, fixed format or unrelated scene-wide investigation.
 
 ### dependency_chain (dependency_chain)
 

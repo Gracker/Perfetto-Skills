@@ -52,7 +52,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/framework/input_module.skill.yaml",
-    "sha256": "e514d3ba027d776732f4f451e54e709f259d7b79e371ab403971fb4925dfa977"
+    "sha256": "44cab906fb8f37dddce79e2c7407f2cef7d4c52307cb65f9890df0a5aaad681d"
   },
   "steps": [
     {
@@ -100,6 +100,7 @@
             "click_stats.data[0].avg_latency_ms",
             "click_stats.data[0].slow_clicks"
           ],
+          "id": "input.click_latency_high",
           "suggestions": [
             "检查主线程是否有耗时操作",
             "优化 View 层级减少测量/布局时间"
@@ -113,6 +114,7 @@
             "click_stats.data[0].slow_clicks",
             "click_stats.data[0].max_latency_ms"
           ],
+          "id": "input.slow_clicks",
           "suggestions": [
             "分析具体慢点击事件的根因",
             "检查是否有 Binder 调用阻塞"
@@ -125,6 +127,7 @@
           "evidence_fields": [
             "dispatch_timing.data[1].avg_ms"
           ],
+          "id": "input.dispatcher_delay",
           "suggestions": [
             "检查系统负载",
             "检查是否有其他应用占用焦点"

@@ -10,8 +10,7 @@
     ],
     "signal_patterns": [
       "${package}",
-      "${package}:*",
-      "Binder:*"
+      "${package}:*"
     ]
   },
   "id": "startup_binder_pool_analysis",
@@ -60,10 +59,10 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/startup_binder_pool_analysis.skill.yaml",
-    "sha256": "89f077e064e5a82c5b38e4601ec000cf53e5ac5e84cf735895b7ef5f5c86281a"
+    "sha256": "6dc1ad094f6c5fa3d93f9e8bbc7c45845c041036651a7db899ed9a646e2d9f0e"
   },
   "steps": [],
   "type": "atomic",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "startup"
 }

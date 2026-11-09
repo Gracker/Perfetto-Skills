@@ -1,8 +1,9 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
--- Source SHA-256: e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349
+-- Source SHA-256: 125f6c0f585e4fb4e02d376ddf8c103f5229e42fbdff3be9b176133960f18834
 
-WITH analysis_window AS (
+-- thread_state 范围兜底，与 analysis_window 步骤的 slice 兜底不同
+WITH thread_state_window AS (
   SELECT
     COALESCE(${start_ts},
       CASE WHEN ${anr_ts} IS NOT NULL THEN ${anr_ts} - 5000000000 ELSE NULL END,
@@ -26,11 +27,11 @@ state_dist AS (
     ts_tbl.state,
     COUNT(*) as count,
     SUM(
-      MIN(ts_tbl.ts + ts_tbl.dur, (SELECT w_end FROM analysis_window))
-      - MAX(ts_tbl.ts, (SELECT w_start FROM analysis_window))
+      MIN(ts_tbl.ts + ts_tbl.dur, (SELECT w_end FROM thread_state_window))
+      - MAX(ts_tbl.ts, (SELECT w_start FROM thread_state_window))
     ) as total_dur_ns
   FROM thread_state ts_tbl
-  CROSS JOIN analysis_window aw
+  CROSS JOIN thread_state_window aw
   CROSS JOIN main_thread mt
   WHERE ts_tbl.utid = mt.utid
     AND ts_tbl.ts + ts_tbl.dur > aw.w_start
@@ -57,10 +58,10 @@ SELECT
   ROUND(100.0 * sd.total_dur_ns / NULLIF((SELECT total_ns FROM total), 0), 1) as pct,
   ROUND(sd.total_dur_ns / NULLIF(sd.count, 0) / 1e6, 2) as avg_dur_ms,
   ROUND((SELECT MAX(
-      MIN(ts2.ts + ts2.dur, (SELECT w_end FROM analysis_window))
-      - MAX(ts2.ts, (SELECT w_start FROM analysis_window))
+      MIN(ts2.ts + ts2.dur, (SELECT w_end FROM thread_state_window))
+      - MAX(ts2.ts, (SELECT w_start FROM thread_state_window))
     ) FROM thread_state ts2
-    CROSS JOIN analysis_window aw2
+    CROSS JOIN thread_state_window aw2
     CROSS JOIN main_thread mt2
     WHERE ts2.utid = mt2.utid
       AND ts2.state = sd.state

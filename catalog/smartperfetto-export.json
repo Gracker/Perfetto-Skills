@@ -1,13 +1,13 @@
 {
   "fixture_manifest_source": "backend/skills/public-fixtures.yaml",
   "official_perfetto": {
-    "commit": "add693d8b338ba9599dbcbc3e300b1ab8c000897",
+    "commit": "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
     "official_skill_reference": "ai/skills/perfetto/SKILL-template.md",
     "official_skill_role": "gap_check_only",
     "repository": "https://github.com/google/perfetto",
     "rpc_api_version": 14,
-    "stdlib_tree": "54fc9f0b5c8dedb8772283b6786753fbb918da0d",
-    "tag": "v58.2"
+    "stdlib_tree": "5a9a1eb9ef4de45444fa2445820405456215c01e",
+    "tag": "v59.1"
   },
   "pipeline_docs": [
     {
@@ -97,11 +97,11 @@
   ],
   "public_skill": "perfetto-performance-analysis",
   "runtime_perfetto": {
-    "reported_version": "v58.3",
+    "reported_version": "v59.1",
     "repository": "https://github.com/google/perfetto",
-    "revision": "99234d73fe356bf7edf6b2cb7afcf2a9eefc5368",
+    "revision": "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
     "rpc_api_version": 14,
-    "stdlib_tree": "c4ed7bdb0dfc5c21fb00e3982220d39abe2911bf"
+    "stdlib_tree": "5a9a1eb9ef4de45444fa2445820405456215c01e"
   },
   "schema_version": 1,
   "skills": [
@@ -112,7 +112,7 @@
       "name": "ams_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/framework/ams_module.skill.yaml",
-      "source_sha256": "bfd2cd1f208acc814f9da8ed0ec0b02c0d5fd7226da25bec898e8de516e315cd",
+      "source_sha256": "3793610c048eb2cd2f719edc363d9f5cf72702f7b6b45fd0845449fba3423cd1",
       "version": "1.0",
       "workflow": "startup"
     },
@@ -219,9 +219,9 @@
       "name": "android_job_scheduler_events",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/android_job_scheduler_events.skill.yaml",
-      "source_sha256": "ba9540e773bd4ae67b91b141674cfe0b66e89de879fc3d328ea0e98c480c110b",
+      "source_sha256": "aa6721a92d941b2fca0139aeba55e46532db1d83720306e4d47b18ac850346bd",
       "tier": "B",
-      "version": "1.0",
+      "version": "1.1",
       "workflow": "cpu-scheduling"
     },
     {
@@ -255,9 +255,9 @@
       "name": "android_process_state_residency",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/android_process_state_residency.skill.yaml",
-      "source_sha256": "f785279fb41abf9e40451b7089d02655c17180229724e8a28759af866c6347cf",
+      "source_sha256": "226abdc8bd617a35c5005014a5020538455aa88290a2d96fa911645bbb2387b1",
       "tier": "B",
-      "version": "1.0",
+      "version": "1.1",
       "workflow": "memory"
     },
     {
@@ -267,7 +267,7 @@
       "name": "anr_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/anr_analysis.skill.yaml",
-      "source_sha256": "1fa589ef5136298372b33fb125b7e0ffa15108e83ecabe89690df65f9bf71ed2",
+      "source_sha256": "f5a02f9bd8e59acab9537e22bc5ddcc6db2828930cd8fab0d630eb4ae1e079a2",
       "tier": "S",
       "version": "1.0",
       "workflow": "anr-blocking"
@@ -279,7 +279,7 @@
       "name": "anr_context_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/anr_context_in_range.skill.yaml",
-      "source_sha256": "4a14d85ad7cd54b07f817c9c76948eefd985a4e2af90e0864f7f4360abc171d3",
+      "source_sha256": "2638bf278c4e442b3598989e310d9d4e540c575851799a40ddf09111ca78f376",
       "tier": "B",
       "version": "1.0",
       "workflow": "anr-blocking"
@@ -291,7 +291,7 @@
       "name": "anr_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/anr_detail.skill.yaml",
-      "source_sha256": "74e651ef4fa4d3949dacf7c4db5b28bd3f522b40e1ff76c40cb2829ea17d44a5",
+      "source_sha256": "163b0bfbab7564b735a5ceffe7d26e5eb48238a44ba9247b121603efb1463762",
       "tier": "S",
       "version": "2.0",
       "workflow": "anr-blocking"
@@ -303,7 +303,7 @@
       "name": "anr_main_thread_blocking",
       "runtime_type": "composite",
       "source_path": "backend/skills/atomic/anr_main_thread_blocking.skill.yaml",
-      "source_sha256": "e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349",
+      "source_sha256": "125f6c0f585e4fb4e02d376ddf8c103f5229e42fbdff3be9b176133960f18834",
       "tier": "S",
       "version": "1.1",
       "workflow": "anr-blocking"
@@ -351,7 +351,7 @@
       "name": "art_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/framework/art_module.skill.yaml",
-      "source_sha256": "420e56403b3df38fd4f2d2f938b611c484252d3bc7f733ba7b956813c7a02fcf",
+      "source_sha256": "ccf7ffb32cfd7c7aec9b11b5f2ea46b43afcc7223ca47f28d55eff74b710bb95",
       "version": "1.0",
       "workflow": "memory"
     },
@@ -410,7 +410,7 @@
       "name": "binder_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/binder_analysis.skill.yaml",
-      "source_sha256": "fc34e062a7ce8185abceac60b9171ac039d0e631ee0ef1646f3d6ef0369cbeee",
+      "source_sha256": "afbc66c5633332309054bf23e4dc7bbebfec5f12bd9b6b494e68f270b19f8755",
       "tier": "S",
       "version": "1.0",
       "workflow": "anr-blocking"
@@ -434,7 +434,7 @@
       "name": "binder_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/binder_detail.skill.yaml",
-      "source_sha256": "eeadbc879f3b3e4118c66913d5a022ebec45f310e3ea34a03306d58cb80b9141",
+      "source_sha256": "a769c1e7ae5e961d54f665ec8b4d7c8b6d56c5b0e20f816f67150ffcf6413197",
       "tier": "S",
       "version": "2.0",
       "workflow": "anr-blocking"
@@ -458,8 +458,20 @@
       "name": "binder_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/kernel/binder_module.skill.yaml",
-      "source_sha256": "e374d828a42b45b2f0c2de0b02ca10fd40049073b3e8b52aedb4724592469f73",
+      "source_sha256": "a0d3130ef46dca29cdc90ca4ef4288c06f405f36121cc8c58ee997b455134811",
       "version": "1.0",
+      "workflow": "anr-blocking"
+    },
+    {
+      "category": "ipc",
+      "destination": "references/generated/skills/binder_pool_saturation_in_range.md",
+      "disposition": "exported",
+      "name": "binder_pool_saturation_in_range",
+      "runtime_type": "atomic",
+      "source_path": "backend/skills/atomic/binder_pool_saturation_in_range.skill.yaml",
+      "source_sha256": "d97947f0d5741f3e833349e9213a342b2eeb780815b6c1a53cba62ccf235a939",
+      "tier": "B",
+      "version": "1.1",
       "workflow": "anr-blocking"
     },
     {
@@ -565,7 +577,7 @@
       "name": "choreographer_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/framework/choreographer_module.skill.yaml",
-      "source_sha256": "50ab26350db4695faed48050143b69a472c511af5a36fcc610e6e6b192860e66",
+      "source_sha256": "8311748b218989a899350adda0f5f535baf90c25d78f68faff7ac6657d241226",
       "version": "1.0",
       "workflow": "scrolling"
     },
@@ -588,7 +600,7 @@
       "name": "click_response_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/click_response_analysis.skill.yaml",
-      "source_sha256": "03b5d4aa8b1a9a35544b024cba0e9f19905aed03fa034951999ef8dd10a8d371",
+      "source_sha256": "96cdbe5a4f10221d92c7760411a1985dcbb03f48d8f5250f002bb12d2aecf818",
       "tier": "S",
       "version": "1.0",
       "workflow": "interaction"
@@ -600,7 +612,7 @@
       "name": "click_response_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/click_response_detail.skill.yaml",
-      "source_sha256": "9e44f27b6343d60763ebf83af07b3dd5c2d9c22a357c8f8527c54a3f67b5e497",
+      "source_sha256": "adfdbf3a5aa0331ce9b3f554c31808a1998d10e09d2ad8c9c50bf55086b473c6",
       "tier": "S",
       "version": "2.0",
       "workflow": "interaction"
@@ -647,7 +659,7 @@
       "name": "cpu_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_analysis.skill.yaml",
-      "source_sha256": "d92fc12306d640e35692ee32b71bec6aa951ed61f3d8f5b0f4f24b2bafacc9af",
+      "source_sha256": "a92fcecfaa391bf3e79d99fde999b7dcf21a49dfcd0fb35c65bbcd41af2d04b9",
       "tier": "S",
       "version": "1.0",
       "workflow": "cpu-scheduling"
@@ -731,7 +743,7 @@
       "name": "cpu_frequency_limit_attribution",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/cpu_frequency_limit_attribution.skill.yaml",
-      "source_sha256": "758e7664b2091d3e128ef1d06d88c4a311526ec85bac8f6db15d7dc1510901e3",
+      "source_sha256": "3a02b4ff9a5f35d376b33c2f64a5945563e89ad8cafb7cb6c62a22cc96d477fc",
       "tier": "S",
       "version": "1.0",
       "workflow": "power-thermal"
@@ -791,7 +803,7 @@
       "name": "cpu_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/hardware/cpu_module.skill.yaml",
-      "source_sha256": "4a9d6de50b0314b731792232ca2a3ac602c68e7c870a4e4a3d95f97d9f84a688",
+      "source_sha256": "71a1d8cdf84e0180782c8c25b1f85eb615aea52e66ee0a8ed675fb1a0634b309",
       "version": "1.0",
       "workflow": "cpu-scheduling"
     },
@@ -982,7 +994,7 @@
       "name": "filesystem_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/kernel/filesystem_module.skill.yaml",
-      "source_sha256": "18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3",
+      "source_sha256": "435ec320f775e53fe918bea24a31a4c5584c3de7cb0e64c367fca92695457fa4",
       "version": "1.0",
       "workflow": "io-network-media"
     },
@@ -1089,7 +1101,7 @@
       "name": "game_fps_analysis",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/game_fps_analysis.skill.yaml",
-      "source_sha256": "afe29e2e27d3fbd6899c8b09c61c286650fe26e2f3f9585158f7f3d7818a7966",
+      "source_sha256": "f104c2ead1d211e29902fa0d4c1b768f407c2f8d942c1076311f373222ff92ab",
       "tier": "A",
       "version": "1.0",
       "workflow": "frameworks-games"
@@ -1220,7 +1232,7 @@
       "name": "gpu_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/hardware/gpu_module.skill.yaml",
-      "source_sha256": "579fe2d70ef30c53d7a5e32a06732ef2872ce8b45c31aea88cb079bf2a45c9e0",
+      "source_sha256": "b886833bb0a8ce73f11e481eb087092418db60082fdec57dda4d24dd6c000658",
       "version": "1.0",
       "workflow": "gpu-rendering"
     },
@@ -1279,7 +1291,7 @@
       "name": "input_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/framework/input_module.skill.yaml",
-      "source_sha256": "e514d3ba027d776732f4f451e54e709f259d7b79e371ab403971fb4925dfa977",
+      "source_sha256": "44cab906fb8f37dddce79e2c7407f2cef7d4c52307cb65f9890df0a5aaad681d",
       "version": "1.0",
       "workflow": "interaction"
     },
@@ -1302,7 +1314,7 @@
       "name": "io_pressure",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/io_pressure.skill.yaml",
-      "source_sha256": "abd029a09336e7e2a849db7fba8b0e13357e976e20c5bd6fd7290e1997a29298",
+      "source_sha256": "43c67fe077b6a53000da236d4dfc90929b32b925511df0c99eb62ea61a241c0e",
       "tier": "S",
       "version": "3.0",
       "workflow": "io-network-media"
@@ -1313,7 +1325,7 @@
       "name": "irq_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/irq_analysis.skill.yaml",
-      "source_sha256": "fea29723032ba827d7c7b294e22ea8ff4633c9c6e8abb832895f9a9642a6e595",
+      "source_sha256": "c70a064eb46aa65eea1e0e328d49c99c3713553733e4f2f3d1731bce766da30b",
       "tier": "S",
       "version": "3.0",
       "workflow": "cpu-scheduling"
@@ -1325,7 +1337,7 @@
       "name": "jank_frame_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/jank_frame_detail.skill.yaml",
-      "source_sha256": "a0211e3d982714457a51437e411533797d8d6b214b85d9f67ce0d80ba4ad4c61",
+      "source_sha256": "d6ebc3c422f3b26600c2d705b90bc6dcfc6723fb3f9e259a094e207326d3915f",
       "tier": "S",
       "version": "2.3",
       "workflow": "scrolling"
@@ -1337,7 +1349,7 @@
       "name": "launcher_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/app/launcher_module.skill.yaml",
-      "source_sha256": "4c0d82a72e79c8ac5f42f5c57ff618e5bc0211d2d8f4c88c79642fbddd4ac263",
+      "source_sha256": "a90057ce86d59a8bc077f03215ec72166ba59b83b7bdc56297cdec0a28e38622",
       "version": "1.0",
       "workflow": "startup"
     },
@@ -1480,7 +1492,7 @@
       "name": "lock_contention_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/kernel/lock_contention_module.skill.yaml",
-      "source_sha256": "106819ab92ac89738c756cd296dd1da8aac142910477fdb313a8dc616a50bd08",
+      "source_sha256": "d07a8840cdaf1f8b7ef019cfc13abd3529dc7873f677593f06d5892a1ddf859a",
       "version": "1.0",
       "workflow": "anr-blocking"
     },
@@ -1527,7 +1539,7 @@
       "name": "main_thread_frame_work",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/main_thread_frame_work.skill.yaml",
-      "source_sha256": "335e554b31f16b090c6d224e21718bd9e2c194ef268a06f9efdf4a36c9ec79d0",
+      "source_sha256": "afd9012024e1d46194fffd127e3507c4594bc3eb0990c1d19ced0b57f795a490",
       "tier": "S",
       "version": "1.0",
       "workflow": "scrolling"
@@ -1611,7 +1623,7 @@
       "name": "memory_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/memory_analysis.skill.yaml",
-      "source_sha256": "1fb350c1d3eb4af09e605373da275721d9521ff7f20b34a245513f545b5b6dd1",
+      "source_sha256": "84ac77ef776250708d0bca27901eb5ceace572351055c4b6bf86dcd84986a1d0",
       "tier": "S",
       "version": "2.1",
       "workflow": "memory"
@@ -1635,7 +1647,7 @@
       "name": "memory_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/hardware/memory_module.skill.yaml",
-      "source_sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff",
+      "source_sha256": "f00717aba46f44cda52a71b3aac619d9a3dabf1eea6b54e5757a38a480c000bc",
       "version": "1.0",
       "workflow": "memory"
     },
@@ -1704,7 +1716,7 @@
       "name": "navigation_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/navigation_analysis.skill.yaml",
-      "source_sha256": "c8bbe81d2a904151402e873ca39bfb964e77a0287f268961fbb540b88648da48",
+      "source_sha256": "5fe3a593785fdcd214084bbc644f0d6572cb21d9c8347976dd48bff48b31080e",
       "tier": "S",
       "version": "3.0",
       "workflow": "interaction"
@@ -1716,7 +1728,7 @@
       "name": "network_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/network_analysis.skill.yaml",
-      "source_sha256": "b0d6f1c51fe5e8687db9cc5ec9b1df231029151ee389c92bfb42f096e1ac13e0",
+      "source_sha256": "390c291f6c2a0149d466965148a169836930c1d3393129ea790511f28db54319",
       "tier": "S",
       "version": "3.0",
       "workflow": "io-network-media"
@@ -2129,7 +2141,7 @@
       "name": "power_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/hardware/power_module.skill.yaml",
-      "source_sha256": "b1684cac1874ae453391ccfe88614289405b052dad8ab7ec594255347bb37acb",
+      "source_sha256": "cd2beb4f76696242a572e25220b5f4bfb755d932498796fb7b3098dd5759ec18",
       "version": "1.0",
       "workflow": "power-thermal"
     },
@@ -2254,6 +2266,18 @@
       "workflow": "frameworks-games"
     },
     {
+      "category": "kernel",
+      "destination": "references/generated/skills/runnable_cpu_occupancy_in_range.md",
+      "disposition": "exported",
+      "name": "runnable_cpu_occupancy_in_range",
+      "runtime_type": "atomic",
+      "source_path": "backend/skills/atomic/runnable_cpu_occupancy_in_range.skill.yaml",
+      "source_sha256": "a49f4b9043c7f6d13ecf147f6202d2d1ffa887e62e7a71c78d89663a5717587f",
+      "tier": "B",
+      "version": "1.0",
+      "workflow": "cpu-scheduling"
+    },
+    {
       "category": "system_context",
       "destination": "references/generated/skills/scene_device_state_changes.md",
       "disposition": "exported",
@@ -2308,7 +2332,7 @@
       "name": "scheduler_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/kernel/scheduler_module.skill.yaml",
-      "source_sha256": "67ddcf3a040cfc8fb5ace854ca824d699330c03bfd3894272d6df7d804f91677",
+      "source_sha256": "0ed2dae7a8e3c77d9cae3d3a2266333ae7ca980b3f7bc1efdb94ae5a00ca5b37",
       "version": "1.0",
       "workflow": "cpu-scheduling"
     },
@@ -2355,7 +2379,7 @@
       "name": "scroll_session_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scroll_session_analysis.skill.yaml",
-      "source_sha256": "59e06a212efc4660c3d1eb10335f4fc1f33c7120448effb115823ec96915d9b5",
+      "source_sha256": "1e937837e79fae2d38ba4a154c578122e18b6005033d677ef55b78cf8d0c9a57",
       "tier": "S",
       "version": "1.0",
       "workflow": "scrolling"
@@ -2366,7 +2390,7 @@
       "name": "scrolling_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/scrolling_analysis.skill.yaml",
-      "source_sha256": "03591cddcd2bd4a278369cc8089e92f224d405b0e9adf66f618e4e44a72056fd",
+      "source_sha256": "ca7c1326c0ca6eac9e485114bd94fbfd81e9c8db2f3d8c65974d46831f8db084",
       "tier": "S",
       "version": "2.2",
       "workflow": "scrolling"
@@ -2426,7 +2450,7 @@
       "name": "startup_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/startup_analysis.skill.yaml",
-      "source_sha256": "14530d7c621f830e66c59b8e2fa47be7e7c4d9a3035b10ab724d1b3cd541d5e1",
+      "source_sha256": "c04d04c381b7112ebe215f07da517fabf6e7d25f71f0e18e3173af2eece326c2",
       "tier": "S",
       "version": "1.0",
       "workflow": "startup"
@@ -2450,9 +2474,9 @@
       "name": "startup_binder_pool_analysis",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/startup_binder_pool_analysis.skill.yaml",
-      "source_sha256": "89f077e064e5a82c5b38e4601ec000cf53e5ac5e84cf735895b7ef5f5c86281a",
+      "source_sha256": "6dc1ad094f6c5fa3d93f9e8bbc7c45845c041036651a7db899ed9a646e2d9f0e",
       "tier": "B",
-      "version": "1.0",
+      "version": "1.1",
       "workflow": "startup"
     },
     {
@@ -2510,7 +2534,7 @@
       "name": "startup_detail",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/startup_detail.skill.yaml",
-      "source_sha256": "4892e80cff5fa2a747e968f6a61d5298f2e68f5e1f20aba97e9eba7b399f5e8b",
+      "source_sha256": "ed969e56ba05e84ded2d40cbd89f78596235f1970bd7ccb87bc1da30923a3ac3",
       "tier": "S",
       "version": "2.0",
       "workflow": "startup"
@@ -2701,7 +2725,7 @@
       "name": "surfaceflinger_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/framework/surfaceflinger_module.skill.yaml",
-      "source_sha256": "e3f857a0ef0e7ea322a5a6f0f6e2f13149fe4684ded79833c5a1421a53b93124",
+      "source_sha256": "1ab8ca32abdfd4935e0a65eb1c83e73cb7d16dfac3a75a9ff0e24508f75769ba",
       "version": "1.0",
       "workflow": "gpu-rendering"
     },
@@ -2712,7 +2736,7 @@
       "name": "suspend_wakeup_analysis",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/suspend_wakeup_analysis.skill.yaml",
-      "source_sha256": "cf54dd26038da1a8e319353fce7eef8b92cc4962e217cb1873d6bc9f74fa70ee",
+      "source_sha256": "4a2128e808996386dac3b72b899746989b84cc0117844e75b30b84dc52c4a367",
       "tier": "S",
       "version": "3.0",
       "workflow": "power-thermal"
@@ -2736,7 +2760,7 @@
       "name": "systemui_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/app/systemui_module.skill.yaml",
-      "source_sha256": "878a322c6ecb8d008c5c1eb3a818f63e55dfb38cdd5a00236fef47da90c6bd0a",
+      "source_sha256": "7bad353475730c50d78e32f5389eef8a18f13d37f2838d318c9d9bfe0c0a577a",
       "version": "1.0",
       "workflow": "trace-overview"
     },
@@ -2783,7 +2807,7 @@
       "name": "thermal_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/hardware/thermal_module.skill.yaml",
-      "source_sha256": "704e180a6465afd151d94ae86efccee580680462a62262896290e7844e46f481",
+      "source_sha256": "fe7a3a653181e5bd0aa0efdbaae32faaec177c0cf2d8bd446618e66cde9eb944",
       "version": "1.0",
       "workflow": "power-thermal"
     },
@@ -2805,7 +2829,7 @@
       "name": "thermal_throttling",
       "runtime_type": "composite",
       "source_path": "backend/skills/composite/thermal_throttling.skill.yaml",
-      "source_sha256": "03d5214cde82b7f701aaf49433f9e9dd86053d0c50cd7845247da2506662c32e",
+      "source_sha256": "620dd9f223481611ba06792821dc77d4665abcd5d4727f571688f31742da6903",
       "tier": "S",
       "version": "3.0",
       "workflow": "power-thermal"
@@ -2829,7 +2853,7 @@
       "name": "third_party_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/app/third_party_module.skill.yaml",
-      "source_sha256": "187161c0bb28c5b2c3fc7793981fd519e399d3a17ee5a07d05ea9d64daf388b5",
+      "source_sha256": "39751b02d647c86152142d1d75ba69d8b950f6ea97c884c16908e3696104804b",
       "version": "1.0",
       "workflow": "frameworks-games"
     },
@@ -2864,7 +2888,7 @@
       "name": "thread_preemption_handoffs_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/thread_preemption_handoffs_in_range.skill.yaml",
-      "source_sha256": "0d6aa446f7bc33de7c1867ce6be9c1042f9c3ba2c3da5fa80100744c268332ef",
+      "source_sha256": "314a8d9538add55e06340510e604aa7f4d35524ca0aea870a0beb3f4b859ea10",
       "tier": "B",
       "version": "1.0",
       "workflow": "cpu-scheduling"
@@ -2876,9 +2900,9 @@
       "name": "thread_system_summary_in_range",
       "runtime_type": "atomic",
       "source_path": "backend/skills/atomic/thread_system_summary_in_range.skill.yaml",
-      "source_sha256": "e523b849bf1e8c93117737f0a334009b9877f6001a098b8e3eed2888cf077dac",
+      "source_sha256": "e6358509d8a9a3186ecf03f06c455ee186afe0bab18fb1b34f58173e2ac3584a",
       "tier": "B",
-      "version": "1.0",
+      "version": "1.2",
       "workflow": "cpu-scheduling"
     },
     {
@@ -3068,16 +3092,16 @@
       "name": "wms_module",
       "runtime_type": "composite",
       "source_path": "backend/skills/modules/framework/wms_module.skill.yaml",
-      "source_sha256": "4bd2c147a32250b3c3ae71af00fb8bbfb8b99256c68cc8fa44a0131ebe25d794",
+      "source_sha256": "c52bd0ea0df3f2c51b66d81b1951baa545c62d35b7e103541c2e25cf88051e39",
       "version": "1.0",
       "workflow": "interaction"
     }
   ],
   "source": {
-    "commit": "5f439fa7f8d8aa30d60d416a3fd2531782b4c20b",
+    "commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216",
     "dirty": false,
     "policy_path": "backend/skills/public-export.yaml",
-    "policy_sha256": "1e9db7207e6c98a435d9ad4c9a75219c4d7c6d801179e0407bdbea9e5c77d9d1",
+    "policy_sha256": "1b44e109351ae2792fe34e92b5c727b811f052601bd134e0c1c75c34acea00fb",
     "repository": "https://github.com/Gracker/SmartPerfetto"
   },
   "sql_fragments": [
@@ -3128,6 +3152,12 @@
       "disposition": "exported",
       "source_path": "backend/skills/fragments/art_gc_names.sql",
       "source_sha256": "e015d4d78f8ffda8073a50b08fcea97f40c01606f56af6ef4b5568934f0b1614"
+    },
+    {
+      "destination": "references/generated/runtime/fragments/binder_pool_activity.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/binder_pool_activity.sql",
+      "source_sha256": "4947242e0bd96642a422f68d2130116720f62c16642ec69469ae306dffccade1"
     },
     {
       "destination": "references/generated/runtime/fragments/buffer_tx_frame_production.sql",
@@ -3253,7 +3283,7 @@
       "destination": "references/generated/runtime/fragments/process_state_scoped_intervals.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/process_state_scoped_intervals.sql",
-      "source_sha256": "cf1aad975c1eb4bd0d0d23caf61ea6a7b24ff262141c2c04335d6508cb163f18"
+      "source_sha256": "e1259d4744754109389cc50fe96e8c95d09a09c9b25f32d258fafaa2462fb498"
     },
     {
       "destination": "references/generated/runtime/fragments/root_cause_sample_cap.sql",
@@ -3388,6 +3418,12 @@
       "source_sha256": "06777e61237b61b3318f9fa40c2714e1b08648d6773844d8ab6c4f1d12ee9184"
     },
     {
+      "destination": "references/generated/runtime/fragments/system_target_threads.sql",
+      "disposition": "exported",
+      "source_path": "backend/skills/fragments/system_target_threads.sql",
+      "source_sha256": "b638acc7bc77e3780a386889a1cff0a9def96b88cbeeb6f611becdea246d60e4"
+    },
+    {
       "destination": "references/generated/runtime/fragments/system_thread_state_spans.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
@@ -3427,7 +3463,7 @@
       "destination": "references/generated/runtime/fragments/thread_role.sql",
       "disposition": "exported",
       "source_path": "backend/skills/fragments/thread_role.sql",
-      "source_sha256": "93ed894a283f2f6590793c6b21aef470b5e64370e5ac66a861bace835dd62228"
+      "source_sha256": "1948b35a9c439573c6a033b466a97bc5125c1d27db39a640e955ef9689517751"
     },
     {
       "destination": "references/generated/runtime/fragments/thread_states_quadrant.sql",
@@ -3447,7 +3483,7 @@
       "destination": "references/generated/strategies/anr.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/anr.strategy.md",
-      "source_sha256": "618a27841cbc74ff326f318963c297125d39fdcabd7911f3da34e603ea0031a9",
+      "source_sha256": "2e6dddc85a333c62cef549cda7a159537ebad4c2bc2fd6a7b113c25c20781576",
       "workflow": "anr-blocking"
     },
     {
@@ -3491,35 +3527,35 @@
       "destination": "references/generated/strategies/game.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/game.strategy.md",
-      "source_sha256": "bf79124f20f00d3a74c57dbae05915cd39d554116803611cfdb2a2a1b6912c9f",
+      "source_sha256": "ff5181050c5aaea09aebad4600acb34d113310750b1219292eab809ff8a6aa33",
       "workflow": "frameworks-games"
     },
     {
       "destination": "references/generated/strategies/general.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/general.strategy.md",
-      "source_sha256": "20653ab254503073227200e5be19bde8f30e59b66e5a91f0b32a6bf88d6fa920",
+      "source_sha256": "417a211390580de3b81e64571752128cd1d27b9c8da674e906a6a67bd7f82a4a",
       "workflow": "trace-overview"
     },
     {
       "destination": "references/generated/strategies/interaction.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/interaction.strategy.md",
-      "source_sha256": "e3c710af622d1e64c23c43d1c6e1a40788c8b81f0446a6c7a79ff26323b4a02a",
+      "source_sha256": "5575cc0f85822a6abfe33657a24e50986a04b6509564f8f607fc5fb44f91ced7",
       "workflow": "interaction"
     },
     {
       "destination": "references/generated/strategies/investigation-profiles.yaml.md",
       "disposition": "exported",
       "source_path": "backend/strategies/investigation-profiles.yaml",
-      "source_sha256": "a6bd593f1a512a72d61da7c61cf80e9f7aee0b927d6aed49e940f11acbaf41b9",
+      "source_sha256": "480b64f0a2185966b168bdb81d19b3a96896732a32992b1e050943973be07364",
       "workflow": "trace-overview"
     },
     {
       "destination": "references/generated/strategies/io.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/io.strategy.md",
-      "source_sha256": "7712d6ee0e1bfe670171efa799a4e5dfbe3ff1855107ed9cdd5da3582bb30cf7",
+      "source_sha256": "393a14051569daaa23e2f5b3e74da8377ba8bc89df98424046dff489653845e4",
       "workflow": "io-network-media"
     },
     {
@@ -3665,21 +3701,21 @@
       "destination": "references/generated/strategies/linux.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/linux.strategy.md",
-      "source_sha256": "ea6c15dd398fff318bb92d96fc3e09d94f05a2cd424cf43386da0d7981a67a9b",
+      "source_sha256": "983fc39c2374159efc0ad6647089c8546b05a710cd8b67cbc117a74fcf874eb7",
       "workflow": "cpu-scheduling"
     },
     {
       "destination": "references/generated/strategies/media.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/media.strategy.md",
-      "source_sha256": "741df6a282da351455c783692f856cca062c2f3bcc462cf2224def0d350930a4",
+      "source_sha256": "b66dd787716715789442374ecf3105f5cfb2b379b7c71a8012caf1739b730f66",
       "workflow": "io-network-media"
     },
     {
       "destination": "references/generated/strategies/memory.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/memory.strategy.md",
-      "source_sha256": "b6b2da177191645c3aacb9a44d7f8a78be21eefcec7b5a1e669f449eaa311176",
+      "source_sha256": "c2e4fbf0e19cab8e1663e8bafe90454c1926271f8f9732524b52452407f20761",
       "workflow": "memory"
     },
     {
@@ -3693,41 +3729,41 @@
       "destination": "references/generated/strategies/network.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/network.strategy.md",
-      "source_sha256": "94f092fedee04da64eb9cf396b60ccba41e1efd65a5b42e5308367ec2106e103",
+      "source_sha256": "913605f6aa8910f641c2ae5949c421b3cba8a8b193e1c2f4ab54dfcaf2b6cc26",
       "workflow": "io-network-media"
     },
     {
       "destination": "references/generated/strategies/overview.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/overview.strategy.md",
-      "source_sha256": "2a04b013e838e4438e2ec257698bd5e00a9ca869ae3e4049ba44c45dc7265885",
+      "source_sha256": "08e43dcbb296cbd731d4161553c80b003f1895c87b5d4330df0db033d3009960",
       "workflow": "trace-overview"
     },
     {
       "destination": "references/generated/strategies/pipeline.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/pipeline.strategy.md",
-      "source_sha256": "c5e2812baf359102bc6a0224f385315a57fcd2193d69548601e08bb16058d4a8",
+      "source_sha256": "1fe26c8072f05ab0df178590cb19f12492b48c76a9b747eee9ad5c2ac3b1f0a8",
       "workflow": "rendering-pipeline"
     },
     {
       "destination": "references/generated/strategies/power.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/power.strategy.md",
-      "source_sha256": "f76bc14650a8408b1ef076b9f3f778a1c9ce3ed7c47d1f5032dedb2ea1e7c70d",
+      "source_sha256": "67d4f56c288d85accfb9e9ab6251a146a53125b84293b98b235da2a4b1723742",
       "workflow": "power-thermal"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto structured candidate recovery protocol",
       "source_path": "backend/strategies/prompt-analysis-correction-en.template.md",
-      "source_sha256": "4dc0d1053f6a95ed6bb2b6cc74b38dbb533eb6dd1eec37e1a6f6562d77c8ae16"
+      "source_sha256": "2586bbc224827736db88168a83f019818e9c4e18ff825f0459447b16058a93cc"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto structured candidate recovery protocol",
       "source_path": "backend/strategies/prompt-analysis-correction-zh.template.md",
-      "source_sha256": "3c1768b33d55e4742d48baba4d4e9abc8f4ecde961339ec9ebb687128b63d3f5"
+      "source_sha256": "93c9fe70fc875169a6e534894eace6245c43d7f3664dddc62e8864725f79d638"
     },
     {
       "disposition": "product-only",
@@ -3739,13 +3775,19 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto native runtime intent classification protocol",
       "source_path": "backend/strategies/prompt-analysis-turn-intent.template.md",
-      "source_sha256": "5140ce7e5a0ab8d90be5d7178a63007b758233cfde7d9280d2838b40c4fc125b"
+      "source_sha256": "84dd37ccc9354caad51739c25a761cf4534dbb9ae8f4ab2f2a95010837966b0e"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto analyze_wait_chain MCP tool contract",
       "source_path": "backend/strategies/prompt-analyze-wait-chain-tool-description.template.md",
       "source_sha256": "7591c80ee9af4092b1b3d304076bb6972fe8c5a66bc952049494342eb299c9a7"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto runtime answer writing guidance for plain assistant answers",
+      "source_path": "backend/strategies/prompt-answer-guidance.template.md",
+      "source_sha256": "5829197ac4ace4a380d8ef0867383a7d7077e6f837d1d92a00068fffc0de90e2"
     },
     {
       "disposition": "product-only",
@@ -3775,13 +3817,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto source lookup tools and codebase-aware report orchestration",
       "source_path": "backend/strategies/prompt-code-reference-contract-en.template.md",
-      "source_sha256": "8f2940eec22adee76d93f2ed12f09dcf4638d4810093f465e37b394555e1f5bd"
+      "source_sha256": "57a794c2bf047205a4189336dc89329718fe9fdd2c21052824048d986b85cae1"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto source lookup tools and codebase-aware report orchestration",
       "source_path": "backend/strategies/prompt-code-reference-contract-zh.template.md",
-      "source_sha256": "c9711231303bda4459e53aeb449e01b2786e6cf24849716392a08a2917f512b9"
+      "source_sha256": "d6e04c5eaae6441a9e4b7d58010f6375b28c14649a8fa8204673c9485833c071"
     },
     {
       "disposition": "product-only",
@@ -3791,15 +3833,21 @@
     },
     {
       "disposition": "product-only",
-      "reason": "SmartPerfetto conclusion declarations and captured evidence identifiers",
-      "source_path": "backend/strategies/prompt-conclusion-contract-schema.template.md",
-      "source_sha256": "2a9a4bbb18b803454b19939dcd4333ddc0544c3f0f488c0b37c87cd5305ef82d"
-    },
-    {
-      "disposition": "product-only",
       "reason": "SmartPerfetto conversation artifact retention and authorization",
       "source_path": "backend/strategies/prompt-conversation-evidence-context.template.md",
       "source_sha256": "5d83aab905e25a2933f08428b1fe964f7dc97c43c10031bc59abd01dcd5fb4a8"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto next-turn supplemental input and authorization",
+      "source_path": "backend/strategies/prompt-conversation-supplement-en.template.md",
+      "source_sha256": "908154b856bac79a5e396c61381f659233f441c3c4a618446b39f01db3f03b6d"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto next-turn supplemental input and authorization",
+      "source_path": "backend/strategies/prompt-conversation-supplement-zh.template.md",
+      "source_sha256": "981fc1c3ea94617bdc2675ab1823241315724993527e67489336c18c1a9d0350"
     },
     {
       "disposition": "product-only",
@@ -3821,27 +3869,15 @@
     },
     {
       "disposition": "product-only",
-      "reason": "SmartPerfetto draft diagnostic result guidance over authorized product evidence captures",
-      "source_path": "backend/strategies/prompt-draft-declaration-diagnostics-feedback.template.md",
-      "source_sha256": "0001eb553bba00a3880a61a8664d3ba29418b0e54c87a7e92e1b1e6a7ae68b67"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto draft diagnostic MCP tool over authorized product evidence captures",
-      "source_path": "backend/strategies/prompt-draft-declaration-diagnostics-tool-description.template.md",
-      "source_sha256": "d19ba46756b1f8a4c234cb584a5ed569747b8d3e14aa166bccf2f72e7b06c544"
-    },
-    {
-      "disposition": "product-only",
       "reason": "SmartPerfetto comparison MCP tool description and runtime schema lookup",
       "source_path": "backend/strategies/prompt-execute-sql-on-tool-description.template.md",
-      "source_sha256": "8eb61e9053e9ca3a7107e7b85fa35dc9a38f0ea1614b05f03f6ae36e36fb8dce"
+      "source_sha256": "ac0cc0c56466d968e9aba846b2a7c8d9e760bab6c7b896502da201cbe65d6a08"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto current-trace MCP tool description and runtime schema lookup",
       "source_path": "backend/strategies/prompt-execute-sql-tool-description.template.md",
-      "source_sha256": "5da49d431db710fa4f4aa7be019643a7280f2dfca25574d8f5049e458bef9549"
+      "source_sha256": "8377c8e1b356586a471b42007843a6eac59caef72f90e0342cfff113d5613f89"
     },
     {
       "disposition": "product-only",
@@ -3881,12 +3917,6 @@
     },
     {
       "disposition": "product-only",
-      "reason": "SmartPerfetto finalization semantic assessment protocol",
-      "source_path": "backend/strategies/prompt-final-semantic-assessment.template.md",
-      "source_sha256": "3a7ff445b473b64ebbc7f898ba90a0e0e340dc58ff1f7e599e665d5733bbf4de"
-    },
-    {
-      "disposition": "product-only",
       "reason": "SmartPerfetto on-demand codebase file-find MCP tool contract",
       "source_path": "backend/strategies/prompt-find-codebase-files-tool-description.template.md",
       "source_sha256": "42cbc60985aa9ced7a463d1c97e18f94f4a90d8cd885da9a16fc62130741f229"
@@ -3899,27 +3929,33 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto run-start investigation requirement acquisition status",
+      "source_path": "backend/strategies/prompt-investigation-acquisition.template.md",
+      "source_sha256": "e4aa5fe359a8c35aa704997c80efcecda8146a11b57309686c04ad8c343a408a"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto typed-turn finding presentation and runtime strategy discovery",
       "source_path": "backend/strategies/prompt-investigation-findings.template.md",
-      "source_sha256": "efdf2f1db653908c29321501f16f2d5f3fa6fa3a34ad118a25fb669814dbfa7c"
+      "source_sha256": "de8b37b34dc0fc3f0ae6fcbfe47e4ed411313d4c683bbdf31a742f7abcf88f51"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto MCP artifact projection and exact process handoff guidance",
       "source_path": "backend/strategies/prompt-invoke-skill-tool-description.template.md",
-      "source_sha256": "c05a2a3cf67ecc8353ed30ad1fa4e871eea10ce47ab6e052a9ef00271638ca53"
+      "source_sha256": "2c7a7ad140f483c042b0b48526ec676368f8e9042c3d05f09a118675202f7302"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto selected document knowledge bases, their tools and citation contract",
       "source_path": "backend/strategies/prompt-knowledge-use-en.template.md",
-      "source_sha256": "bf1c8ad3f947d155442b87f353e4d9e2aa5402391851a691d8cd8cbecd9f6a65"
+      "source_sha256": "272d69dc38c8cf9781bdc10aac451fcb1a56e2c8cb541a6ce00d1cde13f0c52e"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto selected document knowledge bases, their tools and citation contract",
       "source_path": "backend/strategies/prompt-knowledge-use-zh.template.md",
-      "source_sha256": "13363c9edceacf1bad4b9836743d42e93cdedf4746cea0f46dd57862fc80a1d3"
+      "source_sha256": "acf31c4726f030e538bdca464c606d7b0c5e0fd38d7703d06b51424848f6171e"
     },
     {
       "disposition": "product-only",
@@ -3941,39 +3977,33 @@
     },
     {
       "disposition": "product-only",
-      "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
-      "source_path": "backend/strategies/prompt-native-declaration-completion-en.template.md",
-      "source_sha256": "7904c1e98d9c7db9f843215c97bcb25ca66219db2d4507d5af7522659c8d9473"
-    },
-    {
-      "disposition": "product-only",
-      "reason": "SmartPerfetto native conclusion declaration delivery orchestration",
-      "source_path": "backend/strategies/prompt-native-declaration-completion-zh.template.md",
-      "source_sha256": "dbce8c3084321746f36ae1eae933c34ab7ea5a65556e728bc1f0fd0cdbe4cd3c"
+      "reason": "SmartPerfetto SQL schema discovery tool response and pagination contract",
+      "source_path": "backend/strategies/prompt-lookup-sql-schema-tool-description.template.md",
+      "source_sha256": "f02916a6a5d20b6d7cb1b528b83e40be47f062a3913d461ef133434d544a060b"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto native output-limit delivery recovery orchestration",
       "source_path": "backend/strategies/prompt-native-output-completion-en.template.md",
-      "source_sha256": "e87726c70d89d635524ce5bed3e580af3f871ef40d1cadd8f3e36269484c00d0"
+      "source_sha256": "7e855379a5014cb7ed321c3cd3df5bd1462fd5bc10bcbb453b4dfe3754d0b1fc"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto native output-limit delivery recovery orchestration",
       "source_path": "backend/strategies/prompt-native-output-completion-zh.template.md",
-      "source_sha256": "3a8b510836f04e14df59767bedc22335d2de229363a7a49a82c9d3c2211c9798"
+      "source_sha256": "5539871b7a4c61a532175d421b0caa50e2ca62b60475c234b7aa588156efadcf"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-openai-final-report-continuation-en.template.md",
-      "source_sha256": "75460c73dedb1999ee9625e480d177cb99caf582c859c35ac48a07eb30f5caf1"
+      "source_sha256": "d26a48fd701ea751f3039d74bed192d43c2e46788b2fad586ec7f4f5988480ec"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/prompt-openai-final-report-continuation-zh.template.md",
-      "source_sha256": "1ea0c868d1fa19a2fa968687363df47b0b1f83463aee09e3dc7ef6f3bd95ed91"
+      "source_sha256": "0bfb512000d1e753ca70a18f646e329e8f8335f7d1bcc674f192f29989347b40"
     },
     {
       "disposition": "product-only",
@@ -4013,15 +4043,33 @@
     },
     {
       "disposition": "product-only",
-      "reason": "SmartPerfetto native evidence relation candidate recovery protocol",
-      "source_path": "backend/strategies/prompt-relation-proposal-recovery-en.template.md",
-      "source_sha256": "65ff6c2a512b5a5700ba89ec88b06b5e262aa504439d14e11c96eb54515758fc"
+      "reason": "SmartPerfetto in-run supplement closeout delivery section",
+      "source_path": "backend/strategies/prompt-run-supplement-closeout-en.template.md",
+      "source_sha256": "080ebb56a0dde4d67a6843915d70ed2f29633086b29c2662726689f55dbf227d"
     },
     {
       "disposition": "product-only",
-      "reason": "SmartPerfetto native evidence relation candidate recovery protocol",
-      "source_path": "backend/strategies/prompt-relation-proposal-recovery-zh.template.md",
-      "source_sha256": "a7c9ec0678f5e34c408af05b2748f9cf8a30f08f2a1525f3a38309e27980235b"
+      "reason": "SmartPerfetto in-run supplement closeout delivery section",
+      "source_path": "backend/strategies/prompt-run-supplement-closeout-zh.template.md",
+      "source_sha256": "7b69c038dce2256a897862ac7edbc3924b2b950b71e524767576d56daaa5dae2"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto in-run supplement classification protocol",
+      "source_path": "backend/strategies/prompt-run-supplement-intent.template.md",
+      "source_sha256": "cb2a8b08bc50f088f469ceadc90898ed08798654e75018be6a2e2846e12c6e26"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto in-run supplement user-input framing",
+      "source_path": "backend/strategies/prompt-run-supplement-message-en.template.md",
+      "source_sha256": "361bd0280fa41926d78c8286a4eb476213a30e8fff305f99bc29445a03ea2481"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto in-run supplement user-input framing",
+      "source_path": "backend/strategies/prompt-run-supplement-message-zh.template.md",
+      "source_sha256": "e9275b1e91a89d23ca5337503adadaa006aa4fd204cc16418ef3dfdc173fb1d4"
     },
     {
       "disposition": "product-only",
@@ -4051,13 +4099,13 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime empty-body delivery continuation",
       "source_path": "backend/strategies/prompt-runtime-empty-body-continuation-en.template.md",
-      "source_sha256": "b633b3ec16e763ac62e920c46cc63465553883d631d3b6a22751e9cd71c4544a"
+      "source_sha256": "016e81f48d339e6e475947df15c023e7504f6ca3b26a4215ac5f3d22742f8877"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime empty-body delivery continuation",
       "source_path": "backend/strategies/prompt-runtime-empty-body-continuation-zh.template.md",
-      "source_sha256": "070129a52c32cd0e96ed489aa4f93259f230eed62ab37554f98e7f1a8842dfd3"
+      "source_sha256": "6207b9918e670c11f9448219e23a6a7d7eb1d75afdffc43ec35d7746e6929d79"
     },
     {
       "disposition": "product-only",
@@ -4075,25 +4123,37 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime session history projection",
       "source_path": "backend/strategies/prompt-runtime-history-en.template.md",
-      "source_sha256": "1e1628e10b2a386ec77e1f9bb3c5abf1061572cc4bd71cf0cfa0f3cd09c2f108"
+      "source_sha256": "626d5b31fa1dfcb708c7b15542882050df53fa0356c19edcd1f5ca8181eaf61e"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto bounded session history continuation",
+      "source_path": "backend/strategies/prompt-runtime-history-minimal-en.template.md",
+      "source_sha256": "14e149de978421fcade828a3a1d9a890c97cc9389c17bbf2ca5476e93e598fbd"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto bounded session history continuation",
+      "source_path": "backend/strategies/prompt-runtime-history-minimal-zh.template.md",
+      "source_sha256": "b95d238f592b5c373cc1db0141e3a488e2f3207f01f103a7d2cd13947232c0b0"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime session tool-history projection",
       "source_path": "backend/strategies/prompt-runtime-history-tool-en.template.md",
-      "source_sha256": "c48609045894a078d16b8f0dbbb45050de644d0ee2cbaf3aefc7b86404631c9e"
+      "source_sha256": "5bd512a9c17df4d4f8b9d7ad5f9c079d667e522cb26bb138a3ae5b118f9c969b"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime session tool-history projection",
       "source_path": "backend/strategies/prompt-runtime-history-tool-zh.template.md",
-      "source_sha256": "2e04e5e8e37a957902ac7dabbd48b94106944ee1ced4fb722d924312142b8d16"
+      "source_sha256": "b4b4d60f9e760f23796c3a4f93b94c43427543fa3177651199573fbd0c0e6d65"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime session history projection",
       "source_path": "backend/strategies/prompt-runtime-history-zh.template.md",
-      "source_sha256": "e3a13243133b8abafdbd02c27796178d975457f011aae7aa0ae667e50c6011ed"
+      "source_sha256": "8d1122f302559266d9393bfb0021d128f8ec170ffa8d040a500fe8a3522f8260"
     },
     {
       "disposition": "product-only",
@@ -4123,19 +4183,25 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime turn completion and session continuity orchestration",
       "source_path": "backend/strategies/prompt-runtime-turn-closeout-en.template.md",
-      "source_sha256": "d16ec886d8c2d59be43d3757ba0f6a6bfe611746f5ce1e5342e94941ccc450de"
+      "source_sha256": "a6d4f1a138c140505d94982677c6b5eea224be7690df15ae0236ef97a7aa387f"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime turn completion and session continuity orchestration",
       "source_path": "backend/strategies/prompt-runtime-turn-closeout-zh.template.md",
-      "source_sha256": "6cffb7770bf6ef0d03b182799f1c19fe62924d591608fd607ed790331cd35e63"
+      "source_sha256": "37f9e434d83f9b5a4d8ebfc52c1e74caa50675fd4702b0b5bcaad79631762c69"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto product-run entry evidence for a bounded question",
+      "source_path": "backend/strategies/prompt-scene-evidence-bounded.template.md",
+      "source_sha256": "be8ad83989f8cfb1fb7ea4b4eb83c4840a03527ed76076c33e00170de9cb2cb6"
     },
     {
       "disposition": "product-only",
       "reason": "SmartPerfetto product-owned scene entry evidence prompt segment",
       "source_path": "backend/strategies/prompt-scene-evidence.template.md",
-      "source_sha256": "ae4ac53ce34799facf5e4f17f326962ae86218131bd18d96ebe1232b5e5f8be2"
+      "source_sha256": "ec86ad3fa48abe759640e625cfdec1070135aebefed598392a98dad0dd87e310"
     },
     {
       "disposition": "product-only",
@@ -4170,6 +4236,12 @@
     },
     {
       "disposition": "product-only",
+      "reason": "SmartPerfetto product-owned selected interval capture and metric prompt segment",
+      "source_path": "backend/strategies/prompt-selected-evidence.template.md",
+      "source_sha256": "517e2241a0d6008995a444fdce3919ada38012b2d971af2f6843ec7f721df20f"
+    },
+    {
+      "disposition": "product-only",
       "reason": "SmartPerfetto locate-depth source recipe for its codebase-aware tools",
       "source_path": "backend/strategies/prompt-source-recipe-locate.template.md",
       "source_sha256": "ceb26a615c2f8ebb0220aac5c4360cf58db290e406497cce796126ac52090d5e"
@@ -4178,7 +4250,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto mechanism-depth source recipe for its codebase-aware tools",
       "source_path": "backend/strategies/prompt-source-recipe-mechanism.template.md",
-      "source_sha256": "31ede932ff11d8e943efd24a24a11db78581e6d5f547fcfdee1efcdcd09cfc4a"
+      "source_sha256": "0e90b4726c69e465925a3d9f240f3eda1d62c043e0467741c0eb5cd79c55fe3a"
     },
     {
       "disposition": "product-only",
@@ -4196,7 +4268,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto Skill and MCP evidence acquisition contract",
       "source_path": "backend/strategies/prompt-sql-evidence-guidance.template.md",
-      "source_sha256": "9ebc57148d66c6151478496a470cca6e6e34fc08b4dbac8bc9811198965c94ef"
+      "source_sha256": "9ce256a7ec1768f59201e868cf8f17a065a7e7e9398b0ecf7f48ff92509238a4"
     },
     {
       "disposition": "product-only",
@@ -4214,7 +4286,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto resolved turn policy and source authorization",
       "source_path": "backend/strategies/prompt-turn-policy.template.md",
-      "source_sha256": "dceff9353f240eeaa772cf144306ac4c995403cbca26422fd5c08cd2048d729b"
+      "source_sha256": "8400b46dd9b1ca4d71566858e1e0224d06ca7f405d044eee213d909217c636ad"
     },
     {
       "disposition": "product-only",
@@ -4330,7 +4402,7 @@
       "disposition": "product-only",
       "reason": "SmartPerfetto runtime, session, case, language, or codebase orchestration",
       "source_path": "backend/strategies/runtime-correctness.strategy.md",
-      "source_sha256": "58aa31b5a270948e88f0959f6a274e418f3608891fccdf930ce2fe6e1d53bde3"
+      "source_sha256": "16cddf885a5796deb487d02d3a4191634c1a739f1a7e42beab0c775670af7ffe"
     },
     {
       "disposition": "product-only",
@@ -4392,14 +4464,14 @@
       "destination": "references/generated/strategies/scroll-response.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scroll-response.strategy.md",
-      "source_sha256": "4cb9824fa8afc1d9bc28026e5c2f39af9dac33f6cf231933a605f23ea0b04661",
+      "source_sha256": "56ef0f051b813aadbd0216d391d514580185291484ae5827b07874a7b36ce8c9",
       "workflow": "scrolling"
     },
     {
       "destination": "references/generated/strategies/scrolling.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/scrolling.strategy.md",
-      "source_sha256": "b272680f9210641af343747bf05167b7abe75f268ee6028aed95eaee5e91136a",
+      "source_sha256": "964627d9578c1f8c601afc787846c1c55ffeaebe11f525c2311a97c80e0d94af",
       "workflow": "scrolling"
     },
     {
@@ -4431,21 +4503,27 @@
       "destination": "references/generated/strategies/startup.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/startup.strategy.md",
-      "source_sha256": "e2b03d0bc15f9779454cf5635359b68939981863b53eb9dbf581bc9568c70edc",
+      "source_sha256": "d2a5befed1e348ada57df8c57cfb39f49649b58bb7fa61ad12a7120b10840f6d",
       "workflow": "startup"
+    },
+    {
+      "disposition": "product-only",
+      "reason": "SmartPerfetto execute_sql stdlibColumnDocs overlay of stdlib column units and meanings",
+      "source_path": "backend/strategies/stdlib-column-semantics.yaml",
+      "source_sha256": "9553cdeb52a5811f64271243c66332490860a8f4a3e53ee55f628df40bdd0460"
     },
     {
       "destination": "references/generated/strategies/teaching.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/teaching.strategy.md",
-      "source_sha256": "ccada0457c74d33d3057f5d41b31458e3d435e76b0c938ecdfe7d47deb826009",
+      "source_sha256": "8fcd668fe2208a6d5065d73d6652629d0adbfcc01f33dde03bea3f7c81634b26",
       "workflow": "trace-overview"
     },
     {
       "destination": "references/generated/strategies/touch-tracking.strategy.md",
       "disposition": "exported",
       "source_path": "backend/strategies/touch-tracking.strategy.md",
-      "source_sha256": "52b3c2bb17f6d7082dce681f37166c7f72618c03fd82aaa7ff29c475c2c3dca2",
+      "source_sha256": "51614639f7ac6c6bd308a44f5e1766c4d86df1818748ca92ced7d757eb402c98",
       "workflow": "interaction"
     },
     {
@@ -4458,22 +4536,22 @@
   ],
   "summary": {
     "excluded_skill_definitions": 5,
-    "exported_sql_fragments": 53,
+    "exported_sql_fragments": 55,
     "exported_strategy_sources": 46,
     "pipeline_docs": 14,
     "product_only_sql_fragments": 7,
-    "product_only_strategy_sources": 115,
-    "runtime_candidates": 252,
+    "product_only_strategy_sources": 122,
+    "runtime_candidates": 254,
     "runtime_types": {
-      "atomic": 132,
+      "atomic": 134,
       "comparison": 1,
       "composite": 86,
       "deep": 2,
       "pipeline_definition": 31
     },
-    "skill_yaml_files": 257,
-    "sql_fragments": 60,
-    "strategy_sources": 161,
+    "skill_yaml_files": 259,
+    "sql_fragments": 62,
+    "strategy_sources": 168,
     "vendor_overrides": 8
   },
   "vendor_overrides": [

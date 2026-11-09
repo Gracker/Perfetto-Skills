@@ -99,7 +99,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/binder_analysis.skill.yaml",
-    "sha256": "fc34e062a7ce8185abceac60b9171ac039d0e631ee0ef1646f3d6ef0369cbeee"
+    "sha256": "afbc66c5633332309054bf23e4dc7bbebfec5f12bd9b6b494e68f270b19f8755"
   },
   "steps": [
     {
@@ -247,6 +247,7 @@
           "evidence_fields": [
             "binder_check.data"
           ],
+          "id": "binder.data_unavailable",
           "severity": "warning",
           "suggestions": [
             "[Owner] Perf/Infra | [Priority] P0 | [Action] 采集包含 android.binder 模块的 trace 并覆盖问题时段",
@@ -261,6 +262,7 @@
             "main_thread_binder.data",
             "binder_overview.data"
           ],
+          "id": "binder.main_thread_slow_call_critical",
           "severity": "critical",
           "suggestions": [
             "[Owner] App | [Priority] P0 | [Action] 将该 Binder 调用迁移到后台线程或异步化",
@@ -275,6 +277,7 @@
           "evidence_fields": [
             "main_thread_binder.data"
           ],
+          "id": "binder.main_thread_slow_call_over_frame",
           "severity": "warning",
           "suggestions": [
             "[Owner] App/Service | [Priority] P1 | [Action] 对主线程 Binder 做异步化并减少重调用",
@@ -288,6 +291,7 @@
           "evidence_fields": [
             "binder_overview.data"
           ],
+          "id": "binder.main_thread_call_count_high",
           "severity": "warning",
           "suggestions": [
             "[Owner] App | [Priority] P1 | [Action] 合并调用、增加缓存并迁移非关键调用到后台线程",
@@ -301,6 +305,7 @@
           "evidence_fields": [
             "server_response.data"
           ],
+          "id": "binder.server_response_slow",
           "severity": "warning",
           "suggestions": [
             "[Owner] Service | [Priority] P1 | [Action] 优化服务端热点接口与锁/IO路径",
@@ -315,6 +320,7 @@
           "evidence_fields": [
             "binder_blocking.data"
           ],
+          "id": "binder.blocking_io_wait",
           "severity": "warning",
           "suggestions": [
             "[Owner] Service | [Priority] P1 | [Action] 检查并下移阻塞 IO，避免同步链路卡住调用方",

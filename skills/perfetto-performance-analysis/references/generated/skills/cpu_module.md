@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/cpu_module.skill.yaml
-Source SHA-256: 4a9d6de50b0314b731792232ca2a3ac602c68e7c870a4e4a3d95f97d9f84a688
+Source SHA-256: 71a1d8cdf84e0180782c8c25b1f85eb615aea52e66ee0a8ed675fb1a0634b309
 # CPU 硬件分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -160,7 +160,8 @@ inputs:
 - throttle_events
 - cluster_util
 rules:
-- condition: freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz < 1500
+- id: cpu.big_core_freq_low
+  condition: freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz < 1500
   diagnosis: 大核 CPU 平均频率较低 (${freq_overview.data.find(f => f.cluster === 'big')?.avg_freq_mhz}MHz)；仅为频率观测，低频可能来自负载、调速器或频率上限
   confidence: high
   suggestions:
@@ -169,7 +170,8 @@ rules:
   evidence_fields:
   - freq_overview.data[0].avg_freq_mhz
   - freq_overview.data[0].max_freq_mhz
-- condition: throttle_events.data.length > 20
+- id: cpu.freq_change_frequent
+  condition: throttle_events.data.length > 20
   diagnosis: CPU 频率频繁变化 (${throttle_events.data.length} 次)，调度器可能不稳定
   confidence: medium
   suggestions:
@@ -177,7 +179,8 @@ rules:
   - 检查是否有功耗抖动
   evidence_fields:
   - throttle_events.data.length
-- condition: freq_overview.data.find(f => f.cluster === 'little')?.avg_freq_mhz > freq_overview.data.find(f => f.cluster ===
+- id: cpu.little_above_big_freq
+  condition: freq_overview.data.find(f => f.cluster === 'little')?.avg_freq_mhz > freq_overview.data.find(f => f.cluster ===
     'big')?.avg_freq_mhz
   diagnosis: 小核平均频率高于大核；仅为频率观测，可能来自两簇负载不同或大核频率上限
   confidence: medium

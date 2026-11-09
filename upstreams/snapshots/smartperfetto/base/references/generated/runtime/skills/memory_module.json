@@ -93,7 +93,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/memory_module.skill.yaml",
-    "sha256": "b987a26840357de829425e1b7deba3e412dee91d2541ade4ad72e4866c5c38ff"
+    "sha256": "f00717aba46f44cda52a71b3aac619d9a3dabf1eea6b54e5757a38a480c000bc"
   },
   "steps": [
     {
@@ -191,6 +191,7 @@
             "lmk_events.data.length",
             "lmk_events.data[0]?.lmk_event"
           ],
+          "id": "memory.lmk_events",
           "severity": "critical",
           "suggestions": [
             "检查内存泄漏",
@@ -206,6 +207,7 @@
             "dmabuf_usage.data[0]?.growth_mb",
             "dmabuf_usage.data[0]?.max_mb"
           ],
+          "id": "memory.dmabuf_growth",
           "suggestions": [
             "检查 Surface/Texture 是否正确释放",
             "检查 Bitmap 缓存策略",
@@ -220,6 +222,7 @@
             "memory_psi.data[0]?.avg_value",
             "memory_psi.data[0]?.max_value"
           ],
+          "id": "memory.psi_high",
           "suggestions": [
             "系统内存紧张，考虑释放缓存",
             "减少内存密集型操作",
@@ -233,6 +236,7 @@
           "evidence_fields": [
             "memory_overview.data[0]?.min_mb"
           ],
+          "id": "memory.free_memory_low",
           "suggestions": [
             "系统内存极低，可能触发 LMK",
             "检查大内存消耗进程"
@@ -246,6 +250,7 @@
             "process_memory.data[0]?.process_name",
             "process_memory.data[0]?.max_mb"
           ],
+          "id": "memory.process_peak_high",
           "suggestions": [
             "检查是否有大对象或集合",
             "考虑使用 LruCache",

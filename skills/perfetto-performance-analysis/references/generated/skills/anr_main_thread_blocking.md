@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
-Source SHA-256: e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349
+Source SHA-256: 125f6c0f585e4fb4e02d376ddf8c103f5229e42fbdff3be9b176133960f18834
 # ANR 主线程阻塞链分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -79,6 +79,20 @@ modules:
 
 ## Ordered execution
 
+### 分析窗口
+
+- ID: `analysis_window`
+- Type: `atomic`
+- SQL: [`../sql/anr_main_thread_blocking/analysis_window.sql`](../sql/anr_main_thread_blocking/analysis_window.sql)
+
+```yaml
+id: analysis_window
+type: atomic
+process_scope:
+  role: identity_metadata
+display: false
+save_as: analysis_window
+```
 ### 主线程状态分布
 
 - ID: `main_thread_state`
@@ -326,7 +340,49 @@ display:
   - name: server_thread
     label: 服务端线程
     type: string
+  - name: end_ts
+    label: end_ts
+    type: timestamp
+    unit: ns
+    hidden: true
+  - name: dur_ns
+    label: dur_ns
+    type: duration
+    unit: ns
+    hidden: true
+  - name: upid
+    label: upid
+    type: number
+    hidden: true
+  - name: wait_evidence
+    label: wait_evidence
+    type: string
+    hidden: true
+  row_semantics: per_event
 save_as: binder_blocking
+optional: true
+```
+### Binder 线程池饱和
+
+- ID: `binder_pool_saturation`
+- Type: `skill`
+
+```yaml
+id: binder_pool_saturation
+type: skill
+skill: binder_pool_saturation_in_range
+display:
+  level: key
+  layer: deep
+  title: Binder 线程池饱和（目标进程与主线程同步调用对端）
+  title_i18n:
+    en: Binder thread pool saturation (target and main-thread sync binder servers)
+params:
+  start_ts: ${analysis_window.data[0].start_ts}
+  end_ts: ${analysis_window.data[0].end_ts}
+  package: ${process_name}
+condition: Boolean(process_name)
+save_as: binder_pool_saturation
 optional: true
 ```
 ### 锁竞争分析

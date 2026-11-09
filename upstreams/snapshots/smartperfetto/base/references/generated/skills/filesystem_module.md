@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/filesystem_module.skill.yaml
-Source SHA-256: 18dec147f2bfaecf6ae89f2942cc87828fb95e48502a1ff7633dd43fe54fa3d3
+Source SHA-256: 435ec320f775e53fe918bea24a31a4c5584c3de7cb0e64c367fca92695457fa4
 # 文件系统 I/O 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -196,7 +196,8 @@ inputs:
 - io_wait_state
 - slow_io
 rules:
-- condition: main_thread_io.data.length > 0
+- id: filesystem.main_thread_io_slices
+  condition: main_thread_io.data.length > 0
   diagnosis: 主线程观测到 ${main_thread_io.data.length} 个疑似 I/O 命名切片，最长 ${main_thread_io.data[0]?.dur_ms}ms；切片名本身不能证明底层存储阻塞
   confidence: medium
   suggestions:
@@ -207,7 +208,8 @@ rules:
   - main_thread_io.data.length
   - main_thread_io.data[0]?.dur_ms
   - main_thread_io.data[0]?.io_operation
-- condition: db_operations.data.filter(op => op.thread_type === 'main_thread').length > 5
+- id: filesystem.main_thread_db_slices
+  condition: db_operations.data.filter(op => op.thread_type === 'main_thread').length > 5
   diagnosis: 主线程观测到多次疑似数据库命名切片；需结合 SQL/atrace 埋点确认具体 Room/SQLite 调用
   confidence: medium
   suggestions:
@@ -217,7 +219,8 @@ rules:
   evidence_fields:
   - db_operations.data[0]?.db_operation
   - db_operations.data[0]?.dur_ms
-- condition: io_wait_state.data[0]?.io_wait_ms > 50
+- id: filesystem.io_wait_long
+  condition: io_wait_state.data[0]?.io_wait_ms > 50
   diagnosis: '线程 I/O 等待时间过长: ${io_wait_state.data[0]?.thread_name} 等待 ${io_wait_state.data[0]?.io_wait_ms}ms'
   confidence: high
   suggestions:
@@ -227,7 +230,8 @@ rules:
   evidence_fields:
   - io_wait_state.data[0]?.thread_name
   - io_wait_state.data[0]?.io_wait_ms
-- condition: slow_io.data.filter(op => op.severity === 'CRITICAL').length > 0
+- id: filesystem.slow_io_critical
+  condition: slow_io.data.filter(op => op.severity === 'CRITICAL').length > 0
   diagnosis: '主线程观测到疑似慢 I/O 命名切片: ${slow_io.data.filter(op => op.severity === ''CRITICAL'')[0]?.operation}；需结合线程状态或明确 I/O
     埋点确认'
   confidence: medium
@@ -237,7 +241,8 @@ rules:
   evidence_fields:
   - slow_io.data[0]?.operation
   - slow_io.data[0]?.dur_ms
-- condition: io_overview.data[0]?.total_ms > 500
+- id: filesystem.io_total_long
+  condition: io_overview.data[0]?.total_ms > 500
   diagnosis: I/O 操作总耗时 ${io_overview.data[0]?.total_ms}ms，占用大量时间
   confidence: medium
   suggestions:

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/network_analysis.skill.yaml
-Source SHA-256: b0d6f1c51fe5e8687db9cc5ec9b1df231029151ee389c92bfb42f096e1ac13e0
+Source SHA-256: 390c291f6c2a0149d466965148a169836930c1d3393129ea790511f28db54319
 # 网络活动分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -614,7 +614,8 @@ inputs:
 - network_power_cost
 - port_analysis
 rules:
-- condition: network_overview.data[0]?.total_mb > ${heavy_traffic_critical_mb|100}
+- id: network.traffic_heavy_critical
+  condition: network_overview.data[0]?.total_mb > ${heavy_traffic_critical_mb|100}
   severity: critical
   diagnosis: NETWORK_HEAVY - 网络流量过大 (${network_overview.data[0].total_mb} MB)
   confidence: high
@@ -622,14 +623,16 @@ rules:
   - 检查是否有不必要的大文件下载
   - 考虑使用压缩传输和增量更新
   - 检查图片/视频资源是否过大
-- condition: network_overview.data[0]?.total_mb > ${heavy_traffic_warning_mb|10}
+- id: network.traffic_heavy_warning
+  condition: network_overview.data[0]?.total_mb > ${heavy_traffic_warning_mb|10}
   severity: warning
   diagnosis: NETWORK_HEAVY - 网络流量较大 (${network_overview.data[0].total_mb} MB)
   confidence: medium
   suggestions:
   - 检查流量来源应用
   - 考虑优化资源加载策略
-- condition: network_power_cost.data[0]?.active_periods > network_overview.data[0]?.total_mb * 10 && network_power_cost.data[0]?.active_periods
+- id: network.frequent_small_transfers
+  condition: network_power_cost.data[0]?.active_periods > network_overview.data[0]?.total_mb * 10 && network_power_cost.data[0]?.active_periods
     > ${frequent_active_periods|20}
   severity: warning
   diagnosis: NETWORK_LATENCY - 频繁小量网络传输，功耗影响大（${network_power_cost.data[0].active_periods} 个活跃周期）
@@ -638,14 +641,16 @@ rules:
   - 批量合并网络请求以减少唤醒次数
   - 使用 JobScheduler 或 WorkManager 延迟非紧急请求
   - 检查后台定时同步频率
-- condition: port_analysis.data.find(p => p.service === 'DNS')?.event_count > 100
+- id: network.dns_packet_activity
+  condition: port_analysis.data.find(p => p.service === 'DNS')?.event_count > 100
   severity: warning
   diagnosis: NETWORK_DNS_PACKET_ACTIVITY - 远程端口 53 包活动频繁；当前 packet trace 不能直接证明 DNS 阶段耗时或请求延迟
   confidence: low
   suggestions:
   - 结合 OkHttp/Cronet DNS 阶段埋点或接入层 request_id 证据确认是否存在 DNS 延迟
   - 若确认重复解析，再检查 DNS 缓存、预解析和连接复用策略
-- condition: network_overview.data[0]?.total_mb <= ${heavy_traffic_warning_mb|10}
+- id: network.normal
+  condition: network_overview.data[0]?.total_mb <= ${heavy_traffic_warning_mb|10}
   severity: info
   diagnosis: NETWORK_NORMAL - 网络流量正常
   confidence: high
@@ -677,7 +682,8 @@ inputs:
 - network_check
 - network_slice_check
 rules:
-- condition: network_check.data[0]?.status === 'unavailable' && (!network_slice_check.data || network_slice_check.data[0]?.status
+- id: network.data_unavailable
+  condition: network_check.data[0]?.status === 'unavailable' && (!network_slice_check.data || network_slice_check.data[0]?.status
     === 'unavailable')
   severity: info
   diagnosis: 未检测到网络数据。Trace 中未包含 android.network_packets 模块数据，也未发现网络相关 Slice。如需分析网络问题，请在录制 Trace 时启用 net 数据源。

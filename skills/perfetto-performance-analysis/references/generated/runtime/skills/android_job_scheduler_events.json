@@ -13,7 +13,10 @@
       "target_range_row_coverage",
       "api_hint"
     ],
-    "signal_patterns": []
+    "signal_patterns": [
+      "android_job_scheduler_pending_reasons_track_events",
+      "android_job_scheduler_states_track_events"
+    ]
   },
   "id": "android_job_scheduler_events",
   "identity": {
@@ -39,7 +42,7 @@
       "type": "string"
     },
     {
-      "description": "分析起始时间戳(ns)",
+      "description": "分析起始时间戳(ns)：ATrace 按执行区间相交，等待汇总按任务启动时间筛选；上报等待时长不按窗口裁剪",
       "name": "start_ts",
       "required": false,
       "type": "timestamp"
@@ -53,7 +56,8 @@
   ],
   "prerequisites": {
     "modules": [
-      "android.job_scheduler"
+      "android.job_scheduler",
+      "android.job_scheduler_states_track_events"
     ],
     "required_tables": []
   },
@@ -62,7 +66,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/android_job_scheduler_events.skill.yaml",
-    "sha256": "ba9540e773bd4ae67b91b141674cfe0b66e89de879fc3d328ea0e98c480c110b"
+    "sha256": "aa6721a92d941b2fca0139aeba55e46532db1d83720306e4d47b18ac850346bd"
   },
   "steps": [
     {
@@ -72,9 +76,39 @@
       "query_id": "android_job_scheduler_events/job_events",
       "result_dependencies": [],
       "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "pending_reason_capability",
+      "name": "等待原因能力检查",
+      "query_id": "android_job_scheduler_events/pending_reason_capability",
+      "result_dependencies": [],
+      "save_as": "pending_reason_capability",
+      "type": "atomic"
+    },
+    {
+      "condition": "pending_reason_capability.data[0]?.status === 'runtime_supported'",
+      "displayed": true,
+      "id": "pending_reason_data",
+      "name": "已完成任务等待原因数据检查",
+      "optional": true,
+      "query_id": "android_job_scheduler_events/pending_reason_data",
+      "result_dependencies": [],
+      "save_as": "pending_reason_data",
+      "type": "atomic"
+    },
+    {
+      "condition": "pending_reason_data.data[0]?.status === 'available'",
+      "displayed": true,
+      "id": "pending_reason_summary",
+      "name": "已完成任务等待原因汇总",
+      "optional": true,
+      "query_id": "android_job_scheduler_events/pending_reason_summary",
+      "result_dependencies": [],
+      "type": "atomic"
     }
   ],
   "type": "atomic",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "cpu-scheduling"
 }

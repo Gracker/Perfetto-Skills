@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/surfaceflinger_module.skill.yaml
-Source SHA-256: e3f857a0ef0e7ea322a5a6f0f6e2f13149fe4684ded79833c5a1421a53b93124
+Source SHA-256: 1ab8ca32abdfd4935e0a65eb1c83e73cb7d16dfac3a75a9ff0e24508f75769ba
 # SurfaceFlinger 分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -161,7 +161,8 @@ inputs:
 - jank_types
 - thread_stats
 rules:
-- condition: frame_stats.data[0]?.jank_rate > 10
+- id: surfaceflinger.jank_rate_high
+  condition: frame_stats.data[0]?.jank_rate > 10
   diagnosis: 卡顿率过高 (${frame_stats.data[0]?.jank_rate}%)，用户体验受影响
   confidence: high
   suggestions:
@@ -170,7 +171,8 @@ rules:
   evidence_fields:
   - frame_stats.data[0].jank_rate
   - frame_stats.data[0].jank_count
-- condition: thread_stats.data.find(t => t.thread === 'MainThread')?.overrun_count > 5
+- id: surfaceflinger.main_thread_overrun
+  condition: thread_stats.data.find(t => t.thread === 'MainThread')?.overrun_count > 5
   diagnosis: 主线程频繁超时 (${thread_stats.data.find(t => t.thread === 'MainThread')?.overrun_count} 次)，应用逻辑耗时
   confidence: high
   suggestions:
@@ -179,7 +181,8 @@ rules:
   evidence_fields:
   - thread_stats.data[0].avg_ms
   - thread_stats.data[0].overrun_count
-- condition: thread_stats.data.find(t => t.thread === 'RenderThread')?.overrun_count > 5
+- id: surfaceflinger.render_thread_overrun
+  condition: thread_stats.data.find(t => t.thread === 'RenderThread')?.overrun_count > 5
   diagnosis: 渲染线程频繁超时 (${thread_stats.data.find(t => t.thread === 'RenderThread')?.overrun_count} 次)，GPU 负载高
   confidence: high
   suggestions:
@@ -188,7 +191,8 @@ rules:
   evidence_fields:
   - thread_stats.data[1].avg_ms
   - thread_stats.data[1].overrun_count
-- condition: jank_types.data[0]?.jank_cause?.includes('Binder')
+- id: surfaceflinger.binder_jank
+  condition: jank_types.data[0]?.jank_cause?.includes('Binder')
   diagnosis: Binder 调用导致卡顿 (${jank_types.data[0]?.count} 次)
   confidence: medium
   suggestions:

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/jank_frame_detail.skill.yaml
-Source SHA-256: a0211e3d982714457a51437e411533797d8d6b214b85d9f67ce0d80ba4ad4c61
+Source SHA-256: d6ebc3c422f3b26600c2d705b90bc6dcfc6723fb3f9e259a094e207326d3915f
 # 掉帧详情分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -1236,61 +1236,70 @@ inputs:
 - vsync_data
 - pipeline_data
 rules:
-- condition: root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence === '高'
+- id: jank_frame_detail.root_cause.high_confidence
+  condition: root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence === '高'
   severity: critical
   diagnosis: ${root_cause.data[0].primary_cause}
   confidence: high
   suggestions:
   - ${root_cause.data[0].secondary_info || '查看下方详细数据分析具体原因'}
-- condition: root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence === '中'
+- id: jank_frame_detail.root_cause.medium_confidence
+  condition: root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence === '中'
   severity: critical
   diagnosis: ${root_cause.data[0].primary_cause}
   confidence: medium
   suggestions:
   - ${root_cause.data[0].secondary_info || '查看下方详细数据分析具体原因'}
-- condition: root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence !== '高' && root_cause.data[0].confidence
+- id: jank_frame_detail.root_cause.low_confidence
+  condition: root_cause?.data?.[0]?.primary_cause && root_cause.data[0].confidence !== '高' && root_cause.data[0].confidence
     !== '中'
   severity: critical
   diagnosis: ${root_cause.data[0].primary_cause}
   confidence: low
   suggestions:
   - ${root_cause.data[0].secondary_info || '查看下方详细数据分析具体原因'}
-- condition: resync_markers?.data?.length > 0
+- id: jank_frame_detail.choreographer_resync
+  condition: resync_markers?.data?.length > 0
   severity: warning
   diagnosis: 检测到 Choreographer resync marker：doFrame 已重同步到后续 VSync，需结合 FrameTimeline/SF 消费证据判断是否存在 SF 未合成或帧堆积
   confidence: medium
   suggestions:
   - 不要把 resynced child slice 当作独立 doFrame 或普通业务耗时重复计数
   - 核对 jank_type、present_type、present_ts 间隔、同 layer token 和 SurfaceFlinger actual/display frame
-- condition: lock_data?.data?.length > 0 && lock_data.data[0]?.wait_ms > 1
+- id: jank_frame_detail.lock.wait
+  condition: lock_data?.data?.length > 0 && lock_data.data[0]?.wait_ms > 1
   severity: critical
   diagnosis: 锁竞争等待 ${lock_data.data[0].wait_ms}ms (${lock_data.data[0].blocking_method})
   confidence: high
   suggestions:
   - 检查持锁线程是否在做耗时操作
   - 考虑减少锁粒度或使用无锁数据结构
-- condition: lock_data?.data?.length > 0 && lock_data.data[0]?.main_blocked === 1
+- id: jank_frame_detail.lock.main_thread_blocked
+  condition: lock_data?.data?.length > 0 && lock_data.data[0]?.main_blocked === 1
   severity: critical
   diagnosis: 主线程被锁阻塞 (等待 ${lock_data.data[0].blocking_thread_name})
   confidence: high
   suggestions:
   - 避免在持锁时做 Binder/IO 操作
   - 考虑使用异步锁或拆分锁
-- condition: io_data?.data?.length > 0 && io_data.data[0]?.total_ms > 3
+- id: jank_frame_detail.io.wait_over_3ms
+  condition: io_data?.data?.length > 0 && io_data.data[0]?.total_ms > 3
   severity: critical
   diagnosis: IO/page-cache 等待候选 ${io_data.data[0].total_ms}ms (${io_data.data[0].thread_name}, ${io_data.data[0].io_cause})
   confidence: medium
   suggestions:
   - 结合文件/数据库/SharedPreferences/Provider slice 或 stack 证据确认业务根因
   - 确认后再将同步 IO 移到后台线程
-- condition: io_data?.data?.length > 0 && io_data.data[0]?.total_ms > 1
+- id: jank_frame_detail.io.wait_over_1ms
+  condition: io_data?.data?.length > 0 && io_data.data[0]?.total_ms > 1
   severity: warning
   diagnosis: ${io_data.data[0].thread_name} IO/page-cache 等待候选 ${io_data.data[0].total_ms}ms
   confidence: medium
   suggestions:
   - 检查帧期间是否有文件/数据库 slice、page fault 或 block I/O 证据
   - 证据闭环后再考虑内存映射、预加载或异步化
-- condition: (gc_data?.data?.[0]?.total_overlap_ms || 0) > 3
+- id: jank_frame_detail.gc.total_overlap
+  condition: (gc_data?.data?.[0]?.total_overlap_ms || 0) > 3
   severity: critical
   diagnosis: GC 严重影响帧渲染：总重叠 ${gc_data.data[0].total_overlap_ms}ms
   confidence: high
@@ -1298,14 +1307,16 @@ rules:
   - 减少帧期间的对象分配
   - 检查是否有大对象频繁创建
   - 考虑对象池化或预分配
-- condition: gc_data?.data?.length > 0 && gc_data.data[0]?.overlap_ms > 1
+- id: jank_frame_detail.gc.overlap
+  condition: gc_data?.data?.length > 0 && gc_data.data[0]?.overlap_ms > 1
   severity: warning
   diagnosis: GC (${gc_data.data[0].gc_type}) 与帧重叠 ${gc_data.data[0].overlap_ms}ms
   confidence: high
   suggestions:
   - 减少短生命周期对象的分配
   - 避免在 onDraw/onLayout 中创建对象
-- condition: sched_data?.data?.length > 0 && sched_data.data[0]?.max_latency_ms > 5
+- id: jank_frame_detail.sched.max_latency
+  condition: sched_data?.data?.length > 0 && sched_data.data[0]?.max_latency_ms > 5
   severity: critical
   diagnosis: '${sched_data.data[0].thread_name} 调度延迟严重: 最大 ${sched_data.data[0].max_latency_ms}ms'
   confidence: high
@@ -1313,14 +1324,16 @@ rules:
   - 检查系统是否有高优先级进程抢占 CPU
   - 考虑提高 UI 线程优先级
   - 检查后台任务是否过于密集
-- condition: sched_data?.data?.length > 0 && sched_data.data[0]?.total_runnable_ms > 3
+- id: jank_frame_detail.sched.runnable_total
+  condition: sched_data?.data?.length > 0 && sched_data.data[0]?.total_runnable_ms > 3
   severity: warning
   diagnosis: ${sched_data.data[0].thread_name} Runnable 等待 ${sched_data.data[0].total_runnable_ms}ms (${sched_data.data[0].runnable_count}次)
   confidence: high
   suggestions:
   - 系统 CPU 资源紧张
   - 检查是否有密集计算任务
-- condition: migration_data?.data?.length > 0 && migration_data.data[0]?.big_to_little > 2
+- id: jank_frame_detail.placement.big_to_little_migration
+  condition: migration_data?.data?.length > 0 && migration_data.data[0]?.big_to_little > 2
   severity: warning
   diagnosis: ${migration_data.data[0].thread_name} 从大核组（超大/大/中核）迁移到小核 ${migration_data.data[0].big_to_little} 次，小核迁回大核组 ${migration_data.data[0].little_to_big}
     次（迁移次数最多的线程）
@@ -1329,7 +1342,8 @@ rules:
   - 迁移次数只说明调度把该线程放到了不同核组，不说明原因；可能的解释包括负载均衡、EAS 能效放置、uclamp/cpuset 限制、线程负载低于上迁阈值，需结合调度数据核对
   - 迁移本身不是限频或温控证据；频率上限可能降低大核可用容量并影响放置，是否限频以本帧的 CPU 限频证据为准
   - 先确认该线程是否在本帧关键路径上，再对照它在小核上的运行时长与 Runnable 等待判断迁移的影响
-- condition: migration_data?.data?.length > 0 && migration_data.data[0]?.unknown_core_ns === 0 && migration_data.data[0]?.big_core_pct
+- id: jank_frame_detail.placement.big_core_share_low
+  condition: migration_data?.data?.length > 0 && migration_data.data[0]?.unknown_core_ns === 0 && migration_data.data[0]?.big_core_pct
     < 30
   severity: warning
   diagnosis: ${migration_data.data[0].thread_name} 大核组（超大/大/中核）运行占比仅 ${migration_data.data[0].big_core_pct}%
@@ -1337,7 +1351,8 @@ rules:
   suggestions:
   - 大核组占比低不说明资源不足；可能的解释包括线程负载低而被放在小核、cpuset/uclamp 限制、大核组繁忙，需对照该线程的 Runnable 等待与大核簇负载区分
   - 占比本身不是限频或温控证据；频率上限可能降低大核可用容量并影响放置，是否限频以本帧的 CPU 限频证据为准
-- condition: gpu_data?.data?.find(g => g.operation === 'GPU Fence Wait')?.total_ms > 3
+- id: jank_frame_detail.gpu.fence_wait
+  condition: gpu_data?.data?.find(g => g.operation === 'GPU Fence Wait')?.total_ms > 3
   severity: critical
   diagnosis: GPU Fence 等待 ${gpu_data.data.find(g => g.operation === 'GPU Fence Wait')?.total_ms}ms
   confidence: high
@@ -1345,14 +1360,16 @@ rules:
   - GPU 繁忙，无法及时完成上一帧
   - 检查是否有复杂的 GPU 着色器
   - 减少过度绘制
-- condition: gpu_data?.data?.find(g => g.operation === 'EGL SwapBuffers')?.max_ms > 5
+- id: jank_frame_detail.gpu.swap_buffers
+  condition: gpu_data?.data?.find(g => g.operation === 'EGL SwapBuffers')?.max_ms > 5
   severity: warning
   diagnosis: EGL SwapBuffers 耗时 ${gpu_data.data.find(g => g.operation === 'EGL SwapBuffers')?.max_ms}ms
   confidence: high
   suggestions:
   - 帧缓冲交换延迟，可能是 GPU/SF 瓶颈
   - 检查三缓冲是否正常
-- condition: binder_blocking_data?.data?.length > 0 && binder_blocking_data.data[0]?.max_block_ms > 5
+- id: jank_frame_detail.binder.max_block
+  condition: binder_blocking_data?.data?.length > 0 && binder_blocking_data.data[0]?.max_block_ms > 5
   severity: critical
   diagnosis: Binder 同步调用阻塞 ${binder_blocking_data.data[0].max_block_ms}ms (${binder_blocking_data.data[0].server_process})
   confidence: high
@@ -1360,14 +1377,16 @@ rules:
   - 将 Binder 调用移到后台线程
   - 使用 oneway Binder 调用
   - 检查服务端是否有性能问题
-- condition: binder_blocking_data?.data?.length > 0 && binder_blocking_data.data[0]?.total_block_ms > 2
+- id: jank_frame_detail.binder.total_block
+  condition: binder_blocking_data?.data?.length > 0 && binder_blocking_data.data[0]?.total_block_ms > 2
   severity: warning
   diagnosis: Binder 调用总阻塞 ${binder_blocking_data.data[0].total_block_ms}ms (${binder_blocking_data.data[0].call_count}次)
   confidence: high
   suggestions:
   - 减少帧期间的 Binder 调用次数
   - 考虑批量处理或缓存
-- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code
+- id: jank_frame_detail.freq_limit.thermal
+  condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code
     === 'thermal_throttling'
   severity: warning
   diagnosis: 帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count}
@@ -1376,7 +1395,8 @@ rules:
   confidence: high
   suggestions:
   - 本帧主线程关键工作所在 policy 受限且约束了它（binding），该上限值的写入与温控冷却设备升档配对确认；见根因分析的 freq_limit_* 列
-- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code
+- id: jank_frame_detail.freq_limit.cpu_max_limited
+  condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code
     === 'cpu_max_limited'
   severity: warning
   diagnosis: 帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count}
@@ -1385,7 +1405,8 @@ rules:
   confidence: high
   suggestions:
   - 限频约束了本帧关键线程（binding）；由温控还是功耗/厂商策略触发尚未确认：用 cpu_frequency_limit_attribution 判断触发方与限频前负载
-- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code
+- id: jank_frame_detail.freq_limit.other
+  condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'freq_limit_observed' && root_cause?.data?.[0]?.reason_code
     !== 'thermal_throttling' && root_cause?.data?.[0]?.reason_code !== 'cpu_max_limited'
   severity: warning
   diagnosis: 帧窗口内观测到 CPU 限频：与窗口重叠的限频区段 ${freq_limit_evidence.data[0].episode_count} 个，涉及 ${freq_limit_evidence.data[0].policy_count}
@@ -1395,7 +1416,8 @@ rules:
   suggestions:
   - 限频已发生，但由温控还是功耗/厂商策略触发尚未判定：用 cpu_frequency_limit_attribution 判断触发方与限频前负载
   - 限频是否约束了本帧关键线程尚未判定：对照关键线程运行所在 CPU/policy 与运行时长，不能直接把卡顿归因于限频
-- condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'no_limit_episode_in_range' && Boolean(freq_data?.data?.find(f
+- id: jank_frame_detail.freq.no_limit_episode
+  condition: freq_limit_evidence?.data?.[0]?.evidence_status === 'no_limit_episode_in_range' && Boolean(freq_data?.data?.find(f
     => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz))
   severity: info
   diagnosis: 帧窗口内 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz
@@ -1406,7 +1428,8 @@ rules:
   confidence: medium
   suggestions:
   - 频率变化原因（负载、调速器、空闲 DVFS）需结合调度数据排查
-- condition: freq_limit_evidence?.data?.[0]?.limit_evidence_missing_reason === 'max_limit_not_captured' && Boolean(freq_data?.data?.find(f
+- id: jank_frame_detail.freq.max_limit_track_unavailable
+  condition: freq_limit_evidence?.data?.[0]?.limit_evidence_missing_reason === 'max_limit_not_captured' && Boolean(freq_data?.data?.find(f
     => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz))
   severity: info
   diagnosis: 帧窗口内 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz
@@ -1417,7 +1440,8 @@ rules:
   confidence: medium
   suggestions:
   - 采集 power/cpu_frequency_limits 后才能判断是否限频；判断触发方还需温度轨道与 cooling device 事件
-- condition: freq_limit_evidence?.data?.[0]?.limit_evidence_missing_reason === 'max_limit_samples_missing' && Boolean(freq_data?.data?.find(f
+- id: jank_frame_detail.freq.max_limit_samples_unavailable
+  condition: freq_limit_evidence?.data?.[0]?.limit_evidence_missing_reason === 'max_limit_samples_missing' && Boolean(freq_data?.data?.find(f
     => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz))
   severity: info
   diagnosis: 帧窗口内 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz
@@ -1428,7 +1452,8 @@ rules:
   confidence: medium
   suggestions:
   - 检查 cpufreq 上限轨道的采集与解析，缺少有效样本时无法判断是否限频
-- condition: '!freq_limit_evidence?.data?.[0] && Boolean(freq_data?.data?.find(f => [''prime'', ''big'', ''medium''].includes(f.core_type)
+- id: jank_frame_detail.freq.limit_evidence_unavailable
+  condition: '!freq_limit_evidence?.data?.[0] && Boolean(freq_data?.data?.find(f => [''prime'', ''big'', ''medium''].includes(f.core_type)
     && f.max_freq_mhz > 0 && f.max_freq_mhz - f.min_freq_mhz > 0.2 * f.max_freq_mhz))'
   severity: info
   diagnosis: 帧窗口内 ${freq_data.data.find(f => ['prime', 'big', 'medium'].includes(f.core_type) && f.max_freq_mhz > 0 && f.max_freq_mhz
@@ -1439,7 +1464,8 @@ rules:
   confidence: medium
   suggestions:
   - 检查 cpu_throttling_in_range 的 limit_evidence 步骤为何未产出结果
-- condition: cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.load_pct > 90
+- id: jank_frame_detail.cluster.big_load_high
+  condition: cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.load_pct > 90
   severity: critical
   diagnosis: 大核簇负载 ${cluster_load_data.data.find(c => c.cluster === '大核簇')?.load_pct}%，接近跑满
   confidence: high
@@ -1447,7 +1473,8 @@ rules:
   - 检查占用大核簇的线程，区分本帧关键线程与后台密集计算任务
   - 负载只按 Running 时间计算、不反映运行频率；频率偏低时同样的工作可能占用更长时间，是否限频以本帧的 CPU 限频证据为准
   - 考虑优化或推迟非关键任务
-- condition: cluster_load_data?.data?.find(c => c.cluster === '超大核簇')?.load_pct > 90
+- id: jank_frame_detail.cluster.prime_load_high
+  condition: cluster_load_data?.data?.find(c => c.cluster === '超大核簇')?.load_pct > 90
   severity: critical
   diagnosis: 超大核簇负载 ${cluster_load_data.data.find(c => c.cluster === '超大核簇')?.load_pct}%，接近跑满
   confidence: high
@@ -1455,7 +1482,8 @@ rules:
   - 关键线程是否因此被放到其他核组或排队，需对照其核组占比与 Runnable 等待
   - 检查是否有后台密集计算任务占用超大核
   - 负载只按 Running 时间计算、不反映运行频率；频率偏低时同样的工作可能占用更长时间，是否限频以本帧的 CPU 限频证据为准
-- condition: cluster_load_data?.data?.find(c => c.cluster === '中核簇')?.load_pct > 90
+- id: jank_frame_detail.cluster.medium_load_high
+  condition: cluster_load_data?.data?.find(c => c.cluster === '中核簇')?.load_pct > 90
   severity: warning
   diagnosis: 中核簇负载 ${cluster_load_data.data.find(c => c.cluster === '中核簇')?.load_pct}%，接近跑满
   confidence: high
@@ -1463,14 +1491,16 @@ rules:
   - 需要中核的任务可能排队或被放到其他核组，需对照关键线程的核组占比与 Runnable 等待
   - 检查是否有后台密集计算任务占用中核
   - 负载只按 Running 时间计算、不反映运行频率；频率偏低时同样的工作可能占用更长时间，是否限频以本帧的 CPU 限频证据为准
-- condition: cluster_load_data?.data?.find(c => c.cluster === '小核簇')?.load_pct > 95
+- id: jank_frame_detail.cluster.little_load_high
+  condition: cluster_load_data?.data?.find(c => c.cluster === '小核簇')?.load_pct > 95
   severity: warning
   diagnosis: 小核簇负载 ${cluster_load_data.data.find(c => c.cluster === '小核簇')?.load_pct}%，几乎跑满
   confidence: high
   suggestions:
   - 运行在小核的任务可能排队；小核簇跑满不代表其他核组也满载，需对照其他核组负载
   - 后台任务可能挤占资源
-- condition: cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.load_pct > 70 && cluster_load_data?.data?.find(c =>
+- id: jank_frame_detail.cluster.big_and_little_load_high
+  condition: cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.load_pct > 70 && cluster_load_data?.data?.find(c =>
     c.cluster === '小核簇')?.load_pct > 70
   severity: warning
   diagnosis: '大核簇与小核簇负载均高于 70%: 大核簇 ${cluster_load_data.data.find(c => c.cluster === ''大核簇'')?.load_pct}%, 小核簇 ${cluster_load_data.data.find(c
@@ -1479,14 +1509,16 @@ rules:
   suggestions:
   - 多任务竞争是否造成本帧关键线程的调度延迟，以 Runnable 与调度延迟数据为准
   - 检查同时占用大核与小核的后台任务
-- condition: cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.max_single_core_pct > 95
+- id: jank_frame_detail.cluster.big_single_core_saturated
+  condition: cluster_load_data?.data?.find(c => c.cluster === '大核簇')?.max_single_core_pct > 95
   severity: info
   diagnosis: 大核簇中有核心接近 100% (${cluster_load_data.data.find(c => c.cluster === '大核簇')?.max_single_core_pct}%)
   confidence: medium
   suggestions:
   - 可能有单线程密集任务
   - 检查是否有热点线程
-- condition: page_fault_data?.data?.length > 0 && page_fault_data.data[0]?.total_ms > 2
+- id: jank_frame_detail.page_fault.blocking
+  condition: page_fault_data?.data?.length > 0 && page_fault_data.data[0]?.total_ms > 2
   severity: critical
   diagnosis: ${page_fault_data.data[0].thread_name} 内存操作阻塞 ${page_fault_data.data[0].total_ms}ms (${page_fault_data.data[0].fault_type})
   confidence: high
@@ -1494,63 +1526,72 @@ rules:
   - 触发页面错误或内存回收
   - 预加载可能需要的数据
   - 检查内存压力
-- condition: page_fault_data?.data?.find(p => p.fault_type === 'memory_reclaim')?.total_ms > 1
+- id: jank_frame_detail.page_fault.memory_reclaim
+  condition: page_fault_data?.data?.find(p => p.fault_type === 'memory_reclaim')?.total_ms > 1
   severity: warning
   diagnosis: 系统内存回收导致阻塞 ${page_fault_data.data.find(p => p.fault_type === 'memory_reclaim')?.total_ms}ms
   confidence: high
   suggestions:
   - 系统内存紧张
   - 检查应用内存使用
-- condition: sf_data?.data?.find(s => s.composition_type === 'Composite')?.total_ms > 3
+- id: jank_frame_detail.surfaceflinger.composite
+  condition: sf_data?.data?.find(s => s.composition_type === 'Composite')?.total_ms > 3
   severity: warning
   diagnosis: SurfaceFlinger 合成耗时 ${sf_data.data.find(s => s.composition_type === 'Composite')?.total_ms}ms
   confidence: medium
   suggestions:
   - 系统合成层可能是瓶颈
   - 检查图层数量和复杂度
-- condition: gpu_freq_data?.data?.length > 0 && gpu_freq_data.data[0]?.low_freq_pct > 50
+- id: jank_frame_detail.gpu.low_frequency_share
+  condition: gpu_freq_data?.data?.length > 0 && gpu_freq_data.data[0]?.low_freq_pct > 50
   severity: warning
   diagnosis: GPU 运行时间中低频占比 ${gpu_freq_data.data[0].low_freq_pct}%
   confidence: medium
   suggestions:
   - GPU 未能提升频率
   - 检查 GPU 功耗策略
-- condition: vsync_data?.data?.find(v => v.metric === '截止时间')?.value?.includes('超时')
+- id: jank_frame_detail.vsync.deadline_missed
+  condition: vsync_data?.data?.find(v => v.metric === '截止时间')?.value?.includes('超时')
   severity: warning
   diagnosis: '帧未能在 VSync 前完成: ${vsync_data.data.find(v => v.metric === ''截止时间'')?.value}'
   confidence: high
   suggestions:
   - 帧渲染超过 VSync 周期
   - 需要优化帧渲染时间
-- condition: pipeline_data?.data?.find(p => p.stage?.includes('主线程'))?.pct > 70
+- id: jank_frame_detail.pipeline.main_thread_share
+  condition: pipeline_data?.data?.find(p => p.stage?.includes('主线程'))?.pct > 70
   severity: info
   diagnosis: 主线程占用帧时间 ${pipeline_data.data.find(p => p.stage?.includes('主线程'))?.pct}%
   confidence: high
   suggestions:
   - 主线程是主要瓶颈
   - 检查主线程耗时操作
-- condition: pipeline_data?.data?.find(p => p.stage?.includes('RenderThread'))?.pct > 60
+- id: jank_frame_detail.pipeline.render_thread_share
+  condition: pipeline_data?.data?.find(p => p.stage?.includes('RenderThread'))?.pct > 60
   severity: info
   diagnosis: RenderThread 占用帧时间 ${pipeline_data.data.find(p => p.stage?.includes('RenderThread'))?.pct}%
   confidence: high
   suggestions:
   - 渲染是主要瓶颈
   - 检查 GPU 操作和绘制复杂度
-- condition: binder_data?.data?.length > 0 && binder_data.data[0]?.dur_ms > 2
+- id: jank_frame_detail.binder.call
+  condition: binder_data?.data?.length > 0 && binder_data.data[0]?.dur_ms > 2
   severity: warning
   diagnosis: Binder 调用耗时 ${binder_data.data[0].dur_ms}ms (${binder_data.data[0].interface})
   confidence: high
   suggestions:
   - 检查是否可以异步调用
   - 考虑使用缓存减少调用次数
-- condition: quadrant_data?.data?.find(q => q.quadrant?.includes('Q3'))?.percentage > 15
+- id: jank_frame_detail.quadrant.runnable
+  condition: quadrant_data?.data?.find(q => q.quadrant?.includes('Q3'))?.percentage > 15
   severity: warning
   diagnosis: 主线程 Runnable 等待 ${quadrant_data.data.find(q => q.quadrant?.includes('Q3'))?.percentage}%
   confidence: high
   suggestions:
   - CPU 资源争抢，检查后台任务
   - 考虑提高线程优先级
-- condition: quadrant_data?.data?.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q4'))?.percentage
+- id: jank_frame_detail.quadrant.main_thread_sleeping
+  condition: quadrant_data?.data?.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q4'))?.percentage
     > 40
   severity: warning
   diagnosis: 主线程休眠/阻塞时间占比 ${quadrant_data.data.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q4'))?.percentage}%
@@ -1558,7 +1599,8 @@ rules:
   suggestions:
   - 检查是否有 IO 操作或锁等待
   - 考虑使用异步 IO
-- condition: quadrant_data?.data?.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q2'))?.percentage
+- id: jank_frame_detail.quadrant.main_thread_little_core
+  condition: quadrant_data?.data?.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q2'))?.percentage
     > 60
   severity: info
   diagnosis: 主线程主要运行在小核 (${quadrant_data.data.find(q => q.quadrant?.includes('MainThread') && q.quadrant?.includes('Q2'))?.percentage}%)
@@ -1566,42 +1608,48 @@ rules:
   suggestions:
   - 小核运行占比高本身不说明调度异常；可能的解释包括主线程负载低而被放在小核、cpuset/uclamp 限制、大核组繁忙，需对照主线程的 Runnable 等待与大核簇负载区分
   - 占比本身不是限频或温控证据；频率上限可能降低大核可用容量并影响放置，是否限频以本帧的 CPU 限频证据为准
-- condition: main_slices?.data?.length > 0 && main_slices.data[0]?.dur_ms > 5
+- id: jank_frame_detail.main_thread.long_slice
+  condition: main_slices?.data?.length > 0 && main_slices.data[0]?.dur_ms > 5
   severity: warning
   diagnosis: 主线程操作 '${main_slices.data[0].name}' 耗时 ${main_slices.data[0].dur_ms}ms
   confidence: high
   suggestions:
   - 考虑将耗时操作移到后台线程
   - 优化该操作的执行效率
-- condition: render_slices?.data?.length > 0 && render_slices.data[0]?.dur_ms > 3
+- id: jank_frame_detail.render_thread.long_slice
+  condition: render_slices?.data?.length > 0 && render_slices.data[0]?.dur_ms > 3
   severity: warning
   diagnosis: RenderThread 操作 '${render_slices.data[0].name}' 耗时 ${render_slices.data[0].dur_ms}ms
   confidence: high
   suggestions:
   - 检查是否有复杂的自定义绘制
   - 考虑减少绘制复杂度或使用硬件加速
-- condition: freq_data?.data?.find(f => f.core_type === 'big')?.avg_freq_mhz < 1500
+- id: jank_frame_detail.freq.big_core_low
+  condition: freq_data?.data?.find(f => f.core_type === 'big')?.avg_freq_mhz < 1500
   severity: info
   diagnosis: 大核频率偏低 (${freq_data.data?.find(f => f.core_type === 'big')?.avg_freq_mhz || 0}MHz)
   confidence: medium
   suggestions:
   - 系统可能处于省电模式
   - 是否限频以本帧的 CPU 限频证据为准；频率偏低先从负载与调速器策略排查
-- condition: freq_timeline?.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length > 2
+- id: jank_frame_detail.freq.big_core_step_down
+  condition: freq_timeline?.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length > 2
   severity: info
   diagnosis: 大核频率下调 ${freq_timeline.data?.filter(f => f.change_direction === 'down' && f.core_type === 'big').length || 0}次
   confidence: medium
   suggestions:
   - 频率下调次数本身不能说明温控或限频，是否限频以本帧的 CPU 限频证据为准
   - 检查系统负载与调速器策略
-- condition: ${vsync_missed} >= 3
+- id: jank_frame_detail.vsync.missed_severe
+  condition: ${vsync_missed} >= 3
   severity: critical
   diagnosis: '严重卡顿: SF 跳过 ${vsync_missed} 帧 VSync (约 ${vsync_missed} 个 VSync 周期)'
   confidence: high
   suggestions:
   - 检查此时系统是否有大量后台活动
   - 查看主线程和 RenderThread 的阻塞原因
-- condition: ${vsync_missed} >= 1
+- id: jank_frame_detail.vsync.missed
+  condition: ${vsync_missed} >= 1
   severity: warning
   diagnosis: '掉帧: SF 跳过 ${vsync_missed} 帧 VSync'
   confidence: high

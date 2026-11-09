@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/framework/art_module.skill.yaml
-Source SHA-256: 420e56403b3df38fd4f2d2f938b611c484252d3bc7f733ba7b956813c7a02fcf
+Source SHA-256: ccf7ffb32cfd7c7aec9b11b5f2ea46b43afcc7223ca47f28d55eff74b710bb95
 # ART 运行时分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -169,7 +169,8 @@ inputs:
 - main_thread_gc
 - jit_events
 rules:
-- condition: (gc_totals.data[0]?.main_thread_collection_count || 0) + (gc_totals.data[0]?.main_thread_wait_count || 0) > 0
+- id: art.main_thread_gc
+  condition: (gc_totals.data[0]?.main_thread_collection_count || 0) + (gc_totals.data[0]?.main_thread_wait_count || 0) > 0
   diagnosis: 主线程执行 GC 回收 ${gc_totals.data[0].main_thread_collection_count} 次、等待 GC 完成 ${gc_totals.data[0].main_thread_wait_count}
     次，共 ${gc_totals.data[0].main_thread_gc_ms}ms，可能导致卡顿
   confidence: high
@@ -180,7 +181,8 @@ rules:
   - gc_totals.data[0].main_thread_collection_count
   - gc_totals.data[0].main_thread_wait_count
   - gc_totals.data[0].main_thread_gc_ms
-- condition: (gc_totals.data[0]?.collection_ms || 0) > 100
+- id: art.gc_collection_total_long
+  condition: (gc_totals.data[0]?.collection_ms || 0) > 100
   diagnosis: GC 回收总耗时过长 (${gc_totals.data[0].collection_ms}ms，${gc_totals.data[0].collection_count} 次)，内存压力大
   confidence: high
   suggestions:
@@ -189,7 +191,8 @@ rules:
   evidence_fields:
   - gc_totals.data[0].collection_ms
   - gc_totals.data[0].collection_count
-- condition: gc_events.data[0]?.gc_kind === 'collection' && gc_events.data[0]?.dur_ms > 10
+- id: art.gc_collection_long
+  condition: gc_events.data[0]?.gc_kind === 'collection' && gc_events.data[0]?.dur_ms > 10
   diagnosis: 存在长 GC 回收 (${gc_events.data[0]?.dur_ms}ms)
   confidence: medium
   suggestions:
@@ -198,7 +201,8 @@ rules:
   evidence_fields:
   - gc_events.data[0].dur_ms
   - gc_events.data[0].gc_type
-- condition: jit_events.data[0]?.total_ms > 50
+- id: art.jit_compile_long
+  condition: jit_events.data[0]?.total_ms > 50
   diagnosis: JIT 编译耗时较长 (${jit_events.data[0]?.total_ms}ms)
   confidence: low
   suggestions:

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scroll_session_analysis.skill.yaml
-Source SHA-256: 59e06a212efc4660c3d1eb10335f4fc1f33c7120448effb115823ec96915d9b5
+Source SHA-256: 1e937837e79fae2d38ba4a154c578122e18b6005033d677ef55b78cf8d0c9a57
 # 滑动会话分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -148,6 +148,25 @@ params:
   end_ts: ${system_context_window.data[0].end_ts}
   package: ${package}
 save_as: system_task_handoffs
+display:
+  level: detail
+  layer: deep
+```
+### Runnable 等待期间目标 CPU 占用
+
+- ID: `system_runnable_cpu_occupancy`
+- Type: `skill`
+
+```yaml
+id: system_runnable_cpu_occupancy
+type: skill
+skill: runnable_cpu_occupancy_in_range
+optional: true
+params:
+  start_ts: ${system_context_window.data[0].start_ts}
+  end_ts: ${system_context_window.data[0].end_ts}
+  package: ${package}
+save_as: system_runnable_cpu_occupancy
 display:
   level: detail
   layer: deep
@@ -415,7 +434,8 @@ inputs:
 - fling_stats
 - janky_frames
 rules:
-- condition: full_stats.data[0].jank_rate > 15
+- id: scroll_session.jank_rate_high
+  condition: full_stats.data[0].jank_rate > 15
   severity: critical
   diagnosis: 滑动掉帧率过高 (${full_stats.data[0].jank_rate}%)
   confidence: high
@@ -423,14 +443,16 @@ rules:
   - 检查主线程耗时操作
   - 优化列表项布局复杂度
   - 使用 RecyclerView 的 setHasFixedSize 和 setItemViewCacheSize
-- condition: full_stats.data[0].jank_rate > 5
+- id: scroll_session.jank_present
+  condition: full_stats.data[0].jank_rate > 5
   severity: warning
   diagnosis: 滑动存在掉帧 (${full_stats.data[0].jank_rate}%)
   confidence: medium
   suggestions:
   - 检查 onBindViewHolder 耗时
   - 避免在滑动时加载图片
-- condition: full_stats.data[0].max_frame_ms > 100
+- id: scroll_session.max_frame_severe
+  condition: full_stats.data[0].max_frame_ms > 100
   severity: critical
   diagnosis: 存在严重卡顿帧 (最大 ${full_stats.data[0].max_frame_ms}ms)
   confidence: high
@@ -438,21 +460,24 @@ rules:
   - 检查是否有 IO 操作在主线程
   - 检查是否有同步 Binder 调用
   - 分析可能的 ANR 风险
-- condition: touch_stats.data[0].jank_rate > ${fling_stats.data[0].jank_rate} * 2
+- id: scroll_session.touch_phase_worse
+  condition: touch_stats.data[0].jank_rate > ${fling_stats.data[0].jank_rate} * 2
   severity: warning
   diagnosis: 按压滑动阶段掉帧更严重
   confidence: medium
   suggestions:
   - 检查 dispatchTouchEvent 链路
   - 优化手势响应代码
-- condition: fling_stats.data[0].jank_rate > ${touch_stats.data[0].jank_rate} * 2
+- id: scroll_session.fling_phase_worse
+  condition: fling_stats.data[0].jank_rate > ${touch_stats.data[0].jank_rate} * 2
   severity: warning
   diagnosis: Fling 阶段掉帧更严重
   confidence: medium
   suggestions:
   - 检查 Fling 动画计算
   - 优化滑动曲线计算逻辑
-- condition: full_stats.data[0].estimated_fps < 50
+- id: scroll_session.fps_low
+  condition: full_stats.data[0].estimated_fps < 50
   severity: warning
   diagnosis: 帧率偏低 (${full_stats.data[0].estimated_fps} fps)
   confidence: medium

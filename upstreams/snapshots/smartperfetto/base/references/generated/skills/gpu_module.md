@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/hardware/gpu_module.skill.yaml
-Source SHA-256: 579fe2d70ef30c53d7a5e32a06732ef2872ce8b45c31aea88cb079bf2a45c9e0
+Source SHA-256: b886833bb0a8ce73f11e481eb087092418db60082fdec57dda4d24dd6c000658
 # GPU 硬件分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -136,7 +136,8 @@ inputs:
 - render_gpu
 - slow_gpu_ops
 rules:
-- condition: render_gpu.data[0]?.avg_gpu_ms > 8
+- id: gpu.render_thread_gpu_time_long
+  condition: render_gpu.data[0]?.avg_gpu_ms > 8
   diagnosis: RenderThread GPU 平均耗时过长 (${render_gpu.data[0]?.avg_gpu_ms}ms)，超过帧预算
   confidence: high
   suggestions:
@@ -146,7 +147,8 @@ rules:
   evidence_fields:
   - render_gpu.data[0].avg_gpu_ms
   - render_gpu.data[0].max_gpu_ms
-- condition: slow_gpu_ops.data.length > 10
+- id: gpu.slow_operations
+  condition: slow_gpu_ops.data.length > 10
   diagnosis: 存在 ${slow_gpu_ops.data.length} 次慢 GPU 操作
   confidence: high
   suggestions:
@@ -155,7 +157,8 @@ rules:
   evidence_fields:
   - slow_gpu_ops.data.length
   - slow_gpu_ops.data[0]?.dur_ms
-- condition: gpu_util.data[0]?.avg_value > 90
+- id: gpu.utilization_high
+  condition: gpu_util.data[0]?.avg_value > 90
   diagnosis: GPU 利用率过高 (${gpu_util.data[0]?.avg_value}%)，接近饱和
   confidence: medium
   suggestions:

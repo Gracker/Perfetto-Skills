@@ -1,8 +1,9 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/anr_main_thread_blocking.skill.yaml
--- Source SHA-256: e19ece9595a2bf2bd22ead9b8e4c2236e061a672b7f6e76c0c5cd4cf94478349
+-- Source SHA-256: 125f6c0f585e4fb4e02d376ddf8c103f5229e42fbdff3be9b176133960f18834
 
-WITH analysis_window AS (
+-- thread_state 范围兜底，与 analysis_window 步骤的 slice 兜底不同
+WITH thread_state_window AS (
   SELECT
     COALESCE(${start_ts},
       CASE WHEN ${anr_ts} IS NOT NULL THEN ${anr_ts} - 5000000000 ELSE NULL END,
@@ -28,7 +29,7 @@ SELECT
   COUNT(*) as count,
   ROUND(SUM(ts_tbl.dur) / 1e6, 2) as total_dur_ms
 FROM thread_state ts_tbl
-CROSS JOIN analysis_window aw
+CROSS JOIN thread_state_window aw
 CROSS JOIN main_thread mt
 WHERE ts_tbl.utid = mt.utid
   AND ts_tbl.state = 'S'

@@ -90,7 +90,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/binder_detail.skill.yaml",
-    "sha256": "eeadbc879f3b3e4118c66913d5a022ebec45f310e3ea34a03306d58cb80b9141"
+    "sha256": "a769c1e7ae5e961d54f665ec8b4d7c8b6d56c5b0e20f816f67150ffcf6413197"
   },
   "steps": [
     {
@@ -154,6 +154,7 @@
           "condition": "quadrant.data[0]?.sleeping_pct > 90",
           "confidence": "high",
           "diagnosis": "主线程在等待 Binder 回复 (${quadrant.data[0].sleeping_pct}% Sleeping)",
+          "id": "binder_detail.main_thread_sleeping_on_reply",
           "severity": "info",
           "suggestions": [
             "服务端处理时间过长",
@@ -164,6 +165,7 @@
           "condition": "cpu_core.data[0]?.running_pct > 30",
           "confidence": "medium",
           "diagnosis": "Binder 期间主线程 Running 占比 ${cpu_core.data[0].running_pct}%",
+          "id": "binder_detail.main_thread_running",
           "severity": "info",
           "suggestions": [
             "可能存在客户端序列化开销",
@@ -174,6 +176,7 @@
           "condition": "quadrant.data[0]?.q3_runnable_ms > 5",
           "confidence": "medium",
           "diagnosis": "主线程 Runnable 等待 ${quadrant.data[0].q3_runnable_ms}ms",
+          "id": "binder_detail.main_thread_runnable_wait",
           "severity": "warning",
           "suggestions": [
             "CPU 资源争抢",

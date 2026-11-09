@@ -56,7 +56,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/framework/ams_module.skill.yaml",
-    "sha256": "bfd2cd1f208acc814f9da8ed0ec0b02c0d5fd7226da25bec898e8de516e315cd"
+    "sha256": "3793610c048eb2cd2f719edc363d9f5cf72702f7b6b45fd0845449fba3423cd1"
   },
   "steps": [
     {
@@ -104,6 +104,7 @@
             "startup_data.data[0].total_ms",
             "startup_data.data[0].launch_type"
           ],
+          "id": "ams.cold_start_long",
           "suggestions": [
             "检查 Application.onCreate() 耗时",
             "延迟非必要初始化"
@@ -116,6 +117,7 @@
           "evidence_fields": [
             "startup_data.data[0].total_ms"
           ],
+          "id": "ams.warm_start_long",
           "suggestions": [
             "检查 Activity.onCreate() 耗时",
             "优化布局复杂度"
@@ -129,6 +131,7 @@
             "broadcasts.data[0].broadcast_action",
             "broadcasts.data[0].dur_ms"
           ],
+          "id": "ams.broadcast_slow",
           "suggestions": [
             "将广播处理移至后台",
             "考虑使用 JobScheduler"

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/modules/kernel/scheduler_module.skill.yaml
-Source SHA-256: 67ddcf3a040cfc8fb5ace854ca824d699330c03bfd3894272d6df7d804f91677
+Source SHA-256: 0ed2dae7a8e3c77d9cae3d3a2266333ae7ca980b3f7bc1efdb94ae5a00ca5b37
 # 内核调度分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -158,7 +158,8 @@ inputs:
 - freq_data
 - core_data
 rules:
-- condition: runnable_data.data[0]?.runnable_ms > 50
+- id: scheduler.runnable_wait_long
+  condition: runnable_data.data[0]?.runnable_ms > 50
   diagnosis: 线程 ${runnable_data.data[0]?.thread_name} Runnable 等待时间过长 (${runnable_data.data[0]?.runnable_ms}ms)；需结合交接任务与唤醒证据确定原因
   confidence: high
   suggestions:
@@ -167,7 +168,8 @@ rules:
   evidence_fields:
   - runnable_data.data[0].thread_name
   - runnable_data.data[0].runnable_ms
-- condition: freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz < 1500
+- id: scheduler.big_core_freq_low
+  condition: freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz < 1500
   diagnosis: 观测大核窗口均频 ${freq_data.data.find(f => f.core_type === 'big')?.avg_freq_mhz}MHz；需结合覆盖、容量和直接限频/策略证据解释
   confidence: medium
   suggestions:
@@ -176,7 +178,8 @@ rules:
   evidence_fields:
   - freq_data.data[0].avg_freq_mhz
   - freq_data.data[0].max_freq_mhz
-- condition: core_data.data[0]?.small_core_pct > 50
+- id: scheduler.little_core_residency
+  condition: core_data.data[0]?.small_core_pct > 50
   diagnosis: 目标线程大部分时间运行在小核 (${core_data.data[0]?.small_core_pct}%)；单凭驻留比例不能确定性能损失
   confidence: medium
   suggestions:

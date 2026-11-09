@@ -40,7 +40,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/hardware/gpu_module.skill.yaml",
-    "sha256": "579fe2d70ef30c53d7a5e32a06732ef2872ce8b45c31aea88cb079bf2a45c9e0"
+    "sha256": "b886833bb0a8ce73f11e481eb087092418db60082fdec57dda4d24dd6c000658"
   },
   "steps": [
     {
@@ -98,6 +98,7 @@
             "render_gpu.data[0].avg_gpu_ms",
             "render_gpu.data[0].max_gpu_ms"
           ],
+          "id": "gpu.render_thread_gpu_time_long",
           "suggestions": [
             "减少过度绘制",
             "简化 shader 复杂度",
@@ -112,6 +113,7 @@
             "slow_gpu_ops.data.length",
             "slow_gpu_ops.data[0]?.dur_ms"
           ],
+          "id": "gpu.slow_operations",
           "suggestions": [
             "分析具体慢操作的原因",
             "检查是否有大纹理上传"
@@ -124,6 +126,7 @@
           "evidence_fields": [
             "gpu_util.data[0].avg_value"
           ],
+          "id": "gpu.utilization_high",
           "suggestions": [
             "降低渲染复杂度",
             "考虑降低分辨率"

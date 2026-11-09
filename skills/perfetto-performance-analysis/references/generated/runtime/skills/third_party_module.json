@@ -67,7 +67,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/modules/app/third_party_module.skill.yaml",
-    "sha256": "187161c0bb28c5b2c3fc7793981fd519e399d3a17ee5a07d05ea9d64daf388b5"
+    "sha256": "39751b02d647c86152142d1d75ba69d8b950f6ea97c884c16908e3696104804b"
   },
   "steps": [
     {
@@ -125,6 +125,7 @@
             "main_thread_state.data[0].pct",
             "main_thread_state.data[0].dur_ms"
           ],
+          "id": "third_party.main_thread_running_high",
           "suggestions": [
             "将耗时操作移至后台线程",
             "使用协程或线程池"
@@ -137,6 +138,7 @@
           "evidence_fields": [
             "main_thread_state.data.find(s => s.state === 'R')?.pct"
           ],
+          "id": "third_party.main_thread_runnable_high",
           "suggestions": [
             "减少后台线程数量",
             "检查是否有后台进程占用 CPU"
@@ -150,6 +152,7 @@
             "long_slices.data[0].task_name",
             "long_slices.data[0].dur_ms"
           ],
+          "id": "third_party.main_thread_long_task",
           "suggestions": [
             "优化该任务或移至后台",
             "检查是否有同步 IO 或 Binder 调用"
@@ -162,6 +165,7 @@
           "evidence_fields": [
             "thread_overview.data.length"
           ],
+          "id": "third_party.thread_count_high",
           "suggestions": [
             "合并相似功能线程",
             "使用线程池管理"

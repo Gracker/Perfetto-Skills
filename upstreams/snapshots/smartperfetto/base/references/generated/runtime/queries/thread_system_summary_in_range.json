@@ -68,7 +68,7 @@
         "binding": "effective_target_processes",
         "role": "target"
       },
-      "sha256": "bd3fa01fa2b15d7b808aadee96e114deff07d7cc7d24b13fcaceee9fc661c150",
+      "sha256": "54e77e8c5c0796fc0b2a5d985ad7a8cc81af056a4ad2a436aebf6d38ebd375cb",
       "signal_patterns": [
         "${package}",
         "${package}:*"
@@ -77,7 +77,7 @@
       "source": {
         "path": "backend/skills/atomic/thread_system_summary_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "e523b849bf1e8c93117737f0a334009b9877f6001a098b8e3eed2888cf077dac"
+        "sha256": "e6358509d8a9a3186ecf03f06c455ee186afe0bab18fb1b34f58173e2ac3584a"
       },
       "sql_dependencies": {
         "creates": [],
@@ -99,16 +99,21 @@
           },
           {
             "order": 1,
+            "source_path": "backend/skills/fragments/system_target_threads.sql",
+            "source_sha256": "b638acc7bc77e3780a386889a1cff0a9def96b88cbeeb6f611becdea246d60e4"
+          },
+          {
+            "order": 2,
             "source_path": "backend/skills/fragments/system_thread_state_spans.sql",
             "source_sha256": "9731dae208d19f0f96bd0faaa948d92e4be07936331ccc5eb6de57f46b370a53"
           },
           {
-            "order": 2,
+            "order": 3,
             "source_path": "backend/skills/fragments/system_sched_spans.sql",
             "source_sha256": "06777e61237b61b3318f9fa40c2714e1b08648d6773844d8ab6c4f1d12ee9184"
           },
           {
-            "order": 3,
+            "order": 4,
             "source_path": "backend/skills/fragments/system_cpu_frequency_spans.sql",
             "source_sha256": "90cb9ee6db913c6c9dd78fbcf7048a7033489fb884bdbba45175dc697c9e4acc"
           }

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/binder_analysis.skill.yaml
--- Source SHA-256: fc34e062a7ce8185abceac60b9171ac039d0e631ee0ef1646f3d6ef0369cbeee
+-- Source SHA-256: afbc66c5633332309054bf23e4dc7bbebfec5f12bd9b6b494e68f270b19f8755
 
 SELECT
   bt.client_ts / 1e6 as ts_ms,

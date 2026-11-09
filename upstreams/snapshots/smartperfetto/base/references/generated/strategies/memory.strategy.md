@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/memory.strategy.md
-Source SHA-256: b6b2da177191645c3aacb9a44d7f8a78be21eefcec7b5a1e669f449eaa311176
+Source SHA-256: c2e4fbf0e19cab8e1663e8bafe90454c1926271f8f9732524b52452407f20761
 
 # Memory Strategy
 
@@ -168,7 +168,7 @@ final_report_contract:
 
 ## Investigation methodology
 
-Apply `system_execution` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
+Apply `system_execution` version 2 from [shared investigation methods](investigation-profiles.yaml.md).
 
 Apply `causal_reasoning` version 1 from [shared investigation methods](investigation-profiles.yaml.md).
 

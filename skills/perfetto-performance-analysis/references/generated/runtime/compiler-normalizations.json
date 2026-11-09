@@ -211,6 +211,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.anr_matched.sql.source_sha256",
+      "query_id": "anr_analysis/anr_event_brief",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.art_gc_names.sql.source_sha256",
       "query_id": "anr_analysis/trigger_classification",
       "reason": "hash identifies the packaged runtime fragment"
@@ -393,6 +398,66 @@
     {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "binder_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/pool_saturation",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_target_threads.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/pool_saturation",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/pool_saturation",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.binder_pool_activity.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/pool_saturation",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/in_progress_replies",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_target_threads.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/in_progress_replies",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/in_progress_replies",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.binder_pool_activity.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/in_progress_replies",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/waiting_sync_calls",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_target_threads.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/waiting_sync_calls",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/waiting_sync_calls",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.binder_pool_activity.sql.source_sha256",
+      "query_id": "binder_pool_saturation_in_range/waiting_sync_calls",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -1796,6 +1861,21 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "runnable_cpu_occupancy_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_target_threads.sql.source_sha256",
+      "query_id": "runnable_cpu_occupancy_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_thread_state_spans.sql.source_sha256",
+      "query_id": "runnable_cpu_occupancy_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.scene_device_state_facts.sql.source_sha256",
       "query_id": "scene_device_state_changes/state_sources",
       "reason": "hash identifies the packaged runtime fragment"
@@ -2371,6 +2451,11 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.thread_role.sql.source_sha256",
+      "query_id": "startup_binder_pool_analysis/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
       "query_id": "startup_cpu_placement_timeline/root",
       "reason": "hash identifies the packaged runtime fragment"
@@ -2671,7 +2756,17 @@
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
+      "field": "template.fragments.system_target_threads.sql.source_sha256",
+      "query_id": "thread_preemption_handoffs_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
       "field": "template.fragments.effective_target_processes.sql.source_sha256",
+      "query_id": "thread_system_summary_in_range/root",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.system_target_threads.sql.source_sha256",
       "query_id": "thread_system_summary_in_range/root",
       "reason": "hash identifies the packaged runtime fragment"
     },
