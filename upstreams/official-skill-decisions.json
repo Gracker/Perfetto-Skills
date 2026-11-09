@@ -489,6 +489,216 @@
       "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
       "test_id": "execute-gpu_v57_ai_diagnostics",
       "reviewed_source_commit": "e656c756ddaf23a13c7cffdced2f87f75aa07e49"
+    },
+    {
+      "path": "ai/skills/perfetto/SKILL-template.md",
+      "sha256": "685cb67ec2f609b2d6fb03a20d82d2d3172ab95e21d4ce968795a7f885a548b9",
+      "outcome": "already_covered",
+      "reason": "v59.1 condenses the official entrypoint to setup plus a workflow table; the public entrypoint still routes the same scenarios through its generated workflow catalog and bounded runtime.",
+      "local_path": "skills/perfetto-performance-analysis/SKILL.md",
+      "test_id": "tests.unit.test_skill_contract",
+      "reviewed_source_commit": "7c75d411deacff4ce36cd2eb88971fd5a5c92a64"
+    },
+    {
+      "path": "ai/skills/perfetto/environment-references/setup.md",
+      "sha256": "0db75d59ea03600d399e41fb63b3996ecd7995a45e755c6fde4638768aae37a3",
+      "outcome": "already_covered",
+      "reason": "v59.1 only shortens setup wording; the public runtime keeps its checksum-pinned cross-platform processor bootstrap and doctor contract.",
+      "local_path": "skills/perfetto-performance-analysis/scripts/bootstrap_trace_processor.py",
+      "test_id": "tests.unit.test_bootstrap",
+      "reviewed_source_commit": "7c75d411deacff4ce36cd2eb88971fd5a5c92a64"
+    },
+    {
+      "path": "ai/skills/perfetto/infra-references/querying.md",
+      "sha256": "e51210d6a180c659a4b10ba0b3e56c77757f48730b2c2b8e563aa15b82af105f",
+      "outcome": "already_covered",
+      "reason": "v59.1 rewrites ad-hoc querying around warm sessions; the public runtime keeps its own bounded query path with processor identity, argument arrays and provenance, and its guardrails own the SQL rules.",
+      "local_path": "skills/perfetto-performance-analysis/scripts/perfetto_query.py",
+      "test_id": "tests.unit.test_runtime",
+      "reviewed_source_commit": "7c75d411deacff4ce36cd2eb88971fd5a5c92a64"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/heap_dump.md",
+      "sha256": "9b3eb3c7704ddea76d9c7b3b0eef711a6cccce4db0eb50804771f7480b22ddec",
+      "outcome": "adopted",
+      "reason": "v59.1 moves the command to a warm session and rewords the source-grounded recommendation; dominator evidence is unchanged. SmartPerfetto extracts a bounded per-dump dominator path through its persistent native processor lease, with propagated root identity and retained size from real managed-heap graph data.",
+      "local_path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
+      "test_id": "execute-android_heap_dominator_path_extract",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/heap_dump_cluster.md",
+      "sha256": "3f541b2191511eb29a71329aaf0e5f5476bb7fea97f74f8ea1b084822f21bd93",
+      "outcome": "adopted",
+      "reason": "v59.1 only tells the agent to reuse the bundled clustering script. SmartPerfetto owns deterministic sparse TF-IDF, K-Means, Silhouette selection, bounded evidence, and batch-only cluster reporting.",
+      "local_path": "backend/src/services/batchTrace/heapPathClusterService.ts",
+      "test_id": "heap path normalization and clustering",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/heap_dump_diff.md",
+      "sha256": "f1231f941067b9b135a8cfbc77286afd73301f88fc33ff88e8a5cccdff74aa76",
+      "outcome": "not_applicable",
+      "reason": "Class-growth diff needs a before/after managed-heap dump pair; java_memory is still pending_real_trace, and perfetto_compare has no heap-graph diff, so the public Skill makes no retained-growth claim."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/heap_profile_diff.md",
+      "sha256": "9217fbd72d1dcd40d08eae781c87434c8c7a12af7d35d9018484a7a615d93e8f",
+      "outcome": "not_applicable",
+      "reason": "Profile diff needs a before/after heapprofd pair; native_memory is still pending_real_trace, and perfetto_compare has no allocation-profile diff."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/java_allocation_profile.md",
+      "sha256": "3858bc7e0a0c18d394f1cda2650672fbb166bb45c23e258734993f965d091fe6",
+      "outcome": "already_covered",
+      "reason": "v59.1 only rewords how the agent writes its own analysis. The memory diagnostic Skill runs on the persistent processor lease, exposes bounded ART heap-profile hotspot evidence, and separates allocation churn from retained heap evidence.",
+      "local_path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+      "test_id": "memory skill SQL semantic guards",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/native_heap.md",
+      "sha256": "f0f11c6095e5d2c627973cf6b2488e4ea29601c5ca7b801151af6223a1ab7bcb",
+      "outcome": "already_covered",
+      "reason": "v59.1 only moves the command to a warm session and rewords the analysis brief. The native heap Skill runs on the persistent processor lease, reports bounded allocation callstack evidence, and distinguishes unreleased retention from allocation churn.",
+      "local_path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
+      "test_id": "memory skill SQL semantic guards",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/diff_heap_dumps.py",
+      "sha256": "398748571602859ddb14eb49446fe058f7fcdf75e3b224adf0242cb76fcf396b",
+      "outcome": "not_applicable",
+      "reason": "The two-session class-growth script needs an owned before/after heap-dump fixture pair, which does not exist; the public runtime does not claim heap-graph diffing."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/diff_heap_profiles.py",
+      "sha256": "1ce4ce3a49cafef10d8723cca147a24d479b9920797792dfa98f449df84b2315",
+      "outcome": "not_applicable",
+      "reason": "The two-session allocation diff script needs an owned before/after heapprofd fixture pair, which does not exist."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/triage_dominator_path.sql",
+      "sha256": "68b9cbb441a8fbe8771f28998a39f4e04c82b4bf7c5fb16c7e17c62ae786df06",
+      "outcome": "adopted",
+      "reason": "v59.1 only reformats macro arguments. The extraction Skill uses the dominator class tree, bottom-up retained aggregation, and recursive root-to-node path construction on a data-present fixture.",
+      "local_path": "backend/skills/composite/android_heap_dominator_path_extract.skill.yaml",
+      "test_id": "execute-android_heap_dominator_path_extract",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/triage_java_allocation.sql",
+      "sha256": "93b3a1511641d771502534f07a4d6d7e24e3c5b975e9f035761277af57dbdcf8",
+      "outcome": "already_covered",
+      "reason": "v59.1 only reformats macro arguments. The memory diagnostic Skill contains the bounded heap-profile hotspot query and preserves unavailable-data semantics.",
+      "local_path": "backend/skills/composite/android_memory_v57_ai_diagnostics.skill.yaml",
+      "test_id": "memory skill SQL semantic guards",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/android_memory/scripts/triage_native_heap.sql",
+      "sha256": "2a16ee88587af0cf8f8750b441b71cff318a8f8f2d7a3b595a57cda41f27716c",
+      "outcome": "already_covered",
+      "reason": "v59.1 only reformats macro arguments. The native heap Skill provides the bounded top-callstack query and does not infer source-code root cause from allocation evidence alone.",
+      "local_path": "backend/skills/atomic/native_heap_breakdown.skill.yaml",
+      "test_id": "memory skill SQL semantic guards",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/compute_workload_analysis.md",
+      "sha256": "20861d71c17a6cde413789ca104ff4ae30b8b0cc347d1c3e0f3eca8e083c5bbf",
+      "outcome": "not_applicable",
+      "reason": "Renamed from workload_analysis.md; it still requires vendor instruction-pipeline counters absent from the owned schema and data-present fixture."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/kernel_analysis.md",
+      "sha256": "b60d93c31c560c7475f2d4f89e9ba374d83ec21dade28a4f80db7263ac5e1f56",
+      "outcome": "adopted",
+      "reason": "v59.1 only renames the linked workload analysis page. The persistent native processor path runs the vendor-neutral first pass over real compute-category slices; counter-derived bound classification remains excluded.",
+      "local_path": "backend/skills/composite/gpu_compute_kernel_analysis.skill.yaml",
+      "test_id": "execute-gpu_compute_kernel_analysis",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/compute_workload_analysis.md",
+      "sha256": "260cbd5adc79e98cc01ee221be1056972728b002262aec0bf0d40277505f4751",
+      "outcome": "not_applicable",
+      "reason": "Renamed NVIDIA page; no owned instruction-pipeline counter schema or fixture proves workload attribution."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/nvidia/scripts/compute_workload_analysis.sql",
+      "sha256": "fa822f4b02a5c2a7d24c2d9c2bcda7c2687fb776f65aa7a60025550e64e8b323",
+      "outcome": "not_applicable",
+      "reason": "Renamed NVIDIA query; no owned producer-counter schema or data-present fixture proves instruction-pipeline utilization."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/compute/speed_of_light.md",
+      "sha256": "30491952e86162b6fe3f4a7098a503cf4022af59507dc69d90f2f9dc7bc68d0d",
+      "outcome": "not_applicable",
+      "reason": "v59.1 only renames the linked workload analysis page. The workflow requires vendor throughput counters; kernel duration and launch shape cannot establish compute-bound or memory-bound behavior."
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/frequency_residency.md",
+      "sha256": "341af7263466c410e07830c91765de63bc5c56756dee227621c2b9af9bcf8704",
+      "outcome": "already_covered",
+      "reason": "v59.1 only moves the command to a warm session. The GPU diagnostic Skill runs on a persistent native processor and reports busy-frequency residency, DVFS ramp, and sustained throttle evidence.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_dvfs_ramp.sql",
+      "sha256": "be26d5b953b9f11626a0247064dd0ae201d2ad1488bedb9492eb3512b072a0b7",
+      "outcome": "already_covered",
+      "reason": "v59.1 only reformats macro arguments. The v57 GPU diagnostic Skill implements a bounded DVFS ramp query.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_frequency_residency.sql",
+      "sha256": "919ea50808a092a421896477472de73328ba0c9c2c22c04d2de5c2925086fd8d",
+      "outcome": "already_covered",
+      "reason": "v59.1 only reformats macro arguments. The v57 GPU diagnostic Skill implements busy-frequency residency with explicit data availability.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_idle_gaps.sql",
+      "sha256": "3fbaee86114441c25871d208af5db74c77b02f65c32864a2c934be459e393982",
+      "outcome": "already_covered",
+      "reason": "v59.1 only reformats macro arguments. The v57 GPU diagnostic Skill reports bounded GPU idle-gap evidence separately from busy occupancy.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_sustained_throttle.sql",
+      "sha256": "7e968e55cf3ed39f920d0f140ebd18f669974fd0c66ba21328820cb9aff67fe2",
+      "outcome": "already_covered",
+      "reason": "v59.1 only reformats macro arguments. The v57 GPU diagnostic Skill implements sustained-throttle evidence with explicit duration thresholds.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/scripts/gpu_timeline_decomposition.sql",
+      "sha256": "e6143d367fa0ab8b66b18dde843f35dccf4267b19b070d479a9f60081bffc678",
+      "outcome": "already_covered",
+      "reason": "v59.1 only reformats macro arguments. The v57 GPU diagnostic Skill implements timeline occupancy and idle decomposition without treating it as kernel throughput.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
+    },
+    {
+      "path": "ai/skills/perfetto/workflows/gpu/timeline_occupancy.md",
+      "sha256": "7396e134a2335a7ca4a3d51979d01c9a838d0bc6274c43c8f9ee1d16446ce6bf",
+      "outcome": "already_covered",
+      "reason": "v59.1 only moves the command to a warm session. The GPU diagnostic Skill runs on a persistent native processor and separates device-busy occupancy, idle gaps, and host-side timing evidence.",
+      "local_path": "backend/skills/composite/gpu_v57_ai_diagnostics.skill.yaml",
+      "test_id": "execute-gpu_v57_ai_diagnostics",
+      "reviewed_source_commit": "f60d2a85bba7a48d0ad8bfbf2876f616cbed6216"
     }
   ]
 }

@@ -12,5 +12,10 @@ assertion IDs. `coverage_status.pending_real_trace` is intentionally explicit:
 those scenarios are not claimed as covered until a reviewed real trace and
 assertion are added in a later immutable fixture pack.
 
+No public real trace records the Android framework process-state or
+JobScheduler events. Their SQL contracts run on synthetic traces encoded by
+`tests/framework_event_traces.py`; those traces prove query semantics only and
+are not listed here as device coverage.
+
 Build and download commands are documented in
 [`docs/maintenance/upstream-sync.md`](../docs/maintenance/upstream-sync.md).

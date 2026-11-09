@@ -136,7 +136,7 @@ Android 版本不是 Trace schema 版本。系统 API、QPR、OEM、内核、Mai
 本项目把保证拆成四个轴：
 
 - `static_valid`：参数、fragment、依赖图、module 和表达式闭合；
-- `runtime_compatible`：在 `trace-processor-lock.json` 锁定的 runtime（当前 v58.3 / RPC API 14）上可解析、可执行；
+- `runtime_compatible`：在 `trace-processor-lock.json` 锁定的 runtime（当前 v59.1 / RPC API 14）上可解析、可执行；
 - `execution_verified`：在有哈希的真实 fixture 上实际运行过；
 - `semantic_verified`：fixture 还有列、值或关系断言，不只是“没有报错”。
 

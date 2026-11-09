@@ -33,9 +33,9 @@ unless an explicit reviewed override is supplied.
 ## Trace processor
 
 `references/trace-processor-lock.json` is the release lock. It currently pins
-the Perfetto runtime revision `99234d73fe356bf7edf6b2cb7afcf2a9eefc5368`, which
-reports `v58.3` with RPC API 14 (the official Skill gap check separately tracks
-the `v58.2` release tag), and publishes a SHA-256 for each supported artifact:
+the Perfetto runtime revision `1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d`, which
+reports `v59.1` with RPC API 14 (the official Skill gap check separately tracks
+the `v59.1` release tag), and publishes a SHA-256 for each supported artifact:
 
 | Host | Lock key | Bootstrap support |
 |---|---|---|
