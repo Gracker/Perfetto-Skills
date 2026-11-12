@@ -45,8 +45,7 @@
           }
         },
         "exact_scope": {
-          "reason": "SQL has no process_scope declaration",
-          "status": "unsupported"
+          "status": "supported"
         },
         "probe_capabilities": []
       },
@@ -71,13 +70,17 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/linux_perf_counter_hotspots/perf_counter_hotspots.sql",
-      "sha256": "b03f3607117f040ba236e9a75d2a4d66b102c90254764384a08e2cc90576e0c4",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "568788fefa2bd65473a2cc156b62f21f787b7f8eecd2fc552f78dccfae8d2a80",
       "signal_patterns": [],
       "skill_id": "linux_perf_counter_hotspots",
       "source": {
         "path": "backend/skills/atomic/linux_perf_counter_hotspots.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "af7bb5a650cb5630f9a7660853cbc71766190fc42683c59a3cbdd8625d24f3aa"
+        "sha256": "c86639e8f7f1629839d6b73bc1369754c96e74ca1f44c2557f44df90717faf82"
       },
       "sql_dependencies": {
         "creates": [],
@@ -91,7 +94,13 @@
       },
       "step_id": "perf_counter_hotspots",
       "template": {
-        "fragments": [],
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/linux_perf_counter_deltas.sql",
+            "source_sha256": "b4d8b2416a1a03fb4542797849c8126329465d8fa6f49447ed420bead471b661"
+          }
+        ],
         "name_parameters": [
           "package",
           "process_name"
@@ -100,11 +109,141 @@
           "end_ts",
           "package",
           "process_name",
-          "start_ts"
+          "start_ts",
+          "upid"
         ],
         "result_dependencies": [],
         "result_references": [],
-        "runtime_bindings": []
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "exact_scope": {
+          "status": "supported"
+        },
+        "probe_capabilities": []
+      },
+      "id": "linux_perf_counter_hotspots/perf_counter_ratios",
+      "identity": {
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/linux_perf_counter_hotspots/perf_counter_ratios.sql",
+      "process_scope": {
+        "binding": "native_upid",
+        "role": "target"
+      },
+      "sha256": "596b8b240ad11658b9ab377c74a040396992672140373b9b9d6563c57f7dabbc",
+      "signal_patterns": [],
+      "skill_id": "linux_perf_counter_hotspots",
+      "source": {
+        "path": "backend/skills/atomic/linux_perf_counter_hotspots.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "c86639e8f7f1629839d6b73bc1369754c96e74ca1f44c2557f44df90717faf82"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [
+          "linux.perf.counters"
+        ],
+        "drops": [],
+        "required_tables": [],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "perf_counter_ratios",
+      "template": {
+        "fragments": [
+          {
+            "order": 0,
+            "source_path": "backend/skills/fragments/linux_perf_counter_deltas.sql",
+            "source_sha256": "b4d8b2416a1a03fb4542797849c8126329465d8fa6f49447ed420bead471b661"
+          }
+        ],
+        "name_parameters": [
+          "package",
+          "process_name"
+        ],
+        "parameters": [
+          "end_ts",
+          "package",
+          "process_name",
+          "start_ts",
+          "upid"
+        ],
+        "result_dependencies": [],
+        "result_references": [],
+        "runtime_bindings": [
+          "__process_scope.upid"
+        ]
       },
       "validation": {
         "default_execution": "capability_gate_required",

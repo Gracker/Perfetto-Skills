@@ -37,13 +37,22 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/battery_doze_state_timeline.skill.yaml",
-    "sha256": "76538da9dab1b6f5e68441be298de8fa40633dbe1e8b0cf79d547d49c1f1e4a1"
+    "sha256": "38c6fc6d472d705aaa1f872ee022272227ec52cff40e8269d1c1f0f44b2cc021"
   },
   "steps": [
     {
       "displayed": true,
+      "id": "doze_state_summary",
+      "name": "Doze 状态机汇总",
+      "query_id": "battery_doze_state_timeline/doze_state_summary",
+      "result_dependencies": [],
+      "save_as": "doze_state_summary",
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
       "id": "deep_idle_intervals",
-      "name": "Deep Idle 区间",
+      "name": "Deep Doze 状态区间",
       "query_id": "battery_doze_state_timeline/deep_idle_intervals",
       "result_dependencies": [],
       "type": "atomic"
@@ -51,13 +60,13 @@
     {
       "displayed": true,
       "id": "light_idle_intervals",
-      "name": "Light Idle 区间",
+      "name": "Light Doze 状态区间",
       "query_id": "battery_doze_state_timeline/light_idle_intervals",
       "result_dependencies": [],
       "type": "atomic"
     }
   ],
   "type": "atomic",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "power-thermal"
 }

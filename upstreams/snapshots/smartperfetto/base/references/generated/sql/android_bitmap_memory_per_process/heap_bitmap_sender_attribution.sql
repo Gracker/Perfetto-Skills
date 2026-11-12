@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml
--- Source SHA-256: c60050ad32c18950da78069dabe941919f7dd55aa3df9ac7ad86d51254da582d
+-- Source SHA-256: 0b50760adf1ce6444677ccef1d5b8511489b81f17a4007ec9e3efff6c919964b
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later

@@ -7,6 +7,16 @@
     },
     {
       "field": "template.fragments.heap_target_process.sql.source_sha256",
+      "query_id": "android_bitmap_memory_per_process/bitmap_live_shape",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.art_gc_names.sql.source_sha256",
+      "query_id": "android_bitmap_memory_per_process/bitmap_live_shape",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.heap_target_process.sql.source_sha256",
       "query_id": "android_bitmap_memory_per_process/heap_bitmap_metadata",
       "reason": "hash identifies the packaged runtime fragment"
     },
@@ -473,6 +483,31 @@
     {
       "field": "template.fragments.sleep_wake_source_labels.sql.source_sha256",
       "query_id": "blocking_chain_analysis/waker_chain",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.camera_frame_observations.sql.source_sha256",
+      "query_id": "camera_trace_evidence/camera_frame_population",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.camera_frame_observations.sql.source_sha256",
+      "query_id": "camera_trace_evidence/camera_callback_cadence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.camera_frame_observations.sql.source_sha256",
+      "query_id": "camera_trace_evidence/camera_display_cadence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.camera_frame_observations.sql.source_sha256",
+      "query_id": "camera_trace_evidence/camera_surface_cadence",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.camera_frame_observations.sql.source_sha256",
+      "query_id": "camera_trace_evidence/camera_buffer_delivery",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {
@@ -1618,6 +1653,16 @@
     {
       "field": "template.fragments.cpu_cluster_load.sql.source_sha256",
       "query_id": "jank_frame_detail/root_cause_summary",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.linux_perf_counter_deltas.sql.source_sha256",
+      "query_id": "linux_perf_counter_hotspots/perf_counter_hotspots",
+      "reason": "hash identifies the packaged runtime fragment"
+    },
+    {
+      "field": "template.fragments.linux_perf_counter_deltas.sql.source_sha256",
+      "query_id": "linux_perf_counter_hotspots/perf_counter_ratios",
       "reason": "hash identifies the packaged runtime fragment"
     },
     {

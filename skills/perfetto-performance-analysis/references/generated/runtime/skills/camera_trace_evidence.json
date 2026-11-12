@@ -82,13 +82,109 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/composite/camera_trace_evidence.skill.yaml",
-    "sha256": "d2f99680715212f30bafe86e1323d04cb469e5582ac89cad1e8c7b48f92e9c2e"
+    "sha256": "51f50653a5676ed9b3c272fc9c6fc7f51b670240aaf0b404b6b7fea9bdb6a994"
   },
   "steps": [
     {
       "displayed": true,
+      "id": "camera_frame_population",
+      "name": "FrameTimeline 人口（DisplayFrame / SurfaceFrame 分开）",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
+      "query_id": "camera_trace_evidence/camera_frame_population",
+      "result_dependencies": [],
+      "save_as": "camera_frame_population",
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "camera_callback_cadence",
+      "name": "App buffer callback 观测节奏（跨线程合并）",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
+      "query_id": "camera_trace_evidence/camera_callback_cadence",
+      "result_dependencies": [],
+      "save_as": "camera_callback_cadence",
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "camera_display_cadence",
+      "name": "SF DisplayFrame 呈现端间隔（SF 上下文）",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
+      "query_id": "camera_trace_evidence/camera_display_cadence",
+      "result_dependencies": [],
+      "save_as": "camera_display_cadence",
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "camera_surface_cadence",
+      "name": "同 surface marker 的呈现节奏与关联覆盖",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
+      "query_id": "camera_trace_evidence/camera_surface_cadence",
+      "result_dependencies": [],
+      "save_as": "camera_surface_cadence",
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "camera_buffer_delivery",
+      "name": "SF buffer latch → commit → DisplayFrame 明细",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
+      "query_id": "camera_trace_evidence/camera_buffer_delivery",
+      "result_dependencies": [],
+      "save_as": "camera_buffer_delivery",
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "camera_binder_execution",
+      "name": "Camera Binder wall / 线程 Running（不测余量）",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
+      "query_id": "camera_trace_evidence/camera_binder_execution",
+      "result_dependencies": [],
+      "save_as": "camera_binder_execution",
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
       "id": "evidence_coverage",
       "name": "Camera 证据覆盖",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
       "query_id": "camera_trace_evidence/evidence_coverage",
       "result_dependencies": [],
       "save_as": "evidence_coverage",
@@ -98,6 +194,12 @@
       "displayed": true,
       "id": "camera_process_candidates",
       "name": "Camera 进程/线程候选",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
       "query_id": "camera_trace_evidence/camera_process_candidates",
       "result_dependencies": [],
       "save_as": "camera_process_candidates",
@@ -107,6 +209,12 @@
       "displayed": true,
       "id": "camera_slice_candidates",
       "name": "Camera Slice 候选",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
       "query_id": "camera_trace_evidence/camera_slice_candidates",
       "result_dependencies": [],
       "save_as": "camera_slice_candidates",
@@ -116,6 +224,12 @@
       "displayed": true,
       "id": "camera_binder_summary",
       "name": "Camera Binder 事务",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
       "query_id": "camera_trace_evidence/camera_binder_summary",
       "result_dependencies": [],
       "save_as": "camera_binder_summary",
@@ -125,6 +239,12 @@
       "displayed": true,
       "id": "camera_dmabuf_summary",
       "name": "Camera DMA-BUF/legacy ION window evidence",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
       "query_id": "camera_trace_evidence/camera_dmabuf_summary",
       "result_dependencies": [],
       "save_as": "camera_dmabuf_summary",
@@ -134,6 +254,12 @@
       "displayed": true,
       "id": "pixel_camera_stage_summary",
       "name": "Pixel Camera Stage 摘要",
+      "process_scope": {
+        "limitations": [
+          "Trace-wide camera/media context grouped by observed identities; not filtered to a target UPID."
+        ],
+        "role": "global_context"
+      },
       "query_id": "camera_trace_evidence/pixel_camera_stage_summary",
       "result_dependencies": [],
       "save_as": "pixel_camera_stage_summary",
@@ -141,6 +267,6 @@
     }
   ],
   "type": "composite",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "rendering-pipeline"
 }

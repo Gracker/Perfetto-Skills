@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml
-Source SHA-256: c60050ad32c18950da78069dabe941919f7dd55aa3df9ac7ad86d51254da582d
+Source SHA-256: 0b50760adf1ce6444677ccef1d5b8511489b81f17a4007ec9e3efff6c919964b
 # Bitmap 内存（按进程）
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -9,7 +9,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: android_bitmap_memory_per_process
-version: '1.2'
+version: '1.3'
 type: atomic
 category: memory
 tier: B
@@ -19,14 +19,30 @@ tier: B
 
 ```yaml
 display_name: Bitmap 内存（按进程）
-description: 每进程 Bitmap counter、heap graph metadata 和跨进程来源归因
+description: 每进程 Bitmap counter 峰值与存活集增长形状、heap graph metadata 和跨进程来源归因
 icon: image
 tags:
 - memory
 - bitmap
 - image
 - heap_graph
+- leak
 - atomic
+```
+
+## Triggers
+
+```yaml
+keywords:
+  zh:
+  - Bitmap
+  - 位图
+  - 图片内存
+  - Bitmap 泄漏
+  en:
+  - bitmap
+  - bitmap memory
+  - bitmap leak
 ```
 
 ## Prerequisites
@@ -52,6 +68,19 @@ modules:
   type: integer
   required: false
   description: 可选的稳定进程身份；进程名不可用时（.hprof）用它限定进程
+- name: start_ts
+  type: timestamp
+  required: false
+  description: bitmap_live_shape 的分析起始时间戳(ns)
+- name: end_ts
+  type: timestamp
+  required: false
+  description: bitmap_live_shape 的分析结束时间戳(ns)
+- name: bitmap_growth_min_mb
+  type: number
+  required: false
+  default: 32
+  description: Bitmap 存活集净增长低于该值(MB)时只报 below_growth_threshold，不做形状判别，默认 32
 ```
 
 ## Ordered execution
@@ -89,6 +118,87 @@ display:
     type: string
 sql_fragments:
 - fragments/heap_target_process.sql
+```
+### Bitmap 存活集形状
+
+- ID: `bitmap_live_shape`
+- Type: `atomic`
+- SQL: [`../sql/android_bitmap_memory_per_process/bitmap_live_shape.sql`](../sql/android_bitmap_memory_per_process/bitmap_live_shape.sql)
+
+```yaml
+id: bitmap_live_shape
+type: atomic
+display:
+  level: summary
+  layer: overview
+  title: Bitmap 存活集增长形状
+  title_i18n:
+    en: Bitmap Live-Set Growth Shape
+  row_semantics: per_entity
+  columns:
+  - name: process_name
+    label: 进程
+    type: string
+  - name: upid
+    label: UPID
+    type: number
+  - name: samples
+    label: 样本数
+    type: number
+    format: compact
+  - name: span_s
+    label: 覆盖时长(s)
+    type: number
+  - name: first_mb
+    label: 初始 Bitmap 内存(MB)
+    type: number
+  - name: last_mb
+    label: 结束 Bitmap 内存(MB)
+    type: number
+  - name: net_growth_mb
+    label: 净增长(MB)
+    type: number
+  - name: rise_steps
+    label: 上升步数
+    type: number
+    format: compact
+  - name: drop_steps
+    label: 回落步数
+    type: number
+    format: compact
+    semantics: Count of samples where Bitmap Memory decreased. Bitmap Memory is a live-set counter that drops when a bitmap
+      is freed, so zero drops across GCs means nothing was released in the span.
+  - name: max_single_drop_mb
+    label: 最大单次回落(MB)
+    type: number
+  - name: first_count
+    label: 初始 Bitmap 数
+    type: number
+    format: compact
+  - name: last_count
+    label: 结束 Bitmap 数
+    type: number
+    format: compact
+  - name: gcs_in_span
+    label: 期间 GC 次数
+    type: number
+    format: compact
+    semantics: ART collector runs (slices named like "* concurrent copying GC") of this process between the first and last
+      Bitmap sample.
+  - name: shape
+    label: 形状
+    label_i18n:
+      en: Shape
+    type: string
+    semantics: 'retained_growth_across_gc: grew past threshold, never dropped, GC ran in span, so the live set only grew.
+      RSS omits untouched pixel pages; flat RSS does not contradict it.'
+  - name: process_identity
+    label: 进程身份
+    type: string
+sql_fragments:
+- fragments/heap_target_process.sql
+- fragments/art_gc_names.sql
+save_as: bitmap_live_shape
 ```
 ### Heap Graph Bitmap 数据可用性
 

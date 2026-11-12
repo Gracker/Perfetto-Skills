@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-data-sources.template.md
-Source SHA-256: 51011b2777df9a4f602bc7866194ee41530d7fa1cc1223f31af616bae0cb400e
+Source SHA-256: cc0ba96a53eecd6610cdcac362878601d0381d23181d839039e99982bde10a76
 
 # Knowledge Data Sources Template
 
@@ -503,6 +503,7 @@ data_sources {
 ## CPU Profiling (cpu_profiling)
 
 **依赖表**: `linux_perf_samples_summary_tree`, `cpu_profiling_summary_tree`
+**注意**: 这两张 summary tree 只统计带调用栈的样本。linux.perf 只采硬件计数器、不开 callstack 时它们为空，但 `perf_sample` 和 `perf_cpu_counter` 轨道仍有数据，可用 `linux_perf_counter_hotspots` 分析。
 **架构适用**: 所有架构
 **最低版本**: Android 10 (API 29)
 

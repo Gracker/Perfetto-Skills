@@ -9,6 +9,7 @@
       "api_hint"
     ],
     "signal_patterns": [
+      "*GC*",
       "heap_graph_bitmaps"
     ]
   },
@@ -46,6 +47,25 @@
       "name": "upid",
       "required": false,
       "type": "integer"
+    },
+    {
+      "description": "bitmap_live_shape 的分析起始时间戳(ns)",
+      "name": "start_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "description": "bitmap_live_shape 的分析结束时间戳(ns)",
+      "name": "end_ts",
+      "required": false,
+      "type": "timestamp"
+    },
+    {
+      "default": 32,
+      "description": "Bitmap 存活集净增长低于该值(MB)时只报 below_growth_threshold，不做形状判别，默认 32",
+      "name": "bitmap_growth_min_mb",
+      "required": false,
+      "type": "number"
     }
   ],
   "prerequisites": {
@@ -60,7 +80,7 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/android_bitmap_memory_per_process.skill.yaml",
-    "sha256": "c60050ad32c18950da78069dabe941919f7dd55aa3df9ac7ad86d51254da582d"
+    "sha256": "0b50760adf1ce6444677ccef1d5b8511489b81f17a4007ec9e3efff6c919964b"
   },
   "steps": [
     {
@@ -69,6 +89,15 @@
       "name": "Bitmap 内存按进程",
       "query_id": "android_bitmap_memory_per_process/bitmap_memory",
       "result_dependencies": [],
+      "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "bitmap_live_shape",
+      "name": "Bitmap 存活集形状",
+      "query_id": "android_bitmap_memory_per_process/bitmap_live_shape",
+      "result_dependencies": [],
+      "save_as": "bitmap_live_shape",
       "type": "atomic"
     },
     {
@@ -101,6 +130,6 @@
     }
   ],
   "type": "atomic",
-  "version": "1.2",
+  "version": "1.3",
   "workflow": "memory"
 }
