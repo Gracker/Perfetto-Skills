@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/fragments/camera_frame_observations.sql
--- Source SHA-256: cc9bac286936345a1df37e0c6001f4d87bdfc1d99a54b17c2c805317ab49a958
+-- Source SHA-256: 644d83ebad5803a97ace32ff98c304713dc4a98f45a172a1b75db185c1a21bf4
 
 -- Camera/media observation primitives. No configured FPS, panel period,
 -- headroom or fault mechanism is inferred from these measurements.
@@ -108,6 +108,5 @@ camera_surface_presents AS (
   SELECT *, display_present_ts - LAG(display_present_ts) OVER (
     PARTITION BY sf_upid, bindable_surface ORDER BY display_present_ts, display_id) AS surface_present_interval_ns
   FROM camera_buffer_links
-  WHERE latch_matches = 1 AND display_matches = 1 AND display_present_ts IS NOT NULL
-    AND latch_ts <= display_present_ts
+  WHERE binding_status = 'sf_commit_display_bound'
 )
