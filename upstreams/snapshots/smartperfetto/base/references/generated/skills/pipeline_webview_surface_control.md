@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/webview_surface_control.skill.yaml
-Source SHA-256: d6310e6c9cf9ce4049d65ba6c4b213cb0a4c401ca99c1ad81b069a6686cc1ef8
+Source SHA-256: 3d41717e549ad4fcdb706bffecae961263d8c6be369afc35d5c725bc64355c85
 # WebView Surface Control
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,15 +14,19 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s09_webview). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
 pipeline_id: WEBVIEW_SURFACE_CONTROL
 display_name: WebView Surface Control
-description: 现代 WebView + Viz/OOP-R，独立合成
+description: WebView 媒体/overlay 的独立 SurfaceControl，网页主体仍可经宿主 functor
 icon: web
 family: webview
-doc_path: rendering_pipelines/S09_webview_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s09_webview
 s_article_ref: S09
 four_features:
   producer_threads:
@@ -36,9 +40,9 @@ four_features:
   - chromium_compositor_rhythm
 deviation_anchors: independent_overlay_anchor_6_at_chromium_to_sf
 subvariants_note: 文章 S09 列 5 种 WebView 路径中的 SurfaceControl 模式（参 webview_gl_functor 注释）。
-hwc_constraint: 'overlay candidate 数量过多时 HWC plane 不够 → 部分 candidate 回退到 client composition
+hwc_constraint: '检查媒体/受保护内容的独立 layer、geometry 与 buffer transaction。
 
-  → SF GPU 合成成本上升。这是 SurfaceControl 模式相对 Functor 的额外风险点。
+  Viz/OOP-R 或 SurfaceControl 字符串只提供候选线索；实际 DEVICE/CLIENT 需 HWC 证据。
 
   '
 ```
@@ -63,7 +67,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S09_webview_type.md
+source: references/generated/knowledge/rendering-teaching.md#s09_webview
 ```
 
 ## Analysis guidance

@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: ca7c1326c0ca6eac9e485114bd94fbfd81e9c8db2f3d8c65974d46831f8db084
+-- Source SHA-256: 7b6db2bdf39a9b8588e3dbec921991ced81edd6d9a6d7426184f2b1a7d9a3c5a
 
 WITH
 -- Fragment: vsync_config
@@ -81,9 +81,10 @@ vsync_config AS (
   FROM raw_vsync_config
 )
 ,
--- BufferTX frame production evidence for one package.
--- Counts only positive per-track queue-depth deltas, then selects one primary
--- track deterministically to avoid summing duplicate producer/layer tracks.
+-- BufferTX received pending-buffer updates for one package name.
+-- Positive deltas describe SF-side pending transaction updates, not produced,
+-- ready, latched or displayed frames. Track-name matching is not exact UPID
+-- attribution. Select one track to avoid summing duplicate layer tracks.
 -- Requires vsync_config to be injected before this fragment.
 -- BUFFER_TX_FALLBACK_CTES_BEGIN
 buffer_tx_samples AS (
@@ -96,7 +97,11 @@ buffer_tx_samples AS (
     LAG(c.value) OVER (
       PARTITION BY c.track_id
       ORDER BY c.ts, c.id
-    ) as prev_value
+    ) as prev_value,
+    LAG(c.ts) OVER (
+      PARTITION BY c.track_id
+      ORDER BY c.ts, c.id
+    ) as prev_ts
   FROM counter c
   JOIN counter_track ct ON c.track_id = ct.id
   WHERE '${package}' != ''
@@ -115,7 +120,7 @@ buffer_tx_samples AS (
         1
       ) IN ('/', ':', '#', ']', ')', ' ')
     )
-    AND (${start_ts} IS NULL OR c.ts >= ${start_ts})
+    -- Keep the preceding sample for deltas at the requested window boundary.
     AND (${end_ts} IS NULL OR c.ts < ${end_ts})
 ),
 buffer_tx_deltas AS (
@@ -125,30 +130,37 @@ buffer_tx_deltas AS (
     track_name,
     ts,
     CASE
+      WHEN ${start_ts} IS NOT NULL AND prev_ts < ${start_ts} THEN ${start_ts}
+      ELSE COALESCE(prev_ts, ts)
+    END as observation_start_ts,
+    CASE
       WHEN prev_value IS NOT NULL AND value > prev_value
         THEN CAST(value - prev_value AS INTEGER)
       ELSE 0
-    END as produced_frames
+    END as received_buffer_updates
   FROM buffer_tx_samples
+  WHERE (${start_ts} IS NULL OR ts >= ${start_ts})
 ),
 buffer_tx_track_stats AS (
   SELECT
     track_id,
     track_name,
-    CAST(SUM(produced_frames) AS INTEGER) as produced_frames,
-    MIN(ts) as first_sample_ts,
+    CAST(SUM(received_buffer_updates) AS INTEGER) as received_buffer_updates,
+    -- Legacy internal alias; its value counts received updates, never frames.
+    CAST(SUM(received_buffer_updates) AS INTEGER) as produced_frames,
+    MIN(observation_start_ts) as first_sample_ts,
     MAX(ts) as last_sample_ts,
-    MAX(ts) - MIN(ts) as effective_span_ns
+    MAX(ts) - MIN(observation_start_ts) as effective_span_ns
   FROM buffer_tx_deltas
   GROUP BY track_id, track_name
-  HAVING SUM(produced_frames) >= 5
-    AND MAX(ts) > MIN(ts)
-    AND MAX(ts) - MIN(ts) >= 5 * (SELECT vsync_period_ns FROM vsync_config)
+  HAVING SUM(received_buffer_updates) >= 5
+    AND MAX(ts) > MIN(observation_start_ts)
+    AND MAX(ts) - MIN(observation_start_ts) >= 5 * (SELECT vsync_period_ns FROM vsync_config)
 ),
 selected_buffer_tx_track AS (
   SELECT *
   FROM buffer_tx_track_stats
-  ORDER BY produced_frames DESC, effective_span_ns DESC, track_id ASC
+  ORDER BY received_buffer_updates DESC, effective_span_ns DESC, track_id ASC
   LIMIT 1
 )
 -- BUFFER_TX_FALLBACK_CTES_END
@@ -190,10 +202,12 @@ SELECT
     ELSE 'found'
   END as target_process_status,
   ft.frame_timeline_frames,
-  COALESCE(bt.produced_frames, 0) as buffer_tx_frames,
+  -- Legacy buffer_tx_frames is a received-update count, not frame count.
+  COALESCE(bt.received_buffer_updates, 0) as buffer_tx_frames,
+  COALESCE(bt.received_buffer_updates, 0) as received_buffer_updates,
   CASE
-    WHEN bt.produced_frames > 0
-      THEN ROUND(ft.frame_timeline_frames * 1.0 / bt.produced_frames, 4)
+    WHEN bt.received_buffer_updates > 0
+      THEN ROUND(ft.frame_timeline_frames * 1.0 / bt.received_buffer_updates, 4)
     ELSE NULL
   END as frame_timeline_to_buffer_tx_ratio,
   bt.track_id as buffer_tx_track_id,
@@ -204,7 +218,7 @@ SELECT
       THEN 'target_process_not_found'
     WHEN bt.track_id IS NULL THEN 'no_buffer_tx_candidate'
     WHEN ft.frame_timeline_frames = 0 THEN 'no_frame_timeline_coverage'
-    WHEN ft.frame_timeline_frames * 1.0 / bt.produced_frames < 0.75
+    WHEN ft.frame_timeline_frames * 1.0 / bt.received_buffer_updates < 0.75
       THEN 'partial_frame_timeline_coverage'
     ELSE 'sufficient_frame_timeline_coverage'
   END as coverage_status,
@@ -213,7 +227,7 @@ SELECT
     WHEN bt.track_id IS NOT NULL
       AND (
         ft.frame_timeline_frames = 0
-        OR ft.frame_timeline_frames * 1.0 / bt.produced_frames < 0.75
+        OR ft.frame_timeline_frames * 1.0 / bt.received_buffer_updates < 0.75
       )
       THEN 1
     ELSE 0
@@ -222,15 +236,20 @@ FROM frame_timeline_coverage ft
 CROSS JOIN target_process_presence tp
 LEFT JOIN selected_buffer_tx_track bt ON 1 = 1
 )
--- The scope the root-cause steps may claim (not a qualifier of this
--- probe row): only a measured, sufficient FrameTimeline/BufferTX
--- comparison is full coverage; any other status leaves it unverified.
+-- Keep legacy coverage_status/should_fallback for routing compatibility.
+-- A cross-source event ratio is only a heuristic; no ratio establishes
+-- full FrameTimeline coverage or proves BufferTX undercounted frames.
 SELECT target_process_count, target_process_status, frame_timeline_frames,
-  buffer_tx_frames, frame_timeline_to_buffer_tx_ratio, buffer_tx_track_id,
+  buffer_tx_frames, received_buffer_updates,
+  frame_timeline_to_buffer_tx_ratio,
+  frame_timeline_to_buffer_tx_ratio AS source_event_ratio, buffer_tx_track_id,
   frame_source_track, buffer_tx_effective_span_ns, coverage_status,
   should_fallback,
+  CASE WHEN buffer_tx_track_id IS NULL THEN 'unavailable'
+    ELSE 'heuristic_not_coverage_name_match_only'
+  END AS source_event_ratio_status,
   CASE coverage_status
-    WHEN 'sufficient_frame_timeline_coverage' THEN 'full_frame_timeline'
+    WHEN 'sufficient_frame_timeline_coverage' THEN 'frame_timeline_only_unbenchmarked'
     WHEN 'partial_frame_timeline_coverage' THEN 'partial_sample'
     WHEN 'no_buffer_tx_candidate' THEN 'frame_timeline_only_unbenchmarked'
     WHEN 'frame_timeline_only_exact_upid' THEN 'frame_timeline_only_unbenchmarked'

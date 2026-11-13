@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rn_fabric_render_jank.skill.yaml
--- Source SHA-256: 3db80f70cb79855ae72bfefc3e8d9937dff93e81daa6b2452aab13391ea03748
+-- Source SHA-256: 0b4059ccf173b5a84ad0088eb2307ddccb7221c94c4cfe9c6601cd3aac93f150
 
 WITH
 input AS (
@@ -17,6 +17,19 @@ frame_budget AS (
     16666667
   ) AS budget_ns
 ),
+fabric_processes AS (
+  -- JS/native-module names are shared with older RN; require stage evidence
+  -- before admitting their uninstrumented work as Fabric context.
+  SELECT DISTINCT t.upid
+  FROM slice s
+  JOIN thread_track tt ON s.track_id = tt.id
+  JOIN thread t ON tt.utid = t.utid
+  CROSS JOIN input i
+  WHERE s.ts >= i.start_ts AND s.ts < i.end_ts
+    AND (s.name GLOB '*Fabric*' OR s.name GLOB '*SurfaceMountingManager*'
+      OR s.name GLOB '*executeMount*' OR s.name GLOB '*MountItem*'
+      OR s.name GLOB '*ShadowTree*')
+),
 fabric_slices AS (
   SELECT
     s.id,
@@ -28,11 +41,14 @@ fabric_slices AS (
     p.name AS process_name,
     p.upid,
     CASE
-      WHEN s.name GLOB '*Fabric*' OR s.name GLOB '*SurfaceMountingManager*' OR s.name GLOB '*executeMount*' OR s.name GLOB '*MountItem*' THEN 'fabric_mounting'
-      WHEN s.name GLOB '*ShadowTree*' THEN 'shadow_tree_commit'
+      WHEN s.name GLOB '*ShadowTree*' OR s.name GLOB '*FabricCommit*' THEN 'shadow_tree_commit'
+      WHEN s.name GLOB '*FabricMount*' OR s.name GLOB '*SurfaceMountingManager*' OR s.name GLOB '*executeMount*' OR s.name GLOB '*MountItem*' THEN 'fabric_mounting'
+      WHEN s.name GLOB '*Fabric*' THEN 'fabric_work'
       WHEN s.name GLOB '*JSI*' THEN 'jsi_sync'
       WHEN s.name GLOB '*TurboModule*' THEN 'turbo_module'
       WHEN s.name GLOB '*Reanimated*' THEN 'reanimated'
+      WHEN t.name GLOB 'mqt_*js*' THEN 'javascript'
+      WHEN t.name GLOB 'mqt_*native*' THEN 'native_modules'
       ELSE 'rn_new_arch'
     END AS phase
   FROM slice s
@@ -48,7 +64,8 @@ fabric_slices AS (
       s.name GLOB '*Fabric*' OR s.name GLOB '*SurfaceMountingManager*' OR
       s.name GLOB '*executeMount*' OR s.name GLOB '*MountItem*' OR s.name GLOB '*ShadowTree*' OR
       s.name GLOB '*JSI*' OR s.name GLOB '*TurboModule*' OR s.name GLOB '*Reanimated*' OR
-      t.name GLOB '*mqt_native_modules*'
+      (t.upid IN (SELECT upid FROM fabric_processes)
+        AND (t.name GLOB 'mqt_*js*' OR t.name GLOB 'mqt_*native*'))
     )
 ),
 frames AS (

@@ -1,6 +1,6 @@
 import unittest
 
-from tests.support import fixture_available, fixture_path, generated_sql, run_public_query
+from tests.support import SCRIPTS, fixture_available, fixture_path, generated_sql, load_skill_script, run_public_query
 
 
 @unittest.skipUnless(
@@ -48,6 +48,24 @@ class PipelineTest(unittest.TestCase):
             max(scores["rows"], key=lambda row: row["score"])["pipeline_id"],
             "FLUTTER_TEXTUREVIEW",
         )
+
+        # Use the production result renderer and the actual trace scores. The
+        # selected teaching location must resolve inside the standalone Skill.
+        common = load_skill_script("_common")
+        determine = common.render_sql_template(
+            generated_sql("rendering_pipeline_detection", "determine_pipeline.sql").read_text(encoding="utf-8"),
+            {}, {"pipeline_scores": scores["rows"]},
+        )
+        selected = run_public_query(trace, sql=determine)
+        self.assertEqual(selected["status"], "ok", selected)
+        self.assertEqual(len(selected["rows"]), 1)
+        row = selected["rows"][0]
+        self.assertEqual(row["primary_pipeline_id"], "FLUTTER_TEXTUREVIEW")
+        location, separator, anchor = row["doc_path"].partition("#")
+        self.assertEqual(location, "references/generated/knowledge/rendering-teaching.md")
+        self.assertEqual(separator, "#")
+        self.assertEqual(anchor, row["primary_rendering_type_id"].lower())
+        self.assertIn(f'id="{anchor}"', (SCRIPTS.parent / location).read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

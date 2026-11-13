@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml
-Source SHA-256: 38cb7cb1b6874a31a2da8e82406e81c04fade5230ec56e948f7bfd2539a6a85b
+Source SHA-256: 977f9ee7b1e356090321193837d29dbd067b40b9ba43929e9c297508292d5421
 # Buffer Transaction 生命周期
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -9,7 +9,7 @@ This reference is the portable Agent Skill projection of the source definition. 
 
 ```yaml
 name: buffer_transaction_lifecycle
-version: '1.0'
+version: '1.1'
 type: composite
 category: diagnostics
 tier: B
@@ -19,7 +19,7 @@ tier: B
 
 ```yaml
 display_name: Buffer Transaction 生命周期
-description: 追踪 BLAST Transaction 在 SF 侧的真实计数点（S01 §⑥），区分 queueBuffer 与 Transaction 到达时机
+description: 观察 SF 全局事务事件、目标进程提交事件与逐轨 BufferTX pending；缺少 buffer/layer/transaction 身份时不计算跨阶段延迟
 icon: swap_horiz
 tags:
 - surfaceflinger
@@ -36,8 +36,12 @@ s_article_ref: S01
 ```yaml
 required_tables:
 - slice
+- thread_track
 - thread
 - process
+- counter
+- counter_track
+- actual_frame_timeline_slice
 ```
 
 ## Inputs
@@ -54,12 +58,12 @@ required_tables:
 - name: package
   type: string
   required: false
-  description: 应用包名（可选，用于过滤目标 layer）
+  description: 精确包名及冒号子进程；BufferTX 按 layer 名边界匹配，空值观察全部进程
 ```
 
 ## Ordered execution
 
-### SF applyTransaction 概览
+### 事务与提交事件概览
 
 - ID: `apply_transaction_summary`
 - Type: `atomic`
@@ -71,27 +75,36 @@ type: atomic
 display:
   level: summary
   layer: overview
-  title: SF Transaction 真实计数点
+  title: SF 全局事件与目标进程提交事件（未关联单个 buffer）
   columns:
   - name: total_apply_transactions
-    label: applyTransaction 总次数
+    label: SF 全局 applyTransaction 事件数
     type: number
   - name: total_set_transaction_state
-    label: setTransactionState 总次数
+    label: SF 全局 setTransactionState 事件数
     type: number
   - name: total_blast_bq
-    label: BLASTBufferQueue slice 总次数
+    label: 所选进程 BLASTBufferQueue 事件数
     type: number
   - name: total_queue_buffer
-    label: queueBuffer 总次数
+    label: 所选进程 queueBuffer 事件数（非显示帧数）
     type: number
   - name: avg_apply_to_latch_ms
-    label: 平均 Transaction→Latch 间隔
+    label: Transaction→Latch 延迟（缺身份关联，不可用）
     type: duration
     format: duration_ms
+  - name: pairing_status
+    label: 跨阶段关联状态
+    type: string
+  - name: sf_event_scope
+    label: SF 事件范围
+    type: string
+  - name: app_event_scope
+    label: 应用事件范围
+    type: string
 save_as: apply_transaction_summary
 ```
-### queueBuffer → Transaction 到达延迟
+### queueBuffer→Transaction 关联能力
 
 - ID: `queue_to_transaction_delay`
 - Type: `atomic`
@@ -103,17 +116,20 @@ type: atomic
 display:
   level: detail
   layer: list
-  title: App queueBuffer 到 SF Transaction 真实到达的延迟
+  title: 缺少 buffer/layer/transaction 身份，跨阶段延迟不可用
   columns:
   - name: bucket
-    label: 延迟区间
+    label: 延迟统计可用性
     type: string
   - name: count
-    label: 次数
+    label: 已关联样本数（不可用）
     type: number
+  - name: pairing_status
+    label: 跨阶段关联状态
+    type: string
 save_as: queue_to_transaction_delay
 ```
-### 按 Layer 分组的 Transaction 计数
+### 按进程与 Layer 分组的 FrameTimeline 记录
 
 - ID: `per_layer_transactions`
 - Type: `atomic`
@@ -125,31 +141,91 @@ type: atomic
 display:
   level: detail
   layer: list
-  title: Per-layer Transaction 分布
+  title: 完整 FrameTimeline 记录（非 Transaction 或新 buffer 计数）
   columns:
+  - name: upid
+    label: 进程实例 UPID
+    type: number
+  - name: process_name
+    label: 进程名
+    type: string
   - name: layer_name
     label: Layer 名
     type: string
   - name: frame_count
-    label: 帧数
+    label: 完整 FrameTimeline 记录数（非去重 App 帧）
     type: number
   - name: jank_count
-    label: Jank 数
+    label: 带 Jank 标记的记录数
     type: number
   - name: avg_dur_ms
-    label: 平均帧耗时
+    label: 记录平均时长
     type: duration
     format: duration_ms
+  - name: evidence_scope
+    label: 证据口径
+    type: string
 save_as: per_layer_transactions
+```
+### 逐轨 BufferTX pending 观测
+
+- ID: `buffer_tx_pending_observations`
+- Type: `atomic`
+- SQL: [`../sql/buffer_transaction_lifecycle/buffer_tx_pending_observations.sql`](../sql/buffer_transaction_lifecycle/buffer_tx_pending_observations.sql)
+
+```yaml
+id: buffer_tx_pending_observations
+type: atomic
+display:
+  level: detail
+  layer: list
+  title: SF server pending 增减与水位（不等于 GPU ready 或显示帧）
+  columns:
+  - name: track_id
+    label: Counter 轨道 ID
+    type: number
+  - name: track_name
+    label: BufferTX 轨道名
+    type: string
+  - name: sample_count
+    label: 窗口内样本数
+    type: number
+  - name: received_updates
+    label: Pending 上升量（收到 buffer update）
+    type: number
+  - name: removed_updates
+    label: Pending 下降量（latch 或 drop）
+    type: number
+  - name: min_pending_updates
+    label: 采样最低 pending 水位
+    type: number
+  - name: max_pending_updates
+    label: 采样最高 pending 水位
+    type: number
+  - name: last_pending_updates
+    label: 窗口末次采样 pending 水位
+    type: number
+  - name: coverage_status
+    label: 增量观测覆盖
+    type: string
+  - name: evidence_scope
+    label: 归属口径
+    type: string
+  - name: claim_boundary
+    label: 结论边界
+    type: string
+save_as: buffer_tx_pending_observations
 ```
 ## Output and evidence contract
 
 ```yaml
 fields:
 - name: apply_transaction_summary
-  label: Transaction 概览（S01 §⑥ 真实计数点）
+  label: SF 全局事件与所选进程提交事件
 - name: queue_to_transaction_delay
-  label: queueBuffer → Transaction 延迟分布
+  label: queueBuffer→Transaction 关联能力（缺身份时不可用）
 - name: per_layer_transactions
-  label: Per-layer Transaction 分布
+  label: Per-layer FrameTimeline 记录（空结果不证明流畅）
+- name: buffer_tx_pending_observations
+  label: 逐轨 BufferTX pending 增减与水位
 ```

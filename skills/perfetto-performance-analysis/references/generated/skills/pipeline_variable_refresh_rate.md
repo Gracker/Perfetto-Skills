@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/variable_refresh_rate.skill.yaml
-Source SHA-256: edd77a4cea13be86568ffc8a2e5ef058b0b41ed2341850531c2c9cb8a23b2a23
+Source SHA-256: 3753f0be7b552c19a1d97f078c11e4797217d15755fadb14fff7fcc93afde263
 # 可变刷新率 (VRR)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s01_overview). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: 可变刷新率 (VRR)
 description: VRR/ARR + FrameTimeline 动态刷新率
 icon: refresh
 family: specialized
-doc_path: rendering_pipelines/S01_rendering_types_overview.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s01_overview
 s_article_ref: S01
 four_features:
   producer_threads: []
@@ -88,7 +92,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S01_rendering_types_overview.md
+source: references/generated/knowledge/rendering-teaching.md#s01_overview
 ```
 
 ## Analysis guidance

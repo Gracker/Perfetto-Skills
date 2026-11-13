@@ -44,7 +44,7 @@ class GeneratedReferenceTest(unittest.TestCase):
             ):
                 self.assertEqual(line, line.rstrip(), f"{path}:{line_number}")
 
-    def test_all_pipeline_definitions_and_docs_are_exported(self) -> None:
+    def test_pipeline_definitions_use_bundled_cards_without_article_distribution(self) -> None:
         catalog = self.load_catalog()
         definitions = [
             item
@@ -52,15 +52,21 @@ class GeneratedReferenceTest(unittest.TestCase):
             if item["runtime_type"] == "pipeline_definition"
         ]
         self.assertEqual(len(definitions), 31)
-        self.assertEqual(len(catalog["pipeline_docs"]), 14)
-        self.assertEqual(
-            [
-                Path(item["destination"]).stem.split("_")[0]
-                for item in catalog["pipeline_docs"]
-            ],
-            [f"S{index:02d}" for index in range(1, 15)],
-        )
+        self.assertEqual(catalog["pipeline_docs"], [])
+        self.assertFalse((GENERATED / "pipelines/docs").exists())
         self.assertTrue(all((SKILL / item["destination"]).is_file() for item in definitions))
+        teaching = catalog["pipeline_teaching"]
+        text = (SKILL / teaching["destination"]).read_text(encoding="utf-8")
+        self.assertIn(teaching["source_path"], text[:800])
+        self.assertIn(teaching["source_sha256"], text[:800])
+        self.assertEqual(len(teaching["pipelines"]), len(definitions))
+        self.assertEqual(teaching["pipelines"]["CHROME_BROWSER_VIZ"], "S16_CHROMIUM_BROWSER")
+        for entry in definitions:
+            content = (SKILL / entry["destination"]).read_text(encoding="utf-8")
+            self.assertIn("../knowledge/rendering-teaching.md#", content)
+            self.assertNotIn("skills/pipelines/index.yaml#", content)
+        for path in GENERATED.rglob("*.sql"):
+            self.assertNotIn("skills/pipelines/index.yaml#", path.read_text(encoding="utf-8"), path)
 
     def test_generated_catalog_records_provenance_and_transformations(self) -> None:
         generated_catalog = json.loads(

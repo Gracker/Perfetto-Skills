@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/flutter_surfaceview_impeller.skill.yaml
-Source SHA-256: fa252f18052f9439a0b1e0b21b8659fc471c9831a4bd1937fe5270d119309c21
+Source SHA-256: 55204a57d161b214cead6fe6390e2a79e1b2b671528fa98393e250b3255fb284
 # Flutter SurfaceView (Impeller)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s10_flutter). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: Flutter SurfaceView (Impeller)
 description: Flutter + Impeller，引擎常见于 SurfaceView render mode
 icon: flutter
 family: flutter
-doc_path: rendering_pipelines/S10_flutter_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s10_flutter
 s_article_ref: S10
 four_features:
   producer_threads:
@@ -93,7 +97,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S10_flutter_type.md
+source: references/generated/knowledge/rendering-teaching.md#s10_flutter
 ```
 
 ## Analysis guidance

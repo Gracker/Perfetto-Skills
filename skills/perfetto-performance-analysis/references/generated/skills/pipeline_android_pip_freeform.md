@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_pip_freeform.skill.yaml
-Source SHA-256: b33f9deea780ee4e15799d96eb4b84b88cec3e3394e25ce1cff31825a767b12a
+Source SHA-256: b3c1b0406609c691a5128de11b0bddbfd813087d8ef0f7b7b998ebbd73e75986
 # Android PIP/Freeform
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s06_multi_window). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: Android PIP/Freeform
 description: 画中画和自由窗口模式，特殊窗口管理与合成
 icon: pip
 family: surface
-doc_path: rendering_pipelines/S06_multi_window_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s06_multi_window
 s_article_ref: S06
 four_features:
   producer_threads:
@@ -77,7 +81,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S06_multi_window_type.md
+source: references/generated/knowledge/rendering-teaching.md#s06_multi_window
 ```
 
 ## Analysis guidance

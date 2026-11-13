@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_standard_blast.skill.yaml
-Source SHA-256: 78d0c2c42588b16a4a9fd020bd57a3ab3dd13c448ab9e726b3878ae30427e6b0
+Source SHA-256: 90083492ccbb0d1f041905753b9cef1c896d1d71e6ccf2839551a80620ba61e0
 # 标准 Android View (BLAST)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s02_aosp_standard). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: 标准 Android View (BLAST)
 description: Android 11+/12+ 常见的 HWUI + 现代 Transaction/BLAST 提交流程
 icon: android
 family: hwui
-doc_path: rendering_pipelines/S02_aosp_standard_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s02_aosp_standard
 s_article_ref: S02
 four_features:
   producer_threads:
@@ -74,7 +78,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S02_aosp_standard_type.md
+source: references/generated/knowledge/rendering-teaching.md#s02_aosp_standard
 ```
 
 ## Analysis guidance

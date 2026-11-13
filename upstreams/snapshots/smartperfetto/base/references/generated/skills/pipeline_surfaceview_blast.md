@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/surfaceview_blast.skill.yaml
-Source SHA-256: a2f85c38f862e278be9e101753de3d6cf726e3091f543b20876d6f754a57c6a0
+Source SHA-256: f9fe4de787e9e7a05fe436ff30f33fad487a9e45901a061690f9b3fc31dab08c
 # SurfaceView (BLAST)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s03_surfaceview). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: SurfaceView (BLAST)
 description: 独立 SurfaceView + BLAST 同步，用于自定义 GL 渲染、媒体播放
 icon: surface
 family: surface
-doc_path: rendering_pipelines/S03_surfaceview_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s03_surfaceview
 s_article_ref: S03
 four_features:
   producer_threads:
@@ -94,7 +98,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S03_surfaceview_type.md
+source: references/generated/knowledge/rendering-teaching.md#s03_surfaceview
 ```
 
 ## Analysis guidance

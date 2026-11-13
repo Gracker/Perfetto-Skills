@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rendering_pipeline_detection.skill.yaml
--- Source SHA-256: 87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569
+-- Source SHA-256: bdb32cee14ce0f8f258001d34bdb35cc39cc71fb98757a956e28b913c1064b73
 
 WITH
       dominant_process AS (

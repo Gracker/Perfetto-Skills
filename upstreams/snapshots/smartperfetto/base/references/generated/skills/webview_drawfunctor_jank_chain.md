@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/webview_drawfunctor_jank_chain.skill.yaml
-Source SHA-256: 23169f041556c7bfe0b33f5a86d7248694d522332bcb1e0db972702d7f68e337
+Source SHA-256: f955143f2e4366b68abd38648cac6d652dbd08240aecca385340a151f984ca93
 # WebView GL Functor 卡顿链路
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -19,7 +19,7 @@ tier: A
 
 ```yaml
 display_name: WebView GL Functor 卡顿链路
-description: 关联 WebView/Chromium JS 长任务、GL Functor 绘制和宿主帧掉帧窗口
+description: 关联 WebView/Chromium JS 工作、GLES/Vulkan functor 阶段与宿主帧重叠；事件次数不等于显示帧数，重叠不单独证明因果
 icon: web
 tags:
 - webview
@@ -113,7 +113,7 @@ display:
     label: 线程
     type: string
   - name: slice_count
-    label: 次数
+    label: 事件次数（非显示帧数）
     type: number
     format: compact
   - name: avg_dur_ms

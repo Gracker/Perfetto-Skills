@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/camera_pipeline.skill.yaml
-Source SHA-256: 71e8231904220fd671deda7e3eee30333fcfc609394f91dc11f4e400127739af
+Source SHA-256: bbc49adbaa0fe539e83eb44f5212389a3865881856cf221571a82003264c777e
 # 相机管线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s11_camera). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: 相机管线
 description: Camera2/HAL3 多流相机渲染
 icon: camera
 family: specialized
-doc_path: rendering_pipelines/S11_camera_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s11_camera
 s_article_ref: S11
 four_features:
   producer_threads:
@@ -83,7 +87,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S11_camera_type.md
+source: references/generated/knowledge/rendering-teaching.md#s11_camera
 ```
 
 ## Analysis guidance

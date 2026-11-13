@@ -11,7 +11,8 @@ SmartPerfetto owns the domain source of truth:
 
 - `backend/skills/**/*.skill.yaml`: deterministic SQL and orchestration DSL.
 - `backend/strategies/`: scene methodology, evidence rules, and knowledge.
-- `docs/rendering_pipelines/`: architecture teaching and pipeline evidence.
+- `backend/skills/pipelines/index.yaml`: concise product teaching cards and
+  pipeline/type mappings; reference articles are not distributed.
 - `backend/skills/public-export.yaml`: explicit public/product-only policy.
 
 This repository owns the portable projection:
@@ -22,7 +23,7 @@ This repository owns the portable projection:
 - `references/evidence/` and `references/knowledge/`: portable evidence and
   interpretation boundaries.
 - `references/generated/`: generated Skill references, SQL, strategies,
-  knowledge, rendering-pipeline documents, and sharded runtime manifests.
+  knowledge, local rendering teaching cards, and sharded runtime manifests.
 - `scripts/`: local trace-processor bootstrap, release doctor, capability probe,
   deterministic Skill executor, query, comparison, and report CLIs.
 

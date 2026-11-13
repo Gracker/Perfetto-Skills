@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/chrome_browser_viz.skill.yaml
-Source SHA-256: 466d0a5cad5e8f40b35606a938cb63f3e17c75995c13f5df9629200c8d56b37b
+Source SHA-256: abe03605f50ff19e64dd57509e1f6154102979fc2dd863465c2a6338b58912d8
 # Chrome Browser (Viz)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s16_chromium_browser). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,8 +26,8 @@ display_name: Chrome Browser (Viz)
 description: Chrome 浏览器 Viz 合成器管线，多进程架构 (Browser/Renderer/GPU)
 icon: web
 family: webview
-doc_path: rendering_pipelines/S09_webview_type.md
-s_article_ref: S09
+doc_path: references/generated/knowledge/rendering-teaching.md#s16_chromium_browser
+s_article_ref: S16
 four_features:
   producer_threads:
   - CrBrowserMain
@@ -55,13 +59,13 @@ ipc_layers: '多进程通信通过 Mojo IPC（不是 Binder）。Mojo 延迟分�
 
 ```yaml
 required_signals:
-- thread: VizCompositorThread
+- thread_pattern: VizCompositorTh*
   min_count: 1
 - thread_pattern: CrBrowserMain*
   min_count: 1
 scoring_signals:
 - signal: has_viz_compositor_thread
-  thread_pattern: VizCompositorThread
+  thread_pattern: VizCompositorTh*
   weight: 40
 - signal: has_cr_renderer_main
   thread_pattern: CrRendererMain*
@@ -90,7 +94,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S09_webview_type.md
+source: references/generated/knowledge/rendering-teaching.md#s16_chromium_browser
 ```
 
 ## Analysis guidance
@@ -130,10 +134,12 @@ common_issues:
     '
   detection_skill: gpu_render_in_range
 - id: chrome_specific_swap_chain_buffers
-  name: Chrome 特有的 swap chain buffer 数（不是 BLASTBufferQueue）
-  description: 'Chrome 直接管理 ANativeWindow/swap chain，不走 Android HWUI 的 BLASTBufferQueue 路径。
+  name: Chrome 输出分支与 buffer 周转
+  description: 'Chromium 可以经 SurfaceView/BQ/BLAST 输出，也可以直接向 SurfaceControl 提交 buffer。
 
-    分析 buffer 周转时不要套用 BLAST 经验——Chrome 自己的 swap chain 深度由 Viz 决定。
+    先关联本次活动 layer、buffer 与 transaction，再解释周转；不能从没有 HWUI DrawFrame
+
+    推断没有 BLAST，也不能把 swapchain image 数当作可显示的未来帧库存。
 
     '
   detection_skill: render_thread_slices
@@ -170,7 +176,7 @@ instructions:
   smart_filter:
     enabled: true
     description: 仅 Pin 活跃渲染的 Renderer 进程
-- pattern: VizCompositorThread
+- pattern: VizCompositorTh
   match_by: name
   priority: 4
   reason: Viz 合成器 (合成/调度)

@@ -1401,21 +1401,24 @@ class ResultPathReadTest(unittest.TestCase):
                     aliases[name] = names
         self.assertEqual(undecided, [])
 
-    def test_scrolling_coverage_is_full_only_after_a_sufficient_comparison(self) -> None:
+    def test_scrolling_source_event_ratio_never_establishes_full_coverage(self) -> None:
         import sqlite3
 
-        # The probe maps its own coverage status to the scope the root-cause steps may claim.
-        probe = (self.SQL / "scrolling_analysis/buffer_tx_coverage_probe.sql").read_text(encoding="utf-8")
-        mapping = re.search(r"(CASE coverage_status.*?END) AS root_cause_evidence_scope", probe, re.S)
-        self.assertIsNotNone(mapping)
-        expected = {"sufficient_frame_timeline_coverage": "full_frame_timeline",
+        # BufferTX pending updates and FrameTimeline frame events are different
+        # populations, including when the legacy routing status says sufficient.
+        expected = {"sufficient_frame_timeline_coverage": "frame_timeline_only_unbenchmarked",
                     "partial_frame_timeline_coverage": "partial_sample",
                     "no_buffer_tx_candidate": "frame_timeline_only_unbenchmarked",
+                    "frame_timeline_only_exact_upid": "frame_timeline_only_unbenchmarked",
                     "no_frame_timeline_coverage": "coverage_unverified",
                     "target_process_not_found": "coverage_unverified"}
         db = sqlite3.connect(":memory:")
-        self.assertEqual({status: db.execute(f"SELECT {mapping.group(1)} FROM (SELECT ? AS coverage_status)",
-                                             (status,)).fetchone()[0] for status in expected}, expected)
+        for filename in ("buffer_tx_coverage_probe.sql", "buffer_tx_coverage_probe.exact.sql"):
+            probe = (self.SQL / "scrolling_analysis" / filename).read_text(encoding="utf-8")
+            mapping = re.search(r"(CASE coverage_status.*?END) AS root_cause_evidence_scope", probe, re.S)
+            self.assertIsNotNone(mapping, filename)
+            self.assertEqual({status: db.execute(f"SELECT {mapping.group(1)} FROM (SELECT ? AS coverage_status)",
+                                                 (status,)).fetchone()[0] for status in expected}, expected, filename)
         # A consumer reads that scope; a probe without a row leaves coverage unverified.
         for step_id in ("jank_type_stats", "batch_frame_root_cause"):
             sql = (self.SQL / f"scrolling_analysis/{step_id}.sql").read_text(encoding="utf-8")
@@ -1425,6 +1428,59 @@ class ResultPathReadTest(unittest.TestCase):
                 rendered = self.common.render_sql_template(f"SELECT {read.group(0)}", {},
                                                            {"buffer_tx_coverage": {"data": rows}})
                 self.assertEqual(db.execute(rendered).fetchone()[0], scope, step_id)
+        db.close()
+
+    def test_real_scrolling_conditions_keep_null_frame_metrics_and_allow_sparse_evidence(self) -> None:
+        from runtime.executor import SkillRunner
+
+        skill = json.loads((self.MANIFESTS / "scrolling_analysis.json").read_text(encoding="utf-8"))
+        by_id = {step["id"]: step for step in skill["steps"]}
+        for has_frame_samples in (0, 1):
+            with self.subTest(has_frame_samples=has_frame_samples):
+                imported_steps = [copy.deepcopy(by_id[step_id]) for step_id in (
+                    "buffer_tx_performance_fallback", "jank_type_stats", "get_app_jank_frames",
+                    "session_quadrant_summary", "fallback_no_frame_timeline",
+                )]
+                for step in imported_steps:
+                    step.pop("process_scope", None)
+                parent = {"id": "parent", "runtime_status": "executable", "type": "composite",
+                          "identity": {"policy": "none"}, "inputs": [],
+                          "steps": [
+                              {"id": "frame_timeline_check", "type": "atomic", "query_id": "parent/frame_timeline",
+                               "save_as": "frame_timeline"},
+                              {"id": "vsync_config", "type": "atomic", "query_id": "parent/environment",
+                               "save_as": "environment"},
+                              {"id": "buffer_tx_coverage_probe", "type": "atomic", "query_id": "parent/coverage",
+                               "save_as": "buffer_tx_coverage"},
+                              *imported_steps,
+                          ]}
+                answers = {
+                    "parent/frame_timeline": [{"has_frame_timeline": 1}],
+                    "parent/environment": [{"has_data": has_frame_samples}],
+                    "parent/coverage": [{"should_fallback": 1}],
+                    "scrolling_analysis/buffer_tx_performance_fallback": [{
+                        "total_frames": None, "actual_fps": None, "janky_frames": None,
+                        "received_buffer_updates": 8,
+                    }],
+                    "scrolling_analysis/jank_type_stats": [{"real_jank_count": 1, "evidence_scope": "partial_sample"}],
+                    "scrolling_analysis/get_app_jank_frames": [{"frame_id": 42}],
+                    "scrolling_analysis/fallback_no_frame_timeline": [{"status": "no_frame_timeline"}],
+                }
+                result = SkillRunner({"skills": {"parent": parent}},
+                                     lambda query_id, **kwargs: answers[query_id]).run("parent")
+                self.assertTrue(result["success"], result)
+                steps = {step["step_id"]: step for step in result["steps"]}
+                overview = steps["buffer_tx_performance_fallback"]
+                self.assertEqual(overview["status"], "observed")
+                self.assertIn("total_frames", overview["rows"][0])
+                self.assertIsNone(overview["rows"][0]["total_frames"])
+                self.assertIsNone(overview["rows"][0]["actual_fps"])
+                self.assertEqual(steps["session_quadrant_summary"]["status"], "skipped_condition")
+                expected_samples = "observed" if has_frame_samples else "skipped_condition"
+                self.assertEqual(steps["jank_type_stats"]["status"], expected_samples)
+                self.assertEqual(steps["get_app_jank_frames"]["status"], expected_samples)
+                self.assertEqual(steps["fallback_no_frame_timeline"]["status"],
+                                 "skipped_condition" if has_frame_samples else "observed")
 
     def test_scrolling_fallback_runs_when_the_coverage_probe_did_not(self) -> None:
         from runtime.executor import SkillRunner

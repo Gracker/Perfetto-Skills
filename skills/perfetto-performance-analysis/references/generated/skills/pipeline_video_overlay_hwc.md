@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/video_overlay_hwc.skill.yaml
-Source SHA-256: 39a1bcfe778caa41af3ba3a4846e06d6988f55761e0694cd93efde66f042eabd
+Source SHA-256: a2e1f81a3b08c5ad9a10a8bf8975129754d0ad9832c3c58d345da55a5fc21092
 # 视频 Overlay (HWC)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s12_video_overlay_hwc). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: 视频 Overlay (HWC)
 description: HWC 视频层硬件加速叠加
 icon: video
 family: specialized
-doc_path: rendering_pipelines/S12_video_overlay_hwc_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s12_video_overlay_hwc
 s_article_ref: S12
 four_features:
   producer_threads:
@@ -89,7 +93,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S12_video_overlay_hwc_type.md
+source: references/generated/knowledge/rendering-teaching.md#s12_video_overlay_hwc
 ```
 
 ## Analysis guidance

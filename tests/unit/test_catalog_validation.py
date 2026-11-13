@@ -86,6 +86,46 @@ class CatalogValidationTest(unittest.TestCase):
             0,
         )
 
+    def teaching_catalog(self) -> dict[str, object]:
+        catalog = copy.deepcopy(self.catalog)
+        pipeline = copy.deepcopy(catalog["skills"][0])
+        pipeline.update(name="pipeline_example", runtime_type="pipeline_definition", pipeline_id="PIPELINE_EXAMPLE",
+                        source_path="backend/skills/pipelines/example.skill.yaml",
+                        destination="references/generated/skills/pipeline_example.md")
+        (self.skill_root / pipeline["destination"]).write_text("# Pipeline\n", encoding="utf-8")
+        catalog["skills"].append(pipeline)
+        catalog["summary"].update(skill_yaml_files=2, runtime_candidates=2,
+                                  runtime_types={"atomic": 1, "pipeline_definition": 1})
+        teaching = {"source_path": "backend/skills/pipelines/index.yaml", "source_sha256": "d" * 64,
+                    "destination": "references/generated/knowledge/rendering-teaching.md",
+                    "rendering_types": ["EXAMPLE"], "pipelines": {"PIPELINE_EXAMPLE": "EXAMPLE"}}
+        destination = self.skill_root / teaching["destination"]
+        destination.parent.mkdir(parents=True)
+        destination.write_text(f"GENERATED FILE\nSource: {teaching['source_path']}\nSource SHA-256: {teaching['source_sha256']}\n", encoding="utf-8")
+        catalog["pipeline_teaching"] = teaching
+        return catalog
+
+    def test_teaching_provenance_and_complete_mapping_are_required(self) -> None:
+        catalog = self.teaching_catalog()
+        validate_catalog.validate_catalog(catalog, self.skill_root)
+        for field, value in (("source_sha256", "e" * 64), ("pipelines", {}),
+                             ("rendering_types", ["EXAMPLE", "EXAMPLE"]),
+                             ("pipelines", {"OTHER_PIPELINE": "EXAMPLE"}),
+                             ("pipelines", {"PIPELINE_EXAMPLE": "UNKNOWN"})):
+            with self.subTest(field=field, value=value):
+                broken = copy.deepcopy(catalog)
+                broken["pipeline_teaching"][field] = value
+                with self.assertRaises(validate_catalog.CatalogValidationError):
+                    validate_catalog.validate_catalog(broken, self.skill_root)
+        del catalog["pipeline_teaching"]
+        with self.assertRaisesRegex(validate_catalog.CatalogValidationError, "require local teaching"):
+            validate_catalog.validate_catalog(catalog, self.skill_root)
+
+    def test_article_distribution_is_rejected(self) -> None:
+        self.catalog["pipeline_docs"] = [{"source_path": "docs/rendering_pipelines/draft.md"}]
+        with self.assertRaisesRegex(validate_catalog.CatalogValidationError, "articles cannot"):
+            validate_catalog.validate_catalog(self.catalog, self.skill_root)
+
 
 if __name__ == "__main__":
     unittest.main()

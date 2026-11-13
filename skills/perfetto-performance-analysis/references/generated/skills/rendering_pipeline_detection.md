@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/rendering_pipeline_detection.skill.yaml
-Source SHA-256: 87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569
+Source SHA-256: bdb32cee14ce0f8f258001d34bdb35cc39cc71fb98757a956e28b913c1064b73
 # 渲染管线检测 (YAML 驱动)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.

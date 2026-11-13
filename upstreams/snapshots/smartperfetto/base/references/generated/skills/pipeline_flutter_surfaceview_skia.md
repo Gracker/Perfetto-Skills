@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/flutter_surfaceview_skia.skill.yaml
-Source SHA-256: 6f73af0a28cf141538bb6f1dbafa4e5873b8ab4b43f8905ef0e55ec0b17c3429
+Source SHA-256: 0ab6ee64f311eba980f1aee0603a2bab1d74634238cdba6d579edf7faa013b17
 # Flutter SurfaceView (Skia)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s10_flutter). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: Flutter SurfaceView (Skia)
 description: Flutter + Skia 引擎，运行时 Shader 编译 (Runtime Shader Compilation)
 icon: flutter
 family: flutter
-doc_path: rendering_pipelines/S10_flutter_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s10_flutter
 s_article_ref: S10
 four_features:
   producer_threads:
@@ -79,7 +83,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S10_flutter_type.md
+source: references/generated/knowledge/rendering-teaching.md#s10_flutter
 ```
 
 ## Analysis guidance

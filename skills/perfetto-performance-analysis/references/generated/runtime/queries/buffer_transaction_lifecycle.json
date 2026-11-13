@@ -49,6 +49,8 @@
           "status": "unsupported"
         },
         "probe_capabilities": [
+          "counters",
+          "frame_timeline",
           "slices"
         ]
       },
@@ -73,21 +75,22 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/buffer_transaction_lifecycle/apply_transaction_summary.sql",
-      "sha256": "b1af372dce63a62e84a465840078cb3a3578df16180878d44ce87197003b2b07",
+      "sha256": "7f35e380fc336f3f3dfe05ee41f5cb8ab194d2052fc3dc5c2edd99eafe59ba29",
       "signal_patterns": [
+        "${package|}",
+        "*/surfaceflinger",
+        "*::queueBuffer*",
         "*BLASTBufferQueue*",
-        "*acquireBuffer*",
         "*applyTransaction*",
-        "*latchBuffer*",
-        "*queueBuffer*",
         "*setTransactionState*",
+        "queueBuffer*",
         "surfaceflinger"
       ],
       "skill_id": "buffer_transaction_lifecycle",
       "source": {
         "path": "backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "38cb7cb1b6874a31a2da8e82406e81c04fade5230ec56e948f7bfd2539a6a85b"
+        "sha256": "977f9ee7b1e356090321193837d29dbd067b40b9ba43929e9c297508292d5421"
       },
       "sql_dependencies": {
         "creates": [],
@@ -95,8 +98,12 @@
         "drops": [],
         "required_tables": [
           "slice",
+          "thread_track",
           "thread",
-          "process"
+          "process",
+          "counter",
+          "counter_track",
+          "actual_frame_timeline_slice"
         ],
         "requires": [],
         "setup_queries": []
@@ -104,9 +111,12 @@
       "step_id": "apply_transaction_summary",
       "template": {
         "fragments": [],
-        "name_parameters": [],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
+          "package",
           "start_ts"
         ],
         "result_dependencies": [],
@@ -171,6 +181,8 @@
           "status": "unsupported"
         },
         "probe_capabilities": [
+          "counters",
+          "frame_timeline",
           "slices"
         ]
       },
@@ -195,17 +207,13 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/buffer_transaction_lifecycle/queue_to_transaction_delay.sql",
-      "sha256": "1990bef78e38913269aa6a30d77f05c59807b388dba3636f8a3170dee92cab66",
-      "signal_patterns": [
-        "*applyTransaction*",
-        "*queueBuffer*",
-        "surfaceflinger"
-      ],
+      "sha256": "5769c7a0e16b37fcc7fbec66e9686e8cd5e8f4c521802a0f5f767db6f7d3e66b",
+      "signal_patterns": [],
       "skill_id": "buffer_transaction_lifecycle",
       "source": {
         "path": "backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "38cb7cb1b6874a31a2da8e82406e81c04fade5230ec56e948f7bfd2539a6a85b"
+        "sha256": "977f9ee7b1e356090321193837d29dbd067b40b9ba43929e9c297508292d5421"
       },
       "sql_dependencies": {
         "creates": [],
@@ -213,8 +221,12 @@
         "drops": [],
         "required_tables": [
           "slice",
+          "thread_track",
           "thread",
-          "process"
+          "process",
+          "counter",
+          "counter_track",
+          "actual_frame_timeline_slice"
         ],
         "requires": [],
         "setup_queries": []
@@ -223,8 +235,130 @@
       "template": {
         "fragments": [],
         "name_parameters": [],
+        "parameters": [],
+        "result_dependencies": [],
+        "result_references": [],
+        "runtime_bindings": []
+      },
+      "validation": {
+        "default_execution": "capability_gate_required",
+        "execution_verified": false,
+        "fixtures": [],
+        "runtime_compatible": null,
+        "semantic_verified": false,
+        "static_valid": true
+      }
+    },
+    {
+      "compatibility": {
+        "android": {
+          "28": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "29": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "30": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "31": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "32": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "33": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "34": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "35": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "36": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          },
+          "37": {
+            "reason": "No exact API semantic fixture; runtime capability proof required",
+            "status": "capability_gated"
+          }
+        },
+        "exact_scope": {
+          "reason": "SQL has no process_scope declaration",
+          "status": "unsupported"
+        },
+        "probe_capabilities": [
+          "counters",
+          "frame_timeline",
+          "slices"
+        ]
+      },
+      "id": "buffer_transaction_lifecycle/per_layer_transactions",
+      "identity": {
+        "aliases": [
+          "package",
+          "process_name",
+          "package_name",
+          "target_package",
+          "app_package",
+          "packageName",
+          "processName"
+        ],
+        "minConfidence": 50,
+        "policy": "verify_if_present",
+        "rewriteTo": "recommended_process_name_param",
+        "scope": "process"
+      },
+      "license": {
+        "origin": "smartperfetto",
+        "spdx": "AGPL-3.0-or-later"
+      },
+      "path": "sql/buffer_transaction_lifecycle/per_layer_transactions.sql",
+      "sha256": "9f95349e80f915fdeaf6b43447f281f0ce4396768cedc939b5392200e452ba15",
+      "signal_patterns": [
+        "${package|}"
+      ],
+      "skill_id": "buffer_transaction_lifecycle",
+      "source": {
+        "path": "backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml",
+        "repository": "https://github.com/Gracker/SmartPerfetto",
+        "sha256": "977f9ee7b1e356090321193837d29dbd067b40b9ba43929e9c297508292d5421"
+      },
+      "sql_dependencies": {
+        "creates": [],
+        "declared_modules": [],
+        "drops": [],
+        "required_tables": [
+          "slice",
+          "thread_track",
+          "thread",
+          "process",
+          "counter",
+          "counter_track",
+          "actual_frame_timeline_slice"
+        ],
+        "requires": [],
+        "setup_queries": []
+      },
+      "step_id": "per_layer_transactions",
+      "template": {
+        "fragments": [],
+        "name_parameters": [
+          "package"
+        ],
         "parameters": [
           "end_ts",
+          "package",
           "start_ts"
         ],
         "result_dependencies": [],
@@ -289,10 +423,12 @@
           "status": "unsupported"
         },
         "probe_capabilities": [
+          "counters",
+          "frame_timeline",
           "slices"
         ]
       },
-      "id": "buffer_transaction_lifecycle/per_layer_transactions",
+      "id": "buffer_transaction_lifecycle/buffer_tx_pending_observations",
       "identity": {
         "aliases": [
           "package",
@@ -312,14 +448,16 @@
         "origin": "smartperfetto",
         "spdx": "AGPL-3.0-or-later"
       },
-      "path": "sql/buffer_transaction_lifecycle/per_layer_transactions.sql",
-      "sha256": "2e9d4cb92181f6ff70883e0d2704d6f61a31daaddce6eca003c59c485720e37a",
-      "signal_patterns": [],
+      "path": "sql/buffer_transaction_lifecycle/buffer_tx_pending_observations.sql",
+      "sha256": "ad351c17a34a6e35d36b73aaf586869d1c1de0d3ceeab40cef959a3703cbf302",
+      "signal_patterns": [
+        "BufferTX - *"
+      ],
       "skill_id": "buffer_transaction_lifecycle",
       "source": {
         "path": "backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "38cb7cb1b6874a31a2da8e82406e81c04fade5230ec56e948f7bfd2539a6a85b"
+        "sha256": "977f9ee7b1e356090321193837d29dbd067b40b9ba43929e9c297508292d5421"
       },
       "sql_dependencies": {
         "creates": [],
@@ -327,13 +465,17 @@
         "drops": [],
         "required_tables": [
           "slice",
+          "thread_track",
           "thread",
-          "process"
+          "process",
+          "counter",
+          "counter_track",
+          "actual_frame_timeline_slice"
         ],
         "requires": [],
         "setup_queries": []
       },
-      "step_id": "per_layer_transactions",
+      "step_id": "buffer_tx_pending_observations",
       "template": {
         "fragments": [],
         "name_parameters": [

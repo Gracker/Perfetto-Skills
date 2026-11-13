@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/rn_old_arch.skill.yaml
-Source SHA-256: 8fe98e016f146e01ca6d726872aa432c1de7b609f7b2161b3cf14bf25223cbbd
+Source SHA-256: 850bbc75c0890fb5d3a6e770a7ae968f2e2dcaa2c669113be0151d5725984fa6
 # React Native Old Arch (Paper + Bridge)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s14_react_native). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,12 +26,14 @@ display_name: React Native Old Arch (Paper + Bridge)
 description: RN 老架构：JavaScriptCore/Hermes + Bridge JSON 序列化 + Shadow tree + Yoga + 宿主 HWUI
 icon: react
 family: webview
-doc_path: rendering_pipelines/S14_react_native_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s14_react_native
 s_article_ref: S14
 four_features:
   producer_threads:
   - mqt_js
+  - mqt_v_js
   - mqt_native_modules
+  - mqt_v_native
   - mqt_shadow_queue
   consumer_threads:
   - main
@@ -39,9 +45,9 @@ four_features:
 deviation_anchors: rn_bridge_anchor_2_3_at_js_layer
 threads_evolution: '线程名（社区版习惯，可能随 RN 版本/fork/定制改名）：
 
-  - mqt_js: JavaScript 线程（执行 React 业务逻辑）
+  - mqt_js / mqt_v_js: JavaScript 线程；新旧命名本身不能区分架构
 
-  - mqt_native_modules: Native module 调用线程
+  - mqt_native_modules / mqt_v_native: Native module 调用线程
 
   - mqt_shadow_queue: Shadow thread / Layout thread（Yoga 计算）
 
@@ -54,14 +60,14 @@ threads_evolution: '线程名（社区版习惯，可能随 RN 版本/fork/定�
 
 ```yaml
 required_signals:
-- thread_pattern: mqt_*
+- thread_pattern: mqt_shadow*
   min_count: 1
 scoring_signals:
 - signal: has_mqt_js
-  thread_pattern: mqt_js*
+  thread_pattern: mqt_*js*
   weight: 50
 - signal: has_mqt_native_modules
-  thread_pattern: mqt_native_modules*
+  thread_pattern: mqt_*native*
   weight: 30
 - signal: has_mqt_shadow
   thread_pattern: mqt_shadow*
@@ -85,7 +91,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S14_react_native_type.md
+source: references/generated/knowledge/rendering-teaching.md#s14_react_native
 ```
 
 ## Analysis guidance

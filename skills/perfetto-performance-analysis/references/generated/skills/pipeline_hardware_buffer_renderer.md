@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/hardware_buffer_renderer.skill.yaml
-Source SHA-256: f5c8504e0f47225e7f38c91e84aab2c8bbba582347aea5ea42e5a0b0d9957d0a
+Source SHA-256: c94cd030c7e5b3bc299d2b10213aa3d8bb6a5b8026df7c3cae27ce4dc3b0c6da
 # HardwareBufferRenderer
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s07_software_offscreen). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: HardwareBufferRenderer
 description: Android 14+ HBR API，直接 Buffer 渲染
 icon: memory
 family: specialized
-doc_path: rendering_pipelines/S07_software_offscreen_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s07_software_offscreen
 s_article_ref: S07
 four_features:
   producer_threads:
@@ -76,7 +80,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S07_software_offscreen_type.md
+source: references/generated/knowledge/rendering-teaching.md#s07_software_offscreen
 ```
 
 ## Analysis guidance

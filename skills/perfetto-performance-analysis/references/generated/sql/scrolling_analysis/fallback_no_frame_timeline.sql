@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: ca7c1326c0ca6eac9e485114bd94fbfd81e9c8db2f3d8c65974d46831f8db084
+-- Source SHA-256: 7b6db2bdf39a9b8588e3dbec921991ced81edd6d9a6d7426184f2b1a7d9a3c5a
 
 SELECT
   CASE
@@ -21,7 +21,7 @@ SELECT
       THEN 'actual_frame_timeline_slice'
     WHEN '${buffer_tx_coverage.data[0].target_process_status|}' = 'not_found'
       THEN '目标包: ${package}'
-    ELSE '目标包 FrameTimeline / BufferTX 帧产出证据'
+    ELSE '目标包 FrameTimeline 帧证据'
   END as missing_table,
   CASE
     WHEN NOT EXISTS (
@@ -31,7 +31,7 @@ SELECT
       THEN '请确保 trace 采集时启用了 Frame Timeline (需要 Android 12+ 且开启 Choreographer tracing)'
     WHEN '${buffer_tx_coverage.data[0].target_process_status|}' = 'not_found'
       THEN 'trace 未包含目标包进程；请确认包名，或在目标应用处于前台时重新采集。不能输出该目标的帧指标或任务结论'
-    ELSE '已找到 FrameTimeline 表，但目标包无可用帧行，且 BufferTX 帧产出证据不足；不能输出 FPS、掉帧率或帧根因；仍可读取实际主线程任务与状态证据'
+    ELSE '已找到 FrameTimeline 表，但目标包无可用帧行；BufferTX 仅能观测 SF 接收更新，不能恢复 FPS、掉帧率或帧根因；仍可读取实际主线程任务与状态证据'
   END as suggestion
 UNION ALL
 SELECT

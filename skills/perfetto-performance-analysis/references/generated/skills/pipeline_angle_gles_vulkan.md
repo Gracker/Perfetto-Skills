@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/angle_gles_vulkan.skill.yaml
-Source SHA-256: 6534fbaf27524e1bb36aaa99335afadba617e5be071cd201e34b740930b94b02
+Source SHA-256: a1127f4e905b4539ae79e36b96dcabe11f332e3be0713b0267ba2eb8fb94dbb6
 # ANGLE (GLES over Vulkan)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s08_native_graphics). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: ANGLE (GLES over Vulkan)
 description: 通过 ANGLE 将 OpenGL ES 翻译为 Vulkan
 icon: translate
 family: graphics
-doc_path: rendering_pipelines/S08_native_graphics_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s08_native_graphics
 s_article_ref: S08
 four_features:
   producer_threads:
@@ -60,7 +64,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S08_native_graphics_type.md
+source: references/generated/knowledge/rendering-teaching.md#s08_native_graphics
 ```
 
 ## Analysis guidance

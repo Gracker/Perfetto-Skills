@@ -546,21 +546,18 @@ class ExporterTest(unittest.TestCase):
         ]
         self.assertEqual(len(destinations), len(set(destinations)))
 
-    def test_strategies_and_pipeline_docs_are_classified(self) -> None:
+    def test_strategies_and_local_teaching_are_classified_without_articles(self) -> None:
         catalog = self.load_catalog()
         self.assertGreaterEqual(len(catalog["strategies"]), 60)
         self.assertEqual(
             len(catalog["strategies"]), catalog["summary"]["strategy_sources"]
         )
-        pipeline_docs = catalog["pipeline_docs"]
-        self.assertEqual(len(pipeline_docs), 14)
-        self.assertEqual(
-            [item["source_path"].split("/")[-1].split("_")[0] for item in pipeline_docs],
-            [f"S{index:02d}" for index in range(1, 15)],
-        )
-        self.assertTrue(
-            all(item["disposition"] == "exported" for item in pipeline_docs)
-        )
+        self.assertEqual(catalog["pipeline_docs"], [])
+        teaching = catalog["pipeline_teaching"]
+        self.assertEqual(teaching["source_path"], "backend/skills/pipelines/index.yaml")
+        self.assertEqual(len(teaching["source_sha256"]), 64)
+        self.assertIn("S01_OVERVIEW", teaching["rendering_types"])
+        self.assertEqual(teaching["pipelines"]["CHROME_BROWSER_VIZ"], "S16_CHROMIUM_BROWSER")
 
     def test_bootstrap_classifier_preserves_domain_boundaries(self) -> None:
         cases = {

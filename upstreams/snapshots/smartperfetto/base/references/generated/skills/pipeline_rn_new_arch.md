@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/rn_new_arch.skill.yaml
-Source SHA-256: b1c2302f08990ed6de113cc0c6df17c823e84e7743529c3018ea18d1663068b3
+Source SHA-256: b8e0fdf1bbb8e859161bfbf405074a9ac3c9be4a74c72688cf97c0b0d4ba3857
 # React Native New Arch (Fabric + JSI)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s14_react_native). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,11 +26,12 @@ display_name: React Native New Arch (Fabric + JSI)
 description: RN 新架构：JSI 直接 C++ 调用 + Fabric C++ Shadow tree + TurboModules + 宿主 HWUI
 icon: react
 family: webview
-doc_path: rendering_pipelines/S14_react_native_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s14_react_native
 s_article_ref: S14
 four_features:
   producer_threads:
   - mqt_js
+  - mqt_v_js
   optional_producer_threads:
   - Fabric background thread
   consumer_threads:
@@ -41,11 +46,11 @@ fabric_advantages: '相比 Old Arch 的优势（来自 S14）：
 
   - JSI 同步调用：JS ↔ Native 直接 C++ 通信，无 JSON 序列化
 
-  - Fabric C++ Shadow tree：layout 计算从 mqt_shadow_queue 移到 Fabric background thread
+  - Fabric Render/Commit 可在 JS 或高优先级 UI 路径推进，并非固定背景线程
 
-  - Fabric mount 原子：所有 View 更新在同一帧 commit
+  - Host View mutation 最终在 UI thread 执行，之后仍需 HWUI 与显示消费
 
-  - UI 更新延迟比 Old Arch 低（典型从 1-2 帧降到 0-1 帧）
+  - 中间 revision 可合并，commit 次数与实际显示帧数没有一一对应关系
 
   '
 ```
@@ -73,8 +78,11 @@ scoring_signals:
   slice_pattern: '*TurboModule*'
   weight: 15
 - signal: has_mqt_js
-  thread_pattern: mqt_js*
+  thread_pattern: mqt_*js*
   weight: 20
+- signal: has_mqt_v_native
+  thread_pattern: mqt_v_native*
+  weight: 10
 exclude_if:
 - thread_pattern: mqt_shadow*
 ```
@@ -82,7 +90,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S14_react_native_type.md
+source: references/generated/knowledge/rendering-teaching.md#s14_react_native
 ```
 
 ## Analysis guidance

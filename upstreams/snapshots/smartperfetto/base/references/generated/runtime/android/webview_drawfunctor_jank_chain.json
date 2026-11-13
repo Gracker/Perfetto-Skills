@@ -71,20 +71,26 @@
     "api_hint"
   ],
   "signal_patterns": [
-    "*AwDrawFn*",
     "*Blink*",
     "*Chromium*",
     "*Compositor*",
     "*CrRendererMain*",
-    "*DrawFn_DrawGL*",
+    "*DrawFn_Draw[GV][Llk]*",
+    "*DrawFn_OnSync*",
+    "*DrawFn_PostDraw*",
     "*DrawFunctor*",
-    "*DrawGL*",
     "*JavaScript*",
     "*V8*",
     "*sandboxed_process*",
     "*v8*",
     "*webview*",
-    "VizCompositorThread*"
+    "AwDrawFnImpl::Draw[GV][Llk]*",
+    "DrawGL*",
+    "DrawVk*",
+    "VizCompositorThread*",
+    "WebViewFunctor::draw[GgVv][LlKk]*",
+    "WebViewFunctor::postDraw*",
+    "WebViewFunctor::sync*"
   ],
   "skill_id": "webview_drawfunctor_jank_chain",
   "steps": {

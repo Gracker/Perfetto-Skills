@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/webview_textureview_custom.skill.yaml
-Source SHA-256: 6c771335298179b05c20755f8c7716f9296836a061b73eab41a3d78467d5e36d
+Source SHA-256: 7732f2a78f68b2aa4224c8b441c5661c5f59c9fa26087d16b5a979b1cc21eb63
 # WebView TextureView (定制内核)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s09_webview). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: WebView TextureView (定制内核)
 description: X5/UC 等定制 WebView 内核，使用 TextureView
 icon: web
 family: webview
-doc_path: rendering_pipelines/S09_webview_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s09_webview
 s_article_ref: S09
 four_features:
   producer_threads:
@@ -69,7 +73,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S09_webview_type.md
+source: references/generated/knowledge/rendering-teaching.md#s09_webview
 ```
 
 ## Analysis guidance

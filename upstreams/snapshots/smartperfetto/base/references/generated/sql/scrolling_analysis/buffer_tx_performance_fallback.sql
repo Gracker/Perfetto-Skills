@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: ca7c1326c0ca6eac9e485114bd94fbfd81e9c8db2f3d8c65974d46831f8db084
+-- Source SHA-256: 7b6db2bdf39a9b8588e3dbec921991ced81edd6d9a6d7426184f2b1a7d9a3c5a
 
 WITH
 -- Fragment: vsync_config
@@ -81,9 +81,10 @@ vsync_config AS (
   FROM raw_vsync_config
 )
 ,
--- BufferTX frame production evidence for one package.
--- Counts only positive per-track queue-depth deltas, then selects one primary
--- track deterministically to avoid summing duplicate producer/layer tracks.
+-- BufferTX received pending-buffer updates for one package name.
+-- Positive deltas describe SF-side pending transaction updates, not produced,
+-- ready, latched or displayed frames. Track-name matching is not exact UPID
+-- attribution. Select one track to avoid summing duplicate layer tracks.
 -- Requires vsync_config to be injected before this fragment.
 -- BUFFER_TX_FALLBACK_CTES_BEGIN
 buffer_tx_samples AS (
@@ -96,7 +97,11 @@ buffer_tx_samples AS (
     LAG(c.value) OVER (
       PARTITION BY c.track_id
       ORDER BY c.ts, c.id
-    ) as prev_value
+    ) as prev_value,
+    LAG(c.ts) OVER (
+      PARTITION BY c.track_id
+      ORDER BY c.ts, c.id
+    ) as prev_ts
   FROM counter c
   JOIN counter_track ct ON c.track_id = ct.id
   WHERE '${package}' != ''
@@ -115,7 +120,7 @@ buffer_tx_samples AS (
         1
       ) IN ('/', ':', '#', ']', ')', ' ')
     )
-    AND (${start_ts} IS NULL OR c.ts >= ${start_ts})
+    -- Keep the preceding sample for deltas at the requested window boundary.
     AND (${end_ts} IS NULL OR c.ts < ${end_ts})
 ),
 buffer_tx_deltas AS (
@@ -125,30 +130,37 @@ buffer_tx_deltas AS (
     track_name,
     ts,
     CASE
+      WHEN ${start_ts} IS NOT NULL AND prev_ts < ${start_ts} THEN ${start_ts}
+      ELSE COALESCE(prev_ts, ts)
+    END as observation_start_ts,
+    CASE
       WHEN prev_value IS NOT NULL AND value > prev_value
         THEN CAST(value - prev_value AS INTEGER)
       ELSE 0
-    END as produced_frames
+    END as received_buffer_updates
   FROM buffer_tx_samples
+  WHERE (${start_ts} IS NULL OR ts >= ${start_ts})
 ),
 buffer_tx_track_stats AS (
   SELECT
     track_id,
     track_name,
-    CAST(SUM(produced_frames) AS INTEGER) as produced_frames,
-    MIN(ts) as first_sample_ts,
+    CAST(SUM(received_buffer_updates) AS INTEGER) as received_buffer_updates,
+    -- Legacy internal alias; its value counts received updates, never frames.
+    CAST(SUM(received_buffer_updates) AS INTEGER) as produced_frames,
+    MIN(observation_start_ts) as first_sample_ts,
     MAX(ts) as last_sample_ts,
-    MAX(ts) - MIN(ts) as effective_span_ns
+    MAX(ts) - MIN(observation_start_ts) as effective_span_ns
   FROM buffer_tx_deltas
   GROUP BY track_id, track_name
-  HAVING SUM(produced_frames) >= 5
-    AND MAX(ts) > MIN(ts)
-    AND MAX(ts) - MIN(ts) >= 5 * (SELECT vsync_period_ns FROM vsync_config)
+  HAVING SUM(received_buffer_updates) >= 5
+    AND MAX(ts) > MIN(observation_start_ts)
+    AND MAX(ts) - MIN(observation_start_ts) >= 5 * (SELECT vsync_period_ns FROM vsync_config)
 ),
 selected_buffer_tx_track AS (
   SELECT *
   FROM buffer_tx_track_stats
-  ORDER BY produced_frames DESC, effective_span_ns DESC, track_id ASC
+  ORDER BY received_buffer_updates DESC, effective_span_ns DESC, track_id ASC
   LIMIT 1
 )
 -- BUFFER_TX_FALLBACK_CTES_END
@@ -182,15 +194,13 @@ frame_timeline_coverage AS (
 ),
 fallback_summary AS (
   SELECT
-    bt.produced_frames as total_frames,
+    bt.received_buffer_updates,
+    bt.effective_span_ns as received_update_span_ns,
     ROUND(bt.effective_span_ns / 1e9, 3) as duration_sec,
-    MIN(
-      ROUND(bt.produced_frames * 1e9 / NULLIF(bt.effective_span_ns, 0), 1),
-      CAST(ROUND(1e9 / (SELECT vsync_period_ns FROM vsync_config)) AS INTEGER)
-    ) as actual_fps,
+    bt.received_buffer_updates * 1e9 / NULLIF(bt.effective_span_ns, 0) as received_update_rate_hz,
     bt.track_name as frame_source_track,
     ft.frame_timeline_frames,
-    ROUND(ft.frame_timeline_frames * 1.0 / bt.produced_frames, 4) as frame_timeline_to_buffer_tx_ratio,
+    ROUND(ft.frame_timeline_frames * 1.0 / bt.received_buffer_updates, 4) as frame_timeline_to_buffer_tx_ratio,
     CASE
       WHEN ft.frame_timeline_frames = 0 THEN 'no_frame_timeline_coverage'
       ELSE 'partial_frame_timeline_coverage'
@@ -199,7 +209,10 @@ fallback_summary AS (
   CROSS JOIN frame_timeline_coverage ft
 )
 SELECT
-  total_frames,
+  NULL as total_frames,
+  received_buffer_updates,
+  received_update_rate_hz,
+  received_update_span_ns,
   NULL as perceived_jank_frames,
   NULL as jank_rate,
   NULL as buffer_stuffing_frames,
@@ -215,9 +228,9 @@ SELECT
   NULL as p99_frame_dur,
   'unmeasured_buffer_tx_fallback' as present_interval_source,
   duration_sec,
-  actual_fps,
+  NULL as actual_fps,
   CAST(ROUND(1e9 / (SELECT vsync_period_ns FROM vsync_config)) AS INTEGER) as refresh_rate,
-  '仅帧率（FrameTimeline 根因证据不足）' as rating,
+  '仅接收更新（帧数/FPS/卡顿未测量）' as rating,
   'buffer_tx_rising_edge_fallback' as fps_source,
   NULL as max_vsync_missed,
   NULL as total_vsync_missed,
@@ -225,8 +238,10 @@ SELECT
   (SELECT vsync_source FROM vsync_config) as vsync_source,
   frame_source_track,
   frame_timeline_frames,
-  total_frames as buffer_tx_frames,
+  received_buffer_updates as buffer_tx_frames,
   frame_timeline_to_buffer_tx_ratio,
+  frame_timeline_to_buffer_tx_ratio as source_event_ratio,
+  'heuristic_not_coverage_name_match_only' as source_event_ratio_status,
   coverage_status,
-  'frame_rate_only' as evidence_status
+  'received_buffer_updates_only' as evidence_status
 FROM fallback_summary

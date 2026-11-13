@@ -74,7 +74,7 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rn_bridge_to_frame_jank/rn_bridge_frame_overlap.sql",
-      "sha256": "6aef4e7db177281327a2f21225b273b11b6ea4434a8585faa369c3b421c3a3d1",
+      "sha256": "06d24585e37ebeb9b85f7342a494d9269394aa84728956ac87c950e31e78ddae",
       "signal_patterns": [
         "*BatchedBridge*",
         "*JS*",
@@ -83,14 +83,14 @@
         "*UIManager*",
         "*callFunctionReturnFlushedQueue*",
         "*dispatchViewUpdates*",
-        "*mqt_js*",
-        "*mqt_native_modules*"
+        "mqt_*js*",
+        "mqt_*native*"
       ],
       "skill_id": "rn_bridge_to_frame_jank",
       "source": {
         "path": "backend/skills/atomic/rn_bridge_to_frame_jank.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "84b3c782c3627ecbb0379829518edfd9a119e5d2ad035c3b8ad9c06e5107618e"
+        "sha256": "309ae1fd570b17c709ce1c1fbe2d30e362b0f1f368cd0fa80e61fce137be7af7"
       },
       "sql_dependencies": {
         "creates": [],

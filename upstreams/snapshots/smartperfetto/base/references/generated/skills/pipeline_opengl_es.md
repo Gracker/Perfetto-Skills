@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/opengl_es.skill.yaml
-Source SHA-256: 7cb6f71330758b7f1f8984490877f18f7618b5f628145db2cf3a14e1649313b8
+Source SHA-256: 8c625f6c22a5281f846096159e1058de91a0eb5c6141edd7e5364919893c7671
 # OpenGL ES
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s08_native_graphics). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: OpenGL ES
 description: 直接 OpenGL ES / EGL 渲染，用于游戏和自定义渲染引擎
 icon: gpu
 family: graphics
-doc_path: rendering_pipelines/S08_native_graphics_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s08_native_graphics
 s_article_ref: S08
 four_features:
   producer_threads:
@@ -71,7 +75,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S08_native_graphics_type.md
+source: references/generated/knowledge/rendering-teaching.md#s08_native_graphics
 ```
 
 ## Analysis guidance

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_multi_window.skill.yaml
-Source SHA-256: ffbbe1125236b1c0dc17d4f0b0c2221c8aa5ade3a3aeab26dd7056142f39f04f
+Source SHA-256: e139ed304f7fd9576a86ab07e4b96e709ca6ea905be5d58bcdf34d82a20e90e9
 # Android View 多窗口
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s06_multi_window). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: Android View 多窗口
 description: 同进程多窗口渲染 (Dialog/PopupWindow)，RenderThread 串行化
 icon: window
 family: hwui
-doc_path: rendering_pipelines/S06_multi_window_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s06_multi_window
 s_article_ref: S06
 four_features:
   producer_threads:
@@ -83,7 +87,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S06_multi_window_type.md
+source: references/generated/knowledge/rendering-teaching.md#s06_multi_window
 ```
 
 ## Analysis guidance

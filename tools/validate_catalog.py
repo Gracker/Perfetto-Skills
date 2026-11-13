@@ -94,9 +94,42 @@ def validate_catalog(catalog: dict[str, Any], skill_root: Path) -> None:
             require_list(catalog.get("pipeline_docs"), "pipeline_docs")
         )
     ]
+    if pipeline_docs:
+        raise CatalogValidationError("rendering articles cannot be distributed")
+
+    definitions = [entry for entry in skills if entry.get("runtime_type") == "pipeline_definition"
+                   and entry.get("disposition") != "product-only"]
+    teaching = catalog.get("pipeline_teaching")
+    if definitions and teaching is None:
+        raise CatalogValidationError("pipeline definitions require local teaching cards")
+    teaching_entries = []
+    if teaching is not None:
+        teaching = require_mapping(teaching, "pipeline_teaching")
+        source_path = teaching.get("source_path")
+        if source_path != "backend/skills/pipelines/index.yaml":
+            raise CatalogValidationError("pipeline_teaching source_path must identify the product catalog")
+        require_sha256(teaching.get("source_sha256"), "pipeline_teaching source_sha256")
+        validate_destination(teaching.get("destination"), skill_root, "pipeline_teaching")
+        types = require_list(teaching.get("rendering_types"), "pipeline_teaching rendering_types")
+        if (not types or any(not isinstance(value, str) or not re.fullmatch(r"[A-Z][A-Z0-9_]*", value) for value in types)
+                or len(types) != len(set(types))):
+            raise CatalogValidationError("pipeline_teaching rendering_types must be unique safe IDs")
+        pipelines = require_mapping(teaching.get("pipelines"), "pipeline_teaching pipelines")
+        pipeline_ids = [entry.get("pipeline_id") for entry in definitions]
+        if (any(not isinstance(value, str) for value in pipeline_ids)
+                or len(pipeline_ids) != len(set(pipeline_ids))
+                or set(pipelines) != set(pipeline_ids)) or any(
+            not isinstance(key, str) or not re.fullmatch(r"[A-Z][A-Z0-9_]*", key)
+            or value not in types for key, value in pipelines.items()
+        ):
+            raise CatalogValidationError("pipeline_teaching pipeline mapping is incomplete or invalid")
+        content = (skill_root / teaching["destination"]).read_text(encoding="utf-8")
+        if source_path not in content[:800] or teaching["source_sha256"] not in content[:800]:
+            raise CatalogValidationError("pipeline_teaching generated provenance mismatch")
+        teaching_entries = [teaching]
 
     require_unique(skills, "name", "Skill name")
-    all_entries = skills + strategies + pipeline_docs
+    all_entries = skills + strategies + pipeline_docs + teaching_entries
     require_unique(all_entries, "source_path", "source path")
     exported = [
         entry for entry in all_entries if entry.get("disposition") != "product-only"

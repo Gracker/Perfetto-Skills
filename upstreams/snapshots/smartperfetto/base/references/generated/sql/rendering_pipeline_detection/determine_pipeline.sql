@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rendering_pipeline_detection.skill.yaml
--- Source SHA-256: 87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569
+-- Source SHA-256: bdb32cee14ce0f8f258001d34bdb35cc39cc71fb98757a956e28b913c1064b73
 
 WITH
       pipeline_scores AS (
@@ -14,37 +14,37 @@ WITH
         doc_path
       ) AS (
         VALUES
-        ('ANDROID_PIP_FREEFORM', NULL, 0, 1, 'rendering_pipelines/S06_multi_window_type.md'),
-        ('ANDROID_VIEW_MIXED', 'S05_MIXED_RENDERING', 1, 0, 'rendering_pipelines/S05_mixed_rendering_type.md'),
-        ('ANDROID_VIEW_MULTI_WINDOW', NULL, 0, 1, 'rendering_pipelines/S06_multi_window_type.md'),
-        ('ANDROID_VIEW_SOFTWARE', 'S07_SOFTWARE_OFFSCREEN', 1, 0, 'rendering_pipelines/S07_software_offscreen_type.md'),
-        ('ANDROID_VIEW_STANDARD_BLAST', 'S02_AOSP_STANDARD', 1, 0, 'rendering_pipelines/S02_aosp_standard_type.md'),
-        ('ANDROID_VIEW_STANDARD_LEGACY', 'S02_AOSP_STANDARD', 1, 0, 'rendering_pipelines/S02_aosp_standard_type.md'),
-        ('ANGLE_GLES_VULKAN', NULL, 0, 1, 'rendering_pipelines/S08_native_graphics_type.md'),
-        ('CAMERA_PIPELINE', 'S11_CAMERA', 1, 0, 'rendering_pipelines/S11_camera_type.md'),
-        ('CHROME_BROWSER_VIZ', 'S09_WEBVIEW', 1, 0, 'rendering_pipelines/S09_webview_type.md'),
-        ('COMPOSE_STANDARD', 'S02_AOSP_STANDARD', 1, 0, 'rendering_pipelines/S02_aosp_standard_type.md'),
-        ('FLUTTER_SURFACEVIEW_IMPELLER', 'S10_FLUTTER', 1, 0, 'rendering_pipelines/S10_flutter_type.md'),
-        ('FLUTTER_SURFACEVIEW_SKIA', 'S10_FLUTTER', 1, 0, 'rendering_pipelines/S10_flutter_type.md'),
-        ('FLUTTER_TEXTUREVIEW', 'S10_FLUTTER', 1, 0, 'rendering_pipelines/S10_flutter_type.md'),
-        ('GAME_ENGINE', 'S13_GAME', 1, 0, 'rendering_pipelines/S13_game_type.md'),
-        ('HARDWARE_BUFFER_RENDERER', NULL, 0, 1, 'rendering_pipelines/S07_software_offscreen_type.md'),
-        ('IMAGEREADER_PIPELINE', NULL, 0, 1, 'rendering_pipelines/S07_software_offscreen_type.md'),
-        ('OPENGL_ES', 'S08_NATIVE_GRAPHICS', 1, 0, 'rendering_pipelines/S08_native_graphics_type.md'),
-        ('RN_NEW_ARCH_HWUI', 'S14_REACT_NATIVE', 1, 0, 'rendering_pipelines/S14_react_native_type.md'),
-        ('RN_OLD_ARCH_HWUI', 'S14_REACT_NATIVE', 1, 0, 'rendering_pipelines/S14_react_native_type.md'),
-        ('RN_SKIA_RENDERER', 'S14_REACT_NATIVE', 1, 0, 'rendering_pipelines/S14_react_native_type.md'),
-        ('SOFTWARE_COMPOSITING', NULL, 0, 1, 'rendering_pipelines/S01_rendering_types_overview.md'),
-        ('SURFACE_CONTROL_API', NULL, 0, 1, 'rendering_pipelines/S07_software_offscreen_type.md'),
-        ('SURFACEVIEW_BLAST', 'S03_SURFACEVIEW', 1, 0, 'rendering_pipelines/S03_surfaceview_type.md'),
-        ('TEXTUREVIEW_STANDARD', 'S04_TEXTUREVIEW', 1, 0, 'rendering_pipelines/S04_textureview_type.md'),
-        ('VARIABLE_REFRESH_RATE', NULL, 0, 1, 'rendering_pipelines/S01_rendering_types_overview.md'),
-        ('VIDEO_OVERLAY_HWC', NULL, 0, 1, 'rendering_pipelines/S12_video_overlay_hwc_type.md'),
-        ('VULKAN_NATIVE', 'S08_NATIVE_GRAPHICS', 1, 0, 'rendering_pipelines/S08_native_graphics_type.md'),
-        ('WEBVIEW_GL_FUNCTOR', 'S09_WEBVIEW', 1, 0, 'rendering_pipelines/S09_webview_type.md'),
-        ('WEBVIEW_SURFACE_CONTROL', 'S09_WEBVIEW', 1, 0, 'rendering_pipelines/S09_webview_type.md'),
-        ('WEBVIEW_SURFACEVIEW_WRAPPER', 'S09_WEBVIEW', 1, 0, 'rendering_pipelines/S09_webview_type.md'),
-        ('WEBVIEW_TEXTUREVIEW_CUSTOM', 'S09_WEBVIEW', 1, 0, 'rendering_pipelines/S09_webview_type.md')
+        ('ANDROID_PIP_FREEFORM', NULL, 0, 1, 'references/generated/knowledge/rendering-teaching.md#s06_multi_window'),
+        ('ANDROID_VIEW_MIXED', 'S05_MIXED_RENDERING', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s05_mixed_rendering'),
+        ('ANDROID_VIEW_MULTI_WINDOW', NULL, 0, 1, 'references/generated/knowledge/rendering-teaching.md#s06_multi_window'),
+        ('ANDROID_VIEW_SOFTWARE', 'S07_SOFTWARE_OFFSCREEN', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s07_software_offscreen'),
+        ('ANDROID_VIEW_STANDARD_BLAST', 'S02_AOSP_STANDARD', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s02_aosp_standard'),
+        ('ANDROID_VIEW_STANDARD_LEGACY', 'S02_AOSP_STANDARD', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s02_aosp_standard'),
+        ('ANGLE_GLES_VULKAN', NULL, 0, 1, 'references/generated/knowledge/rendering-teaching.md#s08_native_graphics'),
+        ('CAMERA_PIPELINE', 'S11_CAMERA', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s11_camera'),
+        ('CHROME_BROWSER_VIZ', 'S16_CHROMIUM_BROWSER', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s16_chromium_browser'),
+        ('COMPOSE_STANDARD', 'S02_AOSP_STANDARD', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s02_aosp_standard'),
+        ('FLUTTER_SURFACEVIEW_IMPELLER', 'S10_FLUTTER', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s10_flutter'),
+        ('FLUTTER_SURFACEVIEW_SKIA', 'S10_FLUTTER', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s10_flutter'),
+        ('FLUTTER_TEXTUREVIEW', 'S10_FLUTTER', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s10_flutter'),
+        ('GAME_ENGINE', 'S13_GAME', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s13_game'),
+        ('HARDWARE_BUFFER_RENDERER', NULL, 0, 1, 'references/generated/knowledge/rendering-teaching.md#s07_software_offscreen'),
+        ('IMAGEREADER_PIPELINE', NULL, 0, 1, 'references/generated/knowledge/rendering-teaching.md#s07_software_offscreen'),
+        ('OPENGL_ES', 'S08_NATIVE_GRAPHICS', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s08_native_graphics'),
+        ('RN_NEW_ARCH_HWUI', 'S14_REACT_NATIVE', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s14_react_native'),
+        ('RN_OLD_ARCH_HWUI', 'S14_REACT_NATIVE', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s14_react_native'),
+        ('RN_SKIA_RENDERER', 'S14_REACT_NATIVE', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s14_react_native'),
+        ('SOFTWARE_COMPOSITING', NULL, 0, 1, 'references/generated/knowledge/rendering-teaching.md#s01_overview'),
+        ('SURFACE_CONTROL_API', NULL, 0, 1, 'references/generated/knowledge/rendering-teaching.md#s07_software_offscreen'),
+        ('SURFACEVIEW_BLAST', 'S03_SURFACEVIEW', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s03_surfaceview'),
+        ('TEXTUREVIEW_STANDARD', 'S04_TEXTUREVIEW', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s04_textureview'),
+        ('VARIABLE_REFRESH_RATE', NULL, 0, 1, 'references/generated/knowledge/rendering-teaching.md#s01_overview'),
+        ('VIDEO_OVERLAY_HWC', NULL, 0, 1, 'references/generated/knowledge/rendering-teaching.md#s12_video_overlay_hwc'),
+        ('VULKAN_NATIVE', 'S08_NATIVE_GRAPHICS', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s08_native_graphics'),
+        ('WEBVIEW_GL_FUNCTOR', 'S09_WEBVIEW', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s09_webview'),
+        ('WEBVIEW_SURFACE_CONTROL', 'S09_WEBVIEW', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s09_webview'),
+        ('WEBVIEW_SURFACEVIEW_WRAPPER', 'S09_WEBVIEW', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s09_webview'),
+        ('WEBVIEW_TEXTUREVIEW_CUSTOM', 'S09_WEBVIEW', 1, 0, 'references/generated/knowledge/rendering-teaching.md#s09_webview')
       ),
       pipeline_related_rendering_types(
         pipeline_id,
@@ -174,5 +174,5 @@ WITH
         r.rendering_type_candidates_list,
         r.related_rendering_type_candidates_list,
         r.features_list,
-        COALESCE((SELECT doc_path FROM pipeline_metadata WHERE pipeline_id = r.primary_pipeline_id), 'rendering_pipelines/S02_aosp_standard_type.md') as doc_path
+        COALESCE((SELECT doc_path FROM pipeline_metadata WHERE pipeline_id = r.primary_pipeline_id), 'references/generated/knowledge/rendering-teaching.md#s02_aosp_standard') as doc_path
       FROM result r

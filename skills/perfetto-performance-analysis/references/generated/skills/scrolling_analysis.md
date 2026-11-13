@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/composite/scrolling_analysis.skill.yaml
-Source SHA-256: ca7c1326c0ca6eac9e485114bd94fbfd81e9c8db2f3d8c65974d46831f8db084
+Source SHA-256: 7b6db2bdf39a9b8588e3dbec921991ced81edd6d9a6d7426184f2b1a7d9a3c5a
 # 滑动性能分析
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -953,7 +953,7 @@ process_scope:
 save_as: frame_timeline_population
 condition: frame_timeline.data[0]?.has_frame_timeline === 1
 ```
-### BufferTX / FrameTimeline 覆盖探针
+### BufferTX / FrameTimeline 来源事件探针
 
 - ID: `buffer_tx_coverage_probe`
 - Type: `atomic`
@@ -984,15 +984,17 @@ exact_sql:
     \  JOIN effective_target_processes p ON a.upid = p.upid\n  WHERE (${start_ts} IS NULL OR a.ts >= ${start_ts})\n    AND\
     \ (${end_ts} IS NULL OR a.ts < ${end_ts})\n), probe_coverage AS (\nSELECT target_process_count,\n  CASE WHEN target_process_count\
     \ > 0 THEN 'found' ELSE 'not_found' END AS target_process_status,\n  frame_timeline_frames,\n  NULL AS buffer_tx_frames,\
-    \ NULL AS frame_timeline_to_buffer_tx_ratio,\n  NULL AS buffer_tx_track_id, NULL AS frame_source_track,\n  NULL AS buffer_tx_effective_span_ns,\n\
-    \  CASE WHEN target_process_count = 0 THEN 'target_process_not_found'\n    WHEN frame_timeline_frames = 0 THEN 'no_frame_timeline_coverage'\n\
-    \    ELSE 'frame_timeline_only_exact_upid' END AS coverage_status,\n  0 AS should_fallback,\n  'unavailable_exact_upid'\
-    \ AS buffer_tx_status\nFROM target_presence CROSS JOIN frame_coverage\n)\n-- Exact-UPID scope never compares against BufferTX.\n\
-    SELECT target_process_count, target_process_status, frame_timeline_frames,\n  buffer_tx_frames, frame_timeline_to_buffer_tx_ratio,\
-    \ buffer_tx_track_id,\n  frame_source_track, buffer_tx_effective_span_ns, coverage_status,\n  should_fallback, buffer_tx_status,\n\
-    \  CASE coverage_status\n    WHEN 'sufficient_frame_timeline_coverage' THEN 'full_frame_timeline'\n    WHEN 'partial_frame_timeline_coverage'\
-    \ THEN 'partial_sample'\n    WHEN 'no_buffer_tx_candidate' THEN 'frame_timeline_only_unbenchmarked'\n    WHEN 'frame_timeline_only_exact_upid'\
-    \ THEN 'frame_timeline_only_unbenchmarked'\n    ELSE 'coverage_unverified'\n  END AS root_cause_evidence_scope\nFROM probe_coverage\n"
+    \ NULL AS received_buffer_updates,\n  NULL AS frame_timeline_to_buffer_tx_ratio,\n  NULL AS source_event_ratio,\n  NULL\
+    \ AS buffer_tx_track_id, NULL AS frame_source_track,\n  NULL AS buffer_tx_effective_span_ns,\n  CASE WHEN target_process_count\
+    \ = 0 THEN 'target_process_not_found'\n    WHEN frame_timeline_frames = 0 THEN 'no_frame_timeline_coverage'\n    ELSE\
+    \ 'frame_timeline_only_exact_upid' END AS coverage_status,\n  0 AS should_fallback,\n  'unavailable_exact_upid' AS buffer_tx_status\n\
+    FROM target_presence CROSS JOIN frame_coverage\n)\n-- Exact-UPID scope never compares against BufferTX.\nSELECT target_process_count,\
+    \ target_process_status, frame_timeline_frames,\n  buffer_tx_frames, received_buffer_updates,\n  frame_timeline_to_buffer_tx_ratio,\
+    \ source_event_ratio, buffer_tx_track_id,\n  frame_source_track, buffer_tx_effective_span_ns, coverage_status,\n  should_fallback,\
+    \ buffer_tx_status,\n  'unavailable_exact_upid' AS source_event_ratio_status,\n  CASE coverage_status\n    WHEN 'sufficient_frame_timeline_coverage'\
+    \ THEN 'frame_timeline_only_unbenchmarked'\n    WHEN 'partial_frame_timeline_coverage' THEN 'partial_sample'\n    WHEN\
+    \ 'no_buffer_tx_candidate' THEN 'frame_timeline_only_unbenchmarked'\n    WHEN 'frame_timeline_only_exact_upid' THEN 'frame_timeline_only_unbenchmarked'\n\
+    \    ELSE 'coverage_unverified'\n  END AS root_cause_evidence_scope\nFROM probe_coverage\n"
 save_as: buffer_tx_coverage
 condition: frame_timeline.data[0]?.has_frame_timeline === 1
 ```
@@ -1113,7 +1115,7 @@ save_as: perf_summary
 condition: frame_timeline.data[0]?.has_frame_timeline === 1 && environment.data[0]?.has_data === 1 && buffer_tx_coverage.data[0]?.coverage_status
   !== 'target_process_not_found' && buffer_tx_coverage.data[0]?.should_fallback !== 1
 ```
-### BufferTX 帧率回退
+### BufferTX 接收更新观测
 
 - ID: `buffer_tx_performance_fallback`
 - Type: `atomic`
@@ -1128,20 +1130,20 @@ sql_fragments:
 synthesize:
   role: overview
   fields:
-  - key: total_frames
-    label: BufferTX 产出帧
-  - key: actual_fps
-    label: 平均 FPS
+  - key: received_buffer_updates
+    label: BufferTX 接收更新数
+  - key: received_update_rate_hz
+    label: 接收更新速率(Hz)
   - key: fps_source
-    label: 帧率来源
+    label: 兼容来源标识
   - key: duration_sec
     label: 有效时段
   - key: frame_source_track
     label: BufferTX 证据轨道
   - key: coverage_status
     label: FrameTimeline 覆盖状态
-  - key: frame_timeline_to_buffer_tx_ratio
-    label: FrameTimeline 覆盖率
+  - key: source_event_ratio
+    label: 来源事件数比（启发式）
   - key: vsync_source
     label: VSync 证据来源
   - key: evidence_status
@@ -1149,16 +1151,31 @@ synthesize:
 display:
   level: summary
   layer: overview
-  title: 滑动帧率概览（BufferTX 回退）
+  title: BufferTX 接收更新概览（帧指标不可用）
   columns:
-  - name: total_frames
-    label: BufferTX 产出帧
+  - name: received_buffer_updates
+    label: BufferTX 接收更新数
     type: number
     format: compact
+  - name: received_update_rate_hz
+    unit: Hz
+    label: 接收更新速率
+    type: number
+  - name: received_update_span_ns
+    label: 接收更新观测时长
+    type: duration
+    unit: ns
+    format: duration_ms
+  - name: total_frames
+    label: 总帧数（未测量）
+    type: number
+    format: compact
+    hidden: true
   - name: actual_fps
     unit: fps
-    label: 实际 FPS
+    label: 实际 FPS（未测量）
     type: number
+    hidden: true
   - name: duration_sec
     label: 有效时段(s)
     type: number
@@ -1166,7 +1183,7 @@ display:
     label: 刷新率
     type: number
   - name: fps_source
-    label: 帧率来源
+    label: 兼容来源标识
     type: string
   - name: vsync_source
     label: VSync 证据来源
@@ -1175,8 +1192,15 @@ display:
     label: BufferTX 证据轨道
     type: string
   - name: frame_timeline_to_buffer_tx_ratio
-    label: FrameTimeline/BufferTX 帧数比
+    label: 来源事件数比（兼容字段）
     type: number
+    hidden: true
+  - name: source_event_ratio
+    label: FrameTimeline事件/BufferTX接收更新比（启发式）
+    type: number
+  - name: source_event_ratio_status
+    label: 来源事件比较范围
+    type: string
   - name: coverage_status
     label: FrameTimeline 覆盖状态
     type: string
@@ -1657,7 +1681,7 @@ display:
     hidden: true
   - name: frame_timeline_to_buffer_tx_ratio
     unit: ratio
-    label: FrameTimeline/BufferTX 帧数比
+    label: FrameTimeline事件/BufferTX接收更新比（启发式）
     type: number
     hidden: true
   - name: evidence_scope
@@ -1958,7 +1982,7 @@ display:
     hidden: true
   - name: frame_timeline_to_buffer_tx_ratio
     unit: ratio
-    label: FrameTimeline/BufferTX 帧数比
+    label: FrameTimeline事件/BufferTX接收更新比（启发式）
     type: number
     hidden: true
   - name: evidence_scope

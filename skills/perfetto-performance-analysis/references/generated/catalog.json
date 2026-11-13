@@ -1,16 +1,21 @@
 {
-  "generated_files": 1912,
+  "generated_files": 1901,
   "runtime_conditions": 674,
-  "runtime_queries": 761,
+  "runtime_queries": 762,
   "runtime_skills": 254,
   "schema_version": 2,
-  "source_commit": "182b46c4ace70bb009bc03cbf3815ab8a6e28987",
-  "sql_files": 761,
+  "source_commit": "45d13de11d6231488d3dffc87141ebef08f186e5",
+  "sql_files": 762,
   "transformations": [
     {
       "reason": "product snapshot comparison replaced by file-based JSON adapter",
       "removed_lines": 0,
       "source_path": "backend/skills/comparison/multi_trace_result_comparison.skill.yaml"
+    },
+    {
+      "reason": "product teaching cards and source references projected to local portable knowledge",
+      "removed_lines": 0,
+      "source_path": "backend/skills/pipelines/index.yaml"
     },
     {
       "reason": "investigation contract projected to portable methodology",
@@ -159,6 +164,12 @@
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
       "removed_lines": 0,
+      "replacements": 1,
+      "source_path": "backend/strategies/knowledge-rendering-outputs.template.md"
+    },
+    {
+      "reason": "product runtime actions removed; concrete CLI contract added",
+      "removed_lines": 3,
       "replacements": 1,
       "source_path": "backend/strategies/knowledge-rendering-pipeline.template.md"
     },
@@ -343,7 +354,7 @@
     },
     {
       "reason": "product runtime actions removed; concrete CLI contract added",
-      "removed_lines": 13,
+      "removed_lines": 21,
       "replacements": 0,
       "source_path": "backend/strategies/teaching.strategy.md"
     },

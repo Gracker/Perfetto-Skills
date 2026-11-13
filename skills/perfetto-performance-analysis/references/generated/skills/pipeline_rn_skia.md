@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/rn_skia.skill.yaml
-Source SHA-256: 5dcdc8cfea4ac1814a3752847cc411f2a696ddb9595b6a6b7bbfc552c8258486
+Source SHA-256: 7a3a441f55e72ad32ba0de3b729ce49c7b14febdc575653a5523e7c85c76d2a6
 # React Native Skia (@shopify/react-native-skia)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s14_react_native). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,11 +26,12 @@ display_name: React Native Skia (@shopify/react-native-skia)
 description: RN + Skia 自绘渲染，绕过 HWUI 直接用 Skia 在 GPU 上画
 icon: react
 family: webview
-doc_path: rendering_pipelines/S14_react_native_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s14_react_native
 s_article_ref: S14
 four_features:
   producer_threads:
   - mqt_js
+  - mqt_v_js
   - Skia render thread
   expected_layer_count: 1
   bufferqueue_path: JSI_TO_SKIA_DRAW_TO_SURFACE_BBQ
@@ -55,7 +60,7 @@ use_cases: '典型使用场景：
 ```yaml
 scoring_signals:
 - signal: has_mqt_js
-  thread_pattern: mqt_js*
+  thread_pattern: mqt_*js*
   weight: 30
 - signal: has_skia_renderer
   slice_pattern: '*SkiaRenderer*'
@@ -73,7 +78,6 @@ scoring_signals:
   slice_pattern: '*SkCanvas*'
   weight: 10
 exclude_if:
-- slice_pattern: '*FabricUIManager*'
 - thread_pattern: mqt_shadow*
 - slice_pattern: '*EntityPass*'
 ```
@@ -81,7 +85,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S14_react_native_type.md
+source: references/generated/knowledge/rendering-teaching.md#s14_react_native
 ```
 
 ## Analysis guidance

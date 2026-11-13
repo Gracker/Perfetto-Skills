@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rn_bridge_to_frame_jank.skill.yaml
--- Source SHA-256: 84b3c782c3627ecbb0379829518edfd9a119e5d2ad035c3b8ad9c06e5107618e
+-- Source SHA-256: 309ae1fd570b17c709ce1c1fbe2d30e362b0f1f368cd0fa80e61fce137be7af7
 
 WITH
 input AS (
@@ -28,11 +28,13 @@ rn_slices AS (
     p.name AS process_name,
     p.upid,
     CASE
-      WHEN t.name GLOB '*mqt_js*' OR t.name GLOB '*JS*' OR s.name GLOB '*BatchedBridge*' THEN 'js_bridge'
+      WHEN s.name GLOB '*BatchedBridge*' THEN 'js_bridge'
       WHEN s.name GLOB '*UIManager*' OR s.name GLOB '*dispatchViewUpdates*' THEN 'ui_manager'
       WHEN s.name GLOB '*RCTEventEmitter*' OR s.name GLOB '*callFunctionReturnFlushedQueue*' THEN 'bridge_dispatch'
       WHEN s.name GLOB '*ReactChoreographer*' THEN 'react_choreographer'
-      ELSE 'rn_old_arch'
+      WHEN t.name GLOB 'mqt_*js*' OR t.name GLOB '*JS*' THEN 'javascript'
+      WHEN t.name GLOB 'mqt_*native*' THEN 'native_modules'
+      ELSE 'rn_context'
     END AS phase
   FROM slice s
   JOIN thread_track tt ON s.track_id = tt.id
@@ -44,7 +46,7 @@ rn_slices AS (
     AND s.ts < i.end_ts
     AND s.dur > 0
     AND (
-      t.name GLOB '*mqt_js*' OR t.name GLOB '*mqt_native_modules*' OR t.name GLOB '*JS*' OR
+      t.name GLOB 'mqt_*js*' OR t.name GLOB 'mqt_*native*' OR t.name GLOB '*JS*' OR
       s.name GLOB '*BatchedBridge*' OR s.name GLOB '*callFunctionReturnFlushedQueue*' OR
       s.name GLOB '*UIManager*' OR s.name GLOB '*dispatchViewUpdates*' OR
       s.name GLOB '*RCTEventEmitter*' OR s.name GLOB '*ReactChoreographer*'

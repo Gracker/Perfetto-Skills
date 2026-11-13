@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/surface_control_api.skill.yaml
-Source SHA-256: 1266b84034af985d1a068b0c07d116bdae9ac9a81965014efb1ddcb9632912cd
+Source SHA-256: d281b535731f419cb2c9e2c5c11d65ed1a3ff15aa078c283a8c325dfec7236af
 # SurfaceControl API
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s07_software_offscreen). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: SurfaceControl API
 description: NDK SurfaceControl 直接事务提交，低级别表面控制
 icon: code
 family: surface
-doc_path: rendering_pipelines/S07_software_offscreen_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s07_software_offscreen
 s_article_ref: S03
 four_features:
   producer_threads:
@@ -71,7 +75,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S07_software_offscreen_type.md
+source: references/generated/knowledge/rendering-teaching.md#s07_software_offscreen
 ```
 
 ## Analysis guidance

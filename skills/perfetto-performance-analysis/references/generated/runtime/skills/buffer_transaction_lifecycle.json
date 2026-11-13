@@ -18,12 +18,14 @@
       "api_hint"
     ],
     "signal_patterns": [
+      "${package|}",
+      "*/surfaceflinger",
+      "*::queueBuffer*",
       "*BLASTBufferQueue*",
-      "*acquireBuffer*",
       "*applyTransaction*",
-      "*latchBuffer*",
-      "*queueBuffer*",
       "*setTransactionState*",
+      "BufferTX - *",
+      "queueBuffer*",
       "surfaceflinger"
     ]
   },
@@ -57,7 +59,7 @@
       "type": "timestamp"
     },
     {
-      "description": "应用包名（可选，用于过滤目标 layer）",
+      "description": "精确包名及冒号子进程；BufferTX 按 layer 名边界匹配，空值观察全部进程",
       "name": "package",
       "required": false,
       "type": "string"
@@ -67,8 +69,12 @@
     "modules": [],
     "required_tables": [
       "slice",
+      "thread_track",
       "thread",
-      "process"
+      "process",
+      "counter",
+      "counter_track",
+      "actual_frame_timeline_slice"
     ]
   },
   "query_id": null,
@@ -76,13 +82,13 @@
   "schema_version": 1,
   "source": {
     "path": "backend/skills/atomic/buffer_transaction_lifecycle.skill.yaml",
-    "sha256": "38cb7cb1b6874a31a2da8e82406e81c04fade5230ec56e948f7bfd2539a6a85b"
+    "sha256": "977f9ee7b1e356090321193837d29dbd067b40b9ba43929e9c297508292d5421"
   },
   "steps": [
     {
       "displayed": true,
       "id": "apply_transaction_summary",
-      "name": "SF applyTransaction 概览",
+      "name": "事务与提交事件概览",
       "query_id": "buffer_transaction_lifecycle/apply_transaction_summary",
       "result_dependencies": [],
       "save_as": "apply_transaction_summary",
@@ -91,7 +97,7 @@
     {
       "displayed": true,
       "id": "queue_to_transaction_delay",
-      "name": "queueBuffer → Transaction 到达延迟",
+      "name": "queueBuffer→Transaction 关联能力",
       "query_id": "buffer_transaction_lifecycle/queue_to_transaction_delay",
       "result_dependencies": [],
       "save_as": "queue_to_transaction_delay",
@@ -100,14 +106,23 @@
     {
       "displayed": true,
       "id": "per_layer_transactions",
-      "name": "按 Layer 分组的 Transaction 计数",
+      "name": "按进程与 Layer 分组的 FrameTimeline 记录",
       "query_id": "buffer_transaction_lifecycle/per_layer_transactions",
       "result_dependencies": [],
       "save_as": "per_layer_transactions",
       "type": "atomic"
+    },
+    {
+      "displayed": true,
+      "id": "buffer_tx_pending_observations",
+      "name": "逐轨 BufferTX pending 观测",
+      "query_id": "buffer_transaction_lifecycle/buffer_tx_pending_observations",
+      "result_dependencies": [],
+      "save_as": "buffer_tx_pending_observations",
+      "type": "atomic"
     }
   ],
   "type": "composite",
-  "version": "1.0",
+  "version": "1.1",
   "workflow": "gpu-rendering"
 }

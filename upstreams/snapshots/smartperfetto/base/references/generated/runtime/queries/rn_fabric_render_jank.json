@@ -74,9 +74,11 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/rn_fabric_render_jank/fabric_frame_overlap.sql",
-      "sha256": "ae630df7b3a76ba77979bb0957ba7d4ff83388d330e39386d26a1b26f444a300",
+      "sha256": "61e8a681d6d90fa54e4e45669f895968531ab5a8b02d56631659b6f5b0dd9e2c",
       "signal_patterns": [
         "*Fabric*",
+        "*FabricCommit*",
+        "*FabricMount*",
         "*JSI*",
         "*MountItem*",
         "*Reanimated*",
@@ -84,13 +86,14 @@
         "*SurfaceMountingManager*",
         "*TurboModule*",
         "*executeMount*",
-        "*mqt_native_modules*"
+        "mqt_*js*",
+        "mqt_*native*"
       ],
       "skill_id": "rn_fabric_render_jank",
       "source": {
         "path": "backend/skills/atomic/rn_fabric_render_jank.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "3db80f70cb79855ae72bfefc3e8d9937dff93e81daa6b2452aab13391ea03748"
+        "sha256": "0b4059ccf173b5a84ad0088eb2307ddccb7221c94c4cfe9c6601cd3aac93f150"
       },
       "sql_dependencies": {
         "creates": [],

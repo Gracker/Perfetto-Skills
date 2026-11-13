@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/atomic/rendering_pipeline_detection.skill.yaml
--- Source SHA-256: 87f939ac151574036322b3c254144ce82fb5750075efcb49168175f093ad5569
+-- Source SHA-256: bdb32cee14ce0f8f258001d34bdb35cc39cc71fb98757a956e28b913c1064b73
 
 WITH
       -- Identify a dominant app (when package is not provided) by looking for rendering-related slices,
@@ -170,9 +170,9 @@ WITH
         (52, 'CAMERA_PIPELINE', 's', 'has_cam_abbrev_thread', 10, 1, 't', 'glob', '*Cam*', 'a'),
         (53, 'CAMERA_PIPELINE', 's', 'has_camera_slice', 30, 1, 's', 'glob', '*Camera*', 'a'),
         (54, 'CAMERA_PIPELINE', 's', 'has_capture_session', 30, 1, 's', 'glob', '*CaptureSession*', 'a'),
-        (55, 'CHROME_BROWSER_VIZ', 'r', 'thread:VizCompositorThread', 0, 1, 't', 'eq', 'VizCompositorThread', 'a'),
+        (55, 'CHROME_BROWSER_VIZ', 'r', 'thread_pattern:VizCompositorTh*', 0, 1, 't', 'glob', 'VizCompositorTh*', 'a'),
         (56, 'CHROME_BROWSER_VIZ', 'r', 'thread_pattern:CrBrowserMain*', 0, 1, 't', 'glob', 'CrBrowserMain*', 'a'),
-        (57, 'CHROME_BROWSER_VIZ', 's', 'has_viz_compositor_thread', 40, 1, 't', 'glob', 'VizCompositorThread', 'a'),
+        (57, 'CHROME_BROWSER_VIZ', 's', 'has_viz_compositor_thread', 40, 1, 't', 'glob', 'VizCompositorTh*', 'a'),
         (58, 'CHROME_BROWSER_VIZ', 's', 'has_cr_renderer_main', 25, 1, 't', 'glob', 'CrRendererMain*', 'a'),
         (59, 'CHROME_BROWSER_VIZ', 's', 'has_gpu_main', 20, 1, 't', 'glob', 'CrGpuMain*', 'a'),
         (60, 'CHROME_BROWSER_VIZ', 's', 'has_display_scheduler', 15, 1, 's', 'glob', '*DisplayScheduler*', 'a'),
@@ -252,24 +252,24 @@ WITH
         (134, 'RN_NEW_ARCH_HWUI', 's', 'has_fabric_mount', 25, 1, 's', 'glob', '*FabricMount*', 'a'),
         (135, 'RN_NEW_ARCH_HWUI', 's', 'has_jsi_call', 15, 1, 's', 'glob', '*JSI*', 'a'),
         (136, 'RN_NEW_ARCH_HWUI', 's', 'has_turbomodule', 15, 1, 's', 'glob', '*TurboModule*', 'a'),
-        (137, 'RN_NEW_ARCH_HWUI', 's', 'has_mqt_js', 20, 1, 't', 'glob', 'mqt_js*', 'a'),
-        (138, 'RN_NEW_ARCH_HWUI', 'e', 'thread_pattern:mqt_shadow*', 0, 1, 't', 'glob', 'mqt_shadow*', 'a'),
-        (139, 'RN_OLD_ARCH_HWUI', 'r', 'thread_pattern:mqt_*', 0, 1, 't', 'glob', 'mqt_*', 'a'),
-        (140, 'RN_OLD_ARCH_HWUI', 's', 'has_mqt_js', 50, 1, 't', 'glob', 'mqt_js*', 'a'),
-        (141, 'RN_OLD_ARCH_HWUI', 's', 'has_mqt_native_modules', 30, 1, 't', 'glob', 'mqt_native_modules*', 'a'),
-        (142, 'RN_OLD_ARCH_HWUI', 's', 'has_mqt_shadow', 25, 1, 't', 'glob', 'mqt_shadow*', 'a'),
-        (143, 'RN_OLD_ARCH_HWUI', 's', 'has_yoga_layout', 15, 1, 's', 'glob', '*Yoga*', 'a'),
-        (144, 'RN_OLD_ARCH_HWUI', 's', 'has_native_to_js', 10, 1, 's', 'glob', '*NativeToJsBridge*', 'a'),
-        (145, 'RN_OLD_ARCH_HWUI', 's', 'has_js_to_native', 10, 1, 's', 'glob', '*JsToNativeBridge*', 'a'),
-        (146, 'RN_OLD_ARCH_HWUI', 's', 'has_uimanager', 12, 1, 's', 'glob', '*UIManager*dispatchViewUpdates*', 'a'),
-        (147, 'RN_OLD_ARCH_HWUI', 'e', 'slice_pattern:*FabricUIManager*', 0, 1, 's', 'glob', '*FabricUIManager*', 'a'),
-        (148, 'RN_SKIA_RENDERER', 's', 'has_mqt_js', 30, 1, 't', 'glob', 'mqt_js*', 'a'),
-        (149, 'RN_SKIA_RENDERER', 's', 'has_skia_renderer', 25, 1, 's', 'glob', '*SkiaRenderer*', 'a'),
-        (150, 'RN_SKIA_RENDERER', 's', 'has_skia_picture', 20, 1, 's', 'glob', '*SkiaPicture*', 'a'),
-        (151, 'RN_SKIA_RENDERER', 's', 'has_react_native_skia', 25, 1, 's', 'glob', '*react-native-skia*', 'a'),
-        (152, 'RN_SKIA_RENDERER', 's', 'has_skia_paint', 10, 1, 's', 'glob', '*SkPaint*', 'a'),
-        (153, 'RN_SKIA_RENDERER', 's', 'has_skia_canvas', 10, 1, 's', 'glob', '*SkCanvas*', 'a'),
-        (154, 'RN_SKIA_RENDERER', 'e', 'slice_pattern:*FabricUIManager*', 0, 1, 's', 'glob', '*FabricUIManager*', 'a'),
+        (137, 'RN_NEW_ARCH_HWUI', 's', 'has_mqt_js', 20, 1, 't', 'glob', 'mqt_*js*', 'a'),
+        (138, 'RN_NEW_ARCH_HWUI', 's', 'has_mqt_v_native', 10, 1, 't', 'glob', 'mqt_v_native*', 'a'),
+        (139, 'RN_NEW_ARCH_HWUI', 'e', 'thread_pattern:mqt_shadow*', 0, 1, 't', 'glob', 'mqt_shadow*', 'a'),
+        (140, 'RN_OLD_ARCH_HWUI', 'r', 'thread_pattern:mqt_shadow*', 0, 1, 't', 'glob', 'mqt_shadow*', 'a'),
+        (141, 'RN_OLD_ARCH_HWUI', 's', 'has_mqt_js', 50, 1, 't', 'glob', 'mqt_*js*', 'a'),
+        (142, 'RN_OLD_ARCH_HWUI', 's', 'has_mqt_native_modules', 30, 1, 't', 'glob', 'mqt_*native*', 'a'),
+        (143, 'RN_OLD_ARCH_HWUI', 's', 'has_mqt_shadow', 25, 1, 't', 'glob', 'mqt_shadow*', 'a'),
+        (144, 'RN_OLD_ARCH_HWUI', 's', 'has_yoga_layout', 15, 1, 's', 'glob', '*Yoga*', 'a'),
+        (145, 'RN_OLD_ARCH_HWUI', 's', 'has_native_to_js', 10, 1, 's', 'glob', '*NativeToJsBridge*', 'a'),
+        (146, 'RN_OLD_ARCH_HWUI', 's', 'has_js_to_native', 10, 1, 's', 'glob', '*JsToNativeBridge*', 'a'),
+        (147, 'RN_OLD_ARCH_HWUI', 's', 'has_uimanager', 12, 1, 's', 'glob', '*UIManager*dispatchViewUpdates*', 'a'),
+        (148, 'RN_OLD_ARCH_HWUI', 'e', 'slice_pattern:*FabricUIManager*', 0, 1, 's', 'glob', '*FabricUIManager*', 'a'),
+        (149, 'RN_SKIA_RENDERER', 's', 'has_mqt_js', 30, 1, 't', 'glob', 'mqt_*js*', 'a'),
+        (150, 'RN_SKIA_RENDERER', 's', 'has_skia_renderer', 25, 1, 's', 'glob', '*SkiaRenderer*', 'a'),
+        (151, 'RN_SKIA_RENDERER', 's', 'has_skia_picture', 20, 1, 's', 'glob', '*SkiaPicture*', 'a'),
+        (152, 'RN_SKIA_RENDERER', 's', 'has_react_native_skia', 25, 1, 's', 'glob', '*react-native-skia*', 'a'),
+        (153, 'RN_SKIA_RENDERER', 's', 'has_skia_paint', 10, 1, 's', 'glob', '*SkPaint*', 'a'),
+        (154, 'RN_SKIA_RENDERER', 's', 'has_skia_canvas', 10, 1, 's', 'glob', '*SkCanvas*', 'a'),
         (155, 'RN_SKIA_RENDERER', 'e', 'thread_pattern:mqt_shadow*', 0, 1, 't', 'glob', 'mqt_shadow*', 'a'),
         (156, 'RN_SKIA_RENDERER', 'e', 'slice_pattern:*EntityPass*', 0, 1, 's', 'glob', '*EntityPass*', 'a'),
         (157, 'SOFTWARE_COMPOSITING', 'r', 'thread:SurfaceFlinger', 0, 1, 't', 'eq', 'SurfaceFlinger', 'g'),
@@ -324,30 +324,38 @@ WITH
         (206, 'VULKAN_NATIVE', 's', 'has_vkqueue_thread', 4, 1, 't', 'glob', '*VkQueue*', 'a'),
         (207, 'VULKAN_NATIVE', 's', 'has_vk_acquire', 5, 1, 's', 'glob', '*vkAcquireNextImage*', 'a'),
         (208, 'WEBVIEW_GL_FUNCTOR', 'r', 'thread:RenderThread', 0, 1, 't', 'eq', 'RenderThread', 'a'),
-        (209, 'WEBVIEW_GL_FUNCTOR', 's', 'has_draw_gl', 25, 1, 's', 'glob', '*DrawGL*', 'a'),
-        (210, 'WEBVIEW_GL_FUNCTOR', 's', 'has_draw_fn_draw_gl', 20, 1, 's', 'glob', '*DrawFn_DrawGL*', 'a'),
-        (211, 'WEBVIEW_GL_FUNCTOR', 's', 'has_draw_functor', 15, 1, 's', 'glob', '*DrawFunctor*', 'a'),
-        (212, 'WEBVIEW_GL_FUNCTOR', 's', 'has_cr_renderer', 25, 1, 't', 'glob', 'CrRendererMain*', 'a'),
-        (213, 'WEBVIEW_GL_FUNCTOR', 's', 'has_render_thread', 10, 1, 't', 'glob', 'RenderThread*', 'a'),
-        (214, 'WEBVIEW_GL_FUNCTOR', 'e', 'thread_pattern:VizCompositorThread*', 0, 1, 't', 'glob', 'VizCompositorThread*', 'a'),
-        (215, 'WEBVIEW_GL_FUNCTOR', 'e', 'thread:1.ui', 0, 1, 't', 'eq', '1.ui', 'a'),
-        (216, 'WEBVIEW_SURFACE_CONTROL', 's', 'has_viz_compositor', 55, 1, 't', 'glob', 'VizCompositorThread*', 'a'),
-        (217, 'WEBVIEW_SURFACE_CONTROL', 's', 'has_cr_renderer', 12, 1, 't', 'glob', 'CrRendererMain*', 'a'),
-        (218, 'WEBVIEW_SURFACE_CONTROL', 's', 'has_surface_control', 15, 1, 's', 'glob', '*SurfaceControl*', 'a'),
-        (219, 'WEBVIEW_SURFACE_CONTROL', 'e', 'thread:1.ui', 0, 1, 't', 'eq', '1.ui', 'a'),
-        (220, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_webview', 30, 1, 's', 'glob', '*WebView*', 'a'),
-        (221, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_webview_core', 10, 1, 't', 'glob', 'WebViewCore*', 'a'),
-        (222, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_cr_renderer', 10, 1, 't', 'glob', 'CrRendererMain*', 'a'),
-        (223, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_surfaceview', 25, 1, 's', 'glob', '*SurfaceView*', 'a'),
-        (224, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_video', 12, 1, 's', 'glob', '*Video*', 'a'),
-        (225, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_mediacodec', 13, 1, 's', 'glob', '*MediaCodec*', 'a'),
-        (226, 'WEBVIEW_SURFACEVIEW_WRAPPER', 'e', 'thread:1.ui', 0, 1, 't', 'eq', '1.ui', 'a'),
-        (227, 'WEBVIEW_TEXTUREVIEW_CUSTOM', 's', 'has_tbs', 30, 1, 's', 'glob', '*TBS*', 'a'),
-        (228, 'WEBVIEW_TEXTUREVIEW_CUSTOM', 's', 'has_x5', 30, 1, 's', 'glob', '*X5*', 'a'),
-        (229, 'WEBVIEW_TEXTUREVIEW_CUSTOM', 's', 'has_uccore', 20, 1, 's', 'glob', '*UCCore*', 'a'),
-        (230, 'WEBVIEW_TEXTUREVIEW_CUSTOM', 'e', 'thread:1.ui', 0, 1, 't', 'eq', '1.ui', 'a')
+        (209, 'WEBVIEW_GL_FUNCTOR', 'r', 'slice_patterns:DrawGL*|*DrawFn_DrawGL*|*DrawFn_DrawVk*|*DrawFunctor*|AwDrawFnImpl::Draw[GV][Llk]*|WebViewFunctor::draw[GgVv][LlKk]*', 0, 1, 's', 'glob', 'DrawGL*', 'a'),
+        (209, 'WEBVIEW_GL_FUNCTOR', 'r', 'slice_patterns:DrawGL*|*DrawFn_DrawGL*|*DrawFn_DrawVk*|*DrawFunctor*|AwDrawFnImpl::Draw[GV][Llk]*|WebViewFunctor::draw[GgVv][LlKk]*', 0, 1, 's', 'glob', '*DrawFn_DrawGL*', 'a'),
+        (209, 'WEBVIEW_GL_FUNCTOR', 'r', 'slice_patterns:DrawGL*|*DrawFn_DrawGL*|*DrawFn_DrawVk*|*DrawFunctor*|AwDrawFnImpl::Draw[GV][Llk]*|WebViewFunctor::draw[GgVv][LlKk]*', 0, 1, 's', 'glob', '*DrawFn_DrawVk*', 'a'),
+        (209, 'WEBVIEW_GL_FUNCTOR', 'r', 'slice_patterns:DrawGL*|*DrawFn_DrawGL*|*DrawFn_DrawVk*|*DrawFunctor*|AwDrawFnImpl::Draw[GV][Llk]*|WebViewFunctor::draw[GgVv][LlKk]*', 0, 1, 's', 'glob', '*DrawFunctor*', 'a'),
+        (209, 'WEBVIEW_GL_FUNCTOR', 'r', 'slice_patterns:DrawGL*|*DrawFn_DrawGL*|*DrawFn_DrawVk*|*DrawFunctor*|AwDrawFnImpl::Draw[GV][Llk]*|WebViewFunctor::draw[GgVv][LlKk]*', 0, 1, 's', 'glob', 'AwDrawFnImpl::Draw[GV][Llk]*', 'a'),
+        (209, 'WEBVIEW_GL_FUNCTOR', 'r', 'slice_patterns:DrawGL*|*DrawFn_DrawGL*|*DrawFn_DrawVk*|*DrawFunctor*|AwDrawFnImpl::Draw[GV][Llk]*|WebViewFunctor::draw[GgVv][LlKk]*', 0, 1, 's', 'glob', 'WebViewFunctor::draw[GgVv][LlKk]*', 'a'),
+        (210, 'WEBVIEW_GL_FUNCTOR', 's', 'has_draw_gl', 25, 1, 's', 'glob', 'DrawGL*', 'a'),
+        (210, 'WEBVIEW_GL_FUNCTOR', 's', 'has_draw_gl', 25, 1, 's', 'glob', '*DrawFn_DrawGL*', 'a'),
+        (210, 'WEBVIEW_GL_FUNCTOR', 's', 'has_draw_gl', 25, 1, 's', 'glob', '*DrawFn_DrawVk*', 'a'),
+        (210, 'WEBVIEW_GL_FUNCTOR', 's', 'has_draw_gl', 25, 1, 's', 'glob', '*DrawFunctor*', 'a'),
+        (210, 'WEBVIEW_GL_FUNCTOR', 's', 'has_draw_gl', 25, 1, 's', 'glob', 'AwDrawFnImpl::Draw[GV][Llk]*', 'a'),
+        (210, 'WEBVIEW_GL_FUNCTOR', 's', 'has_draw_gl', 25, 1, 's', 'glob', 'WebViewFunctor::draw[GgVv][LlKk]*', 'a'),
+        (211, 'WEBVIEW_GL_FUNCTOR', 's', 'has_cr_renderer', 25, 1, 't', 'glob', 'CrRendererMain*', 'a'),
+        (212, 'WEBVIEW_GL_FUNCTOR', 's', 'has_render_thread', 10, 1, 't', 'glob', 'RenderThread*', 'a'),
+        (213, 'WEBVIEW_GL_FUNCTOR', 'e', 'thread:1.ui', 0, 1, 't', 'eq', '1.ui', 'a'),
+        (214, 'WEBVIEW_SURFACE_CONTROL', 's', 'has_viz_compositor', 55, 1, 't', 'glob', 'VizCompositorThread*', 'a'),
+        (215, 'WEBVIEW_SURFACE_CONTROL', 's', 'has_cr_renderer', 12, 1, 't', 'glob', 'CrRendererMain*', 'a'),
+        (216, 'WEBVIEW_SURFACE_CONTROL', 's', 'has_surface_control', 15, 1, 's', 'glob', '*SurfaceControl*', 'a'),
+        (217, 'WEBVIEW_SURFACE_CONTROL', 'e', 'thread:1.ui', 0, 1, 't', 'eq', '1.ui', 'a'),
+        (218, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_webview', 30, 1, 's', 'glob', '*WebView*', 'a'),
+        (219, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_webview_core', 10, 1, 't', 'glob', 'WebViewCore*', 'a'),
+        (220, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_cr_renderer', 10, 1, 't', 'glob', 'CrRendererMain*', 'a'),
+        (221, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_surfaceview', 25, 1, 's', 'glob', '*SurfaceView*', 'a'),
+        (222, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_video', 12, 1, 's', 'glob', '*Video*', 'a'),
+        (223, 'WEBVIEW_SURFACEVIEW_WRAPPER', 's', 'has_mediacodec', 13, 1, 's', 'glob', '*MediaCodec*', 'a'),
+        (224, 'WEBVIEW_SURFACEVIEW_WRAPPER', 'e', 'thread:1.ui', 0, 1, 't', 'eq', '1.ui', 'a'),
+        (225, 'WEBVIEW_TEXTUREVIEW_CUSTOM', 's', 'has_tbs', 30, 1, 's', 'glob', '*TBS*', 'a'),
+        (226, 'WEBVIEW_TEXTUREVIEW_CUSTOM', 's', 'has_x5', 30, 1, 's', 'glob', '*X5*', 'a'),
+        (227, 'WEBVIEW_TEXTUREVIEW_CUSTOM', 's', 'has_uccore', 20, 1, 's', 'glob', '*UCCore*', 'a'),
+        (228, 'WEBVIEW_TEXTUREVIEW_CUSTOM', 'e', 'thread:1.ui', 0, 1, 't', 'eq', '1.ui', 'a')
       ),
-      signal_counts AS (
+      signal_name_matches AS (
         SELECT
           sd.signal_id,
           sd.pipeline_id,
@@ -355,13 +363,16 @@ WITH
           sd.signal_name,
           sd.weight,
           sd.min_count,
-          SUM(
+          COALESCE(tc.thread_name, sc.slice_name) as source_name,
+          -- Each source count is already grouped by the actual recorded name.
+          -- Multiple alias patterns matching that name must contribute it once.
+          MAX(
             CASE
               WHEN sd.source = 't' THEN CASE WHEN sd.scope = 'g' THEN COALESCE(tc.global_cnt, 0) ELSE COALESCE(tc.app_cnt, 0) END
               WHEN sd.source = 's' THEN CASE WHEN sd.scope = 'g' THEN COALESCE(sc.global_cnt, 0) ELSE COALESCE(sc.app_cnt, 0) END
               ELSE 0
             END
-          ) as cnt
+          ) as source_count
         FROM signal_defs sd
         LEFT JOIN thread_counts tc
           ON sd.source = 't'
@@ -375,7 +386,13 @@ WITH
            (sd.op = 'eq' AND sc.slice_name = sd.pattern)
            OR (sd.op = 'glob' AND sc.slice_name GLOB sd.pattern)
          )
-        GROUP BY sd.signal_id, sd.pipeline_id, sd.signal_type, sd.signal_name, sd.weight, sd.min_count
+        GROUP BY sd.signal_id, sd.pipeline_id, sd.signal_type, sd.signal_name, sd.weight, sd.min_count, source_name
+      ),
+      signal_counts AS (
+        SELECT signal_id, pipeline_id, signal_type, signal_name, weight, min_count,
+          SUM(source_count) as cnt
+        FROM signal_name_matches
+        GROUP BY signal_id, pipeline_id, signal_type, signal_name, weight, min_count
       ),
       signal_agg AS (
         SELECT

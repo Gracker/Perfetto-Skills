@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/vulkan_native.skill.yaml
-Source SHA-256: f2ebbc1d3e8b4454f4ea200f00bca9f606746d70eb395cf18ebfba854d6c4d50
+Source SHA-256: bfb78f28b39fe0c32baf230c91848c934c1d8ceba237f400dba2ade254440c61
 # Vulkan Native
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s08_native_graphics). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: Vulkan Native
 description: 原生 Vulkan 渲染，现代高性能图形 API
 icon: vulkan
 family: graphics
-doc_path: rendering_pipelines/S08_native_graphics_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s08_native_graphics
 s_article_ref: S08
 four_features:
   producer_threads:
@@ -77,7 +81,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S08_native_graphics_type.md
+source: references/generated/knowledge/rendering-teaching.md#s08_native_graphics
 ```
 
 ## Analysis guidance

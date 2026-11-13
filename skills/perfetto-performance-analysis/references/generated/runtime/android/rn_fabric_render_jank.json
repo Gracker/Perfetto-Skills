@@ -72,6 +72,8 @@
   ],
   "signal_patterns": [
     "*Fabric*",
+    "*FabricCommit*",
+    "*FabricMount*",
     "*JSI*",
     "*MountItem*",
     "*Reanimated*",
@@ -79,7 +81,8 @@
     "*SurfaceMountingManager*",
     "*TurboModule*",
     "*executeMount*",
-    "*mqt_native_modules*"
+    "mqt_*js*",
+    "mqt_*native*"
   ],
   "skill_id": "rn_fabric_render_jank",
   "steps": {

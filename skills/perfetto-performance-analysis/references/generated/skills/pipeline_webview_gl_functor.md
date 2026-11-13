@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/webview_gl_functor.skill.yaml
-Source SHA-256: f3cce36c857d9a7f0230a0fdc774d66920dcf35253596eef8419c18c59497206
+Source SHA-256: 7191fa7f411863e906bfc4eb3c76abdbd3c95ffd834321cb2f793906d4c168e1
 # WebView GL Functor
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,15 +14,19 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s09_webview). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
 pipeline_id: WEBVIEW_GL_FUNCTOR
 display_name: WebView GL Functor
-description: 传统 WebView 渲染，App RenderThread 同步等待
+description: WebView GLES/Vulkan functor 在宿主 RenderThread 消费网页资源并绘制
 icon: web
 family: webview
-doc_path: rendering_pipelines/S09_webview_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s09_webview
 s_article_ref: S09
 four_features:
   producer_threads:
@@ -51,9 +55,11 @@ subvariants_note: '文章 S09 区分 5 种 WebView 路径：
   - WEBVIEW_IMAGEREADER_PIPELINE — 罕见中转路径
 
   '
-thread_locations: 'Chromium 线程可能在宿主 App 进程或独立 sandboxed_process（com.google.android.webview:sandboxed_process*）。
+thread_locations: 'Blink/renderer 可在独立 sandboxed_process，functor sync/draw 在宿主 App 的 HWUI RenderThread。
 
-  主体 HWUI App 带 :sandboxed_process 子进程时，主进程仍是 ANDROID_VIEW_STANDARD_BLAST，子进程才走 Functor。
+  DrawFn_DrawGL/DrawVk 与 WebViewFunctor::drawGl/drawVk 是不同版本的 draw 名称；
+
+  sync、postDraw、init 与 reparent 不能当成新内容帧或 physical present。
 
   '
 ```
@@ -64,16 +70,24 @@ thread_locations: 'Chromium 线程可能在宿主 App 进程或独立 sandboxed_
 required_signals:
 - thread: RenderThread
   min_count: 1
+- slice_patterns:
+  - DrawGL*
+  - '*DrawFn_DrawGL*'
+  - '*DrawFn_DrawVk*'
+  - '*DrawFunctor*'
+  - AwDrawFnImpl::Draw[GV][Llk]*
+  - WebViewFunctor::draw[GgVv][LlKk]*
+  min_count: 1
 scoring_signals:
 - signal: has_draw_gl
-  slice_pattern: '*DrawGL*'
+  slice_patterns:
+  - DrawGL*
+  - '*DrawFn_DrawGL*'
+  - '*DrawFn_DrawVk*'
+  - '*DrawFunctor*'
+  - AwDrawFnImpl::Draw[GV][Llk]*
+  - WebViewFunctor::draw[GgVv][LlKk]*
   weight: 25
-- signal: has_draw_fn_draw_gl
-  slice_pattern: '*DrawFn_DrawGL*'
-  weight: 20
-- signal: has_draw_functor
-  slice_pattern: '*DrawFunctor*'
-  weight: 15
 - signal: has_cr_renderer
   thread_pattern: CrRendererMain*
   weight: 25
@@ -81,14 +95,13 @@ scoring_signals:
   thread_pattern: RenderThread*
   weight: 10
 exclude_if:
-- thread_pattern: VizCompositorThread*
 - thread: 1.ui
 ```
 
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S09_webview_type.md
+source: references/generated/knowledge/rendering-teaching.md#s09_webview
 ```
 
 ## Analysis guidance
@@ -105,15 +118,15 @@ common_issues:
   detection_skill: cpu_analysis
 - id: host_renderthread_overrun_via_functor
   name: 宿主 RT 因 functor replay 段超 budget
-  description: 'Chromium 网页内容产出的 DDL 在 AwDrawFnImpl::DrawGL/DrawVk 段 replay 到宿主 RT。
+  description: 'DrawFn_DrawGL/DrawVk 或 WebViewFunctor::drawGl/drawVk 在宿主 RT 消费网页合成描述与资源。
 
-    网页内容重时这一段独自就能让宿主 RT 超 budget，外部表现是整页掉帧（不是网页"自己"掉帧）。
+    外层 wall time 可包含等待与 RunTasks，先区分 Running/Runnable/Sleeping，再追 Viz、资源与 GPU。
 
     '
   detection_skill: render_thread_slices
 - id: chromium_renderer_jank
   name: Chromium Renderer 卡导致网页更新晚
-  description: 'CrRendererMain 上 Blink Layout/Paint 重，或 Compositor 线程卡住，导致下一次 functor replay 拿到的 DDL 是旧内容。
+  description: 'CrRendererMain 上 Blink Layout/Paint 重，或 Compositor 工作晚，可能让宿主继续使用旧网页 frame/resource。
 
     宿主 RT 看不出这一帧"为什么晚了"，要切到 Chromium 线程上找。
 

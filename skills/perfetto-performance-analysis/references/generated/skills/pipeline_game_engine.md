@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/game_engine.skill.yaml
-Source SHA-256: f757768862f521ac5c841eea741273b89f3bf3b80090a1bf2f18b605d629e7bd
+Source SHA-256: b2333b076f73e8443765798cbee48d8624194b502a12a2645ac29a281b66c1be
 # 游戏引擎
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s13_game). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: 游戏引擎
 description: Unity/Unreal/Godot 等游戏引擎渲染
 icon: gamepad
 family: specialized
-doc_path: rendering_pipelines/S13_game_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s13_game
 s_article_ref: S13
 four_features:
   producer_threads:
@@ -111,7 +115,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S13_game_type.md
+source: references/generated/knowledge/rendering-teaching.md#s13_game
 ```
 
 ## Analysis guidance

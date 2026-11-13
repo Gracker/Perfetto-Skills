@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-pipeline-fences.template.md
-Source SHA-256: 671197e51887f96bd62dccd0b635960eabd12ec16ce38c7b264e20987532ceaf
+Source SHA-256: eb72ad8d571d3163912b3637b7b045cb8fbecd5194f15a97a59d9406fba955cb
 
 # Knowledge Pipeline Fences Template
 
@@ -21,7 +21,7 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 
 # Android 17 Fence 证据边界
 
-Fence 细节以 S01 及所选 S02-S14 类型文章为准。报告必须明确 fence 的对象、
+报告必须明确 fence 的对象、
 方向、粒度和 trace 来源，不能只写“fence 慢”。
 
 | Fence | 典型方向/粒度 | 可以回答 | 不能单独证明 |

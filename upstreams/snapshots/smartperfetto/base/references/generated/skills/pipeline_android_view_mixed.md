@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/android_view_mixed.skill.yaml
-Source SHA-256: 12d5b834172b3c5517f36d3b378d7f9cffebbbfcc60c90c1b027fcf7dd8836c0
+Source SHA-256: bd11813a53f0ab65521f6e3b2bc94bf02a8b1543a0f741c533908c529bccea0b
 # Android View 混合渲染
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s05_mixed_rendering). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: Android View 混合渲染
 description: View + SurfaceView 混合渲染，常见于视频播放器、内嵌游戏
 icon: layers
 family: hwui
-doc_path: rendering_pipelines/S05_mixed_rendering_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s05_mixed_rendering
 s_article_ref: S05
 four_features:
   producer_threads:
@@ -88,7 +92,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S05_mixed_rendering_type.md
+source: references/generated/knowledge/rendering-teaching.md#s05_mixed_rendering
 ```
 
 ## Analysis guidance

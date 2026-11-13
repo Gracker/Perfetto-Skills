@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/webview_drawfunctor_jank_chain.skill.yaml
--- Source SHA-256: 23169f041556c7bfe0b33f5a86d7248694d522332bcb1e0db972702d7f68e337
+-- Source SHA-256: f955143f2e4366b68abd38648cac6d652dbd08240aecca385340a151f984ca93
 
 WITH
 input AS (
@@ -10,6 +10,35 @@ input AS (
     COALESCE(${end_ts}, (SELECT COALESCE(MAX(ts + dur), 0) FROM slice)) AS end_ts
 ),
 -- WEBVIEW_CHROMIUM_SCOPE_CTES_BEGIN
+functor_events AS (
+  SELECT s.id, s.track_id, s.ts, s.dur,
+    CASE
+      WHEN s.name GLOB 'WebViewFunctor::postDraw*' OR s.name GLOB '*DrawFn_PostDraw*' THEN 'host_renderthread_functor_post_draw'
+      WHEN s.name GLOB 'WebViewFunctor::sync*' OR s.name GLOB '*DrawFn_OnSync*' THEN 'host_renderthread_functor_sync'
+      WHEN s.name GLOB 'WebViewFunctor::draw[GgVv][LlKk]*'
+        OR s.name GLOB '*DrawFn_Draw[GV][Llk]*'
+        OR s.name GLOB 'DrawGL*' OR s.name GLOB 'DrawVk*'
+        OR s.name GLOB '*DrawFunctor*'
+        OR s.name GLOB 'AwDrawFnImpl::Draw[GV][Llk]*'
+        THEN 'host_renderthread_functor'
+    END AS phase
+  FROM slice s
+  CROSS JOIN input i
+  WHERE s.ts >= i.start_ts AND s.ts < i.end_ts AND s.dur > 0
+),
+functor_slices AS (
+  -- Nested wrappers describe one invocation, not additional output frames.
+  SELECT event.*
+  FROM functor_events event
+  WHERE event.phase IS NOT NULL
+    AND NOT EXISTS (
+      SELECT 1 FROM functor_events wrapper
+      WHERE wrapper.track_id = event.track_id AND wrapper.phase = event.phase
+        AND wrapper.ts <= event.ts
+        AND wrapper.ts + wrapper.dur >= event.ts + event.dur
+        AND (wrapper.dur > event.dur OR (wrapper.dur = event.dur AND wrapper.id < event.id))
+    )
+),
 scoped_processes AS (
   SELECT p.upid, p.name AS process_name
   FROM process p
@@ -33,10 +62,7 @@ scoped_processes AS (
               AND (
                 t.name GLOB '*CrRendererMain*'
                 OR t.name GLOB 'VizCompositorThread*'
-                OR s.name GLOB '*DrawGL*'
-                OR s.name GLOB '*DrawFn_DrawGL*'
-                OR s.name GLOB '*DrawFunctor*'
-                OR s.name GLOB '*AwDrawFn*'
+                OR s.id IN (SELECT id FROM functor_slices)
                 OR s.name GLOB '*Blink*'
                 OR s.name GLOB '*Chromium*'
               )
@@ -76,8 +102,7 @@ webview_processes AS (
     AND s.ts < i.end_ts
     AND (
       t.name GLOB '*CrRendererMain*' OR
-      s.name GLOB '*DrawGL*' OR s.name GLOB '*DrawFn_DrawGL*' OR
-      s.name GLOB '*DrawFunctor*' OR s.name GLOB '*AwDrawFn*' OR
+      s.id IN (SELECT id FROM functor_slices) OR
       (
         ci.has_chromium_identity = 1
         AND (t.name GLOB '*Compositor*' OR s.name GLOB '*Compositor*')
@@ -92,7 +117,7 @@ webview_slices AS (
     COALESCE(t.name, '<unnamed>') AS thread_name,
     p.name AS process_name,
     CASE
-      WHEN s.name GLOB '*DrawGL*' OR s.name GLOB '*DrawFn_DrawGL*' OR s.name GLOB '*DrawFunctor*' OR s.name GLOB '*AwDrawFn*' THEN 'host_renderthread_functor'
+      WHEN fs.phase IS NOT NULL THEN fs.phase
       WHEN t.name GLOB '*CrRendererMain*' OR s.name GLOB '*Blink*' OR s.name GLOB '*Chromium*' THEN 'chromium_render_main'
       WHEN s.name GLOB '*v8*' OR s.name GLOB '*V8*' OR s.name GLOB '*JavaScript*' THEN 'javascript_v8'
       WHEN ci.has_chromium_identity = 1 AND (t.name GLOB '*Compositor*' OR s.name GLOB '*Compositor*') THEN 'chromium_compositor'
@@ -100,6 +125,7 @@ webview_slices AS (
     END AS phase,
     ROUND(s.dur / 1e6, 2) AS dur_ms
   FROM slice s
+  LEFT JOIN functor_slices fs ON fs.id = s.id
   JOIN thread_track tt ON s.track_id = tt.id
   JOIN thread t ON tt.utid = t.utid
   JOIN process p ON t.upid = p.upid
@@ -111,7 +137,7 @@ webview_slices AS (
     AND s.dur > 0
     AND (
       t.name GLOB '*CrRendererMain*' OR
-      s.name GLOB '*DrawGL*' OR s.name GLOB '*DrawFn_DrawGL*' OR s.name GLOB '*DrawFunctor*' OR s.name GLOB '*AwDrawFn*' OR
+      fs.phase IS NOT NULL OR
       s.name GLOB '*Blink*' OR s.name GLOB '*Chromium*' OR
       s.name GLOB '*v8*' OR s.name GLOB '*V8*' OR s.name GLOB '*JavaScript*' OR
       (

@@ -74,28 +74,34 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/webview_drawfunctor_jank_chain/drawfunctor_signal_summary.sql",
-      "sha256": "454b1e3ffde101e8b1e08eeb883b06692d51a04ab97b325250c541b2d2c2b88a",
+      "sha256": "9433d9cf5120548768429220d302139b3f550815a8623d1e4939573c93e72901",
       "signal_patterns": [
-        "*AwDrawFn*",
         "*Blink*",
         "*Chromium*",
         "*Compositor*",
         "*CrRendererMain*",
-        "*DrawFn_DrawGL*",
+        "*DrawFn_Draw[GV][Llk]*",
+        "*DrawFn_OnSync*",
+        "*DrawFn_PostDraw*",
         "*DrawFunctor*",
-        "*DrawGL*",
         "*JavaScript*",
         "*V8*",
         "*sandboxed_process*",
         "*v8*",
         "*webview*",
-        "VizCompositorThread*"
+        "AwDrawFnImpl::Draw[GV][Llk]*",
+        "DrawGL*",
+        "DrawVk*",
+        "VizCompositorThread*",
+        "WebViewFunctor::draw[GgVv][LlKk]*",
+        "WebViewFunctor::postDraw*",
+        "WebViewFunctor::sync*"
       ],
       "skill_id": "webview_drawfunctor_jank_chain",
       "source": {
         "path": "backend/skills/composite/webview_drawfunctor_jank_chain.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "23169f041556c7bfe0b33f5a86d7248694d522332bcb1e0db972702d7f68e337"
+        "sha256": "f955143f2e4366b68abd38648cac6d652dbd08240aecca385340a151f984ca93"
       },
       "sql_dependencies": {
         "creates": [],
@@ -214,28 +220,34 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/webview_drawfunctor_jank_chain/drawfunctor_frame_overlap.sql",
-      "sha256": "f2b707a71bfb3baa474249925c82a17dd11958d825fba9c257bf7b57ac3076af",
+      "sha256": "7edb5301aa7e43b162e77655089e4fdc7b7d0a447fefab9a6dd57ed215cf9c99",
       "signal_patterns": [
-        "*AwDrawFn*",
         "*Blink*",
         "*Chromium*",
         "*Compositor*",
         "*CrRendererMain*",
-        "*DrawFn_DrawGL*",
+        "*DrawFn_Draw[GV][Llk]*",
+        "*DrawFn_OnSync*",
+        "*DrawFn_PostDraw*",
         "*DrawFunctor*",
-        "*DrawGL*",
         "*JavaScript*",
         "*V8*",
         "*sandboxed_process*",
         "*v8*",
         "*webview*",
-        "VizCompositorThread*"
+        "AwDrawFnImpl::Draw[GV][Llk]*",
+        "DrawGL*",
+        "DrawVk*",
+        "VizCompositorThread*",
+        "WebViewFunctor::draw[GgVv][LlKk]*",
+        "WebViewFunctor::postDraw*",
+        "WebViewFunctor::sync*"
       ],
       "skill_id": "webview_drawfunctor_jank_chain",
       "source": {
         "path": "backend/skills/composite/webview_drawfunctor_jank_chain.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "23169f041556c7bfe0b33f5a86d7248694d522332bcb1e0db972702d7f68e337"
+        "sha256": "f955143f2e4366b68abd38648cac6d652dbd08240aecca385340a151f984ca93"
       },
       "sql_dependencies": {
         "creates": [],

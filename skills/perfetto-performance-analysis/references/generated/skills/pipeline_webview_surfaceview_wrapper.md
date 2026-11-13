@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/webview_surfaceview_wrapper.skill.yaml
-Source SHA-256: 15a526a010a329ca90a47f84637259669b5a7aa7aa2fa97415db686588282080
+Source SHA-256: 43a64d174f8353f37a2afce86fd9933c58ad5c44853ae7a0d4e8be08f3a9b41a
 # WebView SurfaceView Wrapper
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s09_webview). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: WebView SurfaceView Wrapper
 description: WebView 全屏视频包装模式
 icon: video
 family: webview
-doc_path: rendering_pipelines/S09_webview_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s09_webview
 s_article_ref: S09
 four_features:
   producer_threads:
@@ -68,7 +72,7 @@ exclude_if:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S09_webview_type.md
+source: references/generated/knowledge/rendering-teaching.md#s09_webview
 ```
 
 ## Analysis guidance

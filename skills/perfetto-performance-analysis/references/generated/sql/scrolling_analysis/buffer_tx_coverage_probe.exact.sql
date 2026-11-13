@@ -1,6 +1,6 @@
 -- GENERATED FILE - DO NOT EDIT.
 -- Source: backend/skills/composite/scrolling_analysis.skill.yaml
--- Source SHA-256: ca7c1326c0ca6eac9e485114bd94fbfd81e9c8db2f3d8c65974d46831f8db084
+-- Source SHA-256: 7b6db2bdf39a9b8588e3dbec921991ced81edd6d9a6d7426184f2b1a7d9a3c5a
 
 WITH
 -- SPDX-License-Identifier: AGPL-3.0-or-later
@@ -27,7 +27,9 @@ target_presence AS (
 SELECT target_process_count,
   CASE WHEN target_process_count > 0 THEN 'found' ELSE 'not_found' END AS target_process_status,
   frame_timeline_frames,
-  NULL AS buffer_tx_frames, NULL AS frame_timeline_to_buffer_tx_ratio,
+  NULL AS buffer_tx_frames, NULL AS received_buffer_updates,
+  NULL AS frame_timeline_to_buffer_tx_ratio,
+  NULL AS source_event_ratio,
   NULL AS buffer_tx_track_id, NULL AS frame_source_track,
   NULL AS buffer_tx_effective_span_ns,
   CASE WHEN target_process_count = 0 THEN 'target_process_not_found'
@@ -39,11 +41,13 @@ FROM target_presence CROSS JOIN frame_coverage
 )
 -- Exact-UPID scope never compares against BufferTX.
 SELECT target_process_count, target_process_status, frame_timeline_frames,
-  buffer_tx_frames, frame_timeline_to_buffer_tx_ratio, buffer_tx_track_id,
+  buffer_tx_frames, received_buffer_updates,
+  frame_timeline_to_buffer_tx_ratio, source_event_ratio, buffer_tx_track_id,
   frame_source_track, buffer_tx_effective_span_ns, coverage_status,
   should_fallback, buffer_tx_status,
+  'unavailable_exact_upid' AS source_event_ratio_status,
   CASE coverage_status
-    WHEN 'sufficient_frame_timeline_coverage' THEN 'full_frame_timeline'
+    WHEN 'sufficient_frame_timeline_coverage' THEN 'frame_timeline_only_unbenchmarked'
     WHEN 'partial_frame_timeline_coverage' THEN 'partial_sample'
     WHEN 'no_buffer_tx_candidate' THEN 'frame_timeline_only_unbenchmarked'
     WHEN 'frame_timeline_only_exact_upid' THEN 'frame_timeline_only_unbenchmarked'

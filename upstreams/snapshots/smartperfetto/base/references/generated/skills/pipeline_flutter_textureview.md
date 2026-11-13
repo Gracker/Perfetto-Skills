@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/flutter_textureview.skill.yaml
-Source SHA-256: 8a914c731bf04e09db6201eeadde573f3db0c3b10197149ae7fddb7e0935985c
+Source SHA-256: bc38cb24f2db27ae7221d731985452d31abd9299fa59e5d964c4992692326110
 # Flutter TextureView
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s10_flutter). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: Flutter TextureView
 description: Flutter TextureView render mode，宿主侧纹理合成路径
 icon: flutter
 family: flutter
-doc_path: rendering_pipelines/S10_flutter_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s10_flutter
 s_article_ref: S10
 four_features:
   producer_threads:
@@ -84,7 +88,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S10_flutter_type.md
+source: references/generated/knowledge/rendering-teaching.md#s10_flutter
 ```
 
 ## Analysis guidance

@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/pipelines/imagereader_pipeline.skill.yaml
-Source SHA-256: 5b2ccd004a9c5954b77897842a72d4e07412657f67fe7305fd90b0634a2ece8a
+Source SHA-256: 6bc68439d354010e095a6d527e67a130decb96f051cffaf8476e058c5cdce708
 # ImageReader 渲染管线
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -14,6 +14,10 @@ type: pipeline_definition
 category: rendering
 ```
 
+## Product teaching card
+
+[Read the local teaching card](../knowledge/rendering-teaching.md#s07_software_offscreen). This is reference topology; verify observed handoffs in the trace.
+
 ## Metadata
 
 ```yaml
@@ -22,7 +26,7 @@ display_name: ImageReader 渲染管线
 description: 通过 ImageReader API 获取渲染帧的管线，常见于 ML 推理、屏幕录制、自定义相机处理和部分 Chrome 渲染模式
 icon: image
 family: specialized
-doc_path: rendering_pipelines/S07_software_offscreen_type.md
+doc_path: references/generated/knowledge/rendering-teaching.md#s07_software_offscreen
 s_article_ref: S07
 four_features:
   producer_threads:
@@ -81,7 +85,7 @@ scoring_signals:
 ## Teaching model
 
 ```yaml
-source: rendering_pipelines/S07_software_offscreen_type.md
+source: references/generated/knowledge/rendering-teaching.md#s07_software_offscreen
 ```
 
 ## Analysis guidance
