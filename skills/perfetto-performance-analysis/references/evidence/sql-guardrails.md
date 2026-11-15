@@ -4,6 +4,18 @@ Run `scripts/perfetto_sql_guardrails.py` before executing authored or modified
 SQL. The validator is static: it can reject unsafe setup and require a proof
 reference, but it cannot inspect interval rows without a trace.
 
+## Core SQL and availability
+
+Perfetto `ts` and `dur` use nanoseconds. Keep source values unchanged and label
+presentation conversions as required by the [evidence contract](evidence-contract.md).
+Use `=` for exact matching and `GLOB` for wildcard matching. Use
+`regexp(pattern, input, 'i')` only for intentional case-insensitive partial matches.
+
+Do not assume `mm_event`, `page_fault`, or `lmks` are built-in Trace Processor
+tables. Inspect the trace schema and available modules first; an event name is
+not a table declaration. Preserve absent sources as `missing_evidence` rather
+than treating a missing table as a measured zero.
+
 ## Blocking SPAN_JOIN invariants
 
 For every `SPAN_JOIN` or `SPAN_LEFT_JOIN`:
