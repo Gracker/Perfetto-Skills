@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/skills/atomic/startup_events_in_range.skill.yaml
-Source SHA-256: 038e6baef3bea018d57ff5db83ee6b30d4f089f339989e7aeaac6cd804ee108d
+Source SHA-256: 84b7f55d58f5678da0404e8beb352a6d2fef99d23643891c09f5cc09abbf735d
 # 启动事件列表 (区间)
 
 This reference is the portable Agent Skill projection of the source definition. Execute SQL with `perfetto_query.py`; bind declared scalar or JSON-array inputs through `--param`, load prerequisites through `--module`, and pass non-empty saved rows from prior steps through `--result`; dotted fields and numeric indexes select saved scalar values. Evaluate conditions and dependent Skill calls in the listed order.
@@ -132,9 +132,54 @@ columns:
   label: 评级
   type: string
 - name: original_type
-  label: 原始类型
+  label: Stdlib 类型
+  label_i18n:
+    en: Stdlib type
   type: string
+- name: stdlib_platform_marker
+  label: 匹配的平台启动类型标记
+  label_i18n:
+    en: Matched platform startup type marker
+  type: string
+- name: classification_basis
+  label: Skill 分类依据
+  label_i18n:
+    en: Skill classification basis
+  type: string
+- name: bind_app_start_ts
+  label: bindApplication 开始
+  label_i18n:
+    en: bindApplication start
+  type: timestamp
+  unit: ns
   hidden: true
+- name: bind_app_end_ts
+  label: bindApplication 结束
+  label_i18n:
+    en: bindApplication end
+  type: timestamp
+  unit: ns
+  hidden: true
+- name: process_start_ts
+  label: 进程创建时间
+  label_i18n:
+    en: Process creation time
+  type: timestamp
+  unit: ns
+  hidden: true
+- name: process_first_state_ts
+  label: 进程首个线程状态观测
+  label_i18n:
+    en: First observed process thread state
+  type: timestamp
+  unit: ns
+  hidden: true
+- name: first_state_before_start_ms
+  label: 首个状态早于启动
+  label_i18n:
+    en: First state before startup
+  type: number
+  unit: ms
 - name: type_reclassified
   label: 类型已修正
   type: number

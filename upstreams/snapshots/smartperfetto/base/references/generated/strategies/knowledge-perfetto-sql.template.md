@@ -1,6 +1,6 @@
 GENERATED FILE - DO NOT EDIT.
 Source: backend/strategies/knowledge-perfetto-sql.template.md
-Source SHA-256: 66644d899ebf051542950f5999a9d160575c3d441a7185970ebc9c0433de0ff5
+Source SHA-256: 8bddcad6eba5f915ad9dbcb2396a168a3ab912701fbf7bb884b27256148d05cf
 
 # Knowledge Perfetto Sql Template
 
@@ -19,24 +19,25 @@ Portable methodology extracted from the SmartPerfetto strategy library.
 <!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
 <!-- Copyright (C) 2024-2026 Gracker (Chris) | the portable runtime -->
 
-## Perfetto SQL
+## SQL
 
-| Relation | Columns |
-| --- | --- |
-| slice | id,ts,dur,track_id,name,parent_id |
-| thread_track | id,utid |
-| thread | utid,tid,upid,name,is_main_thread,is_idle |
-| process | upid,pid,name |
-| sched | ts,dur,cpu,utid,priority,end_state |
-| thread_state | ts,dur,utid,state,blocked_function,waker_utid |
-| android_binder_txns | client_ts,client_dur,server_ts,server_dur,client_upid,server_upid,is_sync,aidl_name |
-| actual_frame_timeline_slice | ts,dur,upid,jank_type,jank_tag,surface_frame_token,display_frame_token |
-| counter | ts,track_id,value |
-
-Slices: `slice s JOIN thread_track tt ON s.track_id=tt.id JOIN thread t ON tt.utid=t.utid JOIN process p ON t.upid=p.upid`.
-TID/PID != UTID/UPID; thread tracks: thread slices only.
-android_binder_txns: no ts/dur; ORDER BY client_ts.
-
-LAG/LEAD need OVER; CTE then WHERE/aggregate: `WITH w AS(SELECT c.ts-LAG(c.ts) OVER(PARTITION BY c.track_id ORDER BY c.ts) gap FROM counter c) SELECT AVG(w.gap) FROM w`.
-USING(x): both sides need x. slice lacks upid/utid; use thread_track.
-Joins: unique aliases; qualify SELECT/ON/WHERE/ORDER BY columns.
+ts/dur: ns. = exact; GLOB wildcard; regexp(pattern,input,'i') opt-in partial.
+No TP tables: mm_event/page_fault/lmks/frames/thread_track_name/cpu_frequency_track/freq.
+SQLite scalar `MAX(a,b)/MIN(a,b)`, no GREATEST/LEAST. `MAX(x)` aggregates.
+|slice|id,ts,dur,track_id,name,parent_id|
+|thread_track|id,utid|
+|thread|utid,tid,upid,name,is_main_thread,is_idle|
+|process|upid,pid,name|
+|sched|ts,dur,cpu,utid,priority,end_state|
+|thread_state|ts,dur,utid,state,blocked_function,waker_utid|
+|android_binder_txns=android.binder|client_ts,client_dur,server_ts,server_dur,client_upid,server_upid,is_sync,aidl_name|
+|actual_frame_timeline_slice|ts,dur,upid,jank_type,jank_tag,surface_frame_token,display_frame_token|
+|counter|ts,track_id,value|
+`INCLUDE PERFETTO MODULE <module>;` first:
+android_monitor_contention=android.monitor_contention (no s); android_startups=android.startup.startups.
+`slice s JOIN thread_track tt ON s.track_id=tt.id JOIN thread t ON tt.utid=t.utid JOIN process p USING(upid)`.
+TID/PID!=UTID/UPID.
+`counter c JOIN counter_track t ON c.track_id=t.id`; CPU=cpu_counter_track.
+Binder: no ts/dur; ORDER BY client_ts
+LAG/LEAD OVER: SELECT/ORDER BY; no AVG/SUM(window); CTE then WHERE/AVG/ROUND: `WITH w AS(SELECT ts-LAG(ts) OVER(PARTITION BY track_id ORDER BY ts) gap FROM counter) SELECT AVG(gap),COUNT(gap) FROM w`.
+USING shared; slice:no upid/utid; qualify; unique aliases.

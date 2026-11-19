@@ -71,12 +71,14 @@
         "spdx": "AGPL-3.0-or-later"
       },
       "path": "sql/startup_events_in_range/query.sql",
-      "sha256": "092df0113744e58588c30431de3c4ad28d1a1ec4468c0148d095cad01c4176de",
+      "sha256": "cb9432cc8a959fbe95ee34a2cac56a58accada13cba0937a8bf59844fa65bf14",
       "signal_patterns": [
         "OpenDexFilesFromOat*",
         "PostFork",
         "bindApplication",
         "handleRelaunchActivity*",
+        "launchingActivity#",
+        "launchingActivity#*:completed-*:*",
         "performCreate:*",
         "performRestart*",
         "relaunchActivity*"
@@ -85,7 +87,7 @@
       "source": {
         "path": "backend/skills/atomic/startup_events_in_range.skill.yaml",
         "repository": "https://github.com/Gracker/SmartPerfetto",
-        "sha256": "038e6baef3bea018d57ff5db83ee6b30d4f089f339989e7aeaac6cd804ee108d"
+        "sha256": "84b7f55d58f5678da0404e8beb352a6d2fef99d23643891c09f5cc09abbf735d"
       },
       "sql_dependencies": {
         "creates": [],

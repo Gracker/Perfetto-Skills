@@ -97,6 +97,20 @@ class GeneratedReferenceTest(unittest.TestCase):
         self.assertIn("## Portable strategy metadata", startup)
         self.assertIn("\nscene: startup\n", startup)
 
+    def test_sql_quick_card_retains_portable_guidance(self) -> None:
+        card = (GENERATED / "strategies/knowledge-perfetto-sql.template.md").read_text(
+            encoding="utf-8"
+        )
+        for guidance in (
+            "MAX(a,b)/MIN(a,b)",
+            "no GREATEST/LEAST",
+            "MAX(x)",
+            "android_binder_txns",
+            "LAG/LEAD",
+        ):
+            self.assertIn(guidance, card)
+        self.assertNotIn("list_stdlib_modules", card)
+
     def test_strategy_references_remove_product_tool_dependencies(self) -> None:
         strategy_text = "\n".join(
             path.read_text(encoding="utf-8")
